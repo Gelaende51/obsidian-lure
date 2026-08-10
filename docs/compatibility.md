@@ -27,6 +27,45 @@ Nothing. No plugin, core or community, has to be enabled.
 - **Omnisearch** / **Another Quick Switcher** — search-first navigation, where this plugin is structure-first navigation.
 - **Templater** — creating notes at typed paths pairs naturally with folder-based templates.
 
+## Peer plugins
+
+Every community plugin that either contends for the note header or answers the
+folder click this plugin re-dispatches. Ids and names are verbatim from
+Obsidian's `community-plugins.json`; a plugin's name is never translated.
+
+**Contend for the header** — they draw into `.view-header-title`, the element
+this plugin takes over. The failure mode is a clobber: whichever patched last
+wins, often in one load order only.
+
+| Plugin | Id | What it does there |
+| --- | --- | --- |
+| Quick Explorer | `quick-explorer` | Draws the current file path into the title bar |
+| Front Matter Title | `obsidian-front-matter-title-plugin` | Rewrites the note header title from frontmatter |
+
+**Answer the folder click** — folder-note plugins that respond to the click
+re-dispatched onto Obsidian's native breadcrumb. The failure mode is silence:
+the click lands on nothing and no note opens.
+
+| Plugin | Id | Notes |
+| --- | --- | --- |
+| Folder notes | `folder-notes` | Opens folder notes from the path — the closest pairing |
+| Folder Note | `folder-note-plugin` | An independent folder-note implementation |
+| create folder notes with dropdown | `create-folder-notes-with-dropdown` | Creates folder notes from its own dropdown |
+
+**Own their own strip** — they add a bar of their own above or inside the note
+rather than touching the header title, so they should merely coexist.
+
+| Plugin | Id |
+| --- | --- |
+| Nav Link Header | `nav-link-header` |
+| Running Head | `running-head` |
+| Crumbs | `crumbs-obsidian` |
+| Breadcrumbs | `breadcrumbs` |
+
+Automated coverage for all of the above lives in `.dev/test-compat.mjs`, which
+exercises both load orders, the on/off matrix, and the swap setting in both
+positions.
+
 ## May conflict
 
 These are expectations based on what each plugin modifies, **not verified test results**. Please open an issue if you hit a real conflict.
