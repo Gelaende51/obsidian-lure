@@ -16,18 +16,17 @@ Obsidian 1.4.0+ · desktop only · AGPL-3.0
 
 ## Features
 
-- **Click a folder** to select its name for editing, with a dropdown of its *parent's* contents — swap one folder for a sibling and leave the rest of the path alone. Clicking the note's name does the same for the file name, extension included.
-- **Click the underlined delimiter** after it to open that folder — its folder note if you use one, otherwise revealed in the File Explorer. One setting swaps the two back.
-- **Right-click or drag any dropdown entry** — the File Explorer's own context menu and drag behaviour, on every file and folder listed.
-- **Click the filename or empty space** to type a path directly, with autocomplete. `/` descends, <kbd>Backspace</kbd> steps back out, <kbd>Enter</kbd> commits.
-- **Pencil Folder button** switches the same interactions to move/rename, with live validation matching Obsidian's own.
-- **Hold <kbd>Ctrl</kbd>** to open in a new tab instead — or, in move/rename mode, to copy the note to that location and open the copy.
-- **<kbd>F2</kbd> alternates** between the inline title and the header path bar.
-- **Settings:** alignment, delimiter (with presets), which of the two opens the dropdown, show vault name, show dot files.
-- **Click the vault name** (once **Access external files** is enabled — it's off by default) for a dropdown of your other vaults, home, the filesystem root and mounted drives — browse out of the vault without switching vaults. Everything out there is read-only until you open a padlock — one in the viewer for the file's contents, one in the header for creating, renaming and moving — and the path bar is framed in the error colour the whole time. See [outside the vault](#outside-the-vault).
-- **Two warning tiers** — red when the path bar points outside your vault, orange for text files Obsidian has no editor for. See [the warning colours](docs/usage.md#the-two-warning-colours).
-- **Themeable icons** — all three icons swap out from a CSS snippet, no fork needed.
-- **45 locales** — every language Obsidian's interface supports.
+- **Click a folder** for a dropdown of its *parent's* contents — swap one folder for a sibling, leave the rest of the path alone. The note's name works the same way, extension included.
+- **Click the delimiter** after a folder to reveal and expand it in the File Explorer. One setting swaps the two roles.
+- **Right-click or drag any entry** — the File Explorer's own context menu and drag behaviour.
+- **Click the filename or empty space** to type a path, with autocomplete. `/` descends, <kbd>Backspace</kbd> steps out, <kbd>Enter</kbd> commits.
+- **Pencil Folder button** switches the same interactions to move/rename, validated as Obsidian validates.
+- **Hold <kbd>Ctrl</kbd>** to open in a new tab — or, in move/rename mode, to copy the note there instead.
+- **<kbd>F2</kbd>** alternates between the inline title and the path bar.
+- **Click the vault name** to browse your other vaults, home, the filesystem root and mounted drives without switching vaults. Read-only until you open a padlock, and framed in the error colour throughout. Off by default — see [outside the vault](#outside-the-vault).
+- **Two warning tiers** — red outside the vault, orange for text files Obsidian has no editor for. See [the warning colours](docs/usage.md#the-two-warning-colours).
+- **Themeable icons**, swapped from a CSS snippet — and **45 locales**, every language Obsidian ships.
+- **Settings:** alignment, delimiter presets, which click opens the dropdown, vault name, dot files.
 
 → [Full usage guide](docs/usage.md)
 
@@ -62,11 +61,11 @@ Not yet in the Community Plugins directory.
 
 ## Compatibility
 
-No plugin is required. The core **File Explorer**, if enabled, is used to reveal folders in the sidebar; without it those actions are no-ops and nothing else changes.
+No plugin is required. The core **File Explorer**, if enabled, is what reveals folders in the sidebar; without it those clicks are no-ops.
 
-Pairs especially well with **folder notes**, which turns every breadcrumb segment into a destination: each folder's note is listed in that folder's dropdown *and* the underlined delimiter after each folder opens it on click. Lure delegates that click to Obsidian's own breadcrumb element, so any folder-notes plugin works under whatever note-location convention it is set to.
+Desktop only — the interaction model needs hover, precise clicks and a keyboard. Known overlaps, possible conflicts, and how this compares to Quick Explorer and Breadcrumbs are in [compatibility](docs/compatibility.md).
 
-Desktop only — the interaction model needs hover, precise clicks and a keyboard. Known overlaps and possible conflicts with other plugins, and how this compares to Quick Explorer and Breadcrumbs, are in [compatibility](docs/compatibility.md).
+> **Side note — folder notes.** Because Lure re-dispatches the delimiter click onto Obsidian's own breadcrumb element, any folder-notes plugin answers it: the delimiter opens the folder's note instead of revealing the folder, under whatever note-location convention that plugin is set to. Nothing here is written for it, but it is a good pairing — every segment of the path becomes a place you can actually go.
 
 ## Contributing
 

@@ -14,28 +14,25 @@ export const EN = {
 	alignmentCenter: "Center (classic Obsidian)",
 	alignmentRight: "Right",
 	settingDelimiterName: "Delimiter",
-	settingDelimiterDesc: "Character(s) shown between path segments.",
+	settingDelimiterDesc: "Shown between path segments.",
 	delimiterPresetTooltip: 'Use "{char}"',
 	settingVaultNameName: "Show vault name",
-	settingVaultNameDesc: "Show the vault name as the first breadcrumb segment.",
-	settingSwapActionsName: "Delimiters open folders",
+	settingVaultNameDesc: "As the first segment of the path.",
+	settingSwapActionsName: "Folder name opens the dropdown",
 	settingSwapActionsDesc:
-		"On, the underlined delimiter after a folder opens it — its folder note if a folder-notes plugin " +
-		"is handling it, otherwise revealing it in the File Explorer. Off, the folder name does that instead. " +
-		"Never applies in rename/move mode.",
+		"On, a folder name opens its dropdown and the delimiter after it reveals the folder in the " +
+		"sidebar — or opens its folder note, if a folder-notes plugin handles it. Off, the two swap. " +
+		"Never in rename/move mode.",
 	settingDotFilesName: "Show dot files",
 	settingDotFilesDesc:
-		"List files and folders whose name starts with a dot in the breadcrumb suggestions. " +
-		"Hidden either way, they still block renaming a note onto their name.",
+		"List dot files in the dropdown. Hidden or not, they still block renaming onto their name.",
 	settingExternalName: "Access external files",
 	settingExternalDesc:
-		"Let the vault name open a dropdown of your other vaults, your home folder, the filesystem " +
-		"root and mounted drives, and browse and open files there. Off, the plugin never looks past " +
-		"this vault.",
+		"Let the vault name open your other vaults, your home folder, the filesystem root and " +
+		"mounted drives. Off, the plugin never looks past this vault.",
 	settingExternalWarning:
-		"This reaches outside your vault. Files out there open read-only, and creating, renaming or " +
-		"moving anything needs a second, per-folder unlock — but no other setting in this plugin can " +
-		"touch a file Obsidian doesn't manage.",
+		"Reaches outside your vault. External files open read-only; creating, renaming or moving " +
+		"needs a second, per-folder unlock.",
 
 	// Create-file confirmation
 	modalCreateTitle: "Create new file?",

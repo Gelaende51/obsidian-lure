@@ -3,8 +3,30 @@ import "obsidian";
 // Minimal ambient typing for undocumented internal-plugin API surface
 // used to reveal a file/folder in the File Explorer sidebar.
 declare module "obsidian" {
+	/**
+	 * One row of the File Explorer tree. `setCollapsed` is a no-op when the
+	 * state already matches, so expanding an open folder costs nothing.
+	 */
+	interface FileTreeItem {
+		collapsed: boolean;
+		collapsible: boolean;
+		/** Obsidian's own ancestor-expansion in revealInFolder calls this. */
+		toggleCollapsed(animate: boolean): unknown;
+	}
+
 	interface FileExplorerLeafInstance {
+		/**
+		 * Opens the explorer leaf if needed, then delegates to the view's
+		 * method of the same name. Expands the target's *ancestors* and
+		 * focuses its row — but leaves the target itself collapsed.
+		 */
 		revealInFolder(file: TAbstractFile): void;
+	}
+
+	/** The explorer's view, which is where the rendered rows actually live. */
+	interface FileExplorerView extends View {
+		/** Every rendered row, keyed by vault path. */
+		fileItems: Record<string, FileTreeItem | undefined>;
 	}
 
 	interface InternalPlugin<T> {

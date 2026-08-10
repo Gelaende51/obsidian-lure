@@ -6,16 +6,16 @@
 
 The note's full vault path replaces the bare filename in the view header — the bar below the tab row that also holds the back/forward buttons.
 
-Two things on the row are clickable, and **Delimiters open folders** decides which does what:
+Two things on the row are clickable, and **Folder name opens the dropdown** decides which does what:
 
 | | Folder name | Delimiter after it |
 | --- | --- | --- |
 | **On** (default) | Selects that folder for editing | Opens the folder |
 | **Off** | Opens the folder | Descends into that folder |
 
-"Opens the folder" means whatever clicking that segment does in stock Obsidian: with a folder-notes plugin installed, its folder note; without one, the folder is revealed and highlighted in the File Explorer sidebar.
+"Opens the folder" means whatever clicking that segment does in stock Obsidian: with a folder-notes plugin installed, its folder note; without one, the folder is revealed in the File Explorer sidebar — highlighted, and expanded to show its contents.
 
-A delimiter is **underlined only when the folder before it actually has a folder note**, so the underline is a promise that something is there to open. Every delimiter stays clickable either way — one without an underline reveals its folder in the sidebar, which the pointer cursor still signals. The underline moves off the folder name at the same time: with the swap on, the name opens the dropdown, so marking it as the link to the note would be a lie.
+A delimiter is **underlined only when the folder before it actually has a folder note**, so the underline is a promise that something is there to open. Every delimiter stays clickable either way — one without an underline reveals and expands its folder in the sidebar, which the pointer cursor still signals. The underline moves off the folder name at the same time: with the swap on, the name opens the dropdown, so marking it as the link to the note would be a lie.
 
 **Rename/move mode overrides both**, whatever the setting says: nothing on the row opens a folder while a move is pending, because opening one would abandon the move. Folder names select for editing and delimiters descend — both are ways of picking the destination — and the underline disappears to show that opening is suspended.
 
@@ -35,7 +35,7 @@ Either way the rest of the path stays visible around the input, as chips before 
 
 ## Descending by delimiter
 
-Clicking a delimiter (with **Delimiters open folders** off) descends into the folder before it: the dropdown lists *that* folder's contents, and the rest of the path opens selected in the input. Picking a folder appends it to the breadcrumb trail and immediately opens the next dropdown, so you can click your way down a tree without leaving the header row.
+Clicking a delimiter (with **Folder name opens the dropdown** off) descends into the folder before it: the dropdown lists *that* folder's contents, and the rest of the path opens selected in the input. Picking a folder appends it to the breadcrumb trail and immediately opens the next dropdown, so you can click your way down a tree without leaving the header row.
 
 ## Dropdown entries are real file-manager rows
 
@@ -246,7 +246,7 @@ This works by wrapping the `workspace:edit-file-title` command rather than grabb
 | **Alignment** | Left / Center / Right | Left | Where the breadcrumb sits in the header row. *Center* matches Obsidian's classic look. |
 | **Delimiter** | Any character | `/` | The separator drawn between segments. Six one-click presets (`/ > ▸ › \ •`) sit in front of the text field. |
 | **Show vault name** | On / Off | On | Whether the vault itself is the first breadcrumb segment. Turned off, that segment becomes a 🏠 icon rather than disappearing, so the path still starts somewhere clickable. |
-| **Delimiters open folders** | On / Off | On | Swaps what a folder name and the delimiter after it do — see [the table above](#the-breadcrumb). Never applies in rename/move mode. |
+| **Folder name opens the dropdown** | On / Off | On | Swaps what a folder name and the delimiter after it do — see [the table above](#the-breadcrumb). Never applies in rename/move mode. |
 | **Show dot files** | On / Off | Off | Whether dot-files and dot-folders are listed in the dropdowns. Overwrite protection applies either way. |
 | **Access external files** | On / Off | **Off** | Whether the vault name opens the locations dropdown. Off, nothing in the plugin ever looks past this vault. |
 

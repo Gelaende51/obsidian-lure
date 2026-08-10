@@ -14,6 +14,7 @@ import {
 	normalizePath,
 	setIcon,
 } from "obsidian";
+import type { FileExplorerView } from "obsidian";
 import type BreadcrumbPathPlugin from "./main";
 import type { BreadcrumbManager } from "./breadcrumbManager";
 import { ConfirmCreateFileModal } from "./createFileModal";
@@ -1379,9 +1380,33 @@ export class PathBreadcrumb {
 		}
 		try {
 			fileExplorer.instance.revealInFolder(target);
+			this.expandInExplorer(target.path);
 		} catch (err) {
 			new Notice(t("noticeExplorerRevealFailed"));
 		}
+	}
+
+	/**
+	 * revealInFolder walks *up* from the target expanding its ancestors, so
+	 * the row becomes visible while its own contents stay shut — which is
+	 * never what "show me this folder" means. Finish the job on the target.
+	 *
+	 * Twice, because the instance method opens the explorer leaf first when
+	 * one isn't already there: on that path the rows don't exist yet when we
+	 * return, so the immediate attempt finds nothing and the next frame does.
+	 * Both calls are safe — Obsidian's setCollapsed is a no-op unless the
+	 * state actually changes, so the second one costs nothing.
+	 */
+	private expandInExplorer(path: string): void {
+		const expand = (): void => {
+			const view = this.plugin.app.workspace.getLeavesOfType("file-explorer")[0]?.view as
+				| FileExplorerView
+				| undefined;
+			const item = view?.fileItems?.[path];
+			if (item?.collapsible && item.collapsed) item.toggleCollapsed(false);
+		};
+		expand();
+		window.requestAnimationFrame(expand);
 	}
 
 	/**

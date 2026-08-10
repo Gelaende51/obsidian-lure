@@ -416,3 +416,22 @@ Worth noting how it hid: `restart-obsidian.sh` prints `ready` once a page
 target exists, which is true and useless — the window is there, the app is
 not. Warm runs never touched the path, so the suite looked stable for as
 long as nobody restarted Obsidian first.
+
+## The file explorer has two `revealInFolder`s, and only one has the rows
+
+`app.internalPlugins.getPluginById("file-explorer").instance.revealInFolder`
+is a thin async wrapper: it opens the explorer leaf if none exists, reveals
+the leaf, then delegates to `leaf.view.revealInFolder`. The *view* is where
+`fileItems` — every rendered row, keyed by vault path — actually lives.
+
+Reading `instance.fileItems` therefore yields `undefined`, and because the
+lookup was written as `instance.fileItems?.[path]`, the optional chain
+swallowed it: the expand silently never ran, with no error and no visible
+difference from a folder that happened to be open already. Only a live
+check caught it.
+
+Worth knowing what reveal does and doesn't do, too. It walks *up* from the
+target expanding each ancestor so the row becomes visible, then focuses and
+scrolls to it — but never touches the target's own collapsed state. So
+"reveal this folder" leaves the folder shut, which is rarely what the user
+meant by clicking it.
