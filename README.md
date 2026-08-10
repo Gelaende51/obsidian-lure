@@ -63,9 +63,13 @@ Not yet in the Community Plugins directory.
 
 No plugin is required. The core **File Explorer**, if enabled, is what reveals folders in the sidebar; without it those clicks are no-ops.
 
-Desktop only — the interaction model needs hover, precise clicks and a keyboard. Known overlaps, possible conflicts, and how this compares to Quick Explorer and Breadcrumbs are in [compatibility](docs/compatibility.md).
+Tested against the community plugins that share the note header or answer the folder click — both load orders, each on and off:
 
-> **Side note — folder notes.** Because Lure re-dispatches the delimiter click onto Obsidian's own breadcrumb element, any folder-notes plugin answers it: the delimiter opens the folder's note instead of revealing the folder, under whatever note-location convention that plugin is set to. Nothing here is written for it, but it is a good pairing — every segment of the path becomes a place you can actually go.
+- [Folder notes](obsidian://show-plugin?id=folder-notes) — the delimiter opens a folder's note instead of revealing the folder, making every segment of the path somewhere you can go. The one folder-note plugin that claims the header path; [Folder Note](obsidian://show-plugin?id=folder-note-plugin) and [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) don't listen there, so the delimiter reveals the folder as usual.
+- [Quick Explorer](obsidian://show-plugin?id=quick-explorer) and [Front Matter Title](obsidian://show-plugin?id=obsidian-front-matter-title-plugin) — both draw into the same header element; Lure keeps the row whichever loads first, and turning either off leaves the other intact.
+- [Nav Link Header](obsidian://show-plugin?id=nav-link-header), [Running Head](obsidian://show-plugin?id=running-head), [Crumbs](obsidian://show-plugin?id=crumbs-obsidian), [Breadcrumbs](obsidian://show-plugin?id=breadcrumbs) — own their own strip, and coexist.
+
+Desktop only — the interaction model needs hover, precise clicks and a keyboard. Full results, remaining expectations, and how this compares to Quick Explorer and Breadcrumbs are in [compatibility](docs/compatibility.md).
 
 ## Contributing
 

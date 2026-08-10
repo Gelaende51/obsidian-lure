@@ -478,3 +478,23 @@ The delegation now expands too, but only when the explorer actually landed
 on that folder (`tree.focusedItem`). A folder-notes plugin may answer the
 click by opening a note and revealing nothing, and expanding a folder
 nobody navigated to would be a stray side effect.
+
+## Two vaults open means two page targets, and no stable order
+
+`/json/list` returns one page target per Obsidian window, and the harness
+took the first. That is fine until a second vault is open — then the suite
+silently drives whichever window the list happened to put first. It ran a
+full compatibility suite against the wrong vault and reported a clean
+answer about a plugin that was not even installed there.
+
+Nothing about that failure looks like a failure, which is what makes it
+worth guarding: the tools now match on the vault name (`OBSIDIAN_VAULT`,
+matched against the window title `"<file> - <vault> - Obsidian"`) and
+refuse outright when more than one window is open and no vault is named.
+Refusing is the point — a wrong answer delivered confidently is worse than
+an error.
+
+Related: `app.setting.open()` does nothing useful in a background window,
+so a settings-tab assertion can't be made by driving the modal. Render the
+tab into a detached element instead — assign `tab.containerEl`, call
+`display()`, read the result, put the original back.

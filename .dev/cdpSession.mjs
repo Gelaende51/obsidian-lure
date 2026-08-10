@@ -7,10 +7,43 @@
 const PORT = process.env.OBSIDIAN_CDP_PORT ?? 9222;
 const ORIGIN = `http://127.0.0.1:${PORT}`;
 
+/**
+ * Picks the Obsidian window to drive.
+ *
+ * With more than one vault open there is more than one page target, and
+ * their order is not stable — taking the first one silently ran a whole
+ * suite against whichever window happened to be listed first, which is a
+ * quiet way to get meaningless results. Match on the vault name instead:
+ * Obsidian titles its windows "<file> - <vault> - Obsidian".
+ *
+ * Set OBSIDIAN_VAULT to choose; with one window open it is optional.
+ */
+function pickTarget(targets, vault) {
+	const pages = targets.filter((t) => t.type === "page" && !t.url.startsWith("devtools://"));
+	if (!pages.length) throw new Error("No page target — is a vault open?");
+	if (!vault) {
+		if (pages.length > 1) {
+			const names = pages.map((t) => t.title).join("\n  ");
+			throw new Error(
+				`${pages.length} Obsidian windows are open, so the target is ambiguous.\n` +
+					`  ${names}\nSet OBSIDIAN_VAULT=<vault name> to choose one.`,
+			);
+		}
+		return pages[0];
+	}
+	const match = pages.find((t) => t.title.includes(` - ${vault} - `));
+	if (!match) {
+		throw new Error(
+			`No window for vault "${vault}". Open windows:\n  ` +
+				pages.map((t) => t.title).join("\n  "),
+		);
+	}
+	return match;
+}
+
 export async function connect() {
 	const targets = await (await fetch(`${ORIGIN}/json/list`)).json();
-	const page = targets.find((t) => t.type === "page" && !t.url.startsWith("devtools://"));
-	if (!page) throw new Error("No page target — is a vault open?");
+	const page = pickTarget(targets, process.env.OBSIDIAN_VAULT);
 
 	const socket = new WebSocket(page.webSocketDebuggerUrl);
 	await new Promise((resolve, reject) => {

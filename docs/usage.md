@@ -13,7 +13,9 @@ Two things on the row are clickable, and **Folder name opens the dropdown** deci
 | **On** (default) | Selects that folder for editing | Opens the folder |
 | **Off** | Opens the folder | Descends into that folder |
 
-"Opens the folder" means whatever clicking that segment does in stock Obsidian: with a folder-notes plugin installed, its folder note; without one, the folder is revealed in the File Explorer sidebar — highlighted, and expanded to show its contents.
+"Opens the folder" means whatever clicking that segment does in stock Obsidian. Without a plugin listening there, the folder is revealed in the File Explorer sidebar — highlighted, and expanded to show its contents.
+
+With [Folder notes](obsidian://show-plugin?id=folder-notes) installed the same click opens that folder's note instead. It is the one folder-note plugin found to claim the header path; [Folder Note](obsidian://show-plugin?id=folder-note-plugin) and [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) manage folder notes but don't listen for a click on the breadcrumb, so with those the delimiter reveals the folder as usual. See [compatibility](compatibility.md#verified-against).
 
 A delimiter is **underlined only when the folder before it actually has a folder note**, so the underline is a promise that something is there to open. Every delimiter stays clickable either way — one without an underline reveals and expands its folder in the sidebar, which the pointer cursor still signals. The underline moves off the folder name at the same time: with the swap on, the name opens the dropdown, so marking it as the link to the note would be a lie.
 
@@ -246,7 +248,7 @@ This works by wrapping the `workspace:edit-file-title` command rather than grabb
 | **Alignment** | Left / Center / Right | Left | Where the breadcrumb sits in the header row. *Center* matches Obsidian's classic look. |
 | **Delimiter** | Any character | `/` | The separator drawn between segments. Six one-click presets (`/ > ▸ › \ •`) sit in front of the text field. |
 | **Show vault name** | On / Off | On | Whether the vault itself is the first breadcrumb segment. Turned off, that segment becomes a 🏠 icon rather than disappearing, so the path still starts somewhere clickable. |
-| **Folder name opens the dropdown** | On / Off | On | Swaps what a folder name and the delimiter after it do — see [the table above](#the-breadcrumb). Never applies in rename/move mode. |
+| **Folder name opens the dropdown** | On / Off | On | Swaps what a folder name and the delimiter after it do — see [the table above](#the-breadcrumb). With [Folder notes](obsidian://show-plugin?id=folder-notes) the delimiter opens folder notes. Never applies in rename/move mode. |
 | **Show dot files** | On / Off | Off | Whether dot-files and dot-folders are listed in the dropdowns. Overwrite protection applies either way. |
 | **Access external files** | On / Off | **Off** | Whether the vault name opens the locations dropdown. Off, nothing in the plugin ever looks past this vault. |
 

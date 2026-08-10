@@ -37,9 +37,28 @@ async function findTarget() {
 				`after --remote-debugging-port was added to user-flags.conf?`,
 		);
 	}
-	const page = targets.find((t) => t.type === "page" && !t.url.startsWith("devtools://"));
-	if (!page) throw new Error("No page target — is a vault open?");
-	return page;
+	// One page target per open vault, in no stable order. Guessing means
+	// inspecting the wrong window and believing the answer, so with more
+	// than one open the vault has to be named. Titles read
+	// "<file> - <vault> - Obsidian".
+	const pages = targets.filter((t) => t.type === "page" && !t.url.startsWith("devtools://"));
+	if (!pages.length) throw new Error("No page target — is a vault open?");
+	const vault = process.env.OBSIDIAN_VAULT;
+	if (!vault) {
+		if (pages.length === 1) return pages[0];
+		throw new Error(
+			`${pages.length} Obsidian windows are open, so the target is ambiguous.\n  ` +
+				pages.map((t) => t.title).join("\n  ") +
+				"\nSet OBSIDIAN_VAULT=<vault name> to choose one.",
+		);
+	}
+	const match = pages.find((t) => t.title.includes(` - ${vault} - `));
+	if (!match) {
+		throw new Error(
+			`No window for vault "${vault}". Open windows:\n  ` + pages.map((t) => t.title).join("\n  "),
+		);
+	}
+	return match;
 }
 
 async function send(method, params = {}) {

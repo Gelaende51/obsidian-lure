@@ -14,7 +14,11 @@ Nothing. No plugin, core or community, has to be enabled.
 
 - **Folder notes** — the best pairing. Giving every folder a note of its own makes each breadcrumb segment a real destination, reachable two ways: the folder's note appears in that folder's dropdown, and the **underlined delimiter after each folder opens it on click**. Moving or renaming a folder note in rename mode works like any other file.
 
-  This works because the plugin never reimplements "open the folder note". It re-dispatches the click onto Obsidian's own breadcrumb element and lets whichever folder-notes plugin owns that element respond — so any of them works, under whatever note-location convention it is configured for, with nothing to keep in sync here. With no such plugin installed the same click hits Obsidian's own handler and reveals the folder in the sidebar, which is also the fallback for a folder that simply has no note. Obsidian's own reveal expands only the *ancestors* of its target, so Lure expands the folder itself afterwards — revealing a folder and finding it still shut is never what the click meant.
+  This works because the plugin never reimplements "open the folder note". It re-dispatches the click onto Obsidian's own breadcrumb element and lets whatever owns that element respond, under whatever note-location convention it is configured for, with nothing to keep in sync here.
+
+  That delegation only pays off for a plugin that actually listens on the header path, and **testing found only one that does**: [Folder notes](obsidian://show-plugin?id=folder-notes). [Folder Note](obsidian://show-plugin?id=folder-note-plugin) and [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) create and manage folder notes perfectly well but never claim the breadcrumb, so a delimiter click falls through to Obsidian's own handler and reveals the folder instead. Nothing breaks; you simply don't get the note.
+
+  Revealing is also the fallback with no folder-notes plugin at all, and for a folder that has no note. Obsidian's own reveal expands only the *ancestors* of its target, so Lure expands the folder itself afterwards — revealing a folder and finding it still shut is never what the click meant.
 
   The underline follows the same principle. Rather than work out where folder notes live, Lure keys it off the `has-folder-note` class that **Folder notes** (LostPaul) puts on the native path segment, so only delimiters that really lead to a note are underlined and the marking tracks that plugin's own configuration. Folder-notes plugins that don't set that class will simply leave every delimiter un-underlined; the clicks still work.
 
@@ -27,53 +31,49 @@ Nothing. No plugin, core or community, has to be enabled.
 - **Omnisearch** / **Another Quick Switcher** — search-first navigation, where this plugin is structure-first navigation.
 - **Templater** — creating notes at typed paths pairs naturally with folder-based templates.
 
-## Peer plugins
+## Verified against
 
-Every community plugin that either contends for the note header or answers the
-folder click this plugin re-dispatches. Ids and names are verbatim from
-Obsidian's `community-plugins.json`; a plugin's name is never translated.
+Every community plugin that contends for the note header or answers the folder
+click, exercised by `.dev/test-compat.mjs` against a live Obsidian: both load
+orders, each plugin on and off, and **Folder name opens the dropdown** in both
+positions. Names and ids are verbatim from Obsidian's `community-plugins.json`;
+a plugin's name is never translated. Links open the plugin's page in Obsidian.
 
 **Contend for the header** — they draw into `.view-header-title`, the element
-this plugin takes over. The failure mode is a clobber: whichever patched last
-wins, often in one load order only.
+this plugin takes over, so the risk is a clobber in one load order only.
 
-| Plugin | Id | What it does there |
+| Plugin | Id | Result |
 | --- | --- | --- |
-| Quick Explorer | `quick-explorer` | Draws the current file path into the title bar |
-| Front Matter Title | `obsidian-front-matter-title-plugin` | Rewrites the note header title from frontmatter |
+| [Quick Explorer](obsidian://show-plugin?id=quick-explorer) | `quick-explorer` | Coexists. Lure keeps the header whichever loads first; disabling either leaves the other intact |
+| [Front Matter Title](obsidian://show-plugin?id=obsidian-front-matter-title-plugin) | `obsidian-front-matter-title-plugin` | Coexists, both load orders. Disabling Lure restores the native title with no leftover nodes |
 
-**Answer the folder click** — folder-note plugins that respond to the click
-re-dispatched onto Obsidian's native breadcrumb. The failure mode is silence:
-the click lands on nothing and no note opens.
+**Answer the folder click** — the delimiter is re-dispatched onto Obsidian's
+native breadcrumb, and whoever has claimed it responds.
 
-| Plugin | Id | Notes |
+| Plugin | Id | Result |
 | --- | --- | --- |
-| Folder notes | `folder-notes` | Opens folder notes from the path — the closest pairing |
-| Folder Note | `folder-note-plugin` | An independent folder-note implementation |
-| create folder notes with dropdown | `create-folder-notes-with-dropdown` | Creates folder notes from its own dropdown |
+| [Folder notes](obsidian://show-plugin?id=folder-notes) | `folder-notes` | Opens the folder note on the delimiter click; with the swap off the delimiter opens the dropdown instead |
+| [Folder Note](obsidian://show-plugin?id=folder-note-plugin) | `folder-note-plugin` | Does not claim the header path — the click reveals and expands the folder |
+| [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) | `create-folder-notes-with-dropdown` | Does not claim the header path — same fallback |
 
-**Own their own strip** — they add a bar of their own above or inside the note
-rather than touching the header title, so they should merely coexist.
+**Own their own strip** — a bar of their own above or inside the note, rather
+than the header title.
 
-| Plugin | Id |
-| --- | --- |
-| Nav Link Header | `nav-link-header` |
-| Running Head | `running-head` |
-| Crumbs | `crumbs-obsidian` |
-| Breadcrumbs | `breadcrumbs` |
-
-Automated coverage for all of the above lives in `.dev/test-compat.mjs`, which
-exercises both load orders, the on/off matrix, and the swap setting in both
-positions.
+| Plugin | Id | Result |
+| --- | --- | --- |
+| [Nav Link Header](obsidian://show-plugin?id=nav-link-header) | `nav-link-header` | Coexists |
+| [Running Head](obsidian://show-plugin?id=running-head) | `running-head` | Coexists |
+| [Crumbs](obsidian://show-plugin?id=crumbs-obsidian) | `crumbs-obsidian` | Coexists |
+| [Breadcrumbs](obsidian://show-plugin?id=breadcrumbs) | `breadcrumbs` | Coexists |
 
 ## May conflict
 
-These are expectations based on what each plugin modifies, **not verified test results**. Please open an issue if you hit a real conflict.
+Untested expectations based on what each plugin modifies, not results. Please
+open an issue if you hit a real conflict.
 
-- **Quick Explorer** — overlapping purpose *and* overlapping surface: it builds its own path UI in the title bar, the same region this plugin replaces. Expect the two to compete for the header rather than complement each other; pick whichever model suits you (see [similar projects](#similar-projects) for the difference).
-- **Front Matter Title** and similar title-rewriting plugins also patch the view header title. Both plugins writing to the same element may produce a flickering or stale header.
 - **Hider**-style plugins that hide the view header entirely leave this plugin with nothing to attach to; the breadcrumb simply won't be visible.
 - Themes or CSS snippets that restyle `.view-header-title-container` may need small adjustments, since the breadcrumb renders inside it.
+- Any other plugin that writes into `.view-header-title`. The two tested above coexist, but that is a property of those two, not a guarantee about the element.
 
 ## Not supported
 
@@ -83,8 +83,8 @@ These are expectations based on what each plugin modifies, **not verified test r
 
 | Project | What it does | How this differs |
 | --- | --- | --- |
-| [Quick Explorer](https://github.com/pjeby/quick-explorer) | Adds a browsable path/menu UI for moving around the vault from the title bar | Quick Explorer is a *browser* for the whole vault. This plugin is an *address bar* for the note you're already in: editable, able to create files at typed paths, and doubling as a move/rename tool. |
-| [Breadcrumbs](https://github.com/SkepticMystic/breadcrumbs) | Builds a navigable hierarchy from note *metadata* (parent/child links) | Breadcrumbs models conceptual relationships you declare in frontmatter. This plugin shows the actual folder path on disk, with no metadata required. |
+| [Quick Explorer](obsidian://show-plugin?id=quick-explorer) ([source](https://github.com/pjeby/quick-explorer)) | Adds a browsable path/menu UI for moving around the vault from the title bar | Quick Explorer is a *browser* for the whole vault. This plugin is an *address bar* for the note you're already in: editable, able to create files at typed paths, and doubling as a move/rename tool. |
+| [Breadcrumbs](obsidian://show-plugin?id=breadcrumbs) ([source](https://github.com/michaelpporter/breadcrumbs)) | Builds a navigable hierarchy from note *metadata* (parent/child links) | Breadcrumbs models conceptual relationships you declare in frontmatter. This plugin shows the actual folder path on disk, with no metadata required. |
 | Obsidian core header breadcrumb | Shows ancestor folders in the header and reveals them on click | The core breadcrumb is read-only, omits the vault name and filename, and has no dropdowns, typing, or move/rename. This plugin reuses its reliable folder-reveal behaviour and builds the rest around it. |
 
 *Comparisons reflect these projects as understood at the time of writing; check their current documentation before relying on the details.*

@@ -5,6 +5,29 @@ import { t } from "./lang";
 
 const DELIMITER_PRESETS = ["/", ">", "▸", "›", "\\", "•"];
 
+/**
+ * Turns each named plugin inside a description into a link to its page in
+ * Obsidian — the same `obsidian://show-plugin?id=` link the app's own
+ * "Copy link" button produces.
+ *
+ * Splitting the sentence on the name works in every language because a
+ * plugin's name is a proper noun and is never translated, so it appears
+ * verbatim in all 45 locales while the grammar around it changes.
+ */
+function withPluginLinks(text: string, plugins: { name: string; id: string }[]): DocumentFragment {
+	const fragment = document.createDocumentFragment();
+	let rest = text;
+	for (const { name, id } of plugins) {
+		const at = rest.indexOf(name);
+		if (at === -1) continue;
+		fragment.appendText(rest.slice(0, at));
+		fragment.createEl("a", { text: name, href: `obsidian://show-plugin?id=${id}` });
+		rest = rest.slice(at + name.length);
+	}
+	fragment.appendText(rest);
+	return fragment;
+}
+
 export class BreadcrumbSettingTab extends PluginSettingTab {
 	constructor(app: App, private plugin: BreadcrumbPathPlugin) {
 		super(app, plugin);
@@ -65,7 +88,14 @@ export class BreadcrumbSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName(t("settingSwapActionsName"))
-			.setDesc(t("settingSwapActionsDesc"))
+			.setDesc(
+				withPluginLinks(t("settingSwapActionsDesc"), [
+					// The only folder-note plugin that claims the header path;
+					// the others create folder notes but never answer a click
+					// on the breadcrumb. See docs/compatibility.md.
+					{ name: "Folder notes", id: "folder-notes" },
+				]),
+			)
 			.addToggle((toggle) =>
 				toggle.setValue(this.plugin.settings.swapSegmentActions).onChange(async (value) => {
 					this.plugin.settings.swapSegmentActions = value;

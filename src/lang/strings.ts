@@ -21,7 +21,7 @@ export const EN = {
 	settingSwapActionsName: "Folder name opens the dropdown",
 	settingSwapActionsDesc:
 		"On, a folder name opens its dropdown and the delimiter after it reveals the folder in the " +
-		"sidebar — or opens its folder note, if Folder Notes handles it. Off, the two swap. " +
+		"sidebar — or opens its folder note, if Folder notes handles it. Off, the two swap. " +
 		"Never in rename/move mode.",
 	settingDotFilesName: "Show dot files",
 	settingDotFilesDesc:
