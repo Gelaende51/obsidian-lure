@@ -75,7 +75,7 @@ const TRAP = `
 `;
 const ERRS = `window.__lureErrs.filter((e) => /lure/i.test(e))`;
 
-const enable = (id) => `await app.plugins.enablePlugin(${JSON.stringify(id)}); ${PAUSE(700)}`;
+const enable = (id) => `await app.plugins.enablePlugin(${JSON.stringify(id)}); ${PAUSE(1200)}`;
 const disable = (id) => `await app.plugins.disablePlugin(${JSON.stringify(id)}); ${PAUSE(500)}`;
 
 const setLure = (key, value) => `
@@ -84,12 +84,38 @@ const setLure = (key, value) => `
 	${PAUSE(300)}
 `;
 
-/** Opens a note that actually sits in a subfolder, so the path has segments. */
+/**
+ * Opens the fixture note inside the fixture folder. Braced because a test
+ * that toggles a plugin has to reopen the note afterwards, and two `const`
+ * declarations of the same name in one evaluate is a SyntaxError.
+ */
 const OPEN_NESTED = `
-	const nested = app.vault.getMarkdownFiles().find((f) => f.parent && f.parent.path !== "/");
-	if (!nested) throw new Error("test vault has no note inside a folder");
-	await app.workspace.getLeaf(false).openFile(nested);
-	${PAUSE(500)}
+	{
+		const child = app.vault.getAbstractFileByPath(FIXTURE_CHILD);
+		if (!child) throw new Error("fixture note missing: " + FIXTURE_CHILD);
+		await app.workspace.getLeaf(false).openFile(child);
+		${PAUSE(500)}
+	}
+`;
+
+/**
+ * A folder with a folder note in it, following the convention every
+ * folder-note plugin here understands: <Folder>/<Folder>.md. Without this
+ * the delimiter click has nothing to open and the test proves nothing.
+ */
+const FIXTURE = "LureCompat";
+const BUILD_FIXTURE = `
+	window.FIXTURE_CHILD = ${JSON.stringify(FIXTURE + "/child.md")};
+	if (!app.vault.getAbstractFileByPath(${JSON.stringify(FIXTURE)})) {
+		await app.vault.createFolder(${JSON.stringify(FIXTURE)});
+	}
+	for (const [path, body] of [
+		[${JSON.stringify(FIXTURE + "/" + FIXTURE + ".md")}, "# folder note\\n"],
+		[${JSON.stringify(FIXTURE + "/child.md")}, "# child\\n"],
+	]) {
+		if (!app.vault.getAbstractFileByPath(path)) await app.vault.create(path, body);
+	}
+	${PAUSE(300)}
 `;
 
 /**
@@ -188,55 +214,140 @@ function headerTests(peer) {
 	});
 }
 
-/** The delimiter click is the contract; test it in both swap positions. */
+/**
+ * The delimiter click is the contract. With the swap on it opens the folder
+ * — which, with a folder-note plugin active, means opening that folder's
+ * note. With it off the delimiter is the dropdown instead. Both positions
+ * are asserted because the setting exists precisely to move this behaviour.
+ */
 function folderNoteTests(peer) {
-	for (const swap of [true, false]) {
-		test(`${peer.name}: delimiter click with "folder name opens the dropdown" ${swap ? "on" : "off"}`, async () => {
-			const r = await page.evaluate(`
-				${TRAP}
-				${enable("lure")}
-				${enable(peer.id)}
-				${setLure("swapSegmentActions", swap)}
-				${OPEN_NESTED}
-				const leaf = document.querySelector(".workspace-leaf.mod-active");
-				const sep = leaf.querySelector(".view-header-breadcrumb-separator");
-				const before = app.workspace.getActiveFile()?.path ?? null;
-				if (sep) sep.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-				${PAUSE(700)}
-				return {
-					hadSeparator: !!sep,
-					before,
-					after: app.workspace.getActiveFile()?.path ?? null,
-					dropdownOpen: !!document.querySelector(".suggestion-container, .menu"),
-					errs: ${ERRS},
-				};
-			`);
-			expect("the row has a delimiter to click", r.hadSeparator, true);
-			// With the swap on the delimiter opens the folder (note or reveal);
-			// with it off the delimiter is the dropdown instead.
-			if (swap) {
-				expect("the click did something", (v) => v, r.after !== r.before || r.dropdownOpen === false);
-			} else {
-				expect("delimiter opened the dropdown", r.dropdownOpen, true);
-			}
-			expect("no errors mentioning Lure", r.errs, []);
-		});
-	}
+	/** Other folder-note plugins would answer the click and muddy the result. */
+	const soloise = PEERS.filter((p) => p.kind === "folder-note" && p.id !== peer.id)
+		.map((p) => disable(p.id))
+		.join("\n");
 
-	test(`${peer.name}: with ${peer.name} off the same click still works`, async () => {
+	test(`${peer.name}: swap on — the delimiter opens the folder note`, async () => {
 		const r = await page.evaluate(`
 			${TRAP}
 			${enable("lure")}
-			${disable(peer.id)}
+			${soloise}
+			${enable(peer.id)}
+			${BUILD_FIXTURE}
 			${setLure("swapSegmentActions", true)}
 			${OPEN_NESTED}
-			const leaf = document.querySelector(".workspace-leaf.mod-active");
-			const sep = leaf.querySelector(".view-header-breadcrumb-separator");
+			// The row is [vault][/][folder][/][filename]: the *last* separator is
+			// the one after the deepest folder. The first one belongs to the
+			// vault segment, and clicking that reveals the vault root instead.
+			const sep = [...document.querySelectorAll(".workspace-leaf.mod-active .view-header-breadcrumb-separator")].pop();
+			const before = app.workspace.getActiveFile()?.path ?? null;
+			// Sample the claim now: after the click the header has re-rendered
+			// for whatever note opened, and the class moves with it.
+			const claimed = !!document.querySelector(
+				".workspace-leaf.mod-active .view-header-title-parent .view-header-breadcrumb.has-folder-note",
+			);
 			if (sep) sep.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-			${PAUSE(600)}
-			return { header: ${HEADER}, errs: ${ERRS} };
+			// Reveal finishes on a later frame, and creating the explorer leaf
+			// first makes it later still. Poll for the outcome instead of
+			// betting on one sleep being long enough.
+			let revealed = false;
+			for (let i = 0; i < 20 && !revealed; i++) {
+				await new Promise((r) => setTimeout(r, 100));
+				const v = app.workspace.getLeavesOfType("file-explorer")[0]?.view;
+				revealed = v?.tree?.focusedItem?.file?.path === ${JSON.stringify(FIXTURE)};
+			}
+			const ev = app.workspace.getLeavesOfType("file-explorer")[0]?.view;
+			return {
+				hadSeparator: !!sep,
+				before,
+				after: app.workspace.getActiveFile()?.path ?? null,
+				dropdownOpen: !!document.querySelector(".suggestion-container"),
+				// Lure keys its underline off this class, and it is also the
+				// only honest signal that a folder-notes plugin has claimed
+				// the segment. Not all of them hook the header path at all.
+				claimed,
+				revealed,
+				errs: ${ERRS},
+			};
 		`);
-		expect("Lure's row survived the click", r.header.filenames, 1);
+		expect("the row has a delimiter to click", r.hadSeparator, true);
+		expect("started on the child note", r.before, `${FIXTURE}/child.md`);
+		expect("the dropdown is not the response", r.dropdownOpen, false);
+		// Only some folder-note plugins hook the header path. When one has
+		// claimed the segment the click must open its note; when none has,
+		// the correct behaviour is Obsidian's own — reveal the folder.
+		if (r.claimed) {
+			expect("the claimed segment opened its folder note", r.after, `${FIXTURE}/${FIXTURE}.md`);
+		} else {
+			expect("unclaimed, so the folder was revealed instead", r.revealed, true);
+			expect("and no note was opened", r.after, r.before);
+		}
+		expect("no errors mentioning Lure", r.errs, []);
+	});
+
+	test(`${peer.name}: swap off — the delimiter opens the dropdown instead`, async () => {
+		const r = await page.evaluate(`
+			${TRAP}
+			${enable("lure")}
+			${soloise}
+			${enable(peer.id)}
+			${BUILD_FIXTURE}
+			${setLure("swapSegmentActions", false)}
+			${OPEN_NESTED}
+			// The row is [vault][/][folder][/][filename]: the *last* separator is
+			// the one after the deepest folder. The first one belongs to the
+			// vault segment, and clicking that reveals the vault root instead.
+			const sep = [...document.querySelectorAll(".workspace-leaf.mod-active .view-header-breadcrumb-separator")].pop();
+			const before = app.workspace.getActiveFile()?.path ?? null;
+			if (sep) sep.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+			${PAUSE(800)}
+			const out = {
+				before,
+				after: app.workspace.getActiveFile()?.path ?? null,
+				dropdownOpen: !!document.querySelector(".suggestion-container"),
+				errs: ${ERRS},
+			};
+			document.body.click();
+			${PAUSE(200)}
+			return out;
+		`);
+		expect("the dropdown opened", r.dropdownOpen, true);
+		expect("and no note was opened behind it", r.after, r.before);
+		expect("no errors mentioning Lure", r.errs, []);
+	});
+
+	test(`${peer.name}: with ${peer.name} off the delimiter still reveals`, async () => {
+		const r = await page.evaluate(`
+			${TRAP}
+			${enable("lure")}
+			${soloise}
+			${disable(peer.id)}
+			${BUILD_FIXTURE}
+			${setLure("swapSegmentActions", true)}
+			${OPEN_NESTED}
+			{
+				// Start shut, or "it is open afterwards" proves nothing.
+				const ev = app.workspace.getLeavesOfType("file-explorer")[0]?.view;
+				const row = ev?.fileItems?.[${JSON.stringify(FIXTURE)}];
+				if (row) await row.setCollapsed(true, false);
+				${PAUSE(300)}
+			}
+			// The row is [vault][/][folder][/][filename]: the *last* separator is
+			// the one after the deepest folder. The first one belongs to the
+			// vault segment, and clicking that reveals the vault root instead.
+			const sep = [...document.querySelectorAll(".workspace-leaf.mod-active .view-header-breadcrumb-separator")].pop();
+			if (sep) sep.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+			${PAUSE(700)}
+			const view = app.workspace.getLeavesOfType("file-explorer")[0]?.view;
+			return {
+				// Revealing focuses the explorer, so .mod-active is no longer
+				// the note's leaf — count the rows wherever they are.
+				rowsAnywhere: document.querySelectorAll(".lure-filename").length,
+				expanded: view?.fileItems?.[${JSON.stringify(FIXTURE)}]?.collapsed === false,
+				errs: ${ERRS},
+			};
+		`);
+		expect("Lure's row survived the click", r.rowsAnywhere > 0, true);
+		expect("the folder was revealed and expanded", r.expanded, true);
 		expect("no errors mentioning Lure", r.errs, []);
 	});
 }
@@ -272,6 +383,16 @@ for (let i = 0; ; i++) {
 		ready = false;
 	}
 	if (ready) break;
+	// The compatibility suite toggles plugins constantly, so a suite run
+	// straight after one can arrive while Lure is still off. Waiting for
+	// someone else to turn it back on is not a plan — turn it on.
+	if (i === 2 || i === 20) {
+		try {
+			await page.evaluate(`await app.plugins.enablePlugin("lure"); return true;`);
+		} catch {
+			/* renderer still coming up; the loop will try again */
+		}
+	}
 	if (i > 60) throw new Error("Lure did not load");
 	await new Promise((r) => setTimeout(r, 500));
 }
@@ -286,6 +407,7 @@ for (const peer of PEERS) {
 	console.log(`  ${here ? "✓" : "·"} ${peer.name} (${peer.id}) — ${here ? peer.why : "not installed"}`);
 }
 
+await page.evaluate(`${BUILD_FIXTURE} return true;`);
 const original = await page.evaluate(`return [...app.plugins.enabledPlugins];`);
 
 for (const peer of PEERS.filter((p) => installed.includes(p.id))) {

@@ -435,3 +435,46 @@ target expanding each ancestor so the row becomes visible, then focuses and
 scrolls to it — but never touches the target's own collapsed state. So
 "reveal this folder" leaves the folder shut, which is rarely what the user
 meant by clicking it.
+
+## A test suite that hardcodes English is a suite that tests one locale
+
+Switching Obsidian to German turned 18 assertions red at once, and every
+one of them *looked* like a product regression: buttons "missing", clicks
+crashing on `undefined.click()`, notices not matching. Nothing was broken.
+The suite compared against English literals — `/as text/` never matches
+"Als Text bearbeiten", `/create/i` never matches "Erstellen".
+
+The fix is not to pin the locale. It is to resolve the expected strings the
+same way the plugin does: load `strings.ts` and `translations.ts` through
+esbuild (the translation checker already had the loader), read the live
+locale from `localStorage.language`, and look each key up. Assertions then
+say *which string* they expect rather than what it happens to say in
+English, and the suite tests all 45 locales instead of one.
+
+Two things this shook out that had nothing to do with language:
+
+**One stuck modal poisons everything after it.** A failed test that leaves
+a modal open leaves it on Obsidian's modal *stack*, and every later
+`.modal button` query finds the stale modal's buttons first. Four dead
+modals had accumulated, so a single real failure was presenting as three.
+Tests now dismiss any open modal before they start.
+
+**Post-click DOM probes read the wrong world.** `has-folder-note` was
+sampled after the click that changes which note the header describes, and
+the reveal outcome was sampled on a fixed 800 ms timer. Sample state that a
+click will destroy *before* the click, and poll for outcomes that land on a
+later frame rather than betting on one sleep.
+
+## Reveal has two entry points, and only one was expanding
+
+Expanding a revealed folder was implemented in `revealFolderInExplorer` —
+which the browse-trail chips use. The *delimiter* click, which is how
+people actually open a folder, goes through `openNativeSegment`: it
+re-dispatches onto Obsidian's own breadcrumb element so a folder-notes
+plugin can answer it. That path never touched the expand code, so the
+feature was invisible exactly where it mattered.
+
+The delegation now expands too, but only when the explorer actually landed
+on that folder (`tree.focusedItem`). A folder-notes plugin may answer the
+click by opening a note and revealing nothing, and expanding a folder
+nobody navigated to would be a stray side effect.

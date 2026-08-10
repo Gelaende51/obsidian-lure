@@ -520,7 +520,7 @@ export class PathBreadcrumb {
 	 * the click keeps both behaviours without reimplementing either, and
 	 * without needing to know which folder-note convention is in use.
 	 */
-	private openNativeSegment(index: number): void {
+	private openNativeSegment(index: number, folderPath: string): void {
 		const segment = this.nativeSegments()[index];
 		if (!segment) return;
 		// Otherwise our capture listener swallows this synthetic click and
@@ -531,6 +531,12 @@ export class PathBreadcrumb {
 		} finally {
 			this.delegatingToNative = false;
 		}
+		// Whoever answered that click, Obsidian's own reveal expands only
+		// ancestors — so the folder you asked for opens *shut*. Expand it,
+		// but only if the explorer actually landed there: a folder-notes
+		// plugin may have opened a note and revealed nothing at all, and
+		// expanding a folder nobody navigated to would be a stray side effect.
+		this.expandInExplorer(folderPath, true);
 	}
 
 	/**
@@ -701,7 +707,7 @@ export class PathBreadcrumb {
 			el.onclick = (evt) => {
 				evt.stopPropagation();
 				if (this.swapActions) {
-					this.openNativeSegment(index);
+					this.openNativeSegment(index, folderPath);
 				} else {
 					this.handleDelimiterClick(folderPath);
 				}
@@ -1397,11 +1403,12 @@ export class PathBreadcrumb {
 	 * Both calls are safe — Obsidian's setCollapsed is a no-op unless the
 	 * state actually changes, so the second one costs nothing.
 	 */
-	private expandInExplorer(path: string): void {
+	private expandInExplorer(path: string, onlyIfRevealed = false): void {
 		const expand = (): void => {
 			const view = this.plugin.app.workspace.getLeavesOfType("file-explorer")[0]?.view as
 				| FileExplorerView
 				| undefined;
+			if (onlyIfRevealed && view?.tree?.focusedItem?.file?.path !== path) return;
 			const item = view?.fileItems?.[path];
 			if (item?.collapsible && item.collapsed) item.toggleCollapsed(false);
 		};

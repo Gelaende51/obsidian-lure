@@ -27,6 +27,8 @@ declare module "obsidian" {
 	interface FileExplorerView extends View {
 		/** Every rendered row, keyed by vault path. */
 		fileItems: Record<string, FileTreeItem | undefined>;
+		/** `focusedItem` is what reveal sets — Obsidian's own "I landed here". */
+		tree?: { focusedItem?: { file?: TAbstractFile } };
 	}
 
 	interface InternalPlugin<T> {

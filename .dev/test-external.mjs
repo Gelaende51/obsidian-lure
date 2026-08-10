@@ -19,6 +19,44 @@ import { mkdirSync, rmSync, writeFileSync, readFileSync, existsSync, chmodSync }
 import { join } from "path";
 import { homedir, userInfo } from "os";
 import { connect, PAUSE } from "./cdpSession.mjs";
+import { build } from "esbuild";
+import { fileURLToPath } from "node:url";
+import { dirname, resolve as resolvePath } from "node:path";
+
+/**
+ * The plugin speaks whatever language Obsidian is set to, so a suite that
+ * hardcodes English silently breaks the moment someone switches locale —
+ * and every failure looks like a product bug instead of a test bug. Load
+ * the real string tables and resolve each key for the locale actually in
+ * use, exactly as the plugin's own `t()` does.
+ */
+const projectRoot = resolvePath(dirname(fileURLToPath(import.meta.url)), "..");
+const { outputFiles } = await build({
+	stdin: {
+		contents:
+			'export { EN } from "./src/lang/strings";\n' +
+			'export { TRANSLATIONS } from "./src/lang/translations";\n',
+		resolveDir: projectRoot,
+		loader: "ts",
+	},
+	bundle: true,
+	format: "esm",
+	write: false,
+});
+const { EN, TRANSLATIONS } = await import(
+	`data:text/javascript;base64,${Buffer.from(outputFiles[0].text).toString("base64")}`
+);
+
+let locale = "en";
+/** Resolves a string key the way the plugin does: locale override, else English. */
+const T = (key) => TRANSLATIONS[locale]?.[key] ?? EN[key];
+/**
+ * The three labels the mode button can carry, as a page-side literal. The
+ * suite used to filter these with English regexes like /as text/, which
+ * quietly matched nothing the moment Obsidian was not in English.
+ */
+const MODE_LABELS = () =>
+	JSON.stringify([T("externalRenderText"), T("externalRenderMarkdown"), T("externalViewText")]);
 
 const BED = "/tmp/lure-testbed";
 /** Derived, never hardcoded: the suite must not carry the author's username. */
@@ -129,7 +167,7 @@ test("viewer: external .txt is plain text and read-only until Edit", async () =>
 	expect("shows the file's text", r.value, "line one\nline two\n");
 	expect("starts read-only", r.readOnly, true);
 	expect("states both conditions", r.notes.length, 2);
-	expect("offers the edit mode", r.buttons.includes("Edit as text"), true);
+	expect("offers the edit mode", r.buttons.includes(T("externalRenderText")), true);
 });
 
 test("viewer: an oversized file truncates instead of taking the window down", async () => {
@@ -144,16 +182,16 @@ test("viewer: an oversized file truncates instead of taking the window down", as
 			hasEdit: [...document.querySelectorAll(".lure-external-bar-button")].some((b) => b.classList.contains("mod-destructive")),
 			// Stated among the other status lines, not tacked on after the buttons.
 			noteInLines: [...document.querySelectorAll(".lure-external-bar-notes .lure-external-note")]
-				.some((n) => /runcat|too large/i.test(n.textContent)),
+				.some((n) => n.textContent === ${JSON.stringify(T("externalTruncated"))}),
 			label: [...document.querySelectorAll(".lure-external-bar-button")]
-				.map((b) => b.textContent).find((x) => /text|Markdown/.test(x)),
+				.map((b) => b.textContent).find((x) => ${MODE_LABELS()}.includes(x)),
 		};
 	`);
 	expect("read was truncated", r.truncated, true);
 	expect("stays read-only", r.readOnly, true);
 	expect("editing is not offered at all", r.hasEdit, false);
 	expect("says so among the status lines", r.noteInLines, true);
-	expect("and the button promises only viewing", r.label, "View as Markdown");
+	expect("and the button promises only viewing", r.label, T("externalRenderMarkdown"));
 	expect("kept to the cap", r.chars, (v) => v > 0 && v <= 256 * 1024);
 	expect("and did it quickly", r.ms, (v) => v < 4000);
 });
@@ -177,7 +215,7 @@ test("viewer: large Markdown renders under its own lower cap", async () => {
 			truncated: ${view}.truncated,
 			rendered: !!document.querySelector(".lure-external-markdown h1"),
 			label: [...document.querySelectorAll(".lure-external-bar-button")]
-				.map((b) => b.textContent).find((x) => /text|Markdown/.test(x)),
+				.map((b) => b.textContent).find((x) => ${MODE_LABELS()}.includes(x)),
 			notes: [...document.querySelectorAll(".lure-external-bar-notes .lure-external-note")]
 				.map((n) => n.textContent),
 		};
@@ -187,14 +225,14 @@ test("viewer: large Markdown renders under its own lower cap", async () => {
 	expect("without freezing the UI", r.ms, (v) => v < 3000);
 	// A truncated file can be read but never written, so the label must not
 	// offer editing on the way to the text view.
-	expect("offers viewing, not editing", r.label, "View as text");
-	expect("truncation stated with the rest", r.notes, (v) => (v ?? []).some((n) => /too large/i.test(n)));
+	expect("offers viewing, not editing", r.label, T("externalViewText"));
+	expect("truncation stated with the rest", r.notes, (v) => (v ?? []).includes(T("externalTruncated")));
 });
 
 test("viewer: exactly one mode button, and it says what the press does", async () => {
 	const r = await page.evaluate(`
 		const snap = () => [...document.querySelectorAll(".lure-external-bar-button")]
-			.filter((b) => /Markdown|as text/.test(b.textContent))
+			.filter((b) => ${MODE_LABELS()}.includes(b.textContent))
 			.map((b) => b.textContent + (b.classList.contains("mod-destructive") ? "!" : "")
 				+ (b.classList.contains("mod-view") ? "~" : ""));
 		const out = {};
@@ -207,9 +245,9 @@ test("viewer: exactly one mode button, and it says what the press does", async (
 		out.vaultText = snap();
 		return out;
 	`);
-	expect("one button, rendered view", r.externalRendered, ["Edit as text!"]);
-	expect("one button, editing", r.externalEditing, ["View as Markdown~"]);
-	expect("vault file needs no unlock", r.vaultText, ["View as Markdown~"]);
+	expect("one button, rendered view", r.externalRendered, [T("externalRenderText") + "!"]);
+	expect("one button, editing", r.externalEditing, [T("externalRenderMarkdown") + "~"]);
+	expect("vault file needs no unlock", r.vaultText, [T("externalRenderMarkdown") + "~"]);
 });
 
 /**
@@ -306,7 +344,7 @@ test("editing: Edit makes the source writable and saves to disk", async () => {
 	const target = join(BED, "plain.txt");
 	await page.evaluate(`
 		${open(target)}
-		[...document.querySelectorAll(".lure-external-bar-button")].find((b) => b.textContent === "Edit as text").click();
+		[...document.querySelectorAll(".lure-external-bar-button")].find((b) => b.textContent === ${JSON.stringify(T("externalRenderText"))}).click();
 		${PAUSE(300)}
 		const editor = document.querySelector(".lure-external-editor");
 		editor.value = "edited by the test\\n";
@@ -320,21 +358,21 @@ test("editing: Edit makes the source writable and saves to disk", async () => {
 test("editing: the Markdown view suspends editing but remembers it", async () => {
 	const r = await page.evaluate(`
 		${open(join(BED, "plain.txt"))}
-		[...document.querySelectorAll(".lure-external-bar-button")].find((b) => b.textContent === "Edit as text").click();
+		[...document.querySelectorAll(".lure-external-bar-button")].find((b) => b.textContent === ${JSON.stringify(T("externalRenderText"))}).click();
 		${PAUSE(300)}
 		const afterEdit = ${view}.editingActive();
 
-		[...document.querySelectorAll(".lure-external-bar-button")].find((b) => b.textContent === "View as Markdown").click();
+		[...document.querySelectorAll(".lure-external-bar-button")].find((b) => b.textContent === ${JSON.stringify(T("externalRenderMarkdown"))}).click();
 		${PAUSE(400)}
 		const v = app.workspace.activeLeaf.view;
 		const inMarkdown = {
 			active: v.editingActive(),
 			remembered: v.unlocked,
-			label: [...document.querySelectorAll(".lure-external-bar-button")].find((b) => /Edit as text/.test(b.textContent))?.textContent ?? null,
+			label: [...document.querySelectorAll(".lure-external-bar-button")].find((b) => b.textContent === ${JSON.stringify(T("externalRenderText"))})?.textContent ?? null,
 			note: document.querySelector(".lure-external-note")?.textContent,
 		};
 
-		[...document.querySelectorAll(".lure-external-bar-button")].find((b) => b.textContent === "Edit as text").click();
+		[...document.querySelectorAll(".lure-external-bar-button")].find((b) => b.textContent === ${JSON.stringify(T("externalRenderText"))}).click();
 		${PAUSE(400)}
 		const back = app.workspace.activeLeaf.view;
 		return {
@@ -347,7 +385,7 @@ test("editing: the Markdown view suspends editing but remembers it", async () =>
 	expect("editing on in text mode", r.afterEdit, true);
 	expect("suspended in markdown", r.inMarkdown.active, false);
 	expect("intent remembered", r.inMarkdown.remembered, true);
-	expect("the edit mode is offered, not in force", r.inMarkdown.label, "Edit as text");
+	expect("the edit mode is offered, not in force", r.inMarkdown.label, T("externalRenderText"));
 	expect("status line drops the pencil", r.inMarkdown.note, (v) => !/Writing/.test(v ?? ""));
 	expect("restored on return", r.backActive, true);
 	expect("editor writable again", r.backReadOnly, false);
@@ -356,9 +394,9 @@ test("editing: the Markdown view suspends editing but remembers it", async () =>
 test("editing: leaving the text view suspends editing", async () => {
 	const r = await page.evaluate(`
 		${open(join(BED, "config.json"))}
-		[...document.querySelectorAll(".lure-external-bar-button")].find((b) => b.textContent === "Edit as text").click();
+		[...document.querySelectorAll(".lure-external-bar-button")].find((b) => b.textContent === ${JSON.stringify(T("externalRenderText"))}).click();
 		${PAUSE(300)}
-		[...document.querySelectorAll(".lure-external-bar-button")].find((b) => b.textContent === "View as Markdown").click();
+		[...document.querySelectorAll(".lure-external-bar-button")].find((b) => b.textContent === ${JSON.stringify(T("externalRenderMarkdown"))}).click();
 		${PAUSE(300)}
 		const v = app.workspace.activeLeaf.view;
 		return { active: v.editingActive(), rendered: !!document.querySelector(".lure-external-markdown") };
@@ -370,7 +408,7 @@ test("editing: leaving the text view suspends editing", async () => {
 test("editing: switching file re-locks", async () => {
 	const r = await page.evaluate(`
 		${open(join(BED, "plain.txt"))}
-		[...document.querySelectorAll(".lure-external-bar-button")].find((b) => b.textContent === "Edit as text").click();
+		[...document.querySelectorAll(".lure-external-bar-button")].find((b) => b.textContent === ${JSON.stringify(T("externalRenderText"))}).click();
 		${PAUSE(300)}
 		${open(join(BED, "config.json"))}
 		return { unlocked: app.workspace.activeLeaf.view.unlocked };
@@ -417,7 +455,7 @@ test("path bar: locked padlock refuses to create", async () => {
 		return { notice: ${LAST_NOTICE} };
 	`);
 	expect("nothing created", existsSync(target), false);
-	expect("said why", r.notice, (v) => /locked/i.test(v));
+	expect("said why", r.notice, T("noticeExternalWriteLocked"));
 });
 
 test("path bar: unlocked padlock creates through the prompt", async () => {
@@ -429,7 +467,7 @@ test("path bar: unlocked padlock creates through the prompt", async () => {
 		const submit = bc.submitExternal("created.md", false);
 		${PAUSE(300)}
 		// Confirm the create-file modal the same way a click would.
-		[...document.querySelectorAll(".modal button")].find((b) => /create/i.test(b.textContent))?.click();
+		[...document.querySelectorAll(".modal button")].find((b) => b.textContent === ${JSON.stringify(T("create"))})?.click();
 		await submit;
 		${PAUSE(400)}
 		return true;
@@ -467,7 +505,8 @@ test("path bar: refuses to overwrite an existing target", async () => {
 	`);
 	expect("target untouched", readFileSync(join(BED, "occupied.txt"), "utf8"), "do not clobber\n");
 	expect("source still there", existsSync(join(BED, "renamed.txt")), true);
-	expect("said already exists", r.notice, (v) => /exist/i.test(v));
+	expect("said already exists", r.notice,
+		(v) => (v ?? "").includes(T("noticeAlreadyExists").split("{path}")[1]));
 });
 
 test("path bar: a note cannot be moved out of the vault", async () => {
@@ -486,7 +525,8 @@ test("path bar: a note cannot be moved out of the vault", async () => {
 	`);
 	expect("nothing written outside", existsSync(join(BED, "exported.md")), false);
 	expect("note still in the vault", r.still, true);
-	expect("explained, and offered the copy", r.notice, (v) => /copy/i.test(v));
+	expect("explained, and offered the copy", r.notice,
+		(v) => (v ?? "").startsWith(T("noticeExternalMoveOut").split("{mod}")[0]));
 });
 
 // -------------------------------------------------------------- dropdown
@@ -556,7 +596,7 @@ test("create: a typed name with no extension becomes a note", async () => {
 		const submit = bc.submitExternal("plain-idea", false);
 		${PAUSE(300)}
 		const prompted = document.querySelector(".modal")?.textContent ?? "";
-		[...document.querySelectorAll(".modal button")].find((b) => /create/i.test(b.textContent))?.click();
+		[...document.querySelectorAll(".modal button")].find((b) => b.textContent === ${JSON.stringify(T("create"))})?.click();
 		await submit;
 		${PAUSE(350)}
 		return { prompted };
@@ -618,7 +658,8 @@ test("dropdown: a truncated listing says how much is missing", async () => {
 	expect("fills the popover exactly", r.count, r.limit);
 	expect("last row is the overflow row", r.lastIsMore, true);
 	expect("states a count", r.lastText, (v) => /\d/.test(v ?? ""));
-	expect("says how to narrow it", r.lastText, (v) => /typing/i.test(v ?? ""));
+	expect("says how to narrow it", r.lastText,
+		(v) => (v ?? "").endsWith(T("suggestMore").split("}")[1]));
 	expect("not clickable", r.pointerEvents, "none");
 });
 
@@ -845,6 +886,10 @@ test("writes: Ctrl copies a note out instead of moving it", async () => {
 const filter = process.argv[2];
 buildFixtures();
 page = await connect();
+// Read the locale the app is actually in, so T() resolves the same strings
+// the user is looking at rather than the ones the author happened to write.
+locale = await page.evaluate(`return window.localStorage.getItem("language") || "en";`);
+if (locale !== "en") console.log(`(Obsidian locale: ${locale} — assertions resolved from the plugin's own table)`);
 
 // The page target answers before Obsidian has loaded its plugins, so a
 // suite started on that signal alone races the thing it is testing.
@@ -864,6 +909,16 @@ for (let i = 0; ; i++) {
 		ready = false; // renderer still coming up; treat as not ready
 	}
 	if (ready) break;
+	// The compatibility suite toggles plugins constantly, so a suite run
+	// straight after one can arrive while Lure is still off. Waiting for
+	// someone else to turn it back on is not a plan — turn it on.
+	if (i === 2 || i === 20) {
+		try {
+			await page.evaluate(`await app.plugins.enablePlugin("lure"); return true;`);
+		} catch {
+			/* renderer still coming up; the loop will try again */
+		}
+	}
 	if (i > 60) throw new Error("Lure did not load");
 	await new Promise((r) => setTimeout(r, 500));
 }
@@ -871,6 +926,17 @@ for (let i = 0; ; i++) {
 for (const { name, fn } of tests) {
 	if (filter ? !name.includes(filter) : name.includes("[crashes")) continue;
 	console.log(`\n${name}`);
+	// A test that fails with a modal open leaves it on Obsidian's modal
+	// stack, and every later `.modal button` query then finds the *stale*
+	// modal's buttons first — one failure silently becomes a dozen.
+	await page.evaluate(`
+		for (let i = 0; i < 4 && document.querySelector(".modal"); i++) {
+			document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+			${PAUSE(120)}
+		}
+		document.querySelectorAll(".modal-container").forEach((m) => m.remove());
+		return true;
+	`);
 	const start = results.length;
 	try {
 		await fn();
