@@ -12,7 +12,7 @@ Obsidian 1.4.0+ · desktop only · AGPL-3.0
 
 - **Agent** — **Claude Opus 5** and **Claude Sonnet 5** (Anthropic, via Claude Code): wrote the TypeScript, the CSS, all 45 translation sets and the documentation. Translations are machine-generated and unreviewed by native speakers.
 - **Author** — Vault51: specified every feature, tested each iteration in a live vault, directed the fixes, reviewed all output.
-- **Usage** — 3–10 Aug 2026, six sessions, ~3,383 responses: ~3.7 M tokens generated, ~13.1 M sent, ~897.5 M cached re-reads (~914.3 M total).
+- **Usage** — 3–10 Aug 2026, six sessions, ~3,404 responses: ~3.8 M tokens generated, ~13.1 M sent, ~905.2 M cached re-reads (~922.1 M total).
 
 ## Features
 

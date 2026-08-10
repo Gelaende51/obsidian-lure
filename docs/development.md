@@ -73,6 +73,25 @@ committed it, which is why every number carries a `~`. And it does not belong
 in `npm run build`, where it would fail for every contributor who has no
 transcripts. Run it as the last step before tagging and take the snapshot.
 
+## Cutting a release
+
+BRAT and Obsidian's own installer both read `manifest.json` on the default
+branch, then look for a release whose tag is **exactly** that version — no `v`
+prefix, no suffix. The three files must be attached as individual assets; the
+auto-generated source zip is not enough, because neither installer unpacks it.
+
+```bash
+node .dev/usage-stats.mjs                      # refresh the disclosure first
+npm run build                                  # produces main.js
+git tag -a 1.0.0 -m "Lure 1.0.0" && git push origin 1.0.0
+gh release create 1.0.0 --title "1.0.0" \
+    --notes-file <notes> main.js manifest.json styles.css
+```
+
+Bump `manifest.json` and add the matching `versions.json` entry
+(`"<plugin version>": "<minimum Obsidian version>"`) before tagging — Obsidian
+uses that map to decide which release an older app may install.
+
 ## Reporting bugs
 
 Include your Obsidian version, OS, theme, and the list of other enabled plugins — most issues so far have come from interactions with the header bar rather than the plugin alone.
