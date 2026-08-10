@@ -1,0 +1,418 @@
+# Takeaways
+
+Challenges, oddities and undocumented behaviour found while building Lure.
+Kept for reference, and as raw material for bug reports or API requests.
+
+Everything below was verified against the installed Obsidian build by
+reading `obsidian.asar`, not inferred from documentation.
+
+## `AbstractInputSuggest`
+
+**The popover only opens in response to the input's own `input` event.**
+Focusing the input from code — as a delimiter click does — shows nothing
+until the user types. Dispatching a synthetic `new Event("input")` after
+focusing is the workaround.
+
+**The suggestion list commits an entry on `auxclick` as well as `click`.**
+
+```js
+t.on("click",    ".suggestion-item", this.onSuggestionClick.bind(this)),
+t.on("auxclick", ".suggestion-item", this.onSuggestionClick.bind(this)),
+```
+
+`auxclick` fires for the right mouse button, so adding a `contextmenu`
+handler to a suggestion silently gives you *both* a menu and a
+selection — the entry commits underneath the menu that just opened.
+`onSuggestionClick` starts with `if (!e.defaultPrevented)`, so the fix is
+to `preventDefault()` an `auxclick` with `button === 2`. Arguably a bug:
+right-click is not an auxiliary *activation*.
+
+**Suggestion items cannot be dragged without a workaround.** The inner
+`Suggest` list registers only `click`/`auxclick`/`mousemove`, but
+`AbstractInputSuggest` itself adds one more line in its constructor:
+
+```js
+n.addEventListener("blur", i.close.bind(i)),
+i.suggestEl.on("mousedown", ".suggestion-item", function (e) { e.preventDefault(); })
+```
+
+The popover closes on the input's `blur`, so the mousedown is prevented
+to stop a click from stealing focus. But Chromium treats a prevented
+`mousedown` as "no drag", so `dragstart` never fires on a suggestion —
+`draggable = true` has no effect and there is nothing in the API to opt
+out of it.
+
+Both halves have to be defeated together, and only in that order:
+
+1. A `mousedown` listener on the **item** runs before the delegated one
+   on the container, so `stopPropagation()` keeps the event
+   un-prevented and the drag gesture alive.
+2. That re-allows the blur Obsidian was avoiding, which would close the
+   popover mid-gesture — so the blur is swallowed by a one-shot
+   **capture-phase** listener on `window`. Blur doesn't bubble but it
+   does capture, so that runs before the listener on the input itself,
+   and `stopImmediatePropagation()` keeps `close()` from ever being
+   reached. Removed on the next tick.
+
+Worth an API request: `AbstractInputSuggest` has no hook for "this item
+is a drag source", and the two behaviours are entangled by design.
+
+**The query is always the input's literal text.** There's no way to open
+the popover with a filter different from what's displayed, which
+collides with prefilling the input with a value the user is about to
+type over. Worked around with a `queryOverride` passed through our own
+context callback, retired on the first `isTrusted` input event.
+
+## Context menus
+
+**Triggering `file-menu` does not give you the native menu items.**
+The obvious reading — that core listens on its own event and contributes
+Rename/Delete/etc. — is wrong. Every call site *builds its own items
+first* and only then fires the event for plugins to extend:
+
+```js
+t.addItem(… menuOptRename … promptForFileRename(r) …),
+t.addItem(… deleteFile … promptForDeletion(r) …),
+this.app.workspace.trigger("file-menu", t, r, "file-explorer-context-menu", null)
+```
+
+So a plugin that wants a File-Explorer-like menu has to re-add the core
+entries by hand and fire the event for everyone else's. There is no
+"give me the standard file menu" API.
+
+**Menu section order** comes from `menu.addSections([...])`, which is not
+in the public typings. The File Explorer's order is
+`title, open, action-primary, action, info, info.copy, view, system, "", danger`.
+Without it, sections render in insertion order — cosmetic only.
+
+**`Menu.forEvent()` is `@since 1.6.0`.** Convenient, but unusable with a
+`minAppVersion` below that; `new Menu()` + `showAtMouseEvent(evt)` is the
+compatible equivalent.
+
+## Obsidian's own i18n is reachable
+
+`i18next` is bundled as a UMD global, so `window.i18next.t(key)` resolves
+Obsidian's own strings in whatever language the app is set to. The
+resource tree is plain camelCase objects:
+
+```js
+menuOptNewNote: "New note", menuOptNewFolder: "New folder",
+menuOptRename: "Rename...", menuOptDelete: "Delete", …
+```
+
+Keys used here: `plugins.fileExplorer.menuOpt*`, `interface.menu.*`.
+
+This is worth reaching for whenever a plugin recreates a piece of native
+UI: the labels then match the app exactly, in every language, with no
+translation work — and far better coverage than a plugin's own table can
+manage. i18next returns the key itself when it can't resolve one, which
+makes the fallback check trivial. Undocumented, so always guarded.
+
+## `app.dragManager`
+
+Undocumented, and the only way to make an element drag like a File
+Explorer row (drop in an editor → link, drop on a folder → move). The
+file explorer's own pattern:
+
+```js
+el.draggable = true;
+el.addEventListener("dragstart", (evt) => {
+    const data = file instanceof TFolder
+        ? dragManager.dragFolder(evt, file)
+        : dragManager.dragFile(evt, file);
+    if (data) dragManager.onDragStart(evt, data);
+});
+```
+
+Also available: `dragFiles` (multi-select), `dragLink`, `handleDrag`,
+`handleDrop`, `updateSource(els, "is-being-dragged")`, `setAction`,
+`showOverlay`.
+
+**Drop *targets* inside a transient popover are not achievable.** The
+suggestion popover only exists while the input holds focus, and grabbing
+a file to drag from anywhere else dismisses it first — so there is no
+moment at which a dropdown entry can receive a drop.
+
+## View header internals
+
+`.view-header-title` is `contenteditable` with its own click-to-rename
+handling that can't be selectively disabled — hence hiding it entirely
+and rendering a replacement next to it.
+
+Obsidian recreates `.view-header-title-parent` when switching files, so
+anything inserted around it has to be re-checked (`isConnected`) on every
+refresh rather than inserted once.
+
+**Obsidian's own header breadcrumb already has folder drag and context
+menus** (`renderBreadcrumbs` wires `contextmenu` → New note / New folder
+→ `trigger("file-menu", …)`, plus `dragManager.handleDrag` →
+`dragFolder`). Worth knowing when replacing that row: those capabilities
+disappear with it unless they're re-added.
+
+The core header's own view-mode action uses the `pencil` icon, so a
+plugin button placed in the same `.view-actions` row should not.
+
+**Pre-empting another plugin's listener on an element you don't own.**
+To give the native folder segments a different job, our handler has to
+run *instead of* Obsidian's — and instead of any a folder-notes plugin
+added to the same element. Both of those sit on the element itself, and
+a listener we add there might be registered after theirs, in which case
+nothing we do can stop them: `stopImmediatePropagation` only cancels
+listeners registered *later* on the same element. A **capture-phase
+listener on an ancestor** sidesteps ordering entirely — capture on the
+parent always runs before any target-phase listener on the child, so a
+plain `stopPropagation()` there suppresses all of them.
+
+**Folder notes marks the path for you.** The plugin adds
+`has-folder-note` to the *native breadcrumb span* of any folder that has
+a note (`updateFolderNamesInPath`), independently of its own
+`underlineFolderInPath` / bold / cursive display toggles — those are
+only body classes its stylesheet keys off. So "does this folder have a
+note?" is answerable in pure CSS, via
+`.view-header-breadcrumb.has-folder-note + .view-header-breadcrumb-separator`,
+with no path-convention guessing and no coupling to its settings.
+
+Two quirks in that function, both read from minified source and worth
+re-checking before filing anything upstream:
+
+- It bails with `if (!folderNote) return;` — a bare `return` out of the
+  whole function, not `continue`. The first folder without a note ends
+  the loop, so a note-having folder *below* a note-less one never gets
+  the class. Any marking derived from it inherits that blind spot, even
+  though delegating the click still opens the note correctly.
+- It reads segment names via `breadcrumb.innerText`, so it depends on
+  the rendered text of the native segments. Rewriting those labels would
+  break its path reconstruction — worth remembering, since this plugin
+  already rewrites the *separators* between them (which it skips).
+
+**Delegating instead of reimplementing.** "Open the folder note" has no
+API and no single convention (`{folder}/{folder}.md`, `index.md`,
+sibling notes — each folder-notes plugin differs, and each is
+configurable). Re-dispatching the click onto Obsidian's own breadcrumb
+element gets whatever the user's setup already does, for free, and with
+no config to keep in sync. It also yields the no-folder-note fallback at
+no cost, since the unpatched element reveals the folder in the File
+Explorer. The catch: dispatching a synthetic click back into an element
+we also intercept needs a re-entrancy flag, or the capture listener
+above swallows its own delegation.
+
+## Icons
+
+Current builds bundle the **full Lucide set** (~1,400 icon ids extracted
+from the asar's icon table), not the ~230-icon subset older docs
+describe. `getIconIds()` at runtime is the authoritative list. Note that
+minification leaves single-word icon names as *unquoted* object keys, so
+grepping the asar for `"name":` misses `move`, `lock`, `type` and every
+other one-word id.
+
+**Making a `setIcon()` icon theme-overridable without style queries.**
+`setIcon` injects an `<svg>` the plugin owns, so a snippet author has
+nothing to target unless one is provided. `@container style(...)` would
+be the obvious switch but needs Chromium 111+, above what
+`minAppVersion` guarantees. Two older CSS behaviours do the job on any
+version:
+
+- `display: var(--lure-icon-svg, revert)` — `revert` rolls the property
+  back to whatever Obsidian's own `.clickable-icon`/`.svg-icon` rules
+  set, so the untouched default is never hard-coded by us.
+- `content: var(--lure-icon-glyph, none)` — `content: none` suppresses
+  the pseudo-element entirely, so the hook costs nothing until someone
+  sets the variable.
+
+Together they let a snippet replace an icon in one rule block, setting
+two custom properties on the plugin's own class.
+
+## Rename validation
+
+The plugin mirrors Obsidian's own rename rules by reusing its character
+sets and message wording (`msgInvalidCharacters`, `msgUnsafeCharacters`,
+`msgFileAlreadyExists`, `msgEmptyFileName`, `msgBadDotfileName`). There
+is no exported validator, so this is a deliberate duplication that has to
+be re-checked when Obsidian changes its rules.
+
+## Build
+
+`esbuild`'s `stdin` + `write: false`, imported back through a
+`data:text/javascript;base64,…` URL, runs the plugin's real TypeScript
+sources inside a plain Node script with no test framework and no extra
+dependencies. That's what `scripts/check-translations.mjs` uses to
+validate all 45 locales against the English source on every build.
+
+## Writing outside the vault
+
+`fs.rename` cannot cross filesystems and fails with `EXDEV`, which is the
+*ordinary* case for this feature rather than an edge one — moving a file
+off a USB stick or a network share is precisely what it exists for. The
+fallback is copy-then-`unlink`, with the original removed only after the
+copy succeeds.
+
+Overwrite protection is delegated to the filesystem rather than to a
+prior existence check: `copyFile(..., constants.COPYFILE_EXCL)` and
+`writeFile(..., { flag: "wx" })` both fail with `EEXIST` instead of
+clobbering. A check-then-write pair has a window between the two, and out
+here there is no vault index to notice a loss and no trash to recover
+from.
+
+`fileManager.renameFile` only accepts a vault path, so a note cannot be
+moved out of the vault by any API that also updates links to it. Doing it
+with `fs` would break every link silently. The plugin refuses the move and
+offers the copy instead — copying has none of that problem, since the
+original and its links stay put.
+
+## Icons Lucide doesn't have
+
+Obsidian bundles a subset of Lucide, and `setIcon` on a name that isn't in
+it silently renders nothing. There is no tilde in the set — the only
+"tilde" anywhere in the app bundle is an HTML-entity table — so the home
+folder's `~` had to be drawn.
+
+Drawing it as a text character works but is visibly the odd one out: it
+doesn't take `--icon-s` sizing, doesn't match the 2px stroke of the icons
+beside it, and moves with the theme's font. Emitting an SVG with Lucide's
+own attribute set instead (`viewBox="0 0 24 24"`, `fill="none"`,
+`stroke="currentColor"`, `stroke-width="2"`, round caps and joins, class
+`svg-icon`) makes a hand-drawn icon indistinguishable from a bundled one,
+and the existing `> svg { width: var(--icon-s) }` rules then apply to it
+unchanged. `M4 12q4-5 8 0t8 0` is a symmetric tilde on that grid.
+
+Obsidian *does* ship `vault` (used for "Copy vault path" and the vault
+commands) — worth grepping the asar for the icon the app itself uses
+before picking a lookalike from the wider Lucide set.
+
+## Size caps have to be measured, not guessed
+
+The external viewer's original 2 MiB text cap was written to stop a huge
+file "locking the renderer". Driving a live Obsidian over the DevTools
+protocol showed it did the opposite — the cap sat *above* the failure
+point, so the one code path it existed to protect was the one that killed
+the app:
+
+    text  512 KB   0.42 s   ok
+    text  768 KB   1.35 s   ok
+    text    1 MB   renderer process killed
+    text    2 MB   renderer process killed   (= the cap)
+    md    512 KB   7.24 s   ok, but the UI is frozen throughout
+
+Three findings worth keeping:
+
+- A `<textarea>` with `white-space: pre` lays out every line up front.
+  Reading less is not the same as rendering less, and only the second one
+  protects the window.
+- Markdown costs several times more per byte than plain text, so one cap
+  cannot serve both. `MarkdownRenderer.render` is synchronous, and its
+  real driver is *block count*, not size: 64 KB of headings and short
+  paragraphs costs seconds where 64 KB of prose is instant. Cap for the
+  dense case — it is the one that hurts.
+- Line *length* matters independently of total size: 128 KB on a single
+  line produced a scroll width over a million pixels.
+
+## Obsidian truncates suggestion lists silently
+
+`AbstractInputSuggest.showSuggestions` does `e.length > n && (e = e.slice(0, n))`
+against `this.limit` (default 100) with nothing shown to the user, so
+browsing /usr/bin looked like a folder of exactly 100 files. To say
+otherwise a suggester has to cap the list *itself*, one short of the limit,
+and spend the last row on the count — anything appended past the limit is
+cut off by that same slice.
+
+## Registering an extension is not the same as being a note
+
+`Plugin.registerExtensions(exts, "markdown")` does give a non-`.md` vault
+file Obsidian's real editor — Live Preview and all — which an ItemView
+never can. It was built, tried, and taken out again, because what it
+changes is *how the file opens*, not *what the vault thinks it is*: the
+metadata cache still indexes only `.md`, so the file has no backlinks,
+never appears in Quick Switcher, and `[[name]]` does not resolve to it. It
+edits like a note without being one, and the registration is vault-wide and
+persistent, which is a lot of surprise to buy that.
+
+Worth keeping from the attempt, in case it is ever wanted again:
+`viewRegistry.registerExtensions` **throws if any extension in the array is
+already registered**, and throws before assigning any of them, so the list
+must be filtered against `isExtensionRegistered` first or one contested
+entry loses the whole batch. `viewRegistry.unregisterExtensions` exists
+(undocumented) and fires `extensions-updated`, so a claim can be released
+without restarting.
+
+## One exit from a session is not all of them
+
+Picking a file from the dropdown *outside* the vault left the input and its
+popover open over the file it had just opened. Every other path tore the
+session down — `navigateToFile` for vault files, `submitExternal` for a
+typed path — and `selectExternalEntry` was the one that didn't, so the bug
+read as "sometimes the dropdown doesn't disappear".
+
+The lesson is about shape rather than the one missing line: when several
+branches all have to end the same way, the teardown belongs at the join,
+or each new branch is a chance to forget it.
+
+## `.view-content` is Obsidian's element, not yours
+
+A view's `contentEl` already carries `.view-content`, and Obsidian styles it
+through `.workspace-leaf-content .view-content` — specificity (0,2,0). A
+plugin rule written as a bare `.lure-external-view` is (0,1,0) and loses
+silently: the declarations that clash simply never apply, and the ones that
+don't clash do, so the result looks *half* styled and reads as a layout bug
+rather than a cascade one. Qualifying as `.view-content.lure-external-view`
+ties the specificity, and plugin CSS loads later, so it wins.
+
+Related, and worth checking in any pane-sized view: `vh` units are the
+*viewport*, not the pane. A `min-height: 60vh` textarea in a horizontally
+split pane is several times taller than the space it has, so the whole view
+scrolls — taking the status bar with it, exactly when the pane is too small
+to spare it. A flex column with a fixed head and a `min-height: 0` scrolling
+body keeps the bar where it belongs. `min-height: 0` is the load-bearing
+part: without it a flex child refuses to shrink below its content.
+
+## Measuring a pane means owning the workspace layout
+
+Obsidian persists the workspace, so splits made while probing survive into
+the next run — and into the vault. Several "the pane is only 82px" readings
+were the leftovers of earlier probes, not the CSS under test. Any layout
+test has to `changeLayout` to a known shape first and restore it after,
+otherwise it measures its own history.
+
+## Don't revoke permissions from the render path
+
+The external write unlock was cleared inside the function that draws the
+padlock, on the reasoning that a row no longer pointing outside the vault
+has no business being unlocked. But that function runs on *every* repaint,
+and a repaint happens partway through the teardown that finishing a move or
+clicking away performs — at a moment when `externalPath` is briefly null.
+The result: the padlock re-locked itself after every single move, which
+reads as "the unlock doesn't stick" rather than as a lifecycle bug.
+
+Permissions should end at the transitions that mean something — a different
+location picked, a return to a vault file — not wherever the state happens
+to be sampled. Grant them to a *place*, remember which one, and check
+membership; then transient nulls during a repaint can't revoke anything.
+
+## Obsidian's split directions read backwards
+
+`getLeaf("split", "vertical")` puts panes **side by side**, and
+`"horizontal"` **stacks** them. The name describes the divider, not the
+arrangement — which is the opposite of how "vertical split" is usually said
+out loud, and the opposite of what the menu calls it ("Split right" /
+"Split down"). Worth measuring rather than assuming: a layout test written
+against the wrong one silently exercises the wrong constraint.
+
+## A readiness probe must not dereference the thing it is waiting for
+
+The suite waited for the plugin with
+`!!app.plugins.plugins.lure?.manager`. The optional chaining looks careful,
+but it starts one level too late: on a cold start the DevTools page target
+answers while `app` itself is still undefined, so the probe threw
+`Cannot read properties of undefined` — out of `evaluate()`, past the
+retry loop, killing the whole run. A loop whose entire job is to report
+"not yet" instead reported a fatal error, and only on the one code path it
+was written for.
+
+Two rules fell out of it. Guard from the root, not from the middle:
+`typeof app !== "undefined" && app.plugins?.…`. And treat a throwing probe
+as *not ready* rather than as a failure — during startup a renderer can
+refuse an evaluate for reasons that resolve themselves a half-second later.
+
+Worth noting how it hid: `restart-obsidian.sh` prints `ready` once a page
+target exists, which is true and useless — the window is there, the app is
+not. Warm runs never touched the path, so the suite looked stable for as
+long as nobody restarted Obsidian first.

@@ -1,0 +1,589 @@
+/* Obsidian's native title element: hidden entirely so none of its own
+   listeners (contenteditable rename, etc.) can ever be triggered. */
+.view-header-title.lure-native-title-hidden {
+	display: none !important;
+}
+
+/* Native ancestor-folder breadcrumb, hidden while a custom chip trail
+   or the rename input is showing instead. */
+.view-header-title-parent.lure-hide-native {
+	display: none !important;
+}
+
+.view-header-title-container:has(.lure-editing) {
+	mask-image: none !important;
+	-webkit-mask-image: none !important;
+}
+
+/* No default focus ring on the row itself — it's script-focusable
+   (to receive keydowns after a click) but shouldn't look focused. */
+.view-header-title-container {
+	outline: none;
+}
+
+/* Text cursor across the whole row, since clicking any empty space
+   also opens edit mode; breadcrumb segments override back to pointer. */
+.view-header-title-container:has(.lure-filename) {
+	cursor: text;
+}
+
+.view-header-title-container:has(.lure-filename) .view-header-breadcrumb {
+	cursor: pointer;
+}
+
+/* Obsidian's native breadcrumb row leaves align-items at its default
+   (stretch), which floats the separator glyphs to the top of their
+   boxes — a few px above the ones we render in .lure-vault-wrapper.
+   Centering puts both sets on the same line. */
+.view-header-title-container:has(.lure-filename) .view-header-title-parent {
+	align-items: center;
+}
+
+/* Delimiters open a dropdown rather than navigating directly, so they
+   get the plain default cursor instead of the pointer "link" hand.
+   The vertical padding matches the folder segments' (2px 4px) so the
+   glyphs share a baseline, and colour/weight are pinned here because
+   Obsidian only tints the native ones (--text-faint), which made them
+   read as smaller and washed out next to ours. */
+.view-header-title-container:has(.lure-filename) .view-header-breadcrumb-separator {
+	cursor: default;
+	border-radius: var(--radius-s);
+	padding: 2px;
+	color: var(--text-muted);
+	font-weight: var(--font-bold);
+}
+
+.view-header-title-container:has(.lure-filename) .view-header-breadcrumb-separator:hover {
+	background-color: var(--background-modifier-hover);
+}
+
+/* Swapped, the roles above are reversed: the delimiter is what opens a
+   folder, so it takes the pointer hand the folder names give up. Every
+   delimiter gets it, because every delimiter does something — a folder
+   with no note is still revealed in the File Explorer. Scoped to
+   [data-lure-swap="true"], which rename/move mode clears — the swap is
+   suspended there, and so is this. */
+.view-header-title-container[data-lure-swap="true"]:has(.lure-filename)
+	.view-header-breadcrumb-separator {
+	cursor: pointer;
+}
+
+.view-header-title-container[data-lure-swap="true"]:has(.lure-filename)
+	.view-header-breadcrumb {
+	cursor: pointer;
+}
+
+/* The underline is the stronger promise — "there is a note behind this"
+   — so it is spent only where one exists. Rather than resolve folder
+   notes ourselves (every plugin has its own configurable convention),
+   this keys off .has-folder-note, which the Folder notes plugin puts on
+   the native segment for exactly that condition. The underline then
+   tracks that plugin's own configuration for free, and matches the
+   segments it underlines itself.
+
+   The class only ever lands on Obsidian's native segments, so browse
+   chips and the vault root stay plain — which is correct: neither can
+   reach a folder note (see docs/compatibility.md). */
+.view-header-title-container[data-lure-swap="true"]:has(.lure-filename)
+	.view-header-breadcrumb.has-folder-note
+	+ .view-header-breadcrumb-separator {
+	text-decoration-line: underline;
+	text-decoration-color: var(--text-faint);
+	text-underline-offset: 2px;
+}
+
+/* With the delimiter now carrying it, the name giving up the underline
+   is the point of the swap: underlining both would say the name opens
+   the note, which is exactly what it no longer does. Longhand and above
+   the Folder notes rule's specificity, so it wins cleanly. */
+.view-header-title-container[data-lure-swap="true"]:has(.lure-filename)
+	.view-header-breadcrumb.has-folder-note {
+	text-decoration-line: none;
+}
+
+.view-header-title-container[data-lure-align="center"] {
+	justify-content: center !important;
+}
+
+.view-header-title-container[data-lure-align="right"] {
+	justify-content: flex-end !important;
+}
+
+.lure-vault-wrapper {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.lure-vault-segment,
+.lure-browse-chip {
+	cursor: pointer;
+	border-radius: var(--radius-s);
+	padding: 0 2px;
+}
+
+.lure-vault-segment:hover,
+.lure-browse-chip:hover {
+	background-color: var(--background-modifier-hover);
+}
+
+/* The vault root is a jump target rather than a path segment: it opens
+   the locations dropdown, so it keeps the pointer even when the swap
+   setting takes it away from the folder names beside it. Qualified up to
+   (0,4,0) to outrank those swap-state cursor rules. */
+.view-header-title-container:has(.lure-filename) .view-header-breadcrumb.lure-vault-segment {
+	cursor: pointer;
+}
+
+/* Icon form of the root segment, shown when "Show vault name" is off.
+   Sized like Obsidian's own inline icons so it sits on the text
+   baseline of the folder chips that follow it. */
+.lure-vault-icon {
+	display: inline-flex;
+	align-items: center;
+}
+
+.lure-vault-icon > svg {
+	width: var(--icon-s);
+	height: var(--icon-s);
+}
+
+/* Icon override hooks
+   -------------------
+   All three icons this plugin renders can be replaced from a theme or
+   CSS snippet without patching the plugin. Set the glyph and hide the
+   bundled Lucide SVG in one rule:
+
+     .lure-vault-icon {
+         --lure-icon-glyph: "🏠";
+         --lure-icon-svg: none;
+     }
+
+     .lure-rename-btn {
+         --lure-icon-glyph: "✎";
+         --lure-icon-svg: none;
+     }
+
+     .lure-unlock-btn { --lure-icon-glyph: "🔒"; --lure-icon-svg: none; }
+     .lure-unlock-btn.is-active { --lure-icon-glyph: "🔓"; }
+
+   `revert` is the default so that, untouched, the SVG keeps whatever
+   display value Obsidian's own .clickable-icon/.svg-icon rules give it
+   rather than one hard-coded here. */
+.lure-vault-icon > svg,
+.lure-rename-btn > svg,
+.lure-unlock-btn > svg {
+	display: var(--lure-icon-svg, revert);
+}
+
+/* `content: none` suppresses the pseudo-element entirely, so this costs
+   nothing until a snippet sets --lure-icon-glyph. */
+.lure-vault-icon::after,
+.lure-rename-btn::after,
+.lure-unlock-btn::after {
+	content: var(--lure-icon-glyph, none);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: var(--icon-s);
+	line-height: 1;
+}
+
+.lure-filename {
+	display: inline-flex;
+	align-items: center;
+	min-width: 0;
+	cursor: text;
+}
+
+/* Only grow to fill the row (and stay clickable across the empty
+   space) in the default left alignment; center/right need the whole
+   breadcrumb to hug its own content so justify-content can move it. */
+.view-header-title-container[data-lure-align="left"] .lure-filename {
+	flex: 1 1 auto;
+}
+
+.lure-filename-text {
+	color: var(--text-normal);
+	font-weight: var(--font-medium);
+	cursor: text;
+	border-radius: var(--radius-s);
+	padding: 0 2px;
+}
+
+.lure-filename-text:hover {
+	background-color: var(--background-modifier-hover);
+}
+
+/* Entirely chrome-free: the input reads as the path text itself,
+   continuing the breadcrumb inline with no box around it. */
+.lure-filename.lure-editing {
+	display: flex;
+}
+
+/* Obsidian's own `input[type='text']` rule (specificity 0,1,1) sets a
+   form-field background, border, padding and font-size — a bare
+   `.lure-path-input` (0,1,0) loses to it, so this is deliberately
+   qualified to outrank it and strip the chrome back off. Both hosts are
+   listed: the input normally lives in the filename slot, but the
+   locations menu puts it in the vault segment so the popover anchors
+   under the vault name. */
+.lure-filename input.lure-path-input,
+.lure-vault-wrapper input.lure-path-input {
+	font: inherit;
+	color: inherit;
+	background: transparent;
+	border: none;
+	border-radius: 0;
+	outline: none;
+	box-shadow: none;
+	padding: 0 2px;
+	cursor: text;
+}
+
+/* Inline rather than row-filling: its width is measured and set in px by
+   the code, from the real glyph widths of what's in it, so flex must not
+   stretch or squash it. content-box keeps that measurement honest — under
+   border-box the 2px side padding would eat into the text instead of
+   sitting beside it. Capped at the row width so a very long path scrolls
+   the row instead of overflowing it. */
+.lure-filename input.lure-typing-input,
+.lure-vault-wrapper input.lure-typing-input {
+	text-align: left;
+	box-sizing: content-box;
+	min-width: 0;
+	max-width: 100%;
+	flex: 0 0 auto;
+}
+
+/* Rename mode greys already-taken names. They stay selectable — the
+   live validation tooltip is what blocks committing over them. */
+.lure-suggest-disabled {
+	opacity: 0.5;
+}
+
+.lure-modal-buttons {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+	margin-top: 12px;
+}
+
+/* Base sizing/spacing comes from Obsidian's own .view-action/.clickable-icon
+   classes, matching the native bookmark/reading-mode/more-options buttons. */
+.lure-rename-btn.is-active {
+	color: var(--interactive-accent);
+	opacity: 1;
+}
+
+/* The padlock, present only while the row points outside the vault. Open,
+   it takes the error colour rather than the accent its sibling uses: it is
+   armed, not selected, and it should read as the same condition the red
+   ring around the row is already stating. Qualified with .view-action so it
+   outranks Obsidian's own .clickable-icon.is-active regardless of the order
+   the stylesheets happen to load in. */
+.view-action.lure-unlock-btn.is-active {
+	color: var(--text-error);
+	opacity: 1;
+}
+
+/* Same rounded, accent-colored framing Obsidian shows around a file's
+   name in the File Explorer while renaming it — a 2px ring rather than
+   a hairline border, matching .tree-item-self.is-being-renamed.
+   Drawn inset so the ring stays within the header bar instead of
+   bleeding over the tabs above and the note below, and left full-width
+   so alignment keeps positioning the path as it does normally. */
+.view-header-title-container.lure-rename-active {
+	box-shadow: inset 0 0 0 2px var(--interactive-accent);
+	border-radius: var(--radius-s);
+	padding: 0 4px;
+}
+
+/* Same ring as rename mode, in the colour Obsidian uses for a rejected
+   name, held for as long as the row points outside the vault. It marks a
+   standing condition rather than an event: while it's up, nothing the
+   vault does — open as a note, rename, create — applies to what the row
+   is showing. Listed after the rename rule so the warning wins if both
+   are somehow up at once. */
+.view-header-title-container.lure-external-active {
+	box-shadow: inset 0 0 0 2px var(--text-error);
+	border-radius: var(--radius-s);
+	padding: 0 4px;
+}
+
+/* One tier down: the file is in the vault and openable, but Obsidian has
+   no view for it, so it lands in an editor meant for Markdown. A caution,
+   not a prohibition — hence orange, and hence never shown together with
+   the red ring (applyExternalState suppresses it there). */
+.view-header-title-container.lure-warn-active {
+	box-shadow: inset 0 0 0 2px var(--text-warning);
+	border-radius: var(--radius-s);
+	padding: 0 4px;
+}
+
+/* Icon on the leading segment while outside the vault — says at a glance
+   whether the trail starts at a vault, a drive or your home folder. */
+.lure-segment-icon {
+	display: inline-flex;
+	align-items: center;
+	margin-inline-end: 4px;
+	vertical-align: middle;
+}
+
+.lure-segment-icon > svg {
+	width: var(--icon-s);
+	height: var(--icon-s);
+}
+
+/* Icons drawn from the plugin's own path data (the "~" naming your home
+   folder). They carry Lucide's attributes, so the `> svg` sizing rules
+   above already apply and nothing further is needed — this rule exists as
+   the hook for a snippet that wants to treat them differently. */
+.lure-glyph-icon {
+	stroke-width: var(--icon-s-stroke-width, 2);
+}
+
+/* Dropdown rows: an icon column for locations, and a muted tint for
+   anything outside the vault so the boundary is visible in the list
+   itself, not only once you've picked something. */
+.suggestion-item .lure-suggest-icon {
+	display: inline-flex;
+	align-items: center;
+	margin-inline-end: var(--size-4-2);
+	color: var(--text-muted);
+	vertical-align: middle;
+}
+
+.suggestion-item .lure-suggest-icon > svg {
+	width: var(--icon-s);
+	height: var(--icon-s);
+}
+
+.suggestion-item.lure-suggest-external .lure-suggest-label {
+	color: var(--text-muted);
+}
+
+/* Notes, in Obsidian's own purple. In a folder of mixed contents the files
+   the app will actually open as notes are the ones you're usually after, so
+   they're worth picking out of the list at a glance. Listed after the
+   external rule so a note outside the vault still reads as a note rather
+   than being muted along with everything else out there. */
+.suggestion-item.lure-suggest-md .lure-suggest-label {
+	color: var(--color-purple);
+}
+
+/* "Move here, keep this name" — pinned to the top of every dropdown while a
+   move is pending, and the only entry that is a destination rather than a
+   thing that exists. Blue picks it out of a list of file names it would
+   otherwise sit among unremarkably, and outranks the muted tint an external
+   one would take. */
+.suggestion-item.lure-suggest-keep-name .lure-suggest-label {
+	color: var(--color-blue);
+	font-weight: var(--font-medium);
+}
+
+/* Text file Obsidian has no view for: opening it lands in an editor built
+   for Markdown. Tinted in the list so the caution arrives before you
+   commit, not after. Listed after the external rule so it wins on entries
+   that are both. */
+.suggestion-item.lure-suggest-warn .lure-suggest-label {
+	color: var(--text-warning);
+}
+
+/* Read-only external file view
+   --------------------------- */
+/* A quiet status line, not a warning block: the header bar already shows
+   the path and flashed its ring on the way in. The path itself isn't
+   repeated here for the same reason. */
+.lure-external-bar {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: var(--size-4-2);
+	margin-bottom: var(--size-4-3);
+	padding-bottom: var(--size-4-2);
+	border-bottom: 1px solid var(--background-modifier-border);
+	color: var(--text-muted);
+	font-size: var(--font-smaller);
+}
+
+.lure-external-bar-icon {
+	display: inline-flex;
+	align-items: center;
+}
+
+.lure-external-bar-icon > svg {
+	width: var(--icon-s);
+	height: var(--icon-s);
+}
+
+/* The notes flow along the row and wrap only when they have to. Stacking
+   them unconditionally spent three lines of height on three short phrases,
+   which is most of the bar in a pane that is already short — and a
+   horizontal split gives exactly that shape, wide but not tall. */
+.lure-external-bar-notes {
+	flex: 1 1 auto;
+	min-width: 0;
+	display: flex;
+	flex-wrap: wrap;
+	column-gap: var(--size-4-4);
+	row-gap: 2px;
+}
+
+/* One line per condition, each carrying its own colour, because the two
+   are independent — a file outside the vault can also be a type Obsidian
+   has no editor for, and both statements then apply. */
+.lure-external-note {
+	display: flex;
+	align-items: center;
+	gap: var(--size-4-1);
+}
+
+.lure-external-note.mod-error {
+	color: var(--text-error);
+}
+
+.lure-external-note.mod-warning {
+	color: var(--text-warning);
+}
+
+.lure-external-note-icon {
+	display: inline-flex;
+	align-items: center;
+}
+
+.lure-external-note-icon > svg {
+	width: var(--icon-xs, 14px);
+	height: var(--icon-xs, 14px);
+}
+
+.lure-external-bar-button {
+	flex: 0 0 auto;
+	font-size: var(--font-smaller);
+}
+
+
+/* Source view. Editable for vault files, and outside the vault once Edit
+   has been pressed — same element either way, so lifting the lock doesn't
+   reflow the page. Styled like Obsidian's code blocks: a config file or a
+   log has meaningful line structure, and neither should be reflowed. */
+.lure-external-editor {
+	display: block;
+	width: 100%;
+	height: 100%;
+	min-height: 0;
+	resize: none;
+	padding: var(--size-4-3);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-s);
+	background-color: var(--code-background);
+	color: var(--code-normal);
+	font-family: var(--font-monospace);
+	font-size: var(--code-size);
+	line-height: var(--line-height-normal);
+	tab-size: 4;
+	white-space: pre;
+	overflow-wrap: normal;
+	overflow-x: auto;
+}
+
+.lure-external-editor:read-only {
+	background-color: var(--background-secondary);
+	cursor: default;
+}
+
+/* The render fills the pane, the way a note in reading view does — it sits
+   on .markdown-preview-view, so Obsidian's own note typography comes with
+   it. Only the padding is dropped, since .lure-external-view already
+   provides it and the two would otherwise stack. */
+.lure-external-markdown {
+	padding: 0;
+}
+
+
+/* A column with a fixed head and a scrolling body, rather than one long
+   scrolling page. In a short pane — a horizontal split, say — the bar would
+   otherwise scroll away with the content, taking "Outside your vault" and
+   "Truncated" out of sight exactly when the pane is too small to show them
+   anyway. */
+/* Qualified with .view-content to reach (0,2,0): Obsidian styles this same
+   element through `.workspace-leaf-content .view-content`, and a bare class
+   loses to it on padding and overflow. */
+.view-content.lure-external-view {
+	display: flex;
+	flex-direction: column;
+	padding: var(--size-4-4);
+	overflow: hidden;
+}
+
+.lure-external-bar {
+	flex: 0 0 auto;
+}
+
+/* min-height: 0 is what lets a flex child actually shrink; without it the
+   body keeps its content's height and pushes the bar off the top. */
+.lure-external-body {
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow: auto;
+}
+
+.lure-external-media {
+	max-width: 100%;
+}
+
+.lure-external-frame {
+	width: 100%;
+	height: 100%;
+	min-height: 240px;
+	border: none;
+}
+
+.lure-external-error {
+	color: var(--text-error);
+}
+
+/* While browsing or typing, the row is held at the offset it had when the
+   session began instead of being re-justified. Centre and right alignment
+   position the content by its width, and an input is never exactly as
+   wide as the segments it replaced — nor the same width from one
+   keystroke to the next — so without this the path slides sideways as you
+   type. The offset is measured in JS and handed over as --lure-pin-offset.
+
+   Ordered after the [data-lure-align] rules (same specificity, so source
+   order decides) and after .lure-rename-active, whose `padding` shorthand
+   this longhand has to override on the inline-start side. */
+.view-header-title-container.lure-pin-start {
+	justify-content: flex-start !important;
+	padding-inline-start: var(--lure-pin-offset, 0px);
+}
+
+
+/* The one setting that widens what the plugin can reach says so in the
+   error colour, inside the description rather than as a separate banner —
+   Obsidian has no warning slot in a Setting, and a notice elsewhere would
+   be read after the toggle rather than before it. */
+.lure-setting-warning {
+	margin-top: var(--size-2-3);
+	color: var(--text-error);
+}
+
+/* The overflow row that ends a truncated listing. Muted and centred so it
+   reads as a count rather than another entry, and inert to the pointer —
+   there is nothing behind it to open. Keyboard selection can still land on
+   it, which the select handler treats as a no-op. */
+.suggestion-item.lure-suggest-more {
+	justify-content: center;
+	color: var(--text-faint);
+	font-size: var(--font-smaller);
+	font-style: italic;
+	pointer-events: none;
+}
+
+/* Going back to the rendered view: a light accent wash rather than a solid
+   fill — the same --text-selection Obsidian tints selected text with. It
+   marks the button as the way back without competing with the red one that
+   arms writing, or with a genuine call to action like "Open in <vault>". */
+.lure-external-bar-button.mod-view {
+	background-color: var(--text-selection);
+}

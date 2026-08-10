@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Build output
+main.js
+*.js.map
+*.zip
+
+# Obsidian plugin data
+data.json
+
+# Local agent config — never published
+.claude/
+
+# Belt and braces: personal.md holds credentials. Kept as its own rule so
+# that removing the .claude/ line above cannot expose it by accident.
+personal.md
+**/personal.md
+
+# OS
+.DS_Store
