@@ -18,12 +18,28 @@ const ORIGIN = `http://127.0.0.1:${PORT}`;
  *
  * Set OBSIDIAN_VAULT to choose; with one window open it is optional.
  */
+/**
+ * Obsidian HTML-escapes the window title, so a vault named
+ * "L'Éclaire, c'est moi" arrives as "L&#39;Éclaire, c&#39;est moi" and a
+ * literal comparison never matches. Decode before comparing, or a vault with
+ * an apostrophe in its name is simply unreachable from these tools.
+ */
+function decodeTitle(title) {
+	return title
+		.replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
+		.replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCharCode(parseInt(code, 16)))
+		.replace(/&quot;/g, '"')
+		.replace(/&lt;/g, "<")
+		.replace(/&gt;/g, ">")
+		.replace(/&amp;/g, "&");
+}
+
 function pickTarget(targets, vault) {
 	const pages = targets.filter((t) => t.type === "page" && !t.url.startsWith("devtools://"));
 	if (!pages.length) throw new Error("No page target — is a vault open?");
 	if (!vault) {
 		if (pages.length > 1) {
-			const names = pages.map((t) => t.title).join("\n  ");
+			const names = pages.map((t) => decodeTitle(t.title)).join("\n  ");
 			throw new Error(
 				`${pages.length} Obsidian windows are open, so the target is ambiguous.\n` +
 					`  ${names}\nSet OBSIDIAN_VAULT=<vault name> to choose one.`,
@@ -31,11 +47,11 @@ function pickTarget(targets, vault) {
 		}
 		return pages[0];
 	}
-	const match = pages.find((t) => t.title.includes(` - ${vault} - `));
+	const match = pages.find((t) => decodeTitle(t.title).includes(` - ${vault} - `));
 	if (!match) {
 		throw new Error(
 			`No window for vault "${vault}". Open windows:\n  ` +
-				pages.map((t) => t.title).join("\n  "),
+				pages.map((t) => decodeTitle(t.title)).join("\n  "),
 		);
 	}
 	return match;

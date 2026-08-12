@@ -51,6 +51,67 @@ All 45 locales are machine-translated (see the README's AI disclosure) and have 
 - **Never translate a plugin's name.** A name is a proper noun: *Folder notes* stays *Folder notes* in all 45 locales, with only the grammar around it localised. Match the spelling and casing in Obsidian's `community-plugins.json`.
 - The project follows Obsidian's [Developer policies](https://docs.obsidian.md/Developer+policies) and [plugin submission requirements](https://docs.obsidian.md/Plugins/Releasing/Submission+requirements+for+plugins).
 
+## Screenshots
+
+`docs/images/*.png` are captured from a running Obsidian, not edited by hand:
+
+```bash
+node .dev/screenshots.mjs           # the published scene
+node .dev/screenshots.mjs <name>    # any other scene in the table
+```
+
+It drives the same CDP connection the test suites use, forces a 1100×760
+viewport at 2× so the framing is identical between runs, and clips each shot
+to element rectangles it measures in the page rather than to guessed constants.
+
+A **scene** is a demo vault plus the two notes the shots are framed around,
+declared in the script's `SCENES` table: which window to drive, which notes to
+open, which folders to expand, which segment the dropdown shot clicks, and the
+filename prefix its output gets. The vault has to exist and be open before the
+run. The scene published in the README writes the unprefixed names; a second
+scene wants a prefix so it cannot overwrite them.
+
+The two shots open *different* notes on purpose, and share one crop height.
+They appear one after the other in the README, so a reader compares them
+directly: two heights read as unrelated crops, and one note in both reads as
+the same photograph taken twice.
+
+The first shot clicks a delimiter and photographs the reveal, with the pointer
+drawn on the delimiter from `.dev/cursor.svg` — a CDP screenshot never contains
+the OS cursor, and which of the two neighbouring targets was pressed is the
+whole point of the picture. The second opens the dropdown in move/rename mode,
+where the list is at its most colourful, and fails unless all three kinds are
+on screen: the pinned current name, a folder, and a note whose name is taken.
+That last one is a property of the demo vault — a folder holding only
+subfolders photographs a list that says nothing.
+
+This window paints no frames. Nothing is on screen to paint for, so
+`requestAnimationFrame` never fires and CSS transitions never advance — which
+is why the script settles the dropdown's fade-in explicitly instead of waiting
+for it, and why anything in the plugin that retries on an animation frame will
+appear to do nothing at all here. It is also how the reveal-expand bug in
+`expandInExplorer` was found; see `.dev/takeaways.md`.
+
+Two things are worth knowing before adding one. The path bar is stateful, so the
+script reloads the renderer and then *asserts* it is in breadcrumb mode — a
+dropdown left open by an earlier run renders the editable string
+(`2026/Cake catapult.md`) instead of the spaced breadcrumb, which is a wrong
+screenshot that nothing downstream would catch. And the hero crop height is
+per-scene, because it is really a question about that vault's sidebar: the open
+note has to stay in frame or the tree and the path stop agreeing, so a vault
+with more top-level folders needs a taller crop.
+
+The vault a scene points at must be built for the purpose. The test vault cannot
+be used: it is named `use_this_testvault`, it runs in German, and it still holds
+the garbled fixtures from an old bug — all three would ship into the README.
+Build a throwaway vault, symlink `main.js`, `manifest.json` and `styles.css`
+into its `.obsidian/plugins/lure/`, and open it; the script enables the plugin
+and switches the language to English itself.
+
+A screenshot is documentation and goes stale like prose: a renamed setting or a
+restyled segment leaves the README showing a plugin that no longer exists.
+Re-run the capture whenever the header's appearance changes.
+
 ## Before a release
 
 The AI disclosure in the README states real token totals, so they have to be

@@ -2,9 +2,7 @@
 
 An [Obsidian](https://obsidian.md) plugin that turns the filename in a note's header bar into a clickable, editable breadcrumb of its full vault path — like the address bar in the [Dolphin](https://apps.kde.org/dolphin/) file manager.
 
-```
-my-vault / Projects / 2026 / Kickoff notes
-```
+![Clicking the delimiter after a folder: the pointer rests on it, and the File Explorer has revealed and expanded that folder](docs/images/breadcrumb.png)
 
 Obsidian 1.4.0+ · desktop only · AGPL-3.0
 
@@ -12,7 +10,7 @@ Obsidian 1.4.0+ · desktop only · AGPL-3.0
 
 - **Agent** — **Claude Opus 5** and **Claude Sonnet 5** (Anthropic, via Claude Code): wrote the TypeScript, the CSS, all 45 translation sets and the documentation. Translations are machine-generated and unreviewed by native speakers.
 - **Author** — Vault51: specified every feature, tested each iteration in a live vault, directed the fixes, reviewed all output.
-- **Usage** — 3–10 Aug 2026, six sessions, ~3,404 responses: ~3.8 M tokens generated, ~13.1 M sent, ~905.2 M cached re-reads (~922.1 M total).
+- **Usage** — 3–11 Aug 2026, six sessions, ~3,484 responses: ~3.8 M tokens generated, ~13.3 M sent, ~910.7 M cached re-reads (~927.8 M total).
 
 ## Features
 
@@ -27,6 +25,10 @@ Obsidian 1.4.0+ · desktop only · AGPL-3.0
 - **Two warning tiers** — red outside the vault, orange for text files Obsidian has no editor for. See [the warning colours](docs/usage.md#the-two-warning-colours).
 - **Themeable icons**, swapped from a CSS snippet — and **45 locales**, every language Obsidian ships.
 - **Settings:** alignment, delimiter presets, which click opens the dropdown, vault name, dot files.
+
+![The same dropdown in move/rename mode: the current filename pinned at the top, sibling folders below it, and existing notes greyed out](docs/images/dropdown.png)
+
+*In move/rename mode the same dropdown changes what it offers: the note's current name pinned at the top to move it without renaming, folders to move it into, and names already taken greyed out so nothing is overwritten by accident.*
 
 → [Full usage guide](docs/usage.md)
 

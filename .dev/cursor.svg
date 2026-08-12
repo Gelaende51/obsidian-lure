@@ -1,0 +1,9 @@
+<!-- Pointer drawn into the reveal screenshot. CDP screenshots never contain
+     the OS cursor, and the shot has to show *where* the click was: the
+     delimiter, not the folder name beside it. Tip sits at (2,1) in viewBox
+     units, which screenshots.mjs subtracts to line it up with the click. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="44" height="68" viewBox="0 0 22 34">
+  <path d="M2 1 L2 25.5 L8.2 19.8 L11.8 27.8 L15.2 26.2 L11.7 18.4 L19.2 18.4 Z"
+        fill="#ffffff" stroke="#000000" stroke-width="1.5"
+        stroke-linejoin="round" stroke-linecap="round"/>
+</svg>
