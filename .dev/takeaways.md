@@ -542,3 +542,40 @@ A vault named `L'Éclaire, c'est moi` appears in the CDP target list as
 ` - <vault> - ` against that title, so an apostrophe in a vault name made the
 vault unreachable — with an error saying the window did not exist while it sat
 right there in the list. The titles are decoded before matching.
+
+## A highlight that exists only in the pixels
+
+Revealing a folder tints its row and fades the tint out. Screenshots taken
+during that window published a bright olive sidebar — and the tint is
+invisible to the DOM: computed background reads `rgba(0,0,0,0)` throughout,
+`getAnimations()` returns nothing, and the pseudo-elements are transparent.
+Every way of *asking* the page whether it had settled said yes while the
+capture said otherwise.
+
+So the capture waits on the clock and then checks the result rather than the
+page: it samples the revealed row out of the finished PNG and fails if the
+colour channels diverge, which is the difference between a neutral grey row
+(spread ~0%) and an unfaded one (~33%). Verified by setting the wait to zero
+and watching it fail.
+
+The general lesson, twice over now in this file: when the thing you care about
+is what the picture looks like, assert on the picture. The DOM is a model of
+the render, not the render.
+
+## Rebuilding your own UI looks exactly like the user leaving it
+
+Rename mode ends when focus leaves the header, checked one tick after
+`focusout` because activeElement is briefly `<body>` mid-change. Choosing a
+folder from the dropdown tears the row's input down and builds a new one,
+which parks focus on `<body>` for *several* ticks — so the guard read the gap
+in our own rebuild as the user clicking away, and the mode ended on a click
+that was meant to continue it.
+
+It was a race, which is why it looked like a property of the folder: the same
+click kept rename mode or dropped it depending on which won, and adding a
+listener to observe it was enough to flip the outcome. The guard now looks
+several times over ~200 ms and only gives up when focus has genuinely settled
+elsewhere.
+
+Worth remembering as a shape: any "did the user leave?" check that samples
+focus once will misread a component that rebuilds itself.

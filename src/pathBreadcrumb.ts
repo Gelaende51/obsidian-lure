@@ -64,6 +64,15 @@ const PATCHED_CLASS = "lure-patched";
  */
 const EXPAND_BACKOFF_MS = [16, 32, 64, 128, 256, 512];
 
+/**
+ * How many times, and how far apart, rename mode re-checks where focus went
+ * before deciding the user has left the header. Rebuilding the row parks
+ * focus on <body> for several ticks, so a single look mistakes our own
+ * rebuild for the user clicking away.
+ */
+const RENAME_FOCUS_CHECKS = 8;
+const RENAME_FOCUS_INTERVAL_MS = 25;
+
 const EDITING_CLASS = "lure-editing";
 const HIDE_NATIVE_CLASS = "lure-hide-native";
 const NATIVE_TITLE_HIDDEN_CLASS = "lure-native-title-hidden";
@@ -189,8 +198,8 @@ export class PathBreadcrumb {
 	private domListeners = new AbortController();
 	/** When on, breadcrumb/dropdown/text-input interactions move or rename the current file instead of navigating. */
 	private renameMode = false;
-	/** Pending folder-expand retries, cancelled on teardown so a dead instance stops touching the explorer. */
-	private expandTimers = new Set<number>();
+	/** Pending deferred work, cancelled on teardown so a dead instance stops acting. */
+	private timers = new Set<number>();
 	/** Folders clicked/typed through so far while navigating; null when not browsing. */
 	private browsePath: string | null = null;
 	/** Message currently shown in the red validation tooltip, "" when the name is fine. */
@@ -441,8 +450,8 @@ export class PathBreadcrumb {
 
 	/** Restores the leaf's native title DOM. Called on leaf close / plugin unload. */
 	destroy(): void {
-		for (const timer of this.expandTimers) window.clearTimeout(timer);
-		this.expandTimers.clear();
+		for (const timer of this.timers) window.clearTimeout(timer);
+		this.timers.clear();
 		this.editCleanup?.();
 		this.editCleanup = null;
 		this.removeDocumentClickAway();
@@ -647,11 +656,28 @@ export class PathBreadcrumb {
 			// <body>, and relatedTarget is null whenever focus lands on
 			// something unfocusable, so the next tick is the first
 			// reliable read of where focus actually ended up.
-			window.setTimeout(() => {
+			//
+			// One tick is not always enough, though. Choosing a folder from
+			// the dropdown tears this row's input down and builds a new one,
+			// which parks focus on <body> for several ticks — and reading it
+			// too early made a click *into* the interaction look exactly like
+			// a click out of it, ending rename mode as though nothing had
+			// been clicked at all. Whether it did was a race, so it happened
+			// on some folders, some machines, some runs.
+			//
+			// Looking more than once costs a fifth of a second in the case
+			// where the user really did leave, and nothing at all otherwise.
+			let checks = 0;
+			const settle = (): void => {
 				if (!this.renameMode) return;
 				if (this.isInsideRenameUi(document.activeElement as HTMLElement | null)) return;
+				if (++checks < RENAME_FOCUS_CHECKS) {
+					this.timers.add(window.setTimeout(settle, RENAME_FOCUS_INTERVAL_MS));
+					return;
+				}
 				this.exitRenameMode();
-			}, 0);
+			};
+			this.timers.add(window.setTimeout(settle, 0));
 		};
 
 		this.renameFocusOut = focusHandler;
@@ -1453,8 +1479,7 @@ export class PathBreadcrumb {
 
 			const done = revealed && item !== undefined && !item.collapsed;
 			if (!done && attempt < EXPAND_BACKOFF_MS.length) {
-				const timer = window.setTimeout(expand, EXPAND_BACKOFF_MS[attempt++]);
-				this.expandTimers.add(timer);
+				this.timers.add(window.setTimeout(expand, EXPAND_BACKOFF_MS[attempt++]));
 			}
 		};
 		expand();
