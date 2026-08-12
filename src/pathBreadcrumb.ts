@@ -64,14 +64,6 @@ const PATCHED_CLASS = "lure-patched";
  */
 const EXPAND_BACKOFF_MS = [16, 32, 64, 128, 256, 512];
 
-/**
- * How many times, and how far apart, rename mode re-checks where focus went
- * before deciding the user has left the header. Rebuilding the row parks
- * focus on <body> for several ticks, so a single look mistakes our own
- * rebuild for the user clicking away.
- */
-const RENAME_FOCUS_CHECKS = 8;
-const RENAME_FOCUS_INTERVAL_MS = 25;
 
 const EDITING_CLASS = "lure-editing";
 const HIDE_NATIVE_CLASS = "lure-hide-native";
@@ -657,27 +649,28 @@ export class PathBreadcrumb {
 			// something unfocusable, so the next tick is the first
 			// reliable read of where focus actually ended up.
 			//
-			// One tick is not always enough, though. Choosing a folder from
-			// the dropdown tears this row's input down and builds a new one,
-			// which parks focus on <body> for several ticks — and reading it
-			// too early made a click *into* the interaction look exactly like
-			// a click out of it, ending rename mode as though nothing had
-			// been clicked at all. Whether it did was a race, so it happened
-			// on some folders, some machines, some runs.
+			// One tick is not enough, though. Choosing a folder from the
+			// dropdown tears this row's input down and builds a new one, and
+			// during that the focus is anywhere but here — which made a click
+			// *into* the interaction look exactly like a click out of it,
+			// ending rename mode as though nothing had been clicked at all.
 			//
-			// Looking more than once costs a fifth of a second in the case
-			// where the user really did leave, and nothing at all otherwise.
-			let checks = 0;
-			const settle = (): void => {
-				if (!this.renameMode) return;
-				if (this.isInsideRenameUi(document.activeElement as HTMLElement | null)) return;
-				if (++checks < RENAME_FOCUS_CHECKS) {
-					this.timers.add(window.setTimeout(settle, RENAME_FOCUS_INTERVAL_MS));
-					return;
-				}
-				this.exitRenameMode();
-			};
-			this.timers.add(window.setTimeout(settle, 0));
+			// Waiting longer for focus to come back is not the answer either:
+			// where it lands during a rebuild is not ours to predict, and
+			// Obsidian may take it for the editor before we get it back. So
+			// while a browsing or typing session of ours is open, focus
+			// changes do not end the mode at all. Leaving for real is a
+			// click, and the click-away handler above catches that; this
+			// path exists for Tab, which only matters when rename mode is
+			// sitting idle on the breadcrumb.
+			this.timers.add(
+				window.setTimeout(() => {
+					if (!this.renameMode) return;
+					if (this.mode !== "breadcrumb") return;
+					if (this.isInsideRenameUi(document.activeElement as HTMLElement | null)) return;
+					this.exitRenameMode();
+				}, 0),
+			);
 		};
 
 		this.renameFocusOut = focusHandler;

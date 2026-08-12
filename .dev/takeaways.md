@@ -566,16 +566,24 @@ the render, not the render.
 
 Rename mode ends when focus leaves the header, checked one tick after
 `focusout` because activeElement is briefly `<body>` mid-change. Choosing a
-folder from the dropdown tears the row's input down and builds a new one,
-which parks focus on `<body>` for *several* ticks — so the guard read the gap
-in our own rebuild as the user clicking away, and the mode ended on a click
-that was meant to continue it.
+folder from the dropdown tears the row's input down and builds a new one, and
+whatever holds focus during that — `<body>`, or Obsidian pulling it back to
+the editor — read as the user clicking away. The mode ended on a click meant
+to continue it.
 
-It was a race, which is why it looked like a property of the folder: the same
-click kept rename mode or dropped it depending on which won, and adding a
-listener to observe it was enough to flip the outcome. The guard now looks
-several times over ~200 ms and only gives up when focus has genuinely settled
-elsewhere.
+The first fix widened the window: look several times over ~200 ms instead of
+once. It passed every automated check and the bug survived in real use,
+because where focus lands during a rebuild is not ours to predict and waiting
+longer only changes the odds. Timing fixes for races are how you get a bug
+that reproduces on someone else's machine and not on yours.
 
-Worth remembering as a shape: any "did the user leave?" check that samples
-focus once will misread a component that rebuilds itself.
+What works is not consulting focus at all while a session of ours is open:
+during browsing or typing, `focusout` cannot end the mode. Leaving for real is
+a click, which the click-away handler already catches; the focus path only
+needs to serve Tab, which only matters when rename mode sits idle.
+
+The test for it had to be made faithful twice. `document.body.focus()` moves
+nothing — body is not focusable — so the first version passed against
+deliberately broken code. Stealing focus into the editor, the way the app
+itself does, is what makes it fail without the guard and pass with it. A
+regression test that has never failed is a guess.

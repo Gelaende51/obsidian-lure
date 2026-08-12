@@ -744,6 +744,107 @@ test("dropdown: the keep-this-name entry stands out in blue", async () => {
 	expect("not the muted external tint", r.colour, (v) => v !== r.mutedColour);
 });
 
+// --------------------------------------------- rename mode stays put
+
+/**
+ * Builds a small in-vault tree with sibling folders, so the rename-mode
+ * dropdown has somewhere to descend into. Removed again by each test.
+ */
+const RENAME_FIXTURE = `
+	for (const path of ["LureFocus/a", "LureFocus/b"]) {
+		if (!app.vault.getAbstractFileByPath(path)) await app.vault.createFolder(path);
+	}
+	if (!app.vault.getAbstractFileByPath("LureFocus/a/note.md")) {
+		await app.vault.create("LureFocus/a/note.md", "fixture\\n");
+	}
+	${PAUSE(200)}
+	await app.workspace.getLeaf(false).openFile(app.vault.getAbstractFileByPath("LureFocus/a/note.md"));
+	${PAUSE(400)}
+`;
+
+const DROP_RENAME_FIXTURE = `
+	const folder = app.vault.getAbstractFileByPath("LureFocus");
+	if (folder) await app.vault.adapter.rmdir(folder.path, true);
+`;
+
+test("rename mode: choosing a folder descends instead of ending the mode", async () => {
+	const r = await page.evaluate(`
+		${RENAME_FIXTURE}
+		${breadcrumb}
+		document.querySelector(".lure-rename-btn").click();
+		${PAUSE(300)}
+		// Open the dropdown on the parent segment, which lists its siblings.
+		const seg = [...document.querySelectorAll(".view-header-breadcrumb")]
+			.find((el) => el.textContent.trim() === "a");
+		seg.click();
+		${PAUSE(500)}
+		const before = { rename: bc.renameMode, mode: bc.mode };
+
+		const item = [...document.querySelectorAll(".suggestion-item")]
+			.find((el) => el.textContent.trim() === "b");
+		item.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+		item.click();
+		${PAUSE(600)}
+
+		const after = { rename: bc.renameMode, mode: bc.mode, browsePath: bc.browsePath };
+		bc.cancelNavigation();
+		bc.renameMode = false;
+		bc.updateRenameModeStyling();
+		${DROP_RENAME_FIXTURE}
+		return { before, after };
+	`);
+	expect("dropdown opened in rename mode", r.before.rename, true);
+	expect("still in rename mode after picking a folder", r.after.rename, true);
+	expect("and it descended", r.after.browsePath, "LureFocus/b");
+});
+
+test("rename mode: focus moving away mid-session does not end it", async () => {
+	// The failure this encodes: descending rebuilds the row's input, and
+	// whatever takes focus while that happens — <body>, or Obsidian pulling
+	// it back to the editor — used to read as the user leaving, ending the
+	// mode on a click meant to continue it.
+	const r = await page.evaluate(`
+		${RENAME_FIXTURE}
+		${breadcrumb}
+		document.querySelector(".lure-rename-btn").click();
+		${PAUSE(300)}
+		const seg = [...document.querySelectorAll(".view-header-breadcrumb")]
+			.find((el) => el.textContent.trim() === "a");
+		seg.click();
+		${PAUSE(500)}
+		const opened = { rename: bc.renameMode, mode: bc.mode };
+
+		// Take focus out of the header the way the app itself does — into the
+		// editor. <body> would not do: it is not focusable, so focusing it
+		// moves nothing and the check never sees anything leave.
+		const editor = document.querySelector(".cm-content, .markdown-source-view [contenteditable]");
+		if (!editor) throw new Error("no editor to steal focus into");
+		editor.focus();
+		document.querySelector(".view-header").dispatchEvent(
+			new FocusEvent("focusout", { bubbles: true }),
+		);
+		${PAUSE(400)}
+		const survived = bc.renameMode;
+		const focusLanded = document.activeElement?.className?.slice?.(0, 30);
+
+		// A real click outside must still end it.
+		bc.cancelNavigation();
+		${PAUSE(200)}
+		document.querySelector(".workspace-leaf-content").click();
+		${PAUSE(300)}
+		const afterClickAway = bc.renameMode;
+
+		bc.renameMode = false;
+		bc.updateRenameModeStyling();
+		${DROP_RENAME_FIXTURE}
+		return { opened, survived, afterClickAway, focusLanded };
+	`);
+	expect("session open in rename mode", r.opened.rename, true);
+	expect("focus really left the header", r.focusLanded, (v) => !!v && !/view-header/.test(v));
+	expect("focus leaving mid-session is ignored", r.survived, true);
+	expect("but clicking away still ends it", r.afterClickAway, false);
+});
+
 // ------------------------------------------------------- invariants
 
 test("invariant: overwrite protection ignores whether a name is listed", async () => {
