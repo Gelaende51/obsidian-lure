@@ -49,6 +49,21 @@ import { warnsOnOpen } from "./fileKinds";
 import { t } from "./lang";
 
 const PATCHED_CLASS = "lure-patched";
+/**
+ * Delays, in milliseconds, between retries of a folder reveal's expand.
+ *
+ * Timers rather than animation frames, which is the whole point: a window
+ * that isn't painting — occluded, in the background, driven by automation —
+ * runs no rAF callbacks at all, so a retry scheduled that way simply never
+ * happened and the folder stayed shut with nothing to show why.
+ *
+ * The ladder backs off because the two cases have very different costs: a
+ * warm tree expands on the first synchronous try, while a window that has
+ * just loaded needs Obsidian to finish revealing first. Bounded, so a folder
+ * that genuinely cannot expand ends after ~1s rather than retrying forever.
+ */
+const EXPAND_BACKOFF_MS = [16, 32, 64, 128, 256, 512];
+
 const EDITING_CLASS = "lure-editing";
 const HIDE_NATIVE_CLASS = "lure-hide-native";
 const NATIVE_TITLE_HIDDEN_CLASS = "lure-native-title-hidden";
@@ -174,6 +189,8 @@ export class PathBreadcrumb {
 	private domListeners = new AbortController();
 	/** When on, breadcrumb/dropdown/text-input interactions move or rename the current file instead of navigating. */
 	private renameMode = false;
+	/** Pending folder-expand retries, cancelled on teardown so a dead instance stops touching the explorer. */
+	private expandTimers = new Set<number>();
 	/** Folders clicked/typed through so far while navigating; null when not browsing. */
 	private browsePath: string | null = null;
 	/** Message currently shown in the red validation tooltip, "" when the name is fine. */
@@ -424,6 +441,8 @@ export class PathBreadcrumb {
 
 	/** Restores the leaf's native title DOM. Called on leaf close / plugin unload. */
 	destroy(): void {
+		for (const timer of this.expandTimers) window.clearTimeout(timer);
+		this.expandTimers.clear();
 		this.editCleanup?.();
 		this.editCleanup = null;
 		this.removeDocumentClickAway();
@@ -1404,16 +1423,41 @@ export class PathBreadcrumb {
 	 * state actually changes, so the second one costs nothing.
 	 */
 	private expandInExplorer(path: string, onlyIfRevealed = false): void {
+		// Obsidian's reveal isn't synchronous, and on a window that has just
+		// loaded it is markedly slower: the folder's tree item exists and
+		// reports itself collapsible, but expanding it in the same frame as
+		// the click doesn't take. Asking again a moment later does.
+		//
+		// The old immediate + single-frame pair therefore worked on a warm
+		// tree and silently did nothing on a cold one — so the first reveal
+		// after every Obsidian start left the folder shut, which is exactly
+		// the case a user meets first. Keep asking across a few frames and
+		// stop as soon as it holds.
+		let attempt = 0;
 		const expand = (): void => {
 			const view = this.plugin.app.workspace.getLeavesOfType("file-explorer")[0]?.view as
 				| FileExplorerView
 				| undefined;
-			if (onlyIfRevealed && view?.tree?.focusedItem?.file?.path !== path) return;
+			// Re-checked every attempt rather than once: while this is
+			// retrying the user may have clicked elsewhere, and expanding a
+			// folder they have navigated away from would be its own bug.
+			//
+			// Crucially this waits rather than gives up. Obsidian sets the
+			// focused item as part of revealing, which on a freshly loaded
+			// window lands after the click returns — bailing out on the
+			// first look meant the common case, the first reveal after a
+			// restart, scheduled no retry at all and quietly never expanded.
+			const revealed = !onlyIfRevealed || view?.tree?.focusedItem?.file?.path === path;
 			const item = view?.fileItems?.[path];
-			if (item?.collapsible && item.collapsed) item.toggleCollapsed(false);
+			if (revealed && item?.collapsible && item.collapsed) item.toggleCollapsed(false);
+
+			const done = revealed && item !== undefined && !item.collapsed;
+			if (!done && attempt < EXPAND_BACKOFF_MS.length) {
+				const timer = window.setTimeout(expand, EXPAND_BACKOFF_MS[attempt++]);
+				this.expandTimers.add(timer);
+			}
 		};
 		expand();
-		window.requestAnimationFrame(expand);
 	}
 
 	/**
@@ -1945,6 +1989,10 @@ export class PathBreadcrumb {
 				// not the open note's — that note isn't what a move out there
 				// would be acting on.
 				keepName: this.externalFileName ?? this.file?.name ?? null,
+				keepPath:
+					this.externalFileName !== null && this.externalPath !== null
+						? externalJoin(this.externalPath, this.externalFileName)
+						: (this.file?.path ?? null),
 				shouldList: (child) => this.shouldListChild(child),
 				shouldListExternal: (child) => this.shouldListExternalChild(child),
 				warnsOnOpen: (extension) => this.warnsOnOpen(extension),

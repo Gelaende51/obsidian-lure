@@ -41,6 +41,11 @@ export interface SuggestContext {
 	/** Current file's name, offered as a "move here, keep this name" entry in rename mode. */
 	keepName: string | null;
 	/**
+	 * Where that file currently lives. A file never conflicts with itself,
+	 * so this is what tells the taken-name checks to ignore one entry.
+	 */
+	keepPath: string | null;
+	/**
 	 * Whether a child should appear in the list at all. Purely a display
 	 * filter — hidden entries still occupy their name, so overwrite
 	 * protection is unaffected by it.
@@ -122,12 +127,20 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		const suggestions: PathSuggestion[] = [];
 
 		// Pinned first in rename mode so moving a file without renaming
-		// it is always one click away, in whichever folder you've
-		// drilled into. Skipped when that name is already taken here —
-		// the conflicting file itself shows up greyed out below instead.
+		// it is always one click away, in whichever folder you've drilled
+		// into — every folder, including the one the file is already in.
+		// Skipped only when some *other* file has taken the name here; that
+		// one shows up greyed out below instead.
 		if (renameMode && keepName && matches(keepName)) {
 			const targetPath = folderPath ? `${folderPath}/${keepName}` : keepName;
-			if (!this.app.vault.getAbstractFileByPath(targetPath)) {
+			const taken = this.app.vault.getAbstractFileByPath(targetPath);
+			// A file does not conflict with itself. Treating it as taken in
+			// its own folder made the current name disappear from the list
+			// the moment you browsed back to where the note already is,
+			// which reads as the autocomplete breaking rather than as a
+			// rule. Selecting it there is the no-op move `moveFileTo`
+			// already short-circuits, so the entry costs nothing.
+			if (!taken || taken.path === context.keepPath) {
 				suggestions.push({
 					label: keepName,
 					kind: "keep-name",
@@ -166,6 +179,11 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 					disabled: false,
 				});
 			} else if (child instanceof TFile) {
+				// The file being renamed is already represented by the pinned
+				// keep-name entry above. Listing it again would show the name
+				// twice, the second time greyed out as though the note
+				// blocked its own rename.
+				if (renameMode && child.path === context.keepPath) continue;
 				// In rename mode existing files are greyed to mark the
 				// name as taken. They're still selectable — picking one
 				// just fills the input, where live validation flags the
@@ -229,14 +247,18 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		const suggestions: PathSuggestion[] = [];
 		if (context.renameMode && context.keepName && matches(context.keepName)) {
 			const keepName = context.keepName;
-			// Skipped when the name is taken here — including by the file
-			// itself, which is the "already in this folder" case where a move
-			// would be a no-op. The entry that shadows it is listed below.
-			if (!children.some((child) => child.name === keepName)) {
+			const targetPath = externalJoin(folderPath, keepName);
+			// Skipped when some other entry has taken the name here. The file
+			// itself doesn't count, exactly as inside the vault — otherwise
+			// the name vanishes as soon as you browse back to it.
+			const taken = children.some(
+				(child) => child.name === keepName && child.path !== context.keepPath,
+			);
+			if (!taken) {
 				suggestions.push({
 					label: keepName,
 					kind: "keep-name",
-					path: externalJoin(folderPath, keepName),
+					path: targetPath,
 					disabled: false,
 					external: true,
 				});
@@ -246,6 +268,8 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		return suggestions.concat(children
 			.filter((child) => {
 				if (!matches(child.name)) return false;
+				// Represented by the keep-name entry above; see the vault branch.
+				if (context.renameMode && child.path === context.keepPath) return false;
 				// A broken display filter must not empty the whole list.
 				try {
 					return context.shouldListExternal(child);

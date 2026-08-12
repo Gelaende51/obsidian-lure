@@ -498,3 +498,47 @@ Related: `app.setting.open()` does nothing useful in a background window,
 so a settings-tab assertion can't be made by driving the modal. Render the
 tab into a detached element instead — assign `tab.containerEl`, call
 `display()`, read the result, put the original back.
+
+## A reveal that only expanded on a warm tree
+
+`expandInExplorer` guarded its retry with `if (onlyIfRevealed && focused !== path) return;`
+— and returned *without scheduling the next attempt*. Obsidian sets the focused
+tree item as part of revealing, and on a freshly loaded window that lands after
+the click returns, so the first look failed and nothing ever tried again. The
+folder stayed shut on the first reveal after every Obsidian start, then worked
+for the rest of the session, which is the worst shape a bug can have: the
+demo is fine and the first impression is broken.
+
+The guard now waits rather than gives up — it re-checks on each attempt, so
+"the user navigated away" still cancels, but "the reveal has not landed yet"
+merely retries.
+
+## requestAnimationFrame does not fire in a window nobody is looking at
+
+The same retry had been scheduled with `requestAnimationFrame`. An Obsidian
+window driven over CDP paints no frames — measured: **zero** rAF callbacks in
+500 ms — so every rAF-scheduled retry in the codebase was dead code under
+automation, and would be equally dead for an occluded window. Timers do not
+have that dependency, so the backoff is `setTimeout` now.
+
+The same fact explains a screenshot that came out with the note text showing
+through the dropdown: Obsidian fades the popover in with a CSS transition, and
+a transition cannot advance without frames either. Setting `opacity` alone did
+not help — that only starts a second transition that also never advances. The
+capture disables the transition first, then sets the end state.
+
+## A file conflicting with itself
+
+In rename mode the "keep this name" entry was skipped whenever
+`getAbstractFileByPath(target)` found anything — including the very file being
+renamed. Browsing back to the note's own folder therefore made its name vanish
+from the list, and the note itself appeared greyed out as though it blocked its
+own rename. Both checks now ignore one path: the file's own.
+
+## Obsidian HTML-escapes its window title
+
+A vault named `L'Éclaire, c'est moi` appears in the CDP target list as
+`L&#39;Éclaire, c&#39;est moi`. Every tool here picks its window by matching
+` - <vault> - ` against that title, so an apostrophe in a vault name made the
+vault unreachable — with an error saying the window did not exist while it sat
+right there in the list. The titles are decoded before matching.
