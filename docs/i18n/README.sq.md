@@ -17,7 +17,7 @@ Obsidian 1.8.7+ · vetëm në kompjuter · AGPL-3.0
 
 - **Agjenti** — **Claude Opus 5** dhe **Claude Sonnet 5** (Anthropic, përmes Claude Code): shkroi TypeScript-in, CSS-në, të 45 grupet e përkthimeve dhe dokumentimin. Përkthimet janë prodhuar me makinë dhe nuk janë shqyrtuar nga folës amtarë.
 - **Autori** — Vault51: përcaktoi çdo veçori, provoi çdo version në një kasafortë të vërtetë, drejtoi ndreqjet, shqyrtoi të gjitha rezultatet.
-- **Konsumi** — 3–13 gusht 2026, nëntë seanca, ~4.928 përgjigje: ~7,2 milionë token të prodhuar, ~23,7 milionë të dërguar, ~1169,6 milionë rilexime nga fshehtina (~1200,5 milionë gjithsej).
+- **Konsumi** — 3–13 gusht 2026, nëntë seanca, \~4.928 përgjigje: \~7,2 milionë token të prodhuar, \~23,7 milionë të dërguar, \~1169,6 milionë rilexime nga fshehtina (\~1200,5 milionë gjithsej).
 
 ## Veçoritë
 
@@ -60,7 +60,7 @@ Asnjëra prej shkyçjeve nuk ruhet as në hapësirën e punës, as në cilësime
 
 ## Instalimi
 
-Ende nuk gjendet në katalogun e shtojcave të komunitetit.
+I listuar te [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), por ende i paaprovuar për shfletuesin brenda aplikacionit — prandaj instalojeni me një nga këto mënyra:
 
 **Me dorë:** shkarko `main.js`, `manifest.json` dhe `styles.css` nga [lëshimi i fundit](https://github.com/Gelaende51/obsidian-lure/releases) te `<vault>/.obsidian/plugins/lure/`, pastaj ndize te **Konfigurime → Shtojca të treta**.
 
@@ -99,6 +99,7 @@ Kontribuuesit do të renditen këtu sapo të mbërrijnë kontributet.
 ## Lidhje
 
 - **Dokumentimi:** [docs/](../)
+- **Faqja e shtojcës:** https://community.obsidian.md/plugins/lure
 - **Prania në web / burimi:** https://github.com/Gelaende51/obsidian-lure
 - **Dhurimet:** [Ko-fi](https://ko-fi.com/vault51) — shih [si të kontribuosh](#si-të-kontribuosh).
 - **Licenca:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51. Degëzimet dhe ndërtimet e rishpërndara duhet ta nxjerrin burimin e tyre me të njëjtën licencë.

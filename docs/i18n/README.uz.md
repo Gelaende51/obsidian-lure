@@ -17,7 +17,7 @@ Obsidian 1.8.7+ · faqat kompyuter uchun · AGPL-3.0
 
 - **Agent** — **Claude Opus 5** va **Claude Sonnet 5** (Anthropic, Claude Code orqali): TypeScript kodini, CSS'ni, barcha 45 ta tarjima to'plamini va hujjatlarni yozdi. Tarjimalar mashina tomonidan qilingan va ona tili egalari tomonidan tekshirilmagan.
 - **Muallif** — Vault51: har bir imkoniyatni belgiladi, har bir versiyani haqiqiy omborda sinab ko'rdi, tuzatishlarni yo'naltirdi, barcha natijalarni ko'rib chiqdi.
-- **Sarf** — 2026-yil 3–13-avgust, to‘qqiz seans, ~4 928 javob: ~7,2 mln yaratilgan token, ~23,7 mln yuborilgan, keshdan ~1169,6 mln qayta o'qish (jami ~1200,5 mln).
+- **Sarf** — 2026-yil 3–13-avgust, to‘qqiz seans, \~4 928 javob: \~7,2 mln yaratilgan token, \~23,7 mln yuborilgan, keshdan \~1169,6 mln qayta o'qish (jami \~1200,5 mln).
 
 ## Imkoniyatlar
 
@@ -60,7 +60,7 @@ Ikkala ochish ham ish maydoniga yoki sozlamalarga saqlanmaydi, shuning uchun yoz
 
 ## O'rnatish
 
-Hozircha hamjamiyat plaginlari katalogida yo'q.
+[community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) da ro'yxatga olingan, ammo ilova ichidagi brauzer uchun hali tasdiqlanmagan — shuning uchun uni quyidagi usullardan biri bilan o'rnating:
 
 **Qo'lda:** `main.js`, `manifest.json` va `styles.css` fayllarini [eng so'nggi chiqarilmadan](https://github.com/Gelaende51/obsidian-lure/releases) `<vault>/.obsidian/plugins/lure/` ichiga yuklab oling, so'ng uni **Sozlamalar → Tashqi plaginlar** bo'limida yoqing.
 
@@ -99,6 +99,7 @@ Hissa qo'shganlar hissalar kelib tushgan sari shu yerda sanab o'tiladi.
 ## Havolalar
 
 - **Hujjatlar:** [docs/](../)
+- **Plagin sahifasi:** https://community.obsidian.md/plugins/lure
 - **Veb / manba:** https://github.com/Gelaende51/obsidian-lure
 - **Xayriyalar:** [Ko-fi](https://ko-fi.com/vault51) — qarang: [qanday hissa qo'shish](#qanday-hissa-qoshish).
 - **Litsenziya:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51. Forklar va qayta tarqatilgan yig'malar o'z manbasini xuddi shu litsenziya ostida chiqarishi shart.

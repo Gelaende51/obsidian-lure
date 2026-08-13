@@ -105,10 +105,15 @@ const all = totals.output + sent + totals.cacheRead;
 const sessions = files.length;
 const sessionWord = sessions < WORDS.length ? WORDS[sessions] : String(sessions);
 
+// Escaped tildes, not bare ones. Markdown — GitHub's and the community
+// site's alike — reads a *single* tilde as a strikethrough delimiter, so five
+// approximation signs on one line pair up and strike the text between the
+// first and the last. The disclosure rendered as a correction of itself on
+// the plugin's public page until this was escaped. `\~` renders as `~`.
 const line =
 	`- **Usage** — ${range(first, last)}, ${sessionWord} sessions, ` +
-	`~${responses.toLocaleString("en-US")} responses: ~${millions(totals.output)} tokens generated, ` +
-	`~${millions(sent)} sent, ~${millions(totals.cacheRead)} cached re-reads (~${millions(all)} total).`;
+	`\\~${responses.toLocaleString("en-US")} responses: \\~${millions(totals.output)} tokens generated, ` +
+	`\\~${millions(sent)} sent, \\~${millions(totals.cacheRead)} cached re-reads (\\~${millions(all)} total).`;
 
 const readme = join(root, "README.md");
 const text = readFileSync(readme, "utf8");

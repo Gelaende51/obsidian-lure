@@ -21,7 +21,7 @@ Obsidian 1.8.7+ · kun datamaskin · AGPL-3.0
 
 - **Agent** — **Claude Opus 5** og **Claude Sonnet 5** (Anthropic, via Claude Code): skrev TypeScript-koden, CSS-en, alle 45 oversettelsessettene og dokumentasjonen. Oversettelsene er laget maskinelt og ikke gjennomlest av morsmålsbrukere.
 - **Forfatter** — Vault51: fastsatte hver funksjon, prøvde hver utgave i et ekte hvelv, styrte rettelsene og leste gjennom alle resultater.
-- **Forbruk** — 3.–13. august 2026, ni økter, ~4928 svar: ~7,2 mill. genererte tokens, ~23,7 mill. sendte, ~1169,6 mill. gjenlesinger fra hurtiglageret (~1200,5 mill. totalt).
+- **Forbruk** — 3.–13. august 2026, ni økter, \~4928 svar: \~7,2 mill. genererte tokens, \~23,7 mill. sendte, \~1169,6 mill. gjenlesinger fra hurtiglageret (\~1200,5 mill. totalt).
 
 ## Funksjoner
 
@@ -64,7 +64,7 @@ Ingen av opplåsingene lagres i arbeidsflaten eller i innstillingene, så skrivi
 
 ## Installasjon
 
-Ennå ikke i katalogen over fellesskapstillegg.
+Oppført på [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), men ennå ikke godkjent for nettleseren i appen — installer det på en av disse måtene:
 
 **Manuelt:** last ned `main.js`, `manifest.json` og `styles.css` fra [siste utgivelse](https://github.com/Gelaende51/obsidian-lure/releases) til `<vault>/.obsidian/plugins/lure/`, og slå det så på under **Innstillinger → Third-party plugin**.
 
@@ -103,6 +103,7 @@ Bidragsytere blir nevnt her etter hvert som bidrag kommer inn.
 ## Lenker
 
 - **Dokumentasjon:** [docs/](../)
+- **Tilleggsside:** https://community.obsidian.md/plugins/lure
 - **Nettsted / kildekode:** https://github.com/Gelaende51/obsidian-lure
 - **Donasjoner:** [Ko-fi](https://ko-fi.com/vault51) — se [bidra](#bidra).
 - **Lisens:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51. Forgreninger og videredistribuerte bygg må gi ut kildekoden sin under samme lisens.

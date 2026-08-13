@@ -59,7 +59,7 @@ Obsidian의 개발자 정책은 보관함 밖 파일에 대한 모든 접근을 
 
 ## 설치
 
-아직 커뮤니티 플러그인 목록에는 없습니다.
+[community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure)에 등재되어 있지만 앱 내 브라우저에는 아직 승인되지 않았습니다 — 다음 방법 중 하나로 설치하세요:
 
 **수동:** [최신 릴리스](https://github.com/Gelaende51/obsidian-lure/releases)에서 `main.js`, `manifest.json`, `styles.css`를 `<vault>/.obsidian/plugins/lure/`로 내려받은 다음 **설정 → 커뮤니티 플러그인**에서 켭니다.
 
@@ -98,6 +98,7 @@ Obsidian의 개발자 정책은 보관함 밖 파일에 대한 모든 접근을 
 ## 링크
 
 - **문서:** [docs/](../)
+- **플러그인 페이지:** https://community.obsidian.md/plugins/lure
 - **웹 / 소스:** https://github.com/Gelaende51/obsidian-lure
 - **후원:** [Ko-fi](https://ko-fi.com/vault51) — [기여](#기여)를 참고하세요.
 - **라이선스:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51. 포크와 재배포되는 빌드는 같은 라이선스로 소스를 공개해야 합니다.

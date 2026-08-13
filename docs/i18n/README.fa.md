@@ -64,7 +64,7 @@ Obsidian 1.8.7+ · فقط رایانهٔ رومیزی · AGPL-3.0
 
 ## نصب
 
-هنوز در فهرست افزونه‌های انجمن نیست.
+در [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) فهرست شده، اما هنوز برای مرورگر درون‌برنامه تأیید نشده است — پس آن را به یکی از این روش‌ها نصب کنید:
 
 **دستی:** `main.js`، `manifest.json` و `styles.css` را از [آخرین انتشار](https://github.com/Gelaende51/obsidian-lure/releases) در `<vault>/.obsidian/plugins/lure/` بارگیری کنید، سپس آن را در **تنظیمات ← افزونه‌های شخص‌ثالث** روشن کنید.
 
@@ -103,6 +103,7 @@ Obsidian 1.8.7+ · فقط رایانهٔ رومیزی · AGPL-3.0
 ## پیوندها
 
 - **مستندات:** [docs/](../)
+- **صفحهٔ افزونه:** https://community.obsidian.md/plugins/lure
 - **حضور وب / منبع:** https://github.com/Gelaende51/obsidian-lure
 - **کمک مالی:** [Ko-fi](https://ko-fi.com/vault51) — ببینید [چگونه مشارکت کنیم](#چگونه-مشارکت-کنیم).
 - **پروانه:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only، © 2026 Vault51. انشعاب‌ها و ساخت‌های بازتوزیع‌شده باید منبع خود را با همین پروانه منتشر کنند.

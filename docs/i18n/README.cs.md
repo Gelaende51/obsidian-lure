@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · pouze počítač · AGPL-3.0
 
 - **Agent** — **Claude Opus 5** a **Claude Sonnet 5** (Anthropic, přes Claude Code): napsal TypeScript, CSS, všech 45 sad překladů a dokumentaci. Překlady vznikly strojově a rodilí mluvčí je nekontrolovali.
 - **Autor** — Vault51: určil každou funkci, každou verzi vyzkoušel ve skutečném trezoru, řídil opravy, prošel všechny výstupy.
-- **Spotřeba** — 3.–13. srpna 2026, devět sezení, ~4928 odpovědí: ~7,2 mil. vygenerovaných tokenů, ~23,7 mil. odeslaných, ~1169,6 mil. opětovných čtení z mezipaměti (~1200,5 mil. celkem).
+- **Spotřeba** — 3.–13. srpna 2026, devět sezení, \~4928 odpovědí: \~7,2 mil. vygenerovaných tokenů, \~23,7 mil. odeslaných, \~1169,6 mil. opětovných čtení z mezipaměti (\~1200,5 mil. celkem).
 
 ## Funkce
 
@@ -59,7 +59,7 @@ Ani jedno odemčení se neukládá do pracovní plochy ani do nastavení, takže
 
 ## Instalace
 
-Zatím není v adresáři pluginů komunity.
+Uvedeno na [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), ale zatím neschváleno pro prohlížeč v aplikaci — nainstalujte jej jedním z těchto způsobů:
 
 **Ručně:** stáhni `main.js`, `manifest.json` a `styles.css` z [nejnovějšího vydání](https://github.com/Gelaende51/obsidian-lure/releases) do `<vault>/.obsidian/plugins/lure/` a pak plugin zapni v **Nastavení → Pluginy třetích stran**.
 
@@ -98,6 +98,7 @@ Přispěvatelé zde budou uvedeni, jak budou příspěvky přicházet.
 ## Odkazy
 
 - **Dokumentace:** [docs/](../)
+- **Stránka pluginu:** https://community.obsidian.md/plugins/lure
 - **Web / zdrojový kód:** https://github.com/Gelaende51/obsidian-lure
 - **Dary:** [Ko-fi](https://ko-fi.com/vault51) — viz [jak přispět](#jak-přispět).
 - **Licence:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51. Forky a přebalená vydání musí zveřejnit své zdroje pod toutéž licencí.

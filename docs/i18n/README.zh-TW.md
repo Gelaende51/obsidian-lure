@@ -59,7 +59,7 @@ Obsidian 的開發者規範要求外掛程式說明一切對儲存庫之外檔�
 
 ## 安裝
 
-尚未收錄進社群外掛程式目錄。
+已在 [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) 列出，但尚未獲准進入應用程式內的瀏覽器 —— 因此請用下列方式之一安裝：
 
 **手動：**從[最新發行版](https://github.com/Gelaende51/obsidian-lure/releases)下載 `main.js`、`manifest.json` 和 `styles.css` 到 `<vault>/.obsidian/plugins/lure/`，然後在**設定 → 第三方外掛程式**中啟用。
 
@@ -98,6 +98,7 @@ Obsidian 的開發者規範要求外掛程式說明一切對儲存庫之外檔�
 ## 連結
 
 - **文件：**[docs/](../)
+- **外掛程式頁面：** https://community.obsidian.md/plugins/lure
 - **網站 / 原始碼：**https://github.com/Gelaende51/obsidian-lure
 - **贊助：**[Ko-fi](https://ko-fi.com/vault51) — 參見[參與貢獻](#參與貢獻)。
 - **授權：**[LICENSE](../../LICENSE) — GNU AGPL-3.0-only，© 2026 Vault51。分支版本與再散布的建置必須以同一授權公開其原始碼。

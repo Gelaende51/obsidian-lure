@@ -668,3 +668,47 @@ while everything else needed only 1.4.10.
 Worth knowing which calls are expensive before reaching for them. `@since` is
 in the shipped `.d.ts`; `grep -B12 <symbol> node_modules/obsidian/obsidian.d.ts`
 answers it in one line.
+
+## A single tilde is a strikethrough delimiter
+
+The AI-disclosure line uses `~` before each number, because none of them is
+exact. Five of them on one line, and GitHub-flavoured Markdown — GitHub's
+renderer and the community site's alike — pairs the first with the last and
+strikes out everything between:
+
+```
+~4,928 responses: ~7.2 M generated, ~23.7 M sent, ~1169.6 M cached (~1200.5 M total).
+```
+
+renders as *4,928 responses … cached (* struck through, followed by an intact
+"1200.5 M total". The disclosure appeared on the plugin's public page as a
+correction of itself. GFM's strikethrough takes "one or two tildes", which is
+the part that is easy to miss: `~~` is the documented form, but a lone `~` is
+just as much a delimiter, and an odd number of them produces a partial strike
+that looks deliberate.
+
+Escaping each one as `\~` renders identically to a bare `~` everywhere and
+cannot pair. The generator in `.dev/usage-stats.mjs` emits the escaped form, so
+the next refresh does not undo it. Worth remembering for any prose that uses
+`~` as "approximately" — the same trap is waiting in every README that does.
+
+## Declaring a dependency's types can be better than installing them
+
+The community review lints with type information but cannot resolve
+`@types/node`, so every value returned by a Node builtin degrades to `any`, and
+each use of it trips a separate type-aware rule. That was 141 of 164 findings
+on the public scorecard, none of them reproducible locally.
+
+Declaring the surface instead — `declare module "fs"` and friends, in the
+repository — fixes it, and turns out to be worth doing on its own merits. The
+declarations are *narrower* than upstream, which is a feature: `readFileSync`
+declared only for `"utf8"` makes an un-encoded call a compile error, and
+writing the file immediately caught a `statSync(...).isFile()` that a grep of
+the call sites had missed. For a plugin whose reviewers care about filesystem
+access, "here is every syscall it can make, in forty lines" is a better answer
+than a paragraph of reassurance.
+
+The check that matters afterwards is that the build passes with the package
+*absent*, since that is the environment being modelled. And the bundle should
+come out byte-identical, because types erase — if it does not, the swap changed
+behaviour and something is wrong.

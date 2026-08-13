@@ -62,7 +62,7 @@ Obsidian 1.8.7+ · למחשב שולחני בלבד · AGPL-3.0
 
 ## התקנה
 
-עדיין לא נמצא בספריית תוספי הקהילה.
+רשום ב-[community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), אך טרם אושר לדפדפן שבתוך היישום — התקינו אותו באחת מהדרכים האלה:
 
 **ידנית:** הורידו את `main.js`, `manifest.json` ו-`styles.css` מ[הגרסה האחרונה](https://github.com/Gelaende51/obsidian-lure/releases) אל `<vault>/.obsidian/plugins/lure/`, ואז הפעילו אותו תחת **הגדרות ← תוספים קהילתיים**.
 
@@ -101,6 +101,7 @@ Obsidian 1.8.7+ · למחשב שולחני בלבד · AGPL-3.0
 ## קישורים
 
 - **תיעוד:** [docs/](../)
+- **עמוד התוסף:** https://community.obsidian.md/plugins/lure
 - **נוכחות ברשת / מקור:** https://github.com/Gelaende51/obsidian-lure
 - **תרומות:** [Ko-fi](https://ko-fi.com/vault51) — ראו [איך לתרום](#איך-לתרום).
 - **רישיון:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51. פיצולים ובנייות שמופצות מחדש חייבים לפרסם את המקור שלהם תחת אותו רישיון.

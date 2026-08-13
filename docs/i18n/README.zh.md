@@ -59,7 +59,7 @@ Obsidian 的开发者规范要求插件说明一切对仓库之外文件的访�
 
 ## 安装
 
-尚未收录进社区插件目录。
+已在 [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) 列出，但尚未获准进入应用内的浏览器 —— 因此请用下列方式之一安装：
 
 **手动：**从[最新发布](https://github.com/Gelaende51/obsidian-lure/releases)下载 `main.js`、`manifest.json` 和 `styles.css` 到 `<vault>/.obsidian/plugins/lure/`，然后在**设置 → 第三方插件**中启用。
 
@@ -98,6 +98,7 @@ Obsidian 的开发者规范要求插件说明一切对仓库之外文件的访�
 ## 链接
 
 - **文档：**[docs/](../)
+- **插件页面：** https://community.obsidian.md/plugins/lure
 - **网站 / 源码：**https://github.com/Gelaende51/obsidian-lure
 - **捐赠：**[Ko-fi](https://ko-fi.com/vault51) — 参见[参与贡献](#参与贡献)。
 - **许可证：**[LICENSE](../../LICENSE) — GNU AGPL-3.0-only，© 2026 Vault51。分支版本与再分发的构建必须以同一许可证公开其源码。

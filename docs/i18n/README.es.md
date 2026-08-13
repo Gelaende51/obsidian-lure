@@ -17,7 +17,7 @@ Obsidian 1.8.7+ · solo escritorio · AGPL-3.0
 
 - **Agente** — **Claude Opus 5** y **Claude Sonnet 5** (Anthropic, mediante Claude Code): escribió el TypeScript, el CSS, los 45 juegos de traducciones y la documentación. Las traducciones son automáticas y no han sido revisadas por hablantes nativos.
 - **Autor** — Vault51: definió cada función, probó cada iteración en una bóveda real, dirigió las correcciones y revisó todos los resultados.
-- **Consumo** — del 3 al 13 de agosto de 2026, nueve sesiones, ~4.928 respuestas: ~7,2 M de tokens generados, ~23,7 M enviados, ~1169,6 M de relecturas en caché (~1200,5 M en total).
+- **Consumo** — del 3 al 13 de agosto de 2026, nueve sesiones, \~4.928 respuestas: \~7,2 M de tokens generados, \~23,7 M enviados, \~1169,6 M de relecturas en caché (\~1200,5 M en total).
 
 ## Funciones
 
@@ -60,7 +60,7 @@ Ningún desbloqueo se guarda en el espacio de trabajo ni en las opciones, así q
 
 ## Instalación
 
-Todavía no está en el directorio de complementos comunitarios.
+Aparece en [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), pero todavía no está aprobado para el explorador dentro de la aplicación: instálalo de una de estas maneras:
 
 **Manual:** descarga `main.js`, `manifest.json` y `styles.css` de la [última versión publicada](https://github.com/Gelaende51/obsidian-lure/releases) en `<vault>/.obsidian/plugins/lure/` y actívalo en **Preferencias → Complementos comunitarios**.
 
@@ -99,6 +99,7 @@ Los contribuyentes se irán listando aquí a medida que lleguen aportaciones.
 ## Enlaces
 
 - **Documentación:** [docs/](../)
+- **Página del complemento:** https://community.obsidian.md/plugins/lure
 - **Presencia web / código fuente:** https://github.com/Gelaende51/obsidian-lure
 - **Donaciones:** [Ko-fi](https://ko-fi.com/vault51) — véase [cómo contribuir](#cómo-contribuir).
 - **Licencia:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51. Los forks y las compilaciones redistribuidas deben publicar su código fuente bajo la misma licencia.

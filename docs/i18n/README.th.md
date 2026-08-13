@@ -62,7 +62,7 @@ Obsidian 1.8.7+ · เดสก์ท็อปเท่านั้น · AGPL-3
 
 ## การติดตั้ง
 
-ยังไม่อยู่ในไดเรกทอรีปลั๊กอินของชุมชน
+มีอยู่ที่ [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) แต่ยังไม่ได้รับอนุมัติสำหรับตัวเรียกดูในแอป — จึงติดตั้งด้วยวิธีใดวิธีหนึ่งต่อไปนี้:
 
 **ด้วยตนเอง:** ดาวน์โหลด `main.js`, `manifest.json` และ `styles.css` จาก [รุ่นล่าสุด](https://github.com/Gelaende51/obsidian-lure/releases) ไปไว้ที่ `<vault>/.obsidian/plugins/lure/` แล้วเปิดใช้งานที่ **การตั้งค่า → ปลั๊กอินโดยชุมชน**
 
@@ -101,6 +101,7 @@ Obsidian 1.8.7+ · เดสก์ท็อปเท่านั้น · AGPL-3
 ## ลิงก์
 
 - **เอกสาร:** [docs/](../)
+- **หน้าปลั๊กอิน:** https://community.obsidian.md/plugins/lure
 - **เว็บ / ซอร์ส:** https://github.com/Gelaende51/obsidian-lure
 - **การบริจาค:** [Ko-fi](https://ko-fi.com/vault51) — ดู [การร่วมพัฒนา](#การร่วมพัฒนา)
 - **สัญญาอนุญาต:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51 ฉบับที่แยกไปพัฒนาต่อและบิลด์ที่แจกจ่ายซ้ำต้องเผยแพร่ซอร์สของตนภายใต้สัญญาอนุญาตเดียวกัน

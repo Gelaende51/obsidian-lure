@@ -63,7 +63,7 @@ Obsidian 1.8.7+ · لسطح المكتب فقط · AGPL-3.0
 
 ## التثبيت
 
-ليست بعدُ في دليل إضافات المجتمع.
+مُدرَجة في [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure)، لكنها لم تُعتمد بعد للمتصفح داخل التطبيق — فثبّتها بإحدى هذه الطرق:
 
 **يدويًا:** نزِّل `main.js` و`manifest.json` و`styles.css` من [أحدث إصدار](https://github.com/Gelaende51/obsidian-lure/releases) إلى `<vault>/.obsidian/plugins/lure/`، ثم فعِّلها من **الإعدادات ← إضافات تابعة لجهات خارجية**.
 
@@ -102,6 +102,7 @@ Obsidian 1.8.7+ · لسطح المكتب فقط · AGPL-3.0
 ## روابط
 
 - **التوثيق:** [docs/](../)
+- **صفحة الإضافة:** https://community.obsidian.md/plugins/lure
 - **الموقع / المصدر:** https://github.com/Gelaende51/obsidian-lure
 - **التبرعات:** [Ko-fi](https://ko-fi.com/vault51) — انظر [المساهمة](#المساهمة).
 - **الرخصة:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only، © 2026 Vault51. على النسخ المتفرعة والبِنى المعاد توزيعها أن تنشر مصدرها بالرخصة نفسها.

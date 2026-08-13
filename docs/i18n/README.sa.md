@@ -64,7 +64,7 @@ Obsidian इत्यस्य विकासकनीतयः आदिशन
 
 ## संस्थापनम्
 
-अद्यापि समुदायप्लगिन्-सूच्यां नास्ति।
+[community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) इत्यत्र सूचितम्, परं अनुप्रयोगान्तर्गतस्य अन्वेषकस्य कृते अद्यापि न स्वीकृतम् — अतः एतेषु केनचित् प्रकारेण संस्थापयतु:
 
 **हस्तेन** — [नवीनतमविमोचनात्](https://github.com/Gelaende51/obsidian-lure/releases) `main.js`, `manifest.json`, `styles.css` इति `<vault>/.obsidian/plugins/lure/` इत्यत्र अवतारयतु, ततः **Settings → Community plugins** इत्यत्र सक्रियं करोतु।
 
@@ -103,6 +103,7 @@ Obsidian इत्यस्य विकासकनीतयः आदिशन
 ## सन्धयः
 
 - **प्रलेखनम्** — [docs/](../)
+- **प्लगिन्-पृष्ठम्:** https://community.obsidian.md/plugins/lure
 - **जालस्थानम् / स्रोतः** — https://github.com/Gelaende51/obsidian-lure
 - **दानानि** — [Ko-fi](https://ko-fi.com/vault51) — पश्यतु [कथं सहयोगः कर्तव्यः](#कथं-सहयोगः-कर्तव्यः)।
 - **अनुज्ञप्तिः** — [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51। शाखाः पुनर्वितरितनिर्माणानि च स्वकीयं स्रोतं तयैव अनुज्ञप्त्या प्रकाशयेयुः।

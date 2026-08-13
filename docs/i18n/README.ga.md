@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · deasc amháin · AGPL-3.0
 
 - **Gníomhaire** — **Claude Opus 5** agus **Claude Sonnet 5** (Anthropic, trí Claude Code): scríobh sé an TypeScript, an CSS, na 45 sraith aistriúcháin ar fad agus an doiciméadú. Is aistriúcháin mheaisín iad agus níor léigh cainteoirí dúchais iad.
 - **Údar** — Vault51: shocraigh sé gach gné, thriail sé gach leagan i dtaisceadán fíor, stiúir sé na ceartúcháin, léigh sé gach toradh.
-- **Úsáid** — 3–13 Lúnasa 2026, naoi seisiún, ~4,928 freagra: ~7.2 milliún ceadchomhartha ginte, ~23.7 milliún seolta, ~1169.6 milliún athléamh ón taisce (~1200.5 milliún san iomlán).
+- **Úsáid** — 3–13 Lúnasa 2026, naoi seisiún, \~4,928 freagra: \~7.2 milliún ceadchomhartha ginte, \~23.7 milliún seolta, \~1169.6 milliún athléamh ón taisce (\~1200.5 milliún san iomlán).
 
 ## Gnéithe
 
@@ -59,7 +59,7 @@ Ní shábháiltear ceachtar díghlasáil sa spás oibre ná sna socruithe, mar s
 
 ## Suiteáil
 
-Níl sé i gcomhadlann bhreiseán an phobail go fóill.
+Liostaithe ag [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), ach níl sé faofa fós don bhrabhsálaí san fheidhmchlár — suiteáil ar cheann de na bealaí seo é:
 
 **De láimh:** íoslódáil `main.js`, `manifest.json` agus `styles.css` ón [eisiúint is déanaí](https://github.com/Gelaende51/obsidian-lure/releases) go dtí `<vault>/.obsidian/plugins/lure/`, ansin cuir ar siúl é faoi **Socruithe → Breiseáin pobail**.
 
@@ -98,6 +98,7 @@ Liostófar rannpháirtithe anseo de réir mar a thagann ranníocaíochtaí istea
 ## Naisc
 
 - **Doiciméadú:** [docs/](../)
+- **Leathanach an bhreiseáin:** https://community.obsidian.md/plugins/lure
 - **Láithreacht gréasáin / foinse:** https://github.com/Gelaende51/obsidian-lure
 - **Síntiúis:** [Ko-fi](https://ko-fi.com/vault51) — féach [conas cuidiú](#conas-cuidiú).
 - **Ceadúnas:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51. Ní mór do fhorcanna agus do thógálacha athdháilte a bhfoinse a eisiúint faoin gceadúnas céanna.

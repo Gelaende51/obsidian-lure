@@ -17,7 +17,7 @@ Obsidian 1.8.7+ · tylko komputer · AGPL-3.0
 
 - **Agent** — **Claude Opus 5** i **Claude Sonnet 5** (Anthropic, przez Claude Code): napisał TypeScript, CSS, wszystkie 45 zestawów tłumaczeń i dokumentację. Tłumaczenia powstały maszynowo i nie były sprawdzane przez native speakerów.
 - **Autor** — Vault51: określił każdą funkcję, przetestował każdą wersję w prawdziwym skarbcu, pokierował poprawkami, przejrzał wszystkie wyniki.
-- **Zużycie** — 3–13 sierpnia 2026, dziewięć sesji, ~4928 odpowiedzi: ~7,2 mln wygenerowanych tokenów, ~23,7 mln wysłanych, ~1169,6 mln odczytów z pamięci podręcznej (~1200,5 mln łącznie).
+- **Zużycie** — 3–13 sierpnia 2026, dziewięć sesji, \~4928 odpowiedzi: \~7,2 mln wygenerowanych tokenów, \~23,7 mln wysłanych, \~1169,6 mln odczytów z pamięci podręcznej (\~1200,5 mln łącznie).
 
 ## Funkcje
 
@@ -60,7 +60,7 @@ Zasady Obsidiana dla twórców wymagają, by wtyczka wyjaśniła każdy dostęp 
 
 ## Instalacja
 
-Jeszcze nie ma jej w katalogu wtyczek społeczności.
+Widnieje na [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), ale nie została jeszcze zatwierdzona do przeglądarki w aplikacji — zainstaluj ją na jeden z tych sposobów:
 
 **Ręcznie:** pobierz `main.js`, `manifest.json` i `styles.css` z [najnowszego wydania](https://github.com/Gelaende51/obsidian-lure/releases) do `<vault>/.obsidian/plugins/lure/`, a potem włącz wtyczkę w **Ustawienia → Wtyczki społeczności**.
 
@@ -99,6 +99,7 @@ Współtwórcy będą wymieniani tutaj w miarę napływu wkładu.
 ## Odnośniki
 
 - **Dokumentacja:** [docs/](../)
+- **Strona wtyczki:** https://community.obsidian.md/plugins/lure
 - **Obecność w sieci / źródła:** https://github.com/Gelaende51/obsidian-lure
 - **Darowizny:** [Ko-fi](https://ko-fi.com/vault51) — zobacz [współtworzenie](#współtworzenie).
 - **Licencja:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51. Forki i redystrybuowane wydania muszą udostępniać swoje źródła na tej samej licencji.

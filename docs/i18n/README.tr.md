@@ -17,7 +17,7 @@ Obsidian 1.8.7+ · yalnızca masaüstü · AGPL-3.0
 
 - **Aracı** — **Claude Opus 5** ve **Claude Sonnet 5** (Anthropic, Claude Code üzerinden): TypeScript kodunu, CSS'i, 45 çeviri takımının tamamını ve belgeleri yazdı. Çeviriler makineyle üretildi ve ana dili konuşanlarca gözden geçirilmedi.
 - **Yazar** — Vault51: her özelliği belirledi, her sürümü gerçek bir kasada denedi, düzeltmeleri yönlendirdi, bütün çıktıları gözden geçirdi.
-- **Tüketim** — 3–13 Ağustos 2026, dokuz oturum, ~4.928 yanıt: ~7,2 M üretilen jeton, ~23,7 M gönderilen, ~1169,6 M önbellekten yeniden okuma (~1200,5 M toplam).
+- **Tüketim** — 3–13 Ağustos 2026, dokuz oturum, \~4.928 yanıt: \~7,2 M üretilen jeton, \~23,7 M gönderilen, \~1169,6 M önbellekten yeniden okuma (\~1200,5 M toplam).
 
 ## Özellikler
 
@@ -60,7 +60,7 @@ Kilit açmaların hiçbiri çalışma alanına ya da ayarlara kaydedilmez, dolay
 
 ## Kurulum
 
-Henüz topluluk eklentileri dizininde değil.
+[community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) adresinde listeleniyor, ancak uygulama içindeki tarayıcı için henüz onaylanmadı — bu yollardan biriyle kurun:
 
 **Elle:** `main.js`, `manifest.json` ve `styles.css` dosyalarını [en son sürümden](https://github.com/Gelaende51/obsidian-lure/releases) `<vault>/.obsidian/plugins/lure/` klasörüne indirin, sonra **Ayarlar → Topluluk Eklentileri** altından etkinleştirin.
 
@@ -99,6 +99,7 @@ Katkılar geldikçe katkıda bulunanlar burada listelenecek.
 ## Bağlantılar
 
 - **Belgeler:** [docs/](../)
+- **Eklenti sayfası:** https://community.obsidian.md/plugins/lure
 - **Web varlığı / kaynak:** https://github.com/Gelaende51/obsidian-lure
 - **Bağışlar:** [Ko-fi](https://ko-fi.com/vault51) — bkz. [katkıda bulunma](#katkıda-bulunma).
 - **Lisans:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51. Çatallamalar ve yeniden dağıtılan derlemeler kaynaklarını aynı lisansla yayımlamak zorundadır.

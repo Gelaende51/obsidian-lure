@@ -60,7 +60,7 @@ Không lần mở khóa nào được lưu vào không gian làm việc hay vào
 
 ## Cài đặt
 
-Chưa có trong danh mục phần mở rộng cộng đồng.
+Được liệt kê tại [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), nhưng chưa được duyệt cho trình duyệt trong ứng dụng — vậy hãy cài đặt bằng một trong các cách sau:
 
 **Thủ công:** tải `main.js`, `manifest.json` và `styles.css` từ [bản phát hành mới nhất](https://github.com/Gelaende51/obsidian-lure/releases) vào `<vault>/.obsidian/plugins/lure/`, rồi bật nó trong **Cài đặt → Phần mở rộng của bên thứ ba**.
 
@@ -99,6 +99,7 @@ Người đóng góp sẽ được liệt kê ở đây khi các đóng góp v�
 ## Liên kết
 
 - **Tài liệu:** [docs/](../)
+- **Trang phần mở rộng:** https://community.obsidian.md/plugins/lure
 - **Trang web / mã nguồn:** https://github.com/Gelaende51/obsidian-lure
 - **Quyên góp:** [Ko-fi](https://ko-fi.com/vault51) — xem [đóng góp](#đóng-góp).
 - **Giấy phép:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51. Các bản rẽ nhánh và bản dựng phát hành lại phải công bố mã nguồn của mình theo cùng giấy phép.

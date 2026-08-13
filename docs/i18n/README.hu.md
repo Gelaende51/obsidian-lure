@@ -17,7 +17,7 @@ Obsidian 1.8.7+ · csak asztali gépen · AGPL-3.0
 
 - **Ügynök** — **Claude Opus 5** és **Claude Sonnet 5** (Anthropic, a Claude Code-on keresztül): megírta a TypeScript kódot, a CSS-t, mind a 45 fordításkészletet és a dokumentációt. A fordítások gépiek, anyanyelvi lektorálás nélkül.
 - **Szerző** — Vault51: meghatározott minden funkciót, valódi széfben próbálta ki az egyes változatokat, irányította a javításokat, átnézte az összes eredményt.
-- **Fogyasztás** — 2026. augusztus 3–13., kilenc munkamenet, ~4928 válasz: ~7,2 M előállított token, ~23,7 M elküldött, ~1169,6 M újraolvasás a gyorsítótárból (összesen ~1200,5 M).
+- **Fogyasztás** — 2026. augusztus 3–13., kilenc munkamenet, \~4928 válasz: \~7,2 M előállított token, \~23,7 M elküldött, \~1169,6 M újraolvasás a gyorsítótárból (összesen \~1200,5 M).
 
 ## Funkciók
 
@@ -60,7 +60,7 @@ Egyik feloldás sem mentődik el a munkaterületbe vagy a beállításokba, így
 
 ## Telepítés
 
-Még nincs benne a közösségi bővítmények jegyzékében.
+Szerepel a [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) oldalon, de az alkalmazáson belüli böngészőhöz még nincs jóváhagyva — telepítsd az alábbi módok egyikén:
 
 **Kézzel:** töltsd le a `main.js`, `manifest.json` és `styles.css` fájlt a [legutóbbi kiadásból](https://github.com/Gelaende51/obsidian-lure/releases) a `<vault>/.obsidian/plugins/lure/` mappába, majd kapcsold be a **Beállítások → Közösségi bővítmények** alatt.
 
@@ -99,6 +99,7 @@ A közreműködők itt lesznek felsorolva, ahogy a hozzájárulások megérkezne
 ## Hivatkozások
 
 - **Dokumentáció:** [docs/](../)
+- **Bővítmény oldala:** https://community.obsidian.md/plugins/lure
 - **Webes jelenlét / forrás:** https://github.com/Gelaende51/obsidian-lure
 - **Adományok:** [Ko-fi](https://ko-fi.com/vault51) — lásd [közreműködés](#közreműködés).
 - **Licenc:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51. A forkoknak és az újraterjesztett fordításoknak ugyanazzal a licenccel kell közzétenniük a forrásukat.

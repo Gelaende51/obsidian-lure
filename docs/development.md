@@ -16,7 +16,9 @@ To test in a real vault, symlink or copy `main.js`, `manifest.json` and `styles.
 
 ## Dependencies
 
-None at runtime. `dependencies` is empty, and the bundle's only `require()` calls are for modules the host already has: `obsidian`, `electron`, and Node builtins. Everything else the plugin uses (Lucide icons, i18next, CSS classes and variables) is already inside Obsidian. `devDependencies` are build and review tooling only: esbuild, TypeScript, `@types/node`, `tslib`, the `obsidian` typings, and the eslint stack.
+None at runtime. `dependencies` is empty, and the bundle's only `require()` calls are for modules the host already has: `obsidian`, `electron`, and Node builtins. Everything else the plugin uses (Lucide icons, i18next, CSS classes and variables) is already inside Obsidian. `devDependencies` are build and review tooling only: esbuild, TypeScript, `tslib`, the `obsidian` typings, and the eslint stack.
+
+Not even `@types/node`. The Node and Electron surfaces are declared in `src/types/`, which is explained under [passing the plugin review](#passing-the-plugin-review) — the short version is that it makes the review see the same types you do, and it puts every filesystem call this plugin can make in one readable file.
 
 Keep it that way unless there's a strong reason not to: a plugin with no dependencies has nothing to audit, nothing to keep patched, and no supply chain.
 
@@ -130,6 +132,16 @@ The alternative was rewriting all three of the newest calls to keep the floor at
 **The settings tab keeps `display()`.** The declarative `getSettingDefinitions()` API would make the settings appear in Obsidian's settings search, but it needs 1.13.0 — five minor versions above what the code actually requires. Adopting it means either raising the floor that far for one search integration, or carrying both code paths and keeping two descriptions of the same seven settings in step. It stays imperative until `minAppVersion` reaches 1.13.0 for reasons of its own; the two warnings are the accepted cost.
 
 **`:has` and `!important` stay in `styles.css`.** Both are flagged as advisory, and both are load-bearing. The `:has` selectors react to state deep inside header DOM the plugin does not own; replacing them means a mutation observer and a class the plugin has to keep in sync by hand, which is a correctness risk taken on to avoid a performance one nobody has measured here. The `!important` rules override community themes — most importantly `display: none !important` on the native title, which is what guarantees Obsidian's own contenteditable rename can never fire. A theme can always out-specify a fixed selector, so trading that for specificity would trade a warning for the loss of a safety property.
+
+**The Node and Electron surfaces are declared, not installed.** `src/types/node.d.ts` and `src/types/electron.d.ts` between them cover everything outside `obsidian` that this plugin imports: eighteen functions from `fs`, `fs/promises`, `path` and `os`, plus one Electron call. `@types/node` is not a dependency at all.
+
+The immediate reason is the review environment: with Node's types unresolvable there, everything from `readdirSync` or `join` became `any`, and the scorecard carried 141 findings that did not exist on any developer's machine. Declaring the surface in the repository is what makes the review see what a contributor sees.
+
+The better reason is that this is the plugin reviewers are right to be sceptical of — it reads and writes outside the vault. One short file listing every call it is *able* to make is cheaper to audit than any promise in a README, and the build fails if the surface grows without someone adding to it.
+
+The declarations are deliberately narrower than the real ones: `readFileSync` exists only in its `"utf8"` form, so an un-encoded call is a compile error rather than a silent `Buffer`, and `readdirSync` only in its `withFileTypes` form. Being narrower than upstream is the point, and it is not theoretical — writing them immediately surfaced a `statSync(...).isFile()` call that a grep of the source had missed. If you need a Node function that is not in there, add it with the narrowest signature that compiles.
+
+Two things to check when touching this. `npm run build` must pass with `@types/node` absent from `node_modules` — that is the review's environment, so it is the one that matters. And the bundle should not change: these are types, they erase, and `main.js` was byte-identical across the swap.
 
 **Releases carry build provenance.** `.github/workflows/release.yml` builds the assets on GitHub's runners, checks the tag against `manifest.json`, and attaches a signed attestation to each one, so a downloaded bundle can be traced to a commit:
 

@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · tikai datoram · AGPL-3.0
 
 - **Aģents** — **Claude Opus 5** un **Claude Sonnet 5** (Anthropic, caur Claude Code): uzrakstīja TypeScript kodu, CSS, visus 45 tulkojumu komplektus un dokumentāciju. Tulkojumi ir mašīnas veidoti, un dzimtās valodas runātāji tos nav pārlasījuši.
 - **Autors** — Vault51: noteica katru funkciju, izmēģināja katru versiju īstā glabātavā, vadīja labojumus, pārskatīja visus rezultātus.
-- **Patēriņš** — 2026. gada 3.–13. augusts, deviņas sesijas, ~4928 atbildes: ~7,2 milj. ģenerētu marķieru, ~23,7 milj. nosūtītu, ~1169,6 milj. atkārtotu nolasījumu no kešatmiņas (~1200,5 milj. kopā).
+- **Patēriņš** — 2026. gada 3.–13. augusts, deviņas sesijas, \~4928 atbildes: \~7,2 milj. ģenerētu marķieru, \~23,7 milj. nosūtītu, \~1169,6 milj. atkārtotu nolasījumu no kešatmiņas (\~1200,5 milj. kopā).
 
 ## Iespējas
 
@@ -59,7 +59,7 @@ Neviena no atslēgšanām netiek saglabāta ne darbvietā, ne iestatījumos, tā
 
 ## Uzstādīšana
 
-Vēl nav kopienas spraudņu katalogā.
+Iekļauts [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), taču vēl nav apstiprināts lietotnes iekšējam pārlūkam — instalējiet to kādā no šiem veidiem:
 
 **Ar rokām:** lejupielādē `main.js`, `manifest.json` un `styles.css` no [jaunākā laidiena](https://github.com/Gelaende51/obsidian-lure/releases) mapē `<vault>/.obsidian/plugins/lure/`, tad ieslēdz to sadaļā **Iestatījumi → Trešās puses spraudnis**.
 
@@ -98,6 +98,7 @@ Līdzautori šeit tiks uzskaitīti, tiklīdz ieguldījumi sāks ienākt.
 ## Saites
 
 - **Dokumentācija:** [docs/](../)
+- **Spraudņa lapa:** https://community.obsidian.md/plugins/lure
 - **Tīmekļa klātbūtne / pirmkods:** https://github.com/Gelaende51/obsidian-lure
 - **Ziedojumi:** [Ko-fi](https://ko-fi.com/vault51) — sk. [kā palīdzēt](#kā-palīdzēt).
 - **Licence:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51. Atzarojumiem un tālāk izplatītiem būvējumiem sava pirmkoda jāpublicē ar to pašu licenci.

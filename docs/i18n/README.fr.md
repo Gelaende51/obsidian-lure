@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · bureau uniquement · AGPL-3.0
 
 - **Agent** — **Claude Opus 5** et **Claude Sonnet 5** (Anthropic, via Claude Code) : a écrit le TypeScript, le CSS, les 45 jeux de traductions et la documentation. Les traductions sont générées automatiquement et n'ont pas été relues par des locuteurs natifs.
 - **Auteur** — Vault51 : a spécifié chaque fonctionnalité, testé chaque version dans un coffre réel, dirigé les corrections, relu l'ensemble des résultats.
-- **Consommation** — du 3 au 13 août 2026, neuf sessions, ~4 928 réponses : ~7,2 M de tokens générés, ~23,7 M envoyés, ~1169,6 M de relectures mises en cache (~1200,5 M au total).
+- **Consommation** — du 3 au 13 août 2026, neuf sessions, \~4 928 réponses : \~7,2 M de tokens générés, \~23,7 M envoyés, \~1169,6 M de relectures mises en cache (\~1200,5 M au total).
 
 ## Fonctionnalités
 
@@ -59,7 +59,7 @@ Aucun de ces déverrouillages n'est conservé dans l'espace de travail ni dans l
 
 ## Installation
 
-Pas encore dans le catalogue des modules complémentaires.
+Référencé sur [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), mais pas encore approuvé pour le catalogue intégré — installez-le de l'une de ces façons :
 
 **Manuelle :** téléchargez `main.js`, `manifest.json` et `styles.css` depuis la [dernière version publiée](https://github.com/Gelaende51/obsidian-lure/releases) dans `<vault>/.obsidian/plugins/lure/`, puis activez le plugin dans **Paramètres → Modules complémentaires**.
 
@@ -98,6 +98,7 @@ Les contributeurs seront listés ici au fur et à mesure des contributions.
 ## Liens
 
 - **Documentation :** [docs/](../)
+- **Page du module :** https://community.obsidian.md/plugins/lure
 - **Présence web / sources :** https://github.com/Gelaende51/obsidian-lure
 - **Dons :** [Ko-fi](https://ko-fi.com/vault51) — voir [contribuer](#contribuer).
 - **Licence :** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51. Les forks et les builds redistribués doivent fournir leurs sources sous la même licence.

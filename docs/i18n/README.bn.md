@@ -59,7 +59,7 @@ Obsidian-এর ডেভেলপার নীতিমালা দাবি �
 
 ## ইনস্টলেশন
 
-এখনও কমিউনিটি প্লাগইনের তালিকায় নেই।
+[community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure)-এ তালিকাভুক্ত, তবে অ্যাপের ভেতরের ব্রাউজারের জন্য এখনও অনুমোদিত নয় — তাই এই উপায়গুলির একটিতে ইনস্টল করুন:
 
 **হাতে করে:** [সর্বশেষ প্রকাশ](https://github.com/Gelaende51/obsidian-lure/releases) থেকে `main.js`, `manifest.json` ও `styles.css` নামিয়ে `<vault>/.obsidian/plugins/lure/`-এ রাখুন, তারপর **সেটিংস → কমিউনিটি প্লাগইন**-এ গিয়ে চালু করুন।
 
@@ -98,6 +98,7 @@ Obsidian-এর ডেভেলপার নীতিমালা দাবি �
 ## লিংক
 
 - **নথিপত্র:** [docs/](../)
+- **প্লাগইন পাতা:** https://community.obsidian.md/plugins/lure
 - **ওয়েব উপস্থিতি / সোর্স:** https://github.com/Gelaende51/obsidian-lure
 - **অনুদান:** [Ko-fi](https://ko-fi.com/vault51) — দেখুন [কীভাবে অবদান রাখবেন](#কীভাবে-অবদান-রাখবেন)।
 - **লাইসেন্স:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51। ফর্ক এবং পুনঃবিতরণ করা বিল্ডগুলিকে নিজেদের সোর্স একই লাইসেন্সে প্রকাশ করতে হবে।

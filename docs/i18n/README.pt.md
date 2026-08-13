@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · apenas computador · AGPL-3.0
 
 - **Agente** — **Claude Opus 5** e **Claude Sonnet 5** (Anthropic, através do Claude Code): escreveu o TypeScript, o CSS, os 45 conjuntos de traduções e a documentação. As traduções são geradas automaticamente e não foram revistas por falantes nativos.
 - **Autor** — Vault51: definiu cada funcionalidade, testou cada versão num cofre real, orientou as correções e reviu todos os resultados.
-- **Consumo** — 3 a 13 de agosto de 2026, nove sessões, ~4928 respostas: ~7,2 M de tokens gerados, ~23,7 M enviados, ~1169,6 M de releituras em cache (~1200,5 M no total).
+- **Consumo** — 3 a 13 de agosto de 2026, nove sessões, \~4928 respostas: \~7,2 M de tokens gerados, \~23,7 M enviados, \~1169,6 M de releituras em cache (\~1200,5 M no total).
 
 ## Funcionalidades
 
@@ -59,7 +59,7 @@ Nenhum dos desbloqueios é guardado na área de trabalho nem nas definições, p
 
 ## Instalação
 
-Ainda não está no diretório de plugins da comunidade.
+Listado em [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), mas ainda não aprovado para o navegador dentro da aplicação — por isso instale-o de uma destas formas:
 
 **Manual:** transfira `main.js`, `manifest.json` e `styles.css` da [versão mais recente](https://github.com/Gelaende51/obsidian-lure/releases) para `<vault>/.obsidian/plugins/lure/` e ative-o em **Definições → Plugins não oficiais**.
 
@@ -98,6 +98,7 @@ Os contribuidores serão listados aqui à medida que as contribuições chegarem
 ## Ligações
 
 - **Documentação:** [docs/](../)
+- **Página do plugin:** https://community.obsidian.md/plugins/lure
 - **Presença web / código-fonte:** https://github.com/Gelaende51/obsidian-lure
 - **Donativos:** [Ko-fi](https://ko-fi.com/vault51) — veja [como contribuir](#como-contribuir).
 - **Licença:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51. Os forks e as compilações redistribuídas têm de publicar o seu código-fonte sob a mesma licença.

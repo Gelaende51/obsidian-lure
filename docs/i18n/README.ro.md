@@ -17,7 +17,7 @@ Obsidian 1.8.7+ · doar desktop · AGPL-3.0
 
 - **Agent** — **Claude Opus 5** și **Claude Sonnet 5** (Anthropic, prin Claude Code): a scris codul TypeScript, CSS-ul, toate cele 45 de seturi de traduceri și documentația. Traducerile sunt generate automat și nu au fost revizuite de vorbitori nativi.
 - **Autor** — Vault51: a stabilit fiecare funcție, a încercat fiecare versiune într-un seif real, a îndrumat corecturile și a citit toate rezultatele.
-- **Consum** — 3–13 august 2026, nouă sesiuni, ~4.928 de răspunsuri: ~7,2 mil. jetoane generate, ~23,7 mil. trimise, ~1169,6 mil. recitiri din memoria tampon (~1200,5 mil. în total).
+- **Consum** — 3–13 august 2026, nouă sesiuni, \~4.928 de răspunsuri: \~7,2 mil. jetoane generate, \~23,7 mil. trimise, \~1169,6 mil. recitiri din memoria tampon (\~1200,5 mil. în total).
 
 ## Funcții
 
@@ -60,7 +60,7 @@ Nici una dintre deblocări nu este salvată în spațiul de lucru sau în setăr
 
 ## Instalare
 
-Încă nu se află în directorul de module comunitare.
+Listat la [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), dar încă neaprobat pentru catalogul din aplicație — instalează-l într-unul dintre aceste moduri:
 
 **Manual:** descarcă `main.js`, `manifest.json` și `styles.css` din [cea mai recentă versiune](https://github.com/Gelaende51/obsidian-lure/releases) în `<vault>/.obsidian/plugins/lure/`, apoi activează-l din **Setări → Module comunitare**.
 
@@ -99,6 +99,7 @@ Contribuitorii vor fi enumerați aici pe măsură ce sosesc contribuții.
 ## Legături
 
 - **Documentație:** [docs/](../)
+- **Pagina modulului:** https://community.obsidian.md/plugins/lure
 - **Prezență web / surse:** https://github.com/Gelaende51/obsidian-lure
 - **Donații:** [Ko-fi](https://ko-fi.com/vault51) — vezi [cum să contribui](#cum-să-contribui).
 - **Licență:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51. Bifurcările și versiunile redistribuite trebuie să-și publice sursele sub aceeași licență.

@@ -1,6 +1,6 @@
 {
 	"name": "lure",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "Shows a clickable, editable breadcrumb of the vault path in each note's header.",
 	"main": "main.js",
 	"scripts": {
@@ -11,7 +11,6 @@
 	},
 	"license": "AGPL-3.0-only",
 	"devDependencies": {
-		"@types/node": "^20.0.0",
 		"esbuild": "^0.19.0",
 		"eslint": "^9.39.0",
 		"eslint-plugin-obsidianmd": "^0.4.1",

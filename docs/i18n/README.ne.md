@@ -59,7 +59,7 @@ Obsidian का विकासकर्ता नीतिहरूले प�
 
 ## स्थापना
 
-अझै सामुदायिक प्लगइनको सूचीमा छैन।
+[community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) मा सूचीबद्ध छ, तर एपभित्रको ब्राउजरका लागि अझै स्वीकृत भएको छैन — त्यसैले यीमध्ये कुनै एक तरिकाले स्थापना गर्नुहोस्:
 
 **हातले:** [पछिल्लो रिलिज](https://github.com/Gelaende51/obsidian-lure/releases) बाट `main.js`, `manifest.json` र `styles.css` झिकेर `<vault>/.obsidian/plugins/lure/` मा राख्नुहोस्, अनि **सेटिङहरू → तेस्रो-पक्ष प्लगइन** अन्तर्गत चालु गर्नुहोस्।
 
@@ -98,6 +98,7 @@ Obsidian का विकासकर्ता नीतिहरूले प�
 ## लिंकहरू
 
 - **कागजात:** [docs/](../)
+- **प्लगइन पृष्ठ:** https://community.obsidian.md/plugins/lure
 - **वेब उपस्थिति / स्रोत:** https://github.com/Gelaende51/obsidian-lure
 - **दान:** [Ko-fi](https://ko-fi.com/vault51) — हेर्नुहोस् [कसरी योगदान गर्ने](#कसरी-योगदान-गर्ने)।
 - **इजाजतपत्र:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51। फोर्क र पुनर्वितरित बिल्डहरूले आफ्नो स्रोत यही इजाजतपत्रअन्तर्गत प्रकाशित गर्नुपर्छ।

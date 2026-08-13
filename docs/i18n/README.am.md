@@ -59,7 +59,7 @@ Obsidian 1.8.7+ · ለዴስክቶፕ ብቻ · AGPL-3.0
 
 ## መጫን
 
-እስካሁን በማህበረሰቡ ተሰኪዎች ማውጫ ውስጥ የለም።
+በ[community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) ተዘርዝሯል፣ ነገር ግን ገና በመተግበሪያው ውስጥ ላለው አሳሽ አልጸደቀም — ስለዚህ በአንዱ መንገድ ይጫኑት፦
 
 **በእጅ፦** `main.js`፣ `manifest.json` እና `styles.css`ን ከ[የቅርብ ጊዜው ልቀት](https://github.com/Gelaende51/obsidian-lure/releases) ወደ `<vault>/.obsidian/plugins/lure/` ያውርዱ፣ ከዚያም በ**ቅንብሮች → የሶስተኛ ወገን ተሰኪ** ስር ያብሩት።
 
@@ -98,6 +98,7 @@ Obsidian 1.8.7+ · ለዴስክቶፕ ብቻ · AGPL-3.0
 ## አገናኞች
 
 - **ሰነዶች፦** [docs/](../)
+- **የተሰኪ ገጽ፦** https://community.obsidian.md/plugins/lure
 - **የድር መገኘት / ምንጭ፦** https://github.com/Gelaende51/obsidian-lure
 - **ልገሳዎች፦** [Ko-fi](https://ko-fi.com/vault51) — ይመልከቱ [እንዴት ማበርከት እንደሚቻል](#እንዴት-ማበርከት-እንደሚቻል)።
 - **ፈቃድ፦** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only፣ © 2026 Vault51። ሹካዎችና እንደገና የተሰራጩ ግንባታዎች ምንጫቸውን በዚያው ፈቃድ ማውጣት አለባቸው።

@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · komputer meja sahaja · AGPL-3.0
 
 - **Ejen** — **Claude Opus 5** dan **Claude Sonnet 5** (Anthropic, melalui Claude Code): menulis TypeScript, CSS, kesemua 45 set terjemahan dan dokumentasi. Terjemahan dihasilkan mesin dan belum disemak penutur jati.
 - **Penulis** — Vault51: menetapkan setiap ciri, mencuba setiap versi dalam bilik kebal sebenar, mengarahkan pembetulan, menyemak semua hasilnya.
-- **Penggunaan** — 3–13 Ogos 2026, sembilan sesi, ~4,928 balasan: ~7.2 juta token dijana, ~23.7 juta dihantar, ~1169.6 juta bacaan semula daripada cache (~1200.5 juta kesemuanya).
+- **Penggunaan** — 3–13 Ogos 2026, sembilan sesi, \~4,928 balasan: \~7.2 juta token dijana, \~23.7 juta dihantar, \~1169.6 juta bacaan semula daripada cache (\~1200.5 juta kesemuanya).
 
 ## Ciri-ciri
 
@@ -59,7 +59,7 @@ Kedua-dua pembukaan kunci itu tidak disimpan dalam ruang kerja mahupun dalam tet
 
 ## Pemasangan
 
-Belum berada dalam direktori plugin komuniti.
+Tersenarai di [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), tetapi belum diluluskan untuk penyemak imbas dalam aplikasi — jadi pasangkannya dengan salah satu cara ini:
 
 **Manual:** muat turun `main.js`, `manifest.json` dan `styles.css` daripada [keluaran terkini](https://github.com/Gelaende51/obsidian-lure/releases) ke `<vault>/.obsidian/plugins/lure/`, kemudian hidupkannya di bawah **Tetapan → Plugin pihak ketiga**.
 
@@ -98,6 +98,7 @@ Penyumbang akan disenaraikan di sini apabila sumbangan mula tiba.
 ## Pautan
 
 - **Dokumentasi:** [docs/](../)
+- **Halaman plugin:** https://community.obsidian.md/plugins/lure
 - **Kehadiran web / sumber:** https://github.com/Gelaende51/obsidian-lure
 - **Derma:** [Ko-fi](https://ko-fi.com/vault51) — lihat [menyumbang](#menyumbang).
 - **Lesen:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51. Cabang dan binaan yang diedar semula mesti mengeluarkan sumbernya di bawah lesen yang sama.

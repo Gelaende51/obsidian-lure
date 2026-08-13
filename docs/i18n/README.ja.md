@@ -59,7 +59,7 @@ Obsidian の開発者ポリシーは、保管庫の外にあるファイルへ�
 
 ## インストール
 
-コミュニティプラグインのディレクトリにはまだ登録されていません。
+[community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) に掲載されていますが、アプリ内のブラウザにはまだ承認されていません。次のいずれかの方法でインストールしてください:
 
 **手動:** [最新のリリース](https://github.com/Gelaende51/obsidian-lure/releases) から `main.js`、`manifest.json`、`styles.css` を `<vault>/.obsidian/plugins/lure/` にダウンロードし、**設定 → コミュニティプラグイン** で有効にします。
 
@@ -98,6 +98,7 @@ Obsidian の開発者ポリシーは、保管庫の外にあるファイルへ�
 ## リンク
 
 - **ドキュメント:** [docs/](../)
+- **プラグインページ:** https://community.obsidian.md/plugins/lure
 - **ウェブ / ソース:** https://github.com/Gelaende51/obsidian-lure
 - **寄付:** [Ko-fi](https://ko-fi.com/vault51) — [貢献](#貢献)を参照してください。
 - **ライセンス:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only、© 2026 Vault51。フォークおよび再配布されるビルドは、同じライセンスでソースを公開しなければなりません。

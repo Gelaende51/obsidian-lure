@@ -17,7 +17,7 @@ Obsidian 1.8.7+ · només escriptori · AGPL-3.0
 
 - **Agent** — **Claude Opus 5** i **Claude Sonnet 5** (Anthropic, mitjançant Claude Code): va escriure el TypeScript, el CSS, els 45 jocs de traduccions i la documentació. Les traduccions són automàtiques i no han estat revisades per parlants nadius.
 - **Autor** — Vault51: va definir cada funció, va provar cada versió en un cofre real, va dirigir les correccions i va revisar tots els resultats.
-- **Consum** — del 3 al 13 d'agost de 2026, nou sessions, ~4.928 respostes: ~7,2 M de tokens generats, ~23,7 M enviats, ~1169,6 M de relectures de la memòria cau (~1200,5 M en total).
+- **Consum** — del 3 al 13 d'agost de 2026, nou sessions, \~4.928 respostes: \~7,2 M de tokens generats, \~23,7 M enviats, \~1169,6 M de relectures de la memòria cau (\~1200,5 M en total).
 
 ## Funcions
 
@@ -60,7 +60,7 @@ Cap dels dos desbloquejos es desa a l'espai de treball ni a les opcions, així q
 
 ## Instal·lació
 
-Encara no és al directori de connectors de la comunitat.
+Apareix a [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), però encara no està aprovat per al navegador dins l'aplicació: instal·la'l d'una d'aquestes maneres:
 
 **Manual:** baixa `main.js`, `manifest.json` i `styles.css` de la [darrera versió publicada](https://github.com/Gelaende51/obsidian-lure/releases) a `<vault>/.obsidian/plugins/lure/` i activa'l a **Configuració → Connectors de tercers**.
 
@@ -99,6 +99,7 @@ Els col·laboradors es llistaran aquí a mesura que arribin contribucions.
 ## Enllaços
 
 - **Documentació:** [docs/](../)
+- **Pàgina del connector:** https://community.obsidian.md/plugins/lure
 - **Presència web / codi font:** https://github.com/Gelaende51/obsidian-lure
 - **Donatius:** [Ko-fi](https://ko-fi.com/vault51) — vegeu [com contribuir](#com-contribuir).
 - **Llicència:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51. Els forks i les compilacions redistribuïdes han de publicar el seu codi font amb la mateixa llicència.

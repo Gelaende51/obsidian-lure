@@ -12,7 +12,7 @@ Obsidian 1.8.7+ · desktop only · AGPL-3.0
 
 - **Agent** — **Claude Opus 5** and **Claude Sonnet 5** (Anthropic, via Claude Code): wrote the TypeScript, the CSS, all 45 translation sets and the documentation. Translations are machine-generated and unreviewed by native speakers.
 - **Author** — Vault51: specified every feature, tested each iteration in a live vault, directed the fixes, reviewed all output.
-- **Usage** — 3–13 Aug 2026, nine sessions, ~4,928 responses: ~7.2 M tokens generated, ~23.7 M sent, ~1169.6 M cached re-reads (~1200.5 M total).
+- **Usage** — 3–13 Aug 2026, nine sessions, \~4,928 responses: \~7.2 M tokens generated, \~23.7 M sent, \~1169.6 M cached re-reads (\~1200.5 M total).
 
 ## Features
 
@@ -55,7 +55,7 @@ Neither unlock is stored in the workspace or in settings, so writing is never ar
 
 ## Installation
 
-Not yet in the Community Plugins directory.
+Listed at [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), but not yet approved for the in-app browser — so install it one of these ways:
 
 **Manual:** download `main.js`, `manifest.json` and `styles.css` from the [latest release](https://github.com/Gelaende51/obsidian-lure/releases) into `<vault>/.obsidian/plugins/lure/`, then enable it under **Settings → Community plugins**.
 
@@ -95,6 +95,7 @@ Contributors will be listed here as contributions land.
 
 
 - **Documentation:** [docs/](docs/)
+- **Plugin page:** https://community.obsidian.md/plugins/lure
 - **Web presence / source:** https://github.com/Gelaende51/obsidian-lure
 - **Donations:** [Ko-fi](https://ko-fi.com/vault51) — see [contributing](#contributing).
 - **License:** [LICENSE](LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51. Forks and redistributed builds must ship their source under the same licence.

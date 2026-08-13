@@ -17,7 +17,7 @@ Obsidian 1.8.7+ · vain työpöytä · AGPL-3.0
 
 - **Agentti** — **Claude Opus 5** ja **Claude Sonnet 5** (Anthropic, Claude Coden kautta): kirjoitti TypeScriptin, CSS:n, kaikki 45 käännösjoukkoa ja dokumentaation. Käännökset ovat koneellisia, eivätkä äidinkieliset puhujat ole niitä tarkastaneet.
 - **Tekijä** — Vault51: määritteli jokaisen ominaisuuden, kokeili jokaista versiota oikeassa holvissa, ohjasi korjaukset ja luki kaikki tulokset läpi.
-- **Kulutus** — 3.–13. elokuuta 2026, yhdeksän istuntoa, ~4 928 vastausta: ~7,2 milj. tuotettua tokenia, ~23,7 milj. lähetettyä, ~1169,6 milj. uudelleenlukua välimuistista (~1200,5 milj. yhteensä).
+- **Kulutus** — 3.–13. elokuuta 2026, yhdeksän istuntoa, \~4 928 vastausta: \~7,2 milj. tuotettua tokenia, \~23,7 milj. lähetettyä, \~1169,6 milj. uudelleenlukua välimuistista (\~1200,5 milj. yhteensä).
 
 ## Ominaisuudet
 
@@ -60,7 +60,7 @@ Kumpaakaan avausta ei tallenneta työtilaan eikä asetuksiin, joten kirjoitus ei
 
 ## Asennus
 
-Ei vielä yhteisön lisäosien hakemistossa.
+Listattu osoitteessa [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), mutta sitä ei ole vielä hyväksytty sovelluksen sisäiseen selaimeen — asenna se jollakin näistä tavoista:
 
 **Käsin:** lataa `main.js`, `manifest.json` ja `styles.css` [uusimmasta julkaisusta](https://github.com/Gelaende51/obsidian-lure/releases) hakemistoon `<vault>/.obsidian/plugins/lure/`, ja kytke se sitten päälle kohdasta **Asetukset → Yhteisön lisäosat**.
 
@@ -99,6 +99,7 @@ Osallistujat luetellaan tässä sitä mukaa kuin panoksia saapuu.
 ## Linkit
 
 - **Dokumentaatio:** [docs/](../)
+- **Lisäosan sivu:** https://community.obsidian.md/plugins/lure
 - **Verkkosivu / lähdekoodi:** https://github.com/Gelaende51/obsidian-lure
 - **Lahjoitukset:** [Ko-fi](https://ko-fi.com/vault51) — katso [osallistuminen](#osallistuminen).
 - **Lisenssi:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51. Haarautumien ja edelleen jaettujen käännösten on julkaistava lähdekoodinsa samalla lisenssillä.
