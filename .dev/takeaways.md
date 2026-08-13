@@ -6,6 +6,15 @@ Kept for reference, and as raw material for bug reports or API requests.
 Everything below was verified against the installed Obsidian build by
 reading `obsidian.asar`, not inferred from documentation.
 
+> **Most of this is not about Lure.** The parts that are facts about Obsidian, about
+> driving it over the DevTools protocol, or about the publishing pipeline have been
+> lifted into a shared `obsidian-lore` repository, where they are version-stamped and
+> can be checked for staleness. This file is kept intact as the original record.
+>
+> When adding something new, ask what would make it false. If a future Obsidian
+> release could, it belongs in the lore. If only a change to Lure could, it belongs
+> here.
+
 ## `AbstractInputSuggest`
 
 **The popover only opens in response to the input's own `input` event.**
