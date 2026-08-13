@@ -1,4 +1,4 @@
-<!-- A docs/usage.md fordítása — állapot: commit 7b2691a.
+<!-- A docs/usage.md fordítása — állapot: commit 349b74e.
      Gépi fordítás (Claude Opus 5), anyanyelvi lektorálás nélkül. A
      bővítmény feliratai a src/lang/translations.ts fájlból, az Obsidian
      feliratai pedig az alkalmazás saját szövegeiből származnak, így

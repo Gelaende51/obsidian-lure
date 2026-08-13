@@ -1,4 +1,4 @@
-<!-- Tłumaczenie docs/usage.md — stan: commit 7b2691a.
+<!-- Tłumaczenie docs/usage.md — stan: commit 349b74e.
      Tłumaczenie maszynowe (Claude Opus 5), nieskorygowane przez native
      speakerów. Etykiety wtyczki pochodzą z src/lang/translations.ts, a te
      Obsidiana z tekstów dostarczanych przez samą aplikację, więc zgadzają

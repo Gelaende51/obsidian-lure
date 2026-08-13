@@ -1,4 +1,4 @@
-<!-- docs/usage.md इत्यस्य अनुवादः — स्थितिः: commit 7b2691a।
+<!-- docs/usage.md इत्यस्य अनुवादः — स्थितिः: commit 349b74e।
      यन्त्रानुवादः (Claude Opus 5), मातृभाषिभिः न परीक्षितः। प्लगिन्-
      पदानि src/lang/translations.ts इत्यस्मात् आगच्छन्ति।
 

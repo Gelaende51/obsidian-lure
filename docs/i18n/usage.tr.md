@@ -1,4 +1,4 @@
-<!-- docs/usage.md dosyasının çevirisi — durum: commit 7b2691a.
+<!-- docs/usage.md dosyasının çevirisi — durum: commit 349b74e.
      Makine çevirisi (Claude Opus 5), ana dili Türkçe olan kişilerce
      gözden geçirilmedi. Eklentinin etiketleri src/lang/translations.ts
      dosyasından, Obsidian'ınkiler ise uygulamanın kendi getirdiği

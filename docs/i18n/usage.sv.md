@@ -1,4 +1,4 @@
-<!-- Översättning av docs/usage.md — läge: commit 7b2691a.
+<!-- Översättning av docs/usage.md — läge: commit 349b74e.
      Maskinöversatt (Claude Opus 5), inte granskad av modersmålstalare.
      Tilläggets etiketter kommer från src/lang/translations.ts och
      Obsidians från de texter som applikationen själv levererar, så de

@@ -1,4 +1,4 @@
-<!-- Aistriúchán ar docs/usage.md — staid: commit 7b2691a.
+<!-- Aistriúchán ar docs/usage.md — staid: commit 349b74e.
      Aistriúchán meaisín (Claude Opus 5), gan léamh ó chainteoirí
      dúchais. Tagann lipéid an bhreiseáin ó src/lang/translations.ts,
      agus lipéid Obsidian ó na téacsanna a sheolann an feidhmchlár

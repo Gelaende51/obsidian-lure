@@ -1,4 +1,4 @@
-<!-- Vertaling van docs/usage.md — stand: commit 7b2691a.
+<!-- Vertaling van docs/usage.md — stand: commit 349b74e.
      Machinaal vertaald (Claude Opus 5), niet nagekeken door
      moedertaalsprekers. De labels van de plugin komen uit
      src/lang/translations.ts en die van Obsidian uit de teksten die de

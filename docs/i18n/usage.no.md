@@ -1,4 +1,4 @@
-<!-- Oversettelse av docs/usage.md — stand: commit 7b2691a.
+<!-- Oversettelse av docs/usage.md — stand: commit 349b74e.
      Maskinoversatt (Claude Opus 5), ikke gjennomgått av personer med
      norsk som morsmål. Programtilleggets etiketter kommer fra
      src/lang/translations.ts og Obsidians fra tekstene applikasjonen

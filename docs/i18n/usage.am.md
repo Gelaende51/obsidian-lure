@@ -1,4 +1,4 @@
-<!-- የ docs/usage.md ትርጉም — ሁኔታ፦ commit 7b2691a።
+<!-- የ docs/usage.md ትርጉም — ሁኔታ፦ commit 349b74e።
      በማሽን የተተረጎመ (Claude Opus 5) ሲሆን በአፍ መፍቻ ተናጋሪዎች አልተመረመረም።
      የተሰኪው ጽሑፎች ከ src/lang/translations.ts ይመጣሉ፤ የ Obsidian ጽሑፎች
      ደግሞ መተግበሪያው ራሱ ከሚያቀርባቸው ጽሑፎች ስለሆኑ በማያ ገጹ ላይ ከሚታየው ጋር

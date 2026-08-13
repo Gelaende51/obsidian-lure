@@ -1,4 +1,4 @@
-<!-- docs/usage.md 번역 — 기준: commit 7b2691a.
+<!-- docs/usage.md 번역 — 기준: commit 349b74e.
      기계 번역(Claude Opus 5)이며 원어민의 검수를 거치지 않았습니다.
      플러그인 문구는 src/lang/translations.ts에서, Obsidian 문구는
      애플리케이션이 함께 제공하는 번역에서 가져왔으므로 화면에 보이는

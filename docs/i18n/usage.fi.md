@@ -1,4 +1,4 @@
-<!-- Käännös tiedostosta docs/usage.md — tilanne: commit 7b2691a.
+<!-- Käännös tiedostosta docs/usage.md — tilanne: commit 349b74e.
      Konekäännös (Claude Opus 5), jota äidinkieliset puhujat eivät ole
      tarkistaneet. Lisäosan tekstit tulevat tiedostosta
      src/lang/translations.ts ja Obsidianin omat sovelluksen mukana

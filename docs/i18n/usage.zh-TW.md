@@ -1,4 +1,4 @@
-<!-- docs/usage.md 的翻譯 — 基準：commit 7b2691a。
+<!-- docs/usage.md 的翻譯 — 基準：commit 349b74e。
      機器翻譯（Claude Opus 5），未經母語者校訂。外掛的文字取自
      src/lang/translations.ts，Obsidian 的文字取自應用程式自帶的譯文，
      因此與你在畫面上看到的一致。 -->

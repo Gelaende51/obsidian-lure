@@ -1,4 +1,4 @@
-<!-- docs/usage.md tulkojums — stāvoklis: commit 7b2691a.
+<!-- docs/usage.md tulkojums — stāvoklis: commit 349b74e.
      Mašīntulkojums (Claude Opus 5), kuru nav pārbaudījuši dzimtās
      valodas runātāji. Spraudņa uzraksti nāk no
      src/lang/translations.ts, bet Obsidian uzraksti — no tekstiem, ko

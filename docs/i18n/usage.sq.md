@@ -1,4 +1,4 @@
-<!-- Përkthim i docs/usage.md — gjendja: commit 7b2691a.
+<!-- Përkthim i docs/usage.md — gjendja: commit 349b74e.
      Përkthim makinerie (Claude Opus 5), i papërmirësuar nga folës
      amtarë. Unazat e shtojcës vijnë nga src/lang/translations.ts,
      ndërsa ato të Obsidian nga tekstet që shpërndan vetë aplikacioni,

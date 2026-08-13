@@ -1,4 +1,4 @@
-<!-- Traduzione di docs/usage.md — stato: commit 7b2691a.
+<!-- Traduzione di docs/usage.md — stato: commit 349b74e.
      Traduzione automatica (Claude Opus 5), non rivista da madrelingua.
      Le etichette del plugin vengono da src/lang/translations.ts e quelle di
      Obsidian dai testi che l'applicazione stessa include, quindi coincidono
