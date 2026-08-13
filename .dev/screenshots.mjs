@@ -48,11 +48,7 @@ const outDir = resolve(root, "docs/images");
  */
 const SCENES = {
 	princess: {
-		// The demo vault lives at ../obsidian-plugin-template/.personal/vault, so
-		// Obsidian calls it "vault" — it names a vault after its directory. If you
-		// ever have two such vaults open at once, rename one: the harness picks its
-		// window by vault name and refuses when the name is ambiguous.
-		vault: "vault",
+		vault: "L'Éclaire, c'est moi",
 		note: "Schemes/2026/Cake catapult.md",
 		dropdownNote: "Schemes/2026/Glitter volcano.md",
 		// Collapsed before the reveal shot, so the expansion in the sidebar is
