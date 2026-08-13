@@ -1,4 +1,4 @@
-<!-- Tłumaczenie README.md — stan: commit 7b2691a.
+<!-- Tłumaczenie README.md — stan: commit d116bbc.
      Tłumaczenie maszynowe (Claude Opus 5), nieskorygowane przez native
      speakerów. Poprawki mile widziane; wersją rozstrzygającą jest
      angielskie README. -->
