@@ -436,13 +436,20 @@ for (const { name, fn } of tests) {
 	}
 }
 
-// Put the vault back the way it was found — these tests toggle a lot.
+// Put the vault back the way it was found — these tests toggle a lot, and the
+// fixture is a folder that shows up in the File Explorer of every screenshot
+// taken afterwards. Unconditional, and after the loop rather than inside it: a
+// test that throws never reaches its own cleanup.
 await page.evaluate(`
 	for (const id of ${JSON.stringify(PEERS.map((p) => p.id))}) {
 		if (${JSON.stringify(original)}.includes(id)) await app.plugins.enablePlugin(id);
 		else if ((app.plugins.manifests || {})[id]) await app.plugins.disablePlugin(id);
 	}
 	await app.plugins.enablePlugin("lure");
+	const fixture = app.vault.getAbstractFileByPath(${JSON.stringify(FIXTURE)});
+	// Straight to delete, not trash: the trash is inside the vault too, and a
+	// .trash folder in the sidebar is the same problem one level down.
+	if (fixture) await app.vault.delete(fixture, true);
 	return true;
 `);
 

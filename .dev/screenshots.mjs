@@ -253,7 +253,9 @@ try {
 	// Prose in the docs cannot prevent that; refusing to shoot can.
 	const residue = await evaluate(`
 		return {
-			fixture: !!app.vault.getAbstractFileByPath("LureFocus"),
+			fixture: ["LureFocus", "LureCompat"].find(
+				(p) => app.vault.getAbstractFileByPath(p),
+			) ?? null,
 			others: [...app.plugins.enabledPlugins].filter((id) => id !== "lure"),
 			// Not localStorage — this script just wrote "en" there, so reading
 			// it back proves nothing. Obsidian loads English plus the active
@@ -264,8 +266,8 @@ try {
 	`);
 	if (residue.fixture) {
 		throw new Error(
-			'the vault still holds the suites\' "LureFocus" fixture — run the suite to ' +
-				"completion, or delete the folder, before capturing",
+			`the vault still holds the suites' "${residue.fixture}" fixture — run the ` +
+				"suite to completion, or delete the folder, before capturing",
 		);
 	}
 	if (residue.others.length) {

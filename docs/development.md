@@ -7,7 +7,8 @@
 ```bash
 npm install
 npm run dev            # esbuild watch
-npm run build          # tsc --noEmit + check:lang + production bundle
+npm run build          # tsc --noEmit + lint + check:lang + production bundle
+npm run lint           # the community-plugin review's own rule set
 npm run check:lang     # verify all 45 locales cover all string keys
 ```
 
@@ -15,7 +16,7 @@ To test in a real vault, symlink or copy `main.js`, `manifest.json` and `styles.
 
 ## Dependencies
 
-None at runtime. `dependencies` is empty and the bundle's only `require()` is `require("obsidian")`, which the app supplies — everything else the plugin uses (Lucide icons, i18next, CSS classes and variables) is already inside Obsidian. `devDependencies` are build tooling only: esbuild, TypeScript, `@types/node`, `builtin-modules`, `tslib`, and the `obsidian` typings.
+None at runtime. `dependencies` is empty, and the bundle's only `require()` calls are for modules the host already has: `obsidian`, `electron`, and Node builtins. Everything else the plugin uses (Lucide icons, i18next, CSS classes and variables) is already inside Obsidian. `devDependencies` are build and review tooling only: esbuild, TypeScript, `@types/node`, `tslib`, the `obsidian` typings, and the eslint stack.
 
 Keep it that way unless there's a strong reason not to: a plugin with no dependencies has nothing to audit, nothing to keep patched, and no supply chain.
 
@@ -102,6 +103,39 @@ All 45 locales are machine-translated (see the README's AI disclosure) and have 
 - `README.md` and `docs/usage.md` are the sources; `docs/i18n/<doc>.<lang>.md` are translations of them: edit the English first, then re-translate the sections that changed. Each locale file records the English commit it was made from, so `git log <recorded>..HEAD -- <source>` shows exactly what a translation is missing. Plugin names, code, commands and paths stay untranslated, and UI labels quoted in prose must match `src/lang/translations.ts` for that locale — a page that names a button the app doesn't is worse than an English one. Obsidian's *own* setting names cannot be checked from this repo (its translations load at runtime, and only English ships in the archive), so those keep the English in parentheses rather than an invented translation.
 - **Never translate a plugin's name.** A name is a proper noun: *Folder notes* stays *Folder notes* in all 45 locales, with only the grammar around it localised. Match the spelling and casing in Obsidian's `community-plugins.json`.
 - The project follows Obsidian's [Developer policies](https://docs.obsidian.md/Developer+policies) and [plugin submission requirements](https://docs.obsidian.md/Plugins/Releasing/Submission+requirements+for+plugins).
+- Every Obsidian API call costs a `minAppVersion`. Check its `@since` before reaching for it, and see [Passing the plugin review](#passing-the-plugin-review) for what the current floor is holding up.
+
+## Passing the plugin review
+
+Submitting to the community list runs an automated review, and the same rules run here:
+
+```bash
+npm run lint     # eslint-plugin-obsidianmd, the review's own rule set
+```
+
+`npm run build` depends on it, so a release cannot be cut with a finding the review would raise. That order matters more than it sounds. The first submission came back with roughly 170 lines of findings, and about 150 of them did not exist: the review's environment could not resolve `@types/node`, so every value out of `readdirSync` or `join` degraded to `any` and each use of it tripped a separate type-aware rule. Reproducing the review locally is what separated the twenty real errors from the noise, and it is not obvious from the report which is which.
+
+Four decisions came out of that review and are worth recording, because each one is a trade the next person might otherwise re-open by accident.
+
+**`minAppVersion` is 1.8.7, and raising it is not free.** The `no-unsupported-api` rule reads the `@since` tags in the bundled `obsidian.d.ts` and compares them with the manifest, so the floor is the *maximum* across every API the plugin touches. Two calls set it on their own — `Vault.copy` and `displayTooltip` — while everything else needed only 1.4.10. Neither was a considered choice at the time, which is the point: reaching for a convenience method silently costs every user on an older Obsidian. Before adopting a new call, check what it costs:
+
+```bash
+grep -B12 'displayTooltip' node_modules/obsidian/obsidian.d.ts | grep @since
+```
+
+The alternative was rewriting all three of the newest calls to keep the floor at 1.4.10. `Vault.copy` has an exact equivalent and `revealLeaf` a near one, but `displayTooltip` does not: it shows an error bubble anchored to the path bar, immediately and without hover, and the substitutes are either a hover-only tooltip nobody would see or a corner `Notice` detached from the thing it is about. Losing the message where the mistake happened was the worse outcome.
+
+**Electron is imported, not required.** The bundle still emits `require("electron")` — esbuild marks it external, and the manifest is `isDesktopOnly` — but at source level it is a typed import against a fifteen-line ambient declaration in `src/types/electron.d.ts`. Declaring the one method used beats installing `@types/electron` and keeping it in step with whichever Electron Obsidian ships. This is also a case where the lint earned its keep directly: with the call untyped, nobody had noticed that `shell.openPath` reports failure by **resolving with an error string** rather than rejecting, so the `try`/`catch` around it could not have caught a missing file.
+
+**The settings tab keeps `display()`.** The declarative `getSettingDefinitions()` API would make the settings appear in Obsidian's settings search, but it needs 1.13.0 — five minor versions above what the code actually requires. Adopting it means either raising the floor that far for one search integration, or carrying both code paths and keeping two descriptions of the same seven settings in step. It stays imperative until `minAppVersion` reaches 1.13.0 for reasons of its own; the two warnings are the accepted cost.
+
+**`:has` and `!important` stay in `styles.css`.** Both are flagged as advisory, and both are load-bearing. The `:has` selectors react to state deep inside header DOM the plugin does not own; replacing them means a mutation observer and a class the plugin has to keep in sync by hand, which is a correctness risk taken on to avoid a performance one nobody has measured here. The `!important` rules override community themes — most importantly `display: none !important` on the native title, which is what guarantees Obsidian's own contenteditable rename can never fire. A theme can always out-specify a fixed selector, so trading that for specificity would trade a warning for the loss of a safety property.
+
+**Releases carry build provenance.** `.github/workflows/release.yml` builds the assets on GitHub's runners, checks the tag against `manifest.json`, and attaches a signed attestation to each one, so a downloaded bundle can be traced to a commit:
+
+```bash
+gh attestation verify main.js --repo Gelaende51/obsidian-lure
+```
 
 ## Testing
 
@@ -116,7 +150,7 @@ node .dev/test-compat.mjs Quick      # one peer
 
 Both need Obsidian running with `--remote-debugging-port=9222` (add it to `~/.config/obsidian/user-flags.conf`) and the demo vault open — the same vault the screenshots are captured from, named in the `SCENES` table in `.dev/screenshots.mjs`. It needs this plugin symlinked into its `.obsidian/plugins/lure/`, and, for the compatibility suite, the peer plugins installed; the suite skips any that aren't. With several vaults open, choose the window with `OBSIDIAN_VAULT=<name>`. **Comment the port back out when you're done** — a shipped build must never be developed against an open debugging port.
 
-One vault serving both roles means each use has to leave it fit for the other. The suites create a `LureFocus/` fixture inside the vault and toggle peer plugins on and off; the fixture is now dropped at the end of every run whether it passed or failed, and peer states are restored. The capture script refuses to shoot if either is still in evidence — both are invisible in a passing test run and perfectly visible in a photograph, which is not a difference documentation can be trusted to bridge.
+One vault serving both roles means each use has to leave it fit for the other. The suites create a fixture folder inside the vault — `LureFocus/` for the external suite, `LureCompat/` for the compatibility one — and toggle peer plugins on and off. Both fixtures are dropped at the end of every run whether it passed or failed, and peer states are restored. The capture script refuses to shoot if either fixture or any peer is still in evidence: they are invisible in a passing test run and perfectly visible in a photograph, which is not a difference documentation can be trusted to bridge. `LureCompat/` is the proof — it went uncleaned and unguarded for as long as the guard named only the other one.
 
 | Tool | What it's for |
 | --- | --- |
@@ -164,15 +198,18 @@ Two things this cannot be. It cannot be exact: writing the line is itself part o
 
 BRAT and Obsidian's own installer both read `manifest.json` on the default branch, then look for a release whose tag is **exactly** that version — no `v` prefix, no suffix. The three files must be attached as individual assets; the auto-generated source zip is not enough, because neither installer unpacks it.
 
+Pushing the tag is the whole release: `.github/workflows/release.yml` builds, verifies that the tag and `manifest.json` agree, attaches the signed provenance attestation, and publishes.
+
 ```bash
 node .dev/usage-stats.mjs                      # refresh the disclosure first
-npm run build                                  # produces main.js
-git tag -a 1.0.0 -m "Lure 1.0.0" && git push origin 1.0.0
-gh release create 1.0.0 --title "1.0.0" \
-    --notes-file <notes> main.js manifest.json styles.css
+npm run build                                  # must pass before the tag exists
+git push
+git tag -a 1.0.2 -m "Lure 1.0.2" && git push origin 1.0.2
 ```
 
-Bump `manifest.json` and add the matching `versions.json` entry (`"<plugin version>": "<minimum Obsidian version>"`) before tagging — Obsidian uses that map to decide which release an older app may install.
+Bump `manifest.json` and add the matching `versions.json` entry (`"<plugin version>": "<minimum Obsidian version>"`) before tagging — Obsidian uses that map to decide which release an older app may install. Keep every past entry: the map is how an app too old for the current release finds the newest one it can still run, so deleting a line strands those users rather than tidying anything.
+
+The workflow rebuilds from the tag rather than uploading the local `main.js`, which is what lets the review verify the bundle byte-for-byte against the source. It follows that the tag must point at a commit whose `npm run build` succeeds — cutting one from a tree that only builds locally fails in the open.
 
 ## Reporting bugs
 
