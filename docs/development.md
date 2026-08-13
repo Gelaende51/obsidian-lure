@@ -223,7 +223,11 @@ Bump `manifest.json` and add the matching `versions.json` entry (`"<plugin versi
 
 The workflow rebuilds from the tag rather than uploading the local `main.js`, which is what lets the review verify the bundle byte-for-byte against the source. It follows that the tag must point at a commit whose `npm run build` succeeds — cutting one from a tree that only builds locally fails in the open.
 
-Nothing else needs doing afterwards. The community site re-scans on its own once a release is published — 1.0.3 appeared on the public page, rescored, without anyone signing in — so the "Review branch" button in the plugin's admin area only forces sooner what would happen anyway. Worth knowing before building automation around a step that is already automatic.
+The last step is in the plugin's admin area at `community.obsidian.md/account/plugins/lure`: the **⋯ → Check for new releases** menu item, which answers *"your manifest points at version X, a scan has been queued"* and runs the official review that the public scorecard reflects.
+
+Do not assume it happens by itself. It sometimes does — 1.0.3 was rescored without anyone signing in — but 1.0.4 sat for over an hour with the site counting the release and still reporting 1.0.3 as current, until the menu item was used. Treat the automatic pickup as an optimisation, not the mechanism.
+
+Two neighbouring controls are worth telling apart. **Review branch** runs a *preview* scan against any branch, tag or commit without requiring a release; it is the way to see what a change will score before tagging, and it does not touch the public listing. **Check for new releases** is the one that promotes a published release and updates the scorecard. *Archive* is in the same menu — it is not part of this flow.
 
 The scorecard on the public page is the review's own verdict and is worth reading after each release, because it is not identical to what `npm run lint` says here. It is scored in an environment without this repository's devDependencies, which is what makes [the declared type surface](#passing-the-plugin-review) load-bearing rather than a stylistic choice: 164 warnings became 23 on the release that added it, and the review rating went from *Caution* to *Satisfactory* without a line of behaviour changing.
 
