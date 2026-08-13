@@ -18,6 +18,7 @@ Obsidian 1.8.7+ · solo escritorio · AGPL-3.0
 - **Agente** — **Claude Opus 5** y **Claude Sonnet 5** (Anthropic, mediante Claude Code): escribió el TypeScript, el CSS, los 45 juegos de traducciones y la documentación. Las traducciones son automáticas y no han sido revisadas por hablantes nativos.
 - **Autor** — Vault51: definió cada función, probó cada iteración en una bóveda real, dirigió las correcciones y revisó todos los resultados.
 - **Consumo** — del 3 al 13 de agosto de 2026, nueve sesiones, \~4.928 respuestas: \~7,2 M de tokens generados, \~23,7 M enviados, \~1169,6 M de relecturas en caché (\~1200,5 M en total).
+- **Origen** — un modelo que escribe complementos de Obsidian lo aprendió de código abierto, documentación, respuestas de foros e informes de errores que la gente escribió y regaló. A ninguno se le preguntó, ni se le acreditó, ni se le pagó. Es la mayor contribución sin crédito que hay aquí, y merece tu apoyo más que este complemento: si eliges adónde mandar algo, mándalo allí.
 
 ## Funciones
 

@@ -13,6 +13,7 @@ Obsidian 1.8.7+ · desktop only · AGPL-3.0
 - **Agent** — **Claude Opus 5** and **Claude Sonnet 5** (Anthropic, via Claude Code): wrote the TypeScript, the CSS, all 45 translation sets and the documentation. Translations are machine-generated and unreviewed by native speakers.
 - **Author** — Vault51: specified every feature, tested each iteration in a live vault, directed the fixes, reviewed all output.
 - **Usage** — 3–13 Aug 2026, nine sessions, \~4,928 responses: \~7.2 M tokens generated, \~23.7 M sent, \~1169.6 M cached re-reads (\~1200.5 M total).
+- **Upstream** — a model that writes Obsidian plugins learned to from open source code, documentation, forum answers and bug reports that people wrote and gave away. None of them were asked, credited or paid. It is the largest uncredited contribution here, and it is worth more of your support than this plugin is: if you are choosing where to send something, send it upstream.
 
 ## Features
 

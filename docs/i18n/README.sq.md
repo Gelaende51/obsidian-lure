@@ -18,6 +18,7 @@ Obsidian 1.8.7+ · vetëm në kompjuter · AGPL-3.0
 - **Agjenti** — **Claude Opus 5** dhe **Claude Sonnet 5** (Anthropic, përmes Claude Code): shkroi TypeScript-in, CSS-në, të 45 grupet e përkthimeve dhe dokumentimin. Përkthimet janë prodhuar me makinë dhe nuk janë shqyrtuar nga folës amtarë.
 - **Autori** — Vault51: përcaktoi çdo veçori, provoi çdo version në një kasafortë të vërtetë, drejtoi ndreqjet, shqyrtoi të gjitha rezultatet.
 - **Konsumi** — 3–13 gusht 2026, nëntë seanca, \~4.928 përgjigje: \~7,2 milionë token të prodhuar, \~23,7 milionë të dërguar, \~1169,6 milionë rilexime nga fshehtina (\~1200,5 milionë gjithsej).
+- **Burimi** — një model që shkruan shtojca për Obsidian e mësoi këtë nga kod me burim të hapur, dokumentim, përgjigje forumesh dhe raportime gabimesh që njerëzit i shkruan dhe i dhanë falas. Askush prej tyre nuk u pyet, nuk u përmend dhe nuk u pagua. Kjo është kontributi më i madh i papërmendur këtu, dhe e meriton mbështetjen tuaj më shumë se kjo shtojcë: nëse po zgjidhni ku ta dërgoni diçka, dërgojeni atje.
 
 ## Veçoritë
 

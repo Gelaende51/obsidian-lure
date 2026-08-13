@@ -17,6 +17,7 @@ Obsidian 1.8.7+ · bureau uniquement · AGPL-3.0
 - **Agent** — **Claude Opus 5** et **Claude Sonnet 5** (Anthropic, via Claude Code) : a écrit le TypeScript, le CSS, les 45 jeux de traductions et la documentation. Les traductions sont générées automatiquement et n'ont pas été relues par des locuteurs natifs.
 - **Auteur** — Vault51 : a spécifié chaque fonctionnalité, testé chaque version dans un coffre réel, dirigé les corrections, relu l'ensemble des résultats.
 - **Consommation** — du 3 au 13 août 2026, neuf sessions, \~4 928 réponses : \~7,2 M de tokens générés, \~23,7 M envoyés, \~1169,6 M de relectures mises en cache (\~1200,5 M au total).
+- **Origine** — un modèle qui écrit des modules Obsidian l'a appris de code libre, de documentation, de réponses de forums et de rapports de bogues que des gens ont écrits et donnés. Aucun d'eux n'a été consulté, crédité ni payé. C'est la plus grande contribution non créditée ici, et elle mérite votre soutien plus que ce module : si vous choisissez où envoyer quelque chose, envoyez-le là.
 
 ## Fonctionnalités
 

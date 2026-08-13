@@ -18,6 +18,7 @@ Obsidian 1.8.7+ · csak asztali gépen · AGPL-3.0
 - **Ügynök** — **Claude Opus 5** és **Claude Sonnet 5** (Anthropic, a Claude Code-on keresztül): megírta a TypeScript kódot, a CSS-t, mind a 45 fordításkészletet és a dokumentációt. A fordítások gépiek, anyanyelvi lektorálás nélkül.
 - **Szerző** — Vault51: meghatározott minden funkciót, valódi széfben próbálta ki az egyes változatokat, irányította a javításokat, átnézte az összes eredményt.
 - **Fogyasztás** — 2026. augusztus 3–13., kilenc munkamenet, \~4928 válasz: \~7,2 M előállított token, \~23,7 M elküldött, \~1169,6 M újraolvasás a gyorsítótárból (összesen \~1200,5 M).
+- **Forrás** — az Obsidian-bővítményeket író modell mindezt nyílt forráskódú kódból, dokumentációból, fórumválaszokból és hibajelentésekből tanulta, amelyeket emberek írtak és ingyen odaadtak. Egyiküket sem kérdezték meg, nem nevezték meg és nem fizették ki. Ez itt a legnagyobb megnevezetlen hozzájárulás, és jobban megérdemli a támogatásodat, mint ez a bővítmény: ha választasz, hová küldj valamit, oda küldd.
 
 ## Funkciók
 

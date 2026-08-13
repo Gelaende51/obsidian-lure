@@ -18,6 +18,7 @@ Obsidian 1.8.7+ · nur Desktop · AGPL-3.0
 - **Agent** — **Claude Opus 5** und **Claude Sonnet 5** (Anthropic, über Claude Code): schrieb das TypeScript, das CSS, alle 45 Übersetzungssätze und die Dokumentation. Die Übersetzungen sind maschinell erstellt und wurden nicht von Muttersprachlern geprüft.
 - **Autor** — Vault51: legte jede Funktion fest, testete jede Fassung in einem echten Vault, gab die Korrekturen vor, prüfte alle Ergebnisse.
 - **Verbrauch** — 3.–13. August 2026, neun Sitzungen, \~4.928 Antworten: \~7,2 Mio. Token erzeugt, \~23,7 Mio. gesendet, \~1169,6 Mio. zwischengespeicherte Wiederholungen (\~1200,5 Mio. gesamt).
+- **Herkunft** — ein Modell, das Obsidian-Plugins schreibt, hat das aus quelloffenem Code, Dokumentation, Forenantworten und Fehlerberichten gelernt, die Menschen geschrieben und verschenkt haben. Niemand von ihnen wurde gefragt, genannt oder bezahlt. Das ist der größte ungenannte Beitrag hier, und er verdient Ihre Unterstützung mehr als dieses Plugin: Wenn Sie wählen, wohin Sie etwas schicken, schicken Sie es dorthin.
 
 ## Funktionen
 

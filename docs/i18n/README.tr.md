@@ -18,6 +18,7 @@ Obsidian 1.8.7+ · yalnızca masaüstü · AGPL-3.0
 - **Aracı** — **Claude Opus 5** ve **Claude Sonnet 5** (Anthropic, Claude Code üzerinden): TypeScript kodunu, CSS'i, 45 çeviri takımının tamamını ve belgeleri yazdı. Çeviriler makineyle üretildi ve ana dili konuşanlarca gözden geçirilmedi.
 - **Yazar** — Vault51: her özelliği belirledi, her sürümü gerçek bir kasada denedi, düzeltmeleri yönlendirdi, bütün çıktıları gözden geçirdi.
 - **Tüketim** — 3–13 Ağustos 2026, dokuz oturum, \~4.928 yanıt: \~7,2 M üretilen jeton, \~23,7 M gönderilen, \~1169,6 M önbellekten yeniden okuma (\~1200,5 M toplam).
+- **Kaynak** — Obsidian eklentileri yazan bir model bunu, insanların yazıp karşılıksız verdiği açık kaynak koddan, belgelerden, forum yanıtlarından ve hata raporlarından öğrendi. Hiçbirine sorulmadı, adı anılmadı, ödeme yapılmadı. Buradaki en büyük anılmamış katkı budur ve desteğinizi bu eklentiden çok hak eder: bir şeyi nereye göndereceğinizi seçiyorsanız, oraya gönderin.
 
 ## Özellikler
 

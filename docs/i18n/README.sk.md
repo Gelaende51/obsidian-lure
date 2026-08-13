@@ -17,6 +17,7 @@ Obsidian 1.8.7+ · iba počítač · AGPL-3.0
 - **Agent** — **Claude Opus 5** a **Claude Sonnet 5** (Anthropic, cez Claude Code): napísal TypeScript, CSS, všetkých 45 sád prekladov a dokumentáciu. Preklady vznikli strojovo a rodení hovoriaci ich nekontrolovali.
 - **Autor** — Vault51: určil každú funkciu, každú verziu vyskúšal v skutočnom trezore, riadil opravy, prezrel všetky výstupy.
 - **Spotreba** — 3.–13. augusta 2026, deväť relácií, \~4928 odpovedí: \~7,2 mil. vygenerovaných tokenov, \~23,7 mil. odoslaných, \~1169,6 mil. opätovných čítaní z vyrovnávacej pamäte (\~1200,5 mil. celkom).
+- **Zdroj** — model, ktorý píše pluginy pre Obsidian, sa to naučil z otvoreného kódu, dokumentácie, odpovedí na fórach a hlásení chýb, ktoré ľudia napísali a rozdali. Nikoho z nich sa nepýtali, nikoho neuviedli a nikomu nezaplatili. To je tunajší najväčší neuvedený príspevok a zaslúži si vašu podporu viac než tento plugin: ak vyberáte, kam niečo poslať, pošlite to tam.
 
 ## Funkcie
 

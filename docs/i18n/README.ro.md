@@ -18,6 +18,7 @@ Obsidian 1.8.7+ · doar desktop · AGPL-3.0
 - **Agent** — **Claude Opus 5** și **Claude Sonnet 5** (Anthropic, prin Claude Code): a scris codul TypeScript, CSS-ul, toate cele 45 de seturi de traduceri și documentația. Traducerile sunt generate automat și nu au fost revizuite de vorbitori nativi.
 - **Autor** — Vault51: a stabilit fiecare funcție, a încercat fiecare versiune într-un seif real, a îndrumat corecturile și a citit toate rezultatele.
 - **Consum** — 3–13 august 2026, nouă sesiuni, \~4.928 de răspunsuri: \~7,2 mil. jetoane generate, \~23,7 mil. trimise, \~1169,6 mil. recitiri din memoria tampon (\~1200,5 mil. în total).
+- **Amonte** — un model care scrie module pentru Obsidian a învățat asta din cod deschis, documentație, răspunsuri de pe forumuri și rapoarte de erori pe care oamenii le-au scris și le-au dat gratuit. Niciunul dintre ei nu a fost întrebat, menționat sau plătit. Este cea mai mare contribuție nemenționată de aici și merită sprijinul tău mai mult decât acest modul: dacă alegi unde să trimiți ceva, trimite acolo.
 
 ## Funcții
 
