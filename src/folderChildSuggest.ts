@@ -157,7 +157,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 				// A broken display filter must not empty the whole list.
 				try {
 					return shouldList(child);
-				} catch (err) {
+				} catch {
 					return true;
 				}
 			})
@@ -273,7 +273,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 				// A broken display filter must not empty the whole list.
 				try {
 					return context.shouldListExternal(child);
-				} catch (err) {
+				} catch {
 					return true;
 				}
 			})

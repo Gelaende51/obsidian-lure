@@ -15,7 +15,7 @@ Et [Obsidian](https://obsidian.md)-tillegg som gjør filnavnet i overskriftslinj
 
 ![Klikk på skilletegnet etter en mappe: pekeren hviler på det, og Filutforskeren har vist og utvidet den mappen](../images/breadcrumb.png)
 
-Obsidian 1.4.0+ · kun datamaskin · AGPL-3.0
+Obsidian 1.8.7+ · kun datamaskin · AGPL-3.0
 
 ## AI-erklæring
 

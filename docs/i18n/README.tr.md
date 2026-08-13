@@ -11,7 +11,7 @@ Bir notun başlık çubuğundaki dosya adını, kasanın tamamı boyunca tıklan
 
 ![Bir klasörden sonraki ayıraca tıklama: imleç üzerinde duruyor ve Dosya Gezgini o klasörü gösterip açtı](../images/breadcrumb.png)
 
-Obsidian 1.4.0+ · yalnızca masaüstü · AGPL-3.0
+Obsidian 1.8.7+ · yalnızca masaüstü · AGPL-3.0
 
 ## Yapay zekâ bildirimi
 

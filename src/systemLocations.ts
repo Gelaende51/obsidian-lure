@@ -118,7 +118,7 @@ export function listVaults(currentVaultPath: string): SystemLocation[] {
 	let parsed: unknown;
 	try {
 		parsed = JSON.parse(readFileSync(join(dir, "obsidian.json"), "utf8"));
-	} catch (err) {
+	} catch {
 		return [];
 	}
 
@@ -161,7 +161,7 @@ function linuxDeviceType(devicePath: string, fsType: string): DeviceType {
 		// One tiny sysfs read, no subprocess — the whole reason type
 		// detection is affordable at all on Linux.
 		if (readFileSync(`/sys/block/${block}/removable`, "utf8").trim() === "1") return "usb";
-	} catch (err) {
+	} catch {
 		return "hdd";
 	}
 	return "hdd";
@@ -176,7 +176,7 @@ function listLinuxMounts(): SystemLocation[] {
 	let contents: string;
 	try {
 		contents = readFileSync("/proc/mounts", "utf8");
-	} catch (err) {
+	} catch {
 		return [];
 	}
 
@@ -221,7 +221,7 @@ function listMacVolumes(): SystemLocation[] {
 				device: "unknown" as const,
 				isCurrentVault: false,
 			}));
-	} catch (err) {
+	} catch {
 		return [];
 	}
 }
@@ -246,7 +246,7 @@ function listWindowsDrives(): SystemLocation[] {
 					isCurrentVault: false,
 				});
 			}
-		} catch (err) {
+		} catch {
 			// An empty optical drive can throw rather than return false.
 		}
 	}

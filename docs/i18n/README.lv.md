@@ -10,7 +10,7 @@
 
 ![Klikšķis uz atdalītāja aiz mapes: rādītājs atrodas uz tā, un Failu pārlūks ir parādījis un izvērsis šo mapi](../images/breadcrumb.png)
 
-Obsidian 1.4.0+ · tikai datoram · AGPL-3.0
+Obsidian 1.8.7+ · tikai datoram · AGPL-3.0
 
 ## Paziņojums par MI
 

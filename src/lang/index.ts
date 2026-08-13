@@ -20,7 +20,7 @@ function activeStrings(): PartialStrings {
 	let language = "";
 	try {
 		language = window.localStorage.getItem(LANGUAGE_STORAGE_KEY) ?? "";
-	} catch (err) {
+	} catch {
 		// Storage can be unavailable in restricted contexts; English is fine.
 		language = "";
 	}

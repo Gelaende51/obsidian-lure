@@ -10,7 +10,7 @@
 
 ![點擊資料夾後面的分隔符號：指標停在上面，檔案瀏覽器已經顯示並展開了那個資料夾](../images/breadcrumb.png)
 
-Obsidian 1.4.0+ · 僅限桌面 · AGPL-3.0
+Obsidian 1.8.7+ · 僅限桌面 · AGPL-3.0
 
 ## AI 揭露
 

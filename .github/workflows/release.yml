@@ -1,0 +1,58 @@
+# Builds the release assets on GitHub's runners and attaches a signed
+# provenance attestation to each one, so anyone can verify that the main.js
+# they are about to load was built from this repository at this commit:
+#
+#   gh attestation verify main.js --repo Gelaende51/obsidian-lure
+#
+# Obsidian's installer reads manifest.json on the default branch and then
+# looks for a release tagged with exactly that version — no "v" prefix — so
+# the tag drives everything here.
+name: Release
+
+on:
+  push:
+    tags: ["[0-9]+.[0-9]+.[0-9]+"]
+
+permissions:
+  contents: write
+  # Required for the attestation to be signed; nothing else uses it.
+  id-token: write
+  attestations: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - run: npm ci
+
+      # Same command a contributor runs locally: type check, lint, translation
+      # check, then bundle. A release that cannot pass them is not published.
+      - run: npm run build
+
+      - name: Fail if the tag and the manifest disagree
+        run: |
+          manifest=$(node -p "require('./manifest.json').version")
+          if [ "$manifest" != "${GITHUB_REF_NAME}" ]; then
+            echo "tag ${GITHUB_REF_NAME} != manifest.json ${manifest}" >&2
+            exit 1
+          fi
+
+      - uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: "main.js, manifest.json, styles.css"
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "${GITHUB_REF_NAME}" \
+            --generate-notes \
+            main.js manifest.json styles.css

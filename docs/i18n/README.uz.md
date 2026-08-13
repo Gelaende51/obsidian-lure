@@ -11,7 +11,7 @@
 
 ![Papkadan keyingi ajratgichga bosish: ko'rsatkich uning ustida turibdi va Fayl menejeri o'sha papkani ko'rsatib, yoyib berdi](../images/breadcrumb.png)
 
-Obsidian 1.4.0+ · faqat kompyuter uchun · AGPL-3.0
+Obsidian 1.8.7+ · faqat kompyuter uchun · AGPL-3.0
 
 ## Sun'iy intellekt haqida ma'lumot
 

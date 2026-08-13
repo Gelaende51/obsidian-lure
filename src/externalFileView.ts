@@ -7,11 +7,13 @@ import {
 	PaneType,
 	Platform,
 	TFile,
+	ViewStateResult,
 	WorkspaceLeaf,
 	debounce,
 	setIcon,
 	setTooltip,
 } from "obsidian";
+import { shell } from "electron";
 import { readFile, writeFile } from "fs/promises";
 import { parse, sep } from "path";
 import { SystemLocation, isInside, listVaults } from "./systemLocations";
@@ -119,16 +121,22 @@ export async function openExternalFile(
 		active: true,
 		state: { path: absolutePath },
 	});
-	plugin.app.workspace.revealLeaf(leaf);
+	void plugin.app.workspace.revealLeaf(leaf);
 }
 
-/** Hands a path to the desktop shell. Electron is external to the bundle and desktop-only, hence the guarded require. */
+/**
+ * Hands a path to the desktop shell.
+ *
+ * `openPath` reports failure by resolving to a non-empty string rather than
+ * by rejecting, so both paths have to be checked: a missing file gives a
+ * message, a revoked permission can still throw.
+ */
 export function openInDefaultApp(absolutePath: string): void {
 	try {
-		// eslint-disable-next-line @typescript-eslint/no-var-requires
-		const { shell } = require("electron");
-		void shell.openPath(absolutePath);
-	} catch (err) {
+		void shell.openPath(absolutePath).then((error) => {
+			if (error) new Notice(t("noticeExternalOpenFailed", { path: absolutePath }));
+		});
+	} catch {
 		new Notice(t("noticeExternalOpenFailed", { path: absolutePath }));
 	}
 }
@@ -215,7 +223,7 @@ export class ExternalFileView extends ItemView {
 		return { ...super.getState(), path: this.filePath, render: this.renderMode ?? undefined };
 	}
 
-	async setState(state: unknown, result: unknown): Promise<void> {
+	async setState(state: unknown, result: ViewStateResult): Promise<void> {
 		const incoming = state as ExternalViewState;
 		const next = incoming?.path;
 		if (typeof next === "string") {
@@ -228,8 +236,7 @@ export class ExternalFileView extends ItemView {
 		}
 		this.renderMode =
 			incoming?.render === "text" || incoming?.render === "markdown" ? incoming.render : null;
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		await super.setState(state, result as any);
+		await super.setState(state, result);
 		await this.reload();
 	}
 
@@ -445,7 +452,7 @@ export class ExternalFileView extends ItemView {
 	private isRegistered(extension: string): boolean {
 		try {
 			return this.app.viewRegistry.isExtensionRegistered(extension);
-		} catch (err) {
+		} catch {
 			return true;
 		}
 	}
@@ -518,7 +525,7 @@ export class ExternalFileView extends ItemView {
 		const uri = `obsidian://open?vault=${encodeURIComponent(vaultName)}&file=${encodeURIComponent(relative)}`;
 		try {
 			window.open(uri);
-		} catch (err) {
+		} catch {
 			new Notice(t("noticeExternalOpenFailed", { path: this.filePath }));
 		}
 	}

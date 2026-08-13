@@ -11,7 +11,7 @@ Një shtojcë e [Obsidian](https://obsidian.md) që e kthen emrin e skedarit në
 
 ![Klikim mbi ndarësin pas një dosjeje: treguesi qëndron mbi të dhe Eksploruesi i dokumenteve e ka shfaqur dhe zgjeruar atë dosje](../images/breadcrumb.png)
 
-Obsidian 1.4.0+ · vetëm në kompjuter · AGPL-3.0
+Obsidian 1.8.7+ · vetëm në kompjuter · AGPL-3.0
 
 ## Deklarim për IA-në
 

@@ -11,7 +11,7 @@ Ein [Obsidian](https://obsidian.md)-Plugin, das den Dateinamen in der Kopfzeile 
 
 ![Klick auf das Trennzeichen hinter einem Ordner: der Mauszeiger liegt darauf, und der Dateiexplorer hat diesen Ordner angezeigt und aufgeklappt](../images/breadcrumb.png)
 
-Obsidian 1.4.0+ · nur Desktop · AGPL-3.0
+Obsidian 1.8.7+ · nur Desktop · AGPL-3.0
 
 ## KI-Offenlegung
 

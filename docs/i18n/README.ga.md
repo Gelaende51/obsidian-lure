@@ -10,7 +10,7 @@ Breiseán [Obsidian](https://obsidian.md) a iompaíonn ainm an chomhaid i mbarra
 
 ![Cliceáil ar an deighilteoir i ndiaidh fillteáin: tá an pointeoir ina luí air, agus tá an fillteán sin taispeánta agus leathnaithe ag Comhaid](../images/breadcrumb.png)
 
-Obsidian 1.4.0+ · deasc amháin · AGPL-3.0
+Obsidian 1.8.7+ · deasc amháin · AGPL-3.0
 
 ## Nochtadh faoin IS
 

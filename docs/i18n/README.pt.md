@@ -10,7 +10,7 @@ Um plugin do [Obsidian](https://obsidian.md) que transforma o nome do ficheiro n
 
 ![Clique no separador a seguir a uma pasta: o ponteiro está pousado sobre ele e o Explorador de ficheiros mostrou e expandiu essa pasta](../images/breadcrumb.png)
 
-Obsidian 1.4.0+ · apenas computador · AGPL-3.0
+Obsidian 1.8.7+ · apenas computador · AGPL-3.0
 
 ## Divulgação sobre IA
 

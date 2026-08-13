@@ -49,7 +49,7 @@ export default class BreadcrumbPathPlugin extends Plugin {
 	}
 
 	async loadSettings(): Promise<void> {
-		const stored = (await this.loadData()) ?? {};
+		const stored: unknown = (await this.loadData()) ?? {};
 		// Only keys the plugin still has. A plain merge would carry a setting
 		// from a removed feature forward for ever, since saveData writes back
 		// whatever it was handed.

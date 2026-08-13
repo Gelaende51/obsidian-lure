@@ -429,8 +429,7 @@
 	min-width: 0;
 	display: flex;
 	flex-wrap: wrap;
-	column-gap: var(--size-4-4);
-	row-gap: 2px;
+	gap: 2px var(--size-4-4);
 }
 
 /* One line per condition, each carrying its own colour, because the two

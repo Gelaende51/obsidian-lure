@@ -6,7 +6,7 @@ An [Obsidian](https://obsidian.md) plugin that turns the filename in a note's he
 
 ![Clicking the delimiter after a folder: the pointer rests on it, and the File Explorer has revealed and expanded that folder](docs/images/breadcrumb.png)
 
-Obsidian 1.4.0+ · desktop only · AGPL-3.0
+Obsidian 1.8.7+ · desktop only · AGPL-3.0
 
 ## AI disclosure
 

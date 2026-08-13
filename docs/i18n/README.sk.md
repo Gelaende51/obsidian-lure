@@ -10,7 +10,7 @@ Plugin pre [Obsidian](https://obsidian.md), ktorý premení názov súboru v hla
 
 ![Kliknutie na oddeľovač za priečinkom: ukazovateľ na ňom spočíva a Prieskumník súborov ten priečinok zobrazil a rozbalil](../images/breadcrumb.png)
 
-Obsidian 1.4.0+ · iba počítač · AGPL-3.0
+Obsidian 1.8.7+ · iba počítač · AGPL-3.0
 
 ## Vyhlásenie o AI
 

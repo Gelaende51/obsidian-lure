@@ -11,7 +11,7 @@ Wtyczka do [Obsidiana](https://obsidian.md), która zamienia nazwę pliku na pas
 
 ![Kliknięcie separatora za folderem: wskaźnik spoczywa na nim, a Przeglądarka plików pokazała i rozwinęła ten folder](../images/breadcrumb.png)
 
-Obsidian 1.4.0+ · tylko komputer · AGPL-3.0
+Obsidian 1.8.7+ · tylko komputer · AGPL-3.0
 
 ## Ujawnienie użycia SI
 

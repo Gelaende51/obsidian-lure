@@ -11,7 +11,7 @@ Un plugin per [Obsidian](https://obsidian.md) che trasforma il nome del file nel
 
 ![Clic sul separatore che segue una cartella: il puntatore vi si appoggia sopra ed Esplora file ha mostrato ed espanso quella cartella](../images/breadcrumb.png)
 
-Obsidian 1.4.0+ · solo desktop · AGPL-3.0
+Obsidian 1.8.7+ · solo desktop · AGPL-3.0
 
 ## Divulgazione sull'IA
 

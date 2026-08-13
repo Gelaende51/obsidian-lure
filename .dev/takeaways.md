@@ -634,3 +634,37 @@ the active language and nothing else, so any second key in there is a chrome
 still drawn in the old language. That is also the only way to enumerate
 Obsidian's own translated strings from outside — `i18next.loadLanguages()`
 silently no-ops for a language the app has not loaded, and returns English.
+
+## Most of a failed submission report was the reviewer's missing type
+
+The community-plugin bot returned about 150 findings across five rules —
+`no-unsafe-call`, `-member-access`, `-return`, `-assignment`, `-argument` —
+concentrated in `externalFs.ts`, `systemLocations.ts` and `externalFileOps.ts`.
+Those are exactly the files that import `fs`, `path` and `os`, and every one of
+them is fully typed. Running the same `eslint-plugin-obsidianmd` config locally
+reported **none** of them.
+
+The difference is `@types/node`. Type-aware rules need a real programme; where
+the Node types are not resolvable, every value coming out of `readdirSync` or
+`join` degrades to `any`, and each use of it then trips a separate rule. One
+missing `@types` package inflated a 22-error report into a 170-line one, and
+the inflation is indistinguishable from real findings unless you reproduce it.
+
+Reproducing the review locally is therefore the first step, not the last:
+`npm run lint` now runs the bot's own rule set, and `npm run build` depends on
+it, so the report cannot come back with anything that was not visible here
+first.
+
+## minAppVersion is checked against the @since tags in obsidian.d.ts
+
+`obsidianmd/no-unsupported-api` reads the `@since` on each declaration in the
+bundled `obsidian.d.ts` and compares it with `manifest.json`. The floor is
+therefore the *maximum* `@since` across everything the plugin touches, and it
+moves silently: adopting one convenience call raises the minimum Obsidian
+version for every user. Here `Vault.copy` and `displayTooltip` — neither of
+them load-bearing choices at the time — set the floor at 1.8.7 on their own,
+while everything else needed only 1.4.10.
+
+Worth knowing which calls are expensive before reaching for them. `@since` is
+in the shipped `.d.ts`; `grep -B12 <symbol> node_modules/obsidian/obsidian.d.ts`
+answers it in one line.

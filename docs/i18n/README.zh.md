@@ -10,7 +10,7 @@
 
 ![点击文件夹后面的分隔符：指针停在上面，文件列表已经显示并展开了那个文件夹](../images/breadcrumb.png)
 
-Obsidian 1.4.0+ · 仅桌面端 · AGPL-3.0
+Obsidian 1.8.7+ · 仅桌面端 · AGPL-3.0
 
 ## AI 披露
 

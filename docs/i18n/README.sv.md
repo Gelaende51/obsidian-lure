@@ -11,7 +11,7 @@ Ett [Obsidian](https://obsidian.md)-tillägg som förvandlar filnamnet i en ante
 
 ![Klick på avskiljaren efter en mapp: pekaren vilar på den och Filutforskaren har visat och fällt ut den mappen](../images/breadcrumb.png)
 
-Obsidian 1.4.0+ · endast dator · AGPL-3.0
+Obsidian 1.8.7+ · endast dator · AGPL-3.0
 
 ## AI-redovisning
 

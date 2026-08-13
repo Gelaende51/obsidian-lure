@@ -10,7 +10,7 @@ Plugin [Obsidian](https://obsidian.md) yang mengubah nama berkas di bilah judul 
 
 ![Klik pada pemisah setelah sebuah folder: penunjuk berada di atasnya, dan Penjelajah berkas telah menampilkan serta membentangkan folder itu](../images/breadcrumb.png)
 
-Obsidian 1.4.0+ · hanya desktop · AGPL-3.0
+Obsidian 1.8.7+ · hanya desktop · AGPL-3.0
 
 ## Pengungkapan AI
 

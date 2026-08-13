@@ -10,7 +10,7 @@ Et [Obsidian](https://obsidian.md)-plugin, der forvandler filnavnet i en notes o
 
 ![Klik på adskilleren efter en mappe: markøren hviler på den, og Filer har vist og foldet den mappe ud](../images/breadcrumb.png)
 
-Obsidian 1.4.0+ · kun computer · AGPL-3.0
+Obsidian 1.8.7+ · kun computer · AGPL-3.0
 
 ## AI-oplysning
 

@@ -10,7 +10,7 @@ Plugin [Obsidian](https://obsidian.md) yang menukar nama fail pada bar tajuk ses
 
 ![Klik pada pemisah selepas sebuah folder: penuding berada di atasnya, dan Peneroka fail telah menunjukkan serta mengembangkan folder itu](../images/breadcrumb.png)
 
-Obsidian 1.4.0+ · komputer meja sahaja · AGPL-3.0
+Obsidian 1.8.7+ · komputer meja sahaja · AGPL-3.0
 
 ## Pendedahan AI
 

@@ -34,7 +34,7 @@ export function listExternalChildren(folderPath: string): ExternalChild[] {
 	let entries: Dirent[];
 	try {
 		entries = readdirSync(folderPath, { withFileTypes: true, encoding: "utf8" });
-	} catch (err) {
+	} catch {
 		return [];
 	}
 
@@ -45,7 +45,7 @@ export function listExternalChildren(folderPath: string): ExternalChild[] {
 		if (entry.isSymbolicLink()) {
 			try {
 				isFolder = statSync(path).isDirectory();
-			} catch (err) {
+			} catch {
 				isFolder = false;
 			}
 		}
@@ -69,7 +69,7 @@ export function listExternalChildren(folderPath: string): ExternalChild[] {
 export function isExternalFolder(path: string): boolean {
 	try {
 		return statSync(path).isDirectory();
-	} catch (err) {
+	} catch {
 		return false;
 	}
 }
@@ -78,7 +78,7 @@ export function isExternalFolder(path: string): boolean {
 export function isExternalFile(path: string): boolean {
 	try {
 		return statSync(path).isFile();
-	} catch (err) {
+	} catch {
 		return false;
 	}
 }

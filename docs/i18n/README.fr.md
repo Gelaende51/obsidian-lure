@@ -10,7 +10,7 @@ Un plugin [Obsidian](https://obsidian.md) qui transforme le nom de fichier affic
 
 ![Clic sur le séparateur qui suit un dossier : le pointeur est posé dessus, et l'Explorateur de fichiers a révélé et déplié ce dossier](../images/breadcrumb.png)
 
-Obsidian 1.4.0+ · bureau uniquement · AGPL-3.0
+Obsidian 1.8.7+ · bureau uniquement · AGPL-3.0
 
 ## Divulgation de l'IA
 

@@ -11,7 +11,7 @@ Un plugin de [Obsidian](https://obsidian.md) que convierte el nombre de archivo 
 
 ![Clic en el separador que sigue a una carpeta: el puntero descansa sobre él y el Explorador de archivos ha mostrado y desplegado esa carpeta](../images/breadcrumb.png)
 
-Obsidian 1.4.0+ · solo escritorio · AGPL-3.0
+Obsidian 1.8.7+ · solo escritorio · AGPL-3.0
 
 ## Divulgación sobre IA
 

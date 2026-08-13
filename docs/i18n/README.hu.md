@@ -11,7 +11,7 @@ Egy [Obsidian](https://obsidian.md)-bővítmény, amely a jegyzet fejlécsávjá
 
 ![Kattintás a mappa utáni elválasztóra: a mutató rajta pihen, a Fájlkezelő pedig megmutatta és kinyitotta azt a mappát](../images/breadcrumb.png)
 
-Obsidian 1.4.0+ · csak asztali gépen · AGPL-3.0
+Obsidian 1.8.7+ · csak asztali gépen · AGPL-3.0
 
 ## MI-nyilatkozat
 

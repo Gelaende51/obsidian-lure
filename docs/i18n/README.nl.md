@@ -11,7 +11,7 @@ Een [Obsidian](https://obsidian.md)-plugin die de bestandsnaam in de kopbalk van
 
 ![Klik op het scheidingsteken achter een map: de muisaanwijzer rust erop en de Verkenner heeft die map getoond en uitgeklapt](../images/breadcrumb.png)
 
-Obsidian 1.4.0+ · alleen desktop · AGPL-3.0
+Obsidian 1.8.7+ · alleen desktop · AGPL-3.0
 
 ## AI-verantwoording
 

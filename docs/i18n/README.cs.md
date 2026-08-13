@@ -10,7 +10,7 @@ Plugin pro [Obsidian](https://obsidian.md), který promění název souboru v z�
 
 ![Kliknutí na oddělovač za složkou: ukazatel na něm spočívá a Průzkumník souborů tuto složku zobrazil a rozbalil](../images/breadcrumb.png)
 
-Obsidian 1.4.0+ · pouze počítač · AGPL-3.0
+Obsidian 1.8.7+ · pouze počítač · AGPL-3.0
 
 ## Prohlášení o AI
 

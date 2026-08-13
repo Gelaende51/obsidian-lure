@@ -15,7 +15,7 @@ const DELIMITER_PRESETS = ["/", ">", "▸", "›", "\\", "•"];
  * verbatim in all 45 locales while the grammar around it changes.
  */
 function withPluginLinks(text: string, plugins: { name: string; id: string }[]): DocumentFragment {
-	const fragment = document.createDocumentFragment();
+	const fragment = createFragment();
 	let rest = text;
 	for (const { name, id } of plugins) {
 		const at = rest.indexOf(name);

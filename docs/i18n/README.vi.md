@@ -11,7 +11,7 @@ Một phần mở rộng cho [Obsidian](https://obsidian.md) biến tên tệp t
 
 ![Bấm vào dấu phân cách ngay sau một thư mục: con trỏ đang đặt trên đó, và Trình duyệt tệp đã hiện ra và mở rộng thư mục ấy](../images/breadcrumb.png)
 
-Obsidian 1.4.0+ · chỉ trên máy tính · AGPL-3.0
+Obsidian 1.8.7+ · chỉ trên máy tính · AGPL-3.0
 
 ## Công bố về AI
 

@@ -1,20 +1,23 @@
 {
 	"name": "lure",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "Shows a clickable, editable breadcrumb of the vault path in each note's header.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
-		"build": "tsc -noEmit -skipLibCheck && npm run check:lang && node esbuild.config.mjs production",
-		"check:lang": "node scripts/check-translations.mjs"
+		"build": "tsc -noEmit -skipLibCheck && npm run lint && npm run check:lang && node esbuild.config.mjs production",
+		"check:lang": "node scripts/check-translations.mjs",
+		"lint": "eslint src"
 	},
 	"license": "AGPL-3.0-only",
 	"devDependencies": {
 		"@types/node": "^20.0.0",
-		"builtin-modules": "^3.3.0",
 		"esbuild": "^0.19.0",
+		"eslint": "^9.39.0",
+		"eslint-plugin-obsidianmd": "^0.4.1",
 		"obsidian": "latest",
 		"tslib": "^2.6.0",
-		"typescript": "^5.4.0"
+		"typescript": "^5.4.0",
+		"typescript-eslint": "^8.67.0"
 	}
 }

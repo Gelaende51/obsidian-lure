@@ -118,7 +118,7 @@ const INPUT_MIN_PX = 28;
 let measureCtx: CanvasRenderingContext2D | null = null;
 
 function textWidth(text: string, el: HTMLElement): number {
-	if (!measureCtx) measureCtx = document.createElement("canvas").getContext("2d");
+	if (!measureCtx) measureCtx = createEl("canvas").getContext("2d");
 	if (!measureCtx) return 0;
 
 	const style = window.getComputedStyle(el);
@@ -247,10 +247,10 @@ export class PathBreadcrumb {
 		this.titleEl.addClass(NATIVE_TITLE_HIDDEN_CLASS);
 		this.titleEl.setAttribute("contenteditable", "false");
 
-		this.vaultSegmentEl = document.createElement("span");
+		this.vaultSegmentEl = createSpan();
 		this.vaultSegmentEl.addClass("lure-vault-wrapper");
 
-		this.filenameEl = document.createElement("div");
+		this.filenameEl = createDiv();
 		this.filenameEl.addClass("lure-filename");
 		this.titleEl.insertAdjacentElement("afterend", this.filenameEl);
 
@@ -258,7 +258,7 @@ export class PathBreadcrumb {
 		// same ones the native bookmark/reading-mode/more-options buttons
 		// use) so it inherits identical sizing for free, and lives in
 		// .view-actions itself rather than next to our breadcrumb.
-		this.renameButtonEl = document.createElement("span");
+		this.renameButtonEl = createSpan();
 		this.renameButtonEl.addClass("clickable-icon", "view-action", "lure-rename-btn");
 		this.renameButtonEl.setAttribute("aria-label", t("renameToggleLabel"));
 		// Not "pencil": that is what Obsidian's own view-mode action in the
@@ -281,7 +281,7 @@ export class PathBreadcrumb {
 		// inside it — there is nothing to unlock in your own vault, and a
 		// permanently inert padlock in the header would only raise the
 		// question of what it is for.
-		this.unlockButtonEl = document.createElement("span");
+		this.unlockButtonEl = createSpan();
 		this.unlockButtonEl.addClass("clickable-icon", "view-action", "lure-unlock-btn");
 		this.unlockButtonEl.addEventListener("click", (evt) => {
 			evt.stopPropagation();
@@ -1218,11 +1218,11 @@ export class PathBreadcrumb {
 
 		const existing = this.plugin.app.workspace.getLeavesOfType("file-explorer")[0];
 		if (existing) {
-			this.plugin.app.workspace.revealLeaf(existing);
+			void this.plugin.app.workspace.revealLeaf(existing);
 		} else {
 			try {
 				fileExplorer.instance.revealInFolder(this.plugin.app.vault.getRoot());
-			} catch (err) {
+			} catch {
 				new Notice(t("noticeExplorerOpenFailed"));
 			}
 		}
@@ -1425,7 +1425,7 @@ export class PathBreadcrumb {
 		try {
 			fileExplorer.instance.revealInFolder(target);
 			this.expandInExplorer(target.path);
-		} catch (err) {
+		} catch {
 			new Notice(t("noticeExplorerRevealFailed"));
 		}
 	}
@@ -1677,7 +1677,7 @@ export class PathBreadcrumb {
 	private isSupportedExtension(extension: string): boolean {
 		try {
 			return this.plugin.app.viewRegistry.isExtensionRegistered(extension);
-		} catch (err) {
+		} catch {
 			return true;
 		}
 	}
@@ -1706,7 +1706,7 @@ export class PathBreadcrumb {
 	private isSupportedFile(file: TFile): boolean {
 		try {
 			return this.plugin.app.viewRegistry.isExtensionRegistered(file.extension);
-		} catch (err) {
+		} catch {
 			return true;
 		}
 	}
@@ -1714,7 +1714,7 @@ export class PathBreadcrumb {
 	private readsUnsupportedFilesSetting(): boolean {
 		try {
 			return this.plugin.app.vault.getConfig("showUnsupportedFiles") === true;
-		} catch (err) {
+		} catch {
 			return true;
 		}
 	}

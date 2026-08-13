@@ -11,7 +11,7 @@
 
 ![Napsautus kansion jälkeisessä erottimessa: osoitin lepää sen päällä, ja Tiedostot on näyttänyt ja avannut kyseisen kansion](../images/breadcrumb.png)
 
-Obsidian 1.4.0+ · vain työpöytä · AGPL-3.0
+Obsidian 1.8.7+ · vain työpöytä · AGPL-3.0
 
 ## Tekoälyilmoitus
 

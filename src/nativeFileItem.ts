@@ -45,7 +45,7 @@ function obsidianLabel(key: string, fallback: string): string {
 	try {
 		const translated = window.i18next?.t(key);
 		return translated && translated !== key ? translated : fallback;
-	} catch (err) {
+	} catch {
 		return fallback;
 	}
 }
@@ -116,7 +116,7 @@ function makeDraggable(
 						? dragManager.dragFile(evt, target)
 						: null;
 			if (data) dragManager.onDragStart(evt, data);
-		} catch (err) {
+		} catch {
 			// Internal API moved: no drag payload, so the drag is simply inert.
 		}
 	});
@@ -199,7 +199,7 @@ function showContextMenu(app: App, evt: MouseEvent, target: TAbstractFile): void
 	// just in the order items happen to be added.
 	try {
 		menu.addSections?.(MENU_SECTIONS);
-	} catch (err) {
+	} catch {
 		// Section ordering unavailable; the menu is still perfectly usable.
 	}
 

@@ -11,7 +11,7 @@ Un connector d'[Obsidian](https://obsidian.md) que converteix el nom del fitxer 
 
 ![Clic al separador que segueix una carpeta: el punter hi reposa a sobre i l'Explorador de fitxers ha mostrat i desplegat aquella carpeta](../images/breadcrumb.png)
 
-Obsidian 1.4.0+ · només escriptori · AGPL-3.0
+Obsidian 1.8.7+ · només escriptori · AGPL-3.0
 
 ## Divulgació sobre la IA
 

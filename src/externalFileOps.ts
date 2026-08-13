@@ -21,7 +21,7 @@ export async function externalExists(path: string): Promise<boolean> {
 	try {
 		await access(path, constants.F_OK);
 		return true;
-	} catch (err) {
+	} catch {
 		return false;
 	}
 }

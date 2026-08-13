@@ -11,7 +11,7 @@ Un modul [Obsidian](https://obsidian.md) care transformă numele fișierului din
 
 ![Clic pe separatorul de după un dosar: indicatorul stă pe el, iar Exploratorul de fișiere a arătat și a desfășurat acel dosar](../images/breadcrumb.png)
 
-Obsidian 1.4.0+ · doar desktop · AGPL-3.0
+Obsidian 1.8.7+ · doar desktop · AGPL-3.0
 
 ## Divulgare privind IA
 
