@@ -216,7 +216,7 @@ Bu tugmani tortib olish o‘rniga `workspace:edit-file-title` buyrug‘ini o‘r
 | **Binafsha** | Eslatma (`.md`, `.markdown`) — Obsidian eslatma sifatida ochadigan narsa, aralash tarkibli jilddan ajratib olingan |
 | **To‘q sariq** | Obsidian’da ko‘rinishi yo‘q matn turi; [ogohlantirish ranglariga](#ikki-ogohlantirish-rangi) qarang |
 | **Xira** | Omboringizdan tashqarida, shu bois omborning o‘z ishlov berishi amal qilmaydi |
-| **Ko‘k** | Faqat nom o‘zgartirish/ko‘chirish rejimida: *shu nomni saqlash* bandi — mavjud narsa emas, manzil, shu bois u atrofidagi fayl nomlaridan ajratib ko‘rsatiladi |
+| **Ko‘k** | Siz turgan qaydnoma. Ko‘rib chiqishda bu uning o‘z bandi; nom o‘zgartirish/ko‘chirish rejimida uning o‘rnida *shu nomni saqlash* bandi turadi — ikkalasida ham o‘sha qaydnoma |
 | **Kulrang** | Faqat nom o‘zgartirish/ko‘chirish rejimida: nom band. Baribir tanlanadi — tanlash maydonni to‘ldiradi, u yerda tekshiruv to‘qnashuvni belgilaydi |
 
 ## Ko‘rinuvchanlik qoidalari

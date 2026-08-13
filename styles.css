@@ -393,6 +393,22 @@
 	color: var(--text-warning);
 }
 
+/* The note this path bar belongs to. Blue, and the same blue as "keep this
+   name", because the two are the same statement in the two modes: browsing,
+   it marks where you already are; renaming, that entry replaces this one in
+   the list (see folderChildSuggest) and stands for the same note. They are
+   mutually exclusive by construction, so one colour never means two things
+   at once.
+
+   Last of the tints, so it outranks all of them. A note is usually Markdown,
+   and the caution on a type Obsidian has no view for is moot once the file
+   is the one you already have open — "you are here" is the more specific
+   fact in both cases. */
+.suggestion-item.lure-suggest-current .lure-suggest-label {
+	color: var(--color-blue);
+	font-weight: var(--font-medium);
+}
+
 /* Read-only external file view
    --------------------------- */
 /* A quiet status line, not a warning block: the header bar already shows

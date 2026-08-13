@@ -216,7 +216,7 @@ Tas darbojas, apņemot komandu `workspace:edit-file-title`, nevis pārtverot tau
 | **Violeta** | Piezīme (`.md`, `.markdown`) — tas, ko Obsidian atvērs kā piezīmi, izcelts no mapes ar jauktu saturu |
 | **Oranža** | Teksta tips, kuram Obsidian nav skata; sk. [brīdinājuma krāsas](#divas-brīdinājuma-krāsas) |
 | **Pieklusināta** | Ārpus tavas glabātavas, tāpēc glabātavas pašas apstrāde neattiecas |
-| **Zila** | Tikai pārdēvēšanas/pārvietošanas režīmā: ieraksts *paturēt šo nosaukumu* — galamērķis, nevis kaut kas esošs, tāpēc izcelts starp failu nosaukumiem, kuru vidū tas sēž |
+| **Zila** | Piezīme, kurā atrodaties. Pārlūkojot tas ir tās pašas ieraksts; pārdēvēšanas/pārvietošanas režīmā tās vietā stāv ieraksts *paturēt šo nosaukumu* — abos gadījumos tā pati piezīme |
 | **Pelēka** | Tikai pārdēvēšanas/pārvietošanas režīmā: nosaukums ir aizņemts. Joprojām izvēlams — izvēloties tas aizpilda lauku, kur pārbaude atzīmē konfliktu |
 
 ## Redzamības noteikumi

@@ -216,7 +216,7 @@ Aceasta funcționează prin împachetarea comenzii `workspace:edit-file-title`, 
 | **Mov** | O notiță (`.md`, `.markdown`) — ceea ce Obsidian va deschide ca notiță, scoasă în evidență dintr-un folder cu conținut amestecat |
 | **Portocaliu** | Un tip text pentru care Obsidian nu are vizualizare; vezi [culorile de avertizare](#cele-două-culori-de-avertizare) |
 | **Estompat** | În afara seifului tău, deci prelucrarea proprie a seifului nu se aplică |
-| **Albastru** | Doar în modul redenumire/mutare: intrarea *păstrează acest nume* — o destinație, nu ceva care există, așa că este scoasă în evidență dintre numele de fișiere printre care stă |
+| **Albastru** | Nota în care ești. La răsfoire este propria ei intrare; în modul redenumire/mutare, intrarea *păstrează acest nume* îi ia locul — aceeași notă în ambele cazuri |
 | **Gri** | Doar în modul redenumire/mutare: numele este ocupat. Rămâne selectabil — alegerea unuia umple câmpul, unde validarea semnalează conflictul |
 
 ## Reguli de vizibilitate

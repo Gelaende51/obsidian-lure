@@ -216,7 +216,7 @@ Dette fungerer ved å pakke inn kommandoen `workspace:edit-file-title` framfor �
 | **Lilla** | Et notat (`.md`, `.markdown`) — det Obsidian åpner som et notat, plukket ut av en mappe med blandet innhold |
 | **Oransje** | En teksttype Obsidian ikke har en visning for; se [varselfargene](#de-to-varselfargene) |
 | **Nedtonet** | Utenfor hvelvet ditt, så hvelvets egen håndtering gjelder ikke |
-| **Blå** | Bare i gi nytt navn-/flyttemodus: raden *behold dette navnet* — et mål framfor noe som finnes, så den plukkes ut av filnavnene den står blant |
+| **Blå** | Notatet du er i. Når du blar, er det dets egen rad; i gi nytt navn-/flyttemodus står raden *behold dette navnet* i stedet — samme notat begge veier |
 | **Grå** | Bare i gi nytt navn-/flyttemodus: navnet er tatt. Kan fortsatt velges — å velge et fyller feltet, der valideringen merker kollisjonen |
 
 ## Synlighetsregler

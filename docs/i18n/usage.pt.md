@@ -216,7 +216,7 @@ Isto funciona envolvendo o comando `workspace:edit-file-title` em vez de agarrar
 | **Roxo** | Uma nota (`.md`, `.markdown`) — o que o Obsidian abrirá como nota, destacado numa pasta de conteúdo misturado |
 | **Laranja** | Um tipo de texto para o qual o Obsidian não tem vista; veja [as cores de aviso](#as-duas-cores-de-aviso) |
 | **Esbatido** | Fora do seu cofre, por isso o tratamento próprio do cofre não se aplica |
-| **Azul** | Só no modo renomear/mover: a entrada *manter este nome* — um destino em vez de algo que existe, por isso destaca-se dos nomes de ficheiro no meio dos quais está |
+| **Azul** | A nota em que está. Ao navegar, é a entrada dela mesma; no modo renomear/mover, a entrada *manter este nome* fica no lugar dela — a mesma nota nos dois casos |
 | **Cinzento** | Só no modo renomear/mover: o nome está ocupado. Continua selecionável — escolhê-lo preenche o campo, onde a validação assinala o conflito |
 
 ## Regras de visibilidade

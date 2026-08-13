@@ -19,7 +19,7 @@
  * Requires --remote-debugging-port=9222 and the test vault open.
  */
 
-import { connect, PAUSE } from "./cdpSession.mjs";
+import { connect, PAUSE, reloadPlugin } from "./cdpSession.mjs";
 
 /**
  * Every community plugin known to contend for the header or the folder
@@ -396,6 +396,9 @@ for (let i = 0; ; i++) {
 	if (i > 60) throw new Error("Lure did not load");
 	await new Promise((r) => setTimeout(r, 500));
 }
+
+// Only now, with the plugin definitely up: swap in whatever is on disk.
+await reloadPlugin(page);
 
 const installed = await page.evaluate(
 	`return ${JSON.stringify(PEERS.map((p) => p.id))}.filter((id) => !!(app.plugins.manifests || {})[id]);`,

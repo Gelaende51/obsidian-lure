@@ -18,7 +18,7 @@
 import { mkdirSync, rmSync, writeFileSync, readFileSync, existsSync, chmodSync } from "fs";
 import { join } from "path";
 import { homedir, userInfo } from "os";
-import { connect, PAUSE } from "./cdpSession.mjs";
+import { connect, PAUSE, reloadPlugin } from "./cdpSession.mjs";
 import { build } from "esbuild";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve as resolvePath } from "node:path";
@@ -788,6 +788,53 @@ const DROP_RENAME_FIXTURE = `
 	if (folder) await app.vault.adapter.rmdir(folder.path, true);
 `;
 
+test("the dropdown marks the note this path bar belongs to", async () => {
+	const r = await page.evaluate(`
+		${RENAME_FIXTURE}
+		// A sibling to compare against: the tint has to pick one entry out,
+		// not colour every note in the folder.
+		if (!app.vault.getAbstractFileByPath("LureFocus/a/other.md")) {
+			await app.vault.create("LureFocus/a/other.md", "sibling\\n");
+		}
+		${PAUSE(250)}
+		${breadcrumb}
+		bc.enterTypingMode("");
+		${PAUSE(350)}
+		const read = () => [...document.querySelectorAll(".suggestion-item")].map((el) => ({
+			label: el.querySelector(".lure-suggest-label")?.textContent,
+			current: el.classList.contains("lure-suggest-current"),
+			kind: [...el.classList].find((c) => c.startsWith("lure-suggest-") && c !== "lure-suggest-current"),
+		}));
+		const browsing = read();
+		bc.cancelNavigation();
+		${PAUSE(200)}
+
+		// Rename mode replaces the open note's own row with the pinned
+		// "keep this name" entry, so the two must never both be blue.
+		document.querySelector(".lure-rename-btn").click();
+		${PAUSE(300)}
+		bc.enterTypingMode("");
+		${PAUSE(350)}
+		const renaming = read();
+		bc.cancelNavigation();
+		${PAUSE(150)}
+		${DROP_RENAME_FIXTURE}
+		return { browsing, renaming };
+	`);
+
+	const open = r.browsing?.find((e) => e.label === "note.md");
+	const sibling = r.browsing?.find((e) => e.label === "other.md");
+	expect("the open note is listed", !!open, true);
+	expect("and marked as current", open?.current, true);
+	expect("a sibling note is not", sibling?.current, false);
+	expect("only one entry is marked", r.browsing?.filter((e) => e.current).length, 1);
+
+	// The blue can only mean one thing at a time, which holds because the
+	// two entries are mutually exclusive rather than because of the CSS.
+	expect("rename mode drops the note's own row", r.renaming?.some((e) => e.label === "note.md" && e.kind === "lure-suggest-file"), false);
+	expect("nothing is marked current there", r.renaming?.filter((e) => e.current).length, 0);
+});
+
 test("rename mode: choosing a folder descends instead of ending the mode", async () => {
 	const r = await page.evaluate(`
 		${RENAME_FIXTURE}
@@ -1044,6 +1091,9 @@ for (let i = 0; ; i++) {
 	if (i > 60) throw new Error("Lure did not load");
 	await new Promise((r) => setTimeout(r, 500));
 }
+
+// Only now, with the plugin definitely up: swap in whatever is on disk.
+await reloadPlugin(page);
 
 /**
  * Settings this suite flips, captured before the first test.

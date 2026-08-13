@@ -217,7 +217,7 @@ Dit werkt door het commando `workspace:edit-file-title` te omhullen in plaats va
 | **Paars** | Een notitie (`.md`, `.markdown`) — wat Obsidian als notitie zal openen, eruit gelicht in een map met gemengde inhoud |
 | **Oranje** | Een teksttype waarvoor Obsidian geen weergave heeft; zie [de waarschuwingskleuren](#de-twee-waarschuwingskleuren) |
 | **Gedempt** | Buiten je kluis, dus de eigen afhandeling van de kluis geldt niet |
-| **Blauw** | Alleen in de verplaats-/hernoemmodus: het item *deze naam behouden* — een bestemming in plaats van iets dat bestaat, dus het wordt uit de bestandsnamen eromheen gelicht |
+| **Blauw** | De notitie waarin je zit. Tijdens het bladeren is dat haar eigen item; in de verplaats-/hernoemmodus staat het item *deze naam behouden* op haar plaats — in beide gevallen dezelfde notitie |
 | **Grijs** | Alleen in de verplaats-/hernoemmodus: de naam is bezet. Nog steeds te kiezen — hem kiezen vult het veld, waar de controle de botsing meldt |
 
 ## Zichtbaarheidsregels

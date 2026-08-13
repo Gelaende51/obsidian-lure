@@ -216,7 +216,7 @@ Detta fungerar genom att linda kommandot `workspace:edit-file-title` snarare än
 | **Lila** | En anteckning (`.md`, `.markdown`) — det Obsidian öppnar som en anteckning, utplockat ur en mapp med blandat innehåll |
 | **Orange** | En texttyp Obsidian saknar vy för; se [varningsfärgerna](#de-två-varningsfärgerna) |
 | **Nedtonad** | Utanför ditt valv, så valvets egen hantering gäller inte |
-| **Blå** | Endast i byt namn-/flyttläget: raden *behåll det här namnet* — ett mål snarare än något som finns, så det plockas ut ur filnamnen det står bland |
+| **Blå** | Anteckningen du är i. När du bläddrar är det dess egen rad; i byt namn-/flyttläget står raden *behåll det här namnet* i dess ställe — samma anteckning i båda fallen |
 | **Grå** | Endast i byt namn-/flyttläget: namnet är taget. Går fortfarande att välja — att välja ett fyller fältet, där valideringen flaggar krocken |
 
 ## Synlighetsregler

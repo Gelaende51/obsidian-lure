@@ -210,7 +210,7 @@ This works by wrapping the `workspace:edit-file-title` command rather than grabb
 | **Purple** | A note (`.md`, `.markdown`) — what Obsidian will open as a note, picked out of a folder of mixed contents |
 | **Orange** | A text type Obsidian has no view for; see [the warning colours](#the-two-warning-colours) |
 | **Muted** | Outside your vault, so the vault's own handling doesn't apply |
-| **Blue** | Rename/move mode only: the *keep this name* entry — a destination rather than something that exists, so it's picked out of the file names it sits among |
+| **Blue** | The note you're on. Browsing, that's its own entry; in rename/move mode the *keep this name* entry stands in its place — the same note either way |
 | **Greyed** | Rename/move mode only: the name is taken. Still selectable — picking one fills the input, where validation flags the conflict |
 
 ## Visibility rules

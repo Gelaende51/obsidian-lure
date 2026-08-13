@@ -216,7 +216,7 @@ Dette virker ved at pakke kommandoen `workspace:edit-file-title` ind frem for at
 | **Lilla** | En note (`.md`, `.markdown`) — det, Obsidian åbner som en note, plukket ud af en mappe med blandet indhold |
 | **Orange** | En teksttype, Obsidian ikke har en visning til; se [advarselsfarverne](#de-to-advarselsfarver) |
 | **Nedtonet** | Uden for din boks, så boksens egen håndtering gælder ikke |
-| **Blå** | Kun i omdøb-/flyttetilstand: rækken *behold dette navn* — et mål frem for noget, der findes, så den plukkes ud af de filnavne, den står blandt |
+| **Blå** | Den note, du er i. Når du browser, er det dens egen række; i omdøb-/flyttetilstand står rækken *behold dette navn* i stedet — samme note begge veje |
 | **Grå** | Kun i omdøb-/flyttetilstand: navnet er taget. Kan stadig vælges — at vælge et fylder feltet, hvor valideringen markerer kollisionen |
 
 ## Synlighedsregler

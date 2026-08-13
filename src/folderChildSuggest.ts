@@ -21,6 +21,8 @@ export interface PathSuggestion {
 	warn?: boolean;
 	/** A note — tinted so the files Obsidian actually opens as notes stand out from the rest. */
 	markdown?: boolean;
+	/** The note this path bar belongs to, tinted to mark where you already are. */
+	current?: boolean;
 }
 
 export interface SuggestContext {
@@ -45,6 +47,13 @@ export interface SuggestContext {
 	 * so this is what tells the taken-name checks to ignore one entry.
 	 */
 	keepPath: string | null;
+	/**
+	 * The path bar's own note, marked in the listing so browsing back to
+	 * the folder you started in says so. Per leaf rather than per window:
+	 * this bar belongs to one tab, and that tab's note is the one "here"
+	 * means. Null while the bar has no file.
+	 */
+	currentPath: string | null;
 	/**
 	 * Whether a child should appear in the list at all. Purely a display
 	 * filter — hidden entries still occupy their name, so overwrite
@@ -195,6 +204,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 					disabled: renameMode,
 					warn: context.warnsOnOpen(child.extension),
 					markdown: isMarkdownExtension(child.extension),
+					current: child.path === context.currentPath,
 				});
 			}
 		}
@@ -301,6 +311,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		if (value.external) el.addClass("lure-suggest-external");
 		if (value.markdown) el.addClass("lure-suggest-md");
 		if (value.warn) el.addClass("lure-suggest-warn");
+		if (value.current) el.addClass("lure-suggest-current");
 
 		if (value.icon) {
 			const iconEl = el.createSpan({ cls: "lure-suggest-icon" });

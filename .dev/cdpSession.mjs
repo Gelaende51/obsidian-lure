@@ -115,3 +115,26 @@ export async function connect() {
 
 /** Page-side sleep, for the debounced saves and Obsidian's own async repaints. */
 export const PAUSE = (ms) => `await new Promise((r) => setTimeout(r, ${ms}));`;
+
+/**
+ * Re-reads main.js from disk before a run.
+ *
+ * Obsidian loads a plugin's bundle once, at enable time, and holds it. Edit
+ * the source, rebuild, run the suite against the window that was already
+ * open, and every assertion is made against the code Obsidian booted with —
+ * so a suite can report a feature working that is not in the build, or a bug
+ * fixed that is not fixed. It was found the only way it can be: by breaking a
+ * feature deliberately and watching its own regression test still pass.
+ *
+ * A disable/enable cycle is what makes the run mean what it says. It costs
+ * about a second, which is nothing next to a green run that proves nothing.
+ */
+export async function reloadPlugin(page, id = "lure") {
+	await page.evaluate(`
+		await app.plugins.disablePlugin(${JSON.stringify(id)});
+		await new Promise((r) => setTimeout(r, 200));
+		await app.plugins.enablePlugin(${JSON.stringify(id)});
+		await new Promise((r) => setTimeout(r, 400));
+		return true;
+	`);
+}

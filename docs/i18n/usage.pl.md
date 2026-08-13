@@ -216,7 +216,7 @@ Działa to przez opakowanie polecenia `workspace:edit-file-title`, a nie przechw
 | **Fioletowy** | Notatka (`.md`, `.markdown`) — to, co Obsidian otworzy jako notatkę, wyłowione z folderu o mieszanej zawartości |
 | **Pomarańczowy** | Typ tekstowy, dla którego Obsidian nie ma widoku; zobacz [kolory ostrzeżeń](#dwa-kolory-ostrzeżeń) |
 | **Przygaszony** | Poza twoim skarbcem, więc własna obsługa skarbca nie obowiązuje |
-| **Niebieski** | Tylko w trybie zmiany nazwy/przenoszenia: pozycja *zachowaj tę nazwę* — cel, a nie coś, co istnieje, więc wyłowiona spośród nazw plików, wśród których stoi |
+| **Niebieski** | Notatka, w której jesteś. Podczas przeglądania to jej własna pozycja; w trybie zmiany nazwy/przenoszenia jej miejsce zajmuje pozycja *zachowaj tę nazwę* — w obu przypadkach ta sama notatka |
 | **Szary** | Tylko w trybie zmiany nazwy/przenoszenia: nazwa jest zajęta. Nadal można ją wybrać — wybranie wypełnia pole, gdzie walidacja zgłasza konflikt |
 
 ## Reguły widoczności

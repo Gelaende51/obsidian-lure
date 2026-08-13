@@ -216,7 +216,7 @@ Das funktioniert, indem der Befehl `workspace:edit-file-title` umhüllt wird, st
 | **Violett** | Eine Notiz (`.md`, `.markdown`) — das, was Obsidian als Notiz öffnet, herausgehoben aus einem Ordner mit gemischtem Inhalt |
 | **Orange** | Ein Texttyp, für den Obsidian keine Ansicht hat; siehe [die Warnfarben](#die-beiden-warnfarben) |
 | **Gedämpft** | Außerhalb deines Vaults, die Behandlung des Vaults gilt dort also nicht |
-| **Blau** | Nur im Umbenennen-/Verschieben-Modus: der Eintrag *diesen Namen behalten* — ein Ziel statt etwas Vorhandenem, deshalb aus den Dateinamen ringsum herausgehoben |
+| **Blau** | Die Notiz, in der Sie sind. Beim Blättern ist das ihr eigener Eintrag; im Umbenennen-/Verschieben-Modus steht der Eintrag *diesen Namen behalten* an ihrer Stelle — in beiden Fällen dieselbe Notiz |
 | **Ausgegraut** | Nur im Umbenennen-/Verschieben-Modus: der Name ist vergeben. Weiterhin auswählbar — die Wahl füllt das Eingabefeld, wo die Prüfung die Kollision markiert |
 
 ## Sichtbarkeitsregeln

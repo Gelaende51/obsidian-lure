@@ -216,7 +216,7 @@ Ez úgy működik, hogy a `workspace:edit-file-title` parancsot burkolja be, nem
 | **Lila** | Jegyzet (`.md`, `.markdown`) — amit az Obsidian jegyzetként fog megnyitni, kiemelve egy vegyes tartalmú mappából |
 | **Narancs** | Szöveges típus, amelyhez az Obsidiannak nincs nézete; lásd [a figyelmeztető színeket](#a-két-figyelmeztető-szín) |
 | **Halvány** | A széfeden kívül, tehát a széf saját kezelése nem érvényes |
-| **Kék** | Csak átnevezés/áthelyezés módban: a *tartsd meg ezt a nevet* elem — célpont, nem pedig valami, ami létezik, ezért kiemelkedik a körülötte álló fájlnevek közül |
+| **Kék** | A jegyzet, amelyben vagy. Böngészés közben a saját eleme; átnevezés/áthelyezés módban a *tartsd meg ezt a nevet* elem áll a helyén — mindkét esetben ugyanaz a jegyzet |
 | **Szürkített** | Csak átnevezés/áthelyezés módban: a név foglalt. Továbbra is kiválasztható — kiválasztva kitölti a mezőt, ahol az ellenőrzés megjelöli az ütközést |
 
 ## Láthatósági szabályok

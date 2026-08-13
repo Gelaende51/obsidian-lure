@@ -217,7 +217,7 @@ Això funciona embolcallant l'ordre `workspace:edit-file-title` en comptes d'aga
 | **Lila** | Una nota (`.md`, `.markdown`) — allò que l'Obsidian obrirà com una nota, destriat d'una carpeta de contingut barrejat |
 | **Taronja** | Un tipus de text per al qual l'Obsidian no té vista; vegeu [els colors d'avís](#els-dos-colors-davís) |
 | **Atenuat** | Fora del teu cofre, així que no s'hi apliquen les maneres de fer del cofre |
-| **Blau** | Només en mode canvi de nom/moviment: l'entrada *conserva aquest nom* — una destinació més que no pas alguna cosa que existeix, així que es destria d'entre els noms de fitxer amb què s'asseu |
+| **Blau** | La nota on ets. Navegant és la seva pròpia entrada; en mode canvi de nom/moviment l'entrada *conserva aquest nom* ocupa el seu lloc — la mateixa nota en tots dos casos |
 | **Grisat** | Només en mode canvi de nom/moviment: el nom està ocupat. Encara és seleccionable — triar-ne un omple el camp, on la validació marca el conflicte |
 
 ## Regles de visibilitat

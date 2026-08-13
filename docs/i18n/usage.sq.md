@@ -216,7 +216,7 @@ Kjo funksionon duke mbështjellë urdhrin `workspace:edit-file-title` e jo duke 
 | **Vjollcë** | Një shënim (`.md`, `.markdown`) — ajo që Obsidian do ta hapë si shënim, e veçuar nga një dosje me përmbajtje të përzier |
 | **Portokalli** | Lloj teksti për të cilin Obsidian nuk ka pamje; shih [ngjyrat e paralajmërimit](#dy-ngjyrat-e-paralajmërimit) |
 | **E zbehtë** | Jashtë kasafortës, ndaj trajtimi i vetë kasafortës nuk vlen |
-| **Blu** | Vetëm në modalitetin riemërtim/zhvendosje: zëri *ruaje këtë emër* — një destinacion e jo diçka që ekziston, ndaj veçohet nga emrat e skedarëve mes të cilëve rri |
+| **Blu** | Shënimi ku ndodheni. Gjatë shfletimit është zëri i tij; në modalitetin riemërtim/zhvendosje zëri *ruaje këtë emër* qëndron në vend të tij — i njëjti shënim në të dyja rastet |
 | **E hirtë** | Vetëm në modalitetin riemërtim/zhvendosje: emri është i zënë. Prapë i zgjedhshëm — zgjedhja e mbush fushën, ku vlerësimi e shënon konfliktin |
 
 ## Rregullat e dukshmërisë

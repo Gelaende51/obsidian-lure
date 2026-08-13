@@ -216,7 +216,7 @@ Cela fonctionne en enveloppant la commande `workspace:edit-file-title` plutôt q
 | **Violet** | Une note (`.md`, `.markdown`) — ce qu'Obsidian ouvrira comme une note, distingué au sein d'un dossier au contenu mêlé |
 | **Orange** | Un type texte pour lequel Obsidian n'a pas de vue ; voir [les couleurs d'avertissement](#les-deux-couleurs-davertissement) |
 | **Atténué** | Hors de votre coffre : le traitement propre au coffre ne s'applique donc pas |
-| **Bleu** | Mode renommer/déplacer uniquement : l'entrée *conserver ce nom* — une destination plutôt qu'un élément existant, d'où sa mise à part parmi les noms de fichiers qui l'entourent |
+| **Bleu** | La note où vous êtes. En navigation, c'est sa propre entrée ; en mode renommer/déplacer, l'entrée *conserver ce nom* prend sa place — la même note dans les deux cas |
 | **Grisé** | Mode renommer/déplacer uniquement : le nom est pris. Toujours sélectionnable — le choisir remplit le champ, où la validation signale le conflit |
 
 ## Règles de visibilité

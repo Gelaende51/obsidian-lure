@@ -216,7 +216,7 @@ Bu, tuşu ele geçirerek değil `workspace:edit-file-title` komutunu sararak ça
 | **Mor** | Bir not (`.md`, `.markdown`) — Obsidian'ın not olarak açacağı şey, karışık içerikli bir klasörün içinden seçilip çıkarılmış |
 | **Turuncu** | Obsidian'ın görünümü olmayan bir metin türü; bkz. [uyarı renkleri](#uyarıların-iki-rengi) |
 | **Soluk** | Kasanızın dışında, dolayısıyla kasanın kendi işleyişi geçerli değil |
-| **Mavi** | Yalnızca yeniden adlandırma/taşıma modunda: *bu adı koru* satırı — var olan bir şey değil bir hedef, bu yüzden arasında durduğu dosya adlarından ayırt edilir |
+| **Mavi** | Bulunduğunuz not. Gezinirken kendi satırıdır; yeniden adlandırma/taşıma modunda onun yerinde *bu adı koru* satırı durur — her iki durumda da aynı not |
 | **Griye çalan** | Yalnızca yeniden adlandırma/taşıma modunda: ad kullanımda. Yine de seçilebilir — birini seçmek alanı doldurur, doğrulama da çakışmayı orada işaretler |
 
 ## Görünürlük kuralları

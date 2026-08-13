@@ -216,7 +216,7 @@ Funguje to obalením příkazu `workspace:edit-file-title`, ne odchycením kláv
 | **Fialová** | Poznámka (`.md`, `.markdown`) — to, co Obsidian otevře jako poznámku, vypíchnuté ze složky se smíšeným obsahem |
 | **Oranžová** | Textový typ, pro který Obsidian nemá pohled; viz [varovné barvy](#dvě-varovné-barvy) |
 | **Ztlumená** | Mimo tvůj trezor, takže vlastní zacházení trezoru neplatí |
-| **Modrá** | Jen v režimu přejmenování/přesunu: položka *ponechat tento název* — spíš cíl než něco, co existuje, takže je vypíchnutá z názvů souborů, mezi kterými stojí |
+| **Modrá** | Poznámka, ve které jste. Při procházení je to její vlastní položka; v režimu přejmenování/přesunu ji na jejím místě nahradí položka *ponechat tento název* — v obou případech tatáž poznámka |
 | **Šedá** | Jen v režimu přejmenování/přesunu: název je obsazený. Pořád vybratelný — výběr vyplní pole, kde kontrola nahlásí konflikt |
 
 ## Pravidla viditelnosti

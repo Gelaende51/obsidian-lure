@@ -216,7 +216,7 @@ Ini berfungsi dengan membalut perintah `workspace:edit-file-title` dan bukannya 
 | **Ungu** | Sebuah nota (`.md`, `.markdown`) — apa yang akan dibuka Obsidian sebagai nota, dipilih daripada folder berkandungan campuran |
 | **Jingga** | Jenis teks yang tiada paparan untuknya dalam Obsidian; lihat [warna amaran](#dua-warna-amaran) |
 | **Malap** | Di luar bilik kebal anda, jadi pengendalian bilik kebal sendiri tidak terpakai |
-| **Biru** | Mod tukar nama/alih sahaja: entri *kekalkan nama ini* — sebuah destinasi dan bukannya sesuatu yang wujud, jadi ia dipilih daripada nama fail di sekelilingnya |
+| **Biru** | Nota yang anda buka. Semasa menyemak imbas ia ialah entrinya sendiri; dalam mod tukar nama/alih, entri *kekalkan nama ini* menggantikannya — nota yang sama dalam kedua-duanya |
 | **Kelabu** | Mod tukar nama/alih sahaja: nama itu sudah diambil. Masih boleh dipilih — memilihnya mengisi medan, tempat pengesahan menandakan percanggahan itu |
 
 ## Peraturan keterlihatan

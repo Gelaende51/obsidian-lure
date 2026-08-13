@@ -216,7 +216,7 @@ Funziona avvolgendo il comando `workspace:edit-file-title` anziché catturare il
 | **Viola** | Una nota (`.md`, `.markdown`) — ciò che Obsidian aprirà come nota, distinto in una cartella dal contenuto misto |
 | **Arancione** | Un tipo testuale per cui Obsidian non ha una vista; vedi [i colori di avviso](#i-due-colori-di-avviso) |
 | **Attenuato** | Fuori dal tuo vault, quindi la gestione propria del vault non si applica |
-| **Blu** | Solo in modalità rinomina/sposta: la voce *mantieni questo nome* — una destinazione più che qualcosa che esiste, quindi si distingue dai nomi di file in mezzo ai quali sta |
+| **Blu** | La nota in cui ti trovi. Durante la navigazione è la sua stessa voce; in modalità rinomina/sposta la voce *mantieni questo nome* ne prende il posto — la stessa nota in entrambi i casi |
 | **Grigio** | Solo in modalità rinomina/sposta: il nome è occupato. Resta selezionabile — sceglierlo riempie il campo, dove la validazione segnala il conflitto |
 
 ## Regole di visibilità

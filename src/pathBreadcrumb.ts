@@ -2011,6 +2011,10 @@ export class PathBreadcrumb {
 					this.externalFileName !== null && this.externalPath !== null
 						? externalJoin(this.externalPath, this.externalFileName)
 						: (this.file?.path ?? null),
+				// The open note, not the rename target: outside the vault
+				// `keepPath` follows the external file, while "you are here"
+				// stays with the note whose header this bar is.
+				currentPath: this.file?.path ?? null,
 				shouldList: (child) => this.shouldListChild(child),
 				shouldListExternal: (child) => this.shouldListExternalChild(child),
 				warnsOnOpen: (extension) => this.warnsOnOpen(extension),

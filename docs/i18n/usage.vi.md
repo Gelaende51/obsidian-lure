@@ -216,7 +216,7 @@ Cách này hoạt động bằng việc bọc lệnh `workspace:edit-file-title`
 | **Tím** | Một ghi chú (`.md`, `.markdown`) — thứ Obsidian sẽ mở như ghi chú, được tách ra khỏi thư mục có nội dung hỗn hợp |
 | **Cam** | Loại văn bản mà Obsidian không có khung xem; xem [các màu cảnh báo](#hai-màu-cảnh-báo) |
 | **Mờ** | Ngoài kho của bạn, nên cách xử lý của chính kho không áp dụng |
-| **Xanh dương** | Chỉ trong chế độ đổi tên/di chuyển: mục *giữ tên này* — một đích đến chứ không phải thứ đang tồn tại, nên nó được tách khỏi các tên tệp xung quanh |
+| **Xanh dương** | Ghi chú bạn đang mở. Khi duyệt, đó là mục của chính nó; trong chế độ đổi tên/di chuyển, mục *giữ tên này* đứng thay chỗ nó — vẫn là cùng một ghi chú |
 | **Xám** | Chỉ trong chế độ đổi tên/di chuyển: tên đã bị chiếm. Vẫn chọn được — chọn nó sẽ điền vào ô, nơi việc kiểm tra gắn cờ sự trùng lặp |
 
 ## Quy tắc hiển thị

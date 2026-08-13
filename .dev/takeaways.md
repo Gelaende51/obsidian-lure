@@ -712,3 +712,33 @@ The check that matters afterwards is that the build passes with the package
 *absent*, since that is the environment being modelled. And the bundle should
 come out byte-identical, because types erase — if it does not, the swap changed
 behaviour and something is wrong.
+
+## The suites were testing whatever Obsidian booted with
+
+A plugin's bundle is read once, when it is enabled, and held. Rebuild
+`main.js` and run a suite against a window that was already open, and every
+assertion is made against the *previous* build. Nothing says so: the run is
+green, the numbers go up, and the code being described is not the code on
+disk.
+
+This was found the only way it can be found. A new feature had a new
+regression test, the test passed, and — following the rule in this file about
+making a passing test fail once — the feature was deliberately broken and the
+build rerun. The test still passed. Six assertions, all green, against a build
+where the feature was `current: false`.
+
+Every green run in this project's history is suspect to the degree that
+Obsidian was not restarted between the build and the run. In practice most
+were fine, because the habit was to launch Obsidian after building — but that
+is luck standing in for a guarantee, and it is exactly the kind of luck that
+holds until the run that matters.
+
+`reloadPlugin()` in `.dev/cdpSession.mjs` now disables and re-enables the
+plugin as the last step of both suites' startup, after the readiness loop and
+before the first test. It costs about a second. The check that it works is the
+same one that exposed the problem: break something on purpose, rebuild, and
+watch the suite fail *without* touching the running window.
+
+The general shape is worth keeping in mind for any host application that
+loads plugins: "the tests pass" means nothing until you know what the tests
+loaded.

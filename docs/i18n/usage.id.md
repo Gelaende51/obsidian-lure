@@ -216,7 +216,7 @@ Ini bekerja dengan membungkus perintah `workspace:edit-file-title` alih-alih mer
 | **Ungu** | Sebuah catatan (`.md`, `.markdown`) — yang akan dibuka Obsidian sebagai catatan, dipisahkan dari folder berisi campuran |
 | **Oranye** | Tipe teks yang tak punya tampilan di Obsidian; lihat [warna peringatan](#dua-warna-peringatan) |
 | **Redup** | Di luar vault Anda, jadi penanganan vault sendiri tak berlaku |
-| **Biru** | Hanya dalam mode ubah nama/pindah: entri *pertahankan nama ini* — sebuah tujuan alih-alih sesuatu yang ada, jadi ia dipisahkan dari nama berkas di sekelilingnya |
+| **Biru** | Catatan yang sedang kamu buka. Saat menjelajah itu entrinya sendiri; dalam mode ubah nama/pindah, entri *pertahankan nama ini* menggantikannya — catatan yang sama di kedua kasus |
 | **Kelabu** | Hanya dalam mode ubah nama/pindah: namanya sudah terpakai. Tetap bisa dipilih — memilihnya mengisi kolom, tempat validasi menandai bentrokannya |
 
 ## Aturan keterlihatan

@@ -217,7 +217,7 @@ Tämä toimii kietomalla komennon `workspace:edit-file-title` sen sijaan että k
 | **Violetti** | Muistiinpano (`.md`, `.markdown`) — se, minkä Obsidian avaa muistiinpanona, poimittuna sekalaisen sisällön kansiosta |
 | **Oranssi** | Tekstityyppi, jolle Obsidianilla ei ole näkymää; katso [varoitusvärit](#kaksi-varoitusväriä) |
 | **Vaimennettu** | Holvisi ulkopuolella, joten holvin oma käsittely ei päde |
-| **Sininen** | Vain nimeämis-/siirtotilassa: rivi *säilytä tämä nimi* — kohde eikä jotain olemassa olevaa, joten se poimitaan esiin niiden tiedostonimien joukosta, joiden seassa se on |
+| **Sininen** | Muistiinpano, jossa olet. Selatessa se on sen oma rivi; nimeämis-/siirtotilassa sen paikalla on rivi *säilytä tämä nimi* — sama muistiinpano kummassakin |
 | **Harmaa** | Vain nimeämis-/siirtotilassa: nimi on varattu. Yhä valittavissa — valinta täyttää kentän, jossa tarkistus merkitsee ristiriidan |
 
 ## Näkyvyyssäännöt

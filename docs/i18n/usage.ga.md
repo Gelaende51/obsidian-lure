@@ -217,7 +217,7 @@ Oibríonn sé seo tríd an ordú `workspace:edit-file-title` a fhilleadh seachas
 | **Corcra** | Nóta (`.md`, `.markdown`) — an rud a osclóidh Obsidian mar nóta, roghnaithe as fillteán ina bhfuil ábhar measctha |
 | **Oráiste** | Cineál téacs nach bhfuil amharc ag Obsidian air; féach [na dathanna rabhaidh](#an-dá-dhath-rabhaidh) |
 | **Maolaithe** | Lasmuigh de do thaisceadán, mar sin ní bhaineann láimhseáil an taisceadáin féin leis |
-| **Gorm** | Mód athainmnithe/bogtha amháin: an iontráil *coinnigh an t-ainm seo* — ceann scríbe seachas rud atá ann, mar sin roghnaítear as na hainmneacha comhad ina measc é |
+| **Gorm** | An nóta ina bhfuil tú. Agus tú ag brabhsáil, sin a iontráil féin; i mód athainmnithe/bogtha seasann an iontráil *coinnigh an t-ainm seo* ina háit — an nóta céanna sa dá chás |
 | **Liath** | Mód athainmnithe/bogtha amháin: tá an t-ainm tógtha. Fós inroghnaithe — líonann rogha an réimse, áit a marcálann an bhailíochtú an choinbhleacht |
 
 ## Rialacha infheictheachta
