@@ -1,3 +1,5 @@
+**Read this in other languages:** **English** · [العربية](i18n/usage.ar.md) · [አማርኛ](i18n/usage.am.md) · [Беларуская](i18n/usage.be.md) · [বাংলা](i18n/usage.bn.md) · [Català](i18n/usage.ca.md) · [Čeština](i18n/usage.cs.md) · [Dansk](i18n/usage.da.md) · [Deutsch](i18n/usage.de.md) · [Ελληνικά](i18n/usage.el.md) · [Español](i18n/usage.es.md) · [فارسی](i18n/usage.fa.md) · [Suomi](i18n/usage.fi.md) · [Français](i18n/usage.fr.md) · [Gaeilge](i18n/usage.ga.md) · [עברית](i18n/usage.he.md) · [Magyar](i18n/usage.hu.md) · [Bahasa Indonesia](i18n/usage.id.md) · [Italiano](i18n/usage.it.md) · [日本語](i18n/usage.ja.md) · [ქართული](i18n/usage.ka.md) · [ភាសាខ្មែរ](i18n/usage.kh.md) · [한국어](i18n/usage.ko.md) · [Latviešu](i18n/usage.lv.md) · [Bahasa Melayu](i18n/usage.ms.md) · [नेपाली](i18n/usage.ne.md) · [Nederlands](i18n/usage.nl.md) · [Norsk](i18n/usage.no.md) · [Polski](i18n/usage.pl.md) · [Português](i18n/usage.pt.md) · [Português (Brasil)](i18n/usage.pt-BR.md) · [Română](i18n/usage.ro.md) · [Русский](i18n/usage.ru.md) · [संस्कृतम्](i18n/usage.sa.md) · [Slovenčina](i18n/usage.sk.md) · [Shqip](i18n/usage.sq.md) · [Српски](i18n/usage.sr.md) · [Svenska](i18n/usage.sv.md) · [ไทย](i18n/usage.th.md) · [Türkçe](i18n/usage.tr.md) · [Українська](i18n/usage.uk.md) · [Oʻzbekcha](i18n/usage.uz.md) · [Tiếng Việt](i18n/usage.vi.md) · [简体中文](i18n/usage.zh.md) · [繁體中文](i18n/usage.zh-TW.md)
+
 # Usage
 
 [← back to README](../README.md)
@@ -98,7 +100,7 @@ The path **starts at the location you picked**, not at the machine's directory l
 
 The path bar is **framed in the error colour** — the same ring rename mode draws — for as long as it points outside your vault. It marks a standing condition, not a moment: while it's up, none of Obsidian's own handling applies to what the row is showing, and writing is locked until you say otherwise.
 
-Browsing otherwise works as it does inside: chips, delimiters, typing, autocomplete, <kbd>Backspace</kbd> to step out. The same visibility rules apply too, so unsupported extensions still need Obsidian's *Detect all file extensions* and dot-files still need this plugin's setting.
+Browsing otherwise works as it does inside: chips, delimiters, typing, autocomplete, <kbd>Backspace</kbd> to step out. The same visibility rules apply too, so unsupported extensions still need Obsidian's *Show all file types* and dot-files still need this plugin's setting.
 
 **Right-click and drag** on dropdown entries don't work out there — those are the File Explorer's own handlers, and they need a file the vault knows about.
 
@@ -180,7 +182,7 @@ Nothing outside your vault is written unless you press *Edit as text* first. See
 
 The **two are independent, and both can hold at once** — an external `.json` is outside your vault *and* a type Obsidian has no editor for. In the viewer they appear as separate lines, each stating only its own fact. On the path bar, red wins where both apply, since two rings would only be noise.
 
-The orange tier is deliberately narrow. Registered types (Markdown, canvas, images, PDF, audio, video) are handled properly and get nothing. Binary files get nothing either — you are not going to edit a `.zip` into a mess by accident. What is left is exactly the hazard: a `.json`, `.css` or `.log` that **Detect all file extensions** has made visible.
+The orange tier is deliberately narrow. Registered types (Markdown, canvas, images, PDF, audio, video) are handled properly and get nothing. Binary files get nothing either — you are not going to edit a `.zip` into a mess by accident. What is left is exactly the hazard: a `.json`, `.css` or `.log` that **Show all file types** has made visible.
 
 Red wins where both would apply; two rings at once would only be noise.
 
@@ -213,7 +215,7 @@ This works by wrapping the `workspace:edit-file-title` command rather than grabb
 
 ## Visibility rules
 
-- Files with unsupported extensions appear in the dropdowns only if Obsidian's **Detect all file extensions** setting is on.
+- Files with unsupported extensions appear in the dropdowns only if Obsidian's **Show all file types** setting is on.
 - The dropdown shows at most 100 entries — Obsidian's own limit. When a folder has more, the last row says how many were left out; keep typing to narrow the list.
 - Dot-files and dot-folders appear only if this plugin's **Show dot files** setting is on.
 - **Overwrite protection works identically regardless of visibility** — a hidden file still blocks you from overwriting it.

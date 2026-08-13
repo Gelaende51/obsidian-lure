@@ -587,3 +587,50 @@ nothing — body is not focusable — so the first version passed against
 deliberately broken code. Stealing focus into the editor, the way the app
 itself does, is what makes it fail without the guard and pass with it. A
 regression test that has never failed is a guess.
+
+## A suite that reads a setting instead of setting it passes by luck
+
+Three assertions in the external suite were written against whatever the vault
+happened to have: the tinting test needed Obsidian's *Show all file types* on
+to see a `.txt` at all, the `/usr/bin` truncation test needed it on so the
+listing overflowed, and the dot-file assertion needed the plugin's own
+`showDotFiles` off. All three passed for months in a vault where those toggles
+sat the right way, and all three broke the day the suite moved to a different
+vault — as failures that pointed at tinting, truncation and dot-files rather
+than at the settings underneath them.
+
+Worse than the noise: the dot-file assertion had been *passing for the wrong
+reason*. `.hidden.txt` is hidden twice over — once as a dot-file, once as an
+unregistered extension — and with the extension filter on, the dot-file rule
+was never the thing being tested. Turning the filter off is what first made
+that assertion mean anything, and it failed immediately.
+
+Every test now pins the settings it depends on and restores them. The restore
+also happens unconditionally at the end of the run, next to the fixture
+cleanup, because a test that throws never reaches its own restore — one such
+run left *Show all file types* on, and the next run faithfully snapshotted the
+leak as the state to preserve.
+
+## Screenshot rejects overwrite the good image
+
+The capture script writes the PNG, then reads the pixels back to check the
+reveal highlight had finished fading. That order is deliberate — a rejected
+shot is left on disk to look at — but the file it writes is the one the README
+links, so a failed run replaces a good committed screenshot with the olive
+mid-fade version it just refused. Nothing downstream says so: the script exits
+non-zero, the image is already changed, and `git add -A` ships it. Twice now
+the project has published a flawed screenshot nobody noticed; this is a
+mechanism for exactly that. `git checkout -- docs/images/` after any failed
+capture, or the reject wins by default.
+
+## The language a screenshot is taken in is not the one localStorage claims
+
+Obsidian's UI language lives in localStorage but is read once at startup, so
+writing `"en"` there changes nothing until the renderer reloads. The capture
+script does both, and a guard that reads localStorage back therefore asserts
+only that the script's own write landed — it cannot fail. What does carry the
+answer is `i18next.services.resourceStore.data`: Obsidian loads English plus
+the active language and nothing else, so any second key in there is a chrome
+still drawn in the old language. That is also the only way to enumerate
+Obsidian's own translated strings from outside — `i18next.loadLanguages()`
+silently no-ops for a language the app has not loaded, and returns English.

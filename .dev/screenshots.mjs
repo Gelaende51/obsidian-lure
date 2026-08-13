@@ -12,10 +12,9 @@
  *   node .dev/screenshots.mjs <name>      # any other scene in the table
  *
  * Each scene names the vault it needs open; the vault has to exist already
- * and be built for the purpose — see docs/development.md. The test vault is
- * never a candidate: it is named use_this_testvault, runs in German, and
- * still holds the garbled fixtures from an old bug, all of which would ship
- * into the README.
+ * and be built for the purpose — see docs/development.md. It is the same
+ * vault the behavioural suites run against, so before capturing anything
+ * this script checks that nothing those suites do is still on screen.
  *
  * Requires --remote-debugging-port=9222, which is a debugging setting:
  * comment it back out when the session is over.
@@ -246,6 +245,48 @@ try {
 	// downstream notices, so start from a renderer that has no history.
 	await evaluate(`location.reload(); return true;`);
 	await new Promise((r) => setTimeout(r, 8000));
+
+	// The suites share this vault: they create a fixture folder in it and
+	// toggle peer plugins on and off. Both are invisible in a passing run and
+	// both are visible in a photograph — a leftover folder sits in the File
+	// Explorer, and a peer left enabled draws its own row into the header.
+	// Prose in the docs cannot prevent that; refusing to shoot can.
+	const residue = await evaluate(`
+		return {
+			fixture: !!app.vault.getAbstractFileByPath("LureFocus"),
+			others: [...app.plugins.enabledPlugins].filter((id) => id !== "lure"),
+			// Not localStorage — this script just wrote "en" there, so reading
+			// it back proves nothing. Obsidian loads English plus the active
+			// language into the resource store, so anything besides "en" in
+			// there is a chrome that is still drawn in the old language.
+			loaded: Object.keys(i18next?.services?.resourceStore?.data ?? { en: 1 }),
+		};
+	`);
+	if (residue.fixture) {
+		throw new Error(
+			'the vault still holds the suites\' "LureFocus" fixture — run the suite to ' +
+				"completion, or delete the folder, before capturing",
+		);
+	}
+	if (residue.others.length) {
+		throw new Error(
+			`these plugins are enabled and would appear in the shot: ${residue.others.join(", ")}`,
+		);
+	}
+	// The images sit in the English README, and everything around the path row
+	// — tab bar, sidebar, context menus — is drawn in Obsidian's UI language.
+	// Setting localStorage above only takes effect through the reload that
+	// follows it; if that reload is ever dropped or races, the shot comes out
+	// in the previous language while the plugin's own row still looks right,
+	// which is exactly the kind of flaw that survives review.
+	const stale = residue.loaded.filter((lang) => lang !== "en");
+	if (stale.length) {
+		throw new Error(
+			`the renderer still has ${stale.join(", ")} loaded, so the chrome around ` +
+				"the path row would be captured in it — the language switch did not " +
+				"survive the reload",
+		);
+	}
 
 	// --- 1. a folder revealed from the delimiter -------------------------
 	// Framed from the left edge so the File Explorer is in shot: this shot is

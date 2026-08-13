@@ -570,14 +570,29 @@ test("dropdown: markdown entries are tinted, dot-files hidden", async () => {
 	const r = await page.evaluate(`
 		${open(join(BED, "note.md"))}
 		${breadcrumb}
+		// The orange tier only ever applies to a file Obsidian was told to
+		// show, so pin the setting rather than inherit whatever this vault
+		// happens to have: with it off "plain.txt" is filtered out and the
+		// assertion below fails for a reason that has nothing to do with tinting.
+		const was = app.vault.getConfig("showUnsupportedFiles");
+		app.vault.setConfig("showUnsupportedFiles", true);
+		// ".hidden.txt" is hidden for two independent reasons; with the
+		// extension filter now off, the dot-file setting is the only one
+		// left holding it back, so pin that too or a vault where someone
+		// switched it on reports a failure the plugin did not cause.
+		const lure = app.plugins.plugins.lure;
+		const dots = lure.settings.showDotFiles;
+		lure.settings.showDotFiles = false;
 		bc.enterTypingMode("");
 		${PAUSE(350)}
-		return {
-			items: [...document.querySelectorAll(".suggestion-item")].map((e) => ({
-				label: e.querySelector(".lure-suggest-label")?.textContent,
-				cls: e.className,
-			})),
-		};
+		const items = [...document.querySelectorAll(".suggestion-item")].map((e) => ({
+			label: e.querySelector(".lure-suggest-label")?.textContent,
+			cls: e.className,
+		}));
+		bc.cancelNavigation();
+		lure.settings.showDotFiles = dots;
+		app.vault.setConfig("showUnsupportedFiles", was);
+		return { items };
 	`);
 	const md = r.items?.find((i) => i.label === "note.md");
 	const txt = r.items?.find((i) => i.label === "plain.txt");
@@ -640,6 +655,11 @@ test("dropdown: a truncated listing says how much is missing", async () => {
 	const r = await page.evaluate(`
 		${open(join(BED, "note.md"))}
 		${breadcrumb}
+		// Same reason as the tinting test: /usr/bin is mostly extension-less
+		// binaries, which Obsidian's setting filters out. With it off the
+		// listing is a dozen directories and never overflows.
+		const was = app.vault.getConfig("showUnsupportedFiles");
+		app.vault.setConfig("showUnsupportedFiles", true);
 		bc.externalPath = "/usr/bin";
 		bc.enterTypingMode("");
 		${PAUSE(600)}
@@ -653,6 +673,7 @@ test("dropdown: a truncated listing says how much is missing", async () => {
 			pointerEvents: last ? getComputedStyle(last).pointerEvents : null,
 		};
 		bc.cancelNavigation();
+		app.vault.setConfig("showUnsupportedFiles", was);
 		return out;
 	`);
 	expect("fills the popover exactly", r.count, r.limit);
@@ -1024,6 +1045,23 @@ for (let i = 0; ; i++) {
 	await new Promise((r) => setTimeout(r, 500));
 }
 
+/**
+ * Settings this suite flips, captured before the first test.
+ *
+ * Each test that flips one restores it, but a test that throws never reaches
+ * its own restore — and this vault is the one the README screenshots come
+ * from, where a stray "show all file types" changes what a dropdown contains.
+ * Snapshot here, put it back in the unconditional teardown at the bottom.
+ */
+const SETTINGS_AT_START = JSON.parse(
+	await page.evaluate(`
+		return JSON.stringify({
+			showUnsupportedFiles: !!app.vault.getConfig("showUnsupportedFiles"),
+			lure: { ...app.plugins.plugins.lure.settings },
+		});
+	`),
+);
+
 for (const { name, fn } of tests) {
 	if (filter ? !name.includes(filter) : name.includes("[crashes")) continue;
 	console.log(`\n${name}`);
@@ -1050,6 +1088,19 @@ for (const { name, fn } of tests) {
 		console.log(`  ${r.ok ? "PASS" : "FAIL"}  ${r.label}${r.ok ? "" : `  → got ${r.actual}`}`);
 	}
 }
+
+// The fixture folder is created inside the vault, and this vault is also the
+// one the README screenshots are taken from. Individual tests drop it, but a
+// test that throws does not reach its own cleanup — so drop it here too,
+// where every run passes regardless of outcome.
+await page.evaluate(`
+	const folder = app.vault.getAbstractFileByPath("LureFocus");
+	if (folder) await app.vault.adapter.rmdir(folder.path, true);
+	const at = ${JSON.stringify(SETTINGS_AT_START)};
+	app.vault.setConfig("showUnsupportedFiles", at.showUnsupportedFiles);
+	Object.assign(app.plugins.plugins.lure.settings, at.lure);
+	return true;
+`);
 
 page.close();
 

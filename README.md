@@ -1,3 +1,5 @@
+**Read this in other languages:** **English** · [العربية](docs/i18n/README.ar.md) · [አማርኛ](docs/i18n/README.am.md) · [Беларуская](docs/i18n/README.be.md) · [বাংলা](docs/i18n/README.bn.md) · [Català](docs/i18n/README.ca.md) · [Čeština](docs/i18n/README.cs.md) · [Dansk](docs/i18n/README.da.md) · [Deutsch](docs/i18n/README.de.md) · [Ελληνικά](docs/i18n/README.el.md) · [Español](docs/i18n/README.es.md) · [فارسی](docs/i18n/README.fa.md) · [Suomi](docs/i18n/README.fi.md) · [Français](docs/i18n/README.fr.md) · [Gaeilge](docs/i18n/README.ga.md) · [עברית](docs/i18n/README.he.md) · [Magyar](docs/i18n/README.hu.md) · [Bahasa Indonesia](docs/i18n/README.id.md) · [Italiano](docs/i18n/README.it.md) · [日本語](docs/i18n/README.ja.md) · [ქართული](docs/i18n/README.ka.md) · [ភាសាខ្មែរ](docs/i18n/README.kh.md) · [한국어](docs/i18n/README.ko.md) · [Latviešu](docs/i18n/README.lv.md) · [Bahasa Melayu](docs/i18n/README.ms.md) · [नेपाली](docs/i18n/README.ne.md) · [Nederlands](docs/i18n/README.nl.md) · [Norsk](docs/i18n/README.no.md) · [Polski](docs/i18n/README.pl.md) · [Português](docs/i18n/README.pt.md) · [Português (Brasil)](docs/i18n/README.pt-BR.md) · [Română](docs/i18n/README.ro.md) · [Русский](docs/i18n/README.ru.md) · [संस्कृतम्](docs/i18n/README.sa.md) · [Slovenčina](docs/i18n/README.sk.md) · [Shqip](docs/i18n/README.sq.md) · [Српски](docs/i18n/README.sr.md) · [Svenska](docs/i18n/README.sv.md) · [ไทย](docs/i18n/README.th.md) · [Türkçe](docs/i18n/README.tr.md) · [Українська](docs/i18n/README.uk.md) · [Oʻzbekcha](docs/i18n/README.uz.md) · [Tiếng Việt](docs/i18n/README.vi.md) · [简体中文](docs/i18n/README.zh.md) · [繁體中文](docs/i18n/README.zh-TW.md)
+
 # Lure
 
 An [Obsidian](https://obsidian.md) plugin that turns the filename in a note's header bar into a clickable, editable breadcrumb of its full vault path — like the address bar in the [Dolphin](https://apps.kde.org/dolphin/) file manager.
@@ -10,7 +12,7 @@ Obsidian 1.4.0+ · desktop only · AGPL-3.0
 
 - **Agent** — **Claude Opus 5** and **Claude Sonnet 5** (Anthropic, via Claude Code): wrote the TypeScript, the CSS, all 45 translation sets and the documentation. Translations are machine-generated and unreviewed by native speakers.
 - **Author** — Vault51: specified every feature, tested each iteration in a live vault, directed the fixes, reviewed all output.
-- **Usage** — 3–11 Aug 2026, six sessions, ~3,484 responses: ~3.8 M tokens generated, ~13.3 M sent, ~910.7 M cached re-reads (~927.8 M total).
+- **Usage** — 3–13 Aug 2026, nine sessions, ~4,928 responses: ~7.2 M tokens generated, ~23.7 M sent, ~1169.6 M cached re-reads (~1200.5 M total).
 
 ## Features
 
