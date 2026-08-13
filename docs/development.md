@@ -223,6 +223,10 @@ Bump `manifest.json` and add the matching `versions.json` entry (`"<plugin versi
 
 The workflow rebuilds from the tag rather than uploading the local `main.js`, which is what lets the review verify the bundle byte-for-byte against the source. It follows that the tag must point at a commit whose `npm run build` succeeds — cutting one from a tree that only builds locally fails in the open.
 
+Nothing else needs doing afterwards. The community site re-scans on its own once a release is published — 1.0.3 appeared on the public page, rescored, without anyone signing in — so the "Review branch" button in the plugin's admin area only forces sooner what would happen anyway. Worth knowing before building automation around a step that is already automatic.
+
+The scorecard on the public page is the review's own verdict and is worth reading after each release, because it is not identical to what `npm run lint` says here. It is scored in an environment without this repository's devDependencies, which is what makes [the declared type surface](#passing-the-plugin-review) load-bearing rather than a stylistic choice: 164 warnings became 23 on the release that added it, and the review rating went from *Caution* to *Satisfactory* without a line of behaviour changing.
+
 ## Reporting bugs
 
 Include your Obsidian version, OS, theme, and the list of other enabled plugins — most issues so far have come from interactions with the header bar rather than the plugin alone.
