@@ -5,9 +5,8 @@
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
-		"build": "tsc -noEmit -skipLibCheck && npm run check:lang && npm run sync:readme && node esbuild.config.mjs production",
-		"check:lang": "node scripts/check-translations.mjs",
-		"sync:readme": "node -e \"require('fs').copyFileSync('README.md','README_lure.md')\""
+		"build": "tsc -noEmit -skipLibCheck && npm run check:lang && node esbuild.config.mjs production",
+		"check:lang": "node scripts/check-translations.mjs"
 	},
 	"license": "AGPL-3.0-only",
 	"devDependencies": {

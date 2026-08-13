@@ -25,7 +25,7 @@ export class ConfirmCreateFileModal extends Modal {
 
 	onOpen(): void {
 		const { contentEl } = this;
-		contentEl.createEl("h3", { text: t("modalCreateTitle") });
+		this.titleEl.setText(t("modalCreateTitle"));
 		contentEl.createEl("p", {
 			text: t("modalCreateBody", { path: this.path }),
 		});

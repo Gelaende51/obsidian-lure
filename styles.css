@@ -16,8 +16,11 @@
 }
 
 /* No default focus ring on the row itself — it's script-focusable
-   (to receive keydowns after a click) but shouldn't look focused. */
-.view-header-title-container {
+   (to receive keydowns after a click) but shouldn't look focused.
+   Scoped to headers this plugin patched: the attribute lives exactly as
+   long as the tabindex does, so an unpatched view keeps Obsidian's own
+   styling untouched. */
+.view-header-title-container[data-lure-align] {
 	outline: none;
 }
 

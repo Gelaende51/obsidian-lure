@@ -643,7 +643,11 @@ export class ExternalFileView extends ItemView {
 
 	private async writeTo(target: TFile | "external", text: string): Promise<void> {
 		if (target === "external") await this.writeExternal(text);
-		else await this.app.vault.modify(target, text);
+		// process, not modify: this fires from a debounce, so it races
+		// anything else writing the same note (sync, another pane). The
+		// atomic read-modify-write keeps the loser from being silently
+		// overwritten by a buffer captured before the other change landed.
+		else await this.app.vault.process(target, () => text);
 	}
 
 	/**
