@@ -17,7 +17,7 @@ Obsidian 1.8.7+ · deasc amháin · AGPL-3.0
 - **Gníomhaire** — **Claude Opus 5** agus **Claude Sonnet 5** (Anthropic, trí Claude Code): scríobh sé an TypeScript, an CSS, na 45 sraith aistriúcháin ar fad agus an doiciméadú. Is aistriúcháin mheaisín iad agus níor léigh cainteoirí dúchais iad.
 - **Údar** — Vault51: shocraigh sé gach gné, thriail sé gach leagan i dtaisceadán fíor, stiúir sé na ceartúcháin, léigh sé gach toradh.
 - **Úsáid** — 3–13 Lúnasa 2026, naoi seisiún, \~4,928 freagra: \~7.2 milliún ceadchomhartha ginte, \~23.7 milliún seolta, \~1169.6 milliún athléamh ón taisce (\~1200.5 milliún san iomlán).
-- **Foinse** — d'fhoghlaim múnla a scríobhann breiseáin Obsidian é sin ó chód foinse oscailte, ó dhoiciméadú, ó fhreagraí fóram agus ó thuairiscí fabhtanna a scríobh daoine agus a thug siad uathu saor in aisce. Níor fiafraíodh de dhuine ar bith acu, níor tugadh creidiúint dóibh agus níor íocadh iad. Sin an rannchuidiú gan chreidiúint is mó atá anseo, agus tuilleann sé do thacaíocht níos mó ná an breiseán seo: má tá tú ag roghnú cá gcuirfidh tú rud, cuir ansin é.
+- **Foinse** — d'fhoghlaim an múnla ó chód foinse oscailte, ó dhoiciméadú agus ó scríbhinní pobail a d'fhoilsigh daoine eile.
 
 ## Gnéithe
 

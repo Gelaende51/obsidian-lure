@@ -18,7 +18,7 @@ Obsidian 1.8.7+ · només escriptori · AGPL-3.0
 - **Agent** — **Claude Opus 5** i **Claude Sonnet 5** (Anthropic, mitjançant Claude Code): va escriure el TypeScript, el CSS, els 45 jocs de traduccions i la documentació. Les traduccions són automàtiques i no han estat revisades per parlants nadius.
 - **Autor** — Vault51: va definir cada funció, va provar cada versió en un cofre real, va dirigir les correccions i va revisar tots els resultats.
 - **Consum** — del 3 al 13 d'agost de 2026, nou sessions, \~4.928 respostes: \~7,2 M de tokens generats, \~23,7 M enviats, \~1169,6 M de relectures de la memòria cau (\~1200,5 M en total).
-- **Origen** — un model que escriu connectors d'Obsidian ho ha après de codi obert, documentació, respostes de fòrums i informes d'errors que la gent va escriure i va regalar. No se'ls va preguntar, ni acreditar, ni pagar. És la contribució sense crèdit més gran que hi ha aquí, i mereix el teu suport més que aquest connector: si tries on enviar alguna cosa, envia-ho allà.
+- **Origen** — el model ho ha après de codi obert, documentació i escrits de la comunitat publicats per altres.
 
 ## Funcions
 

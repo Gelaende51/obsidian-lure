@@ -17,7 +17,7 @@ Obsidian 1.8.7+ · komputer meja sahaja · AGPL-3.0
 - **Ejen** — **Claude Opus 5** dan **Claude Sonnet 5** (Anthropic, melalui Claude Code): menulis TypeScript, CSS, kesemua 45 set terjemahan dan dokumentasi. Terjemahan dihasilkan mesin dan belum disemak penutur jati.
 - **Penulis** — Vault51: menetapkan setiap ciri, mencuba setiap versi dalam bilik kebal sebenar, mengarahkan pembetulan, menyemak semua hasilnya.
 - **Penggunaan** — 3–13 Ogos 2026, sembilan sesi, \~4,928 balasan: \~7.2 juta token dijana, \~23.7 juta dihantar, \~1169.6 juta bacaan semula daripada cache (\~1200.5 juta kesemuanya).
-- **Hulu** — model yang menulis pemalam Obsidian mempelajarinya daripada kod sumber terbuka, dokumentasi, jawapan forum dan laporan pepijat yang ditulis orang lalu diberikan percuma. Tiada seorang pun daripada mereka ditanya, disebut atau dibayar. Itulah sumbangan tanpa nama yang terbesar di sini, dan ia lebih layak menerima sokongan anda daripada pemalam ini: jika anda memilih ke mana hendak menghantar sesuatu, hantarlah ke sana.
+- **Hulu** — model belajar daripada kod sumber terbuka, dokumentasi dan tulisan komuniti yang diterbitkan orang lain.
 
 ## Ciri-ciri
 

@@ -17,7 +17,7 @@ Obsidian 1.8.7+ · somente desktop · AGPL-3.0
 - **Agente** — **Claude Opus 5** e **Claude Sonnet 5** (Anthropic, via Claude Code): escreveu o TypeScript, o CSS, os 45 conjuntos de traduções e a documentação. As traduções são geradas por máquina e não foram revisadas por falantes nativos.
 - **Autor** — Vault51: especificou cada funcionalidade, testou cada versão em um cofre real, orientou as correções e revisou todos os resultados.
 - **Consumo** — 3 a 13 de agosto de 2026, nove sessões, \~4.928 respostas: \~7,2 M de tokens gerados, \~23,7 M enviados, \~1169,6 M de releituras em cache (\~1200,5 M no total).
-- **Origem** — um modelo que escreve plugins do Obsidian aprendeu isso com código aberto, documentação, respostas em fóruns e relatos de bugs que pessoas escreveram e deram de graça. Nenhuma delas foi consultada, creditada ou paga. Essa é a maior contribuição sem crédito daqui, e merece seu apoio mais do que este plugin: se você está escolhendo para onde mandar algo, mande para lá.
+- **Origem** — o modelo aprendeu com código aberto, documentação e textos da comunidade publicados por outras pessoas.
 
 ## Funcionalidades
 

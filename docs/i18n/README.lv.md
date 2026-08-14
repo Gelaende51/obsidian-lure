@@ -17,7 +17,7 @@ Obsidian 1.8.7+ · tikai datoram · AGPL-3.0
 - **Aģents** — **Claude Opus 5** un **Claude Sonnet 5** (Anthropic, caur Claude Code): uzrakstīja TypeScript kodu, CSS, visus 45 tulkojumu komplektus un dokumentāciju. Tulkojumi ir mašīnas veidoti, un dzimtās valodas runātāji tos nav pārlasījuši.
 - **Autors** — Vault51: noteica katru funkciju, izmēģināja katru versiju īstā glabātavā, vadīja labojumus, pārskatīja visus rezultātus.
 - **Patēriņš** — 2026. gada 3.–13. augusts, deviņas sesijas, \~4928 atbildes: \~7,2 milj. ģenerētu marķieru, \~23,7 milj. nosūtītu, \~1169,6 milj. atkārtotu nolasījumu no kešatmiņas (\~1200,5 milj. kopā).
-- **Pirmavots** — modelis, kas raksta Obsidian spraudņus, to iemācījās no atvērtā pirmkoda, dokumentācijas, forumu atbildēm un kļūdu ziņojumiem, ko cilvēki uzrakstīja un atdeva par velti. Nevienam no viņiem nejautāja, nevienu nepieminēja un nevienam nemaksāja. Tas ir lielākais nepieminētais ieguldījums šeit, un tas ir jūsu atbalsta vērts vairāk nekā šis spraudnis: ja izvēlaties, kurp kaut ko sūtīt, sūtiet turp.
+- **Pirmavots** — modelis mācījās no atvērtā pirmkoda, dokumentācijas un kopienas rakstiem, ko publicējuši citi.
 
 ## Iespējas
 
