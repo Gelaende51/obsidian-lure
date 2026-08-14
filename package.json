@@ -5,8 +5,10 @@
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
-		"build": "tsc -noEmit -skipLibCheck && npm run lint && npm run check:lang && node esbuild.config.mjs production",
+		"build": "tsc -noEmit -skipLibCheck && npm run lint && npm run check:lang && npm run check:listing && node esbuild.config.mjs production",
 		"check:lang": "node scripts/check-translations.mjs",
+		"check:listing": "node scripts/check-listing.mjs",
+		"tags": "node scripts/obsidian-listing-tags.mjs",
 		"lint": "eslint src"
 	},
 	"license": "AGPL-3.0-only",

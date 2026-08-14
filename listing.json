@@ -1,0 +1,8 @@
+{
+	"_": "What community.obsidian.md shows about Lure that manifest.json has no field for. Not shipped, never read by Obsidian — `npm run check:listing` validates it and `npm run check:listing -- --remote` diffs it against the live listing. Keys starting with _ are notes.",
+
+	"_tags": "Ordered: the listing shows them in this order. Navigation is what the plugin is for; Files and Folders are what it operates on. `npm run tags` prints the 76 the site accepts.",
+	"tags": ["navigation", "files", "folders"],
+
+	"_omitted": "pricing (free is the default), payment_description, long_desc, and the listing icon are all left at the site's defaults, so they are not repeated here. The short description is taken from manifest.json's description and must not be duplicated."
+}

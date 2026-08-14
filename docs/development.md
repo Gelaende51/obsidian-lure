@@ -231,6 +231,25 @@ Two neighbouring controls are worth telling apart. **Review branch** runs a *pre
 
 The scorecard on the public page is the review's own verdict and is worth reading after each release, because it is not identical to what `npm run lint` says here. It is scored in an environment without this repository's devDependencies, which is what makes [the declared type surface](#passing-the-plugin-review) load-bearing rather than a stylistic choice: 164 warnings became 23 on the release that added it, and the review rating went from *Caution* to *Satisfactory* without a line of behaviour changing.
 
+## The listing
+
+The public page carries a few things `manifest.json` has no field for — tags, an optional long description, a pricing model, a listing icon, screenshots. They are edited in a form at `community.obsidian.md/account/plugins/lure/edit`, and until now they existed nowhere in this repository. `listing.json` is where they live.
+
+They cannot go in `manifest.json`, for three separate reasons. Obsidian's [manifest reference](https://docs.obsidian.md/Reference/Manifest) is a closed list of nine properties and the submission review validates against it. The manifest is parsed with strict `JSON.parse` at plugin load, so there is nowhere to leave a note next to a value — a comment there breaks the app rather than a linter. And the lifecycles differ: manifest fields change with a version and are downloaded by every user, while a tag changes when you change your mind about it and belongs to nobody's download. Because `listing.json` is read by nothing but `scripts/check-listing.mjs`, keys beginning with `_` can carry that missing annotation.
+
+```bash
+npm run check:listing              # validate the file
+npm run check:listing -- --remote  # and diff it against the live listing
+npm run tags                       # the 76 tags the site accepts
+npm run tags -- --refresh          # re-read that vocabulary from the site
+```
+
+Nothing here writes to the site. The form saves with a `PATCH /api/entries/lure` that authenticates by session cookie, and the site has no token path, so no script can hold a credential that would let it — the same constraint that keeps the release scan a browser step. What the scripts do instead is refuse values the form would reject before you type them, and read the public listing back afterwards to say whether it agrees. `npm run publish` prints the values to enter and then runs the remote check.
+
+Only what was actually chosen is kept. `pricing` is `free`, which is the default; the icon and long description are unset; the short description is taken from `manifest.json`'s `description` by the site itself, so a second copy here would just be a second thing to keep right — the checker rejects it. The rule is that if the site can work a value out, the repository does not keep it.
+
+The tag vocabulary is not documented anywhere. It is compiled into the community site's own JavaScript, and `scripts/obsidian-listing-tags.mjs` holds a copy read from there together with a `--refresh` that reads it again and reports what moved. Lure's three are `navigation`, `files`, `folders`, in that order — the form lets them be dragged, so the order is a choice and not an accident.
+
 ## Reporting bugs
 
 Include your Obsidian version, OS, theme, and the list of other enabled plugins — most issues so far have come from interactions with the header bar rather than the plugin alone.
