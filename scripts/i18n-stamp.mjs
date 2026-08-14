@@ -27,7 +27,16 @@ for (const file of readdirSync(DIR).filter((f) => f.endsWith(".md"))) {
 	const text = readFileSync(DIR + file, "utf8");
 	// Either the placeholder or an already-stamped line, so a language added
 	// later updates every file rather than only the fresh ones.
-	const pattern = /^(?:\{\{SELECTOR\}\}|\*\*[^*\n]+\*\* (?:\[[^\]]*\]\([^)]*\)|\*\*[^*\n]+\*\*)(?: · (?:\[[^\]]*\]\([^)]*\)|\*\*[^*\n]+\*\*))*)$/m;
+	// An item is a link to another language, or the current language in bold.
+	// The first alternative is the old shape, which carried a translated
+	// "Read this in other languages:" label; keeping it here means a document
+	// written before the label was dropped still gets re-stamped rather than
+	// silently skipped.
+	const item = String.raw`(?:\[[^\]]*\]\([^)]*\)|\*\*[^*\n]+\*\*)`;
+	const pattern = new RegExp(
+		String.raw`^(?:\{\{SELECTOR\}\}|\*\*[^*\n]+\*\* ${item}(?: · ${item})*|${item}(?: · ${item})+)$`,
+		"m",
+	);
 	if (!pattern.test(text)) {
 		console.warn(`no selector line found: ${file}`);
 		continue;

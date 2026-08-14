@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 /**
- * Prints the "read this in other languages" line for one document in one
- * language.
+ * Prints the language line for one document in one language.
+ *
+ * There is no label in front of it: a row of language names in their own
+ * scripts is already unambiguous, and a label has to be translated 45 times to
+ * say what the row says by itself.
  *
  *   node scripts/i18n-selector.mjs README de
  *   node scripts/i18n-selector.mjs usage en
@@ -61,54 +64,6 @@ export const LANGUAGES = [
 	["zh-TW", "繁體中文"],
 ];
 
-/** The label the line itself carries, in each language. */
-export const LEAD = {
-	en: "Read this in other languages:",
-	am: "ይህን በሌሎች ቋንቋዎች ያንብቡ፦",
-	ar: "اقرأ هذا بلغات أخرى:",
-	be: "Чытаць на іншых мовах:",
-	bn: "অন্যান্য ভাষায় পড়ুন:",
-	ca: "Llegiu-ho en altres llengües:",
-	cs: "Přečtěte si to v jiných jazycích:",
-	da: "Læs dette på andre sprog:",
-	de: "Diese Datei in anderen Sprachen lesen:",
-	el: "Διαβάστε το σε άλλες γλώσσες:",
-	es: "Lee esto en otros idiomas:",
-	fa: "این را به زبان‌های دیگر بخوانید:",
-	fi: "Lue tämä muilla kielillä:",
-	fr: "Lire ce fichier dans d'autres langues :",
-	ga: "Léigh é seo i dteangacha eile:",
-	he: "קראו זאת בשפות אחרות:",
-	hu: "Olvasd el más nyelveken:",
-	id: "Baca ini dalam bahasa lain:",
-	it: "Leggi questo in altre lingue:",
-	ja: "他の言語で読む:",
-	ka: "წაიკითხეთ სხვა ენებზე:",
-	kh: "អានជាភាសាផ្សេង៖",
-	ko: "다른 언어로 읽기:",
-	lv: "Lasīt citās valodās:",
-	ms: "Baca ini dalam bahasa lain:",
-	ne: "अन्य भाषाहरूमा पढ्नुहोस्:",
-	nl: "Lees dit in andere talen:",
-	no: "Les dette på andre språk:",
-	pl: "Przeczytaj to w innych językach:",
-	pt: "Leia isto noutras línguas:",
-	"pt-BR": "Leia isto em outros idiomas:",
-	ro: "Citește acest fișier în alte limbi:",
-	ru: "Читать на других языках:",
-	sa: "अन्यभाषासु पठतु:",
-	sk: "Prečítajte si to v iných jazykoch:",
-	sq: "Lexoje këtë në gjuhë të tjera:",
-	sr: "Прочитајте ово на другим језицима:",
-	sv: "Läs detta på andra språk:",
-	th: "อ่านในภาษาอื่น:",
-	tr: "Bunu başka dillerde okuyun:",
-	uk: "Читати іншими мовами:",
-	uz: "Buni boshqa tillarda o'qing:",
-	vi: "Đọc bản dịch ngôn ngữ khác:",
-	zh: "阅读其他语言版本：",
-	"zh-TW": "閱讀其他語言版本：",
-};
 
 /**
  * `doc` is "README" or "usage"; `lang` the language the page itself is in.
@@ -131,7 +86,7 @@ export function selector(doc, lang) {
 		const target = href(code);
 		return target ? `[${name}](${target})` : `**${name}**`;
 	});
-	return `**${LEAD[lang] ?? LEAD.en}** ${parts.join(" · ")}`;
+	return parts.join(" · ");
 }
 
 import { pathToFileURL } from "node:url";
