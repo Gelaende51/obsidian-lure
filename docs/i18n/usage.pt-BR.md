@@ -1,4 +1,4 @@
-<!-- Tradução de docs/usage.md — estado: commit 349b74e.
+<!-- Tradução de docs/usage.md — estado: commit 33b0e60.
      Tradução automática (Claude Opus 5), não revisada por falantes nativos.
      Os rótulos do plugin vêm de src/lang/translations.ts e os do Obsidian
      dos textos que o próprio aplicativo traz, então batem com o que você vê

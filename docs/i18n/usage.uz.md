@@ -1,4 +1,4 @@
-<!-- docs/usage.md tarjimasi — holati: commit 349b74e.
+<!-- docs/usage.md tarjimasi — holati: commit 33b0e60.
      Mashina tarjimasi (Claude Opus 5), ona tili egalari tekshirmagan.
      Plagin yozuvlari src/lang/translations.ts dan, Obsidian yozuvlari
      esa ilovaning o‘zi yetkazadigan matnlardan olingan, shu bois ular

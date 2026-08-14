@@ -1,4 +1,4 @@
-<!-- Terjemahan docs/usage.md — status: commit 349b74e.
+<!-- Terjemahan docs/usage.md — status: commit 33b0e60.
      Terjemahan mesin (Claude Opus 5), belum diperiksa penutur asli.
      Label plugin berasal dari src/lang/translations.ts, sedangkan
      label Obsidian berasal dari teks yang dikirimkan aplikasi itu

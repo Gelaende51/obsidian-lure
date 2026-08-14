@@ -1,4 +1,4 @@
-<!-- README.md 的翻译 — 对应提交：d116bbc。
+<!-- README.md 的翻译 — 对应提交：33b0e60。
      机器翻译（Claude Opus 5），未经母语者校订。欢迎指出错误；以英文
      README 为准。 -->
 

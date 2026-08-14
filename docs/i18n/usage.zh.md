@@ -1,4 +1,4 @@
-<!-- docs/usage.md 的翻译 — 基准：commit 349b74e。
+<!-- docs/usage.md 的翻译 — 基准：commit 33b0e60。
      机器翻译（Claude Opus 5），未经母语者校订。插件的文案取自
      src/lang/translations.ts，Obsidian 的文案取自应用自带的译文，
      因此与你在屏幕上看到的一致。 -->

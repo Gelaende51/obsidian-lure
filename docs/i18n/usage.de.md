@@ -1,4 +1,4 @@
-<!-- Übersetzung von docs/usage.md — Stand: Commit 349b74e.
+<!-- Übersetzung von docs/usage.md — Stand: Commit 33b0e60.
      Maschinell übersetzt (Claude Opus 5) und nicht von Muttersprachlern
      geprüft. Bezeichnungen aus dem Plugin selbst stammen aus
      src/lang/translations.ts; bei Obsidians eigenen Einstellungen steht der

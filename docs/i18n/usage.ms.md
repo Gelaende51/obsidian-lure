@@ -1,4 +1,4 @@
-<!-- Terjemahan docs/usage.md — status: commit 349b74e.
+<!-- Terjemahan docs/usage.md — status: commit 33b0e60.
      Terjemahan mesin (Claude Opus 5), belum disemak penutur asli.
      Label pemalam datang daripada src/lang/translations.ts, manakala
      label Obsidian datang daripada teks yang dihantar oleh aplikasi

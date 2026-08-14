@@ -1,4 +1,4 @@
-<!-- Oversættelse af docs/usage.md — stand: commit 349b74e.
+<!-- Oversættelse af docs/usage.md — stand: commit 33b0e60.
      Maskinoversat (Claude Opus 5), ikke gennemset af personer med dansk
      som modersmål. Plugin'ets etiketter kommer fra
      src/lang/translations.ts og Obsidians fra de tekster, applikationen

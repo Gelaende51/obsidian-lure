@@ -1,4 +1,4 @@
-<!-- Përkthim i README.md — gjendja: commit d116bbc.
+<!-- Përkthim i README.md — gjendja: commit 33b0e60.
      Përkthim me makinë (Claude Opus 5), i pashqyrtuar nga folës amtarë.
      Ndreqjet janë të mirëpritura; versioni përcaktues është README-ja
      në anglisht. -->

@@ -1,4 +1,4 @@
-<!-- Bản dịch của docs/usage.md — trạng thái: commit 349b74e.
+<!-- Bản dịch của docs/usage.md — trạng thái: commit 33b0e60.
      Dịch máy (Claude Opus 5), chưa được người bản ngữ rà soát. Nhãn
      của plugin lấy từ src/lang/translations.ts, còn nhãn của Obsidian
      lấy từ các chuỗi do chính ứng dụng cung cấp, nên chúng khớp với

@@ -1,4 +1,4 @@
-<!-- Překlad docs/usage.md — stav: commit 349b74e.
+<!-- Překlad docs/usage.md — stav: commit 33b0e60.
      Strojový překlad (Claude Opus 5), nezkontrolovaný rodilými mluvčími.
      Popisky pluginu pocházejí z src/lang/translations.ts a popisky Obsidianu
      z řetězců, které dodává sama aplikace, takže odpovídají tomu, co vidíš

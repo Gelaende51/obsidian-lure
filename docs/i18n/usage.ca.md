@@ -1,4 +1,4 @@
-<!-- Traducció de docs/usage.md — estat: commit 349b74e.
+<!-- Traducció de docs/usage.md — estat: commit 33b0e60.
      Traducció automàtica (Claude Opus 5), no revisada per parlants
      nadius. Les etiquetes del connector provenen de
      src/lang/translations.ts i les d'Obsidian dels textos que la

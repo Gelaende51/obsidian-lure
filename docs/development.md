@@ -231,6 +231,18 @@ Two neighbouring controls are worth telling apart. **Review branch** runs a *pre
 
 The scorecard on the public page is the review's own verdict and is worth reading after each release, because it is not identical to what `npm run lint` says here. It is scored in an environment without this repository's devDependencies, which is what makes [the declared type surface](#passing-the-plugin-review) load-bearing rather than a stylistic choice: 164 warnings became 23 on the release that added it, and the review rating went from *Caution* to *Satisfactory* without a line of behaviour changing.
 
+## Translation freshness
+
+Every translated document opens with a comment naming the commit of the English source it was made from, so `git log <hash>..HEAD -- README.md` shows exactly what it is missing. Without it a translation set rots silently: the prose still reads fine, and nothing says it describes a version that no longer exists.
+
+```bash
+npm run stamp                          # rewrite the language row in every document
+npm run stamp -- --freshness --check   # which translations name an old commit, and how far behind
+npm run stamp -- --freshness           # claim they are current
+```
+
+Bumping a hash is a claim that the translation reflects that commit, so it is never a side effect of stamping the language row — read what `--check` lists first. The hash can only be bumped after the English change is committed, which is why this is a second commit rather than part of the first.
+
 ## The listing
 
 The public page carries a few things `manifest.json` has no field for — tags, an optional long description, a pricing model, a listing icon, screenshots. They are edited in a form at `community.obsidian.md/account/plugins/lure/edit`, and until now they existed nowhere in this repository. `listing.json` is where they live.

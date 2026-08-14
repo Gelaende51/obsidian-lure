@@ -1,4 +1,4 @@
-<!-- Traduction de docs/usage.md — état : commit 349b74e.
+<!-- Traduction de docs/usage.md — état : commit 33b0e60.
      Traduction automatique (Claude Opus 5), non relue par des locuteurs
      natifs. Les libellés du plugin proviennent de src/lang/translations.ts ;
      pour les paramètres d'Obsidian lui-même, le nom anglais est donné entre

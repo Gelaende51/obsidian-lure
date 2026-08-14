@@ -1,4 +1,4 @@
-<!-- Traducerea fișierului docs/usage.md — stare: commit 349b74e.
+<!-- Traducerea fișierului docs/usage.md — stare: commit 33b0e60.
      Traducere automată (Claude Opus 5), neverificată de vorbitori
      nativi. Etichetele pluginului provin din src/lang/translations.ts,
      iar cele ale Obsidian din textele livrate de aplicația însăși, deci

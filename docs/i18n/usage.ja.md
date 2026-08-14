@@ -1,4 +1,4 @@
-<!-- docs/usage.md の翻訳 — 基準: commit 349b74e。
+<!-- docs/usage.md の翻訳 — 基準: commit 33b0e60。
      機械翻訳（Claude Opus 5）であり、母語話者による確認は受けていま
      せん。プラグインのラベルは src/lang/translations.ts から、
      Obsidian のラベルはアプリ自身が同梱する訳文から取っているので、
