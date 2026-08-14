@@ -15,9 +15,9 @@ Obsidian 1.8.7+ · bureau uniquement · AGPL-3.0
 ## Divulgation de l'IA
 
 - **Agent** — **Claude Opus 5** et **Claude Sonnet 5** (Anthropic, via Claude Code) : a écrit le TypeScript, le CSS, les 45 jeux de traductions et la documentation. Les traductions sont générées automatiquement et n'ont pas été relues par des locuteurs natifs.
-- **Auteur** — Vault51 : a spécifié chaque fonctionnalité, testé chaque version dans un coffre réel, dirigé les corrections, relu l'ensemble des résultats.
 - **Consommation** — du 3 au 13 août 2026, neuf sessions, \~4 928 réponses : \~7,2 M de tokens générés, \~23,7 M envoyés, \~1169,6 M de relectures mises en cache (\~1200,5 M au total).
-- **Origine** — le modèle a appris de code libre, de documentation et d'écrits communautaires publiés par d'autres.
+- **Origine** — le modèle a appris de code libre, de documentation et d'écrits communautaires publiés par d'autres. L'essentiel du mérite leur revient.
+- **Auteur** — Vault51 : a spécifié chaque fonctionnalité, testé chaque version dans un coffre réel, dirigé les corrections, relu l'ensemble des résultats.
 
 ## Fonctionnalités
 

@@ -16,9 +16,9 @@ Obsidian 1.8.7+ · yalnızca masaüstü · AGPL-3.0
 ## Yapay zekâ bildirimi
 
 - **Aracı** — **Claude Opus 5** ve **Claude Sonnet 5** (Anthropic, Claude Code üzerinden): TypeScript kodunu, CSS'i, 45 çeviri takımının tamamını ve belgeleri yazdı. Çeviriler makineyle üretildi ve ana dili konuşanlarca gözden geçirilmedi.
-- **Yazar** — Vault51: her özelliği belirledi, her sürümü gerçek bir kasada denedi, düzeltmeleri yönlendirdi, bütün çıktıları gözden geçirdi.
 - **Tüketim** — 3–13 Ağustos 2026, dokuz oturum, \~4.928 yanıt: \~7,2 M üretilen jeton, \~23,7 M gönderilen, \~1169,6 M önbellekten yeniden okuma (\~1200,5 M toplam).
-- **Kaynak** — model, başkalarının yayımladığı açık kaynak koddan, belgelerden ve topluluk yazılarından öğrendi.
+- **Kaynak** — model, başkalarının yayımladığı açık kaynak koddan, belgelerden ve topluluk yazılarından öğrendi. Kredinin büyük kısmı onlara aittir.
+- **Yazar** — Vault51: her özelliği belirledi, her sürümü gerçek bir kasada denedi, düzeltmeleri yönlendirdi, bütün çıktıları gözden geçirdi.
 
 ## Özellikler
 

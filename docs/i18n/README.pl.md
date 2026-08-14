@@ -16,9 +16,9 @@ Obsidian 1.8.7+ · tylko komputer · AGPL-3.0
 ## Ujawnienie użycia SI
 
 - **Agent** — **Claude Opus 5** i **Claude Sonnet 5** (Anthropic, przez Claude Code): napisał TypeScript, CSS, wszystkie 45 zestawów tłumaczeń i dokumentację. Tłumaczenia powstały maszynowo i nie były sprawdzane przez native speakerów.
-- **Autor** — Vault51: określił każdą funkcję, przetestował każdą wersję w prawdziwym skarbcu, pokierował poprawkami, przejrzał wszystkie wyniki.
 - **Zużycie** — 3–13 sierpnia 2026, dziewięć sesji, \~4928 odpowiedzi: \~7,2 mln wygenerowanych tokenów, \~23,7 mln wysłanych, \~1169,6 mln odczytów z pamięci podręcznej (\~1200,5 mln łącznie).
-- **Źródło** — model nauczył się z otwartego kodu, dokumentacji i tekstów społeczności opublikowanych przez innych.
+- **Źródło** — model nauczył się z otwartego kodu, dokumentacji i tekstów społeczności opublikowanych przez innych. Większość zasługi należy do nich.
+- **Autor** — Vault51: określił każdą funkcję, przetestował każdą wersję w prawdziwym skarbcu, pokierował poprawkami, przejrzał wszystkie wyniki.
 
 ## Funkcje
 

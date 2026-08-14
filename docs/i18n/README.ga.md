@@ -15,9 +15,9 @@ Obsidian 1.8.7+ · deasc amháin · AGPL-3.0
 ## Nochtadh faoin IS
 
 - **Gníomhaire** — **Claude Opus 5** agus **Claude Sonnet 5** (Anthropic, trí Claude Code): scríobh sé an TypeScript, an CSS, na 45 sraith aistriúcháin ar fad agus an doiciméadú. Is aistriúcháin mheaisín iad agus níor léigh cainteoirí dúchais iad.
-- **Údar** — Vault51: shocraigh sé gach gné, thriail sé gach leagan i dtaisceadán fíor, stiúir sé na ceartúcháin, léigh sé gach toradh.
 - **Úsáid** — 3–13 Lúnasa 2026, naoi seisiún, \~4,928 freagra: \~7.2 milliún ceadchomhartha ginte, \~23.7 milliún seolta, \~1169.6 milliún athléamh ón taisce (\~1200.5 milliún san iomlán).
-- **Foinse** — d'fhoghlaim an múnla ó chód foinse oscailte, ó dhoiciméadú agus ó scríbhinní pobail a d'fhoilsigh daoine eile.
+- **Foinse** — d'fhoghlaim an múnla ó chód foinse oscailte, ó dhoiciméadú agus ó scríbhinní pobail a d'fhoilsigh daoine eile. Is leo formhór an chreidiúna.
+- **Údar** — Vault51: shocraigh sé gach gné, thriail sé gach leagan i dtaisceadán fíor, stiúir sé na ceartúcháin, léigh sé gach toradh.
 
 ## Gnéithe
 
