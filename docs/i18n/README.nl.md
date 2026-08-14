@@ -1,4 +1,4 @@
-<!-- Vertaling van README.md — stand: commit 9e180d1.
+<!-- Vertaling van README.md — stand: commit dc475f7.
      Machinaal vertaald (Claude Opus 5) en niet nagekeken door
      moedertaalsprekers. Correcties zijn welkom; de Engelse README is de
      maatgevende versie. -->

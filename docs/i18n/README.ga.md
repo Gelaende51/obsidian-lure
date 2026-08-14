@@ -1,4 +1,4 @@
-<!-- Aistriúchán ar README.md — staid: tiomantas 9e180d1.
+<!-- Aistriúchán ar README.md — staid: tiomantas dc475f7.
      Aistriúchán meaisín (Claude Opus 5) nár léigh cainteoirí dúchais é.
      Fáilte roimh cheartúcháin; is é an README Béarla an leagan údarásach. -->
 
