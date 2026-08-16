@@ -118,6 +118,24 @@ const INPUT_MIN_PX = 28;
  */
 let measureCtx: CanvasRenderingContext2D | null = null;
 
+/**
+ * How much of a file name is the name rather than the extension.
+ *
+ * Clicking the note's name selects this much, so the common edit — renaming
+ * a note — needs no further gesture, and the extension stays visible and
+ * one keystroke away rather than being typed over by accident. Pressing
+ * End or the right arrow still reaches it, and a double-click still widens
+ * to the whole row.
+ *
+ * A leading dot belongs to the name: ".gitignore" is all name and no
+ * extension, so `lastIndexOf` at position 0 does not count. A name with no
+ * dot at all is likewise all name.
+ */
+function stemLength(name: string): number {
+	const dot = name.lastIndexOf(".");
+	return dot > 0 ? dot : name.length;
+}
+
 function textWidth(text: string, el: HTMLElement): number {
 	if (!measureCtx) measureCtx = createEl("canvas").getContext("2d");
 	if (!measureCtx) return 0;
@@ -1284,14 +1302,14 @@ export class PathBreadcrumb {
 		// An external file has no TFile to read a parent off; the row already
 		// holds its folder, so the name alone is what goes in the input.
 		if (this.externalFileName !== null && this.externalPath !== null) {
-			this.enterTypingMode(this.externalFileName, "all");
+			this.enterTypingMode(this.externalFileName, stemLength(this.externalFileName));
 			return;
 		}
 		if (!this.file) return;
 		const parent = this.file.parent?.path ?? "";
 		const folderPath = parent === "/" ? "" : parent;
 		this.extendBrowsePath(folderPath);
-		this.enterTypingMode(this.file.name, "all");
+		this.enterTypingMode(this.file.name, stemLength(this.file.name));
 	}
 
 	/**
