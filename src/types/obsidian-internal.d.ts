@@ -59,6 +59,14 @@ declare module "obsidian" {
 	/** Registry of every registered command, keyed by id. */
 	interface CommandRegistry {
 		commands: Record<string, Command | undefined>;
+		/**
+		 * Runs a command by id, returning false when it declined. Used to
+		 * delegate to Obsidian's own features — the outline sidebar, a new
+		 * empty tab — rather than reimplementing them, so a user's rebound
+		 * hotkey and any plugin that has patched the command both still
+		 * apply.
+		 */
+		executeCommandById(id: string): boolean;
 	}
 
 	/**

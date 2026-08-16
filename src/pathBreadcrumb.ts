@@ -46,6 +46,8 @@ import {
 } from "./externalFileOps";
 import { ExternalFileView, extensionOf, openExternalFile } from "./externalFileView";
 import { showExternalMenu } from "./externalMenu";
+import { RightClickCounter, classifyTarget, GestureTarget } from "./segmentGestures";
+import { showContextMenu } from "./nativeFileItem";
 import { warnsOnOpen } from "./fileKinds";
 import { t } from "./lang";
 
@@ -207,6 +209,17 @@ export class PathBreadcrumb {
 	private renameFocusOut: (() => void) | null = null;
 	/** Detaches the listeners bound to Obsidian's own header element on destroy. */
 	private domListeners = new AbortController();
+	/**
+	 * Counts right-clicks on the row so one press can mean three things.
+	 * One per bar: a run that starts on a folder and continues on the file
+	 * name is one indecisive gesture, not two, and resolving it as the
+	 * target it ended on is the least surprising reading.
+	 */
+	private rightClicks = new RightClickCounter((count, at) => this.runGesture(count, at));
+	/** What the run in progress is aimed at, captured on the first press. */
+	private gestureTarget: GestureTarget = "empty";
+	/** The folder segment or delimiter the run started on, when it began on one. */
+	private gestureFolderPath: string | null = null;
 	/** When on, breadcrumb/dropdown/text-input interactions move or rename the current file instead of navigating. */
 	private renameMode = false;
 	/** Pending deferred work, cancelled on teardown so a dead instance stops acting. */
@@ -367,6 +380,22 @@ export class PathBreadcrumb {
 			this.handleSegmentClick(folderPath);
 		}, { capture: true, signal: this.domListeners.signal });
 
+		// Right-click on the row. Every press is counted rather than acted
+		// on, because two and three presses mean different things — see
+		// segmentGestures for what that costs. Obsidian has no handler of
+		// its own here, so nothing is being overridden; the default menu is
+		// suppressed so the platform's does not appear behind ours.
+		container?.addEventListener("contextmenu", (evt) => {
+			if (this.inputEl) return;
+			evt.preventDefault();
+			const target = classifyTarget(evt.target as HTMLElement);
+			// The run is aimed at whatever the latest press landed on, so
+			// an indecisive gesture resolves as the thing it ended on.
+			this.gestureTarget = target;
+			this.gestureFolderPath = this.folderPathForEvent(evt, target);
+			this.rightClicks.press(evt);
+		}, { signal: this.domListeners.signal });
+
 		// Typing only starts the chip-trail's inline autocomplete input
 		// while browsing (i.e. after a delimiter click has already put
 		// at least one chip on the row) — reachable only that way, per
@@ -385,6 +414,143 @@ export class PathBreadcrumb {
 				this.enterTypingMode(evt.key);
 			}
 		}, { signal: this.domListeners.signal });
+	}
+
+	/**
+	 * Which folder a right-click refers to, for the targets that name one.
+	 *
+	 * A delimiter refers to the folder *before* it, which is the same index
+	 * as the segment it follows — the identity the click handlers already
+	 * rely on.
+	 */
+	private folderPathForEvent(evt: MouseEvent, target: GestureTarget): string | null {
+		const el = evt.target as HTMLElement;
+		if (target === "folder") {
+			const segment = el.closest<HTMLElement>(".view-header-breadcrumb");
+			return segment ? this.nativeSegmentPath(segment) : null;
+		}
+		if (target === "delimiter") {
+			const separator = el.closest<HTMLElement>(".view-header-breadcrumb-separator");
+			const all = this.titleEl.parentElement
+				?.querySelector<HTMLElement>(NATIVE_BREADCRUMB_SELECTOR)
+				?.querySelectorAll<HTMLElement>(".view-header-breadcrumb-separator");
+			if (!separator || !all) return null;
+			const index = Array.from(all).indexOf(separator);
+			return index < 0 ? null : (this.ancestorFolderPaths()[index] ?? null);
+		}
+		return null;
+	}
+
+	/**
+	 * What a completed run of right-clicks does.
+	 *
+	 * One press is a command, two and three are copies of progressively
+	 * more of the path. Copying is the whole reason the counting exists:
+	 * there is no other gesture that distinguishes "this name", "this name
+	 * with its extension" and "everything from here rightwards" without
+	 * asking the user to aim at different pixels.
+	 */
+	private runGesture(count: number, at: { clientX: number; clientY: number }): void {
+		switch (this.gestureTarget) {
+			case "vault":
+				// The one segment that is not a path segment gets the one
+				// action that is not about this file.
+				if (count === 1) void this.plugin.app.commands.executeCommandById("workspace:new-tab");
+				return;
+			case "delimiter":
+				if (count === 1) this.showDelimiterMenu(this.gestureFolderPath, at);
+				return;
+			case "file":
+				this.runFileGesture(count);
+				return;
+			case "folder":
+				this.runFolderGesture(count);
+				return;
+			case "empty":
+				// Two presses on the empty space take the whole row, matching
+				// what a single click there already opens for editing.
+				if (count === 2) void this.copyToClipboard(this.rowPath());
+				return;
+		}
+	}
+
+	private runFileGesture(count: number): void {
+		const name = this.externalFileName ?? this.file?.name ?? null;
+		if (count === 1) {
+			void this.plugin.app.commands.executeCommandById("outline:open");
+			return;
+		}
+		if (name === null) return;
+		// Two presses take the name as the row shows it selected; three take
+		// it as the filesystem has it. The pair mirrors what clicking the
+		// name selects, so the gesture and the selection agree.
+		if (count === 2) void this.copyToClipboard(name.slice(0, stemLength(name)));
+		else if (count === 3) void this.copyToClipboard(name);
+	}
+
+	private runFolderGesture(count: number): void {
+		const folderPath = this.gestureFolderPath;
+		if (folderPath === null) return;
+		const name = folderPath.split("/").pop() ?? folderPath;
+		if (count === 2) void this.copyToClipboard(name);
+		// Everything from this folder rightwards: the folder and the rest of
+		// the path below it, which is the part of the row to the right of
+		// where the user pressed.
+		else if (count === 3) {
+			const suffix = this.pathSuffixAfter(folderPath);
+			void this.copyToClipboard(suffix ? `${name}/${suffix}` : name);
+		}
+	}
+
+	/** The whole path as the row is showing it: vault-relative inside, absolute outside. */
+	private rowPath(): string {
+		if (this.externalPath !== null) {
+			return this.externalFileName !== null
+				? externalJoin(this.externalPath, this.externalFileName)
+				: this.externalPath;
+		}
+		return this.file?.path ?? "";
+	}
+
+	/**
+	 * A delimiter stands for the folder before it, so right-clicking one
+	 * asks about that folder. Where the folder has a note, the note is the
+	 * more specific answer and wins; otherwise the folder answers for
+	 * itself, because a right-click that does nothing teaches nothing.
+	 */
+	private showDelimiterMenu(folderPath: string | null, at: { clientX: number; clientY: number }): void {
+		if (folderPath === null) return;
+		const app = this.plugin.app;
+		const folder = app.vault.getAbstractFileByPath(folderPath);
+		if (!(folder instanceof TFolder)) return;
+
+		const note = this.folderNoteFor(folder);
+		const evt = new MouseEvent("contextmenu", { clientX: at.clientX, clientY: at.clientY });
+		showContextMenu(app, evt, note ?? folder);
+	}
+
+	/**
+	 * The note that stands for a folder, under the convention every
+	 * folder-note plugin agrees on: a note inside the folder with the
+	 * folder's own name. Checked against the vault rather than inferred
+	 * from a marker class, so it is right whether or not one of those
+	 * plugins is installed.
+	 */
+	private folderNoteFor(folder: TFolder): TFile | null {
+		const candidate = this.plugin.app.vault.getAbstractFileByPath(
+			`${folder.path}/${folder.name}.md`,
+		);
+		return candidate instanceof TFile ? candidate : null;
+	}
+
+	private async copyToClipboard(text: string): Promise<void> {
+		if (!text) return;
+		try {
+			await navigator.clipboard.writeText(text);
+		} catch {
+			// Clipboard access can be refused; saying so beats a silent no-op.
+			new Notice(t("noticeExternalOpenFailed", { path: text }));
+		}
 	}
 
 	/** Re-derives the file from the leaf and re-renders, unless mid-edit. */
@@ -471,6 +637,7 @@ export class PathBreadcrumb {
 		// Listeners on the header element itself: it belongs to Obsidian
 		// and outlives us, so leaving these attached would keep this dead
 		// instance reachable and reacting to clicks after unload.
+		this.rightClicks.reset();
 		this.domListeners.abort();
 		this.vaultSegmentEl.remove();
 		this.filenameEl.remove();
