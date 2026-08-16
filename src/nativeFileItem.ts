@@ -1,5 +1,6 @@
 import { App, Menu, Notice, TAbstractFile, TFile, TFolder } from "obsidian";
 import { t } from "./lang";
+import { LABELS, obsidianLabel } from "./obsidianLabels";
 
 /**
  * Makes an arbitrary element behave like a File Explorer row: draggable
@@ -18,7 +19,7 @@ import { t } from "./lang";
  * items contributed by other plugins land in the same place they do in
  * the File Explorer.
  */
-const MENU_SECTIONS = [
+export const MENU_SECTIONS = [
 	"title",
 	"open",
 	"action-primary",
@@ -34,21 +35,6 @@ const MENU_SECTIONS = [
 /** Source string the File Explorer passes with its `file-menu` event; other plugins branch on it. */
 const MENU_SOURCE = "file-explorer-context-menu";
 
-/**
- * Obsidian's own label for one of its menu entries, so these read
- * identically to the File Explorer's in whatever language the app is
- * set to. Falls back to the English wording if the i18n global or the
- * key ever moves — i18next returns the key itself when it can't resolve
- * one, which is the signal used here.
- */
-function obsidianLabel(key: string, fallback: string): string {
-	try {
-		const translated = window.i18next?.t(key);
-		return translated && translated !== key ? translated : fallback;
-	} catch {
-		return fallback;
-	}
-}
 
 /**
  * Swallows exactly one `blur` on `inputEl`, so the suggestion popover
@@ -150,20 +136,86 @@ async function createFolderIn(app: App, folder: TFolder): Promise<void> {
 	}
 }
 
+/**
+ * A duplicate beside the original, named the way Obsidian names one.
+ *
+ * `getAvailablePath` is Obsidian's own "find me a free name" — it produces
+ * "note 1.md" next to "note.md" — so a copy made here is indistinguishable
+ * from one made in the File Explorer.
+ */
+async function makeCopyOfFile(app: App, file: TFile): Promise<void> {
+	try {
+		const parent = file.parent?.path ?? "";
+		const base = parent && parent !== "/" ? `${parent}/${file.basename}` : file.basename;
+		await app.vault.copy(file, app.vault.getAvailablePath(base, file.extension));
+	} catch (err) {
+		new Notice(t("noticeCopyFailed", { error: (err as Error).message }));
+	}
+}
+
+/**
+ * Folders have no copy API — `vault.copy` takes a TFile — so the tree is
+ * walked and rebuilt. Folders are created before their contents so a child
+ * never lands before its parent exists.
+ */
+async function copyFolderInto(app: App, folder: TFolder, targetPath: string): Promise<void> {
+	await app.vault.createFolder(targetPath);
+	for (const child of folder.children) {
+		if (child instanceof TFolder) await copyFolderInto(app, child, `${targetPath}/${child.name}`);
+		else if (child instanceof TFile) await app.vault.copy(child, `${targetPath}/${child.name}`);
+	}
+}
+
+async function makeCopyOfFolder(app: App, folder: TFolder): Promise<void> {
+	try {
+		const parent = folder.parent?.path ?? "";
+		const base = parent && parent !== "/" ? `${parent}/${folder.name}` : folder.name;
+		// An empty extension asks for a free *folder* name rather than a file one.
+		await copyFolderInto(app, folder, app.vault.getAvailablePath(base, ""));
+	} catch (err) {
+		new Notice(t("noticeCopyFailed", { error: (err as Error).message }));
+	}
+}
+
 function buildFolderMenu(app: App, menu: Menu, folder: TFolder): void {
 	menu.addItem((item) =>
 		item
 			.setSection("action-primary")
-			.setTitle(obsidianLabel("plugins.fileExplorer.menuOptNewNote", "New note"))
+			.setTitle(obsidianLabel(LABELS.newNote, "New note"))
 			.setIcon("lucide-edit")
 			.onClick(() => void createNoteIn(app, folder)),
 	);
 	menu.addItem((item) =>
 		item
 			.setSection("action-primary")
-			.setTitle(obsidianLabel("plugins.fileExplorer.menuOptNewFolder", "New folder"))
+			.setTitle(obsidianLabel(LABELS.newFolder, "New folder"))
 			.setIcon("lucide-folder-open")
 			.onClick(() => void createFolderIn(app, folder)),
+	);
+	// Obsidian's core plugins fill in the rest of this menu through the
+	// file-menu event — canvas, bases, copy path, show in folder. What the
+	// File Explorer adds inline, and nobody contributes, is these three.
+	menu.addItem((item) =>
+		item
+			.setSection("action")
+			.setTitle(obsidianLabel(LABELS.makeCopy, "Make a copy"))
+			.setIcon("lucide-copy")
+			.onClick(() => void makeCopyOfFolder(app, folder)),
+	);
+	menu.addItem((item) =>
+		item
+			.setSection("action")
+			.setTitle(obsidianLabel(LABELS.rename, "Rename..."))
+			.setIcon("lucide-edit-3")
+			.onClick(() => void app.fileManager.promptForFileRename(folder)),
+	);
+	menu.addItem((item) =>
+		item
+			.setSection("danger")
+			.setTitle(obsidianLabel(LABELS.deleteFolder, "Delete folder"))
+			.setIcon("lucide-trash-2")
+			.setWarning(true)
+			.onClick(() => void app.fileManager.promptForDeletion(folder)),
 	);
 }
 
@@ -171,21 +223,35 @@ function buildFileMenu(app: App, menu: Menu, file: TFile): void {
 	menu.addItem((item) =>
 		item
 			.setSection("open")
-			.setTitle(obsidianLabel("interface.menu.openInNewTab", "Open in new tab"))
+			.setTitle(obsidianLabel(LABELS.openInNewTab, "Open in new tab"))
 			.setIcon("lucide-file-plus")
 			.onClick(() => void app.workspace.getLeaf("tab").openFile(file)),
 	);
 	menu.addItem((item) =>
 		item
+			.setSection("open")
+			.setTitle(obsidianLabel(LABELS.openToTheRight, "Open to the right"))
+			.setIcon("lucide-separator-vertical")
+			.onClick(() => void app.workspace.getLeaf("split", "vertical").openFile(file)),
+	);
+	menu.addItem((item) =>
+		item
 			.setSection("action")
-			.setTitle(obsidianLabel("plugins.fileExplorer.menuOptRename", "Rename..."))
+			.setTitle(obsidianLabel(LABELS.makeCopy, "Make a copy"))
+			.setIcon("lucide-copy")
+			.onClick(() => void makeCopyOfFile(app, file)),
+	);
+	menu.addItem((item) =>
+		item
+			.setSection("action")
+			.setTitle(obsidianLabel(LABELS.rename, "Rename..."))
 			.setIcon("lucide-edit-3")
 			.onClick(() => void app.fileManager.promptForFileRename(file)),
 	);
 	menu.addItem((item) =>
 		item
 			.setSection("danger")
-			.setTitle(obsidianLabel("interface.menu.deleteFile", "Delete file"))
+			.setTitle(obsidianLabel(LABELS.deleteFile, "Delete file"))
 			.setIcon("lucide-trash-2")
 			.setWarning(true)
 			.onClick(() => void app.fileManager.promptForDeletion(file)),
@@ -193,7 +259,7 @@ function buildFileMenu(app: App, menu: Menu, file: TFile): void {
 }
 
 /** Opens the same menu the File Explorer opens for this file or folder. */
-function showContextMenu(app: App, evt: MouseEvent, target: TAbstractFile): void {
+export function showContextMenu(app: App, evt: MouseEvent, target: TAbstractFile): void {
 	const menu = new Menu();
 	// Internal, and only cosmetic: without it every section still renders,
 	// just in the order items happen to be added.
