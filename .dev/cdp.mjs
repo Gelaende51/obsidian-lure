@@ -15,6 +15,7 @@
  *   node .dev/cdp.mjs html  ".view-header-title-container"
  *   node .dev/cdp.mjs style ".lure-glyph-icon" stroke-width font-size
  *   node .dev/cdp.mjs shot  /tmp/obsidian.png
+ *   node .dev/cdp.mjs key   F2 ctrl+l Escape
  *
  * `eval` runs in the renderer's main world, so `app` — Obsidian's own API
  * object — is in scope: `app.workspace.getActiveFile().path` works.
@@ -22,6 +23,8 @@
  * Debug tool, not part of the plugin: nothing here is bundled into main.js,
  * and the port should be commented back out when a session is over.
  */
+
+import { describeKey } from "./cdpSession.mjs";
 
 const PORT = process.env.OBSIDIAN_CDP_PORT ?? 9222;
 const ORIGIN = `http://127.0.0.1:${PORT}`;
@@ -111,6 +114,24 @@ async function evaluate(expression) {
 	return result.result.value;
 }
 
+/**
+ * Key dispatch lives in cdpSession.mjs so the suites and this tool press
+ * keys the same way — two spellings of "what does F2 do" would eventually
+ * disagree, and the one that disagreed would be the one under test.
+ */
+async function pressKey(spec) {
+	const { key, code, keyCode, modifiers, text } = describeKey(spec);
+	const base = { key, code, windowsVirtualKeyCode: keyCode, nativeVirtualKeyCode: keyCode, modifiers };
+	await send("Input.dispatchKeyEvent", {
+		...base,
+		type: text ? "keyDown" : "rawKeyDown",
+		text,
+		unmodifiedText: text,
+	});
+	await send("Input.dispatchKeyEvent", { ...base, type: "keyUp" });
+	return `pressed ${spec}`;
+}
+
 const [command, ...args] = process.argv.slice(2);
 
 const commands = {
@@ -140,6 +161,12 @@ const commands = {
 		const path = args[0] ?? "/tmp/obsidian.png";
 		writeFileSync(path, Buffer.from(data, "base64"));
 		return `wrote ${path}`;
+	},
+
+	key: async () => {
+		const results = [];
+		for (const spec of args) results.push(await pressKey(spec));
+		return results.join(", ");
 	},
 
 	targets: async () =>

@@ -113,6 +113,73 @@ export async function connect() {
 	return { send, evaluate, close: () => socket.close() };
 }
 
+
+/**
+ * A real key press, dispatched by the browser rather than synthesised in the
+ * page.
+ *
+ * An event made with `new KeyboardEvent(...)` is `isTrusted: false`, and
+ * Obsidian decides what reaches a command from a capture-phase window
+ * listener with a scope stack on top of it — so a synthetic event tests the
+ * listener under it rather than the path a user takes. It is the difference
+ * between the two that found the rename-dialog bug: `executeCommandById`
+ * reported the plugin stealing focus, while a real key showed the command
+ * never running at all.
+ */
+const KEY_CODES = {
+	Escape: [27, "Escape"], Enter: [13, "Enter"], Tab: [9, "Tab"],
+	Backspace: [8, "Backspace"], Delete: [46, "Delete"], Space: [32, "Space"],
+	ArrowUp: [38, "ArrowUp"], ArrowDown: [40, "ArrowDown"],
+	ArrowLeft: [37, "ArrowLeft"], ArrowRight: [39, "ArrowRight"],
+	Home: [36, "Home"], End: [35, "End"],
+};
+
+const MODIFIER_BITS = { alt: 1, ctrl: 2, control: 2, meta: 4, cmd: 4, shift: 8 };
+
+/** "ctrl+shift+f2" -> the CDP payload for one press. */
+export function describeKey(spec) {
+	const parts = spec.split("+");
+	const name = parts.pop();
+	let modifiers = 0;
+	for (const part of parts) {
+		const bit = MODIFIER_BITS[part.toLowerCase()];
+		if (!bit) throw new Error(`unknown modifier "${part}" in "${spec}"`);
+		modifiers |= bit;
+	}
+
+	const fn = /^[fF](\d{1,2})$/.exec(name);
+	if (fn) {
+		const n = Number(fn[1]);
+		if (n < 1 || n > 12) throw new Error(`no such function key "${name}"`);
+		return { key: `F${n}`, code: `F${n}`, keyCode: 111 + n, modifiers, text: "" };
+	}
+	if (KEY_CODES[name]) {
+		const [keyCode, code] = KEY_CODES[name];
+		const isSpace = name === "Space";
+		return { key: isSpace ? " " : name, code, keyCode, modifiers, text: isSpace ? " " : "" };
+	}
+	if (name.length === 1) {
+		const upper = name.toUpperCase();
+		const code = /[0-9]/.test(name) ? `Digit${name}` : `Key${upper}`;
+		// A modified press produces no text: ctrl+l must not also type an "l".
+		return { key: name, code, keyCode: upper.charCodeAt(0), modifiers, text: modifiers ? "" : name };
+	}
+	throw new Error(`don't know how to press "${name}"`);
+}
+
+/** Presses a key in a connected page. Accepts the same specs as describeKey. */
+export async function pressKey(page, spec) {
+	const { key, code, keyCode, modifiers, text } = describeKey(spec);
+	const base = { key, code, windowsVirtualKeyCode: keyCode, nativeVirtualKeyCode: keyCode, modifiers };
+	await page.send("Input.dispatchKeyEvent", {
+		...base,
+		type: text ? "keyDown" : "rawKeyDown",
+		text,
+		unmodifiedText: text,
+	});
+	await page.send("Input.dispatchKeyEvent", { ...base, type: "keyUp" });
+}
+
 /** Page-side sleep, for the debounced saves and Obsidian's own async repaints. */
 export const PAUSE = (ms) => `await new Promise((r) => setTimeout(r, ${ms}));`;
 
