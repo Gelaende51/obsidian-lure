@@ -9,7 +9,7 @@
  * see the LICENSE file or <https://www.gnu.org/licenses/> for details.
  */
 
-import { Command, Plugin } from "obsidian";
+import { Command, Hotkey, Platform, Plugin } from "obsidian";
 import { BreadcrumbManager } from "./breadcrumbManager";
 import { EXTERNAL_VIEW_TYPE, ExternalFileView } from "./externalFileView";
 import { BreadcrumbSettingTab } from "./settingsTab";
@@ -18,7 +18,24 @@ import { BreadcrumbPathSettings, DEFAULT_SETTINGS } from "./settings";
 /** Obsidian's built-in "Rename file" command, bound to F2 by default. */
 const RENAME_COMMAND_ID = "workspace:edit-file-title";
 
+/**
+ * Obsidian's fallback when it cannot focus the inline title — scrolled out
+ * of view, or a view that has none. It is a real modal, and modals push
+ * their own keymap scope, which is why the rename key stops reaching the
+ * command as soon as one is up.
+ */
+const RENAME_DIALOG_SELECTOR = ".modal.mod-file-rename";
+
+/** How long the dialog is waited for, and how often. Generous: missing it costs the fix. */
+const RENAME_DIALOG_TIMEOUT_MS = 500;
+const RENAME_DIALOG_POLL_MS = 25;
+
 type CheckCallback = NonNullable<Command["checkCallback"]>;
+
+/** Obsidian writes the platform-agnostic modifier as "Mod"; this is what it means here. */
+function modKey(): string {
+	return Platform.isMacOS ? "Meta" : "Ctrl";
+}
 
 export default class BreadcrumbPathPlugin extends Plugin {
 	settings: BreadcrumbPathSettings = DEFAULT_SETTINGS;
@@ -101,8 +118,96 @@ export default class BreadcrumbPathPlugin extends Plugin {
 			}
 
 			this.useHeaderRename = true;
-			return original.call(command, false);
+			const handled = original.call(command, false);
+			// Obsidian may answer with its rename dialog instead of the
+			// inline title. That dialog swallows the rename key, so the
+			// alternation would dead-end here: press again and nothing at
+			// all happens. Arm a listener on the dialog itself so the same
+			// key still reaches the next target.
+			this.awaitRenameDialog();
+			return handled;
 		};
+	}
+
+	/**
+	 * Watches for the rename dialog for as long as it could plausibly appear.
+	 *
+	 * `promptForFileRename` is async, so the modal is not in the DOM when the
+	 * command returns — arming on the next tick finds nothing and the fix
+	 * silently does not apply. Polling rather than an animation frame is
+	 * deliberate: a CDP-driven window paints no frames, so a
+	 * requestAnimationFrame loop would never run and this could not be
+	 * tested at all (see .dev/takeaways.md).
+	 */
+	private awaitRenameDialog(): void {
+		const deadline = Date.now() + RENAME_DIALOG_TIMEOUT_MS;
+		const poll = (): void => {
+			if (document.querySelector(RENAME_DIALOG_SELECTOR)) {
+				this.armRenameDialog();
+				return;
+			}
+			// Nothing appeared, so the inline title took it — the ordinary case.
+			if (Date.now() < deadline) window.setTimeout(poll, RENAME_DIALOG_POLL_MS);
+		};
+		poll();
+	}
+
+	/**
+	 * Lets the rename key close Obsidian's rename dialog and carry on to the
+	 * path bar.
+	 *
+	 * The listener goes on the dialog rather than on the window: Obsidian
+	 * handles hotkeys from a capture-phase window listener whose scope stack
+	 * the modal has already taken over, so nothing registered globally sees
+	 * the key while one is open. It dies with the element, so a dialog closed
+	 * any other way needs no cleanup.
+	 *
+	 * Only the rename key is claimed. Every other key — including the ones
+	 * that type into the field — is left to the dialog.
+	 */
+	private armRenameDialog(): void {
+		const dialog = document.querySelector<HTMLElement>(RENAME_DIALOG_SELECTOR);
+		if (!dialog || dialog.dataset.lureArmed) return;
+		dialog.dataset.lureArmed = "1";
+
+		const onKeyDown = (evt: KeyboardEvent): void => {
+			if (!this.isRenameHotkey(evt)) return;
+			evt.preventDefault();
+			evt.stopPropagation();
+			dialog.removeEventListener("keydown", onKeyDown, true);
+			// Cancel, never save: the press means "not this target, the
+			// other one". Committing a rename nobody typed would be a
+			// destructive reading of a key that only meant to move on.
+			dialog.querySelector<HTMLElement>(".mod-cancel")?.click();
+			const breadcrumb = this.manager.getActiveBreadcrumb();
+			breadcrumb?.startHeaderRename();
+			this.useHeaderRename = false;
+		};
+
+		dialog.addEventListener("keydown", onKeyDown, true);
+	}
+
+	/**
+	 * Whether this event is the rename command's own key.
+	 *
+	 * Read from Obsidian's tables rather than hardcoded, so a rebound key
+	 * comes along: `customKeys` holds only what the user has changed, so a
+	 * command still on its default is found in `defaultKeys`.
+	 */
+	private isRenameHotkey(evt: KeyboardEvent): boolean {
+		const manager = this.app.hotkeyManager;
+		const bindings: Hotkey[] =
+			manager?.customKeys?.[RENAME_COMMAND_ID] ?? manager?.defaultKeys?.[RENAME_COMMAND_ID] ?? [];
+		return bindings.some((binding) => {
+			if (binding.key.toLowerCase() !== evt.key.toLowerCase()) return false;
+			const wanted = new Set(binding.modifiers.map((m) => (m === "Mod" ? modKey() : m)));
+			return (
+				wanted.has("Ctrl") === evt.ctrlKey &&
+				wanted.has("Shift") === evt.shiftKey &&
+				wanted.has("Alt") === evt.altKey &&
+				wanted.has("Meta") === evt.metaKey
+			);
+		});
 	}
 
 	private restoreRenameCommand(): void {

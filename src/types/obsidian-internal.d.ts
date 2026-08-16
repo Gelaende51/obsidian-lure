@@ -47,6 +47,13 @@ declare module "obsidian" {
 	interface Vault {
 		/** Reads an Obsidian setting, e.g. the "Detect all file extensions" toggle. */
 		getConfig(key: string): unknown;
+		/**
+		 * Obsidian's own "find me a free name": "note.md" beside an existing
+		 * one becomes "note 1.md". An empty extension asks for a folder name.
+		 * Used so a copy made here is named exactly as the File Explorer
+		 * would have named it.
+		 */
+		getAvailablePath(basePath: string, extension: string): string;
 	}
 
 	/** Registry of every registered command, keyed by id. */
@@ -76,8 +83,12 @@ declare module "obsidian" {
 	}
 
 	interface FileManager {
-		/** Opens Obsidian's own rename dialog, exactly as the File Explorer's "Rename..." does. */
-		promptForFileRename(file: TFile): Promise<void>;
+		/**
+		 * Opens Obsidian's own rename dialog, exactly as the File Explorer's
+		 * "Rename..." does. Named for files, but the File Explorer hands it
+		 * folders too and it renders the same `.modal.mod-file-rename`.
+		 */
+		promptForFileRename(file: TAbstractFile): Promise<void>;
 		createNewMarkdownFile(parent: TFolder, filename?: string): Promise<TFile>;
 		createNewFolder(parent: TFolder): Promise<TFolder>;
 	}
@@ -87,11 +98,32 @@ declare module "obsidian" {
 		addSections(sections: string[]): this;
 	}
 
+	/**
+	 * One key binding. `modifiers` uses Obsidian's own names ("Mod", "Shift",
+	 * "Alt", "Meta"), where Mod is Ctrl on Linux/Windows and Cmd on macOS.
+	 */
+	interface Hotkey {
+		modifiers: string[];
+		key: string;
+	}
+
+	/**
+	 * Obsidian's hotkey table. `customKeys` holds only what the user has
+	 * rebound, so a lookup has to fall back to `defaultKeys` — the public
+	 * `getHotkeys` returns the custom entry alone and is null for anything
+	 * still on its default.
+	 */
+	interface HotkeyManager {
+		customKeys: Record<string, Hotkey[] | undefined>;
+		defaultKeys: Record<string, Hotkey[] | undefined>;
+	}
+
 	interface App {
 		internalPlugins: InternalPlugins;
 		viewRegistry: ViewRegistry;
 		commands: CommandRegistry;
 		dragManager: DragManager;
+		hotkeyManager: HotkeyManager;
 	}
 }
 
