@@ -94,6 +94,12 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		app: App,
 		inputEl: HTMLInputElement,
 		private getContext: () => SuggestContext,
+		/**
+		 * Opens the menu for a row that names something outside the vault.
+		 * Injected because building that menu needs the plugin and the leaf,
+		 * neither of which a suggester has any other business knowing.
+		 */
+		private onExternalContextMenu?: (evt: MouseEvent, path: string, isFolder: boolean) => void,
 	) {
 		super(app, inputEl);
 		this.dragKeepFocusEl = inputEl;
@@ -319,12 +325,28 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		}
 		el.createSpan({ cls: "lure-suggest-label", text: value.label });
 
+		// "keep-name" is a proposed destination that nothing exists at yet,
+		// so there is nothing to act on either way.
+		if (value.kind === "keep-name") return;
+
+		// Outside the vault there is no TAbstractFile, so the File Explorer's
+		// handlers cannot be reused — these rows used to fall through here
+		// with nothing wired at all, which is why right-clicking one did
+		// nothing. They get the path-built menu instead. Dragging still needs
+		// a vault file and stays unavailable.
+		if (value.external) {
+			if (!this.onExternalContextMenu) return;
+			const open = this.onExternalContextMenu;
+			el.addEventListener("contextmenu", (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+				open(evt, value.path, value.kind === "folder");
+			});
+			return;
+		}
+
 		// Entries stand for real vault items, so they behave like the File
-		// Explorer's rows: draggable, and right-clickable for the same
-		// menu. Two exceptions: "keep-name" is a proposed destination that
-		// nothing exists at yet, and anything outside the vault has no
-		// TAbstractFile for those handlers to act on.
-		if (value.kind === "keep-name" || value.external) return;
+		// Explorer's rows: draggable, and right-clickable for the same menu.
 		const target = this.app.vault.getAbstractFileByPath(value.path);
 		if (target) wireNativeFileItem(this.app, el, target, this.dragKeepFocusEl);
 	}

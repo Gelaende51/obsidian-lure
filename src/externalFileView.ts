@@ -3,6 +3,7 @@ import {
 	FileSystemAdapter,
 	ItemView,
 	MarkdownRenderer,
+	Menu,
 	Notice,
 	PaneType,
 	Platform,
@@ -20,6 +21,9 @@ import { SystemLocation, isInside, listVaults } from "./systemLocations";
 import { isBinaryExtension, isMarkdownExtension, warnsOnOpen } from "./fileKinds";
 import type LurePlugin from "./main";
 import { t } from "./lang";
+import { LABELS, obsidianLabel } from "./obsidianLabels";
+import { showExternalMenu } from "./externalMenu";
+import { showContextMenu } from "./nativeFileItem";
 
 export const EXTERNAL_VIEW_TYPE = "lure-external-file";
 
@@ -283,6 +287,7 @@ export class ExternalFileView extends ItemView {
 		this.renderBanner(container);
 
 		const body = container.createDiv({ cls: "lure-external-body" });
+		this.wireContextMenu(container);
 		if (readError !== null) {
 			// The bar still stands: "Open in default app" is exactly what you
 			// want when this view couldn't read the file itself.
@@ -366,7 +371,11 @@ export class ExternalFileView extends ItemView {
 			bar
 				.createEl("button", {
 					cls: "lure-external-bar-button",
-					text: t("externalOpenInDefaultApp"),
+					// Obsidian's own wording, not ours: this button does exactly
+					// what the File Explorer's entry does, and two names for one
+					// action is the kind of difference a user has to test to
+					// discover. Comes translated in every language the host has.
+					text: obsidianLabel(LABELS.openInDefaultApp, "Open in default app"),
 				})
 				.addEventListener("click", () => openInDefaultApp(this.filePath));
 		}
@@ -599,6 +608,104 @@ export class ExternalFileView extends ItemView {
 	 * Markdown would silently swallow syntax that means something else in
 	 * that format — a `#` in a shell script is a comment, not a heading.
 	 */
+	/**
+	 * Right-click in the viewer.
+	 *
+	 * The pane had no menu at all: not the file's, and not the ordinary
+	 * editing one, because Obsidian suppresses the platform menu app-wide
+	 * and a plain textarea gets nothing in its place. Which of the two is
+	 * wanted is decided by where the click landed — inside the editor it is
+	 * an editing question, anywhere else it is a question about the file.
+	 */
+	private wireContextMenu(container: HTMLElement): void {
+		container.addEventListener("contextmenu", (evt) => {
+			const editor = (evt.target as HTMLElement)?.closest?.(".lure-external-editor");
+			evt.preventDefault();
+			if (editor instanceof HTMLTextAreaElement) this.showEditMenu(editor, evt);
+			else this.showFileMenu(evt);
+		});
+	}
+
+	/**
+	 * The file's own menu, so the viewer offers what the File Explorer
+	 * offers for the same file. A vault file gets the vault menu — including
+	 * whatever other plugins contribute to it — and anything outside gets
+	 * the path-built one.
+	 */
+	private showFileMenu(evt: MouseEvent): void {
+		if (!this.filePath) return;
+		const vaultFile = this.vaultFile();
+		if (vaultFile) showContextMenu(this.plugin.app, evt, vaultFile);
+		else showExternalMenu(this.plugin, evt, this.filePath, false, this.leaf);
+	}
+
+	/**
+	 * Cut/copy/paste/select all for the plain-text editor.
+	 *
+	 * Built rather than borrowed: Obsidian's own editor menu belongs to
+	 * CodeMirror, which only exists for files in the vault. Cut and paste
+	 * are omitted outright when the field is read-only, rather than offered
+	 * and refused — the file may be outside the vault with the padlock
+	 * still closed, and a menu entry that cannot work is worse than no
+	 * entry. Every mutation dispatches `input` so the debounced save behaves
+	 * exactly as it does for typing.
+	 */
+	private showEditMenu(editor: HTMLTextAreaElement, evt: MouseEvent): void {
+		const menu = new Menu();
+		const selected = editor.value.slice(editor.selectionStart, editor.selectionEnd);
+		const editable = !editor.readOnly;
+
+		if (editable) {
+			menu.addItem((item) =>
+				item
+					.setTitle(obsidianLabel(LABELS.cut, "Cut"))
+					.setIcon("lucide-scissors")
+					.setDisabled(!selected)
+					.onClick(() => {
+						void navigator.clipboard.writeText(selected);
+						this.replaceSelection(editor, "");
+					}),
+			);
+		}
+		menu.addItem((item) =>
+			item
+				.setTitle(obsidianLabel(LABELS.copy, "Copy"))
+				.setIcon("lucide-copy")
+				.setDisabled(!selected)
+				.onClick(() => void navigator.clipboard.writeText(selected)),
+		);
+		if (editable) {
+			menu.addItem((item) =>
+				item
+					.setTitle(obsidianLabel(LABELS.paste, "Paste"))
+					.setIcon("lucide-clipboard")
+					.onClick(() => {
+						void navigator.clipboard.readText().then((text) => this.replaceSelection(editor, text));
+					}),
+			);
+		}
+		menu.addItem((item) =>
+			item
+				.setTitle(obsidianLabel(LABELS.selectAll, "Select all"))
+				.setIcon("lucide-text-select")
+				.onClick(() => {
+					editor.focus();
+					editor.select();
+				}),
+		);
+		menu.showAtMouseEvent(evt);
+	}
+
+	/** Replaces the selection and leaves the caret after it, as typing would. */
+	private replaceSelection(editor: HTMLTextAreaElement, text: string): void {
+		const start = editor.selectionStart;
+		const end = editor.selectionEnd;
+		editor.value = editor.value.slice(0, start) + text + editor.value.slice(end);
+		editor.selectionStart = editor.selectionEnd = start + text.length;
+		editor.focus();
+		editor.dispatchEvent(new Event("input"));
+	}
+
 	private async renderTextual(body: HTMLElement, source: string): Promise<void> {
 		if (this.effectiveRenderMode() === "markdown") {
 			await this.renderMarkdown(body, source);

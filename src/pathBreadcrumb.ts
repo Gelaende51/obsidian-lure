@@ -45,6 +45,7 @@ import {
 	moveExternalFile,
 } from "./externalFileOps";
 import { ExternalFileView, extensionOf, openExternalFile } from "./externalFileView";
+import { showExternalMenu } from "./externalMenu";
 import { warnsOnOpen } from "./fileKinds";
 import { t } from "./lang";
 
@@ -2019,7 +2020,9 @@ export class PathBreadcrumb {
 				shouldListExternal: (child) => this.shouldListExternalChild(child),
 				warnsOnOpen: (extension) => this.warnsOnOpen(extension),
 				queryOverride: this.suggestQueryOverride,
-			}));
+			}),
+			(evt, path, isFolder) => showExternalMenu(this.plugin, evt, path, isFolder, this.leaf),
+			);
 			this.suggest.onSelect((value, evt) => {
 				evt.preventDefault();
 				// The overflow row is a count, not a destination. Keyboard

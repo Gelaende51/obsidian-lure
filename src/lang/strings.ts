@@ -71,7 +71,6 @@ export const EN = {
 	externalBannerTooltip: "Obsidian can't open a file outside your vault as a note, so Lure shows it here.",
 	externalEditingEnabled: "Writing outside your vault",
 	externalEditingTooltip: "Edits are saved straight to disk, outside your vault.",
-	externalOpenInDefaultApp: "Open externally",
 	// The two readings of a file, shown as a pair. Markdown is the default
 	// for notes, text for everything else — and outside the vault the text
 	// option doubles as the press that lifts read-only.
