@@ -67,6 +67,9 @@ main.ts                 plugin lifecycle, wraps the rename command
 | `src/folderChildSuggest.ts` | Autocomplete over a folder's children, and over external folders. Extends Obsidian's `AbstractInputSuggest`. | Driven entirely by the `SuggestContext` the path bar hands it: which folder, whether rename mode is on, which name to pin (`keepName`) and which path is the file itself (`keepPath`, so a file never counts as a conflict with itself). Extend the context rather than reaching back into the breadcrumb. |
 | `src/nativeFileItem.ts` | Makes an arbitrary element behave like a File Explorer row: Obsidian's own drag payload, and the same right-click menu including other plugins' contributions. | `wireNativeFileItem(app, el, target, keepFocusEl)`. Sits on undocumented API (`app.dragManager`), so every entry point is guarded — a failure must degrade to an ordinary element, never throw inside an event handler. |
 | `src/createFileModal.ts` | The "create it?" confirmation for a typed path that doesn't exist. | `ConfirmCreateFileModal.ask(app, path)` resolves `true`/`false`; every form of cancel resolves `false`. |
+| `src/segmentGestures.ts` | Counts consecutive right-clicks so one target can carry three meanings, and classifies what a click landed on. | `RightClickCounter` fires once the run settles; `classifyTarget(el)` returns which column of the gesture table applies. The window runs from the *last* press, so a slow triple stays a triple. Because a second press may follow, the first cannot act immediately — every plain right-click on the row waits `MULTI_CLICK_WINDOW_MS`. |
+| `src/obsidianLabels.ts` | Obsidian's own wording for entries this plugin mirrors, and the lookup that resolves it. | `obsidianLabel(keys, fallback, params?)`. Keys are arrays because Obsidian renamed its i18n table from camelCase to kebab-case — see [Borrowing Obsidian's strings](#borrowing-obsidians-strings). Add a key here rather than adding a string to `lang/`. |
+| `src/prompts.ts` | A name prompt and a confirmation, for paths that have no `TFile` for Obsidian's own dialogs to take. | `promptForName(app, {...})` resolves the name or `null`; `confirmAction(app, {...})` resolves a boolean. Every form of dismissal is a cancel. |
 | `src/fileKinds.ts` | Classifies an extension: binary, Markdown, or "Obsidian has no editor for this". | `isBinaryExtension`, `isMarkdownExtension`, `warnsOnOpen` — the last one decides the orange warning tier. |
 
 ### Outside the vault
@@ -77,7 +80,8 @@ Off by default behind `accessExternalFiles`; the vault-root segment is the only 
 | --- | --- | --- |
 | `src/systemLocations.ts` | The locations dropdown: other vaults (read from Obsidian's own `obsidian.json`), home, filesystem root, mounted drives, each with a device-type icon. | `listSystemLocations()`, `listVaults()`, plus `samePath`/`isInside`, which are the containment checks the write guards rely on. |
 | `src/externalFs.ts` | Directory listing and path maths outside the vault, synchronous because the dropdown needs it during a click. | `listExternalChildren`, `externalParent`, `externalSegments`, `externalJoin`. Use these instead of `path` directly so separators stay consistent. |
-| `src/externalFileOps.ts` | The four write operations, and the only place the plugin writes outside the vault. | `externalExists`, `createExternalFile`, `copyExternalFile`, `moveExternalFile`. Creation uses the filesystem's own exclusive-create, not a check-then-write — a check could lose a race and overwrite. Anything new that writes externally belongs here, behind the same unlock. |
+| `src/externalFileOps.ts` | The four write operations, and the only place the plugin writes outside the vault. | `externalExists`, `createExternalFile`, `createExternalFolder`, `copyExternalFile`, `copyExternalEntry`, `moveExternalFile`, `renameExternalEntry`, `trashExternalEntry`. Creation uses the filesystem's own exclusive-create, not a check-then-write — a check could lose a race and overwrite. Anything new that writes externally belongs here, behind the same unlock. Deleting is `shell.trashItem`, never `unlink`: out here there is no vault index to notice a loss and no Obsidian trash to recover from, so a platform with no trash must fail rather than fall back to destroying the file. |
+| `src/externalMenu.ts` | The context menu for a file or folder with no `TFile` — everything outside the vault. | `showExternalMenu(plugin, evt, path, isFolder, leaf, canWrite, onChanged)`. `canWrite` is read at *click* time, not when the menu was built: a menu can outlive the padlock state that opened it. Every write goes through it. |
 | `src/externalFileView.ts` | A read-only `ItemView` for a file Obsidian can't open as a note: Markdown, images, audio, video, PDF, and plain text for the rest. Handles the edit unlock, the size cap and the banner. | `openExternalFile(...)` is the entry point; `EXTERNAL_VIEW_TYPE` is registered in `main.ts` unconditionally so a leaf restored from a saved workspace finds its view. Writes go through `writableTarget()` — the single decision about whether an edit is allowed at all. |
 
 ### Settings, strings and types
@@ -95,6 +99,33 @@ Off by default behind `accessExternalFiles`; the vault-root segment is the only 
 English in `src/lang/strings.ts` is the source of truth. The active language comes from Obsidian's own setting; a regional variant falls back to its base language (`pt-BR` → `pt`) before falling back to English, so nothing is ever blank.
 
 All 45 locales are machine-translated (see the README's AI disclosure) and have **not** been reviewed by native speakers. Corrections are the most welcome kind of PR — a one-line change to `src/lang/translations.ts` is genuinely valuable.
+
+### Borrowing Obsidian's strings
+
+Menu entries and dialogue that mirror something Obsidian already does take
+**Obsidian's own wording**, through `obsidianLabel()`, rather than a string in
+`lang/`. Two reasons: a plugin entry worded differently from the identical
+native one is a difference the user has to test to discover, and with 45
+locales every string of our own costs 45 translations. The whole
+create/rename/delete-to-trash menu was built without adding a single string —
+including the sentence explaining where a deleted file goes.
+
+**Check the host's table before writing a string.** `window.i18next.store.data`
+holds every key for the active locale; searching it by *value* is the fastest
+way to find the key you want.
+
+Keys are arrays, newest spelling first, because Obsidian renamed its whole
+i18n table from camelCase to kebab-case (`plugins.fileExplorer.menuOptNewNote`
+→ `plugins.file-explorer.menu-opt-new-note`). Every key here was originally
+the camelCase form, and on 1.13 that resolves to nothing — so these menus
+silently served hardcoded English in all 44 non-English locales while the
+documentation promised otherwise. i18next returns the key itself when it
+cannot resolve one, which is the failure signal, and a fallback that quietly
+works is exactly what hides it.
+
+**Verify a label by switching the host's language**, not by reading the table:
+set `localStorage.language`, restart, and look at the rendered menu. In English
+a broken lookup and a working one are indistinguishable.
 
 ## Ground rules
 
@@ -156,9 +187,28 @@ There are no unit tests. The features here are conversations between the path ba
 ```bash
 node .dev/test-external.mjs          # outside-the-vault behaviour
 node .dev/test-external.mjs edit     # only tests whose name matches
+node .dev/test-rename.mjs            # the rename key's alternation
 node .dev/test-compat.mjs            # against installed peer plugins
 node .dev/test-compat.mjs Quick      # one peer
 ```
+
+**Anything about a hotkey must use a real key press.** `.dev/cdp.mjs key F2`,
+and `pressKey(page, spec)` in the suites, dispatch through the browser;
+an event built with `new KeyboardEvent()` is `isTrusted: false`, and Obsidian
+decides what reaches a command from a capture-phase window listener with a
+scope stack on top of it. The difference is not academic — on the rename
+dialog, `executeCommandById` reports the plugin stealing focus from behind a
+modal, while a real key shows the command never running at all. Two different
+bugs depending on how you press it.
+
+**Scope DOM queries to the leaf you mean.** A `document.querySelector` for
+`.lure-filename-text` finds the first bar in the workspace, not the active
+one, and a stray split from an earlier test then makes assertions read one
+leaf while acting on another. Start from
+`app.workspace.getMostRecentLeaf().view.containerEl`. For the same reason a
+test must not leave a window open: pressing F1 to prove an unrelated key is
+ignored opened Obsidian Help, and every later run failed with "2 Obsidian
+windows are open".
 
 Both need Obsidian running with `--remote-debugging-port=9222` (add it to `~/.config/obsidian/user-flags.conf`) and the demo vault open. That vault now lives under `../obsidian-plugin-template/.personal/` — outside this repository and outside git, so nothing about it reaches a commit. Its name is unchanged and is what the `SCENES` table and `OBSIDIAN_VAULT` match on. It needs this plugin symlinked into its `.obsidian/plugins/lure/`, and, for the compatibility suite, the peer plugins installed; the suite skips any that aren't. With several vaults open, choose the window with `OBSIDIAN_VAULT=<name>`. **Comment the port back out when you're done** — a shipped build must never be developed against an open debugging port.
 

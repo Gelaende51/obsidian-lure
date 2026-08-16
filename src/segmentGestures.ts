@@ -57,6 +57,21 @@ export class RightClickCounter {
 	}
 }
 
+/**
+ * Plugin ids that manage folder notes.
+ *
+ * Folder-note behaviour is only offered when one of these is actually
+ * running. The convention — a note inside the folder sharing its name — is
+ * checkable without them, but acting on it regardless would mean the
+ * delimiter behaving differently in two vaults that look identical to the
+ * user, which is worse than not offering it at all.
+ */
+export const FOLDER_NOTE_PLUGIN_IDS = [
+	"folder-notes",
+	"folder-note-plugin",
+	"create-folder-notes-with-dropdown",
+] as const;
+
 /** What a right-click landed on. Decides which column of the gesture table applies. */
 export type GestureTarget = "vault" | "folder" | "delimiter" | "file" | "empty";
 

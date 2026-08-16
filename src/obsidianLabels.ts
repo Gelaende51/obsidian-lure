@@ -43,6 +43,9 @@ export const LABELS = {
 	confirmDeletion: ["dialogue.label-confirm-deletion"],
 	fileNameLabel: ["dialogue.label-rename-file-generic"],
 	renamePlain: ["interface.menu.rename"],
+	// Obsidian's own clipboard reporting, interpolation and all.
+	copied: ["interface.copied"],
+	copyFailed: ["interface.copy_failed"],
 	cut: ["interface.menu.cut"],
 	copy: ["interface.menu.copy"],
 	paste: ["interface.menu.paste"],

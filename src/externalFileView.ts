@@ -245,6 +245,11 @@ export class ExternalFileView extends ItemView {
 	}
 
 	async onOpen(): Promise<void> {
+		// Once, here, rather than in reload(): `contentEl` is emptied on every
+		// reload but never replaced, so wiring it there stacked a listener per
+		// reload — one right-click then ran the gesture as many times as the
+		// view had been redrawn.
+		this.wireContextMenu(this.contentEl);
 		await this.reload();
 	}
 
@@ -287,7 +292,6 @@ export class ExternalFileView extends ItemView {
 		this.renderBanner(container);
 
 		const body = container.createDiv({ cls: "lure-external-body" });
-		this.wireContextMenu(container);
 		if (readError !== null) {
 			// The bar still stands: "Open in default app" is exactly what you
 			// want when this view couldn't read the file itself.

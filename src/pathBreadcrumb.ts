@@ -46,7 +46,13 @@ import {
 } from "./externalFileOps";
 import { ExternalFileView, extensionOf, openExternalFile } from "./externalFileView";
 import { showExternalMenu } from "./externalMenu";
-import { RightClickCounter, classifyTarget, GestureTarget } from "./segmentGestures";
+import {
+	FOLDER_NOTE_PLUGIN_IDS,
+	GestureTarget,
+	RightClickCounter,
+	classifyTarget,
+} from "./segmentGestures";
+import { LABELS, obsidianLabel } from "./obsidianLabels";
 import { showContextMenu } from "./nativeFileItem";
 import { warnsOnOpen } from "./fileKinds";
 import { t } from "./lang";
@@ -388,13 +394,21 @@ export class PathBreadcrumb {
 		container?.addEventListener("contextmenu", (evt) => {
 			if (this.inputEl) return;
 			evt.preventDefault();
+			// Capture phase, and the event stops here. Obsidian answers a
+			// right-click on its own breadcrumb with a folder menu that is
+			// missing the three entries the File Explorer adds inline —
+			// make a copy, rename, delete — so letting it through would
+			// mean the same folder offering two different menus depending
+			// on where it was clicked. Ours is built from the same code the
+			// dropdown rows use, so the two agree by construction.
+			evt.stopPropagation();
 			const target = classifyTarget(evt.target as HTMLElement);
 			// The run is aimed at whatever the latest press landed on, so
 			// an indecisive gesture resolves as the thing it ended on.
 			this.gestureTarget = target;
 			this.gestureFolderPath = this.folderPathForEvent(evt, target);
 			this.rightClicks.press(evt);
-		}, { signal: this.domListeners.signal });
+		}, { capture: true, signal: this.domListeners.signal });
 
 		// Typing only starts the chip-trail's inline autocomplete input
 		// while browsing (i.e. after a delimiter click has already put
@@ -464,12 +478,16 @@ export class PathBreadcrumb {
 				this.runFileGesture(count);
 				return;
 			case "folder":
-				this.runFolderGesture(count);
+				this.runFolderGesture(count, at);
 				return;
 			case "empty":
-				// Two presses on the empty space take the whole row, matching
-				// what a single click there already opens for editing.
+				// Two presses take the row as shown — vault-relative inside,
+				// which is what a link or a search needs. Three take the
+				// path the filesystem knows, which is what anything outside
+				// Obsidian needs. Obsidian draws the same distinction in its
+				// own two commands, "from vault folder" and "from system root".
 				if (count === 2) void this.copyToClipboard(this.rowPath());
+				else if (count === 3) void this.copyToClipboard(this.systemPath());
 				return;
 		}
 	}
@@ -488,10 +506,23 @@ export class PathBreadcrumb {
 		else if (count === 3) void this.copyToClipboard(name);
 	}
 
-	private runFolderGesture(count: number): void {
+	private runFolderGesture(count: number, at: { clientX: number; clientY: number }): void {
 		const folderPath = this.gestureFolderPath;
 		if (folderPath === null) return;
 		const name = folderPath.split("/").pop() ?? folderPath;
+		// The plain press answers with the folder's menu, the same one the
+		// delimiter beside it gives and the same one its dropdown row gives.
+		if (count === 1) {
+			const folder = this.plugin.app.vault.getAbstractFileByPath(folderPath);
+			if (folder instanceof TFolder) {
+				showContextMenu(
+					this.plugin.app,
+					new MouseEvent("contextmenu", { clientX: at.clientX, clientY: at.clientY }),
+					folder,
+				);
+			}
+			return;
+		}
 		if (count === 2) void this.copyToClipboard(name);
 		// Everything from this folder rightwards: the folder and the rest of
 		// the path below it, which is the part of the row to the right of
@@ -500,6 +531,16 @@ export class PathBreadcrumb {
 			const suffix = this.pathSuffixAfter(folderPath);
 			void this.copyToClipboard(suffix ? `${name}/${suffix}` : name);
 		}
+	}
+
+	/**
+	 * The path from the system root, for the copy that has to mean something
+	 * outside Obsidian. Outside the vault the row is already absolute, so
+	 * the two copies coincide there.
+	 */
+	private systemPath(): string {
+		if (this.externalPath !== null) return this.rowPath();
+		return this.file ? (this.absolutePathFor(this.file) ?? this.file.path) : "";
 	}
 
 	/** The whole path as the row is showing it: vault-relative inside, absolute outside. */
@@ -530,26 +571,41 @@ export class PathBreadcrumb {
 	}
 
 	/**
-	 * The note that stands for a folder, under the convention every
-	 * folder-note plugin agrees on: a note inside the folder with the
-	 * folder's own name. Checked against the vault rather than inferred
-	 * from a marker class, so it is right whether or not one of those
-	 * plugins is installed.
+	 * The note that stands for a folder, when a plugin is actually managing
+	 * folder notes.
+	 *
+	 * The convention — a note inside the folder sharing its name — is
+	 * checkable on its own, but acting on it regardless would make the
+	 * delimiter behave differently in two vaults that look identical to the
+	 * user. Gated on a running plugin instead, so the behaviour a vault has
+	 * is the behaviour its plugins say it has.
 	 */
 	private folderNoteFor(folder: TFolder): TFile | null {
+		const enabled = this.plugin.app.plugins?.enabledPlugins;
+		if (!enabled || !FOLDER_NOTE_PLUGIN_IDS.some((id) => enabled.has(id))) return null;
 		const candidate = this.plugin.app.vault.getAbstractFileByPath(
 			`${folder.path}/${folder.name}.md`,
 		);
 		return candidate instanceof TFile ? candidate : null;
 	}
 
+	/**
+	 * Copies, and says so.
+	 *
+	 * A copy leaves nothing on screen to show it happened, and these are
+	 * reached by a gesture with no visible affordance — a run of
+	 * right-clicks — so without a notice there is no way to tell a
+	 * successful copy from a miscounted one. Obsidian words both the
+	 * success and the failure already, so the wording matches everything
+	 * else that touches the clipboard.
+	 */
 	private async copyToClipboard(text: string): Promise<void> {
 		if (!text) return;
 		try {
 			await navigator.clipboard.writeText(text);
+			new Notice(obsidianLabel(LABELS.copied, `${text} copied to your clipboard`, { item: text }));
 		} catch {
-			// Clipboard access can be refused; saying so beats a silent no-op.
-			new Notice(t("noticeExternalOpenFailed", { path: text }));
+			new Notice(obsidianLabel(LABELS.copyFailed, "Unable to copy to your clipboard"));
 		}
 	}
 

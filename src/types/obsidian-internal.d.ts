@@ -126,12 +126,21 @@ declare module "obsidian" {
 		defaultKeys: Record<string, Hotkey[] | undefined>;
 	}
 
+	/**
+	 * The community-plugin registry. Only `enabledPlugins` is used, and only
+	 * to ask whether a named peer is running — never to reach into one.
+	 */
+	interface PluginRegistry {
+		enabledPlugins: Set<string>;
+	}
+
 	interface App {
 		internalPlugins: InternalPlugins;
 		viewRegistry: ViewRegistry;
 		commands: CommandRegistry;
 		dragManager: DragManager;
 		hotkeyManager: HotkeyManager;
+		plugins: PluginRegistry;
 	}
 }
 
