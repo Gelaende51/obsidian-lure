@@ -136,7 +136,7 @@ declare global {
 		 * table doesn't cover. Always guarded: see `obsidianLabel()`.
 		 */
 		i18next?: {
-			t(key: string): string;
+			t(key: string, params?: Record<string, string>): string;
 		};
 	}
 }

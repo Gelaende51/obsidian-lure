@@ -272,6 +272,12 @@
 	margin-top: 12px;
 }
 
+/* The name field in the create/rename prompts. Full width because a path
+   segment is the only thing typed here and truncating it helps nobody. */
+.lure-prompt-input {
+	width: 100%;
+}
+
 /* Base sizing/spacing comes from Obsidian's own .view-action/.clickable-icon
    classes, matching the native bookmark/reading-mode/more-options buttons. */
 .lure-rename-btn.is-active {

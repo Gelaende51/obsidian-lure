@@ -75,6 +75,11 @@ declare module "fs/promises" {
 	export function copyFile(src: string, dest: string, mode?: number): Promise<void>;
 	export function mkdir(path: string, options?: { recursive?: boolean }): Promise<string | undefined>;
 	export function readFile(path: string): Promise<NodeBuffer>;
+	/** `withFileTypes` only, matching readdirSync above: an entry's kind is never guessed from its name. */
+	export function readdir(
+		path: string,
+		options: { withFileTypes: true; encoding?: "utf8" },
+	): Promise<import("fs").Dirent[]>;
 	export function rename(oldPath: string, newPath: string): Promise<void>;
 	export function unlink(path: string): Promise<void>;
 	export function writeFile(
@@ -93,6 +98,7 @@ declare module "path" {
 		name: string;
 	}
 	export function join(...paths: string[]): string;
+	export function basename(path: string, suffix?: string): string;
 	export function parse(path: string): ParsedPath;
 	export function dirname(path: string): string;
 	export const sep: string;

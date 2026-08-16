@@ -1,6 +1,7 @@
 import { constants } from "fs";
-import { access, copyFile, mkdir, rename, unlink, writeFile } from "fs/promises";
-import { dirname } from "path";
+import { access, copyFile, mkdir, readdir, rename, unlink, writeFile } from "fs/promises";
+import { dirname, join } from "path";
+import { shell } from "electron";
 
 /**
  * The write half of browsing outside the vault.
@@ -66,4 +67,65 @@ export async function moveExternalFile(from: string, to: string): Promise<void> 
 		await copyFile(from, to, constants.COPYFILE_EXCL);
 		await unlink(from);
 	}
+}
+
+/** Missing parents included, matching what committing a typed path does inside the vault. */
+export async function createExternalFolder(path: string): Promise<void> {
+	await mkdir(path, { recursive: true });
+}
+
+/**
+ * Copies a file or a whole directory tree.
+ *
+ * Directories are walked rather than handed to fs.cp, whose recursive mode
+ * has been experimental across the Node versions Obsidian has shipped.
+ * Files still refuse to overwrite, so a copy can never consume something
+ * that was already there.
+ */
+export async function copyExternalEntry(from: string, to: string): Promise<void> {
+	const entries = await readdirOrNull(from);
+	if (entries === null) {
+		await copyExternalFile(from, to);
+		return;
+	}
+	await mkdir(to, { recursive: true });
+	for (const entry of entries) {
+		await copyExternalEntry(join(from, entry.name), join(to, entry.name));
+	}
+}
+
+/** Directory listing, or null when the path is not a directory. */
+async function readdirOrNull(path: string) {
+	try {
+		return await readdir(path, { withFileTypes: true });
+	} catch (err) {
+		const code = (err as NodeJS.ErrnoException).code;
+		if (code === "ENOTDIR") return null;
+		throw err;
+	}
+}
+
+/**
+ * Renames within the same directory, for files and folders alike.
+ *
+ * No EXDEV fallback here on purpose: a rename in place cannot cross a
+ * filesystem, so the copy-then-delete dance moveExternalFile needs would
+ * only be dead code with a directory-shaped hole in it.
+ */
+export async function renameExternalEntry(from: string, to: string): Promise<void> {
+	await rename(from, to);
+}
+
+/**
+ * Moves a path to the desktop's trash.
+ *
+ * Electron's own call, so this is the Recycle Bin on Windows, Trash on
+ * macOS and the XDG trash on Linux, without this plugin knowing which. It
+ * is deliberately not an unlink: out here there is no vault index to notice
+ * a loss and no Obsidian trash to recover from, so the only acceptable
+ * delete is one the desktop can undo. A platform with no trash rejects, and
+ * the caller reports that rather than falling back to destroying the file.
+ */
+export async function trashExternalEntry(path: string): Promise<void> {
+	await shell.trashItem(path);
 }

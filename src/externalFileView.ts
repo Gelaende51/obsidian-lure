@@ -636,7 +636,20 @@ export class ExternalFileView extends ItemView {
 		if (!this.filePath) return;
 		const vaultFile = this.vaultFile();
 		if (vaultFile) showContextMenu(this.plugin.app, evt, vaultFile);
-		else showExternalMenu(this.plugin, evt, this.filePath, false, this.leaf);
+		else {
+			showExternalMenu(
+				this.plugin,
+				evt,
+				this.filePath,
+				false,
+				this.leaf,
+				// The viewer's own unlock, which is the press that armed
+				// editing for this file — the same gate, read from where it
+				// actually lives rather than assumed from the path bar's.
+				() => this.editingActive(),
+				() => void this.reload(),
+			);
+		}
 	}
 
 	/**

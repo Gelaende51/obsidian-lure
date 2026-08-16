@@ -30,6 +30,19 @@ export const LABELS = {
 		"plugins.open-with-default-app.action-open-file",
 		"plugins.openWithDefaultApp.actionOpenFile",
 	],
+	// The write half of the external menu. Obsidian words all of this
+	// already — including the sentence that explains where a deleted file
+	// goes — so none of it needs a string of Lure's own, and none of it
+	// needs translating into 45 locales.
+	deleteAction: ["interface.menu.delete", "interface.menu.delete-file"],
+	deleteFileTitle: ["dialogue.label-delete-file"],
+	deleteFolderTitle: ["dialogue.label-delete-folder"],
+	deleteFolderWarning: ["dialogue.label-delete-folder-warning"],
+	movedToSystemTrash: ["dialogue.label-move-to-system-trash"],
+	deleteButton: ["dialogue.button-delete"],
+	confirmDeletion: ["dialogue.label-confirm-deletion"],
+	fileNameLabel: ["dialogue.label-rename-file-generic"],
+	renamePlain: ["interface.menu.rename"],
 	cut: ["interface.menu.cut"],
 	copy: ["interface.menu.copy"],
 	paste: ["interface.menu.paste"],
@@ -55,10 +68,19 @@ export const LABELS = {
  * to see. Both spellings are tried so the declared minAppVersion range is
  * actually covered rather than assumed.
  */
-export function obsidianLabel(keys: readonly string[], fallback: string): string {
+export function obsidianLabel(
+	keys: readonly string[],
+	fallback: string,
+	/**
+	 * Interpolation values for the keys that carry a placeholder — Obsidian
+	 * writes its delete confirmation as "delete “{{filename}}”?", and the
+	 * sentence is only worth borrowing if the name can go in it.
+	 */
+	params?: Record<string, string>,
+): string {
 	for (const key of keys) {
 		try {
-			const translated = window.i18next?.t(key);
+			const translated = window.i18next?.t(key, params);
 			if (translated && translated !== key) return translated;
 		} catch {
 			return fallback;

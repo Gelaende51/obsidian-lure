@@ -2021,7 +2021,20 @@ export class PathBreadcrumb {
 				warnsOnOpen: (extension) => this.warnsOnOpen(extension),
 				queryOverride: this.suggestQueryOverride,
 			}),
-			(evt, path, isFolder) => showExternalMenu(this.plugin, evt, path, isFolder, this.leaf),
+			(evt, path, isFolder) =>
+				showExternalMenu(
+					this.plugin,
+					evt,
+					path,
+					isFolder,
+					this.leaf,
+					() => this.externalWritesUnlocked,
+					// The listing is now stale — something was created, renamed
+					// or trashed in the folder it is showing. An input event is
+					// how the suggester re-queries; it is what every other
+					// refresh in this file uses.
+					() => this.inputEl?.dispatchEvent(new Event("input")),
+				),
 			);
 			this.suggest.onSelect((value, evt) => {
 				evt.preventDefault();
