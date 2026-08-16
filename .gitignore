@@ -12,6 +12,12 @@ data.json
 # Local agent config — never published
 .claude/
 
+# Belt and braces: .personal/ holds local-only material (issue notes, test
+# vaults, filled-in credentials). Its own rule so that removing the .claude/
+# line above cannot expose it by accident.
+.personal/
+**/.personal/
+
 # Belt and braces: personal.md holds credentials. Kept as its own rule so
 # that removing the .claude/ line above cannot expose it by accident.
 personal.md
