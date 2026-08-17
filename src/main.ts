@@ -14,6 +14,7 @@ import { BreadcrumbManager } from "./breadcrumbManager";
 import { EXTERNAL_VIEW_TYPE, ExternalFileView } from "./externalFileView";
 import { BreadcrumbSettingTab } from "./settingsTab";
 import { BreadcrumbPathSettings, DEFAULT_SETTINGS } from "./settings";
+import { t } from "./lang";
 
 /** Obsidian's built-in "Rename file" command, bound to F2 by default. */
 const RENAME_COMMAND_ID = "workspace:edit-file-title";
@@ -57,6 +58,7 @@ export default class BreadcrumbPathPlugin extends Plugin {
 		this.manager = new BreadcrumbManager(this);
 		this.manager.registerEvents();
 
+		this.registerFocusCommand();
 		this.app.workspace.onLayoutReady(() => this.patchRenameCommand());
 	}
 
@@ -74,6 +76,28 @@ export default class BreadcrumbPathPlugin extends Plugin {
 			([key, value]) => key in DEFAULT_SETTINGS && value !== undefined,
 		);
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, Object.fromEntries(known));
+	}
+
+	/**
+	 * The path bar as a command, so it is reachable from the keyboard and
+	 * from the palette.
+	 *
+	 * No default hotkey. Obsidian's submission requirements discourage them,
+	 * and the obvious candidate — the browser's Ctrl+L — is already Obsidian's
+	 * own "toggle left sidebar" on some setups. The user binds it; the
+	 * command exists so there is something to bind.
+	 */
+	private registerFocusCommand(): void {
+		this.addCommand({
+			id: "focus-path-bar",
+			name: t("commandFocusPathBar"),
+			checkCallback: (checking: boolean) => {
+				const breadcrumb = this.manager.getActiveBreadcrumb();
+				if (!breadcrumb) return false;
+				if (!checking) breadcrumb.focusPathBar();
+				return true;
+			},
+		});
 	}
 
 	async saveSettings(): Promise<void> {

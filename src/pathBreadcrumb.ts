@@ -2719,6 +2719,18 @@ export class PathBreadcrumb {
 	 * path. It's the fast path for "I already know exactly where I want
 	 * to go"; the chip trail is reached via a delimiter click instead.
 	 */
+	/**
+	 * Focuses the row and selects the whole path, the way Ctrl+L does in a
+	 * browser's address bar.
+	 *
+	 * The same thing clicking the empty space beside the breadcrumbs does —
+	 * exposed as a command so it can be reached without the pointer, and so
+	 * the key that reaches it is the user's to choose.
+	 */
+	focusPathBar(): void {
+		this.startFullPathEdit();
+	}
+
 	private startFullPathEdit(): void {
 		// Outside the vault the whole path is absolute, and an absolute path
 		// typed outright is exactly what submitExternal already accepts — so

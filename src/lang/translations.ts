@@ -83,6 +83,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Schreiben außerhalb deines Vaults ist gesperrt. Nutze die Schloss-Schaltfläche in der Kopfzeile, um es zu erlauben.",
 		noticeExternalMoveOut: "Eine Notiz kann nicht aus deinem Vault herausbewegt werden — Links darauf würden brechen. Halte {mod}, um sie stattdessen dorthin zu kopieren.",
 		errorNotAFolder: "„{path}“ existiert und ist kein Ordner.",
+		commandFocusPathBar: "Pfadleiste fokussieren",
 	},
 
 	fr: {
@@ -149,6 +150,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "L'écriture hors de votre coffre est verrouillée. Utilisez le bouton cadenas de l'en-tête pour l'autoriser.",
 		noticeExternalMoveOut: "Une note ne peut pas être déplacée hors de votre coffre — les liens vers elle seraient rompus. Maintenez {mod} pour la copier à cet endroit.",
 		errorNotAFolder: "« {path} » existe et n’est pas un dossier.",
+		commandFocusPathBar: "Placer le focus sur la barre de chemin",
 	},
 
 	es: {
@@ -214,6 +216,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Escribir fuera de tu bóveda está bloqueado. Usa el botón de candado en la cabecera para permitirlo.",
 		noticeExternalMoveOut: "Una nota no se puede mover fuera de tu bóveda: los enlaces a ella se romperían. Mantén {mod} para copiarla allí.",
 		errorNotAFolder: "«{path}» existe y no es una carpeta.",
+		commandFocusPathBar: "Enfocar la barra de ruta",
 	},
 
 	it: {
@@ -279,6 +282,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "La scrittura fuori dal tuo vault è bloccata. Usa il pulsante lucchetto nell'intestazione per consentirla.",
 		noticeExternalMoveOut: "Una nota non può essere spostata fuori dal tuo vault: i link a essa si romperebbero. Tieni premuto {mod} per copiarla lì.",
 		errorNotAFolder: "«{path}» esiste e non è una cartella.",
+		commandFocusPathBar: "Attiva la barra del percorso",
 	},
 
 	pt: {
@@ -344,6 +348,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Escrever fora do seu cofre está bloqueado. Use o botão de cadeado no cabeçalho para permitir.",
 		noticeExternalMoveOut: "Uma nota não pode ser movida para fora do seu cofre — as ligações para ela quebrariam. Mantenha {mod} para a copiar para lá.",
 		errorNotAFolder: "«{path}» existe e não é uma pasta.",
+		commandFocusPathBar: "Focar a barra de caminho",
 	},
 
 	"pt-BR": {
@@ -409,6 +414,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Gravar fora do seu cofre está bloqueado. Use o botão de cadeado no cabeçalho para permitir.",
 		noticeExternalMoveOut: "Uma nota não pode ser movida para fora do seu cofre — os links para ela quebrariam. Segure {mod} para copiá-la para lá.",
 		errorNotAFolder: "“{path}” existe e não é uma pasta.",
+		commandFocusPathBar: "Focar a barra de caminho",
 	},
 
 	nl: {
@@ -473,6 +479,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Schrijven buiten je kluis is vergrendeld. Gebruik de slotknop in de koptekst om het toe te staan.",
 		noticeExternalMoveOut: "Een notitie kan niet uit je kluis worden verplaatst — links ernaartoe zouden breken. Houd {mod} ingedrukt om er een kopie te plaatsen.",
 		errorNotAFolder: "“{path}” bestaat en is geen map.",
+		commandFocusPathBar: "Focus op de padbalk",
 	},
 
 	pl: {
@@ -537,6 +544,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Zapis poza skarbcem jest zablokowany. Użyj przycisku kłódki w nagłówku, aby na niego zezwolić.",
 		noticeExternalMoveOut: "Notatki nie można przenieść poza skarbiec — linki do niej przestałyby działać. Przytrzymaj {mod}, aby ją tam skopiować.",
 		errorNotAFolder: "„{path}” istnieje i nie jest folderem.",
+		commandFocusPathBar: "Ustaw fokus na pasku ścieżki",
 	},
 
 	ru: {
@@ -601,6 +609,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Запись вне хранилища заблокирована. Разрешите её кнопкой с замком в заголовке.",
 		noticeExternalMoveOut: "Заметку нельзя переместить за пределы хранилища — ссылки на неё сломаются. Удерживайте {mod}, чтобы скопировать её туда.",
 		errorNotAFolder: "«{path}» существует и не является папкой.",
+		commandFocusPathBar: "Фокус на строке пути",
 	},
 
 	uk: {
@@ -665,6 +674,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Запис поза сховищем заблоковано. Дозвольте його кнопкою із замком у заголовку.",
 		noticeExternalMoveOut: "Нотатку не можна перемістити за межі сховища — посилання на неї зламаються. Утримуйте {mod}, щоб скопіювати її туди.",
 		errorNotAFolder: "«{path}» існує і не є текою.",
+		commandFocusPathBar: "Фокус на рядку шляху",
 	},
 
 	cs: {
@@ -729,6 +739,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Zápis mimo trezor je uzamčen. Povolte jej tlačítkem se zámkem v záhlaví.",
 		noticeExternalMoveOut: "Poznámku nelze přesunout mimo trezor — odkazy na ni by přestaly fungovat. Podržte {mod} a zkopírujte ji tam.",
 		errorNotAFolder: "„{path}“ existuje a není složka.",
+		commandFocusPathBar: "Zaměřit lištu cesty",
 	},
 
 	sv: {
@@ -793,6 +804,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Skrivning utanför valvet är låst. Använd hänglåsknappen i rubriken för att tillåta den.",
 		noticeExternalMoveOut: "En anteckning kan inte flyttas ut ur valvet — länkar till den skulle brytas. Håll ned {mod} för att kopiera den dit.",
 		errorNotAFolder: "”{path}” finns och är inte en mapp.",
+		commandFocusPathBar: "Fokusera sökvägsfältet",
 	},
 
 	da: {
@@ -857,6 +869,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Skrivning uden for din boks er låst. Brug låseknappen i overskriften for at tillade det.",
 		noticeExternalMoveOut: "En note kan ikke flyttes ud af din boks — links til den ville gå i stykker. Hold {mod} nede for at kopiere den derhen.",
 		errorNotAFolder: "“{path}” findes og er ikke en mappe.",
+		commandFocusPathBar: "Fokusér stilinjen",
 	},
 
 	no: {
@@ -921,6 +934,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Skriving utenfor hvelvet er låst. Bruk låseknappen i overskriften for å tillate det.",
 		noticeExternalMoveOut: "Et notat kan ikke flyttes ut av hvelvet — lenker til det ville bli brutt. Hold inne {mod} for å kopiere det dit.",
 		errorNotAFolder: "«{path}» finnes og er ikke en mappe.",
+		commandFocusPathBar: "Fokuser på stilinjen",
 	},
 
 	fi: {
@@ -985,6 +999,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Kirjoittaminen holvin ulkopuolelle on lukittu. Salli se otsikkorivin lukkopainikkeella.",
 		noticeExternalMoveOut: "Muistiinpanoa ei voi siirtää holvin ulkopuolelle — linkit siihen rikkoutuisivat. Kopioi se sinne pitämällä {mod} pohjassa.",
 		errorNotAFolder: "”{path}” on olemassa eikä ole kansio.",
+		commandFocusPathBar: "Kohdista polkupalkkiin",
 	},
 
 	tr: {
@@ -1049,6 +1064,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Kasanızın dışına yazma kilitli. İzin vermek için başlıktaki kilit düğmesini kullanın.",
 		noticeExternalMoveOut: "Bir not kasanızın dışına taşınamaz — ona giden bağlantılar kırılır. Oraya kopyalamak için {mod} tuşunu basılı tutun.",
 		errorNotAFolder: "“{path}” var ve bir klasör değil.",
+		commandFocusPathBar: "Yol çubuğuna odaklan",
 	},
 
 	ja: {
@@ -1113,6 +1129,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "保管庫の外への書き込みはロックされています。ヘッダーの鍵ボタンで許可してください。",
 		noticeExternalMoveOut: "ノートを保管庫の外へ移動することはできません — リンクが壊れます。{mod} を押しながらでコピーできます。",
 		errorNotAFolder: "「{path}」は存在しますが、フォルダーではありません。",
+		commandFocusPathBar: "パスバーにフォーカス",
 	},
 
 	ko: {
@@ -1177,6 +1194,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "보관함 외부 쓰기가 잠겨 있습니다. 헤더의 자물쇠 버튼으로 허용하세요.",
 		noticeExternalMoveOut: "노트를 보관함 밖으로 옮길 수 없습니다 — 링크가 끊어집니다. {mod} 를 누른 채로 복사하세요.",
 		errorNotAFolder: "“{path}”이(가) 있지만 폴더가 아닙니다.",
+		commandFocusPathBar: "경로 표시줄에 포커스",
 	},
 
 	zh: {
@@ -1241,6 +1259,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "写入仓库之外已锁定。请使用标题栏中的锁定按钮允许。",
 		noticeExternalMoveOut: "笔记无法移出仓库 — 指向它的链接会失效。按住 {mod} 可改为复制过去。",
 		errorNotAFolder: "“{path}”已存在且不是文件夹。",
+		commandFocusPathBar: "聚焦路径栏",
 	},
 
 	"zh-TW": {
@@ -1305,6 +1324,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "寫入儲存庫之外已鎖定。請使用標題列中的鎖定按鈕允許。",
 		noticeExternalMoveOut: "筆記無法移出儲存庫 — 指向它的連結會失效。按住 {mod} 可改為複製過去。",
 		errorNotAFolder: "「{path}」已存在且不是資料夾。",
+		commandFocusPathBar: "聚焦路徑列",
 	},
 
 	ar: {
@@ -1369,6 +1389,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "الكتابة خارج خزنتك مقفلة. استخدم زر القفل في الترويسة للسماح بها.",
 		noticeExternalMoveOut: "لا يمكن نقل ملاحظة خارج خزنتك — ستنكسر الروابط إليها. اضغط باستمرار على {mod} لنسخها هناك بدلاً من ذلك.",
 		errorNotAFolder: "«{path}» موجود وليس مجلدًا.",
+		commandFocusPathBar: "التركيز على شريط المسار",
 	},
 
 	ca: {
@@ -1435,6 +1456,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Escriure fora del teu cofre està bloquejat. Fes servir el botó del cadenat a la capçalera per permetre-ho.",
 		noticeExternalMoveOut: "Una nota no es pot moure fora del teu cofre: els enllaços cap a ella es trencarien. Mantén {mod} per copiar-la-hi.",
 		errorNotAFolder: "«{path}» existeix i no és una carpeta.",
+		commandFocusPathBar: "Enfoca la barra de camí",
 	},
 
 	ro: {
@@ -1500,6 +1522,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Scrierea în afara seifului este blocată. Folosește butonul lacăt din antet pentru a o permite.",
 		noticeExternalMoveOut: "O notiță nu poate fi mutată în afara seifului — legăturile către ea s-ar rupe. Ține apăsat {mod} pentru a o copia acolo.",
 		errorNotAFolder: "„{path}” există și nu este un folder.",
+		commandFocusPathBar: "Focalizează bara de cale",
 	},
 
 	hu: {
@@ -1565,6 +1588,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "A széfen kívüli írás zárolva van. Engedélyezéshez használd a fejlécben lévő lakat gombot.",
 		noticeExternalMoveOut: "Egy jegyzet nem helyezhető át a széfen kívülre — a rá mutató hivatkozások eltörnének. Tartsd nyomva a(z) {mod} billentyűt a másoláshoz.",
 		errorNotAFolder: "A(z) „{path}” létezik, és nem mappa.",
+		commandFocusPathBar: "Fókusz az útvonalsávra",
 	},
 
 	sk: {
@@ -1629,6 +1653,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Zápis mimo trezora je uzamknutý. Povoľte ho tlačidlom so zámkom v hlavičke.",
 		noticeExternalMoveOut: "Poznámku nemožno presunúť mimo trezora — odkazy na ňu by prestali fungovať. Podržte {mod} a skopírujte ju tam.",
 		errorNotAFolder: "„{path}“ existuje a nie je priečinok.",
+		commandFocusPathBar: "Zamerať lištu cesty",
 	},
 
 	lv: {
@@ -1693,6 +1718,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Rakstīšana ārpus glabātavas ir bloķēta. Atļaujiet to ar slēdzenes pogu galvenē.",
 		noticeExternalMoveOut: "Piezīmi nevar pārvietot ārpus glabātavas — saites uz to pārtrūktu. Turiet {mod}, lai to tur nokopētu.",
 		errorNotAFolder: "„{path}“ pastāv un nav mape.",
+		commandFocusPathBar: "Fokusēt ceļa joslu",
 	},
 
 	sq: {
@@ -1758,6 +1784,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Shkrimi jashtë kasafortës është i kyçur. Përdor butonin e bravës në krye për ta lejuar.",
 		noticeExternalMoveOut: "Një shënim nuk mund të zhvendoset jashtë kasafortës — lidhjet drejt tij do të prisheshin. Mbaj {mod} për ta kopjuar atje.",
 		errorNotAFolder: "„{path}“ ekziston dhe nuk është dosje.",
+		commandFocusPathBar: "Fokuso shiritin e shtegut",
 	},
 
 	sr: {
@@ -1822,6 +1849,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Уписивање ван трезора је закључано. Дозволите га дугметом са катанцем у заглављу.",
 		noticeExternalMoveOut: "Белешка не може да се премести ван трезора — везе ка њој би се покидале. Држите {mod} да је уместо тога копирате тамо.",
 		errorNotAFolder: "„{path}“ постоји и није фасцикла.",
+		commandFocusPathBar: "Фокусирај траку путање",
 	},
 
 	be: {
@@ -1887,6 +1915,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Запіс па-за сховішчам заблакаваны. Дазвольце яго кнопкай з замком у загалоўку.",
 		noticeExternalMoveOut: "Нататку нельга перамясціць па-за сховішча — спасылкі на яе зламаюцца. Утрымлівайце {mod}, каб скапіяваць яе туды.",
 		errorNotAFolder: "«{path}» існуе і не з’яўляецца папкай.",
+		commandFocusPathBar: "Фокус на радку шляху",
 	},
 
 	el: {
@@ -1953,6 +1982,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Η εγγραφή εκτός του θησαυροφυλακίου είναι κλειδωμένη. Χρησιμοποιήστε το κουμπί κλειδαριάς στην κεφαλίδα για να την επιτρέψετε.",
 		noticeExternalMoveOut: "Μια σημείωση δεν μπορεί να μετακινηθεί εκτός του θησαυροφυλακίου — οι σύνδεσμοι προς αυτήν θα έσπαγαν. Κρατήστε {mod} για να την αντιγράψετε εκεί.",
 		errorNotAFolder: "Το «{path}» υπάρχει και δεν είναι φάκελος.",
+		commandFocusPathBar: "Εστίαση στη γραμμή διαδρομής",
 	},
 
 	ga: {
@@ -2017,6 +2047,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Tá scríobh lasmuigh de do thaisceadán glasáilte. Bain úsáid as an gcnaipe glais sa cheanntásc chun é a cheadú.",
 		noticeExternalMoveOut: "Ní féidir nóta a bhogadh amach as do thaisceadán — bhrisfí na naisc chuige. Coinnigh {mod} síos chun é a chóipeáil ann.",
 		errorNotAFolder: "Tá „{path}“ ann agus ní fillteán é.",
+		commandFocusPathBar: "Fócas ar an mbarra conaire",
 	},
 
 	he: {
@@ -2081,6 +2112,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "כתיבה מחוץ לכספת נעולה. השתמש בכפתור המנעול בכותרת כדי לאפשר אותה.",
 		noticeExternalMoveOut: "לא ניתן להעביר פתק אל מחוץ לכספת — קישורים אליו יישברו. החזק {mod} כדי להעתיק אותו לשם במקום.",
 		errorNotAFolder: "“{path}” קיים ואינו תיקייה.",
+		commandFocusPathBar: "מיקוד בשורת הנתיב",
 	},
 
 	fa: {
@@ -2145,6 +2177,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "نوشتن بیرون از گاوصندوق قفل است. برای اجازه دادن از دکمهٔ قفل در سربرگ استفاده کنید.",
 		noticeExternalMoveOut: "یادداشت را نمی‌توان از گاوصندوق بیرون برد — پیوندها به آن می‌شکنند. برای کپی کردن آن، {mod} را نگه دارید.",
 		errorNotAFolder: "«{path}» وجود دارد و پوشه نیست.",
+		commandFocusPathBar: "تمرکز روی نوار مسیر",
 	},
 
 	id: {
@@ -2209,6 +2242,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Menulis di luar vault terkunci. Gunakan tombol gembok di header untuk mengizinkannya.",
 		noticeExternalMoveOut: "Catatan tidak dapat dipindahkan keluar dari vault — tautan ke sana akan rusak. Tahan {mod} untuk menyalinnya ke sana.",
 		errorNotAFolder: "“{path}” ada dan bukan folder.",
+		commandFocusPathBar: "Fokus ke bilah jalur",
 	},
 
 	ms: {
@@ -2273,6 +2307,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Penulisan di luar bilik kebal dikunci. Gunakan butang kunci pada pengepala untuk membenarkannya.",
 		noticeExternalMoveOut: "Nota tidak boleh dipindahkan keluar dari bilik kebal — pautan kepadanya akan rosak. Tahan {mod} untuk menyalinnya ke sana.",
 		errorNotAFolder: "“{path}” wujud dan bukan folder.",
+		commandFocusPathBar: "Fokus pada bar laluan",
 	},
 
 	vi: {
@@ -2337,6 +2372,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Ghi ra ngoài kho đang bị khóa. Dùng nút khóa trên thanh tiêu đề để cho phép.",
 		noticeExternalMoveOut: "Không thể chuyển ghi chú ra ngoài kho — các liên kết tới nó sẽ hỏng. Giữ {mod} để sao chép nó tới đó.",
 		errorNotAFolder: "“{path}” đã tồn tại và không phải là thư mục.",
+		commandFocusPathBar: "Tập trung vào thanh đường dẫn",
 	},
 
 	th: {
@@ -2401,6 +2437,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "การเขียนนอกห้องนิรภัยถูกล็อกอยู่ ใช้ปุ่มกุญแจในส่วนหัวเพื่ออนุญาต",
 		noticeExternalMoveOut: "ไม่สามารถย้ายโน้ตออกจากห้องนิรภัยได้ — ลิงก์ที่ชี้มาจะเสีย กด {mod} ค้างไว้เพื่อคัดลอกไปแทน",
 		errorNotAFolder: "“{path}” มีอยู่แล้วและไม่ใช่โฟลเดอร์",
+		commandFocusPathBar: "โฟกัสแถบพาธ",
 	},
 
 	kh: {
@@ -2465,6 +2502,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "ការសរសេរនៅក្រៅឃ្លាំងត្រូវបានចាក់សោ។ ប្រើប៊ូតុងសោនៅក្បាលទំព័រដើម្បីអនុញ្ញាត។",
 		noticeExternalMoveOut: "កំណត់ចំណាំមិនអាចផ្លាស់ទីចេញពីឃ្លាំងបានទេ — តំណភ្ជាប់ទៅវានឹងខូច។ សង្កត់ {mod} ដើម្បីចម្លងវាទៅទីនោះជំនួសវិញ។",
 		errorNotAFolder: "«{path}» មានរួចហើយ ហើយមិនមែនជាថតទេ។",
+		commandFocusPathBar: "ផ្តោតលើរបារផ្លូវ",
 	},
 
 	ne: {
@@ -2529,6 +2567,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "भल्ट बाहिर लेख्न लक गरिएको छ। अनुमति दिन हेडरको ताल्चा बटन प्रयोग गर्नुहोस्।",
 		noticeExternalMoveOut: "नोटलाई भल्ट बाहिर सार्न सकिँदैन — यसका लिंकहरू भाँचिन्छन्। बरु त्यहाँ प्रतिलिपि गर्न {mod} थिच्नुहोस्।",
 		errorNotAFolder: "“{path}” छ तर फोल्डर होइन।",
+		commandFocusPathBar: "पथ पट्टीमा फोकस गर्नुहोस्",
 	},
 
 	bn: {
@@ -2593,6 +2632,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "ভল্টের বাইরে লেখা লক করা আছে। অনুমতি দিতে হেডারের তালা বোতামটি ব্যবহার করুন।",
 		noticeExternalMoveOut: "নোট ভল্টের বাইরে সরানো যায় না — এর লিঙ্কগুলো ভেঙে যাবে। এর বদলে সেখানে কপি করতে {mod} চেপে ধরুন।",
 		errorNotAFolder: "“{path}” আছে এবং এটি ফোল্ডার নয়।",
+		commandFocusPathBar: "পাথ বারে ফোকাস করুন",
 	},
 
 	ka: {
@@ -2659,6 +2699,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "საცავის გარეთ ჩაწერა დაბლოკილია. ნებართვისთვის გამოიყენეთ საკეტის ღილაკი სათაურში.",
 		noticeExternalMoveOut: "ჩანაწერის საცავიდან გატანა შეუძლებელია — მასზე ბმულები გაწყდება. მის დასაკოპირებლად დააჭირეთ {mod}-ს.",
 		errorNotAFolder: "„{path}“ არსებობს და საქაღალდე არ არის.",
+		commandFocusPathBar: "ფოკუსი ბილიკის ზოლზე",
 	},
 
 	uz: {
@@ -2723,6 +2764,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "Ombordan tashqariga yozish qulflangan. Ruxsat berish uchun sarlavhadagi qulf tugmasidan foydalaning.",
 		noticeExternalMoveOut: "Qaydni ombordan tashqariga ko‘chirib bo‘lmaydi — unga havolalar uziladi. Uni o‘sha yerga nusxalash uchun {mod} ni bosib turing.",
 		errorNotAFolder: "“{path}” mavjud va u jild emas.",
+		commandFocusPathBar: "Yo'l paneliga fokus",
 	},
 
 	am: {
@@ -2787,6 +2829,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "ከመዝገብ ቤትዎ ውጭ መጻፍ ተቆልፏል። ለመፍቀድ በራስጌው ላይ ያለውን የመቆለፊያ ቁልፍ ይጠቀሙ።",
 		noticeExternalMoveOut: "ማስታወሻን ከመዝገብ ቤትዎ ውጭ ማንቀሳቀስ አይቻልም — ወደ እሱ ያሉ አገናኞች ይሰበራሉ። ወደዚያ ለመቅዳት {mod} ን ተጭነው ይያዙ።",
 		errorNotAFolder: "“{path}” አለ ግን አቃፊ አይደለም።",
+		commandFocusPathBar: "የመንገድ አሞሌ ላይ አትኩር",
 	},
 
 	sa: {
@@ -2851,5 +2894,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalWriteLocked: "कोशात् बहिः लेखनं निरुद्धम्। अनुमन्तुं शीर्षके तालकबटनं प्रयुज्यताम्।",
 		noticeExternalMoveOut: "टिप्पणी कोशात् बहिः चालयितुं न शक्यते — तस्याः सम्बन्धाः भज्येरन्। तत्र प्रतिलिपिं कर्तुं {mod} धार्यताम्।",
 		errorNotAFolder: "“{path}” विद्यते, पुटं तु नास्ति।",
+		commandFocusPathBar: "पथपट्टिकायां केन्द्रीकरणम्",
 	},
 };

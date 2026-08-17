@@ -60,6 +60,8 @@ export const EN = {
 	noticeCopyFailed: "Could not copy file: {error}",
 	noticeIsFolder: '"{path}" is a folder.',
 	noticeCreateFailed: "Could not create file: {error}",
+	/** Command palette entry; Obsidian shows it prefixed with the plugin name. */
+	commandFocusPathBar: "Focus the path bar",
 	noticeAutocompleteUnavailable: "Autocomplete unavailable: {error}",
 	suggestMore: "{count} more — keep typing to filter",
 
