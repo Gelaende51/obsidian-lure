@@ -16,6 +16,7 @@
  *   node .dev/cdp.mjs style ".lure-glyph-icon" stroke-width font-size
  *   node .dev/cdp.mjs shot  /tmp/obsidian.png
  *   node .dev/cdp.mjs key   F2 ctrl+l Escape
+ *   node .dev/cdp.mjs type  https://obsidian.md
  *
  * `eval` runs in the renderer's main world, so `app` — Obsidian's own API
  * object — is in scope: `app.workspace.getActiveFile().path` works.
@@ -161,6 +162,16 @@ const commands = {
 		const path = args[0] ?? "/tmp/obsidian.png";
 		writeFileSync(path, Buffer.from(data, "base64"));
 		return `wrote ${path}`;
+	},
+
+	// Text as the user would enter it: Input.insertText goes through the
+	// same path a paste or an IME commit does, so the field's own input
+	// handlers run. It does *not* fire per-key keydowns, which is the point
+	// when a key has a meaning of its own — "/" descends into a folder, so
+	// typing a URL key by key would never reach the field intact.
+	type: async () => {
+		await send("Input.insertText", { text: args.join(" ") });
+		return `typed ${args.join(" ")}`;
 	},
 
 	key: async () => {

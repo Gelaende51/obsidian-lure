@@ -188,6 +188,7 @@ There are no unit tests. The features here are conversations between the path ba
 node .dev/test-external.mjs          # outside-the-vault behaviour
 node .dev/test-external.mjs edit     # only tests whose name matches
 node .dev/test-rename.mjs            # the rename key's alternation
+node .dev/test-urls.mjs              # URLs and encoded paths typed into the bar
 node .dev/test-compat.mjs            # against installed peer plugins
 node .dev/test-compat.mjs Quick      # one peer
 ```
@@ -200,6 +201,32 @@ scope stack on top of it. The difference is not academic — on the rename
 dialog, `executeCommandById` reports the plugin stealing focus from behind a
 modal, while a real key shows the command never running at all. Two different
 bugs depending on how you press it.
+
+**A key that produces text must be sent with that text.** `Input.dispatchKeyEvent`
+delivers Enter and Tab to the focused *element* only when `text` is `\r` / `\t`;
+without it the event reaches the window and stops there, so a field's own keydown
+handler never runs and the feature looks broken. Genuinely textless keys — Escape,
+arrows, function keys — are dispatched raw and are fine. `describeKey` carries the
+text per key; add new ones there rather than at the call site.
+
+**Focus in one process, press in the next, and the key misses.** The editor takes
+focus back in the gap between two `cdp.mjs` invocations, so anything that focuses a
+field and then presses a key has to happen on one connection — which is what the
+suites are for. Re-focus immediately before the press even then.
+
+**Attach probes in a separate `evaluate` from the click that creates the element.**
+A listener added in the same round trip can land on an element a later render
+replaces, and then sees nothing.
+
+**When a command starts doing nothing, restart Obsidian before debugging it.** After a
+long automated session `workspace:edit-file-title` began no-opping with the plugin
+*disabled* — the app's own state, not the plugin's. `.dev/restart-obsidian.sh` restored
+it and the suite went from 7/15 back to 15/15.
+
+**Check the build's exit code, not its output.** `npm run build` runs tsc *and* eslint;
+grepping for `error TS` silently misses a lint error, and then every later test runs
+against a stale `main.js` that never rebuilt. That is how a feature can appear entirely
+absent from a passing-looking session.
 
 **Scope DOM queries to the leaf you mean.** A `document.querySelector` for
 `.lure-filename-text` finds the first bar in the workspace, not the active

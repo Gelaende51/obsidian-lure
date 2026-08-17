@@ -46,6 +46,7 @@ import {
 } from "./externalFileOps";
 import { ExternalFileView, extensionOf, openExternalFile } from "./externalFileView";
 import { showExternalMenu } from "./externalMenu";
+import { UrlTarget, classifyTypedTarget, slashBelongsToScheme } from "./urlTargets";
 import {
 	FOLDER_NOTE_PLUGIN_IDS,
 	GestureTarget,
@@ -2286,6 +2287,9 @@ export class PathBreadcrumb {
 				evt.preventDefault();
 				this.stepOutOfFolder();
 			} else if (evt.key === "/") {
+				// Except where the slash is part of a scheme: "https:/" +
+				// "/" is a URL being typed, not a folder called "https:".
+				if (slashBelongsToScheme(inputEl.value)) return;
 				evt.preventDefault();
 				this.descendIntoTypedSegment(inputEl.value);
 			}
@@ -2497,6 +2501,15 @@ export class PathBreadcrumb {
 			return;
 		}
 
+		// Checked before anything else, and in both modes: a URL is not a
+		// destination inside the vault, so building a candidate path out of
+		// it would only produce a note named after a web address.
+		const target = classifyTypedTarget(trimmed);
+		if (target) {
+			await this.openTypedTarget(target, paneType);
+			return;
+		}
+
 		if (this.externalPath !== null) {
 			await this.submitExternal(trimmed, paneType);
 			return;
@@ -2560,6 +2573,59 @@ export class PathBreadcrumb {
 	 * The last two of those write, and out here that needs the padlock
 	 * open. Locked, this stays what it always was: a way to look around.
 	 */
+	/**
+	 * Opens something typed into the row that was not a path.
+	 *
+	 * Web and Obsidian URIs both go through `window.open`: Obsidian routes
+	 * its own scheme internally, and an http one honours whatever the user
+	 * has set for external links — the Web Viewer if it is on, the system
+	 * browser otherwise. Neither is this plugin's business to decide.
+	 *
+	 * A filesystem path is resolved against the vault first. Inside, it is
+	 * an ordinary note and opens as one, with links and backlinks; only
+	 * outside does it need the read-only viewer and the opt-in.
+	 */
+	private async openTypedTarget(target: UrlTarget, paneType: PaneType | false): Promise<void> {
+		if (target.kind !== "path") {
+			window.open(target.href);
+			this.cancelNavigation();
+			return;
+		}
+
+		const normalized = target.path.split(PATH_SEP).join("/").replace(/\/+$/, "");
+		const base = this.vaultBasePath();
+		if (base !== null && isInside(normalized, base)) {
+			const relative = normalized.slice(base.length).replace(/^\/+/, "");
+			const inVault = this.plugin.app.vault.getAbstractFileByPath(normalizePath(relative));
+			if (inVault instanceof TFile) {
+				this.cancelNavigation();
+				this.navigateToFile(inVault, paneType);
+				return;
+			}
+			if (inVault instanceof TFolder) {
+				this.extendBrowsePath(inVault.path);
+				this.enterTypingMode("");
+				return;
+			}
+		}
+
+		if (!this.plugin.settings.accessExternalFiles) {
+			new Notice(t("noticeExternalDisabled", { setting: t("settingExternalName") }));
+			this.cancelNavigation();
+			return;
+		}
+		if (!(await externalExists(normalized))) {
+			new Notice(t("noticeExternalNotFound", { path: normalized }));
+			return;
+		}
+		if (isExternalFolder(normalized)) {
+			this.goToLocation(normalized);
+			return;
+		}
+		this.cancelNavigation();
+		void openExternalFile(this.plugin, normalized, paneType, this.leaf);
+	}
+
 	private async submitExternal(typed: string, paneType: PaneType | false): Promise<void> {
 		const base = this.externalPath ?? "";
 		// An absolute path typed outright replaces the trail; anything else

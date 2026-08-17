@@ -126,12 +126,22 @@ export async function connect() {
  * reported the plugin stealing focus, while a real key showed the command
  * never running at all.
  */
+/**
+ * keyCode, DOM code, and the text the key produces.
+ *
+ * The text matters more than it looks. A key sent as `rawKeyDown` with no
+ * text never reaches the focused element for Enter and Tab — the event
+ * arrives at the window and stops there, so a field's own keydown handler
+ * never runs and the test reports the feature broken. Enter carries a
+ * carriage return and Tab a tab; the genuinely textless keys (Escape,
+ * arrows, function keys) carry nothing and are dispatched as raw.
+ */
 const KEY_CODES = {
-	Escape: [27, "Escape"], Enter: [13, "Enter"], Tab: [9, "Tab"],
-	Backspace: [8, "Backspace"], Delete: [46, "Delete"], Space: [32, "Space"],
-	ArrowUp: [38, "ArrowUp"], ArrowDown: [40, "ArrowDown"],
-	ArrowLeft: [37, "ArrowLeft"], ArrowRight: [39, "ArrowRight"],
-	Home: [36, "Home"], End: [35, "End"],
+	Escape: [27, "Escape", ""], Enter: [13, "Enter", "\r"], Tab: [9, "Tab", "\t"],
+	Backspace: [8, "Backspace", ""], Delete: [46, "Delete", ""], Space: [32, "Space", " "],
+	ArrowUp: [38, "ArrowUp", ""], ArrowDown: [40, "ArrowDown", ""],
+	ArrowLeft: [37, "ArrowLeft", ""], ArrowRight: [39, "ArrowRight", ""],
+	Home: [36, "Home", ""], End: [35, "End", ""],
 };
 
 const MODIFIER_BITS = { alt: 1, ctrl: 2, control: 2, meta: 4, cmd: 4, shift: 8 };
@@ -154,9 +164,8 @@ export function describeKey(spec) {
 		return { key: `F${n}`, code: `F${n}`, keyCode: 111 + n, modifiers, text: "" };
 	}
 	if (KEY_CODES[name]) {
-		const [keyCode, code] = KEY_CODES[name];
-		const isSpace = name === "Space";
-		return { key: isSpace ? " " : name, code, keyCode, modifiers, text: isSpace ? " " : "" };
+		const [keyCode, code, text] = KEY_CODES[name];
+		return { key: name === "Space" ? " " : name, code, keyCode, modifiers, text };
 	}
 	if (name.length === 1) {
 		const upper = name.toUpperCase();

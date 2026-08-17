@@ -84,6 +84,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Eine Notiz kann nicht aus deinem Vault herausbewegt werden — Links darauf würden brechen. Halte {mod}, um sie stattdessen dorthin zu kopieren.",
 		errorNotAFolder: "„{path}“ existiert und ist kein Ordner.",
 		commandFocusPathBar: "Pfadleiste fokussieren",
+		noticeExternalDisabled: "Pfade außerhalb deines Vaults sind deaktiviert. Aktiviere {setting} in den Plugin-Einstellungen.",
 	},
 
 	fr: {
@@ -151,6 +152,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Une note ne peut pas être déplacée hors de votre coffre — les liens vers elle seraient rompus. Maintenez {mod} pour la copier à cet endroit.",
 		errorNotAFolder: "« {path} » existe et n’est pas un dossier.",
 		commandFocusPathBar: "Placer le focus sur la barre de chemin",
+		noticeExternalDisabled: "Les chemins hors de votre coffre sont désactivés. Activez {setting} dans les paramètres du plugin.",
 	},
 
 	es: {
@@ -217,6 +219,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Una nota no se puede mover fuera de tu bóveda: los enlaces a ella se romperían. Mantén {mod} para copiarla allí.",
 		errorNotAFolder: "«{path}» existe y no es una carpeta.",
 		commandFocusPathBar: "Enfocar la barra de ruta",
+		noticeExternalDisabled: "Las rutas fuera de tu bóveda están desactivadas. Activa {setting} en los ajustes del plugin.",
 	},
 
 	it: {
@@ -283,6 +286,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Una nota non può essere spostata fuori dal tuo vault: i link a essa si romperebbero. Tieni premuto {mod} per copiarla lì.",
 		errorNotAFolder: "«{path}» esiste e non è una cartella.",
 		commandFocusPathBar: "Attiva la barra del percorso",
+		noticeExternalDisabled: "I percorsi fuori dal tuo vault sono disattivati. Attiva {setting} nelle impostazioni del plugin.",
 	},
 
 	pt: {
@@ -349,6 +353,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Uma nota não pode ser movida para fora do seu cofre — as ligações para ela quebrariam. Mantenha {mod} para a copiar para lá.",
 		errorNotAFolder: "«{path}» existe e não é uma pasta.",
 		commandFocusPathBar: "Focar a barra de caminho",
+		noticeExternalDisabled: "Os caminhos fora do teu cofre estão desativados. Ativa {setting} nas definições do plugin.",
 	},
 
 	"pt-BR": {
@@ -415,6 +420,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Uma nota não pode ser movida para fora do seu cofre — os links para ela quebrariam. Segure {mod} para copiá-la para lá.",
 		errorNotAFolder: "“{path}” existe e não é uma pasta.",
 		commandFocusPathBar: "Focar a barra de caminho",
+		noticeExternalDisabled: "Os caminhos fora do seu cofre estão desativados. Ative {setting} nas configurações do plugin.",
 	},
 
 	nl: {
@@ -480,6 +486,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Een notitie kan niet uit je kluis worden verplaatst — links ernaartoe zouden breken. Houd {mod} ingedrukt om er een kopie te plaatsen.",
 		errorNotAFolder: "“{path}” bestaat en is geen map.",
 		commandFocusPathBar: "Focus op de padbalk",
+		noticeExternalDisabled: "Paden buiten je kluis staan uit. Zet {setting} aan in de plug-in-instellingen.",
 	},
 
 	pl: {
@@ -545,6 +552,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Notatki nie można przenieść poza skarbiec — linki do niej przestałyby działać. Przytrzymaj {mod}, aby ją tam skopiować.",
 		errorNotAFolder: "„{path}” istnieje i nie jest folderem.",
 		commandFocusPathBar: "Ustaw fokus na pasku ścieżki",
+		noticeExternalDisabled: "Ścieżki poza skarbcem są wyłączone. Włącz {setting} w ustawieniach wtyczki.",
 	},
 
 	ru: {
@@ -610,6 +618,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Заметку нельзя переместить за пределы хранилища — ссылки на неё сломаются. Удерживайте {mod}, чтобы скопировать её туда.",
 		errorNotAFolder: "«{path}» существует и не является папкой.",
 		commandFocusPathBar: "Фокус на строке пути",
+		noticeExternalDisabled: "Пути за пределами хранилища отключены. Включите {setting} в настройках плагина.",
 	},
 
 	uk: {
@@ -675,6 +684,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Нотатку не можна перемістити за межі сховища — посилання на неї зламаються. Утримуйте {mod}, щоб скопіювати її туди.",
 		errorNotAFolder: "«{path}» існує і не є текою.",
 		commandFocusPathBar: "Фокус на рядку шляху",
+		noticeExternalDisabled: "Шляхи поза сховищем вимкнено. Увімкніть {setting} у налаштуваннях плагіна.",
 	},
 
 	cs: {
@@ -740,6 +750,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Poznámku nelze přesunout mimo trezor — odkazy na ni by přestaly fungovat. Podržte {mod} a zkopírujte ji tam.",
 		errorNotAFolder: "„{path}“ existuje a není složka.",
 		commandFocusPathBar: "Zaměřit lištu cesty",
+		noticeExternalDisabled: "Cesty mimo trezor jsou vypnuté. Zapněte {setting} v nastavení pluginu.",
 	},
 
 	sv: {
@@ -805,6 +816,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "En anteckning kan inte flyttas ut ur valvet — länkar till den skulle brytas. Håll ned {mod} för att kopiera den dit.",
 		errorNotAFolder: "”{path}” finns och är inte en mapp.",
 		commandFocusPathBar: "Fokusera sökvägsfältet",
+		noticeExternalDisabled: "Sökvägar utanför valvet är avstängda. Slå på {setting} i plugin-inställningarna.",
 	},
 
 	da: {
@@ -870,6 +882,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "En note kan ikke flyttes ud af din boks — links til den ville gå i stykker. Hold {mod} nede for at kopiere den derhen.",
 		errorNotAFolder: "“{path}” findes og er ikke en mappe.",
 		commandFocusPathBar: "Fokusér stilinjen",
+		noticeExternalDisabled: "Stier uden for dit hvælv er slået fra. Slå {setting} til i plugin-indstillingerne.",
 	},
 
 	no: {
@@ -935,6 +948,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Et notat kan ikke flyttes ut av hvelvet — lenker til det ville bli brutt. Hold inne {mod} for å kopiere det dit.",
 		errorNotAFolder: "«{path}» finnes og er ikke en mappe.",
 		commandFocusPathBar: "Fokuser på stilinjen",
+		noticeExternalDisabled: "Stier utenfor hvelvet er av. Slå på {setting} i programtilleggsinnstillingene.",
 	},
 
 	fi: {
@@ -1000,6 +1014,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Muistiinpanoa ei voi siirtää holvin ulkopuolelle — linkit siihen rikkoutuisivat. Kopioi se sinne pitämällä {mod} pohjassa.",
 		errorNotAFolder: "”{path}” on olemassa eikä ole kansio.",
 		commandFocusPathBar: "Kohdista polkupalkkiin",
+		noticeExternalDisabled: "Holvin ulkopuoliset polut ovat pois käytöstä. Ota {setting} käyttöön lisäosan asetuksissa.",
 	},
 
 	tr: {
@@ -1065,6 +1080,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Bir not kasanızın dışına taşınamaz — ona giden bağlantılar kırılır. Oraya kopyalamak için {mod} tuşunu basılı tutun.",
 		errorNotAFolder: "“{path}” var ve bir klasör değil.",
 		commandFocusPathBar: "Yol çubuğuna odaklan",
+		noticeExternalDisabled: "Kasanızın dışındaki yollar kapalı. Eklenti ayarlarından {setting} seçeneğini açın.",
 	},
 
 	ja: {
@@ -1130,6 +1146,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "ノートを保管庫の外へ移動することはできません — リンクが壊れます。{mod} を押しながらでコピーできます。",
 		errorNotAFolder: "「{path}」は存在しますが、フォルダーではありません。",
 		commandFocusPathBar: "パスバーにフォーカス",
+		noticeExternalDisabled: "保管庫の外のパスは無効です。プラグイン設定で{setting}をオンにしてください。",
 	},
 
 	ko: {
@@ -1195,6 +1212,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "노트를 보관함 밖으로 옮길 수 없습니다 — 링크가 끊어집니다. {mod} 를 누른 채로 복사하세요.",
 		errorNotAFolder: "“{path}”이(가) 있지만 폴더가 아닙니다.",
 		commandFocusPathBar: "경로 표시줄에 포커스",
+		noticeExternalDisabled: "보관소 밖의 경로가 꺼져 있습니다. 플러그인 설정에서 {setting}을(를) 켜세요.",
 	},
 
 	zh: {
@@ -1260,6 +1278,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "笔记无法移出仓库 — 指向它的链接会失效。按住 {mod} 可改为复制过去。",
 		errorNotAFolder: "“{path}”已存在且不是文件夹。",
 		commandFocusPathBar: "聚焦路径栏",
+		noticeExternalDisabled: "保管库之外的路径已关闭。请在插件设置中开启{setting}。",
 	},
 
 	"zh-TW": {
@@ -1325,6 +1344,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "筆記無法移出儲存庫 — 指向它的連結會失效。按住 {mod} 可改為複製過去。",
 		errorNotAFolder: "「{path}」已存在且不是資料夾。",
 		commandFocusPathBar: "聚焦路徑列",
+		noticeExternalDisabled: "保險庫之外的路徑已關閉。請在外掛設定中開啟{setting}。",
 	},
 
 	ar: {
@@ -1390,6 +1410,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "لا يمكن نقل ملاحظة خارج خزنتك — ستنكسر الروابط إليها. اضغط باستمرار على {mod} لنسخها هناك بدلاً من ذلك.",
 		errorNotAFolder: "«{path}» موجود وليس مجلدًا.",
 		commandFocusPathBar: "التركيز على شريط المسار",
+		noticeExternalDisabled: "المسارات خارج قبوك معطّلة. فعّل {setting} في إعدادات الإضافة.",
 	},
 
 	ca: {
@@ -1457,6 +1478,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Una nota no es pot moure fora del teu cofre: els enllaços cap a ella es trencarien. Mantén {mod} per copiar-la-hi.",
 		errorNotAFolder: "«{path}» existeix i no és una carpeta.",
 		commandFocusPathBar: "Enfoca la barra de camí",
+		noticeExternalDisabled: "Els camins fora del teu magatzem estan desactivats. Activa {setting} als ajustaments del connector.",
 	},
 
 	ro: {
@@ -1523,6 +1545,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "O notiță nu poate fi mutată în afara seifului — legăturile către ea s-ar rupe. Ține apăsat {mod} pentru a o copia acolo.",
 		errorNotAFolder: "„{path}” există și nu este un folder.",
 		commandFocusPathBar: "Focalizează bara de cale",
+		noticeExternalDisabled: "Căile din afara seifului sunt dezactivate. Activează {setting} în setările pluginului.",
 	},
 
 	hu: {
@@ -1589,6 +1612,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Egy jegyzet nem helyezhető át a széfen kívülre — a rá mutató hivatkozások eltörnének. Tartsd nyomva a(z) {mod} billentyűt a másoláshoz.",
 		errorNotAFolder: "A(z) „{path}” létezik, és nem mappa.",
 		commandFocusPathBar: "Fókusz az útvonalsávra",
+		noticeExternalDisabled: "A tárolón kívüli útvonalak ki vannak kapcsolva. Kapcsold be a(z) {setting} beállítást a bővítmény beállításaiban.",
 	},
 
 	sk: {
@@ -1654,6 +1678,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Poznámku nemožno presunúť mimo trezora — odkazy na ňu by prestali fungovať. Podržte {mod} a skopírujte ju tam.",
 		errorNotAFolder: "„{path}“ existuje a nie je priečinok.",
 		commandFocusPathBar: "Zamerať lištu cesty",
+		noticeExternalDisabled: "Cesty mimo trezora sú vypnuté. Zapnite {setting} v nastaveniach pluginu.",
 	},
 
 	lv: {
@@ -1719,6 +1744,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Piezīmi nevar pārvietot ārpus glabātavas — saites uz to pārtrūktu. Turiet {mod}, lai to tur nokopētu.",
 		errorNotAFolder: "„{path}“ pastāv un nav mape.",
 		commandFocusPathBar: "Fokusēt ceļa joslu",
+		noticeExternalDisabled: "Ceļi ārpus glabātavas ir izslēgti. Ieslēdziet {setting} spraudņa iestatījumos.",
 	},
 
 	sq: {
@@ -1785,6 +1811,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Një shënim nuk mund të zhvendoset jashtë kasafortës — lidhjet drejt tij do të prisheshin. Mbaj {mod} për ta kopjuar atje.",
 		errorNotAFolder: "„{path}“ ekziston dhe nuk është dosje.",
 		commandFocusPathBar: "Fokuso shiritin e shtegut",
+		noticeExternalDisabled: "Shtigjet jashtë kasafortës janë të çaktivizuara. Aktivizo {setting} te cilësimet e shtojcës.",
 	},
 
 	sr: {
@@ -1850,6 +1877,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Белешка не може да се премести ван трезора — везе ка њој би се покидале. Држите {mod} да је уместо тога копирате тамо.",
 		errorNotAFolder: "„{path}“ постоји и није фасцикла.",
 		commandFocusPathBar: "Фокусирај траку путање",
+		noticeExternalDisabled: "Путање изван трезора су искључене. Укључите {setting} у подешавањима додатка.",
 	},
 
 	be: {
@@ -1916,6 +1944,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Нататку нельга перамясціць па-за сховішча — спасылкі на яе зламаюцца. Утрымлівайце {mod}, каб скапіяваць яе туды.",
 		errorNotAFolder: "«{path}» існуе і не з’яўляецца папкай.",
 		commandFocusPathBar: "Фокус на радку шляху",
+		noticeExternalDisabled: "Шляхі па-за сховішчам адключаны. Уключыце {setting} у наладах плагіна.",
 	},
 
 	el: {
@@ -1983,6 +2012,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Μια σημείωση δεν μπορεί να μετακινηθεί εκτός του θησαυροφυλακίου — οι σύνδεσμοι προς αυτήν θα έσπαγαν. Κρατήστε {mod} για να την αντιγράψετε εκεί.",
 		errorNotAFolder: "Το «{path}» υπάρχει και δεν είναι φάκελος.",
 		commandFocusPathBar: "Εστίαση στη γραμμή διαδρομής",
+		noticeExternalDisabled: "Οι διαδρομές εκτός του θησαυροφυλακίου είναι απενεργοποιημένες. Ενεργοποιήστε το {setting} στις ρυθμίσεις του πρόσθετου.",
 	},
 
 	ga: {
@@ -2048,6 +2078,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Ní féidir nóta a bhogadh amach as do thaisceadán — bhrisfí na naisc chuige. Coinnigh {mod} síos chun é a chóipeáil ann.",
 		errorNotAFolder: "Tá „{path}“ ann agus ní fillteán é.",
 		commandFocusPathBar: "Fócas ar an mbarra conaire",
+		noticeExternalDisabled: "Tá conairí lasmuigh de do chruinneog múchta. Cuir {setting} ar siúl i socruithe an bhreiseáin.",
 	},
 
 	he: {
@@ -2113,6 +2144,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "לא ניתן להעביר פתק אל מחוץ לכספת — קישורים אליו יישברו. החזק {mod} כדי להעתיק אותו לשם במקום.",
 		errorNotAFolder: "“{path}” קיים ואינו תיקייה.",
 		commandFocusPathBar: "מיקוד בשורת הנתיב",
+		noticeExternalDisabled: "נתיבים מחוץ לכספת מושבתים. הפעל את {setting} בהגדרות התוסף.",
 	},
 
 	fa: {
@@ -2178,6 +2210,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "یادداشت را نمی‌توان از گاوصندوق بیرون برد — پیوندها به آن می‌شکنند. برای کپی کردن آن، {mod} را نگه دارید.",
 		errorNotAFolder: "«{path}» وجود دارد و پوشه نیست.",
 		commandFocusPathBar: "تمرکز روی نوار مسیر",
+		noticeExternalDisabled: "مسیرهای بیرون از گاوصندوق غیرفعال است. {setting} را در تنظیمات افزونه روشن کنید.",
 	},
 
 	id: {
@@ -2243,6 +2276,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Catatan tidak dapat dipindahkan keluar dari vault — tautan ke sana akan rusak. Tahan {mod} untuk menyalinnya ke sana.",
 		errorNotAFolder: "“{path}” ada dan bukan folder.",
 		commandFocusPathBar: "Fokus ke bilah jalur",
+		noticeExternalDisabled: "Jalur di luar brankas dimatikan. Aktifkan {setting} di pengaturan plugin.",
 	},
 
 	ms: {
@@ -2308,6 +2342,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Nota tidak boleh dipindahkan keluar dari bilik kebal — pautan kepadanya akan rosak. Tahan {mod} untuk menyalinnya ke sana.",
 		errorNotAFolder: "“{path}” wujud dan bukan folder.",
 		commandFocusPathBar: "Fokus pada bar laluan",
+		noticeExternalDisabled: "Laluan di luar bilik kebal dimatikan. Hidupkan {setting} dalam tetapan pemalam.",
 	},
 
 	vi: {
@@ -2373,6 +2408,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Không thể chuyển ghi chú ra ngoài kho — các liên kết tới nó sẽ hỏng. Giữ {mod} để sao chép nó tới đó.",
 		errorNotAFolder: "“{path}” đã tồn tại và không phải là thư mục.",
 		commandFocusPathBar: "Tập trung vào thanh đường dẫn",
+		noticeExternalDisabled: "Đường dẫn ngoài kho lưu trữ đang tắt. Bật {setting} trong cài đặt plugin.",
 	},
 
 	th: {
@@ -2438,6 +2474,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "ไม่สามารถย้ายโน้ตออกจากห้องนิรภัยได้ — ลิงก์ที่ชี้มาจะเสีย กด {mod} ค้างไว้เพื่อคัดลอกไปแทน",
 		errorNotAFolder: "“{path}” มีอยู่แล้วและไม่ใช่โฟลเดอร์",
 		commandFocusPathBar: "โฟกัสแถบพาธ",
+		noticeExternalDisabled: "เส้นทางนอกวอลต์ถูกปิดอยู่ เปิด {setting} ในการตั้งค่าปลั๊กอิน",
 	},
 
 	kh: {
@@ -2503,6 +2540,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "កំណត់ចំណាំមិនអាចផ្លាស់ទីចេញពីឃ្លាំងបានទេ — តំណភ្ជាប់ទៅវានឹងខូច។ សង្កត់ {mod} ដើម្បីចម្លងវាទៅទីនោះជំនួសវិញ។",
 		errorNotAFolder: "«{path}» មានរួចហើយ ហើយមិនមែនជាថតទេ។",
 		commandFocusPathBar: "ផ្តោតលើរបារផ្លូវ",
+		noticeExternalDisabled: "ផ្លូវនៅខាងក្រៅឃ្លាំងត្រូវបានបិទ។ បើក {setting} ក្នុងការកំណត់កម្មវិធីជំនួយ។",
 	},
 
 	ne: {
@@ -2568,6 +2606,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "नोटलाई भल्ट बाहिर सार्न सकिँदैन — यसका लिंकहरू भाँचिन्छन्। बरु त्यहाँ प्रतिलिपि गर्न {mod} थिच्नुहोस्।",
 		errorNotAFolder: "“{path}” छ तर फोल्डर होइन।",
 		commandFocusPathBar: "पथ पट्टीमा फोकस गर्नुहोस्",
+		noticeExternalDisabled: "भल्ट बाहिरका पथहरू बन्द छन्। प्लगइन सेटिङमा {setting} खोल्नुहोस्।",
 	},
 
 	bn: {
@@ -2633,6 +2672,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "নোট ভল্টের বাইরে সরানো যায় না — এর লিঙ্কগুলো ভেঙে যাবে। এর বদলে সেখানে কপি করতে {mod} চেপে ধরুন।",
 		errorNotAFolder: "“{path}” আছে এবং এটি ফোল্ডার নয়।",
 		commandFocusPathBar: "পাথ বারে ফোকাস করুন",
+		noticeExternalDisabled: "ভল্টের বাইরের পাথ বন্ধ আছে। প্লাগইন সেটিংসে {setting} চালু করুন।",
 	},
 
 	ka: {
@@ -2700,6 +2740,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "ჩანაწერის საცავიდან გატანა შეუძლებელია — მასზე ბმულები გაწყდება. მის დასაკოპირებლად დააჭირეთ {mod}-ს.",
 		errorNotAFolder: "„{path}“ არსებობს და საქაღალდე არ არის.",
 		commandFocusPathBar: "ფოკუსი ბილიკის ზოლზე",
+		noticeExternalDisabled: "საცავის გარეთ არსებული ბილიკები გამორთულია. ჩართეთ {setting} დანამატის პარამეტრებში.",
 	},
 
 	uz: {
@@ -2765,6 +2806,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "Qaydni ombordan tashqariga ko‘chirib bo‘lmaydi — unga havolalar uziladi. Uni o‘sha yerga nusxalash uchun {mod} ni bosib turing.",
 		errorNotAFolder: "“{path}” mavjud va u jild emas.",
 		commandFocusPathBar: "Yo'l paneliga fokus",
+		noticeExternalDisabled: "Ombordan tashqaridagi yo'llar o'chirilgan. Plagin sozlamalarida {setting} ni yoqing.",
 	},
 
 	am: {
@@ -2830,6 +2872,7 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "ማስታወሻን ከመዝገብ ቤትዎ ውጭ ማንቀሳቀስ አይቻልም — ወደ እሱ ያሉ አገናኞች ይሰበራሉ። ወደዚያ ለመቅዳት {mod} ን ተጭነው ይያዙ።",
 		errorNotAFolder: "“{path}” አለ ግን አቃፊ አይደለም።",
 		commandFocusPathBar: "የመንገድ አሞሌ ላይ አትኩር",
+		noticeExternalDisabled: "ከቮልትዎ ውጭ ያሉ መንገዶች ጠፍተዋል። በተሰኪ ቅንብሮች ውስጥ {setting} ን ያብሩ።",
 	},
 
 	sa: {
@@ -2895,5 +2938,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		noticeExternalMoveOut: "टिप्पणी कोशात् बहिः चालयितुं न शक्यते — तस्याः सम्बन्धाः भज्येरन्। तत्र प्रतिलिपिं कर्तुं {mod} धार्यताम्।",
 		errorNotAFolder: "“{path}” विद्यते, पुटं तु नास्ति।",
 		commandFocusPathBar: "पथपट्टिकायां केन्द्रीकरणम्",
+		noticeExternalDisabled: "कोशात् बहिः मार्गाः निष्क्रियाः सन्ति। पुरःसरसेटिङ्गेषु {setting} इति सक्रियं कुरुत।",
 	},
 };

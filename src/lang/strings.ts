@@ -89,6 +89,7 @@ export const EN = {
 	noticeExternalOpenFailed: 'Could not open "{path}" in the default app.',
 	noticeExternalReadFailed: "Could not read file: {error}",
 	noticeExternalWriteFailed: "Could not save file: {error}",
+	noticeExternalDisabled: "Paths outside your vault are off. Turn on {setting} in the plugin settings.",
 	noticeExternalNotFound: '"{path}" does not exist.',
 	externalUnlockLabel: "Allow writing outside the vault",
 	externalLockLabel: "Writing outside the vault is allowed — click to lock again",
