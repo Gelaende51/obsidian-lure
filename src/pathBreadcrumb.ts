@@ -372,16 +372,43 @@ export class PathBreadcrumb {
 			} else this.startFullPathEdit();
 		}, { signal: this.domListeners.signal });
 
+		// A modifier on a folder segment opens rather than edits, the same
+		// rule the file name follows. Capture phase and ahead of the segment
+		// handler below, so it applies in swapped mode too — what a plain
+		// click does there is a setting, but "open it elsewhere" is not.
+		container?.addEventListener("click", (evt) => {
+			if (this.inputEl) return;
+			const paneType = this.paneTypeFor(evt);
+			if (!paneType) return;
+			const segment = (evt.target as HTMLElement).closest<HTMLElement>(".view-header-breadcrumb");
+			if (!segment || segment.closest(".lure-vault-wrapper")) return;
+			const folderPath = this.nativeSegmentPath(segment);
+			if (folderPath === null) return;
+			evt.preventDefault();
+			evt.stopPropagation();
+			this.openFolderInPane(folderPath, paneType);
+		}, { capture: true, signal: this.domListeners.signal });
+
 		// Middle-click never fires `click`, so the modifier rule above would
 		// miss the one gesture users reach for most on a tab-like row.
 		// `auxclick` also fires for the right button, which is counted
 		// elsewhere and must not be opened as a file.
 		container?.addEventListener("auxclick", (evt) => {
-			if (evt.button !== 1 || this.inputEl || !this.file) return;
-			if (!(evt.target as HTMLElement).closest(".lure-filename-text")) return;
+			if (evt.button !== 1 || this.inputEl) return;
+			const el = evt.target as HTMLElement;
+			if (el.closest(".lure-filename-text")) {
+				if (!this.file) return;
+				evt.preventDefault();
+				this.navigateToFile(this.file, this.paneTypeFor(evt) || "tab");
+				return;
+			}
+			const segment = el.closest<HTMLElement>(".view-header-breadcrumb");
+			if (!segment || segment.closest(".lure-vault-wrapper")) return;
+			const folderPath = this.nativeSegmentPath(segment);
+			if (folderPath === null) return;
 			evt.preventDefault();
-			this.navigateToFile(this.file, this.paneTypeFor(evt) || "tab");
-		}, { signal: this.domListeners.signal });
+			this.openFolderInPane(folderPath, this.paneTypeFor(evt) || "tab");
+		}, { capture: true, signal: this.domListeners.signal });
 
 		// Swapped mode has to pre-empt Obsidian's own click handler on the
 		// native folder segments — and any handler a folder-notes plugin
@@ -560,6 +587,33 @@ export class PathBreadcrumb {
 		return this.file ? (this.absolutePathFor(this.file) ?? this.file.path) : "";
 	}
 
+	/**
+	 * Sends a folder to another pane.
+	 *
+	 * A folder is not something Obsidian can open, so there are only two
+	 * honest answers. Where a folder-note plugin is running and the folder
+	 * has a note, that note *is* the folder as far as the user is concerned,
+	 * and it opens like any other file. Otherwise the pane opens empty with
+	 * its path bar already standing in that folder, so the only thing left
+	 * to supply is the name.
+	 */
+	private openFolderInPane(folderPath: string, paneType: PaneType): void {
+		const app = this.plugin.app;
+		const folder = app.vault.getAbstractFileByPath(folderPath);
+		if (!(folder instanceof TFolder)) return;
+
+		const note = this.folderNoteFor(folder);
+		const leaf = app.workspace.getLeaf(paneType);
+		if (note) {
+			void leaf.openFile(note);
+			return;
+		}
+		// The new leaf is empty and has had no active-leaf-change yet, so its
+		// bar has to be asked for rather than assumed to exist.
+		void app.workspace.revealLeaf(leaf);
+		window.setTimeout(() => this.manager.breadcrumbFor(leaf)?.startBrowsingAt(folderPath), 0);
+	}
+
 	/** The whole path as the row is showing it: vault-relative inside, absolute outside. */
 	private rowPath(): string {
 		if (this.externalPath !== null) {
@@ -624,6 +678,19 @@ export class PathBreadcrumb {
 		} catch {
 			new Notice(obsidianLabel(LABELS.copyFailed, "Unable to copy to your clipboard"));
 		}
+	}
+
+	/**
+	 * Opens this bar in typing mode at a folder, with nothing after it.
+	 *
+	 * A folder cannot be a tab: Obsidian has no view for one. So dropping a
+	 * folder segment on the tab bar, or Ctrl-clicking it, opens an empty tab
+	 * whose path bar already stands in that folder — the remaining work is
+	 * the name, which is the only part the user actually knows.
+	 */
+	startBrowsingAt(folderPath: string): void {
+		this.extendBrowsePath(folderPath);
+		this.enterTypingMode("");
 	}
 
 	/** Re-derives the file from the leaf and re-renders, unless mid-edit. */
@@ -994,6 +1061,17 @@ export class PathBreadcrumb {
 		if (!this.file) return;
 
 		const cumulativePaths = this.ancestorFolderPaths();
+
+		// Each segment stands for a real folder, so it drags like that
+		// folder's row in the File Explorer — onto the tab bar, into the
+		// editor, onto another folder to move it. Drag only: the right-click
+		// on these is counted, and the menu it opens is built elsewhere.
+		this.nativeSegments().forEach((el, index) => {
+			const folderPath = cumulativePaths[index];
+			if (folderPath === undefined) return;
+			const folder = this.plugin.app.vault.getAbstractFileByPath(folderPath);
+			if (folder instanceof TFolder) makeDraggable(this.plugin.app, el, folder);
+		});
 
 		// Separator i sits directly after segment i, so both refer to the
 		// same folder — which is what lets the swapped delimiter delegate

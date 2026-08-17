@@ -75,6 +75,16 @@ export class BreadcrumbManager {
 	}
 
 	/** The breadcrumb for the leaf the user is currently in, patching it first if needed. */
+	/**
+	 * The bar belonging to one leaf, patching it first if it has none yet.
+	 * A tab opened a moment ago has not had `active-leaf-change` fire for it,
+	 * so asking for its bar has to be able to create it.
+	 */
+	breadcrumbFor(leaf: WorkspaceLeaf): PathBreadcrumb | null {
+		if (!this.instances.has(leaf)) this.patchLeaf(leaf);
+		return this.instances.get(leaf) ?? null;
+	}
+
 	getActiveBreadcrumb(): PathBreadcrumb | null {
 		const leaf = this.plugin.app.workspace.getMostRecentLeaf();
 		if (!leaf) return null;
