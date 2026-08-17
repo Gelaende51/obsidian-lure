@@ -53,7 +53,7 @@ import {
 	classifyTarget,
 } from "./segmentGestures";
 import { LABELS, obsidianLabel } from "./obsidianLabels";
-import { showContextMenu } from "./nativeFileItem";
+import { makeDraggable, showContextMenu } from "./nativeFileItem";
 import { warnsOnOpen } from "./fileKinds";
 import { t } from "./lang";
 
@@ -362,8 +362,25 @@ export class PathBreadcrumb {
 			// differs (navigate vs. move), and that's decided at submit.
 			// The name itself selects just the file name; the empty space
 			// around it stays the way to grab the whole path at once.
-			if (target.closest(".lure-filename-text")) this.handleFilenameClick();
-			else this.startFullPathEdit();
+			if (target.closest(".lure-filename-text")) {
+				// A modifier means "open it", not "edit it" — the same rule
+				// a link or a File Explorer row follows, so Ctrl, Ctrl+Alt
+				// and middle-click land where the user already expects.
+				const paneType = this.paneTypeFor(evt);
+				if (paneType && this.file) this.navigateToFile(this.file, paneType);
+				else this.handleFilenameClick();
+			} else this.startFullPathEdit();
+		}, { signal: this.domListeners.signal });
+
+		// Middle-click never fires `click`, so the modifier rule above would
+		// miss the one gesture users reach for most on a tab-like row.
+		// `auxclick` also fires for the right button, which is counted
+		// elsewhere and must not be opened as a file.
+		container?.addEventListener("auxclick", (evt) => {
+			if (evt.button !== 1 || this.inputEl || !this.file) return;
+			if (!(evt.target as HTMLElement).closest(".lure-filename-text")) return;
+			evt.preventDefault();
+			this.navigateToFile(this.file, this.paneTypeFor(evt) || "tab");
 		}, { signal: this.domListeners.signal });
 
 		// Swapped mode has to pre-empt Obsidian's own click handler on the
@@ -1440,10 +1457,16 @@ export class PathBreadcrumb {
 
 		if (!this.file) return;
 
-		this.filenameEl.createSpan({
+		const nameEl = this.filenameEl.createSpan({
 			cls: "lure-filename-text",
 			text: this.file.basename,
 		});
+		// The name stands for the open note, so it behaves like that note's
+		// row in the File Explorer: drag it into an editor to write a link,
+		// onto a folder to move it, onto the tab bar to open it. Only the
+		// drag is borrowed — the right-click here is counted rather than
+		// acted on, and builds its own menu.
+		makeDraggable(this.plugin.app, nameEl, this.file);
 	}
 
 	/**

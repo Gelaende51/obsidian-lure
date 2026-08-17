@@ -64,7 +64,13 @@ function suppressNextBlurClose(inputEl: HTMLElement): void {
  * that popover possible at all — see the comment on the mousedown
  * handler below.
  */
-function makeDraggable(
+/**
+ * Obsidian's own drag payload on an arbitrary element, without the context
+ * menu that usually comes with it. The path bar's file name wants the drag
+ * but builds its own menu, because a right-click there is counted rather
+ * than acted on.
+ */
+export function makeDraggable(
 	app: App,
 	el: HTMLElement,
 	target: TAbstractFile,
