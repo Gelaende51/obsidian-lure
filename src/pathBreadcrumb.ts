@@ -405,6 +405,53 @@ export class PathBreadcrumb {
 			} else this.startFullPathEdit();
 		}, { signal: this.domListeners.signal });
 
+		// While coupled, a click on the row is a request to move every pane,
+		// not this one. Capture phase and first, so neither the plugin's own
+		// segment handling nor Obsidian's runs and takes one pane somewhere
+		// the others are not following.
+		container?.addEventListener("click", (evt) => {
+			const lock = this.manager.navLock;
+			if (!lock.isLocked() || !this.participates()) return;
+			const target = (evt.target as HTMLElement).closest<HTMLElement>(".view-header-breadcrumb");
+			if (!target || target.closest(".lure-vault-wrapper")) return;
+			evt.preventDefault();
+			// stopImmediatePropagation, not stopPropagation: the row's other
+			// handlers sit on this same element, and stopPropagation does not
+			// stop siblings. With only that, a locked click ran this handler
+			// *and* the ordinary segment one — which moved one pane on its own
+			// and left the panes pointing at different folders, the precise
+			// failure the lock exists to prevent.
+			evt.stopImmediatePropagation();
+			// Only the marked ones do anything: a segment with no marking is
+			// a move the other panes cannot make, and silence is the honest
+			// answer rather than moving this one alone.
+			if (!target.hasClass(NAV_LEGAL_CLASS)) return;
+			const path = this.nativeSegmentPath(target);
+			lock.move(path === this.currentFolderPath() ? "sibling" : "up");
+		}, { capture: true, signal: this.domListeners.signal });
+
+		// Obsidian's own back and forward move one pane. While coupled they
+		// have to move all of them, so the press is taken here and handed to
+		// the lock — which refuses it outright if any pane cannot follow.
+		this.leaf.view.containerEl
+			.querySelector<HTMLElement>(".view-header-left")
+			?.addEventListener("click", (evt) => {
+				const lock = this.manager.navLock;
+				if (!lock.isLocked() || !this.participates()) return;
+				// Array.from rather than spread: the DOM lib this project builds
+				// against types NodeListOf without an iterator.
+				const icons = Array.from(
+					this.leaf.view.containerEl.querySelectorAll<HTMLElement>(".view-header-left .clickable-icon"),
+				);
+				const pressed = (evt.target as HTMLElement).closest<HTMLElement>(".clickable-icon");
+				if (!pressed) return;
+				const index = icons.indexOf(pressed);
+				if (index !== 0 && index !== 1) return;
+				evt.preventDefault();
+				evt.stopImmediatePropagation();
+				lock.move(index === 0 ? "back" : "forward");
+			}, { capture: true, signal: this.domListeners.signal });
+
 		// A modifier on a folder segment opens rather than edits, the same
 		// rule the file name follows. Capture phase and ahead of the segment
 		// handler below, so it applies in swapped mode too — what a plain
@@ -750,6 +797,7 @@ export class PathBreadcrumb {
 	canMove(move: NavMove): boolean {
 		if (!this.participates()) return false;
 		if (move === "up") return this.parentOfCurrentFolder() !== null;
+		if (move === "sibling") return this.manager.navLock.nextSharedSibling() !== null;
 		const history = this.leaf.history;
 		if (!history) return false;
 		const stack = move === "back" ? history.backHistory : history.forwardHistory;
@@ -763,7 +811,38 @@ export class PathBreadcrumb {
 	 * about them.
 	 */
 	previewMove(move: NavMove): string | null {
-		return move === "up" ? this.parentOfCurrentFolder() : null;
+		if (move === "up") return this.parentOfCurrentFolder();
+		// A sibling step keeps each pane in its own tree, so two panes only
+		// converge on one if they were already sharing a parent — which the
+		// preview reports honestly rather than assuming cannot happen.
+		if (move === "sibling") {
+			const name = this.manager.navLock.nextSharedSibling();
+			if (name === null) return null;
+			const parent = this.parentOfCurrentFolder();
+			return parent === null ? null : parent ? `${parent}/${name}` : name;
+		}
+		return null;
+	}
+
+	currentFolderName(): string | null {
+		const current = this.currentFolderPath();
+		if (!current) return null;
+		const cut = current.lastIndexOf("/");
+		return cut < 0 ? current : current.slice(cut + 1);
+	}
+
+	siblingFolderNames(): string[] {
+		const parentPath = this.parentOfCurrentFolder();
+		if (parentPath === null) return [];
+		const parent = this.plugin.app.vault.getAbstractFileByPath(parentPath || "/");
+		if (!(parent instanceof TFolder)) return [];
+		return parent.children.filter((child) => child instanceof TFolder).map((child) => child.name);
+	}
+
+	moveToSibling(name: string): void {
+		const parentPath = this.parentOfCurrentFolder();
+		if (parentPath === null) return;
+		this.goUpTo(parentPath ? `${parentPath}/${name}` : name);
 	}
 
 	applyMove(move: NavMove): void {
@@ -792,9 +871,14 @@ export class PathBreadcrumb {
 		container?.toggleClass(NAV_LOCKED_CLASS, this.manager.navLock.isLocked() && this.participates());
 
 		const parent = this.parentOfCurrentFolder();
+		const here = this.currentFolderPath();
 		for (const [index, segment] of this.nativeSegments().entries()) {
 			const path = this.ancestorFolderPaths()[index] ?? null;
-			segment.toggleClass(NAV_LEGAL_CLASS, moves.has("up") && path !== null && path === parent);
+			const isUp = moves.has("up") && path !== null && path === parent;
+			// The folder you are in is what a sibling step leaves, so it is
+			// what carries that move's marking.
+			const isSibling = moves.has("sibling") && path !== null && path === here;
+			segment.toggleClass(NAV_LEGAL_CLASS, isUp || isSibling);
 		}
 		this.markHistoryButtons(moves);
 		this.updateNavLockButton();

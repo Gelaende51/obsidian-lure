@@ -15,9 +15,9 @@
  */
 
 /** The moves a locked bar may make. Deliberately small — see `isLegal`. */
-export type NavMove = "back" | "forward" | "up";
+export type NavMove = "back" | "forward" | "up" | "sibling";
 
-export const NAV_MOVES: readonly NavMove[] = ["back", "forward", "up"];
+export const NAV_MOVES: readonly NavMove[] = ["back", "forward", "up", "sibling"];
 
 /**
  * What the lock needs of a path bar. Kept to questions and instructions so
@@ -39,6 +39,12 @@ export interface NavLockParticipant {
 	markLegalMoves(moves: ReadonlySet<NavMove>): void;
 	/** True while this bar is showing something the lock can reason about. */
 	participates(): boolean;
+	/** The folder this bar stands in, by name alone. Null at the vault root. */
+	currentFolderName(): string | null;
+	/** Names of the folders beside this one, so the lock can find what they share. */
+	siblingFolderNames(): string[];
+	/** Steps into a named folder beside the current one. The name is the lock's choice, not this bar's. */
+	moveToSibling(name: string): void;
 }
 
 export class NavLock {
@@ -91,9 +97,49 @@ export class NavLock {
 	 */
 	move(move: NavMove): boolean {
 		if (!this.legalMoves().has(move)) return false;
+		if (move === "sibling") {
+			const name = this.nextSharedSibling();
+			if (name === null) return false;
+			for (const bar of this.active()) bar.moveToSibling(name);
+			this.refresh();
+			return true;
+		}
 		for (const bar of this.active()) bar.applyMove(move);
 		this.refresh();
 		return true;
+	}
+
+	/**
+	 * The next folder name every coupled bar has beside its own.
+	 *
+	 * One name for all of them, chosen here: letting each bar pick its own
+	 * "next" would step them into differently-named folders and quietly end
+	 * the parallel. Ordered and cycled so repeated presses walk the shared
+	 * siblings and come back round.
+	 */
+	nextSharedSibling(): string | null {
+		const bars = this.active();
+		if (bars.length < 2) return null;
+
+		let shared: string[] | null = null;
+		for (const bar of bars) {
+			const names = new Set(bar.siblingFolderNames());
+			shared = shared === null ? [...names] : shared.filter((name) => names.has(name));
+		}
+		if (!shared?.length) return null;
+		shared.sort((a, b) => a.localeCompare(b));
+
+		// Only meaningful while every bar stands in the same-named folder;
+		// otherwise there is no "current" to advance from and the panes are
+		// already somewhere the lock did not put them.
+		const current = bars[0]?.currentFolderName() ?? null;
+		if (current === null || !bars.every((bar) => bar.currentFolderName() === current)) {
+			return shared[0] ?? null;
+		}
+		const at = shared.indexOf(current);
+		if (at < 0) return shared[0] ?? null;
+		if (shared.length < 2) return null;
+		return shared[(at + 1) % shared.length] ?? null;
 	}
 
 	/**
