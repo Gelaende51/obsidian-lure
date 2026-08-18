@@ -3,6 +3,11 @@
  * Behavioural tests for the navigation lock: several path bars coupled so
  * they walk parallel folder structures in step.
  *
+ * Three panes at most, on purpose. Two give the pairwise rule and three give
+ * the N-way one — a name shared by two of them but not the third, which must
+ * not be offered. A fourth exercises the same code with a longer list, so the
+ * cost of opening it buys nothing.
+ *
  * Fixtures are built here rather than assumed, because the shapes matter:
  * a name two panes share, a name only one has, and a third pane that
  * shares less than the other two. Those are the cases the legality rule is
@@ -15,8 +20,12 @@
  */
 
 import { connect, PAUSE, reloadPlugin } from "./cdpSession.mjs";
+import { mkdirSync, rmSync, writeFileSync } from "fs";
+import { join } from "path";
 
 const ROOT = "NavTest";
+/** Outside every vault on purpose — that is the thing under test. */
+const EXT = `${process.env.HOME}/lure-navlock-fixtures`;
 const results = [];
 const tests = [];
 const test = (name, fn) => tests.push({ name, fn });
@@ -50,12 +59,55 @@ const buildFixture = `
 	return true;
 `;
 
+function buildExternalFixtureOnDisk() {
+	rmSync(EXT, { recursive: true, force: true });
+	for (const branch of ["one", "two"]) {
+		for (const folder of ["shared", "twin", ".hidden"]) {
+			mkdirSync(join(EXT, branch, folder), { recursive: true });
+		}
+		writeFileSync(join(EXT, branch, "shared", "leaf.md"), `# ${branch}\n`);
+		writeFileSync(join(EXT, branch, "twin", "leaf.md"), `# twin ${branch}\n`);
+	}
+	return "return true;";
+}
+const buildExternalFixture = buildExternalFixtureOnDisk();
+
+/** Opens one external pane per branch, all at shared/leaf.md. */
+const openExternalPanes = (branches) => `
+	for (const type of ["markdown", "lure-external-file", "empty"]) {
+		app.workspace.getLeavesOfType(type).forEach((l) => l.detach());
+	}
+	${PAUSE(400)}
+	const branches = ${JSON.stringify(branches)};
+	let leaf = app.workspace.getLeaf(false);
+	for (const [i, branch] of branches.entries()) {
+		if (i > 0) leaf = app.workspace.getLeaf("split", "vertical");
+		await leaf.setViewState({
+			type: "lure-external-file", active: true,
+			state: { path: "${EXT}/" + branch + "/shared/leaf.md" },
+		});
+		${PAUSE(400)}
+	}
+	${PAUSE(500)}
+	const mgr = app.plugins.plugins.lure.manager;
+	app.workspace.getLeavesOfType("lure-external-file").forEach((l) => mgr.patchLeaf(l));
+	${PAUSE(400)}
+	mgr.navLock.setLocked(true);
+	${PAUSE(400)}
+	return true;
+`;
+
 /** Opens `branches.length` editor panes, one per branch, all at shared/leaf.md. */
 const openPanes = (branches) => `
 	document.querySelector(".lure-path-input")?.blur();
 	document.body.click();
-	app.workspace.detachLeavesOfType("markdown");
-	app.workspace.detachLeavesOfType("lure-external-file");
+	// Every kind, not just markdown. Detaching a view leaves an *empty* leaf
+	// behind in its split, so a suite that only detached markdown accumulated
+	// one dead split per test — twenty of them by the end of a run, each with
+	// a live breadcrumb instance attached.
+	for (const type of ["markdown", "lure-external-file", "empty"]) {
+		app.workspace.getLeavesOfType(type).forEach((l) => l.detach());
+	}
 	${PAUSE(400)}
 	const branches = ${JSON.stringify(branches)};
 	let leaf = app.workspace.getLeaf(false);
@@ -79,7 +131,9 @@ const lockState = `
 		locked: mgr.navLock.isLocked(),
 		legal: [...mgr.navLock.legalMoves()].sort(),
 		nextSibling: mgr.navLock.nextSharedSibling(),
-		folders: bars.map((b) => b.currentFolderPath()),
+		// Where each bar stands, in whichever world it is in: currentFolderPath
+		// is vault-relative and reads empty for a bar outside the vault.
+		folders: bars.map((b) => b.externalPath ?? b.currentFolderPath()),
 		files: app.workspace.getLeavesOfType("markdown").map((l) => l.view.file?.path ?? null),
 	});
 `;
@@ -174,59 +228,129 @@ test("rename: one that would break the parallel asks first", async () => {
 	expect("dialog closed", s.modals, 0);
 });
 
-test("outside the vault: a pane out there is not coupled", async () => {
-	await page.evaluate(buildFixture);
-	await page.evaluate(openPanes(["alpha", "beta"]));
-	const before = await look();
-	expect("both panes coupled to begin with", before.canLock, true);
+test("outside the vault: two panes out there couple like any others", async () => {
+	buildExternalFixtureOnDisk();
+	await page.evaluate(openExternalPanes(["one", "two"]));
+	const s = await look();
+	expect("both take part", s.folders.length, 2);
+	expect("locked", s.locked, true);
+	expect("sibling offered", s.legal, (v) => v.includes("sibling"));
+	expect("and it is the shared name", s.nextSibling, "twin");
 
-	// Send one pane outside the vault; only one bar is left to couple.
-	const r = await page.evaluate(`
-		const leaf = app.workspace.getLeavesOfType("markdown")[1];
-		await leaf.setViewState({ type: "lure-external-file", active: true, state: { path: "/home/niemand/big.md" } });
-		${PAUSE(1000)}
-		const mgr = app.plugins.plugins.lure.manager;
-		app.workspace.iterateAllLeaves((l) => mgr.patchLeaf(l));
-		${PAUSE(400)}
-		mgr.navLock.setLocked(true);
-		${PAUSE(500)}
-		return JSON.stringify({
-			participants: [...mgr.instances.values()].filter((b) => b.participates()).length,
-			canLock: mgr.navLock.canLock(),
-			locked: mgr.navLock.isLocked(),
-			chains: document.querySelectorAll(".lure-navlock-btn").length,
-		});
-	`);
-	const s = JSON.parse(r);
-	expect("the external pane does not take part", s.participants, 1);
-	expect("so there is nothing to couple", s.canLock, false);
-	expect("and locking is refused", s.locked, false);
-	expect("no chain is shown", s.chains, 0);
+	await page.evaluate(`app.plugins.plugins.lure.manager.navLock.move("sibling"); ${PAUSE(900)} return true;`);
+	expect("both stepped, each in its own tree", (await look()).folders.sort(), [
+		`${EXT}/one/twin`,
+		`${EXT}/two/twin`,
+	]);
 });
 
-test("outside the vault: a lock already on drops when a pane leaves", async () => {
-	await page.evaluate(buildFixture);
-	await page.evaluate(openPanes(["alpha", "beta"]));
-	await lock(true);
-	expect("locked to begin with", (await look()).locked, true);
+test("outside the vault: hidden folders are not offered unless they are shown", async () => {
+	buildExternalFixtureOnDisk();
+	await page.evaluate(openExternalPanes(["one", "two"]));
 	const r = await page.evaluate(`
-		const leaf = app.workspace.getLeavesOfType("markdown")[1];
-		await leaf.setViewState({ type: "lure-external-file", active: true, state: { path: "/home/niemand/big.md" } });
-		${PAUSE(1000)}
 		const mgr = app.plugins.plugins.lure.manager;
-		app.workspace.iterateAllLeaves((l) => mgr.patchLeaf(l));
-		mgr.navLock.refresh();
+		const bar = [...mgr.instances.values()].find((b) => b.participates());
+		const settings = app.plugins.plugins.lure.settings;
+		const was = settings.showDotFiles;
+		settings.showDotFiles = false;
+		const hidden = bar.siblingFolderNames();
+		settings.showDotFiles = true;
+		const shown = bar.siblingFolderNames();
+		settings.showDotFiles = was;
+		return JSON.stringify({ hidden, shown });
+	`);
+	const s = JSON.parse(r);
+	// Inside the vault this cannot arise — Obsidian never indexes dot folders
+	// — so only the external listing has to be filtered, and it is the same
+	// rule the dropdown uses.
+	expect("hidden while the setting is off", s.hidden, (v) => !v.includes(".hidden"));
+	expect("offered when it is on", s.shown, (v) => v.includes(".hidden"));
+});
+
+test("mixed: a vault pane and an external one walk together", async () => {
+	await page.evaluate(buildFixture);
+	buildExternalFixtureOnDisk();
+	await page.evaluate(`
+		for (const type of ["markdown", "lure-external-file", "empty"]) {
+			app.workspace.getLeavesOfType(type).forEach((l) => l.detach());
+		}
 		${PAUSE(400)}
+		await app.workspace.getLeaf(false).openFile(app.vault.getAbstractFileByPath("${ROOT}/alpha/shared/leaf.md"));
+		${PAUSE(400)}
+		await app.workspace.getLeaf("split", "vertical").setViewState({
+			type: "lure-external-file", active: true,
+			state: { path: "${EXT}/one/shared/leaf.md" },
+		});
+		${PAUSE(900)}
+		const mgr = app.plugins.plugins.lure.manager;
+		app.workspace.getLeavesOfType("markdown").forEach((l) => mgr.patchLeaf(l));
+		app.workspace.getLeavesOfType("lure-external-file").forEach((l) => mgr.patchLeaf(l));
+		${PAUSE(400)}
+		mgr.navLock.setLocked(true);
+		${PAUSE(400)}
+		return true;
+	`);
+	const s = await look();
+	expect("both take part", s.folders.length, 2);
+	expect("standing in same-named folders", s.folders.map((f) => f.split(/[/\\]/).pop()), ["shared", "shared"]);
+	expect("sibling offered across the boundary", s.nextSibling, "twin");
+
+	await page.evaluate(`app.plugins.plugins.lure.manager.navLock.move("sibling"); ${PAUSE(900)} return true;`);
+	const after = await look();
+	expect("each stepped in its own world", after.folders.sort(), [
+		`${EXT}/one/twin`,
+		`${ROOT}/alpha/twin`,
+	]);
+});
+
+test("mixed: a shared rename asks rather than half-renaming", async () => {
+	await page.evaluate(buildFixture);
+	buildExternalFixtureOnDisk();
+	await page.evaluate(`
+		for (const type of ["markdown", "lure-external-file", "empty"]) {
+			app.workspace.getLeavesOfType(type).forEach((l) => l.detach());
+		}
+		${PAUSE(400)}
+		await app.workspace.getLeaf(false).openFile(app.vault.getAbstractFileByPath("${ROOT}/alpha/shared/leaf.md"));
+		${PAUSE(400)}
+		await app.workspace.getLeaf("split", "vertical").setViewState({
+			type: "lure-external-file", active: true,
+			state: { path: "${EXT}/one/shared/leaf.md" },
+		});
+		${PAUSE(900)}
+		const mgr = app.plugins.plugins.lure.manager;
+		app.workspace.getLeavesOfType("markdown").forEach((l) => mgr.patchLeaf(l));
+		app.workspace.getLeavesOfType("lure-external-file").forEach((l) => mgr.patchLeaf(l));
+		${PAUSE(400)}
+		mgr.navLock.setLocked(true);
+		${PAUSE(400)}
+		return true;
+	`);
+	// Not awaited: the commit stops on a dialog, and awaiting it here would
+	// wait for a click that this step is the one meant to make.
+	const r = await page.evaluate(`
+		const mgr = app.plugins.plugins.lure.manager;
+		const bar = [...mgr.instances.values()].find((b) => b.participates() && b.externalPath === null);
+		bar.renameMode = true;
+		bar.moveFileTo("${ROOT}/alpha/renamed/leaf.md");
+		${PAUSE(900)}
+		const title = document.querySelector(".modal-title")?.textContent ?? null;
+		document.querySelector(".modal .lure-modal-buttons button")?.click();
+		${PAUSE(700)}
 		return JSON.stringify({
-			locked: mgr.navLock.isLocked(),
-			marked: document.querySelectorAll(".lure-nav-legal").length,
-			chains: document.querySelectorAll(".lure-navlock-btn").length,
+			title,
+			vaultUntouched: !!app.vault.getAbstractFileByPath("${ROOT}/alpha/shared"),
+			renamedAbsent: !app.vault.getAbstractFileByPath("${ROOT}/alpha/renamed"),
+			stillLocked: mgr.navLock.isLocked(),
 		});
 	`);
 	const s = JSON.parse(r);
-	expect("the lock lets go", s.locked, false);
-	expect("its marking is cleared", s.marked, 0);
-	expect("and its button is gone", s.chains, 0);
+	// Depths cannot line up between a vault path and an absolute one, so the
+	// shared-folder rename never applies across the boundary. Asking is the
+	// safe answer, and it must not have renamed one side already.
+	expect("it asked", s.title, (v) => typeof v === "string" && v.length > 0);
+	expect("nothing was renamed", [s.vaultUntouched, s.renamedAbsent], [true, true]);
+	expect("and the lock is still on", s.stillLocked, true);
 });
 
 const filter = process.argv[2];
@@ -250,11 +374,14 @@ for (const { name, fn } of tests) {
 await page.evaluate(`
 	app.plugins.plugins.lure.manager.navLock.setLocked(false);
 	document.querySelectorAll(".modal-container").forEach((m) => m.remove());
-	app.workspace.detachLeavesOfType("lure-external-file");
+	for (const type of ["lure-external-file", "empty"]) {
+		app.workspace.getLeavesOfType(type).forEach((l) => l.detach());
+	}
 	const folder = app.vault.getAbstractFileByPath("${ROOT}");
 	if (folder) await app.vault.adapter.rmdir("${ROOT}", true);
 	return true;
 `);
+rmSync(EXT, { recursive: true, force: true });
 page.close();
 
 const failed = results.filter((r) => !r.ok).length;

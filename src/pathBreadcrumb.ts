@@ -19,15 +19,7 @@ import type BreadcrumbPathPlugin from "./main";
 import type { BreadcrumbManager } from "./breadcrumbManager";
 import { ConfirmCreateFileModal } from "./createFileModal";
 import { FolderChildSuggest } from "./folderChildSuggest";
-import {
-	ExternalChild,
-	PATH_SEP,
-	externalJoin,
-	externalParent,
-	externalSegments,
-	isExternalFile,
-	isExternalFolder,
-} from "./externalFs";
+import { ExternalChild, PATH_SEP, externalJoin, externalParent, externalSegments, isExternalFile, isExternalFolder, listExternalChildren } from "./externalFs";
 import {
 	CURRENT_VAULT_ICON,
 	LOCATION_ICONS,
@@ -806,7 +798,13 @@ export class PathBreadcrumb {
 	 * that do not apply to it.
 	 */
 	participates(): boolean {
-		if (this.file === null || this.externalPath !== null) return false;
+		// Outside the vault counts. A folder tree out there can be parallel to
+		// one in here, or to another out there, and the moves all still mean
+		// something: the leaf keeps its own history, and the filesystem has
+		// parents and siblings like any vault does. Excluding it was
+		// convenience on my part, not a property of the feature.
+		if (this.externalPath !== null) return true;
+		if (this.file === null) return false;
 		// Editor panes only. Sidebar views get patched too — backlinks has a
 		// header title and a file like any other — but they carry no
 		// navigation history, so including one made every locked group report
@@ -843,25 +841,38 @@ export class PathBreadcrumb {
 			const name = this.manager.navLock.nextSharedSibling();
 			if (name === null) return null;
 			const parent = this.parentOfCurrentFolder();
-			return parent === null ? null : parent ? `${parent}/${name}` : name;
+			if (parent === null) return null;
+			if (this.externalPath !== null) return externalJoin(parent, name);
+			return parent ? `${parent}/${name}` : name;
 		}
 		return null;
 	}
 
 	folderNameAt(depth: number): string | null {
+		if (this.externalPath !== null) return this.externalPath.split(PATH_SEP)[depth] ?? null;
 		return this.file?.path.split("/")[depth] ?? null;
 	}
 
 	currentFolderName(): string | null {
-		const current = this.currentFolderPath();
+		const current = this.lockFolderPath();
 		if (!current) return null;
-		const cut = current.lastIndexOf("/");
+		const cut = current.lastIndexOf(this.lockSeparator());
 		return cut < 0 ? current : current.slice(cut + 1);
 	}
 
 	siblingFolderNames(): string[] {
 		const parentPath = this.parentOfCurrentFolder();
 		if (parentPath === null) return [];
+		if (this.externalPath !== null) {
+			// The same visibility rule the dropdown uses. Without it the lock
+			// would step both panes into a folder neither dropdown will show
+			// — outside the vault `listExternalChildren` returns dot entries,
+			// where Obsidian simply never indexes them and the question
+			// cannot arise inside.
+			return listExternalChildren(parentPath)
+				.filter((child) => child.isFolder && this.shouldListExternalChild(child))
+				.map((child) => child.name);
+		}
 		const parent = this.plugin.app.vault.getAbstractFileByPath(parentPath || "/");
 		if (!(parent instanceof TFolder)) return [];
 		return parent.children.filter((child) => child instanceof TFolder).map((child) => child.name);
@@ -870,10 +881,19 @@ export class PathBreadcrumb {
 	moveToSibling(name: string): void {
 		const parentPath = this.parentOfCurrentFolder();
 		if (parentPath === null) return;
+		if (this.externalPath !== null) {
+			this.goToLocation(externalJoin(parentPath, name));
+			return;
+		}
 		this.goUpTo(parentPath ? `${parentPath}/${name}` : name);
 	}
 
 	applyMove(move: NavMove): void {
+		if (move === "up" && this.externalPath !== null) {
+			const parent = this.parentOfCurrentFolder();
+			if (parent !== null) this.goToLocation(parent);
+			return;
+		}
 		if (move === "back") {
 			void this.leaf.history?.back();
 			return;
@@ -929,12 +949,34 @@ export class PathBreadcrumb {
 		icons[1]?.toggleClass(NAV_LEGAL_CLASS, moves.has("forward"));
 	}
 
-	/** The folder one level above where this bar currently stands, or null at the root. */
+	/**
+	 * The folder one level above where this bar currently stands, or null
+	 * when there is nowhere above it.
+	 *
+	 * Outside the vault that boundary is the location the row started from —
+	 * the vault, home, a drive — rather than the filesystem root, matching
+	 * what Backspace already refuses to walk past.
+	 */
 	private parentOfCurrentFolder(): string | null {
+		if (this.externalPath !== null) {
+			const base = this.externalBase?.path ?? null;
+			if (base !== null && samePath(this.externalPath, base)) return null;
+			return externalParent(this.externalPath);
+		}
 		const current = this.currentFolderPath();
 		if (!current) return null;
 		const cut = current.lastIndexOf("/");
 		return cut < 0 ? "" : current.slice(0, cut);
+	}
+
+	/** Where this bar stands, in whichever world it is in. */
+	private lockFolderPath(): string {
+		return this.externalPath ?? this.currentFolderPath();
+	}
+
+	/** The separator the current world uses, so names are split the same way they were joined. */
+	private lockSeparator(): string {
+		return this.externalPath !== null ? PATH_SEP : "/";
 	}
 
 	/**
@@ -1100,6 +1142,7 @@ export class PathBreadcrumb {
 	}
 
 	/** Cumulative folder path for each of the open file's ancestor folders. */
+	/** Vault-relative ancestors. Empty outside, where the shared rename does not apply. */
 	ancestorFolderPaths(): string[] {
 		if (!this.file) return [];
 		const parts = this.file.path.split("/");
