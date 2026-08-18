@@ -17,13 +17,16 @@ Obsidian 1.8.7+ · desktop only · AGPL-3.0
 
 ## Features
 
-- **Click a folder** for a dropdown of its *parent's* contents — swap one folder for a sibling, leave the rest of the path alone. The note's name works the same way, extension included.
+- **Click a folder** for a dropdown of its *parent's* contents — swap one folder for a sibling, leave the rest of the path alone. The note's name works the same way, selecting the name without its extension.
 - **Click the delimiter** after a folder to reveal and expand it in the File Explorer. One setting swaps the two roles.
-- **Right-click or drag any entry** — the File Explorer's own context menu and drag behaviour.
+- **Right-click or drag any entry** — the File Explorer's own context menu, entry for entry, and its drag behaviour. Paths outside the vault get an equivalent menu built for them, down to *Delete* by way of the system trash.
 - **Click the filename or empty space** to type a path, with autocomplete. `/` descends, <kbd>Backspace</kbd> steps out, <kbd>Enter</kbd> commits.
 - **Pencil Folder button** switches the same interactions to move/rename, validated as Obsidian validates.
-- **Hold <kbd>Ctrl</kbd>** to open in a new tab — or, in move/rename mode, to copy the note there instead.
-- **<kbd>F2</kbd>** alternates between the inline title and the path bar.
+- **Hold <kbd>Ctrl</kbd>** to open in a new tab — or, in move/rename mode, to copy the note there instead. The note's name and the folder segments take the same modifiers, and drag, as their File Explorer rows do.
+- **<kbd>Tab</kbd> completes the path** a folder at a time, then widens the selection: name, name with extension, path from the vault, path from the system root.
+- **Right-click to copy** — twice for a name, three times for everything to the right of it, and on the empty space for the whole path or the system path.
+- **Type a URL** — `https://`, `obsidian://`, or a `file://` or percent-encoded path — and it is opened rather than treated as a note name.
+- **<kbd>F2</kbd>** alternates between the inline title and the path bar, passing cleanly through Obsidian's rename dialog when the title is scrolled out of view. A *Focus the path bar* command is there to bind if you want the address-bar gesture.
 - **Click the vault name** to browse your other vaults, home, the filesystem root and mounted drives without switching vaults. Read-only until you open a padlock, and framed in the error colour throughout. Off by default — see [outside the vault](#outside-the-vault).
 - **Two warning tiers** — red outside the vault, orange for text files Obsidian has no editor for. See [the warning colours](docs/usage.md#the-two-warning-colours).
 - **Themeable icons**, swapped from a CSS snippet — and **45 locales**, every language Obsidian ships.

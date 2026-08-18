@@ -29,7 +29,7 @@ The **vault root** is the one segment that isn't a path segment. It has no paren
 
 Clicking a folder name selects **that folder's name** in a text input and opens a dropdown of the folder **one layer up** — its parent. Typing or picking an entry swaps this folder for a sibling and leaves everything below it untouched, so `Projects/2026/Kickoff.md` → click `2026` → pick `2025` gets you `Projects/2025/Kickoff.md`.
 
-Clicking the **note's name** works the same way against its own folder, and selects the file name **including the extension** — renaming or retargeting a note usually means changing that too.
+Clicking the **note's name** works the same way against its own folder, and selects the name **without its extension** — renaming is the common edit, and typing straight over a selection that included `.md` used to change the file type by accident. The extension stays visible one keystroke away: <kbd>End</kbd> or <kbd>→</kbd> reaches it, and the double-click that widens to the whole row takes the lot.
 
 Clicking the folder has already selected one segment, so **one further click** widens the selection to the whole line — that folder *and* everything below it — and typing then replaces the rest of the path in one go. Works the same in navigation and rename/move mode.
 
@@ -45,7 +45,7 @@ Clicking a delimiter (with **Folder name opens the dropdown** off) descends into
 
 Every file and folder in the dropdown behaves like its row in the File Explorer:
 
-- **Right-click** for the same context menu — *New note* / *New folder* on a folder, *Open in new tab* / *Rename…* / *Delete* on a file — including entries other plugins add to file menus.
+- **Right-click** for the same context menu the File Explorer gives, entry for entry — including the ones other plugins add. A folder offers *New note*, *New folder*, *New canvas*, *New base*, *Make a copy*, *Move folder to…*, *Search in folder*, *Copy path*, *Show in system explorer*, *Rename…* and *Delete*; a file offers its own equivalent, *Open in default app* included.
 - **Drag** an entry anywhere Obsidian accepts a file: into an editor to insert a link, onto a folder in the File Explorer to move it, onto the tab bar to open it.
 
 Menu wording comes from Obsidian's own translations, so it matches the rest of the app in every language.
@@ -59,6 +59,62 @@ Menu wording comes from Obsidian's own translations, so it matches the rest of t
 - <kbd>Enter</kbd> commits; <kbd>Esc</kbd> or a click elsewhere cancels back to the file's real path.
 
 The input is chrome-free — no box, no border — so it reads as the path text itself, and it auto-grows as you type.
+
+## Right-click: one press, two presses, three
+
+Every target on the row answers a right-click, and how many presses you give it decides what you get. Because a second press might still be coming, the first one waits about a third of a second before acting — the cost of putting three gestures on one button.
+
+| Where you press | Once | Twice | Three times |
+| --- | --- | --- | --- |
+| The **vault name** | A new empty tab | | |
+| A **delimiter** | That folder's menu — its folder note's, where a folder-note plugin is running and the folder has one | | |
+| A **folder name** | That folder's menu | Copies the folder's name | Copies it and everything to the right of it |
+| The **note's name** | Opens the outline sidebar | Copies the name | Copies it with its extension |
+| The **empty space** | | Copies the path from your vault folder | Copies it from the system root |
+
+Every copy says so in a notice, because a copy leaves nothing on screen to show it happened and a miscounted press should not look like a successful one.
+
+## Modifiers: open it somewhere else
+
+The note's name and the folder segments behave like their rows in the File Explorer.
+
+| | On the note's name | On a folder segment |
+| --- | --- | --- |
+| Plain click | Edit the name | Browse that folder |
+| <kbd>Ctrl</kbd> / middle-click | Open the note in a new tab | Send the folder to a new tab |
+| <kbd>Ctrl</kbd>+<kbd>Alt</kbd> | A split | A split |
+| Drag | The note, anywhere Obsidian takes a file | The folder, likewise |
+
+A folder is not something Obsidian can open, so sending one to a tab does one of two things: opens its folder note, where a folder-note plugin is running and there is one, or opens an empty tab whose path bar already stands in that folder — leaving you only the name to type.
+
+## Tab: complete the path, then widen the selection
+
+While there is a folder left to complete, <kbd>Tab</kbd> completes it and steps into it, so a path can be typed as far as its first unambiguous letters. Once there is nothing left to descend into, the presses stop moving along the path and start widening what is selected:
+
+1. the name
+2. the name with its extension
+3. the path from your vault folder
+4. the path from the system root
+5. back to the first folder, ready to type from again
+
+A fourth click reaches that same fourth rung directly.
+
+Each rung changes what is *in* the field, not only what is highlighted — a selection has to be over the text it names, or <kbd>Enter</kbd> would commit something other than what you can see is selected. The ladder belongs to one editing session: click away and the next <kbd>Tab</kbd> completes a folder again.
+
+## Typing something that is not a path
+
+| What you type | What happens |
+| --- | --- |
+| `https://…` | Opens as a link — in the Web Viewer if you have it on, your browser otherwise |
+| `obsidian://…` | Handed to Obsidian's own URI handler |
+| `file:///…` | Decoded and opened: as a real note if it is inside your vault, in the viewer if not |
+| `/home/you/a%20b.md` | The same, for a path pasted out of a browser or file manager |
+
+Only explicit schemes count — a note called `100%20` is still a note. A `/` that belongs to a scheme stays literal rather than descending into a folder, so a URL can be typed by hand and not only pasted.
+
+## A command for the keyboard
+
+**Focus the path bar** selects the whole path, ready to be typed over — the address-bar gesture. It has no key of its own out of the box, because Obsidian's guidelines discourage plugins claiming one; bind it under *Settings → Hotkeys* to whatever suits you.
 
 ## Navigation never touches the open file
 
@@ -102,7 +158,9 @@ The path bar is **framed in the error colour** — the same ring rename mode dra
 
 Browsing otherwise works as it does inside: chips, delimiters, typing, autocomplete, <kbd>Backspace</kbd> to step out. The same visibility rules apply too, so unsupported extensions still need Obsidian's *Show all file types* and dot-files still need this plugin's setting.
 
-**Right-click and drag** on dropdown entries don't work out there — those are the File Explorer's own handlers, and they need a file the vault knows about.
+**Right-click works out there too**, though it is a different menu: the File Explorer's own handlers need a file the vault knows about, so entries outside are built from the path instead. They offer opening (here, to the right, in a new window, or in your desktop's default application), *Copy path*, *Show in system explorer*, and — once the padlock is open — *New note*, *New folder*, *Make a copy*, *Rename…* and *Delete*. **Dragging** still needs a vault file and stays unavailable.
+
+Deleting outside the vault moves the file to your **system trash** — the Recycle Bin on Windows, Trash on macOS — never an unlink. Out here there is no Obsidian trash to recover from, so a delete that could not be undone is not offered at all: where a platform has no trash, the attempt reports the failure instead.
 
 ### Writing outside the vault
 
@@ -132,7 +190,7 @@ Obsidian's editor only works on files inside the vault, so an external file **ca
 | `.md`, `.markdown` | Rendered Markdown |
 | Images, audio, video, PDF | Native player/viewer |
 | Any other **text** file (`.json`, `.css`, `.log`, `.txt`, …) | Verbatim plain text |
-| Binary formats with no viewer (`.zip`, `.exe`, …) | Handed to *Open externally* |
+| Binary formats with no viewer (`.zip`, `.exe`, …) | Handed to *Open in default app* |
 
 The viewer has two readings of a file, and since they exclude each other only the one you'd switch **to** is shown:
 
@@ -169,7 +227,9 @@ A quiet line above the content offers the ways out:
 
 - **Open in *(vault)*** — shown when the file belongs to one of your other vaults. Hands it to Obsidian's own URI handler, which opens that vault's window with the note in it, as a real editable note. This window is left exactly as it was; nothing switches under you.
 - **View as Markdown** / **Edit as text** — the two readings; the second also lifts read-only outside the vault.
-- **Open externally** — hands the file to your desktop's default application, including the binary formats this viewer can't show.
+- **Open in default app** — hands the file to your desktop's default application, including the binary formats this viewer can't show. Worded exactly as Obsidian's own entry for the same action, because it is the same action.
+
+The viewer also answers a **right-click**: inside the text editor with *Cut* / *Copy* / *Paste* / *Select all*, and anywhere else with the file's own menu. Obsidian's three-dot menu in the header carries that menu too — outside the vault it would otherwise offer nothing but *Split right* and *Split down*.
 
 Nothing outside your vault is written unless you press *Edit as text* first. See the README's [Outside the vault](../README.md#outside-the-vault) section for the full disclosure.
 
@@ -241,6 +301,12 @@ This works by wrapping the `workspace:edit-file-title` command rather than grabb
 | Rename in place | <kbd>F2</kbd> twice (first press goes to the inline title, second to the header) |
 | Jump to another vault, home or a drive | Click the vault name |
 | Open a file from outside the vault | Vault name → pick a location → browse → pick the file (read-only until *Edit as text*) |
+| Complete a folder while typing | <kbd>Tab</kbd> |
+| Grab the whole path, or the system path | <kbd>Tab</kbd> past the end, or click four times |
+| Copy a name, a path, or a system path | Right-click it twice; the empty space three times for the system path |
+| Open a folder segment in a new tab | <kbd>Ctrl</kbd> or middle-click it |
+| Reach the path bar from the keyboard | Bind *Focus the path bar* in Hotkeys |
+| Open a web address or an `obsidian://` link | Type it into the bar and press <kbd>Enter</kbd> |
 | Cancel anything | <kbd>Esc</kbd>, or click outside the header bar |
 
 ## Settings
