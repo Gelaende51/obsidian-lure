@@ -58,6 +58,7 @@ import { LABELS, obsidianLabel } from "./obsidianLabels";
 import { makeDraggable, showContextMenu } from "./nativeFileItem";
 import { warnsOnOpen } from "./fileKinds";
 import { t } from "./lang";
+import { confirmAction } from "./prompts";
 
 const PATCHED_CLASS = "lure-patched";
 /**
@@ -148,6 +149,26 @@ let measureCtx: CanvasRenderingContext2D | null = null;
  * extension, so `lastIndexOf` at position 0 does not count. A name with no
  * dot at all is likewise all name.
  */
+/**
+ * The single folder position where two paths differ, or null.
+ *
+ * Null when the paths are different lengths, when nothing changed, when
+ * more than one segment did, or when the change is the file name itself —
+ * none of those is "the user renamed a folder", which is the only case the
+ * coupled rename applies to.
+ */
+function onlyChangedFolder(before: string[], after: string[]): number | null {
+	if (before.length !== after.length || before.length < 2) return null;
+	let found: number | null = null;
+	for (let i = 0; i < before.length; i++) {
+		if (before[i] === after[i]) continue;
+		if (found !== null) return null;
+		found = i;
+	}
+	// The last segment is the file, not a folder.
+	return found !== null && found < before.length - 1 ? found : null;
+}
+
 function stemLength(name: string): number {
 	const dot = name.lastIndexOf(".");
 	return dot > 0 ? dot : name.length;
@@ -411,7 +432,10 @@ export class PathBreadcrumb {
 		// the others are not following.
 		container?.addEventListener("click", (evt) => {
 			const lock = this.manager.navLock;
-			if (!lock.isLocked() || !this.participates()) return;
+			// Rename mode is exempt: renaming is not navigating, and the whole
+			// point of leaving the pencil button alone was that it keeps
+			// working while coupled.
+			if (!lock.isLocked() || !this.participates() || this.renameMode) return;
 			const target = (evt.target as HTMLElement).closest<HTMLElement>(".view-header-breadcrumb");
 			if (!target || target.closest(".lure-vault-wrapper")) return;
 			evt.preventDefault();
@@ -824,6 +848,10 @@ export class PathBreadcrumb {
 		return null;
 	}
 
+	folderNameAt(depth: number): string | null {
+		return this.file?.path.split("/")[depth] ?? null;
+	}
+
 	currentFolderName(): string | null {
 		const current = this.currentFolderPath();
 		if (!current) return null;
@@ -1072,7 +1100,7 @@ export class PathBreadcrumb {
 	}
 
 	/** Cumulative folder path for each of the open file's ancestor folders. */
-	private ancestorFolderPaths(): string[] {
+	ancestorFolderPaths(): string[] {
 		if (!this.file) return [];
 		const parts = this.file.path.split("/");
 		parts.pop();
@@ -2103,6 +2131,11 @@ export class PathBreadcrumb {
 			return;
 		}
 
+		// While coupled, a rename means something wider than this one note.
+		if (this.manager.navLock.isLocked() && this.participates()) {
+			if (await this.commitLockedRename(newPath)) return;
+		}
+
 		const existing = this.plugin.app.vault.getAbstractFileByPath(newPath);
 		if (existing && existing !== this.file) {
 			new Notice(t("noticeAlreadyExists", { path: newPath }));
@@ -2119,6 +2152,84 @@ export class PathBreadcrumb {
 		}
 
 		this.finishRename();
+	}
+
+	/**
+	 * A rename committed while the panes are coupled.
+	 *
+	 * Two cases the ordinary move does not cover. Renaming a folder the
+	 * coupled panes *share* — same name, same depth, different trees — is a
+	 * rename of that folder in every one of them, because the shared name is
+	 * the structure the lock is holding on to and changing it in one place
+	 * only would end the parallel silently. And a rename that leaves the
+	 * panes standing in differently-named folders breaks that structure
+	 * whether it means to or not, so it asks rather than picking for you.
+	 *
+	 * Returns true when it has dealt with the commit.
+	 */
+	private async commitLockedRename(newPath: string): Promise<boolean> {
+		const before = this.file?.path.split("/") ?? [];
+		const after = newPath.split("/");
+		const depth = onlyChangedFolder(before, after);
+
+		if (depth !== null) {
+			const oldName = before[depth] ?? "";
+			const newName = after[depth] ?? "";
+			// Renaming a folder and moving the note into a different folder
+			// both change exactly one segment; what separates them is whether
+			// the new one is already there. A name nobody is using is a
+			// rename; an existing folder is a destination, and renaming onto
+			// it would fail anyway.
+			const target = [...before.slice(0, depth), newName].join("/");
+			const taken = this.plugin.app.vault.getAbstractFileByPath(target) !== null;
+			if (!taken && this.manager.navLock.sharesFolderAt(depth, oldName)) {
+				await this.renameSharedFolder(depth, newName);
+				this.finishRename();
+				return true;
+			}
+		}
+
+		if (!this.manager.navLock.wouldBreakAlignment(this, newPath)) return false;
+
+		const keepRenaming = await confirmAction(this.plugin.app, {
+			title: t("navLockBreakTitle"),
+			body: t("navLockBreakBody"),
+			cta: t("navLockRenameAnyway"),
+			warning: true,
+		});
+		if (!keepRenaming) {
+			// The lock is what was chosen, so the rename simply does not
+			// happen — and the field is left as it was rather than closed,
+			// since the user may want to type something else.
+			return true;
+		}
+		// The rename was chosen, so the coupling it breaks ends with it.
+		this.manager.navLock.setLocked(false);
+		return false;
+	}
+
+	/**
+	 * Renames the folder at `depth` to `newName` in every coupled pane.
+	 *
+	 * Each pane renames its *own* folder at that depth: the panes are in
+	 * different trees, and the shared thing is the name, not the path.
+	 */
+	private async renameSharedFolder(depth: number, newName: string): Promise<void> {
+		for (const bar of this.manager.navLock.coupledBars()) {
+			const path = bar.ancestorFolderPaths()[depth];
+			if (path === undefined) continue;
+			const folder = this.plugin.app.vault.getAbstractFileByPath(path);
+			if (!(folder instanceof TFolder)) continue;
+			const parent = path.slice(0, Math.max(0, path.lastIndexOf("/")));
+			const target = parent ? `${parent}/${newName}` : newName;
+			if (target === path) continue;
+			try {
+				await this.plugin.app.fileManager.renameFile(folder, target);
+			} catch (err) {
+				new Notice(t("noticeRenameFailed", { error: (err as Error).message }));
+				return;
+			}
+		}
 	}
 
 	/**

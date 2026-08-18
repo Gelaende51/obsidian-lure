@@ -45,6 +45,10 @@ export interface NavLockParticipant {
 	siblingFolderNames(): string[];
 	/** Steps into a named folder beside the current one. The name is the lock's choice, not this bar's. */
 	moveToSibling(name: string): void;
+	/** The name of this bar's folder at a given depth, for comparing structure across trees. */
+	folderNameAt(depth: number): string | null;
+	/** This bar's own ancestor folders, so a shared rename can act on each pane's tree. */
+	ancestorFolderPaths(): string[];
 }
 
 export class NavLock {
@@ -160,6 +164,41 @@ export class NavLock {
 		}
 	}
 
+	/** The bars currently being coupled, for callers that need to act on all of them. */
+	coupledBars(): NavLockParticipant[] {
+		return this.locked ? this.active() : [];
+	}
+
+	/**
+	 * Whether every coupled bar has this folder name at this depth.
+	 *
+	 * That shared name is the structure the lock is holding on to — the
+	 * panes are in different trees and it is the only thing they have in
+	 * common at that level — so renaming it is a change to all of them.
+	 */
+	sharesFolderAt(depth: number, name: string): boolean {
+		const bars = this.active();
+		if (bars.length < 2) return false;
+		return bars.every((bar) => bar.folderNameAt(depth) === name);
+	}
+
+	/**
+	 * Whether a rename would leave the coupled panes standing in
+	 * differently-named folders.
+	 *
+	 * The mover's own path is the proposed one; everyone else keeps theirs.
+	 * If the names no longer agree the parallel is over, which is a thing to
+	 * ask about rather than to discover later when moves stop being offered.
+	 */
+	wouldBreakAlignment(mover: NavLockParticipant, proposedPath: string): boolean {
+		const bars = this.active();
+		if (bars.length < 2) return false;
+		const names = bars.map((bar) =>
+			bar === mover ? folderNameOf(proposedPath) : bar.currentFolderName(),
+		);
+		return new Set(names).size > 1;
+	}
+
 	private active(): NavLockParticipant[] {
 		return this.participants().filter((bar) => bar.participates());
 	}
@@ -188,6 +227,13 @@ function wouldConverge(bars: NavLockParticipant[], move: NavMove): boolean {
 		seen.add(destination);
 	}
 	return false;
+}
+
+/** The folder a path sits in, by name alone. */
+function folderNameOf(path: string): string | null {
+	const parts = path.split("/");
+	parts.pop();
+	return parts.pop() ?? null;
 }
 
 const EMPTY: ReadonlySet<NavMove> = new Set();

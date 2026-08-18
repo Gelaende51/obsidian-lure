@@ -88,6 +88,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Navigation über Bereiche hinweg sperren",
 		navLockRelease: "Navigation über Bereiche hinweg entsperren",
 		navLockNeedsTwo: "Die Navigationssperre braucht mindestens zwei geöffnete Bereiche.",
+		navLockBreakTitle: "Diese Umbenennung würde die Navigationssperre beenden",
+		navLockBreakBody: "Die Bereiche stünden dann nicht mehr in gleichnamigen Ordnern, sodass nichts mehr übrig wäre, um sie im Gleichlauf zu halten.",
+		navLockRenameAnyway: "Umbenennen und entsperren",
 	},
 
 	fr: {
@@ -159,6 +162,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Verrouiller la navigation entre les volets",
 		navLockRelease: "Déverrouiller la navigation entre les volets",
 		navLockNeedsTwo: "Le verrou de navigation nécessite au moins deux volets ouverts.",
+		navLockBreakTitle: "Ce renommage mettrait fin au verrou de navigation",
+		navLockBreakBody: "Les volets ne seraient plus dans des dossiers de même nom, il ne resterait donc rien pour les garder synchronisés.",
+		navLockRenameAnyway: "Renommer et déverrouiller",
 	},
 
 	es: {
@@ -229,6 +235,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Bloquear la navegación entre paneles",
 		navLockRelease: "Desbloquear la navegación entre paneles",
 		navLockNeedsTwo: "El bloqueo de navegación necesita al menos dos paneles abiertos.",
+		navLockBreakTitle: "Este cambio de nombre terminaría el bloqueo de navegación",
+		navLockBreakBody: "Los paneles ya no estarían en carpetas con el mismo nombre, así que no quedaría nada que los mantuviera sincronizados.",
+		navLockRenameAnyway: "Renombrar y desbloquear",
 	},
 
 	it: {
@@ -299,6 +308,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Blocca la navigazione tra i riquadri",
 		navLockRelease: "Sblocca la navigazione tra i riquadri",
 		navLockNeedsTwo: "Il blocco di navigazione richiede almeno due riquadri aperti.",
+		navLockBreakTitle: "Questa rinomina porrebbe fine al blocco di navigazione",
+		navLockBreakBody: "I riquadri non si troverebbero più in cartelle con lo stesso nome, quindi non resterebbe nulla a tenerli allineati.",
+		navLockRenameAnyway: "Rinomina e sblocca",
 	},
 
 	pt: {
@@ -369,6 +381,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Bloquear a navegação entre painéis",
 		navLockRelease: "Desbloquear a navegação entre painéis",
 		navLockNeedsTwo: "O bloqueio de navegação precisa de pelo menos dois painéis abertos.",
+		navLockBreakTitle: "Esta mudança de nome terminaria o bloqueio de navegação",
+		navLockBreakBody: "Os painéis deixariam de estar em pastas com o mesmo nome, pelo que nada restaria para os manter sincronizados.",
+		navLockRenameAnyway: "Mudar o nome e desbloquear",
 	},
 
 	"pt-BR": {
@@ -439,6 +454,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Bloquear a navegação entre painéis",
 		navLockRelease: "Desbloquear a navegação entre painéis",
 		navLockNeedsTwo: "O bloqueio de navegação precisa de pelo menos dois painéis abertos.",
+		navLockBreakTitle: "Esta renomeação encerraria o bloqueio de navegação",
+		navLockBreakBody: "Os painéis deixariam de estar em pastas com o mesmo nome, então nada restaria para mantê-los sincronizados.",
+		navLockRenameAnyway: "Renomear e desbloquear",
 	},
 
 	nl: {
@@ -508,6 +526,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Navigatie tussen deelvensters vergrendelen",
 		navLockRelease: "Navigatie tussen deelvensters ontgrendelen",
 		navLockNeedsTwo: "De navigatievergrendeling heeft minstens twee open deelvensters nodig.",
+		navLockBreakTitle: "Deze naamswijziging beëindigt de navigatievergrendeling",
+		navLockBreakBody: "De deelvensters zouden niet langer in mappen met dezelfde naam staan, dus er blijft niets over om ze gelijk te houden.",
+		navLockRenameAnyway: "Naam wijzigen en ontgrendelen",
 	},
 
 	pl: {
@@ -577,6 +598,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Zablokuj nawigację między panelami",
 		navLockRelease: "Odblokuj nawigację między panelami",
 		navLockNeedsTwo: "Blokada nawigacji wymaga co najmniej dwóch otwartych paneli.",
+		navLockBreakTitle: "Ta zmiana nazwy zakończy blokadę nawigacji",
+		navLockBreakBody: "Panele nie znajdowałyby się już w folderach o tej samej nazwie, więc nie zostałoby nic, co utrzymywałoby je w zgodzie.",
+		navLockRenameAnyway: "Zmień nazwę i odblokuj",
 	},
 
 	ru: {
@@ -646,6 +670,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Связать навигацию между панелями",
 		navLockRelease: "Развязать навигацию между панелями",
 		navLockNeedsTwo: "Для блокировки навигации нужно минимум две открытые панели.",
+		navLockBreakTitle: "Это переименование снимет блокировку навигации",
+		navLockBreakBody: "Панели больше не будут находиться в одноимённых папках, и удерживать их вместе станет нечему.",
+		navLockRenameAnyway: "Переименовать и разблокировать",
 	},
 
 	uk: {
@@ -715,6 +742,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Зв'язати навігацію між панелями",
 		navLockRelease: "Розв'язати навігацію між панелями",
 		navLockNeedsTwo: "Для блокування навігації потрібні щонайменше дві відкриті панелі.",
+		navLockBreakTitle: "Це перейменування завершить блокування навігації",
+		navLockBreakBody: "Панелі більше не будуть в однойменних теках, тож утримувати їх разом буде нічому.",
+		navLockRenameAnyway: "Перейменувати та розблокувати",
 	},
 
 	cs: {
@@ -784,6 +814,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Uzamknout navigaci mezi panely",
 		navLockRelease: "Odemknout navigaci mezi panely",
 		navLockNeedsTwo: "Zámek navigace vyžaduje alespoň dva otevřené panely.",
+		navLockBreakTitle: "Toto přejmenování ukončí zámek navigace",
+		navLockBreakBody: "Panely by už nestály ve složkách stejného jména, takže by je nemělo co držet v souladu.",
+		navLockRenameAnyway: "Přejmenovat a odemknout",
 	},
 
 	sv: {
@@ -853,6 +886,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Lås navigeringen mellan paneler",
 		navLockRelease: "Lås upp navigeringen mellan paneler",
 		navLockNeedsTwo: "Navigeringslåset kräver minst två öppna paneler.",
+		navLockBreakTitle: "Den här omdöpningen avslutar navigeringslåset",
+		navLockBreakBody: "Panelerna skulle inte längre stå i mappar med samma namn, så inget skulle hålla dem i takt.",
+		navLockRenameAnyway: "Byt namn och lås upp",
 	},
 
 	da: {
@@ -922,6 +958,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Lås navigationen på tværs af ruder",
 		navLockRelease: "Lås navigationen op på tværs af ruder",
 		navLockNeedsTwo: "Navigationslåsen kræver mindst to åbne ruder.",
+		navLockBreakTitle: "Denne omdøbning afslutter navigationslåsen",
+		navLockBreakBody: "Ruderne ville ikke længere stå i mapper med samme navn, så der ville ikke være noget tilbage til at holde dem i takt.",
+		navLockRenameAnyway: "Omdøb og lås op",
 	},
 
 	no: {
@@ -991,6 +1030,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Lås navigeringen på tvers av ruter",
 		navLockRelease: "Lås opp navigeringen på tvers av ruter",
 		navLockNeedsTwo: "Navigasjonslåsen krever minst to åpne ruter.",
+		navLockBreakTitle: "Denne omdøpingen avslutter navigasjonslåsen",
+		navLockBreakBody: "Rutene ville ikke lenger stå i mapper med samme navn, så ingenting ville holde dem i takt.",
+		navLockRenameAnyway: "Gi nytt navn og lås opp",
 	},
 
 	fi: {
@@ -1060,6 +1102,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Lukitse siirtyminen ruutujen välillä",
 		navLockRelease: "Vapauta siirtyminen ruutujen välillä",
 		navLockNeedsTwo: "Siirtymislukitus vaatii vähintään kaksi avointa ruutua.",
+		navLockBreakTitle: "Tämä nimeäminen päättää siirtymislukituksen",
+		navLockBreakBody: "Ruudut eivät enää olisi samannimisissä kansioissa, joten mikään ei pitäisi niitä tahdissa.",
+		navLockRenameAnyway: "Nimeä ja vapauta",
 	},
 
 	tr: {
@@ -1129,6 +1174,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Bölmeler arası gezinmeyi kilitle",
 		navLockRelease: "Bölmeler arası gezinmenin kilidini aç",
 		navLockNeedsTwo: "Gezinme kilidi için en az iki açık bölme gerekir.",
+		navLockBreakTitle: "Bu yeniden adlandırma gezinme kilidini sonlandırır",
+		navLockBreakBody: "Bölmeler artık aynı adlı klasörlerde olmayacağı için onları eşleşmiş tutacak bir şey kalmaz.",
+		navLockRenameAnyway: "Yeniden adlandır ve kilidi aç",
 	},
 
 	ja: {
@@ -1198,6 +1246,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "ペイン間のナビゲーションをロック",
 		navLockRelease: "ペイン間のナビゲーションのロックを解除",
 		navLockNeedsTwo: "ナビゲーションロックには 2 つ以上のペインが必要です。",
+		navLockBreakTitle: "この名前変更はナビゲーションロックを解除します",
+		navLockBreakBody: "ペインが同名のフォルダーに揃わなくなるため、同期を保つものが残りません。",
+		navLockRenameAnyway: "名前を変更してロック解除",
 	},
 
 	ko: {
@@ -1267,6 +1318,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "창 간 탐색 잠금",
 		navLockRelease: "창 간 탐색 잠금 해제",
 		navLockNeedsTwo: "탐색 잠금에는 창이 두 개 이상 필요합니다.",
+		navLockBreakTitle: "이 이름 변경은 탐색 잠금을 해제합니다",
+		navLockBreakBody: "창이 더 이상 같은 이름의 폴더에 있지 않게 되어 함께 움직이게 할 것이 남지 않습니다.",
+		navLockRenameAnyway: "이름 변경 후 잠금 해제",
 	},
 
 	zh: {
@@ -1336,6 +1390,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "锁定窗格间的导航",
 		navLockRelease: "解除窗格间的导航锁定",
 		navLockNeedsTwo: "导航锁定至少需要两个打开的窗格。",
+		navLockBreakTitle: "此重命名将结束导航锁定",
+		navLockBreakBody: "窗格将不再位于同名文件夹中，也就没有什么能让它们保持同步了。",
+		navLockRenameAnyway: "重命名并解锁",
 	},
 
 	"zh-TW": {
@@ -1405,6 +1462,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "鎖定窗格間的導覽",
 		navLockRelease: "解除窗格間的導覽鎖定",
 		navLockNeedsTwo: "導覽鎖定至少需要兩個開啟的窗格。",
+		navLockBreakTitle: "此重新命名將結束導覽鎖定",
+		navLockBreakBody: "窗格將不再位於同名資料夾中，也就沒有什麼能讓它們保持同步了。",
+		navLockRenameAnyway: "重新命名並解鎖",
 	},
 
 	ar: {
@@ -1474,6 +1534,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "قفل التنقل بين الأجزاء",
 		navLockRelease: "إلغاء قفل التنقل بين الأجزاء",
 		navLockNeedsTwo: "يحتاج قفل التنقل إلى جزأين مفتوحين على الأقل.",
+		navLockBreakTitle: "ستنهي إعادة التسمية هذه قفل التنقل",
+		navLockBreakBody: "لن تعود الأجزاء في مجلدات بالاسم نفسه، فلن يبقى ما يبقيها متوافقة.",
+		navLockRenameAnyway: "إعادة التسمية وإلغاء القفل",
 	},
 
 	ca: {
@@ -1545,6 +1608,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Bloqueja la navegació entre subfinestres",
 		navLockRelease: "Desbloqueja la navegació entre subfinestres",
 		navLockNeedsTwo: "El bloqueig de navegació necessita almenys dues subfinestres obertes.",
+		navLockBreakTitle: "Aquest canvi de nom acabaria amb el bloqueig de navegació",
+		navLockBreakBody: "Les subfinestres ja no estarien en carpetes del mateix nom, així que no quedaria res per mantenir-les sincronitzades.",
+		navLockRenameAnyway: "Reanomena i desbloqueja",
 	},
 
 	ro: {
@@ -1615,6 +1681,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Blochează navigarea între panouri",
 		navLockRelease: "Deblochează navigarea între panouri",
 		navLockNeedsTwo: "Blocarea navigării necesită cel puțin două panouri deschise.",
+		navLockBreakTitle: "Această redenumire ar încheia blocarea navigării",
+		navLockBreakBody: "Panourile nu ar mai sta în foldere cu același nume, deci nu ar mai rămâne nimic care să le țină sincronizate.",
+		navLockRenameAnyway: "Redenumește și deblochează",
 	},
 
 	hu: {
@@ -1685,6 +1754,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Navigáció zárolása a panelek között",
 		navLockRelease: "Navigáció feloldása a panelek között",
 		navLockNeedsTwo: "A navigációzárhoz legalább két nyitott panel kell.",
+		navLockBreakTitle: "Ez az átnevezés megszünteti a navigációzárat",
+		navLockBreakBody: "A panelek már nem azonos nevű mappákban állnának, így semmi nem tartaná őket együtt.",
+		navLockRenameAnyway: "Átnevezés és feloldás",
 	},
 
 	sk: {
@@ -1754,6 +1826,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Uzamknúť navigáciu medzi panelmi",
 		navLockRelease: "Odomknúť navigáciu medzi panelmi",
 		navLockNeedsTwo: "Zámok navigácie vyžaduje aspoň dva otvorené panely.",
+		navLockBreakTitle: "Toto premenovanie ukončí zámok navigácie",
+		navLockBreakBody: "Panely by už nestáli v priečinkoch s rovnakým názvom, takže by ich nemalo čo držať v súlade.",
+		navLockRenameAnyway: "Premenovať a odomknúť",
 	},
 
 	lv: {
@@ -1823,6 +1898,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Bloķēt navigāciju starp rūtīm",
 		navLockRelease: "Atbloķēt navigāciju starp rūtīm",
 		navLockNeedsTwo: "Navigācijas bloķēšanai vajadzīgas vismaz divas atvērtas rūtis.",
+		navLockBreakTitle: "Šī pārdēvēšana beigs navigācijas bloķēšanu",
+		navLockBreakBody: "Rūtis vairs neatrastos vienāda nosaukuma mapēs, tāpēc nekas tās vairs neturētu kopsolī.",
+		navLockRenameAnyway: "Pārdēvēt un atbloķēt",
 	},
 
 	sq: {
@@ -1893,6 +1971,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Blloko lundrimin mes paneleve",
 		navLockRelease: "Zhblloko lundrimin mes paneleve",
 		navLockNeedsTwo: "Blloku i lundrimit kërkon të paktën dy panele të hapura.",
+		navLockBreakTitle: "Ky riemërtim do t'i jepte fund bllokut të lundrimit",
+		navLockBreakBody: "Panelet nuk do të ishin më në dosje me të njëjtin emër, ndaj nuk do të mbetej asgjë për t'i mbajtur në hap.",
+		navLockRenameAnyway: "Riemërto dhe zhblloko",
 	},
 
 	sr: {
@@ -1962,6 +2043,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Закључај навигацију између окана",
 		navLockRelease: "Откључај навигацију између окана",
 		navLockNeedsTwo: "Закључавање навигације захтева најмање два отворена окна.",
+		navLockBreakTitle: "Ово преименовање би прекинуло закључавање навигације",
+		navLockBreakBody: "Окна више не би стајала у истоименим фасциклама, па не би остало ништа што их држи усклађеним.",
+		navLockRenameAnyway: "Преименуј и откључај",
 	},
 
 	be: {
@@ -2032,6 +2116,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Звязаць навігацыю паміж панэлямі",
 		navLockRelease: "Развязаць навігацыю паміж панэлямі",
 		navLockNeedsTwo: "Для блакіроўкі навігацыі патрэбны прынамсі дзве адкрытыя панэлі.",
+		navLockBreakTitle: "Гэта перайменаванне спыніць блакіроўку навігацыі",
+		navLockBreakBody: "Панэлі больш не будуць у аднайменных папках, таму трымаць іх разам не будзе чым.",
+		navLockRenameAnyway: "Перайменаваць і разблакаваць",
 	},
 
 	el: {
@@ -2103,6 +2190,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Κλείδωμα πλοήγησης μεταξύ των παραθύρων",
 		navLockRelease: "Ξεκλείδωμα πλοήγησης μεταξύ των παραθύρων",
 		navLockNeedsTwo: "Το κλείδωμα πλοήγησης χρειάζεται τουλάχιστον δύο ανοιχτά παράθυρα.",
+		navLockBreakTitle: "Αυτή η μετονομασία θα τερματίσει το κλείδωμα πλοήγησης",
+		navLockBreakBody: "Τα παράθυρα δεν θα βρίσκονται πλέον σε φακέλους με το ίδιο όνομα, οπότε δεν θα μένει τίποτα να τα κρατά σε συγχρονισμό.",
+		navLockRenameAnyway: "Μετονομασία και ξεκλείδωμα",
 	},
 
 	ga: {
@@ -2172,6 +2262,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Cuir glas ar an nascleanúint idir na pánaí",
 		navLockRelease: "Bain an glas den nascleanúint idir na pánaí",
 		navLockNeedsTwo: "Teastaíonn dhá phána ar a laghad ón nglas nascleanúna.",
+		navLockBreakTitle: "Chuirfeadh an t-athainmniú seo deireadh leis an nglas nascleanúna",
+		navLockBreakBody: "Ní bheadh na pánaí i bhfillteáin den ainm céanna a thuilleadh, mar sin ní bheadh aon rud fágtha chun iad a choinneáil ar aon chéim.",
+		navLockRenameAnyway: "Athainmnigh agus bain an glas",
 	},
 
 	he: {
@@ -2241,6 +2334,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "נעילת הניווט בין החלוניות",
 		navLockRelease: "שחרור נעילת הניווט בין החלוניות",
 		navLockNeedsTwo: "נעילת הניווט דורשת לפחות שתי חלוניות פתוחות.",
+		navLockBreakTitle: "שינוי השם הזה יסיים את נעילת הניווט",
+		navLockBreakBody: "החלוניות כבר לא יעמדו בתיקיות בעלות אותו שם, ולא יישאר דבר שישמור עליהן מסונכרנות.",
+		navLockRenameAnyway: "שנה שם ובטל נעילה",
 	},
 
 	fa: {
@@ -2310,6 +2406,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "قفل کردن پیمایش میان قاب‌ها",
 		navLockRelease: "باز کردن قفل پیمایش میان قاب‌ها",
 		navLockNeedsTwo: "قفل پیمایش دست‌کم به دو قاب باز نیاز دارد.",
+		navLockBreakTitle: "این تغییر نام قفل پیمایش را پایان می‌دهد",
+		navLockBreakBody: "قاب‌ها دیگر در پوشه‌هایی با نام یکسان نخواهند بود، پس چیزی برای هماهنگ نگه‌داشتنشان نمی‌ماند.",
+		navLockRenameAnyway: "تغییر نام و باز کردن قفل",
 	},
 
 	id: {
@@ -2379,6 +2478,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Kunci navigasi antar panel",
 		navLockRelease: "Buka kunci navigasi antar panel",
 		navLockNeedsTwo: "Kunci navigasi memerlukan setidaknya dua panel terbuka.",
+		navLockBreakTitle: "Penggantian nama ini akan mengakhiri kunci navigasi",
+		navLockBreakBody: "Panel tidak lagi berada di folder dengan nama yang sama, sehingga tidak ada lagi yang menjaganya tetap selaras.",
+		navLockRenameAnyway: "Ganti nama dan buka kunci",
 	},
 
 	ms: {
@@ -2448,6 +2550,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Kunci navigasi antara anak tetingkap",
 		navLockRelease: "Buka kunci navigasi antara anak tetingkap",
 		navLockNeedsTwo: "Kunci navigasi memerlukan sekurang-kurangnya dua anak tetingkap dibuka.",
+		navLockBreakTitle: "Penamaan semula ini akan menamatkan kunci navigasi",
+		navLockBreakBody: "Anak tetingkap tidak lagi berada dalam folder dengan nama yang sama, jadi tiada apa lagi yang mengekalkannya seiring.",
+		navLockRenameAnyway: "Namakan semula dan buka kunci",
 	},
 
 	vi: {
@@ -2517,6 +2622,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Khoá điều hướng giữa các khung",
 		navLockRelease: "Mở khoá điều hướng giữa các khung",
 		navLockNeedsTwo: "Khoá điều hướng cần ít nhất hai khung đang mở.",
+		navLockBreakTitle: "Việc đổi tên này sẽ kết thúc khoá điều hướng",
+		navLockBreakBody: "Các khung sẽ không còn nằm trong thư mục cùng tên, nên không còn gì giữ chúng đồng bộ.",
+		navLockRenameAnyway: "Đổi tên và mở khoá",
 	},
 
 	th: {
@@ -2586,6 +2694,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "ล็อกการนำทางระหว่างบานหน้าต่าง",
 		navLockRelease: "ปลดล็อกการนำทางระหว่างบานหน้าต่าง",
 		navLockNeedsTwo: "การล็อกการนำทางต้องมีบานหน้าต่างเปิดอยู่อย่างน้อยสองบาน",
+		navLockBreakTitle: "การเปลี่ยนชื่อนี้จะยุติการล็อกการนำทาง",
+		navLockBreakBody: "บานหน้าต่างจะไม่อยู่ในโฟลเดอร์ชื่อเดียวกันอีกต่อไป จึงไม่เหลือสิ่งใดที่ทำให้ทำงานพร้อมกัน",
+		navLockRenameAnyway: "เปลี่ยนชื่อและปลดล็อก",
 	},
 
 	kh: {
@@ -2655,6 +2766,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "ចាក់សោការរុករករវាងផ្ទាំង",
 		navLockRelease: "ដោះសោការរុករករវាងផ្ទាំង",
 		navLockNeedsTwo: "ការចាក់សោការរុករកត្រូវការផ្ទាំងបើកយ៉ាងតិចពីរ។",
+		navLockBreakTitle: "ការប្តូរឈ្មោះនេះនឹងបញ្ចប់ការចាក់សោការរុករក",
+		navLockBreakBody: "ផ្ទាំងនឹងលែងស្ថិតនៅក្នុងថតឈ្មោះដូចគ្នា ដូច្នេះគ្មានអ្វីនៅសល់ដើម្បីរក្សាពួកវាឲ្យដំណើរការជាមួយគ្នាទេ។",
+		navLockRenameAnyway: "ប្តូរឈ្មោះ និងដោះសោ",
 	},
 
 	ne: {
@@ -2724,6 +2838,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "प्यानलहरू बीचको नेभिगेसन लक गर्नुहोस्",
 		navLockRelease: "प्यानलहरू बीचको नेभिगेसन अनलक गर्नुहोस्",
 		navLockNeedsTwo: "नेभिगेसन लकलाई कम्तीमा दुई खुला प्यानल चाहिन्छ।",
+		navLockBreakTitle: "यो पुनःनामकरणले नेभिगेसन लक अन्त्य गर्नेछ",
+		navLockBreakBody: "प्यानलहरू अब उही नामका फोल्डरमा रहनेछैनन्, त्यसैले तिनलाई मिलाएर राख्ने केही बाँकी रहनेछैन।",
+		navLockRenameAnyway: "पुनःनामकरण गरी अनलक गर्नुहोस्",
 	},
 
 	bn: {
@@ -2793,6 +2910,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "প্যানেলের মধ্যে নেভিগেশন লক করুন",
 		navLockRelease: "প্যানেলের মধ্যে নেভিগেশন আনলক করুন",
 		navLockNeedsTwo: "নেভিগেশন লকের জন্য অন্তত দুটি খোলা প্যানেল দরকার।",
+		navLockBreakTitle: "এই নাম পরিবর্তন নেভিগেশন লক শেষ করবে",
+		navLockBreakBody: "প্যানেলগুলি আর একই নামের ফোল্ডারে থাকবে না, তাই তাদের মিলিয়ে রাখার কিছু অবশিষ্ট থাকবে না।",
+		navLockRenameAnyway: "নাম বদলে আনলক করুন",
 	},
 
 	ka: {
@@ -2864,6 +2984,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "ნავიგაციის ჩაკეტვა პანელებს შორის",
 		navLockRelease: "ნავიგაციის განბლოკვა პანელებს შორის",
 		navLockNeedsTwo: "ნავიგაციის ჩაკეტვას სჭირდება მინიმუმ ორი ღია პანელი.",
+		navLockBreakTitle: "ეს გადარქმევა დაასრულებს ნავიგაციის ჩაკეტვას",
+		navLockBreakBody: "პანელები აღარ იქნება ერთი და იმავე სახელის საქაღალდეებში, ამიტომ მათი შეთანხმებულად შენარჩუნება ვეღარაფერი შეძლებს.",
+		navLockRenameAnyway: "გადარქმევა და განბლოკვა",
 	},
 
 	uz: {
@@ -2933,6 +3056,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "Panellar orasidagi navigatsiyani qulflash",
 		navLockRelease: "Panellar orasidagi navigatsiya qulfini ochish",
 		navLockNeedsTwo: "Navigatsiya qulfi uchun kamida ikkita ochiq panel kerak.",
+		navLockBreakTitle: "Bu qayta nomlash navigatsiya qulfini tugatadi",
+		navLockBreakBody: "Panellar endi bir xil nomli jildlarda bo'lmaydi, shuning uchun ularni hamohang saqlaydigan narsa qolmaydi.",
+		navLockRenameAnyway: "Qayta nomlash va qulfni ochish",
 	},
 
 	am: {
@@ -3002,6 +3128,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "በክፍሎች መካከል አሰሳን ቆልፍ",
 		navLockRelease: "በክፍሎች መካከል አሰሳን ክፈት",
 		navLockNeedsTwo: "የአሰሳ መቆለፊያ ቢያንስ ሁለት የተከፈቱ ክፍሎችን ይፈልጋል።",
+		navLockBreakTitle: "ይህ ዳግም መሰየም የአሰሳ መቆለፊያውን ያቆማል",
+		navLockBreakBody: "ክፍሎቹ ከዚህ በኋላ በተመሳሳይ ስም አቃፊዎች ውስጥ አይሆኑም፣ ስለዚህ አብረው የሚያቆያቸው ነገር አይቀርም።",
+		navLockRenameAnyway: "ዳግም ሰይምና ክፈት",
 	},
 
 	sa: {
@@ -3071,5 +3200,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		navLockEngage: "पटलानां मध्ये संचरणं निरुध्यताम्",
 		navLockRelease: "पटलानां मध्ये संचरणं विमोच्यताम्",
 		navLockNeedsTwo: "संचरणनिरोधाय न्यूनातिन्यूनं द्वे उद्घाटिते पटले आवश्यके।",
+		navLockBreakTitle: "इदं नामपरिवर्तनं संचरणनिरोधं समापयेत्",
+		navLockBreakBody: "पटलानि पुनः समाननामकेषु निर्देशिकासु न स्थास्यन्ति, अतः तानि समकालं धारयितुं किमपि न अवशिष्येत।",
+		navLockRenameAnyway: "नाम परिवर्त्य विमोचयतु",
 	},
 };
