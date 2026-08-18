@@ -22,7 +22,7 @@ import { isBinaryExtension, isMarkdownExtension, warnsOnOpen } from "./fileKinds
 import type LurePlugin from "./main";
 import { t } from "./lang";
 import { LABELS, obsidianLabel } from "./obsidianLabels";
-import { showExternalMenu } from "./externalMenu";
+import { buildExternalMenu, showExternalMenu } from "./externalMenu";
 import { showContextMenu } from "./nativeFileItem";
 
 export const EXTERNAL_VIEW_TYPE = "lure-external-file";
@@ -242,6 +242,36 @@ export class ExternalFileView extends ItemView {
 			incoming?.render === "text" || incoming?.render === "markdown" ? incoming.render : null;
 		await super.setState(state, result);
 		await this.reload();
+	}
+
+	/**
+	 * Obsidian's own three-dot menu in the view header.
+	 *
+	 * For a view it has no file for, it offers nothing but "split", so
+	 * everything you would expect to do to the open file is missing out here.
+	 * The same entries the row's own menu carries are added, built by the
+	 * same code so the two cannot drift.
+	 */
+	onPaneMenu(menu: Menu, source: string): void {
+		super.onPaneMenu(menu, source);
+		if (!this.filePath) return;
+
+		const vaultFile = this.vaultFile();
+		if (vaultFile) {
+			// A vault file shown here is still a vault file: Obsidian's own
+			// menu is the right one, contributions from other plugins and all.
+			this.plugin.app.workspace.trigger("file-menu", menu, vaultFile, source, this.leaf);
+			return;
+		}
+		buildExternalMenu(
+			menu,
+			this.plugin,
+			this.filePath,
+			false,
+			this.leaf,
+			() => this.editingActive(),
+			() => void this.reload(),
+		);
 	}
 
 	async onOpen(): Promise<void> {

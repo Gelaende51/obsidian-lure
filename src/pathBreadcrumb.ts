@@ -206,7 +206,6 @@ export class PathBreadcrumb {
 	private vaultSegmentEl: HTMLElement;
 	private filenameEl: HTMLElement;
 	private renameButtonEl: HTMLElement;
-	private moreButtonEl: HTMLElement;
 	/** The padlock, shown only while the row points outside the vault. */
 	private unlockButtonEl: HTMLElement;
 	private inputEl: HTMLInputElement | null = null;
@@ -307,22 +306,6 @@ export class PathBreadcrumb {
 		// same ones the native bookmark/reading-mode/more-options buttons
 		// use) so it inherits identical sizing for free, and lives in
 		// .view-actions itself rather than next to our breadcrumb.
-		// The row's menus are otherwise reachable only by right-clicking, and
-		// that gesture now waits out a multi-click window before it does
-		// anything. A button costs one press and is visible, which is what
-		// the pointer path should be.
-		this.moreButtonEl = createSpan();
-		this.moreButtonEl.addClass("clickable-icon", "view-action", "lure-more-btn");
-		this.moreButtonEl.setAttribute("aria-label", obsidianLabel(LABELS.moreOptions, "More options"));
-		// A hamburger rather than Obsidian's vertical dots: its own
-		// more-options button sits in the same row and the two must not read
-		// as the same control.
-		setIcon(this.moreButtonEl, "menu");
-		this.moreButtonEl.addEventListener("click", (evt) => {
-			evt.stopPropagation();
-			this.openMoreMenu(evt);
-		});
-
 		this.renameButtonEl = createSpan();
 		this.renameButtonEl.addClass("clickable-icon", "view-action", "lure-rename-btn");
 		this.renameButtonEl.setAttribute("aria-label", t("renameToggleLabel"));
@@ -809,7 +792,6 @@ export class PathBreadcrumb {
 		this.vaultSegmentEl.remove();
 		this.filenameEl.remove();
 		this.renameButtonEl.remove();
-		this.moreButtonEl.remove();
 		this.unlockButtonEl.remove();
 		this.titleEl.parentElement?.removeClass(RENAME_MODE_CLASS);
 		this.titleEl.parentElement?.removeAttribute("tabindex");
@@ -1149,41 +1131,6 @@ export class PathBreadcrumb {
 		if (!this.renameButtonEl.isConnected) {
 			viewActions?.insertAdjacentElement("afterbegin", this.renameButtonEl);
 		}
-		// Anchored to the rename button rather than to the row, so the
-		// padlock — which inserts itself directly after that button — cannot
-		// land between the two and split the group.
-		if (!this.moreButtonEl.isConnected && this.renameButtonEl.isConnected) {
-			this.renameButtonEl.insertAdjacentElement("beforebegin", this.moreButtonEl);
-		}
-	}
-
-	/**
-	 * The open file's own menu, from a button.
-	 *
-	 * Outside the vault that is the path-built menu — which is what the
-	 * tracker asked for — and inside it is Obsidian's own, contributions from
-	 * other plugins included. One control, and what it offers follows the
-	 * file rather than the user having to know which kind they are looking
-	 * at.
-	 */
-	private openMoreMenu(evt: MouseEvent): void {
-		const externalTarget = this.externalFileName !== null && this.externalPath !== null
-			? externalJoin(this.externalPath, this.externalFileName)
-			: this.externalPath;
-
-		if (externalTarget !== null) {
-			showExternalMenu(
-				this.plugin,
-				evt,
-				externalTarget,
-				this.externalFileName === null,
-				this.leaf,
-				() => this.externalWritesUnlocked,
-				() => this.inputEl?.dispatchEvent(new Event("input")),
-			);
-			return;
-		}
-		if (this.file) showContextMenu(this.plugin.app, evt, this.file);
 	}
 
 	/**

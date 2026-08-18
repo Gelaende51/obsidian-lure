@@ -44,7 +44,6 @@ export const LABELS = {
 	fileNameLabel: ["dialogue.label-rename-file-generic"],
 	renamePlain: ["interface.menu.rename"],
 	// Obsidian's own clipboard reporting, interpolation and all.
-	moreOptions: ["interface.menu.more-options"],
 	copied: ["interface.copied"],
 	copyFailed: ["interface.copy_failed"],
 	cut: ["interface.menu.cut"],

@@ -170,15 +170,12 @@
      .lure-unlock-btn { --lure-icon-glyph: "🔒"; --lure-icon-svg: none; }
      .lure-unlock-btn.is-active { --lure-icon-glyph: "🔓"; }
 
-     .lure-more-btn { --lure-icon-glyph: "☰"; --lure-icon-svg: none; }
-
    `revert` is the default so that, untouched, the SVG keeps whatever
    display value Obsidian's own .clickable-icon/.svg-icon rules give it
    rather than one hard-coded here. */
 .lure-vault-icon > svg,
 .lure-rename-btn > svg,
-.lure-unlock-btn > svg,
-.lure-more-btn > svg {
+.lure-unlock-btn > svg {
 	display: var(--lure-icon-svg, revert);
 }
 
@@ -186,8 +183,7 @@
    nothing until a snippet sets --lure-icon-glyph. */
 .lure-vault-icon::after,
 .lure-rename-btn::after,
-.lure-unlock-btn::after,
-.lure-more-btn::after {
+.lure-unlock-btn::after {
 	content: var(--lure-icon-glyph, none);
 	display: inline-flex;
 	align-items: center;

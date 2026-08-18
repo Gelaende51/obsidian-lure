@@ -41,6 +41,34 @@ export function showExternalMenu(
 	absolutePath: string,
 	isFolder: boolean,
 	leaf: WorkspaceLeaf,
+	canWrite: () => boolean = () => false,
+	onChanged: () => void = () => undefined,
+): void {
+	const menu = new Menu();
+	try {
+		menu.addSections(MENU_SECTIONS);
+	} catch {
+		// Internal and only cosmetic: without it the sections still render,
+		// just in the order they were added.
+	}
+	buildExternalMenu(menu, plugin, absolutePath, isFolder, leaf, canWrite, onChanged);
+	menu.showAtMouseEvent(evt);
+}
+
+/**
+ * The same entries, added to a menu somebody else owns.
+ *
+ * Obsidian's own pane menu — the three dots in the view header — offers
+ * nothing but "split" for a view it does not recognise, so the external
+ * viewer fills it in from here. Building into a caller's menu rather than
+ * showing one keeps the two identical by construction.
+ */
+export function buildExternalMenu(
+	menu: Menu,
+	plugin: LurePlugin,
+	absolutePath: string,
+	isFolder: boolean,
+	leaf: WorkspaceLeaf,
 	/**
 	 * Whether writing out here has been unlocked with the padlock. Read at
 	 * click time rather than at build time: the menu can outlive the state
@@ -51,14 +79,6 @@ export function showExternalMenu(
 	/** Called after a write so the row the menu belongs to can redraw. */
 	onChanged: () => void = () => undefined,
 ): void {
-	const menu = new Menu();
-	try {
-		menu.addSections(MENU_SECTIONS);
-	} catch {
-		// Internal and only cosmetic: without it the sections still render,
-		// just in the order they were added.
-	}
-
 	if (!isFolder) {
 		const openIn = (pane: PaneType): void => {
 			void openExternalFile(plugin, absolutePath, pane, leaf);
@@ -166,7 +186,6 @@ export function showExternalMenu(
 			.onClick(write(() => trashEntry(plugin, absolutePath, isFolder))),
 	);
 
-	menu.showAtMouseEvent(evt);
 }
 
 /**
