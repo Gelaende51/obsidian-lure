@@ -756,6 +756,16 @@ export class PathBreadcrumb {
 		return (stack?.length ?? 0) > 0;
 	}
 
+	/**
+	 * Only "up" has a destination this bar can name without making the move.
+	 * Back and forward are the leaf's own history, whose entries are
+	 * Obsidian's business, so they answer null and the lock forms no opinion
+	 * about them.
+	 */
+	previewMove(move: NavMove): string | null {
+		return move === "up" ? this.parentOfCurrentFolder() : null;
+	}
+
 	applyMove(move: NavMove): void {
 		if (move === "back") {
 			void this.leaf.history?.back();

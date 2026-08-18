@@ -29,6 +29,12 @@ export interface NavLockParticipant {
 	canMove(move: NavMove): boolean;
 	/** Makes the move. Called on every participant, including the one that asked. */
 	applyMove(move: NavMove): void;
+	/**
+	 * Where this move would land, when that is knowable ahead of making it,
+	 * and null when it is not. Used to refuse moves that would bring two
+	 * bars to the same place — see `wouldConverge`.
+	 */
+	previewMove(move: NavMove): string | null;
 	/** Paints the moves currently legal for everyone, or clears the marking. */
 	markLegalMoves(moves: ReadonlySet<NavMove>): void;
 	/** True while this bar is showing something the lock can reason about. */
@@ -69,7 +75,9 @@ export class NavLock {
 		const bars = this.active();
 		if (bars.length < 2) return legal;
 		for (const move of NAV_MOVES) {
-			if (bars.every((bar) => bar.canMove(move))) legal.add(move);
+			if (!bars.every((bar) => bar.canMove(move))) continue;
+			if (wouldConverge(bars, move)) continue;
+			legal.add(move);
 		}
 		return legal;
 	}
@@ -109,6 +117,31 @@ export class NavLock {
 	private active(): NavLockParticipant[] {
 		return this.participants().filter((bar) => bar.participates());
 	}
+}
+
+/**
+ * Whether a move would bring two coupled bars to the same place.
+ *
+ * Rising far enough always ends at a common ancestor: `parent1/childa` and
+ * `parent2/childa` go up once to two distinct folders and twice to the one
+ * they share. From there the panes are no longer parallel — they are the
+ * same view twice, every later move is the same move twice, and there is no
+ * move back apart that the lock would allow. So convergence is refused
+ * while the panes are still distinct, which is the only moment refusing it
+ * is any use.
+ *
+ * Moves whose destination cannot be known in advance are not second-guessed:
+ * a null preview means "no opinion", not "safe".
+ */
+function wouldConverge(bars: NavLockParticipant[], move: NavMove): boolean {
+	const seen = new Set<string>();
+	for (const bar of bars) {
+		const destination = bar.previewMove(move);
+		if (destination === null) continue;
+		if (seen.has(destination)) return true;
+		seen.add(destination);
+	}
+	return false;
 }
 
 const EMPTY: ReadonlySet<NavMove> = new Set();
