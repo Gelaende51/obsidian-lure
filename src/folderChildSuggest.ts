@@ -105,6 +105,20 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		this.dragKeepFocusEl = inputEl;
 	}
 
+	/**
+	 * The entry Tab would complete to: the first real child matching what has
+	 * been typed. "keep-name", "location" and the overflow row are skipped —
+	 * none of them is a thing you can descend into or land on.
+	 *
+	 * Reads the same list the popover shows, so completion can never offer
+	 * something the dropdown does not.
+	 */
+	firstMatch(query: string): PathSuggestion | null {
+		return (
+			this.getSuggestions(query).find((s) => s.kind === "folder" || s.kind === "file") ?? null
+		);
+	}
+
 	protected getSuggestions(query: string): PathSuggestion[] {
 		const context = this.getContext();
 		const { folderPath, renameMode, keepName, shouldList, queryOverride } = context;

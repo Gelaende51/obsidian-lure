@@ -237,6 +237,15 @@ export class PathBreadcrumb {
 	private validationError = "";
 	/** Suppresses the input's text as an autocomplete query while a prefilled selection is still untouched (see enterTypingMode). */
 	private suggestQueryOverride: string | null = null;
+	/**
+	 * How far along the end-of-path selection ladder Tab has walked, or null
+	 * while it is still completing folders. Reset whenever the session ends,
+	 * so a new one always starts by walking the path rather than resuming a
+	 * ladder the user has forgotten about.
+	 */
+	private tabStage: number | null = null;
+	/** The file the ladder is describing — the one Tab landed on, or the open note. */
+	private tabTargetPath: string | null = null;
 	/** Set while re-dispatching a click onto a native segment, so our own capture listener lets it through (see openNativeSegment). */
 	private delegatingToNative = false;
 	/**
@@ -2101,6 +2110,107 @@ export class PathBreadcrumb {
 	 * folder needn't exist yet — missing parents are created when the
 	 * final target is committed.
 	 */
+	/**
+	 * Tab walks the path, then walks how much of it is selected.
+	 *
+	 * While there is still a folder to complete, Tab completes it and steps
+	 * into it, so a path can be typed as far as its first unambiguous letters
+	 * and Tab does the rest. Once there is nothing left to descend into, the
+	 * presses stop moving along the path and start widening what is
+	 * selected — name, name with extension, the path from the vault, the path
+	 * from the system root — and then wrap back to the first folder, which is
+	 * where the walk began.
+	 *
+	 * Widening changes what is *in* the field, not just what is highlighted:
+	 * the selection has to be over the text it names, or Enter would commit
+	 * something other than what the user can see is selected.
+	 */
+	private handleTabCompletion(typed: string): void {
+		if (this.tabStage !== null) {
+			this.advanceLadder();
+			return;
+		}
+
+		const match = this.suggest?.firstMatch(typed) ?? null;
+		if (match?.kind === "folder") {
+			this.extendBrowsePath(match.path);
+			this.enterTypingMode("");
+			return;
+		}
+
+		// Either Tab landed on a file, or there is nothing left to complete.
+		// Both mean the walk is over and the ladder begins.
+		this.tabTargetPath = match?.kind === "file" ? match.path : this.ladderTargetPath();
+		this.tabStage = 0;
+		this.applyLadderStage();
+	}
+
+	/** The path the ladder describes when Tab did not land on anything: whatever the row is showing. */
+	private ladderTargetPath(): string | null {
+		if (this.externalPath !== null) {
+			return this.externalFileName ? externalJoin(this.externalPath, this.externalFileName) : null;
+		}
+		return this.file?.path ?? null;
+	}
+
+	private advanceLadder(): void {
+		this.tabStage = (this.tabStage ?? 0) + 1;
+		this.applyLadderStage();
+	}
+
+	/**
+	 * Four rungs and a wrap. The last press returns to the first folder
+	 * rather than to the file name, because the point of wrapping is to get
+	 * back to somewhere you can keep typing from.
+	 */
+	private applyLadderStage(): void {
+		const target = this.tabTargetPath;
+		if (target === null) {
+			this.tabStage = null;
+			return;
+		}
+
+		const external = this.externalPath !== null;
+		const separator = external ? PATH_SEP : "/";
+		const cut = target.lastIndexOf(separator);
+		const name = cut < 0 ? target : target.slice(cut + 1);
+		const parent = cut < 0 ? "" : target.slice(0, cut);
+
+		switch (this.tabStage) {
+			case 0:
+				this.setLadderField(parent, name, stemLength(name));
+				return;
+			case 1:
+				this.setLadderField(parent, name, "all");
+				return;
+			case 2:
+				// From the vault folder — what a link or a search wants.
+				this.setLadderField(external ? parent : "", external ? name : target, "all");
+				return;
+			case 3: {
+				// From the system root — what anything outside Obsidian wants.
+				const base = this.vaultBasePath();
+				const system = external || base === null ? target : `${base}/${target}`;
+				this.setLadderField("", system, "all");
+				return;
+			}
+			default: {
+				// Wrap: back to the first folder of the path, ready to type on.
+				this.tabStage = null;
+				this.tabTargetPath = null;
+				const first = target.split(separator)[0] ?? "";
+				this.extendBrowsePath(external ? "" : first);
+				this.enterTypingMode("");
+			}
+		}
+	}
+
+	/** Puts the ladder's text in the field with the browse path that makes it resolvable. */
+	private setLadderField(browseFrom: string, text: string, selection: "all" | number): void {
+		if (this.externalPath === null) this.extendBrowsePath(browseFrom);
+		this.enterTypingMode(text, selection);
+	}
+
 	private descendIntoTypedSegment(rawText: string): void {
 		const trimmed = rawText.trim();
 		if (!trimmed) return; // a stray "/" with nothing typed is a no-op
@@ -2286,6 +2396,9 @@ export class PathBreadcrumb {
 			} else if (evt.key === "Backspace" && inputEl.value === "") {
 				evt.preventDefault();
 				this.stepOutOfFolder();
+			} else if (evt.key === "Tab") {
+				evt.preventDefault();
+				this.handleTabCompletion(inputEl.value);
 			} else if (evt.key === "/") {
 				// Except where the slash is part of a scheme: "https:/" +
 				// "/" is a URL being typed, not a folder called "https:".
@@ -2314,6 +2427,19 @@ export class PathBreadcrumb {
 			if (performance.now() - openedAt > SEGMENT_DOUBLE_CLICK_MS) return;
 			inputEl.select();
 		};
+
+		// A fourth click reaches the same place Tab's last rung does. `detail`
+		// is the browser's own click counter, so this needs no timer of its
+		// own and cannot disagree with what the platform considers a
+		// multi-click.
+		const onClick = (evt: MouseEvent) => {
+			if (evt.detail < 4) return;
+			evt.preventDefault();
+			this.tabTargetPath = this.ladderTargetPath();
+			this.tabStage = 3;
+			this.applyLadderStage();
+		};
+		inputEl.addEventListener("click", onClick);
 
 		const onInput = (evt: Event) => {
 			// Only a genuine keystroke or paste retires the prefill. The
@@ -2462,6 +2588,11 @@ export class PathBreadcrumb {
 
 	/** Escape / click-away: fully discards the browsing/typing session and shows the real file's actual path again. */
 	private cancelNavigation(): void {
+		// A ladder belongs to one editing session. Carrying it into the next
+		// would make the first Tab there widen a selection instead of
+		// completing a folder, for reasons the user could not see.
+		this.tabStage = null;
+		this.tabTargetPath = null;
 		this.editCleanup?.();
 		this.editCleanup = null;
 		this.inputEl = null;

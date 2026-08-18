@@ -189,6 +189,7 @@ node .dev/test-external.mjs          # outside-the-vault behaviour
 node .dev/test-external.mjs edit     # only tests whose name matches
 node .dev/test-rename.mjs            # the rename key's alternation
 node .dev/test-urls.mjs              # URLs and encoded paths typed into the bar
+node .dev/test-tab.mjs               # Tab completion and the selection ladder
 node .dev/test-compat.mjs            # against installed peer plugins
 node .dev/test-compat.mjs Quick      # one peer
 ```
