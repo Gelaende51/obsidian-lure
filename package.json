@@ -8,6 +8,7 @@
 		"build": "tsc -noEmit -skipLibCheck && npm run lint && npm run check:lang && npm run check:listing && node esbuild.config.mjs production",
 		"check:lang": "node scripts/check-translations.mjs",
 		"check:listing": "node scripts/check-listing.mjs",
+		"check:minver": "node scripts/check-min-app-version.mjs",
 		"tags": "node scripts/obsidian-listing-tags.mjs",
 		"lint": "eslint src",
 		"stamp": "node scripts/i18n-stamp.mjs"

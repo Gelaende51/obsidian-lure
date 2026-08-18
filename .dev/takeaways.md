@@ -751,3 +751,17 @@ watch the suite fail *without* touching the running window.
 The general shape is worth keeping in mind for any host application that
 loads plugins: "the tests pass" means nothing until you know what the tests
 loaded.
+
+## `Plugin.settings` became an Obsidian field in 1.13.0
+
+A plugin that stores its own options as `this.settings` — which the sample
+plugin does, and which this one copied — now shadows `Plugin.settings?: unknown`,
+added for the declarative settings API. It typechecks, because narrowing an
+optional `unknown` to a concrete type is legal, and it behaves correctly on
+1.13.7.
+
+Worth knowing anyway: the field is no longer only ours, and a future Obsidian
+that reads it for its own purposes would find a shape it did not choose. It is
+also the one thing `scripts/check-min-app-version.mjs` reports as newer than
+the floor, and the report is right that the name is new and wrong that we use
+it — which is exactly why that script says a hit is a question, not a finding.
