@@ -47,6 +47,7 @@ import {
 import { ExternalFileView, extensionOf, openExternalFile } from "./externalFileView";
 import { showExternalMenu } from "./externalMenu";
 import { UrlTarget, classifyTypedTarget, slashBelongsToScheme } from "./urlTargets";
+import { NavMove } from "./navLock";
 import {
 	FOLDER_NOTE_PLUGIN_IDS,
 	GestureTarget,
@@ -108,6 +109,13 @@ const charList = (chars: string) => chars.split("").join(" ");
  * deliberate later click is never caught by it.
  */
 const SEGMENT_DOUBLE_CLICK_MS = 500;
+
+/** On the header row while navigation is locked; suppresses typing, tints the marking. */
+const NAV_LOCKED_CLASS = "lure-nav-locked";
+/** On whatever would make a legal locked move — a segment, or a history button. */
+const NAV_LEGAL_CLASS = "lure-nav-legal";
+/** Passed when clearing, so a cleared bar cannot accidentally be told a move is legal. */
+const NO_MOVES: ReadonlySet<NavMove> = new Set();
 
 /** Room past the caret, in px, so the cursor is never flush against the edge. */
 const INPUT_SLACK_PX = 6;
@@ -206,6 +214,7 @@ export class PathBreadcrumb {
 	private vaultSegmentEl: HTMLElement;
 	private filenameEl: HTMLElement;
 	private renameButtonEl: HTMLElement;
+	private navLockButtonEl: HTMLElement;
 	/** The padlock, shown only while the row points outside the vault. */
 	private unlockButtonEl: HTMLElement;
 	private inputEl: HTMLInputElement | null = null;
@@ -306,6 +315,20 @@ export class PathBreadcrumb {
 		// same ones the native bookmark/reading-mode/more-options buttons
 		// use) so it inherits identical sizing for free, and lives in
 		// .view-actions itself rather than next to our breadcrumb.
+		// A chain, not a padlock. The padlock beside it is a *permission* —
+		// writing outside the vault — while this is a *coupling*: these bars
+		// move together. Two padlocks a few pixels apart would make the user
+		// learn which is which, which is the cost an icon is supposed to
+		// save. Blue here and red there, matching what each already means
+		// elsewhere on the row.
+		this.navLockButtonEl = createSpan();
+		this.navLockButtonEl.addClass("clickable-icon", "view-action", "lure-navlock-btn");
+		setIcon(this.navLockButtonEl, "link");
+		this.navLockButtonEl.addEventListener("click", (evt) => {
+			evt.stopPropagation();
+			this.manager.navLock.setLocked(false);
+		});
+
 		this.renameButtonEl = createSpan();
 		this.renameButtonEl.addClass("clickable-icon", "view-action", "lure-rename-btn");
 		this.renameButtonEl.setAttribute("aria-label", t("renameToggleLabel"));
@@ -703,6 +726,115 @@ export class PathBreadcrumb {
 		this.enterTypingMode("");
 	}
 
+	// ---- NavLockParticipant -------------------------------------------------
+
+	/**
+	 * A bar takes part once it is showing a vault file. Outside the vault
+	 * there is no leaf history to walk and no vault folder to rise through,
+	 * so an external row is left out rather than made to answer questions
+	 * that do not apply to it.
+	 */
+	participates(): boolean {
+		if (this.file === null || this.externalPath !== null) return false;
+		// Editor panes only. Sidebar views get patched too — backlinks has a
+		// header title and a file like any other — but they carry no
+		// navigation history, so including one made every locked group report
+		// "back" as illegal because of a pane nobody was navigating.
+		//
+		// `iterateRootLeaves` looked like the obvious test and is not: with two
+		// editor panes open side by side it yielded one of them. Asking the
+		// leaf for its own root is exact.
+		return this.leaf.getRoot() === this.plugin.app.workspace.rootSplit;
+	}
+
+	canMove(move: NavMove): boolean {
+		if (!this.participates()) return false;
+		if (move === "up") return this.parentOfCurrentFolder() !== null;
+		const history = this.leaf.history;
+		if (!history) return false;
+		const stack = move === "back" ? history.backHistory : history.forwardHistory;
+		return (stack?.length ?? 0) > 0;
+	}
+
+	applyMove(move: NavMove): void {
+		if (move === "back") {
+			void this.leaf.history?.back();
+			return;
+		}
+		if (move === "forward") {
+			void this.leaf.history?.forward();
+			return;
+		}
+		const parent = this.parentOfCurrentFolder();
+		if (parent !== null) this.goUpTo(parent);
+	}
+
+	/**
+	 * Paints the moves the lock will accept.
+	 *
+	 * Blue on the segment that would be risen to, and on Obsidian's own
+	 * back/forward buttons — the two places a user already looks for those
+	 * moves. Clearing is unconditional so an unlocked bar never keeps a
+	 * marking from a lock that has since ended.
+	 */
+	markLegalMoves(moves: ReadonlySet<NavMove>): void {
+		const container = this.titleEl.parentElement;
+		container?.toggleClass(NAV_LOCKED_CLASS, this.manager.navLock.isLocked() && this.participates());
+
+		const parent = this.parentOfCurrentFolder();
+		for (const [index, segment] of this.nativeSegments().entries()) {
+			const path = this.ancestorFolderPaths()[index] ?? null;
+			segment.toggleClass(NAV_LEGAL_CLASS, moves.has("up") && path !== null && path === parent);
+		}
+		this.markHistoryButtons(moves);
+		this.updateNavLockButton();
+	}
+
+	/**
+	 * Obsidian's own back and forward actions.
+	 *
+	 * They carry no distinguishing class — only an `aria-label`, which is
+	 * translated, so matching "Navigate back" would mark nothing in any of
+	 * the other 44 languages this plugin speaks. They are the first two
+	 * clickable icons in the header's left group, in that order, which is a
+	 * fact about the layout rather than about the text.
+	 */
+	private markHistoryButtons(moves: ReadonlySet<NavMove>): void {
+		const icons = this.leaf.view.containerEl.querySelectorAll<HTMLElement>(
+			".view-header-left .clickable-icon",
+		);
+		icons[0]?.toggleClass(NAV_LEGAL_CLASS, moves.has("back"));
+		icons[1]?.toggleClass(NAV_LEGAL_CLASS, moves.has("forward"));
+	}
+
+	/** The folder one level above where this bar currently stands, or null at the root. */
+	private parentOfCurrentFolder(): string | null {
+		const current = this.currentFolderPath();
+		if (!current) return null;
+		const cut = current.lastIndexOf("/");
+		return cut < 0 ? "" : current.slice(0, cut);
+	}
+
+	/**
+	 * Rising a level: the folder's own note where a folder-note plugin gives
+	 * it one, since that is what the folder *is* to the user, and otherwise
+	 * the folder revealed in the explorer with the bar standing there.
+	 */
+	private goUpTo(folderPath: string): void {
+		const folder = this.plugin.app.vault.getAbstractFileByPath(folderPath || "/");
+		if (folder instanceof TFolder) {
+			const note = this.folderNoteFor(folder);
+			if (note) {
+				void this.leaf.openFile(note);
+				return;
+			}
+		}
+		this.extendBrowsePath(folderPath);
+		this.render();
+	}
+
+	// -------------------------------------------------------------------------
+
 	/** Re-derives the file from the leaf and re-renders, unless mid-edit. */
 	refresh(): void {
 		this.insertVaultSegment();
@@ -788,10 +920,16 @@ export class PathBreadcrumb {
 		// and outlives us, so leaving these attached would keep this dead
 		// instance reachable and reacting to clicks after unload.
 		this.rightClicks.reset();
+		// The marking lives on Obsidian's own breadcrumb elements, which
+		// outlive this instance — disabling the plugin, or reloading it,
+		// would otherwise leave blue segments behind with nothing to explain
+		// them.
+		this.markLegalMoves(NO_MOVES);
 		this.domListeners.abort();
 		this.vaultSegmentEl.remove();
 		this.filenameEl.remove();
 		this.renameButtonEl.remove();
+		this.navLockButtonEl.remove();
 		this.unlockButtonEl.remove();
 		this.titleEl.parentElement?.removeClass(RENAME_MODE_CLASS);
 		this.titleEl.parentElement?.removeAttribute("tabindex");
@@ -1130,6 +1268,28 @@ export class PathBreadcrumb {
 		);
 		if (!this.renameButtonEl.isConnected) {
 			viewActions?.insertAdjacentElement("afterbegin", this.renameButtonEl);
+		}
+		this.updateNavLockButton();
+	}
+
+	/**
+	 * The chain shows only while the lock is on, the way the padlock shows
+	 * only outside the vault: a control for a mode you are not in is one
+	 * more thing to read past. It is the indicator and the way out at once,
+	 * so nothing else has to be given up to make room — the rename button in
+	 * particular stays exactly where it was, because renaming is still
+	 * something you may want to do while coupled.
+	 */
+	private updateNavLockButton(): void {
+		const locked = this.manager.navLock.isLocked() && this.participates();
+		if (!locked) {
+			this.navLockButtonEl.remove();
+			return;
+		}
+		this.navLockButtonEl.setAttribute("aria-label", t("navLockRelease"));
+		if (this.navLockButtonEl.isConnected) return;
+		if (this.renameButtonEl.isConnected) {
+			this.renameButtonEl.insertAdjacentElement("beforebegin", this.navLockButtonEl);
 		}
 	}
 
@@ -2339,6 +2499,11 @@ export class PathBreadcrumb {
 		host: HTMLElement = this.filenameEl,
 	): void {
 		if (!this.file && this.externalPath === null && this.browsePath === null) return;
+		// Locked bars do not type. A typed path is an arbitrary destination,
+		// and arbitrary is exactly what the lock exists to rule out — the
+		// other panes could not be asked to follow it. Renaming is not
+		// navigation and is deliberately still allowed.
+		if (this.manager.navLock.isLocked() && !this.renameMode) return;
 
 		this.mode = "typing";
 		// The filename slot is where the input normally goes, and emptying

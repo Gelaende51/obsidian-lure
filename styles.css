@@ -611,3 +611,31 @@
 .lure-external-bar-button.mod-view {
 	background-color: var(--text-selection);
 }
+
+/* Navigation lock.
+
+   Blue, against the padlock's red, because the two are different kinds of
+   thing: the padlock is a permission to write outside the vault, this is a
+   coupling between panes. One colour, one meaning — and blue is already
+   what a legal locked move is marked with, so the button and the marking
+   say the same thing. */
+.lure-navlock-btn.view-action {
+	color: var(--interactive-accent);
+}
+
+/* What the lock will accept: the segment that would be risen to, and
+   Obsidian's own back/forward buttons. Tinted rather than outlined so a
+   marked control still reads as the control it was. */
+.lure-nav-legal {
+	color: var(--interactive-accent);
+}
+
+.view-header-breadcrumb.lure-nav-legal {
+	font-weight: var(--font-semibold);
+}
+
+/* While coupled the row does not accept typing, so it should not invite it. */
+.lure-nav-locked .lure-filename-text,
+.lure-nav-locked .view-header-breadcrumb {
+	cursor: default;
+}

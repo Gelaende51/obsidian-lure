@@ -59,6 +59,7 @@ export default class BreadcrumbPathPlugin extends Plugin {
 		this.manager.registerEvents();
 
 		this.registerFocusCommand();
+		this.registerNavLockMenu();
 		this.app.workspace.onLayoutReady(() => this.patchRenameCommand());
 	}
 
@@ -98,6 +99,31 @@ export default class BreadcrumbPathPlugin extends Plugin {
 				return true;
 			},
 		});
+	}
+
+	/**
+	 * The nav-lock toggle, in Obsidian's own three-dot menu.
+	 *
+	 * That menu is where a per-pane mode belongs, and the event carries the
+	 * source so the entry appears there rather than in every file menu in
+	 * the app — the File Explorer's rows have nothing to do with how panes
+	 * navigate.
+	 */
+	private registerNavLockMenu(): void {
+		this.registerEvent(
+			this.app.workspace.on("file-menu", (menu, _file, source) => {
+				if (source !== "pane-more-options" && source !== "more-options") return;
+				const lock = this.manager.navLock;
+				if (!lock.isLocked() && !lock.canLock()) return;
+				menu.addItem((item) =>
+					item
+						.setSection("view")
+						.setTitle(lock.isLocked() ? t("navLockRelease") : t("navLockEngage"))
+						.setIcon(lock.isLocked() ? "unlink" : "link")
+						.onClick(() => lock.toggle()),
+				);
+			}),
+		);
 	}
 
 	async saveSettings(): Promise<void> {

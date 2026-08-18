@@ -1,6 +1,7 @@
 import { WorkspaceLeaf } from "obsidian";
 import type BreadcrumbPathPlugin from "./main";
 import { PathBreadcrumb } from "./pathBreadcrumb";
+import { NavLock } from "./navLock";
 
 const PATCHED_CLASS = "lure-patched";
 
@@ -11,6 +12,12 @@ const PATCHED_CLASS = "lure-patched";
  */
 export class BreadcrumbManager {
 	private instances = new Map<WorkspaceLeaf, PathBreadcrumb>();
+	/**
+	 * Owned here because "legal on every bar" is not a question any single
+	 * bar can answer about itself, and picking one to arbitrate would make it
+	 * a master the others have no reason to trust.
+	 */
+	readonly navLock = new NavLock(() => [...this.instances.values()]);
 
 	constructor(private plugin: BreadcrumbPathPlugin) {}
 
@@ -26,6 +33,10 @@ export class BreadcrumbManager {
 			}),
 		);
 		this.plugin.registerEvent(workspace.on("layout-change", () => this.fullSweep()));
+		// Closing or opening a pane changes what the lock is coupling, and can
+		// leave it with nothing to couple at all.
+		this.plugin.registerEvent(workspace.on("layout-change", () => this.navLock.refresh()));
+		this.plugin.registerEvent(workspace.on("file-open", () => this.navLock.refresh()));
 		this.plugin.registerEvent(vault.on("rename", () => this.refreshAll()));
 
 		workspace.onLayoutReady(() => this.fullSweep());

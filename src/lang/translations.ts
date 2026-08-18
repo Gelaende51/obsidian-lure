@@ -85,6 +85,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "„{path}“ existiert und ist kein Ordner.",
 		commandFocusPathBar: "Pfadleiste fokussieren",
 		noticeExternalDisabled: "Pfade außerhalb deines Vaults sind deaktiviert. Aktiviere {setting} in den Plugin-Einstellungen.",
+		navLockEngage: "Navigation über Bereiche hinweg sperren",
+		navLockRelease: "Navigation über Bereiche hinweg entsperren",
+		navLockNeedsTwo: "Die Navigationssperre braucht mindestens zwei geöffnete Bereiche.",
 	},
 
 	fr: {
@@ -153,6 +156,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "« {path} » existe et n’est pas un dossier.",
 		commandFocusPathBar: "Placer le focus sur la barre de chemin",
 		noticeExternalDisabled: "Les chemins hors de votre coffre sont désactivés. Activez {setting} dans les paramètres du plugin.",
+		navLockEngage: "Verrouiller la navigation entre les volets",
+		navLockRelease: "Déverrouiller la navigation entre les volets",
+		navLockNeedsTwo: "Le verrou de navigation nécessite au moins deux volets ouverts.",
 	},
 
 	es: {
@@ -220,6 +226,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "«{path}» existe y no es una carpeta.",
 		commandFocusPathBar: "Enfocar la barra de ruta",
 		noticeExternalDisabled: "Las rutas fuera de tu bóveda están desactivadas. Activa {setting} en los ajustes del plugin.",
+		navLockEngage: "Bloquear la navegación entre paneles",
+		navLockRelease: "Desbloquear la navegación entre paneles",
+		navLockNeedsTwo: "El bloqueo de navegación necesita al menos dos paneles abiertos.",
 	},
 
 	it: {
@@ -287,6 +296,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "«{path}» esiste e non è una cartella.",
 		commandFocusPathBar: "Attiva la barra del percorso",
 		noticeExternalDisabled: "I percorsi fuori dal tuo vault sono disattivati. Attiva {setting} nelle impostazioni del plugin.",
+		navLockEngage: "Blocca la navigazione tra i riquadri",
+		navLockRelease: "Sblocca la navigazione tra i riquadri",
+		navLockNeedsTwo: "Il blocco di navigazione richiede almeno due riquadri aperti.",
 	},
 
 	pt: {
@@ -354,6 +366,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "«{path}» existe e não é uma pasta.",
 		commandFocusPathBar: "Focar a barra de caminho",
 		noticeExternalDisabled: "Os caminhos fora do teu cofre estão desativados. Ativa {setting} nas definições do plugin.",
+		navLockEngage: "Bloquear a navegação entre painéis",
+		navLockRelease: "Desbloquear a navegação entre painéis",
+		navLockNeedsTwo: "O bloqueio de navegação precisa de pelo menos dois painéis abertos.",
 	},
 
 	"pt-BR": {
@@ -421,6 +436,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "“{path}” existe e não é uma pasta.",
 		commandFocusPathBar: "Focar a barra de caminho",
 		noticeExternalDisabled: "Os caminhos fora do seu cofre estão desativados. Ative {setting} nas configurações do plugin.",
+		navLockEngage: "Bloquear a navegação entre painéis",
+		navLockRelease: "Desbloquear a navegação entre painéis",
+		navLockNeedsTwo: "O bloqueio de navegação precisa de pelo menos dois painéis abertos.",
 	},
 
 	nl: {
@@ -487,6 +505,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "“{path}” bestaat en is geen map.",
 		commandFocusPathBar: "Focus op de padbalk",
 		noticeExternalDisabled: "Paden buiten je kluis staan uit. Zet {setting} aan in de plug-in-instellingen.",
+		navLockEngage: "Navigatie tussen deelvensters vergrendelen",
+		navLockRelease: "Navigatie tussen deelvensters ontgrendelen",
+		navLockNeedsTwo: "De navigatievergrendeling heeft minstens twee open deelvensters nodig.",
 	},
 
 	pl: {
@@ -553,6 +574,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "„{path}” istnieje i nie jest folderem.",
 		commandFocusPathBar: "Ustaw fokus na pasku ścieżki",
 		noticeExternalDisabled: "Ścieżki poza skarbcem są wyłączone. Włącz {setting} w ustawieniach wtyczki.",
+		navLockEngage: "Zablokuj nawigację między panelami",
+		navLockRelease: "Odblokuj nawigację między panelami",
+		navLockNeedsTwo: "Blokada nawigacji wymaga co najmniej dwóch otwartych paneli.",
 	},
 
 	ru: {
@@ -619,6 +643,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "«{path}» существует и не является папкой.",
 		commandFocusPathBar: "Фокус на строке пути",
 		noticeExternalDisabled: "Пути за пределами хранилища отключены. Включите {setting} в настройках плагина.",
+		navLockEngage: "Связать навигацию между панелями",
+		navLockRelease: "Развязать навигацию между панелями",
+		navLockNeedsTwo: "Для блокировки навигации нужно минимум две открытые панели.",
 	},
 
 	uk: {
@@ -685,6 +712,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "«{path}» існує і не є текою.",
 		commandFocusPathBar: "Фокус на рядку шляху",
 		noticeExternalDisabled: "Шляхи поза сховищем вимкнено. Увімкніть {setting} у налаштуваннях плагіна.",
+		navLockEngage: "Зв'язати навігацію між панелями",
+		navLockRelease: "Розв'язати навігацію між панелями",
+		navLockNeedsTwo: "Для блокування навігації потрібні щонайменше дві відкриті панелі.",
 	},
 
 	cs: {
@@ -751,6 +781,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "„{path}“ existuje a není složka.",
 		commandFocusPathBar: "Zaměřit lištu cesty",
 		noticeExternalDisabled: "Cesty mimo trezor jsou vypnuté. Zapněte {setting} v nastavení pluginu.",
+		navLockEngage: "Uzamknout navigaci mezi panely",
+		navLockRelease: "Odemknout navigaci mezi panely",
+		navLockNeedsTwo: "Zámek navigace vyžaduje alespoň dva otevřené panely.",
 	},
 
 	sv: {
@@ -817,6 +850,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "”{path}” finns och är inte en mapp.",
 		commandFocusPathBar: "Fokusera sökvägsfältet",
 		noticeExternalDisabled: "Sökvägar utanför valvet är avstängda. Slå på {setting} i plugin-inställningarna.",
+		navLockEngage: "Lås navigeringen mellan paneler",
+		navLockRelease: "Lås upp navigeringen mellan paneler",
+		navLockNeedsTwo: "Navigeringslåset kräver minst två öppna paneler.",
 	},
 
 	da: {
@@ -883,6 +919,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "“{path}” findes og er ikke en mappe.",
 		commandFocusPathBar: "Fokusér stilinjen",
 		noticeExternalDisabled: "Stier uden for dit hvælv er slået fra. Slå {setting} til i plugin-indstillingerne.",
+		navLockEngage: "Lås navigationen på tværs af ruder",
+		navLockRelease: "Lås navigationen op på tværs af ruder",
+		navLockNeedsTwo: "Navigationslåsen kræver mindst to åbne ruder.",
 	},
 
 	no: {
@@ -949,6 +988,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "«{path}» finnes og er ikke en mappe.",
 		commandFocusPathBar: "Fokuser på stilinjen",
 		noticeExternalDisabled: "Stier utenfor hvelvet er av. Slå på {setting} i programtilleggsinnstillingene.",
+		navLockEngage: "Lås navigeringen på tvers av ruter",
+		navLockRelease: "Lås opp navigeringen på tvers av ruter",
+		navLockNeedsTwo: "Navigasjonslåsen krever minst to åpne ruter.",
 	},
 
 	fi: {
@@ -1015,6 +1057,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "”{path}” on olemassa eikä ole kansio.",
 		commandFocusPathBar: "Kohdista polkupalkkiin",
 		noticeExternalDisabled: "Holvin ulkopuoliset polut ovat pois käytöstä. Ota {setting} käyttöön lisäosan asetuksissa.",
+		navLockEngage: "Lukitse siirtyminen ruutujen välillä",
+		navLockRelease: "Vapauta siirtyminen ruutujen välillä",
+		navLockNeedsTwo: "Siirtymislukitus vaatii vähintään kaksi avointa ruutua.",
 	},
 
 	tr: {
@@ -1081,6 +1126,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "“{path}” var ve bir klasör değil.",
 		commandFocusPathBar: "Yol çubuğuna odaklan",
 		noticeExternalDisabled: "Kasanızın dışındaki yollar kapalı. Eklenti ayarlarından {setting} seçeneğini açın.",
+		navLockEngage: "Bölmeler arası gezinmeyi kilitle",
+		navLockRelease: "Bölmeler arası gezinmenin kilidini aç",
+		navLockNeedsTwo: "Gezinme kilidi için en az iki açık bölme gerekir.",
 	},
 
 	ja: {
@@ -1147,6 +1195,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "「{path}」は存在しますが、フォルダーではありません。",
 		commandFocusPathBar: "パスバーにフォーカス",
 		noticeExternalDisabled: "保管庫の外のパスは無効です。プラグイン設定で{setting}をオンにしてください。",
+		navLockEngage: "ペイン間のナビゲーションをロック",
+		navLockRelease: "ペイン間のナビゲーションのロックを解除",
+		navLockNeedsTwo: "ナビゲーションロックには 2 つ以上のペインが必要です。",
 	},
 
 	ko: {
@@ -1213,6 +1264,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "“{path}”이(가) 있지만 폴더가 아닙니다.",
 		commandFocusPathBar: "경로 표시줄에 포커스",
 		noticeExternalDisabled: "보관소 밖의 경로가 꺼져 있습니다. 플러그인 설정에서 {setting}을(를) 켜세요.",
+		navLockEngage: "창 간 탐색 잠금",
+		navLockRelease: "창 간 탐색 잠금 해제",
+		navLockNeedsTwo: "탐색 잠금에는 창이 두 개 이상 필요합니다.",
 	},
 
 	zh: {
@@ -1279,6 +1333,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "“{path}”已存在且不是文件夹。",
 		commandFocusPathBar: "聚焦路径栏",
 		noticeExternalDisabled: "保管库之外的路径已关闭。请在插件设置中开启{setting}。",
+		navLockEngage: "锁定窗格间的导航",
+		navLockRelease: "解除窗格间的导航锁定",
+		navLockNeedsTwo: "导航锁定至少需要两个打开的窗格。",
 	},
 
 	"zh-TW": {
@@ -1345,6 +1402,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "「{path}」已存在且不是資料夾。",
 		commandFocusPathBar: "聚焦路徑列",
 		noticeExternalDisabled: "保險庫之外的路徑已關閉。請在外掛設定中開啟{setting}。",
+		navLockEngage: "鎖定窗格間的導覽",
+		navLockRelease: "解除窗格間的導覽鎖定",
+		navLockNeedsTwo: "導覽鎖定至少需要兩個開啟的窗格。",
 	},
 
 	ar: {
@@ -1411,6 +1471,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "«{path}» موجود وليس مجلدًا.",
 		commandFocusPathBar: "التركيز على شريط المسار",
 		noticeExternalDisabled: "المسارات خارج قبوك معطّلة. فعّل {setting} في إعدادات الإضافة.",
+		navLockEngage: "قفل التنقل بين الأجزاء",
+		navLockRelease: "إلغاء قفل التنقل بين الأجزاء",
+		navLockNeedsTwo: "يحتاج قفل التنقل إلى جزأين مفتوحين على الأقل.",
 	},
 
 	ca: {
@@ -1479,6 +1542,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "«{path}» existeix i no és una carpeta.",
 		commandFocusPathBar: "Enfoca la barra de camí",
 		noticeExternalDisabled: "Els camins fora del teu magatzem estan desactivats. Activa {setting} als ajustaments del connector.",
+		navLockEngage: "Bloqueja la navegació entre subfinestres",
+		navLockRelease: "Desbloqueja la navegació entre subfinestres",
+		navLockNeedsTwo: "El bloqueig de navegació necessita almenys dues subfinestres obertes.",
 	},
 
 	ro: {
@@ -1546,6 +1612,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "„{path}” există și nu este un folder.",
 		commandFocusPathBar: "Focalizează bara de cale",
 		noticeExternalDisabled: "Căile din afara seifului sunt dezactivate. Activează {setting} în setările pluginului.",
+		navLockEngage: "Blochează navigarea între panouri",
+		navLockRelease: "Deblochează navigarea între panouri",
+		navLockNeedsTwo: "Blocarea navigării necesită cel puțin două panouri deschise.",
 	},
 
 	hu: {
@@ -1613,6 +1682,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "A(z) „{path}” létezik, és nem mappa.",
 		commandFocusPathBar: "Fókusz az útvonalsávra",
 		noticeExternalDisabled: "A tárolón kívüli útvonalak ki vannak kapcsolva. Kapcsold be a(z) {setting} beállítást a bővítmény beállításaiban.",
+		navLockEngage: "Navigáció zárolása a panelek között",
+		navLockRelease: "Navigáció feloldása a panelek között",
+		navLockNeedsTwo: "A navigációzárhoz legalább két nyitott panel kell.",
 	},
 
 	sk: {
@@ -1679,6 +1751,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "„{path}“ existuje a nie je priečinok.",
 		commandFocusPathBar: "Zamerať lištu cesty",
 		noticeExternalDisabled: "Cesty mimo trezora sú vypnuté. Zapnite {setting} v nastaveniach pluginu.",
+		navLockEngage: "Uzamknúť navigáciu medzi panelmi",
+		navLockRelease: "Odomknúť navigáciu medzi panelmi",
+		navLockNeedsTwo: "Zámok navigácie vyžaduje aspoň dva otvorené panely.",
 	},
 
 	lv: {
@@ -1745,6 +1820,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "„{path}“ pastāv un nav mape.",
 		commandFocusPathBar: "Fokusēt ceļa joslu",
 		noticeExternalDisabled: "Ceļi ārpus glabātavas ir izslēgti. Ieslēdziet {setting} spraudņa iestatījumos.",
+		navLockEngage: "Bloķēt navigāciju starp rūtīm",
+		navLockRelease: "Atbloķēt navigāciju starp rūtīm",
+		navLockNeedsTwo: "Navigācijas bloķēšanai vajadzīgas vismaz divas atvērtas rūtis.",
 	},
 
 	sq: {
@@ -1812,6 +1890,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "„{path}“ ekziston dhe nuk është dosje.",
 		commandFocusPathBar: "Fokuso shiritin e shtegut",
 		noticeExternalDisabled: "Shtigjet jashtë kasafortës janë të çaktivizuara. Aktivizo {setting} te cilësimet e shtojcës.",
+		navLockEngage: "Blloko lundrimin mes paneleve",
+		navLockRelease: "Zhblloko lundrimin mes paneleve",
+		navLockNeedsTwo: "Blloku i lundrimit kërkon të paktën dy panele të hapura.",
 	},
 
 	sr: {
@@ -1878,6 +1959,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "„{path}“ постоји и није фасцикла.",
 		commandFocusPathBar: "Фокусирај траку путање",
 		noticeExternalDisabled: "Путање изван трезора су искључене. Укључите {setting} у подешавањима додатка.",
+		navLockEngage: "Закључај навигацију између окана",
+		navLockRelease: "Откључај навигацију између окана",
+		navLockNeedsTwo: "Закључавање навигације захтева најмање два отворена окна.",
 	},
 
 	be: {
@@ -1945,6 +2029,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "«{path}» існуе і не з’яўляецца папкай.",
 		commandFocusPathBar: "Фокус на радку шляху",
 		noticeExternalDisabled: "Шляхі па-за сховішчам адключаны. Уключыце {setting} у наладах плагіна.",
+		navLockEngage: "Звязаць навігацыю паміж панэлямі",
+		navLockRelease: "Развязаць навігацыю паміж панэлямі",
+		navLockNeedsTwo: "Для блакіроўкі навігацыі патрэбны прынамсі дзве адкрытыя панэлі.",
 	},
 
 	el: {
@@ -2013,6 +2100,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "Το «{path}» υπάρχει και δεν είναι φάκελος.",
 		commandFocusPathBar: "Εστίαση στη γραμμή διαδρομής",
 		noticeExternalDisabled: "Οι διαδρομές εκτός του θησαυροφυλακίου είναι απενεργοποιημένες. Ενεργοποιήστε το {setting} στις ρυθμίσεις του πρόσθετου.",
+		navLockEngage: "Κλείδωμα πλοήγησης μεταξύ των παραθύρων",
+		navLockRelease: "Ξεκλείδωμα πλοήγησης μεταξύ των παραθύρων",
+		navLockNeedsTwo: "Το κλείδωμα πλοήγησης χρειάζεται τουλάχιστον δύο ανοιχτά παράθυρα.",
 	},
 
 	ga: {
@@ -2079,6 +2169,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "Tá „{path}“ ann agus ní fillteán é.",
 		commandFocusPathBar: "Fócas ar an mbarra conaire",
 		noticeExternalDisabled: "Tá conairí lasmuigh de do chruinneog múchta. Cuir {setting} ar siúl i socruithe an bhreiseáin.",
+		navLockEngage: "Cuir glas ar an nascleanúint idir na pánaí",
+		navLockRelease: "Bain an glas den nascleanúint idir na pánaí",
+		navLockNeedsTwo: "Teastaíonn dhá phána ar a laghad ón nglas nascleanúna.",
 	},
 
 	he: {
@@ -2145,6 +2238,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "“{path}” קיים ואינו תיקייה.",
 		commandFocusPathBar: "מיקוד בשורת הנתיב",
 		noticeExternalDisabled: "נתיבים מחוץ לכספת מושבתים. הפעל את {setting} בהגדרות התוסף.",
+		navLockEngage: "נעילת הניווט בין החלוניות",
+		navLockRelease: "שחרור נעילת הניווט בין החלוניות",
+		navLockNeedsTwo: "נעילת הניווט דורשת לפחות שתי חלוניות פתוחות.",
 	},
 
 	fa: {
@@ -2211,6 +2307,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "«{path}» وجود دارد و پوشه نیست.",
 		commandFocusPathBar: "تمرکز روی نوار مسیر",
 		noticeExternalDisabled: "مسیرهای بیرون از گاوصندوق غیرفعال است. {setting} را در تنظیمات افزونه روشن کنید.",
+		navLockEngage: "قفل کردن پیمایش میان قاب‌ها",
+		navLockRelease: "باز کردن قفل پیمایش میان قاب‌ها",
+		navLockNeedsTwo: "قفل پیمایش دست‌کم به دو قاب باز نیاز دارد.",
 	},
 
 	id: {
@@ -2277,6 +2376,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "“{path}” ada dan bukan folder.",
 		commandFocusPathBar: "Fokus ke bilah jalur",
 		noticeExternalDisabled: "Jalur di luar brankas dimatikan. Aktifkan {setting} di pengaturan plugin.",
+		navLockEngage: "Kunci navigasi antar panel",
+		navLockRelease: "Buka kunci navigasi antar panel",
+		navLockNeedsTwo: "Kunci navigasi memerlukan setidaknya dua panel terbuka.",
 	},
 
 	ms: {
@@ -2343,6 +2445,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "“{path}” wujud dan bukan folder.",
 		commandFocusPathBar: "Fokus pada bar laluan",
 		noticeExternalDisabled: "Laluan di luar bilik kebal dimatikan. Hidupkan {setting} dalam tetapan pemalam.",
+		navLockEngage: "Kunci navigasi antara anak tetingkap",
+		navLockRelease: "Buka kunci navigasi antara anak tetingkap",
+		navLockNeedsTwo: "Kunci navigasi memerlukan sekurang-kurangnya dua anak tetingkap dibuka.",
 	},
 
 	vi: {
@@ -2409,6 +2514,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "“{path}” đã tồn tại và không phải là thư mục.",
 		commandFocusPathBar: "Tập trung vào thanh đường dẫn",
 		noticeExternalDisabled: "Đường dẫn ngoài kho lưu trữ đang tắt. Bật {setting} trong cài đặt plugin.",
+		navLockEngage: "Khoá điều hướng giữa các khung",
+		navLockRelease: "Mở khoá điều hướng giữa các khung",
+		navLockNeedsTwo: "Khoá điều hướng cần ít nhất hai khung đang mở.",
 	},
 
 	th: {
@@ -2475,6 +2583,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "“{path}” มีอยู่แล้วและไม่ใช่โฟลเดอร์",
 		commandFocusPathBar: "โฟกัสแถบพาธ",
 		noticeExternalDisabled: "เส้นทางนอกวอลต์ถูกปิดอยู่ เปิด {setting} ในการตั้งค่าปลั๊กอิน",
+		navLockEngage: "ล็อกการนำทางระหว่างบานหน้าต่าง",
+		navLockRelease: "ปลดล็อกการนำทางระหว่างบานหน้าต่าง",
+		navLockNeedsTwo: "การล็อกการนำทางต้องมีบานหน้าต่างเปิดอยู่อย่างน้อยสองบาน",
 	},
 
 	kh: {
@@ -2541,6 +2652,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "«{path}» មានរួចហើយ ហើយមិនមែនជាថតទេ។",
 		commandFocusPathBar: "ផ្តោតលើរបារផ្លូវ",
 		noticeExternalDisabled: "ផ្លូវនៅខាងក្រៅឃ្លាំងត្រូវបានបិទ។ បើក {setting} ក្នុងការកំណត់កម្មវិធីជំនួយ។",
+		navLockEngage: "ចាក់សោការរុករករវាងផ្ទាំង",
+		navLockRelease: "ដោះសោការរុករករវាងផ្ទាំង",
+		navLockNeedsTwo: "ការចាក់សោការរុករកត្រូវការផ្ទាំងបើកយ៉ាងតិចពីរ។",
 	},
 
 	ne: {
@@ -2607,6 +2721,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "“{path}” छ तर फोल्डर होइन।",
 		commandFocusPathBar: "पथ पट्टीमा फोकस गर्नुहोस्",
 		noticeExternalDisabled: "भल्ट बाहिरका पथहरू बन्द छन्। प्लगइन सेटिङमा {setting} खोल्नुहोस्।",
+		navLockEngage: "प्यानलहरू बीचको नेभिगेसन लक गर्नुहोस्",
+		navLockRelease: "प्यानलहरू बीचको नेभिगेसन अनलक गर्नुहोस्",
+		navLockNeedsTwo: "नेभिगेसन लकलाई कम्तीमा दुई खुला प्यानल चाहिन्छ।",
 	},
 
 	bn: {
@@ -2673,6 +2790,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "“{path}” আছে এবং এটি ফোল্ডার নয়।",
 		commandFocusPathBar: "পাথ বারে ফোকাস করুন",
 		noticeExternalDisabled: "ভল্টের বাইরের পাথ বন্ধ আছে। প্লাগইন সেটিংসে {setting} চালু করুন।",
+		navLockEngage: "প্যানেলের মধ্যে নেভিগেশন লক করুন",
+		navLockRelease: "প্যানেলের মধ্যে নেভিগেশন আনলক করুন",
+		navLockNeedsTwo: "নেভিগেশন লকের জন্য অন্তত দুটি খোলা প্যানেল দরকার।",
 	},
 
 	ka: {
@@ -2741,6 +2861,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "„{path}“ არსებობს და საქაღალდე არ არის.",
 		commandFocusPathBar: "ფოკუსი ბილიკის ზოლზე",
 		noticeExternalDisabled: "საცავის გარეთ არსებული ბილიკები გამორთულია. ჩართეთ {setting} დანამატის პარამეტრებში.",
+		navLockEngage: "ნავიგაციის ჩაკეტვა პანელებს შორის",
+		navLockRelease: "ნავიგაციის განბლოკვა პანელებს შორის",
+		navLockNeedsTwo: "ნავიგაციის ჩაკეტვას სჭირდება მინიმუმ ორი ღია პანელი.",
 	},
 
 	uz: {
@@ -2807,6 +2930,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "“{path}” mavjud va u jild emas.",
 		commandFocusPathBar: "Yo'l paneliga fokus",
 		noticeExternalDisabled: "Ombordan tashqaridagi yo'llar o'chirilgan. Plagin sozlamalarida {setting} ni yoqing.",
+		navLockEngage: "Panellar orasidagi navigatsiyani qulflash",
+		navLockRelease: "Panellar orasidagi navigatsiya qulfini ochish",
+		navLockNeedsTwo: "Navigatsiya qulfi uchun kamida ikkita ochiq panel kerak.",
 	},
 
 	am: {
@@ -2873,6 +2999,9 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "“{path}” አለ ግን አቃፊ አይደለም።",
 		commandFocusPathBar: "የመንገድ አሞሌ ላይ አትኩር",
 		noticeExternalDisabled: "ከቮልትዎ ውጭ ያሉ መንገዶች ጠፍተዋል። በተሰኪ ቅንብሮች ውስጥ {setting} ን ያብሩ።",
+		navLockEngage: "በክፍሎች መካከል አሰሳን ቆልፍ",
+		navLockRelease: "በክፍሎች መካከል አሰሳን ክፈት",
+		navLockNeedsTwo: "የአሰሳ መቆለፊያ ቢያንስ ሁለት የተከፈቱ ክፍሎችን ይፈልጋል።",
 	},
 
 	sa: {
@@ -2939,5 +3068,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		errorNotAFolder: "“{path}” विद्यते, पुटं तु नास्ति।",
 		commandFocusPathBar: "पथपट्टिकायां केन्द्रीकरणम्",
 		noticeExternalDisabled: "कोशात् बहिः मार्गाः निष्क्रियाः सन्ति। पुरःसरसेटिङ्गेषु {setting} इति सक्रियं कुरुत।",
+		navLockEngage: "पटलानां मध्ये संचरणं निरुध्यताम्",
+		navLockRelease: "पटलानां मध्ये संचरणं विमोच्यताम्",
+		navLockNeedsTwo: "संचरणनिरोधाय न्यूनातिन्यूनं द्वे उद्घाटिते पटले आवश्यके।",
 	},
 };

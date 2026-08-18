@@ -130,6 +130,22 @@ declare module "obsidian" {
 	 * The community-plugin registry. Only `enabledPlugins` is used, and only
 	 * to ask whether a named peer is running — never to reach into one.
 	 */
+	/**
+	 * A leaf's own back/forward stack. Undocumented, and the only way to ask
+	 * whether a pane has anywhere to go — which is what makes a locked move
+	 * legal or not.
+	 */
+	interface LeafHistory {
+		backHistory: unknown[];
+		forwardHistory: unknown[];
+		back(): Promise<void>;
+		forward(): Promise<void>;
+	}
+
+	interface WorkspaceLeaf {
+		history?: LeafHistory;
+	}
+
 	interface PluginRegistry {
 		enabledPlugins: Set<string>;
 	}
