@@ -10,7 +10,7 @@
  */
 
 export type UrlTarget =
-	/** Opened with window.open, which honours the user's Web Viewer setting. */
+	/** Opened in Obsidian's own Web viewer where that is on, and in the desktop browser otherwise. */
 	| { kind: "web"; href: string }
 	/** Handed to Obsidian's own URI handler, which knows about vaults. */
 	| { kind: "obsidian"; href: string }

@@ -1,7 +1,8 @@
-import { WorkspaceLeaf } from "obsidian";
+import { Notice, WorkspaceLeaf } from "obsidian";
 import type BreadcrumbPathPlugin from "./main";
 import { PathBreadcrumb } from "./pathBreadcrumb";
 import { NavLock } from "./navLock";
+import { t } from "./lang";
 
 const PATCHED_CLASS = "lure-patched";
 
@@ -17,7 +18,14 @@ export class BreadcrumbManager {
 	 * bar can answer about itself, and picking one to arbitrate would make it
 	 * a master the others have no reason to trust.
 	 */
-	readonly navLock = new NavLock(() => [...this.instances.values()]);
+	readonly navLock = new NavLock(
+		() => [...this.instances.values()],
+		// The lock is a mode with no dialog of its own, so it letting go has
+		// to be said out loud: the marking simply disappearing looks like
+		// the feature failing rather than like a decision.
+		(reason) =>
+			new Notice(t(reason === "closed" ? "navLockDroppedClosed" : "navLockDroppedMoved")),
+	);
 
 	constructor(private plugin: BreadcrumbPathPlugin) {}
 

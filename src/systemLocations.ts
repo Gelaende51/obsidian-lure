@@ -58,7 +58,11 @@ export const LOCATION_ICONS: Record<LocationKind, string> = {
 	// rest of the app does.
 	vault: "vault",
 	home: "tilde",
-	root: "folder",
+	// Not a plain "folder": the filesystem root is a jump target in a
+	// dropdown of jump targets, and drawing it as an ordinary folder made it
+	// read as one more directory among the drives. `applyIcon` falls back to
+	// a folder where Obsidian's Lucide subset predates this name.
+	root: "folder-root",
 	drive: "hard-drive",
 };
 

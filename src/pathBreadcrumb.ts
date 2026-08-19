@@ -4,7 +4,7 @@ import {
 	Keymap,
 	Notice,
 	PaneType,
-	Platform,
+	Scope,
 	TAbstractFile,
 	TFile,
 	TFolder,
@@ -13,11 +13,13 @@ import {
 	displayTooltip,
 	normalizePath,
 	setIcon,
+	setTooltip,
 } from "obsidian";
 import type { FileExplorerView } from "obsidian";
 import type BreadcrumbPathPlugin from "./main";
 import type { BreadcrumbManager } from "./breadcrumbManager";
 import { ConfirmCreateFileModal } from "./createFileModal";
+import { planFit, shortestUnique } from "./pathFit";
 import { FolderChildSuggest } from "./folderChildSuggest";
 import { ExternalChild, PATH_SEP, externalJoin, externalParent, externalSegments, isExternalFile, isExternalFolder, listExternalChildren } from "./externalFs";
 import {
@@ -105,10 +107,22 @@ const SEGMENT_DOUBLE_CLICK_MS = 500;
 
 /** On the header row while navigation is locked; suppresses typing, tints the marking. */
 const NAV_LOCKED_CLASS = "lure-nav-locked";
+/** On the row when even the shortest honest names do not fit; turns it into a scroller. */
+const SCROLL_CLASS = "lure-row-scrolls";
+/**
+ * How many times the fitter re-measures. Each pass costs one layout read
+ * and converges quickly — three is comfortably enough for the paths that
+ * exist, and a bound means a row that cannot be satisfied scrolls instead
+ * of looping.
+ */
+const FIT_PASSES = 4;
 /** On whatever would make a legal locked move — a segment, or a history button. */
 const NAV_LEGAL_CLASS = "lure-nav-legal";
 /** Passed when clearing, so a cleared bar cannot accidentally be told a move is legal. */
 const NO_MOVES: ReadonlySet<NavMove> = new Set();
+
+/** Obsidian's own in-app browser, for addresses typed into the bar. */
+const WEB_VIEWER_VIEW_TYPE = "webviewer";
 
 /** Room past the caret, in px, so the cursor is never flush against the edge. */
 const INPUT_SLACK_PX = 6;
@@ -164,6 +178,19 @@ function onlyChangedFolder(before: string[], after: string[]): number | null {
 function stemLength(name: string): number {
 	const dot = name.lastIndexOf(".");
 	return dot > 0 ? dot : name.length;
+}
+
+/**
+ * A whole path with the extension taken off its last segment.
+ *
+ * Not `stemLength` on the path itself: a folder called `v1.2` holding a
+ * file with no extension would have the cut land inside the folder name
+ * and hand back half a path.
+ */
+function pathStem(path: string): string {
+	const cut = Math.max(path.lastIndexOf("/"), path.lastIndexOf("\\"));
+	const name = path.slice(cut + 1);
+	return path.slice(0, cut + 1) + name.slice(0, stemLength(name));
 }
 
 function textWidth(text: string, el: HTMLElement): number {
@@ -238,6 +265,8 @@ export class PathBreadcrumb {
 	private renameFocusOut: (() => void) | null = null;
 	/** Detaches the listeners bound to Obsidian's own header element on destroy. */
 	private domListeners = new AbortController();
+	/** Refits the row when the pane is resized — the whole point of fitting it. */
+	private resizeObserver: ResizeObserver | null = null;
 	/**
 	 * Counts right-clicks on the row so one press can mean three things.
 	 * One per bar: a run that starts on a folder and continues on the file
@@ -386,6 +415,7 @@ export class PathBreadcrumb {
 		this.insertVaultSegment();
 		this.insertRenameButton();
 		this.updateUnlockButton();
+		this.observeWidth();
 
 		// Listen on the whole row, not just the filename element, so
 		// clicking empty space anywhere (before the vault name, after
@@ -579,6 +609,13 @@ export class PathBreadcrumb {
 	 */
 	private folderPathForEvent(evt: MouseEvent, target: GestureTarget): string | null {
 		const el = evt.target as HTMLElement;
+		// Our own chips carry their path; Obsidian's segments are found by
+		// their index instead. Checked first because a chip is never in the
+		// native breadcrumb and would otherwise resolve to nothing.
+		const chip = el.closest<HTMLElement>("[data-lure-path]");
+		if (chip && (target === "folder" || target === "delimiter")) {
+			return chip.dataset.lurePath ?? null;
+		}
 		if (target === "folder") {
 			const segment = el.closest<HTMLElement>(".view-header-breadcrumb");
 			return segment ? this.nativeSegmentPath(segment) : null;
@@ -610,6 +647,13 @@ export class PathBreadcrumb {
 				// The one segment that is not a path segment gets the one
 				// action that is not about this file.
 				if (count === 1) void this.plugin.app.commands.executeCommandById("workspace:new-tab");
+				// Two presses take what this segment names — the vault, or
+				// the location standing in for it out there. Three take the
+				// path the filesystem knows, extension included: the copy
+				// that has to mean something outside Obsidian belongs on
+				// the segment that is itself outside the path.
+				else if (count === 2) void this.copyToClipboard(this.rootSegmentName());
+				else if (count === 3) void this.copyToClipboard(this.systemPath());
 				return;
 			case "delimiter":
 				if (count === 1) this.showDelimiterMenu(this.gestureFolderPath, at);
@@ -620,15 +664,17 @@ export class PathBreadcrumb {
 			case "folder":
 				this.runFolderGesture(count, at);
 				return;
-			case "empty":
-				// Two presses take the row as shown — vault-relative inside,
-				// which is what a link or a search needs. Three take the
-				// path the filesystem knows, which is what anything outside
-				// Obsidian needs. Obsidian draws the same distinction in its
-				// own two commands, "from vault folder" and "from system root".
-				if (count === 2) void this.copyToClipboard(this.rowPath());
-				else if (count === 3) void this.copyToClipboard(this.systemPath());
+			case "empty": {
+				// The row as shown — vault-relative inside, which is what a
+				// link or a search needs. Two presses give it the way the
+				// row spells it, without the extension; three give it the
+				// way the filesystem does, with. The pair matches what the
+				// file name's own two presses copy, one path longer.
+				const row = this.rowDisplayPath();
+				if (count === 2) void this.copyToClipboard(pathStem(row));
+				else if (count === 3) void this.copyToClipboard(row);
 				return;
+			}
 		}
 	}
 
@@ -649,18 +695,12 @@ export class PathBreadcrumb {
 	private runFolderGesture(count: number, at: { clientX: number; clientY: number }): void {
 		const folderPath = this.gestureFolderPath;
 		if (folderPath === null) return;
-		const name = folderPath.split("/").pop() ?? folderPath;
+		const external = this.externalPath !== null;
+		const name = folderPath.split(external ? /[\\/]/ : "/").pop() ?? folderPath;
 		// The plain press answers with the folder's menu, the same one the
 		// delimiter beside it gives and the same one its dropdown row gives.
 		if (count === 1) {
-			const folder = this.plugin.app.vault.getAbstractFileByPath(folderPath);
-			if (folder instanceof TFolder) {
-				showContextMenu(
-					this.plugin.app,
-					new MouseEvent("contextmenu", { clientX: at.clientX, clientY: at.clientY }),
-					folder,
-				);
-			}
+			this.showFolderMenu(folderPath, at);
 			return;
 		}
 		if (count === 2) void this.copyToClipboard(name);
@@ -680,7 +720,16 @@ export class PathBreadcrumb {
 	 */
 	private systemPath(): string {
 		if (this.externalPath !== null) return this.rowPath();
-		return this.file ? (this.absolutePathFor(this.file) ?? this.file.path) : "";
+		const row = this.rowDisplayPath();
+		if (!row) return "";
+		const base = this.vaultBasePath();
+		return base === null ? row : `${base}/${row}`;
+	}
+
+	/** What the row's opening segment names: this vault, or the location standing in for it outside. */
+	private rootSegmentName(): string {
+		if (this.externalPath !== null) return this.externalBase?.label ?? this.externalPath;
+		return this.plugin.app.vault.getName();
 	}
 
 	/**
@@ -730,11 +779,45 @@ export class PathBreadcrumb {
 		if (folderPath === null) return;
 		const app = this.plugin.app;
 		const folder = app.vault.getAbstractFileByPath(folderPath);
-		if (!(folder instanceof TFolder)) return;
+		if (!(folder instanceof TFolder)) {
+			// Outside the vault there is no TFolder and no folder note, so
+			// the path-built menu is the whole answer.
+			this.showFolderMenu(folderPath, at);
+			return;
+		}
 
 		const note = this.folderNoteFor(folder);
 		const evt = new MouseEvent("contextmenu", { clientX: at.clientX, clientY: at.clientY });
 		showContextMenu(app, evt, note ?? folder);
+	}
+
+	/**
+	 * A folder segment's own menu, whichever side of the vault boundary it
+	 * is on.
+	 *
+	 * Inside, that is the File Explorer's menu for the folder. Outside,
+	 * there is no TFolder for those handlers to act on, so it is the same
+	 * path-built menu the dropdown rows out there already use — the two are
+	 * built from one function so a folder cannot offer different entries
+	 * depending on which of its two representations was clicked.
+	 */
+	private showFolderMenu(folderPath: string, at: { clientX: number; clientY: number }): void {
+		const evt = new MouseEvent("contextmenu", { clientX: at.clientX, clientY: at.clientY });
+		const folder = this.plugin.app.vault.getAbstractFileByPath(folderPath);
+		if (folder instanceof TFolder) {
+			showContextMenu(this.plugin.app, evt, folder);
+			return;
+		}
+		if (this.externalPath === null) return;
+		showExternalMenu(
+			this.plugin,
+			evt,
+			folderPath,
+			true,
+			this.leaf,
+			() => this.externalWritesUnlocked,
+			() => this.refresh(),
+		);
 	}
 
 	/**
@@ -1035,6 +1118,14 @@ export class PathBreadcrumb {
 			}
 
 			if (this.file !== previousFile) {
+				// This pane went somewhere the lock did not send it — a link,
+				// the quick switcher, a bookmark. The panes no longer stand
+				// where the coupling put them, so the lock lets go rather
+				// than staying on over a parallel that has already ended.
+				// Ignored while the lock is making its own moves, which open
+				// files too.
+				if (previousFile !== null) this.manager.navLock.noticeIndependentMove(this);
+
 				// Don't carry a browsing session or rename mode over to a
 				// different file just because the user navigated away
 				// without explicitly finishing/cancelling — that's an easy
@@ -1065,10 +1156,33 @@ export class PathBreadcrumb {
 	 * the full path ready to edit, selected.
 	 */
 	startHeaderRename(): void {
-		if (!this.file) return;
+		// A file outside the vault has no TFile, and requiring one here made
+		// the rename key do nothing at all out there while the pencil button
+		// beside it worked — the same mode, reachable by one route and not
+		// the other. The padlock still gates the commit, which is where the
+		// permission belongs.
+		if (!this.file && this.externalPath === null) return;
 		this.renameMode = true;
 		this.updateRenameModeStyling();
-		this.startFullPathEdit();
+		// The name without its extension, which is what a rename almost
+		// always means — and the same thing clicking the name selects, so
+		// the key and the click agree. The rest of the path is one further
+		// press away, on the same ladder Tab walks.
+		this.startLadderAt(0);
+	}
+
+	/**
+	 * A second press of the rename key while the header field is open.
+	 *
+	 * Walks the selection along instead of alternating back to the inline
+	 * title: name, name with extension, the path from the vault, the path
+	 * from the system root. Returns false when there is nothing to walk, so
+	 * the caller can fall back to its usual behaviour.
+	 */
+	advanceRenameSelection(): boolean {
+		if (!this.inputEl || !this.renameMode) return false;
+		this.advanceLadder();
+		return true;
 	}
 
 	/** Restores the leaf's native title DOM. Called on leaf close / plugin unload. */
@@ -1089,6 +1203,10 @@ export class PathBreadcrumb {
 		// would otherwise leave blue segments behind with nothing to explain
 		// them.
 		this.markLegalMoves(NO_MOVES);
+		this.resizeObserver?.disconnect();
+		this.resizeObserver = null;
+		this.restoreFittedText();
+		this.titleEl.parentElement?.removeClass(SCROLL_CLASS);
 		this.domListeners.abort();
 		this.vaultSegmentEl.remove();
 		this.filenameEl.remove();
@@ -1590,6 +1708,189 @@ export class PathBreadcrumb {
 		this.applyExternalState();
 		this.renderVaultSegment();
 		this.renderFilename();
+		this.fitRow();
+	}
+
+	/**
+	 * Makes the row fit its pane, and says so when it cannot.
+	 *
+	 * Left to itself the row is squeezed by flexbox: every segment shrinks
+	 * until the names are two or three pixels of a letter each, with no
+	 * ellipsis to say anything was cut, and a name containing a space wraps
+	 * onto a second line. So the segments are pinned to their natural width
+	 * (see `lure-fit` in the stylesheet) and shortened here instead, by the
+	 * rule in pathFit: from the left, and never past what tells a folder
+	 * apart from its neighbours.
+	 *
+	 * When even that is not enough the row scrolls sideways rather than
+	 * cutting into names that have nothing left to give, and is parked at
+	 * its right-hand end — where the file you are looking at is.
+	 */
+	private fitRow(): void {
+		const container = this.titleEl.parentElement;
+		if (!container) return;
+		// An open input is measured and sized in px by enterTypingMode, and
+		// re-cutting the chips under it would move the text the user is
+		// typing into. The row is refitted when the session ends.
+		if (this.inputEl) return;
+
+		const segments = this.fittableSegments();
+		for (const segment of segments) segment.el.textContent = segment.full;
+		container.removeClass(SCROLL_CLASS);
+		if (!segments.length) return;
+
+		// Planned against measured text and then checked against real layout,
+		// because the two do not agree: a canvas measurement knows nothing of
+		// the padding, letter-spacing and rounding each segment sits in, and
+		// it consistently over-credited the saving — one pass left the row
+		// still spilling with names it believed it had made short enough.
+		// So the residual is fed back and the plan redrawn, from the full
+		// names each time, until the row fits or there is nothing left to cut.
+		const plan = { texts: segments.map((segment) => segment.full), overflows: true };
+		let demand = 0;
+		for (let pass = 0; pass < FIT_PASSES; pass++) {
+			const residual = container.scrollWidth - container.clientWidth;
+			if (residual <= 0) {
+				plan.overflows = false;
+				break;
+			}
+			demand += residual;
+			const next = planFit(
+				segments.map((segment) => ({ full: segment.full, floor: segment.floor })),
+				demand,
+				(text, index) => textWidth(text, segments[index]?.el ?? container),
+			);
+			// Nothing moved: every name is already as short as it may go, and
+			// another pass would only measure the same row again.
+			if (next.texts.every((text, index) => text === plan.texts[index])) break;
+			plan.texts = next.texts;
+			for (const [index, segment] of segments.entries()) {
+				segment.el.textContent = plan.texts[index] ?? segment.full;
+			}
+		}
+
+		for (const [index, segment] of segments.entries()) {
+			const text = plan.texts[index] ?? segment.full;
+			// The full name is a hover away, so shortening costs nothing but
+			// a moment. Only where something was actually cut: a tooltip
+			// repeating what is already on screen is noise.
+			if (text !== segment.full) setTooltip(segment.el, segment.full);
+		}
+
+		if (plan.overflows && container.scrollWidth > container.clientWidth) {
+			container.addClass(SCROLL_CLASS);
+			container.scrollLeft = container.scrollWidth;
+		}
+	}
+
+	/**
+	 * The row's shortenable names, left to right, each with the floor its
+	 * siblings impose.
+	 *
+	 * The file's own name comes last so it is the last thing cut — by the
+	 * time the fitter reaches it, every folder is already at its floor.
+	 */
+	private fittableSegments(): { el: HTMLElement; full: string; floor: () => number }[] {
+		const out: { el: HTMLElement; full: string; floor: () => number }[] = [];
+
+		const add = (el: HTMLElement | null | undefined, siblings: () => string[]): void => {
+			if (!el) return;
+			// Read once and remembered: after the first cut the element's own
+			// text is the shortened one, and re-deriving the floor from that
+			// would let each pass eat a little more.
+			const full = el.dataset.lureFull ?? el.textContent ?? "";
+			if (!full) return;
+			el.dataset.lureFull = full;
+			out.push({ el, full, floor: () => shortestUnique(full, siblings()) });
+		};
+
+		// The opening segment shortens like any other, and first: it names
+		// where the path starts, which is the least useful thing on the row
+		// once you are several folders deep. Its floor is one character —
+		// nothing else on the row is a vault or a drive, so there is nothing
+		// for it to be confused with.
+		add(this.vaultSegmentEl.querySelector<HTMLElement>(".lure-root-name"), () => []);
+
+		if (this.externalPath !== null) {
+			for (const chip of this.chipElements()) {
+				const path = chip.dataset.lurePath;
+				add(chip, () => (path ? this.externalSiblingNames(path) : []));
+			}
+			const nameEl = this.filenameEl.querySelector<HTMLElement>(".lure-filename-text");
+			add(nameEl, () => this.externalSiblingNames(externalJoin(this.externalPath ?? "", "x")));
+			return out;
+		}
+
+		// Inside the vault the trail is either Obsidian's own breadcrumb or,
+		// while browsing, our chips standing in for it. Both are fitted the
+		// same way; only where the names come from differs.
+		const chips = this.chipElements();
+		const elements = chips.length ? chips : this.nativeSegments();
+		for (const [index, el] of elements.entries()) {
+			const path = chips.length ? el.dataset.lurePath : this.ancestorFolderPaths()[index];
+			add(el, () => this.vaultSiblingNames(path ?? null));
+		}
+		const nameEl = this.filenameEl.querySelector<HTMLElement>(".lure-filename-text");
+		add(nameEl, () => this.vaultSiblingNames(this.file?.path ?? null));
+		return out;
+	}
+
+	/**
+	 * Refits when the pane changes width.
+	 *
+	 * A split dragged narrower is exactly the case the fitting exists for,
+	 * and it fires no Obsidian event of its own — the row would keep names
+	 * that no longer fit until something else happened to redraw it.
+	 */
+	private observeWidth(): void {
+		const container = this.titleEl.parentElement;
+		if (!container || this.resizeObserver) return;
+		this.resizeObserver = new ResizeObserver(() => this.fitRow());
+		this.resizeObserver.observe(container);
+	}
+
+	/**
+	 * Puts every shortened name back.
+	 *
+	 * The native segments are Obsidian's own elements and outlive this
+	 * instance, so a row left with `Proj…` on it after the plugin is
+	 * disabled would be debris of exactly the kind the teardown contract
+	 * exists to prevent.
+	 */
+	private restoreFittedText(): void {
+		for (const el of this.nativeSegments()) {
+			const full = el.dataset.lureFull;
+			if (full === undefined) continue;
+			el.textContent = full;
+			delete el.dataset.lureFull;
+			setTooltip(el, "");
+		}
+	}
+
+	private chipElements(): HTMLElement[] {
+		return Array.from(this.vaultSegmentEl.querySelectorAll<HTMLElement>(".lure-browse-chip"));
+	}
+
+	/** The names beside a vault path, for the floor its own name may not go below. */
+	private vaultSiblingNames(path: string | null): string[] {
+		if (!path) return [];
+		const entry = this.plugin.app.vault.getAbstractFileByPath(path);
+		const parent = entry?.parent ?? null;
+		if (!parent) return [];
+		// Folders are told apart from folders and files from files: the two
+		// never occupy the same slot on the row, so a file cannot make a
+		// folder's name ambiguous.
+		const wantFolder = entry instanceof TFolder;
+		return parent.children
+			.filter((child) => child instanceof TFolder === wantFolder)
+			.map((child) => (child instanceof TFile && !wantFolder ? child.basename : child.name));
+	}
+
+	/** The same, outside the vault, where the listing is a readdir rather than an index. */
+	private externalSiblingNames(path: string): string[] {
+		const parent = externalParent(path);
+		if (!parent) return [];
+		return listExternalChildren(parent).map((child) => child.name);
 	}
 
 	/**
@@ -1711,6 +2012,11 @@ export class PathBreadcrumb {
 				cls: "view-header-breadcrumb lure-browse-chip",
 				text: part,
 			});
+			// The chips are ours, so the right-click gestures cannot find
+			// their folder the way they find a native segment's (by index
+			// into Obsidian's own breadcrumb). Carrying the path on the
+			// element is what lets one gesture table serve both.
+			chip.dataset.lurePath = chipPath;
 			// Chips are this plugin's own elements, which no folder-notes
 			// plugin knows about, so the swapped chip separator can only
 			// offer the reveal fallback rather than the folder's note.
@@ -1728,6 +2034,8 @@ export class PathBreadcrumb {
 				cls: "view-header-breadcrumb-separator",
 				text: this.plugin.settings.delimiter,
 			});
+			// A delimiter stands for the folder before it, which is this one.
+			chipSeparator.dataset.lurePath = chipPath;
 			chipSeparator.addEventListener("click", (evt) => {
 				evt.stopPropagation();
 				if (this.swapActions) {
@@ -1760,7 +2068,7 @@ export class PathBreadcrumb {
 		const iconEl = rootEl.createSpan({ cls: "lure-segment-icon lure-vault-icon" });
 		setIcon(iconEl, CURRENT_VAULT_ICON);
 		if (this.plugin.settings.showVaultName) {
-			rootEl.createSpan({ text: this.plugin.app.vault.getName() });
+			rootEl.createSpan({ cls: "lure-root-name", text: this.plugin.app.vault.getName() });
 		} else {
 			rootEl.setAttribute("aria-label", t("vaultRootLabel"));
 		}
@@ -1806,7 +2114,7 @@ export class PathBreadcrumb {
 		// vault that is — showing another vault's name here while the open
 		// one is reduced to an icon would contradict the setting.
 		if (named || !base || remainder === null) {
-			rootEl.createSpan({ text: baseLabel });
+			rootEl.createSpan({ cls: "lure-root-name", text: baseLabel });
 		} else {
 			rootEl.setAttribute("aria-label", baseLabel);
 		}
@@ -1829,16 +2137,17 @@ export class PathBreadcrumb {
 				cls: "view-header-breadcrumb lure-browse-chip lure-external-segment",
 				text: segment,
 			});
+			chip.dataset.lurePath = chipPath;
 			chip.addEventListener("click", (evt) => {
 				evt.stopPropagation();
-				this.extendExternalPath(chipPath);
-				this.enterTypingMode("");
+				this.handleExternalSegmentClick(chipPath);
 			});
 
 			const chipSeparator = this.vaultSegmentEl.createSpan({
 				cls: "view-header-breadcrumb-separator",
 				text: this.plugin.settings.delimiter,
 			});
+			chipSeparator.dataset.lurePath = chipPath;
 			chipSeparator.addEventListener("click", (evt) => {
 				evt.stopPropagation();
 				this.extendExternalPath(chipPath);
@@ -1953,6 +2262,30 @@ export class PathBreadcrumb {
 	}
 
 	/**
+	 * The same gesture as `handleSegmentClick`, for a chip outside the
+	 * vault.
+	 *
+	 * It used to descend into the clicked folder and open an empty field,
+	 * which threw away everything the row was showing to the right of it —
+	 * the one place the tail did not survive a folder click. Kept as a
+	 * separate method only because the trail out there is absolute and has
+	 * no TFolder behind it; the behaviour is deliberately identical.
+	 */
+	private handleExternalSegmentClick(folderPath: string): void {
+		const parent = externalParent(folderPath);
+		if (parent === null) {
+			this.extendExternalPath(folderPath);
+			this.enterTypingMode("");
+			return;
+		}
+		const name = folderPath.slice(parent.length).replace(/^[\\/]+/, "");
+		const suffix = this.pathSuffixAfter(parent);
+		const startsHere = suffix === name || suffix.startsWith(`${name}${PATH_SEP}`);
+		this.extendExternalPath(parent);
+		this.enterTypingMode(startsHere ? suffix : name, name.length);
+	}
+
+	/**
 	 * Clicking the note's name selects the file name alone — extension
 	 * included, since renaming or retargeting one usually means changing
 	 * it — over a chip trail of the folders above, whose contents the
@@ -1973,17 +2306,42 @@ export class PathBreadcrumb {
 	}
 
 	/**
-	 * The part of the open file's path that follows a given ancestor
-	 * folder — what a delimiter click puts in the input. Returns "" when
-	 * the folder isn't an ancestor, which happens once browsing has
-	 * clicked away into an unrelated branch: there's no remainder to show
-	 * there, so the input opens empty as it always did.
+	 * The whole path the row is currently showing, as the user reads it.
+	 *
+	 * Not the same as the open file's path: browsing can take the chips
+	 * somewhere the file isn't, and outside the vault there is no file at
+	 * all. The row is what a click on it refers to, so this is what the
+	 * gestures and the prefills are measured against.
+	 */
+	private rowDisplayPath(): string {
+		if (this.externalPath !== null) return this.rowPath();
+		if (!this.file) return this.browsePath ?? "";
+		const folder = this.browsePath ?? this.file.parent?.path ?? "";
+		const base = folder === "/" ? "" : folder;
+		return base ? `${base}/${this.file.name}` : this.file.name;
+	}
+
+	/**
+	 * The part of the row that follows a given folder — what clicking that
+	 * folder or the delimiter after it puts in the input.
+	 *
+	 * Measured against the row rather than against the open file's path so
+	 * that the tail survives everywhere the row can be: browsed into a
+	 * branch the open file isn't under, and outside the vault, where the
+	 * old reading found no TFile and dropped everything to the right of the
+	 * clicked folder.
 	 */
 	private pathSuffixAfter(folderPath: string): string {
-		const path = this.file?.path;
+		const path = this.rowDisplayPath();
 		if (!path) return "";
 		if (!folderPath) return path;
-		return path.startsWith(`${folderPath}/`) ? path.slice(folderPath.length + 1) : "";
+		// Both separators are accepted, because outside the vault a path can
+		// be spelt with either on Windows; the remainder keeps whichever the
+		// row itself used.
+		const prefix = folderPath.replace(/[\\/]+$/, "");
+		const rest = path.slice(prefix.length);
+		if (!path.startsWith(prefix) || !/^[\\/]/.test(rest)) return "";
+		return rest.replace(/^[\\/]+/, "");
 	}
 
 	/**
@@ -2226,6 +2584,10 @@ export class PathBreadcrumb {
 			const target = [...before.slice(0, depth), newName].join("/");
 			const taken = this.plugin.app.vault.getAbstractFileByPath(target) !== null;
 			if (!taken && this.manager.navLock.sharesFolderAt(depth, oldName)) {
+				// A rename across the coupled panes is the lock acting, not
+				// the panes wandering off — every one of them will report a
+				// file-open for the note at its new path.
+				this.manager.navLock.startOwnMove();
 				await this.renameSharedFolder(depth, newName);
 				this.finishRename();
 				return true;
@@ -2711,13 +3073,45 @@ export class PathBreadcrumb {
 			label: location?.label ?? absolutePath,
 			icon: location ? iconFor(location) : LOCATION_ICONS.root,
 		};
-		this.externalPath = absolutePath;
+		const twin = this.twinOfCurrentFile(absolutePath);
+		this.externalPath = twin?.folder ?? absolutePath;
 		this.browsePath = null;
 		this.mode = "browsing";
 		this.hideNativeBreadcrumb();
 		this.render();
 		this.attachDocumentClickAway();
-		this.enterTypingMode("");
+		this.enterTypingMode(twin?.name ?? "", twin ? "all" : "none");
+	}
+
+	/**
+	 * The open note's own path, followed as far as it exists under a newly
+	 * picked location.
+	 *
+	 * Vaults are very often near-copies of each other — an archive, a
+	 * synced twin, last year's — and the reason for jumping to one is
+	 * usually the same note over there. So the row lands as deep into the
+	 * matching path as that location actually goes, and offers the file
+	 * name selected when the whole path is there.
+	 *
+	 * Only what exists is used: a prefill naming something that isn't there
+	 * would read as a file you could open, and Enter would offer to create
+	 * it in a vault you have only just glanced at.
+	 */
+	private twinOfCurrentFile(base: string): { folder: string; name: string } | null {
+		const path = this.file?.path;
+		if (!path) return null;
+
+		const parts = path.split("/");
+		const name = parts.pop() ?? "";
+		let folder = base;
+		for (const part of parts) {
+			const next = externalJoin(folder, part);
+			if (!isExternalFolder(next)) return folder === base ? null : { folder, name: "" };
+			folder = next;
+		}
+		return isExternalFile(externalJoin(folder, name))
+			? { folder, name }
+			: { folder, name: "" };
 	}
 
 	/** Descends to another absolute folder while already outside the vault. */
@@ -2860,7 +3254,17 @@ export class PathBreadcrumb {
 			// `input` events dispatched from code below — to open the
 			// popover, and to fill the field from a suggestion — are
 			// untrusted, and must not be mistaken for the user typing.
-			if (evt.isTrusted) this.suggestQueryOverride = null;
+			if (evt.isTrusted) {
+				this.suggestQueryOverride = null;
+				// Typing also ends the selection ladder, so Tab goes back to
+				// completing folders. Without this, reaching the field
+				// through the focus command (which opens on a rung) left
+				// Tab widening a selection for the rest of the session, however
+				// much had since been typed over it. The ladder's own writes
+				// are untrusted and so leave it alone.
+				this.tabStage = null;
+				this.tabTargetPath = null;
+			}
 			autoSize();
 			if (this.renameMode) this.updateValidation(inputEl.value, this.currentFolderPath());
 		};
@@ -2870,13 +3274,55 @@ export class PathBreadcrumb {
 		// could throw, and if it did after this point the input would be
 		// left with no key handling and no cleanup — stranding `mode` at
 		// "typing" forever, which silently kills every other click path.
+		// Escape has to be taken here rather than on the input.
+		//
+		// The autocomplete popover closes on Escape through Obsidian's
+		// keymap, which runs from a window capture listener registered long
+		// before any of ours and stops the event there — so the input's own
+		// handler never saw the first press, and cancelling took two: one to
+		// close the dropdown, one to leave the field. A window capture
+		// listener still *runs* (the keymap does not preventDefault), so this
+		// sees every press and ends the session on the first one.
+		const onEscapeCapture = (evt: KeyboardEvent): void => {
+			if (evt.key !== "Escape" || !this.inputEl) return;
+			// A dialog over the row owns the key: its own Escape is a cancel
+			// of the dialog, not of the row underneath it.
+			if (document.querySelector(".modal-container")) return;
+			evt.preventDefault();
+			this.dismissEditing();
+		};
+
+		// Ctrl/Cmd+Enter never reaches the field on its own: Obsidian binds
+		// Mod+Enter to "open link in new leaf", and its keymap takes the key
+		// before any listener on the input sees it — so the modifier that
+		// means "somewhere else" everywhere else on this row did nothing
+		// here, while the editor underneath quietly opened whatever link its
+		// cursor happened to be on. A scope is how Obsidian itself claims a
+		// key for a piece of UI, and it is consulted before the global
+		// hotkeys. Parented to the app's scope, so every other key behaves
+		// exactly as it did.
+		//
+		// Only needed while the dropdown is closed: with it open, the
+		// suggester's own scope is on top and its selection handler already
+		// reads the modifier.
+		const scope = new Scope(this.plugin.app.scope);
+		scope.register(["Mod"], "Enter", (evt) => {
+			evt.preventDefault();
+			void this.handleTypedSubmit(inputEl.value, this.paneTypeFor(evt));
+			return false;
+		});
+		this.plugin.app.keymap.pushScope(scope);
+
 		inputEl.addEventListener("keydown", onKeydown);
 		inputEl.addEventListener("input", onInput);
 		inputEl.addEventListener("dblclick", onDblClick);
+		window.addEventListener("keydown", onEscapeCapture, true);
 		this.editCleanup = () => {
 			inputEl.removeEventListener("keydown", onKeydown);
 			inputEl.removeEventListener("input", onInput);
 			inputEl.removeEventListener("dblclick", onDblClick);
+			window.removeEventListener("keydown", onEscapeCapture, true);
+			this.plugin.app.keymap.popScope(scope);
 			this.suggestQueryOverride = null;
 			this.validationError = "";
 			this.clearErrorTooltip();
@@ -3001,6 +3447,27 @@ export class PathBreadcrumb {
 	}
 
 	/** Escape / click-away: fully discards the browsing/typing session and shows the real file's actual path again. */
+	/**
+	 * Escape: end the session and hand focus back to the note.
+	 *
+	 * Cancelling alone leaves the row's container focused, so the bar still
+	 * answers keystrokes and still looks like where you are. One press
+	 * should put you back where you were, which means leaving the row as
+	 * well as leaving the field.
+	 */
+	private dismissEditing(): void {
+		this.cancelNavigation();
+		if (this.renameMode) {
+			this.renameMode = false;
+			this.updateRenameModeStyling();
+		}
+		this.titleEl.parentElement?.blur();
+		// Focus follows the leaf rather than being dropped on the body, so
+		// the next keystroke goes to the note the way it would after any
+		// other dismissed overlay.
+		this.plugin.app.workspace.setActiveLeaf(this.leaf, { focus: true });
+	}
+
 	private cancelNavigation(): void {
 		// A ladder belongs to one editing session. Carrying it into the next
 		// would make the first Tab there widen a selection instead of
@@ -3102,6 +3569,7 @@ export class PathBreadcrumb {
 			const parentPath = normalized.substring(0, normalized.lastIndexOf("/"));
 			await this.ensureFolderExists(parentPath);
 			const newFile = await this.plugin.app.vault.create(normalized, "");
+			new Notice(t("noticeCreated", { path: newFile.path }));
 			this.navigateToFile(newFile, paneType);
 		} catch (err) {
 			new Notice(t("noticeCreateFailed", { error: (err as Error).message }));
@@ -3131,6 +3599,11 @@ export class PathBreadcrumb {
 	 * outside does it need the read-only viewer and the opt-in.
 	 */
 	private async openTypedTarget(target: UrlTarget, paneType: PaneType | false): Promise<void> {
+		if (target.kind === "web") {
+			this.openWebAddress(target.href, paneType);
+			this.cancelNavigation();
+			return;
+		}
 		if (target.kind !== "path") {
 			window.open(target.href);
 			this.cancelNavigation();
@@ -3169,6 +3642,44 @@ export class PathBreadcrumb {
 		}
 		this.cancelNavigation();
 		void openExternalFile(this.plugin, normalized, paneType, this.leaf);
+	}
+
+	/**
+	 * A web address typed into the bar, opened the way the address bar it
+	 * imitates would: in a tab of this application.
+	 *
+	 * `window.open` was the old answer, and it left Obsidian entirely
+	 * unless the user had also turned on the Web viewer's own "open
+	 * external links here" setting — so typing a URL into a path bar
+	 * inside Obsidian threw you out to the desktop browser. Asking the
+	 * Web viewer directly means having it on is enough.
+	 *
+	 * Always a new tab: replacing the note you were reading with a web
+	 * page is not what typing an address means, and the modifier that
+	 * usually chooses the pane can still ask for a split or a window.
+	 */
+	private openWebAddress(href: string, paneType: PaneType | false): void {
+		const viewer = this.plugin.app.internalPlugins.getPluginById("webviewer");
+		if (!viewer?.enabled) {
+			// Off: the desktop browser is the only place left to open it.
+			window.open(href);
+			return;
+		}
+		try {
+			const leaf = this.plugin.app.workspace.getLeaf(paneType || "tab");
+			// `navigate` is what makes the view actually load the address;
+			// without it the tab opens blank on the URL it was handed.
+			void leaf.setViewState({
+				type: WEB_VIEWER_VIEW_TYPE,
+				active: true,
+				state: { url: href, navigate: true },
+			});
+			void this.plugin.app.workspace.revealLeaf(leaf);
+		} catch {
+			// Internal view type moved or refused the state: the browser is
+			// still a working answer, and losing the address is not.
+			window.open(href);
+		}
 	}
 
 	private async submitExternal(typed: string, paneType: PaneType | false): Promise<void> {
@@ -3210,6 +3721,7 @@ export class PathBreadcrumb {
 		}
 		try {
 			await createExternalFile(target);
+			new Notice(t("noticeCreated", { path: target }));
 		} catch (err) {
 			new Notice(t("noticeCreateFailed", { error: (err as Error).message }));
 			this.inputEl?.focus();
@@ -3243,13 +3755,35 @@ export class PathBreadcrumb {
 		}
 
 		const copying = paneType !== false;
-		if (!copying && source.fromVault) {
-			new Notice(t("noticeExternalMoveOut", { mod: Platform.isMacOS ? "Cmd" : "Ctrl" }));
-			this.inputEl?.focus();
+		// Taking a note out of the vault. `fileManager` cannot follow it
+		// across that boundary, so this is the one move that costs something
+		// the plugin cannot give back: every link pointing at the note stops
+		// resolving, silently. It used to be refused outright for that
+		// reason; it is now a decision to put to the user, with the number
+		// of notes that would be affected, because "I know, take it out" is
+		// a legitimate thing to want and the refusal left no way to say it.
+		const movingOut = !copying && source.fromVault;
+		if (movingOut && !this.file) {
+			// Nothing to remove afterwards, so this would be a copy wearing
+			// a move's name.
+			new Notice(t("noticeRenameFailed", { error: t("errorNotAFolder", { path: source.path }) }));
 			return;
 		}
 
 		if (!this.requireExternalUnlock()) return;
+
+		if (movingOut) {
+			const agreed = await confirmAction(this.plugin.app, {
+				title: t("moveOutTitle"),
+				body: t("moveOutBody", { count: String(this.incomingLinkCount()) }),
+				cta: t("moveOutConfirm"),
+				warning: true,
+			});
+			if (!agreed) {
+				this.inputEl?.focus();
+				return;
+			}
+		}
 
 		if (await externalExists(target)) {
 			new Notice(t("noticeAlreadyExists", { path: target }));
@@ -3259,7 +3793,19 @@ export class PathBreadcrumb {
 
 		try {
 			if (copying) await copyExternalFile(source.path, target);
-			else await moveExternalFile(source.path, target);
+			else if (movingOut) {
+				// Copy out, then remove from the vault through Obsidian's own
+				// delete — never a bare rename across the boundary. A rename
+				// would take the file out from under the index, which would
+				// go on believing in a note that is no longer there until
+				// something forced a rescan; and the copy landing first means
+				// a failure at either step leaves the note where it was
+				// rather than nowhere. It goes to the trash the user has
+				// configured, so this is recoverable in the way deleting a
+				// note is.
+				await copyExternalFile(source.path, target);
+				if (this.file) await this.plugin.app.fileManager.trashFile(this.file);
+			} else await moveExternalFile(source.path, target);
 		} catch (err) {
 			new Notice(
 				t(copying ? "noticeCopyFailed" : "noticeRenameFailed", {
@@ -3308,6 +3854,25 @@ export class PathBreadcrumb {
 	 * viewer is still a vault file, and moving it out with `fs` behind
 	 * Obsidian's back is exactly what that flag exists to prevent.
 	 */
+	/**
+	 * How many notes link to the open one.
+	 *
+	 * Counted from `resolvedLinks`, which is the same table Obsidian's own
+	 * link handling reads, so the number matches what would actually stop
+	 * resolving. Sources are counted rather than links: "eleven notes point
+	 * here" is what the decision turns on, not that one of them does it
+	 * three times.
+	 */
+	private incomingLinkCount(): number {
+		const path = this.file?.path;
+		if (!path) return 0;
+		let count = 0;
+		for (const targets of Object.values(this.plugin.app.metadataCache.resolvedLinks)) {
+			if (targets[path]) count += 1;
+		}
+		return count;
+	}
+
 	private externalRenameSource(): { path: string; fromVault: boolean } | null {
 		const path = this.getExternalPathForLeaf() ?? (this.file ? this.absolutePathFor(this.file) : null);
 		if (!path) return null;
@@ -3339,7 +3904,33 @@ export class PathBreadcrumb {
 	 * the key that reaches it is the user's to choose.
 	 */
 	focusPathBar(): void {
-		this.startFullPathEdit();
+		// The whole path first — the address-bar gesture the command is for.
+		// Pressing again walks the same rungs Tab does rather than
+		// re-selecting what is already selected, so one key reaches the
+		// system path too.
+		if (this.inputEl) {
+			this.advanceLadder();
+			return;
+		}
+		this.startLadderAt(2);
+	}
+
+	/**
+	 * Opens the field at one rung of the Tab ladder.
+	 *
+	 * Falls back to the plain full-path edit where there is no path to
+	 * describe — an empty tab browsing a folder, where the ladder has no
+	 * file name to start from.
+	 */
+	private startLadderAt(stage: number): void {
+		const target = this.ladderTargetPath();
+		if (target === null) {
+			this.startFullPathEdit();
+			return;
+		}
+		this.tabTargetPath = target;
+		this.tabStage = stage;
+		this.applyLadderStage();
 	}
 
 	private startFullPathEdit(): void {
@@ -3372,6 +3963,7 @@ export class PathBreadcrumb {
 			const existing = this.plugin.app.vault.getAbstractFileByPath(current);
 			if (!existing) {
 				await this.plugin.app.vault.createFolder(current);
+				new Notice(t("noticeCreated", { path: current }));
 			} else if (!(existing instanceof TFolder)) {
 				throw new Error(t("errorNotAFolder", { path: current }));
 			}
@@ -3392,6 +3984,13 @@ export class PathBreadcrumb {
 			// exemption it would cancel the session before the button's own
 			// handler ever ran.
 			if (this.renameButtonEl.contains(target)) return;
+			// The padlock, for the same reason and more sharply: refusing a
+			// write out here *tells* you to press it, and pressing it threw
+			// away the name you had just typed — so a rename outside the
+			// vault could not be completed in the order the interface asks
+			// for. Both buttons are part of the edit, not a click away
+			// from it.
+			if (this.unlockButtonEl.contains(target)) return;
 			if (target.closest(".suggestion-container, .menu")) return;
 			this.cancelNavigation();
 		};

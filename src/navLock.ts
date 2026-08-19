@@ -51,10 +51,39 @@ export interface NavLockParticipant {
 	ancestorFolderPaths(): string[];
 }
 
+/**
+ * How long after a lock-driven move its own `file-open` events keep
+ * arriving.
+ *
+ * "back", "forward" and a folder note all open files, and Obsidian reports
+ * that asynchronously — so without a window in which those are expected,
+ * the lock's own moves would look exactly like a pane navigating on its own
+ * and every move would release the lock it just made. Generous, because
+ * being slow to notice an independent move costs nothing and mistaking a
+ * lock move for one costs the feature.
+ */
+const OWN_MOVE_WINDOW_MS = 500;
+
 export class NavLock {
 	private locked = false;
+	/**
+	 * The bars the lock was engaged over.
+	 *
+	 * The lock is an arrangement between *these* panes. If one of them goes
+	 * away — closed, or navigated to something with no path to speak of —
+	 * carrying on with the rest would be a different arrangement than the one
+	 * that was asked for, silently.
+	 */
+	private members: NavLockParticipant[] = [];
+	/** Set while the lock is making its own moves; see OWN_MOVE_WINDOW_MS. */
+	private applying = false;
+	private applyingTimer: number | null = null;
 
-	constructor(private readonly participants: () => NavLockParticipant[]) {}
+	constructor(
+		private readonly participants: () => NavLockParticipant[],
+		/** Says why the lock let go, when the user did not ask it to. */
+		private readonly announce: (reason: "closed" | "moved") => void = () => undefined,
+	) {}
 
 	isLocked(): boolean {
 		return this.locked;
@@ -71,7 +100,32 @@ export class NavLock {
 
 	setLocked(locked: boolean): void {
 		this.locked = locked && this.canLock();
+		this.members = this.locked ? this.active() : [];
 		this.refresh();
+	}
+
+	/**
+	 * A pane moved without the lock being asked.
+	 *
+	 * A link click, a quick switcher, a bookmark: the pane is now somewhere
+	 * the others were not taken, so the parallel the lock was holding is
+	 * over. Warning first would be better, and there is no hook for it —
+	 * Obsidian reports a file-open after the fact and offers nothing to
+	 * refuse — so the honest answer is to let go and say so, rather than to
+	 * leave a lock standing over panes that no longer line up.
+	 */
+	noticeIndependentMove(bar: NavLockParticipant): void {
+		if (!this.locked || this.applying) return;
+		if (!this.members.includes(bar)) return;
+		this.release("moved");
+	}
+
+	/** Lets go, and says why. */
+	private release(reason: "closed" | "moved"): void {
+		this.locked = false;
+		this.members = [];
+		this.refresh();
+		this.announce(reason);
 	}
 
 	toggle(): void {
@@ -101,6 +155,7 @@ export class NavLock {
 	 */
 	move(move: NavMove): boolean {
 		if (!this.legalMoves().has(move)) return false;
+		this.startOwnMove();
 		if (move === "sibling") {
 			const name = this.nextSharedSibling();
 			if (name === null) return false;
@@ -111,6 +166,23 @@ export class NavLock {
 		for (const bar of this.active()) bar.applyMove(move);
 		this.refresh();
 		return true;
+	}
+
+	/**
+	 * Marks the moves the lock is about to make as its own, for as long as
+	 * their `file-open` events can take to arrive.
+	 *
+	 * Public because a rename across coupled panes is the lock's doing too:
+	 * it fires the same events, and without this it would read as every pane
+	 * moving on its own at once.
+	 */
+	startOwnMove(): void {
+		this.applying = true;
+		if (this.applyingTimer !== null) window.clearTimeout(this.applyingTimer);
+		this.applyingTimer = window.setTimeout(() => {
+			this.applying = false;
+			this.applyingTimer = null;
+		}, OWN_MOVE_WINDOW_MS);
 	}
 
 	/**
@@ -152,6 +224,13 @@ export class NavLock {
 	 * lock, and leaving it on would mark moves blue for no reason.
 	 */
 	refresh(): void {
+		// A pane the lock was engaged over is gone — closed, or no longer
+		// showing anything the lock can reason about. The remaining panes
+		// were never what was asked for on their own.
+		if (this.locked && this.members.some((bar) => !this.active().includes(bar))) {
+			this.release("closed");
+			return;
+		}
 		if (this.locked && !this.canLock()) this.locked = false;
 		const legal = this.legalMoves();
 		for (const bar of this.participants()) {

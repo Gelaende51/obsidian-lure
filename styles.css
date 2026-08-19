@@ -639,3 +639,50 @@
 .lure-nav-locked .view-header-breadcrumb {
 	cursor: default;
 }
+
+/* ---------------------------------------------------------------------
+   Fitting a long path into a narrow pane.
+
+   Left to flexbox, every segment shrinks together: in a third-width pane
+   each folder name became two or three pixels of a letter, with nothing to
+   say it had been cut, and a name containing a space wrapped onto a second
+   line. Pinning the segments to their natural width moves that decision
+   into the code (see fitRow / pathFit), which can cut where the characters
+   are redundant instead of where the box happens to end.
+
+   `:has(.lure-filename)` keeps all of this to rows this plugin has taken
+   over — an unpatched header is Obsidian's business. */
+.view-header-title-container:has(.lure-filename) .view-header-title-parent,
+.view-header-title-container:has(.lure-filename) .view-header-breadcrumb,
+.view-header-title-container:has(.lure-filename) .lure-filename-text,
+/* The box around the name keeps its stretch (it is what makes the empty
+   space beside the name clickable) but loses its shrink. With shrink on it
+   collapsed to nothing in a narrow pane: the name vanished, and — worse for
+   the fitting — the row then measured as if it fit, so nothing was ever
+   shortened and nothing ever scrolled. */
+.view-header-title-container:has(.lure-filename) .lure-filename {
+	flex: 0 0 auto;
+	min-width: auto;
+	overflow: visible;
+	/* Item and row alike: a folder called "parallel structures" is one
+	   name, and breaking it across two lines makes it read as two. */
+	white-space: nowrap;
+}
+
+.view-header-title-container[data-lure-align="left"]:has(.lure-filename) .lure-filename {
+	flex: 1 0 auto;
+}
+
+/* Only once every name is down to what still tells it apart from its
+   siblings. Scrolling is the honest end of the line: there is nothing left
+   to compress, so the row lets you reach the rest rather than hiding it.
+   The scrollbar itself is suppressed — this is a one-line strip a few
+   pixels tall, and a bar across it would cost more than it explains. */
+.view-header-title-container.lure-row-scrolls {
+	overflow-x: auto;
+	scrollbar-width: none;
+}
+
+.view-header-title-container.lure-row-scrolls::-webkit-scrollbar {
+	display: none;
+}

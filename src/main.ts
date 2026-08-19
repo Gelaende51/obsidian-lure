@@ -9,7 +9,7 @@
  * see the LICENSE file or <https://www.gnu.org/licenses/> for details.
  */
 
-import { Command, Hotkey, Platform, Plugin } from "obsidian";
+import { Command, Hotkey, Menu, Platform, Plugin } from "obsidian";
 import { BreadcrumbManager } from "./breadcrumbManager";
 import { EXTERNAL_VIEW_TYPE, ExternalFileView } from "./externalFileView";
 import { BreadcrumbSettingTab } from "./settingsTab";
@@ -113,16 +113,33 @@ export default class BreadcrumbPathPlugin extends Plugin {
 		this.registerEvent(
 			this.app.workspace.on("file-menu", (menu, _file, source) => {
 				if (source !== "pane-more-options" && source !== "more-options") return;
-				const lock = this.manager.navLock;
-				if (!lock.isLocked() && !lock.canLock()) return;
-				menu.addItem((item) =>
-					item
-						.setSection("view")
-						.setTitle(lock.isLocked() ? t("navLockRelease") : t("navLockEngage"))
-						.setIcon(lock.isLocked() ? "unlink" : "link")
-						.onClick(() => lock.toggle()),
-				);
+				this.addNavLockItem(menu);
 			}),
+		);
+	}
+
+	/**
+	 * The toggle itself, so every pane menu that has to carry it carries the
+	 * same one.
+	 *
+	 * The external viewer builds its own pane menu from a path rather than
+	 * from a TFile, so it never fired `file-menu` and the entry was simply
+	 * absent out there — the lock could be engaged from a vault pane and
+	 * then not released from the pane you were looking at.
+	 */
+	addNavLockItem(menu: Menu): void {
+		const lock = this.manager.navLock;
+		if (!lock.isLocked() && !lock.canLock()) return;
+		menu.addItem((item) =>
+			item
+				// The section the splits are in. A pane-wide navigation mode
+				// belongs beside "Split right" and "Split down" — the other
+				// entries about how panes relate — rather than down among
+				// the file's own actions, where it sat before.
+				.setSection("open")
+				.setTitle(lock.isLocked() ? t("navLockRelease") : t("navLockEngage"))
+				.setIcon(lock.isLocked() ? "unlink" : "link")
+				.onClick(() => lock.toggle()),
 		);
 	}
 
@@ -153,6 +170,15 @@ export default class BreadcrumbPathPlugin extends Plugin {
 			// Availability is entirely Obsidian's call — we only change
 			// what happens when the command actually runs.
 			if (checking) return original.call(command, true);
+
+			// Already renaming in the header: the press walks the selection
+			// along the path rather than alternating back to the inline
+			// title, so the same key that reached the name also reaches the
+			// name with its extension and the two full paths.
+			if (this.manager.getActiveBreadcrumb()?.advanceRenameSelection()) {
+				this.useHeaderRename = false;
+				return true;
+			}
 
 			// With Obsidian's inline title turned off there's nothing for
 			// the native rename to focus (it would fall back to the header

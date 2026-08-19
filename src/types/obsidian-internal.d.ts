@@ -33,10 +33,14 @@ declare module "obsidian" {
 
 	interface InternalPlugin<T> {
 		instance: T;
+		/** Core plugins can be switched off; `getPluginById` returns them either way. */
+		enabled: boolean;
 	}
 
 	interface InternalPlugins {
 		getPluginById(id: "file-explorer"): InternalPlugin<FileExplorerLeafInstance> | null;
+		/** Obsidian's own in-app browser. Nothing of its instance is used — only whether it is on. */
+		getPluginById(id: "webviewer"): InternalPlugin<unknown> | null;
 	}
 
 	/** Mirrors what the core file explorer uses for its own `isSupported()` check. */

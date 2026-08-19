@@ -81,11 +81,22 @@ export type GestureTarget = "vault" | "folder" | "delimiter" | "file" | "empty";
  * Order matters: the vault segment and the browse chips both carry
  * `.view-header-breadcrumb`, so the more specific test has to come first
  * or every vault click would read as a folder.
+ *
+ * The *wrapper* is deliberately not part of the vault test, though it once
+ * was. It holds the whole chip trail, so matching it made every browse
+ * chip — every segment there is, once the row is outside the vault or
+ * browsing — classify as the vault name, whose single press opens a new
+ * tab. That is the "right-click a folder and get a new page" bug.
  */
 export function classifyTarget(target: HTMLElement): GestureTarget {
-	if (target.closest(".lure-vault-wrapper, .lure-vault-segment")) return "vault";
+	if (target.closest(".lure-vault-segment")) return "vault";
 	if (target.closest(".view-header-breadcrumb-separator")) return "delimiter";
-	if (target.closest(".lure-filename")) return "file";
+	// The name's own text, not the box it sits in. That box is stretched to
+	// fill the row under the default alignment, so keying off it made the
+	// whole empty half of the row answer as the file name — and the empty
+	// space's own presses unreachable. This is the same line the click
+	// handler draws, so a press means the same thing whichever button it is.
+	if (target.closest(".lure-filename-text")) return "file";
 	if (target.closest(".view-header-breadcrumb")) return "folder";
 	return "empty";
 }

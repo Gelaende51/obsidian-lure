@@ -117,6 +117,7 @@ export function makeDraggable(
 async function createNoteIn(app: App, folder: TFolder): Promise<void> {
 	try {
 		const file = await app.fileManager.createNewMarkdownFile(folder);
+		new Notice(t("noticeCreated", { path: file.path }));
 		// eState.rename matches core: the new note opens with its title
 		// selected, so it can be named without a second interaction.
 		await app.workspace.getLeaf(false).openFile(file, {
@@ -132,6 +133,7 @@ async function createNoteIn(app: App, folder: TFolder): Promise<void> {
 async function createFolderIn(app: App, folder: TFolder): Promise<void> {
 	try {
 		const created = await app.fileManager.createNewFolder(folder);
+		new Notice(t("noticeCreated", { path: created.path }));
 		// Core hands the new folder to the File Explorer so it opens
 		// already in inline-rename. That path needs the explorer's own
 		// view class, so reveal it instead: the folder is at least

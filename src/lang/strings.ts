@@ -60,6 +60,13 @@ export const EN = {
 	noticeCopyFailed: "Could not copy file: {error}",
 	noticeIsFolder: '"{path}" is a folder.',
 	noticeCreateFailed: "Could not create file: {error}",
+	/**
+	 * Creating leaves nothing on screen where it happened — the new file
+	 * opens, but a new folder is invisible until you go looking for it, and
+	 * a creation from the path bar can land anywhere in the tree. One line
+	 * for both, since the path already says which it was.
+	 */
+	noticeCreated: 'Created "{path}"',
 	/** Command palette entry; Obsidian shows it prefixed with the plugin name. */
 	commandFocusPathBar: "Focus the path bar",
 	noticeAutocompleteUnavailable: "Autocomplete unavailable: {error}",
@@ -96,11 +103,26 @@ export const EN = {
 	navLockBreakTitle: "This rename would end the navigation lock",
 	navLockBreakBody: "The panes would no longer stand in folders of the same name, so there would be nothing left to keep them in step.",
 	navLockRenameAnyway: "Rename and unlock",
+	/**
+	 * The lock letting go on its own. Two reasons, two lines: a closed pane
+	 * and a pane that navigated by itself are different things to have
+	 * happened, and one vague sentence covering both would leave the user
+	 * guessing which.
+	 */
+	navLockDroppedClosed: "Navigation lock released — one of the coupled panes is gone.",
+	navLockDroppedMoved: "Navigation lock released — a coupled pane moved on its own.",
 	noticeExternalNotFound: '"{path}" does not exist.',
 	externalUnlockLabel: "Allow writing outside the vault",
 	externalLockLabel: "Writing outside the vault is allowed — click to lock again",
 	noticeExternalWriteLocked: "Writing outside your vault is locked. Use the lock button in the header to allow it.",
-	noticeExternalMoveOut: "A note can't be moved out of your vault — links to it would break. Hold {mod} to copy it there instead.",
+	/**
+	 * Moving a note out of the vault, which Obsidian's own rename cannot
+	 * follow. The count is given as a plain number rather than folded into
+	 * the sentence, so no locale has to carry a plural rule for it.
+	 */
+	moveOutTitle: "Move this note out of your vault?",
+	moveOutBody: "Obsidian can only update links inside the vault, so every link pointing at this note will break, and the note itself leaves the vault index. Notes linking here: {count}.",
+	moveOutConfirm: "Move and break links",
 	errorNotAFolder: '"{path}" exists and is not a folder.',
 } as const;
 

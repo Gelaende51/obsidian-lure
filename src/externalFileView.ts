@@ -110,6 +110,21 @@ export async function openExternalFile(
 	paneType: PaneType | false,
 	currentLeaf: WorkspaceLeaf,
 ): Promise<void> {
+	// Browsing the filesystem can walk back into the open vault — from the
+	// root, from home, from the folder a vault happens to live in — and a
+	// file reached that way is an ordinary note that Obsidian can open
+	// properly. Showing it in the read-only preview instead was a worse
+	// reading of the same file, arrived at only because of the route taken
+	// to it. Files the app has no view for are left alone: out there the
+	// preview is the better answer, which is what the orange tier is.
+	const own = vaultFileFor(plugin, absolutePath);
+	if (own) {
+		const leaf = paneType ? plugin.app.workspace.getLeaf(paneType) : currentLeaf;
+		await leaf.openFile(own);
+		void plugin.app.workspace.revealLeaf(leaf);
+		return;
+	}
+
 	if (!canRenderExternally(absolutePath)) {
 		openInDefaultApp(absolutePath);
 		return;
@@ -126,6 +141,31 @@ export async function openExternalFile(
 		state: { path: absolutePath },
 	});
 	void plugin.app.workspace.revealLeaf(leaf);
+}
+
+/**
+ * An absolute path as a file of the open vault, when it is one Obsidian
+ * has a view for.
+ *
+ * The same question `ExternalFileView.openableInThisVault` asks about the
+ * file it is already showing, asked before anything is opened — one rule,
+ * so the automatic switch and the button in the viewer cannot disagree
+ * about which files belong to Obsidian.
+ */
+function vaultFileFor(plugin: LurePlugin, absolutePath: string): TFile | null {
+	const adapter = plugin.app.vault.adapter;
+	if (!(adapter instanceof FileSystemAdapter)) return null;
+	const base = adapter.getBasePath();
+	if (!isInside(absolutePath, base)) return null;
+
+	const relative = absolutePath.slice(base.length).replace(/^[\\/]+/, "").split(sep).join("/");
+	const found = plugin.app.vault.getAbstractFileByPath(relative);
+	if (!(found instanceof TFile)) return null;
+	try {
+		return plugin.app.viewRegistry.isExtensionRegistered(found.extension) ? found : null;
+	} catch {
+		return found;
+	}
 }
 
 /**
@@ -272,6 +312,10 @@ export class ExternalFileView extends ItemView {
 			() => this.editingActive(),
 			() => void this.reload(),
 		);
+		// The pane-wide entries the vault branch above gets from Obsidian's
+		// own menu. A pane outside the vault takes part in the navigation
+		// lock like any other, so the way out of it has to be here too.
+		this.plugin.addNavLockItem(menu);
 	}
 
 	async onOpen(): Promise<void> {
@@ -384,6 +428,23 @@ export class ExternalFileView extends ItemView {
 		// read as a caption on whichever button it happened to land beside.
 		if (this.truncated) {
 			this.addNote(notes, "", "scissors", t("externalTruncated"), t("externalTruncatedTooltip"));
+		}
+
+		// The file is in *this* vault, reached by browsing the filesystem
+		// into it — from the root or from home, where the path bar has no
+		// way of knowing it has come back inside. Obsidian can open it
+		// properly, with links and backlinks, so say so and offer it: the
+		// preview is the poorer reading of a file that has a real home
+		// here. Worded with the same string another vault's button uses,
+		// because it is the same offer.
+		const here = this.openableInThisVault();
+		if (here) {
+			bar
+				.createEl("button", {
+					cls: "lure-external-bar-button mod-cta",
+					text: t("externalOpenInVault", { vault: this.app.vault.getName() }),
+				})
+				.addEventListener("click", () => void this.leaf.openFile(here));
 		}
 
 		// A file that belongs to another vault has a proper home where it
@@ -540,6 +601,20 @@ export class ExternalFileView extends ItemView {
 		} catch (err) {
 			new Notice(t("noticeExternalWriteFailed", { error: (err as Error).message }));
 		}
+	}
+
+	/**
+	 * This file as something Obsidian would open itself.
+	 *
+	 * A vault file with no registered view is deliberately excluded: for
+	 * those this viewer *is* the better answer (Obsidian would hand a
+	 * `.json` straight to the desktop), so offering to "open it here"
+	 * would offer to leave the application.
+	 */
+	private openableInThisVault(): TFile | null {
+		const file = this.vaultFile();
+		if (!file) return null;
+		return this.isRegistered(file.extension) ? file : null;
 	}
 
 	/** The known vault this file lives in, when it isn't the one already open. */

@@ -216,6 +216,7 @@ async function createNamed(
 	}
 	if (isNote) await createExternalFile(target);
 	else await createExternalFolder(target);
+	new Notice(t("noticeCreated", { path: target }));
 }
 
 /** A duplicate beside the original, named the way the vault menu names one. */
