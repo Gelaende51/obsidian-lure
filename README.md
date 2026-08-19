@@ -20,7 +20,8 @@ Obsidian 1.8.7+ · desktop only · AGPL-3.0
 - **Click a folder** for a dropdown of its *parent's* contents — swap one folder for a sibling, leave the rest of the path alone. The note's name works the same way, selecting the name without its extension.
 - **Click the delimiter** after a folder to reveal and expand it in the File Explorer. One setting swaps the two roles.
 - **Right-click or drag any entry** — the File Explorer's own context menu, entry for entry, and its drag behaviour. Paths outside the vault get an equivalent menu built for them, down to *Delete* by way of the system trash.
-- **Click the filename or empty space** to type a path, with autocomplete. `/` descends, <kbd>Backspace</kbd> steps out, <kbd>Enter</kbd> commits.
+- **Click the filename or empty space** to type a path, with autocomplete. `/` descends, <kbd>Backspace</kbd> steps out, <kbd>Enter</kbd> commits — and a path that isn't there yet is simply created, with a notice saying where it went.
+- **The dropdown opens on the entry you're standing in**, and arrowing or hovering through it fills the field with what you're pointing at. Moving up off the top gives back what you had typed.
 - **Pencil Folder button** switches the same interactions to move/rename, validated as Obsidian validates.
 - **Hold <kbd>Ctrl</kbd>** to open in a new tab — or, in move/rename mode, to copy the note there instead. The note's name and the folder segments take the same modifiers, and drag, as their File Explorer rows do.
 - **<kbd>Tab</kbd> completes the path** a folder at a time, then widens the selection: name, name with extension, path from the vault, path from the system root.

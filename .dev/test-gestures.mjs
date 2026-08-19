@@ -43,6 +43,10 @@ const buildVaultFixture = `
 	await mk("${ROOT}");
 	await mk("${ROOT}/inner");
 	await app.vault.create("${ROOT}/inner/leaf.md", "# leaf");
+	// Sorts before leaf.md, so "the dropdown opens on the file you are on"
+	// and "hovering shows a different entry" both have something to prove:
+	// in a folder of one, row zero is the answer by accident.
+	await app.vault.create("${ROOT}/inner/aside.md", "# aside");
 	// For the fitting: two folders that share a long prefix (so neither may
 	// be cut short enough to be mistaken for the other) and, below them, a
 	// folder with nothing like it (so it may go down to one letter).
@@ -323,20 +327,133 @@ test("ctrl+enter creates the note in a new tab", async () => {
 	// opening whatever link its cursor was on.
 	await pressKey(page, "ctrl+Enter");
 	const out = await page.evaluate(`
-		${PAUSE(600)}
-		const title = document.querySelector(".modal-title")?.textContent ?? null;
-		const buttons = [...document.querySelectorAll(".modal .lure-modal-buttons button")];
-		buttons[buttons.length - 1]?.click();
 		${PAUSE(900)}
 		return {
-			title,
+			// Creating inside the vault no longer asks; the modifier's job is
+			// only to decide *where* it opens.
+			title: document.querySelector(".modal-title")?.textContent ?? null,
 			tabs: app.workspace.getLeavesOfType("markdown").length,
 			active: app.workspace.getActiveFile()?.path ?? null,
 		};
 	`);
-	expect("it offered to create", out.title, (v) => typeof v === "string" && v.length > 0);
+	expect("no prompt in the way", out.title, null);
 	expect("in a second tab", out.tabs, 2);
 	expect("showing the new note", out.active, `${ROOT}/made-by-ctrl-enter.md`);
+});
+
+// --------------------------------------------------------------- dropdown
+
+/** Opens the dropdown on the note's own name, the ordinary way in. */
+const openDropdown = `
+	const c = app.workspace.getMostRecentLeaf().view.containerEl
+		.querySelector(".view-header-title-container");
+	c.querySelector(".lure-filename-text").dispatchEvent(new MouseEvent("click", { bubbles: true }));
+	${PAUSE(500)}
+	return true;
+`;
+
+const dropdownState = `
+	const c = app.workspace.getMostRecentLeaf().view.containerEl
+		.querySelector(".view-header-title-container");
+	const rows = [...document.querySelectorAll(".suggestion-item")];
+	return {
+		rows: rows.map((e) => e.textContent),
+		selected: rows.findIndex((e) => e.classList.contains("is-selected")),
+		field: c.querySelector("input")?.value ?? null,
+	};
+`;
+
+test("dropdown: opens on the file you are on, not the first row", async () => {
+	await page.evaluate(buildVaultFixture);
+	await page.evaluate(openVaultNote);
+	await page.evaluate(openDropdown);
+	const s = await page.evaluate(dropdownState);
+	// The listing is the folder's contents, and "leaf.md" is not first in it
+	// — Obsidian opens every suggester on row zero, which in a folder of two
+	// hundred notes is nowhere near where you are.
+	expect("the current file is selected", s.rows[s.selected], "leaf.md");
+});
+
+test("dropdown: arrowing previews into the field, and up past the top gives it back", async () => {
+	await page.evaluate(buildVaultFixture);
+	await page.evaluate(openVaultNote);
+	await page.evaluate(openDropdown);
+	const start = await page.evaluate(dropdownState);
+
+	await pressKey(page, "ArrowDown");
+	await page.evaluate(PAUSE(250) + "return true;");
+	const moved = await page.evaluate(dropdownState);
+	expect("the field shows where you are pointing", moved.field, moved.rows[moved.selected]);
+	// The listing must not re-filter to what it just wrote into the field,
+	// or the next press moves through a different list than the one on screen.
+	expect("the list is unchanged", moved.rows, start.rows);
+
+	// Up off the top row lets go of the list and puts back what was typed.
+	for (let i = 0; i <= moved.selected; i++) {
+		await pressKey(page, "ArrowUp");
+		await page.evaluate(PAUSE(150) + "return true;");
+	}
+	const released = await page.evaluate(dropdownState);
+	expect("nothing is selected", released.selected, -1);
+	expect("and the typed text is back", released.field, start.field);
+
+	// One more wraps to the bottom, as it always did.
+	await pressKey(page, "ArrowUp");
+	await page.evaluate(PAUSE(200) + "return true;");
+	const wrapped = await page.evaluate(dropdownState);
+	expect("the next press wraps to the end", wrapped.selected, wrapped.rows.length - 1);
+});
+
+test("dropdown: hovering previews, and taking the pointer off restores", async () => {
+	await page.evaluate(buildVaultFixture);
+	await page.evaluate(openVaultNote);
+	await page.evaluate(openDropdown);
+	const out = await page.evaluate(`
+		const bc = app.plugins.plugins.lure.manager.instances.get(app.workspace.getMostRecentLeaf());
+		const c = app.workspace.getMostRecentLeaf().view.containerEl
+			.querySelector(".view-header-title-container");
+		const list = bc.suggest.suggestions;
+		const typed = c.querySelector("input").value;
+		[...document.querySelectorAll(".suggestion-item")]
+			.find((e) => e.textContent !== typed)
+			.dispatchEvent(new MouseEvent("mousemove", { bubbles: true }));
+		${PAUSE(250)}
+		const hovered = c.querySelector("input").value;
+		list.containerEl.dispatchEvent(new MouseEvent("mouseleave"));
+		${PAUSE(250)}
+		return { typed, hovered, restored: c.querySelector("input").value, selected: list.selectedItem };
+	`);
+	expect("hovering fills the field", out.hovered, (v) => v !== out.typed && typeof v === "string");
+	expect("leaving the list restores it", out.restored, out.typed);
+	expect("and lets go of the row", out.selected, -1);
+});
+
+test("creating a note inside the vault does not ask", async () => {
+	await page.evaluate(buildVaultFixture);
+	await page.evaluate(openVaultNote);
+	const out = await page.evaluate(`
+		const bc = app.plugins.plugins.lure.manager.instances.get(app.workspace.getMostRecentLeaf());
+		// Relative, because the field is: it resolves against the folder the
+		// row is standing in, which here is ${ROOT}/inner.
+		const at = app.vault.getAbstractFileByPath("${ROOT}/inner/silent/made.md");
+		if (at) await app.fileManager.trashFile(at);
+		${PAUSE(200)}
+		document.querySelectorAll(".notice").forEach((n) => n.remove());
+		await bc.handleTypedSubmit("silent/made.md", false);
+		${PAUSE(900)}
+		return {
+			modal: document.querySelector(".modal-title")?.textContent ?? null,
+			created: !!app.vault.getAbstractFileByPath("${ROOT}/inner/silent/made.md"),
+			active: app.workspace.getActiveFile()?.path ?? null,
+			// The notice is what replaced the prompt: it says where the file
+			// went, which the prompt was the only other thing telling you.
+			notices: [...document.querySelectorAll(".notice")].map((n) => n.textContent),
+		};
+	`);
+	expect("no prompt", out.modal, null);
+	expect("the note is there", out.created, true);
+	expect("and open", out.active, `${ROOT}/inner/silent/made.md`);
+	expect("with a notice for the note and its folder", out.notices.length, 2);
 });
 
 // ------------------------------------------------------------- long paths

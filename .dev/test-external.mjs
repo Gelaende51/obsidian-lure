@@ -1084,6 +1084,70 @@ test("invariant: browsing another vault never switches this window", async () =>
 	expect("under Obsidian's vault icon", r.base?.icon, "vault");
 });
 
+test("locations: picking a place that contains this note lands on the note", async () => {
+	// The reported case: a note open in the vault, "~" picked from the
+	// dropdown. Home *contains* the vault, so there is no guessing to do —
+	// the answer is the note's own path from home. The old reading looked
+	// for the vault-relative path directly under home, found nothing, and
+	// dropped you at the top of your home folder.
+	const r = await page.evaluate(`
+		const md = app.vault.getMarkdownFiles()[0];
+		await app.workspace.getLeaf(false).openFile(md);
+		${PAUSE(400)}
+		${breadcrumb}
+		const home = bc.locationEntries().find((l) => l.kind === "home");
+		bc.goToLocation(home.path);
+		${PAUSE(600)}
+		const container = app.workspace.activeLeaf.view.containerEl
+			.querySelector(".view-header-title-container");
+		const input = container.querySelector("input");
+		const out = {
+			home: home.path,
+			base: bc.externalBase?.path ?? null,
+			folder: bc.externalPath,
+			field: input?.value ?? null,
+			selected: input ? input.value.slice(input.selectionStart, input.selectionEnd) : null,
+			absolute: app.vault.adapter.getFullPath(md.path),
+		};
+		bc.cancelNavigation();
+		return out;
+	`);
+	const folder = r.absolute.slice(0, r.absolute.lastIndexOf("/"));
+	expect("the trail is standing in the note's own folder", r.folder, folder);
+	expect("the name is offered", r.field, r.absolute.slice(r.absolute.lastIndexOf("/") + 1));
+	expect("and selected, ready to type over", r.selected, r.field);
+});
+
+test("path bar: the field outside reads from the place you picked", async () => {
+	// The row counts from the location the dropdown offered, so the field
+	// has to as well — it used to open on the machine's absolute path,
+	// contradicting the chips above it.
+	const r = await page.evaluate(`
+		${open(join(BED, "note.md"))}
+		${breadcrumb}
+		bc.focusPathBar();
+		${PAUSE(400)}
+		const container = app.workspace.activeLeaf.view.containerEl
+			.querySelector(".view-header-title-container");
+		const out = {
+			base: bc.externalBase?.path ?? null,
+			absolute: ${JSON.stringify(join(BED, "note.md"))},
+			field: container.querySelector("input")?.value ?? null,
+			chips: [...container.querySelectorAll(".lure-browse-chip")].map((e) => e.textContent),
+		};
+		bc.cancelNavigation();
+		return out;
+	`);
+	expect("no absolute path in the field", r.field, (v) => typeof v === "string" && !v.startsWith("/"));
+	// Which place that is depends on how the file was reached: opened by
+	// path, as here, the row starts from the filesystem root, so the field
+	// holds the path from there. The rule is the same either way — the field
+	// counts from whatever the chips count from.
+	expect("it is the path from that place", r.field,
+		r.absolute.slice(r.base.length).replace(/^\/+/, ""));
+	expect("and the trail has collapsed to it", r.chips, []);
+});
+
 test("invariant: the padlock lapses on returning to the vault", async () => {
 	const r = await page.evaluate(`
 		${open(join(BED, "plain.txt"))}

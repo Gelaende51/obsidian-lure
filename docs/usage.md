@@ -41,6 +41,23 @@ Either way the rest of the path stays visible around the input, as chips before 
 
 Clicking a delimiter (with **Folder name opens the dropdown** off) descends into the folder before it: the dropdown lists *that* folder's contents, and the rest of the path opens selected in the input. Picking a folder appends it to the breadcrumb trail and immediately opens the next dropdown, so you can click your way down a tree without leaving the header row.
 
+## The dropdown opens where you are
+
+The list opens on the entry you are standing in — the note this bar belongs to,
+or, when a folder click has listed its parent, that folder — rather than on the
+first row. In a folder of two hundred notes the first row is nowhere near you.
+
+Moving through the list **fills the field with what you are pointing at**, by
+arrow key or by hovering, so the row you are on is also the path you would get.
+The text you had typed is kept: moving **up off the first entry** lets go of the
+list and puts it back, and so does taking the pointer off the list. Pressing up
+again from there wraps to the bottom, as it always did.
+
+The list itself doesn't change while you move through it — it keeps filtering by
+what you typed, not by what has been previewed into the field — so the entry
+under you never shifts out from under the next press. Typing replaces the
+preview and filters as usual.
+
 ## Dropdown entries are real file-manager rows
 
 Every file and folder in the dropdown behaves like its row in the File Explorer:
@@ -129,7 +146,8 @@ Only explicit schemes count — a note called `100%20` is still a note. A `/` th
 In the default (navigation) mode the currently open note is **never** renamed or moved.
 
 - A path that resolves to an existing file opens it.
-- A path that doesn't exist yet prompts *"Create file here?"*. Confirming creates any missing parent folders and the file; cancelling does nothing at all. Every file and folder created this way says so in a notice — a new folder is otherwise invisible until you go looking for it.
+- A path that doesn't exist yet is simply created, along with any missing parent folders, and opened. Every file and folder made this way says so in a notice — a new folder is otherwise invisible until you go looking for it — and Obsidian's own trash makes an unwanted one a keystroke to undo.
+- **Outside your vault it still asks first.** Out there the same typo writes into a system folder, where neither the notice nor Obsidian's trash is much comfort.
 
 ## <kbd>Ctrl</kbd> — new tab, and copy instead of move
 
@@ -158,11 +176,16 @@ Clicking the **vault name** (or the 🏠 icon, when *Show vault name* is off) op
 
 Picking another vault **does not switch Obsidian to it.** Everything you have open stays open; the breadcrumb simply starts browsing there. That's the whole point of having it on the path bar rather than deferring to the sidebar's vault switcher.
 
-It also lands **as close to the note you're on as that place actually goes**. Vaults are often near-copies of each other — an archive, a synced twin, last year's — and the reason for jumping to one is usually the same note over there, so the row follows your note's own path down as far as it exists and offers the file name selected when the whole path is there. Nothing is ever prefilled that isn't really on disk.
+It also lands **as close to the note you're on as that place actually goes**.
+
+- If the place you picked *contains* the note — home, or wherever your vaults live — the row simply walks down to it: pick `~` with `takeaways.md` open and you get `~ ▸ Vaults ▸ your-vault ▸ takeaways.md`, the name selected and ready to type over.
+- If it's a place beside this one — another vault, another drive — the same relative path is tried, as deep as it actually exists. Vaults are often near-copies of each other, and the reason for jumping to one is usually the same note over there.
+
+Nothing is ever prefilled that isn't really on disk.
 
 ### While you're outside
 
-The path **starts at the location you picked**, not at the machine's directory layout — choose `Archive` and the row reads `Archive / notes / …`, not `/home/you/Vaults/Archive/notes/…`. The leading segment carries an icon for what it is (vault, home, drive), and <kbd>Backspace</kbd> stops there rather than walking on up into the rest of the filesystem. With *Show vault name* off, that segment is the icon alone — the setting is about the row's opening segment whichever vault it names, not only your own.
+The path **starts at the location you picked**, not at the machine's directory layout — and so does the field you get by clicking the empty space or pressing the focus key: it holds the path from that place, not the machine's absolute one, with the trail collapsed to the place itself exactly as it collapses to the vault root inside — choose `Archive` and the row reads `Archive / notes / …`, not `/home/you/Vaults/Archive/notes/…`. The leading segment carries an icon for what it is (vault, home, drive), and <kbd>Backspace</kbd> stops there rather than walking on up into the rest of the filesystem. With *Show vault name* off, that segment is the icon alone — the setting is about the row's opening segment whichever vault it names, not only your own.
 
 The path bar is **framed in the error colour** — the same ring rename mode draws — for as long as it points outside your vault. It marks a standing condition, not a moment: while it's up, none of Obsidian's own handling applies to what the row is showing, and writing is locked until you say otherwise.
 
@@ -384,6 +407,7 @@ This works by wrapping the `workspace:edit-file-title` command rather than grabb
 | Reach the path bar from the keyboard | Bind *Focus the path bar* in Hotkeys |
 | Open a web address or an `obsidian://` link | Type it into the bar and press <kbd>Enter</kbd> |
 | Cancel anything | <kbd>Esc</kbd>, or click outside the header bar |
+| Try entries on for size before committing | Arrow or hover through the dropdown; <kbd>↑</kbd> past the top gives your text back |
 | Walk two parallel folder trees together | Three-dot pane menu → *Lock navigation across panes* |
 | See a shortened folder name in full | Hover it, or widen the pane |
 | Take a note out of the vault | Pencil → browse outside → confirm the dialog (links will break) |
