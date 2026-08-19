@@ -196,6 +196,49 @@ test("rename: a shared folder is renamed in every coupled pane", async () => {
 	expect("no question needed — the name was shared", s.modals, 0);
 });
 
+test("rename: links to every renamed pane's notes still resolve", async () => {
+	await page.evaluate(buildFixture);
+	await page.evaluate(openPanes(["alpha", "beta"]));
+	// A note linking into both trees, written as full paths — the form a
+	// folder rename actually has to rewrite. Shortest-form links would keep
+	// resolving whatever happened to the folders, and prove nothing.
+	await page.evaluate(`
+		const at = app.vault.getAbstractFileByPath("${ROOT}/pointer.md");
+		if (at) await app.fileManager.trashFile(at);
+		${PAUSE(200)}
+		await app.vault.create("${ROOT}/pointer.md",
+			"a [[${ROOT}/alpha/shared/leaf|A]] b [[${ROOT}/beta/shared/leaf|B]] md [x](${ROOT}/alpha/shared/leaf.md)");
+		${PAUSE(900)}
+		return true;
+	`);
+	await lock(true);
+
+	const after = JSON.parse(await page.evaluate(`
+		const mgr = app.plugins.plugins.lure.manager;
+		const bar = [...mgr.instances.values()]
+			.find((b) => b.participates() && b.file?.path.startsWith("${ROOT}/alpha"));
+		bar.renameMode = true;
+		bar.moveFileTo("${ROOT}/alpha/renamed/leaf.md");
+		${PAUSE(1800)}
+		const src = app.vault.getAbstractFileByPath("${ROOT}/pointer.md");
+		const cache = app.metadataCache;
+		return JSON.stringify({
+			renamed: [
+				!!app.vault.getAbstractFileByPath("${ROOT}/alpha/renamed/leaf.md"),
+				!!app.vault.getAbstractFileByPath("${ROOT}/beta/renamed/leaf.md"),
+			],
+			// Asked of Obsidian's own resolver rather than of the text: a link
+			// can read plausibly and still point at nothing.
+			resolve: (cache.getFileCache(src)?.links ?? [])
+				.map((l) => !!cache.getFirstLinkpathDest(l.link, src.path)),
+		});
+	`));
+	expect("renamed in both trees", after.renamed, [true, true]);
+	// Three: one wikilink into each tree, and a markdown link — the two
+	// syntaxes are rewritten by different code inside Obsidian.
+	expect("and every link still resolves", after.resolve, (v) => Array.isArray(v) && v.length === 3 && v.every(Boolean));
+});
+
 test("rename: one that would break the parallel asks first", async () => {
 	await page.evaluate(buildFixture);
 	await page.evaluate(openPanes(["alpha", "beta"]));
