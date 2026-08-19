@@ -1112,10 +1112,13 @@ test("locations: picking a place that contains this note lands on the note", asy
 		bc.cancelNavigation();
 		return out;
 	`);
-	const folder = r.absolute.slice(0, r.absolute.lastIndexOf("/"));
-	expect("the trail is standing in the note's own folder", r.folder, folder);
-	expect("the name is offered", r.field, r.absolute.slice(r.absolute.lastIndexOf("/") + 1));
-	expect("and selected, ready to type over", r.selected, r.field);
+	// The whole path from that place, with its *first folder* selected — the
+	// same shape a folder click gives. Landing deep with only the file name
+	// in the field hid the path it had chosen for you.
+	const relative = r.absolute.slice(r.home.length).replace(/^\/+/, "");
+	expect("the trail stays at the place picked", r.folder, r.home);
+	expect("the whole path from it is offered", r.field, relative);
+	expect("with the first folder selected", r.selected, relative.split("/")[0]);
 });
 
 test("path bar: the field outside reads from the place you picked", async () => {

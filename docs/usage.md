@@ -58,6 +58,13 @@ what you typed, not by what has been previewed into the field — so the entry
 under you never shifts out from under the next press. Typing replaces the
 preview and filters as usual.
 
+**What it filters by is the segment you are editing**, not everything in the
+field. Clicking a folder leaves the rest of the path in there behind the name
+you are changing, so filtering by the whole of it would look for a child called
+`2026/Kickoff.md` and find nothing — the list would close on your first
+keystroke whatever you typed. A name that genuinely matches nothing still
+closes it, because an empty list is the honest answer.
+
 ## Dropdown entries are real file-manager rows
 
 Every file and folder in the dropdown behaves like its row in the File Explorer:
@@ -178,10 +185,10 @@ Picking another vault **does not switch Obsidian to it.** Everything you have op
 
 It also lands **as close to the note you're on as that place actually goes**.
 
-- If the place you picked *contains* the note — home, or wherever your vaults live — the row simply walks down to it: pick `~` with `takeaways.md` open and you get `~ ▸ Vaults ▸ your-vault ▸ takeaways.md`, the name selected and ready to type over.
+- If the place you picked *contains* the note — home, or wherever your vaults live — you get its path from there: pick `~` with `takeaways.md` open and the field reads `Vaults/your-vault/takeaways.md`.
 - If it's a place beside this one — another vault, another drive — the same relative path is tried, as deep as it actually exists. Vaults are often near-copies of each other, and the reason for jumping to one is usually the same note over there.
 
-Nothing is ever prefilled that isn't really on disk.
+Either way the row stays at the place you picked and the **first folder of that path opens selected**, the same shape clicking a folder gives: the step you are most likely to change when you jump somewhere else is the one nearest the top, and the rest of the path stays visible while you change it. Nothing is ever prefilled that isn't really on disk.
 
 ### While you're outside
 

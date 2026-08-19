@@ -54,6 +54,12 @@ const buildVaultFixture = `
 	await mk("${ROOT}/aaaa-common-two");
 	await mk("${ROOT}/aaaa-common-one/unmistakable");
 	await app.vault.create("${ROOT}/aaaa-common-one/unmistakable/leaf.md", "# deep");
+	// A folder to type *into* from a clicked segment, with a sibling that
+	// shares its first letter so filtering has something to do.
+	await mk("${ROOT}/branch");
+	await mk("${ROOT}/brioche");
+	await mk("${ROOT}/branch/twig");
+	await app.vault.create("${ROOT}/branch/twig/nest.md", "# nest");
 	${PAUSE(300)}
 	return true;
 `;
@@ -454,6 +460,47 @@ test("creating a note inside the vault does not ask", async () => {
 	expect("the note is there", out.created, true);
 	expect("and open", out.active, `${ROOT}/inner/silent/made.md`);
 	expect("with a notice for the note and its folder", out.notices.length, 2);
+});
+
+test("dropdown: typing after a folder click filters instead of closing", async () => {
+	await page.evaluate(buildVaultFixture);
+	await page.evaluate(`
+		for (const type of ["markdown", "lure-external-file", "empty"]) {
+			app.workspace.getLeavesOfType(type).forEach((l) => l.detach());
+		}
+		${PAUSE(300)}
+		await app.workspace.getLeaf(false)
+			.openFile(app.vault.getAbstractFileByPath("${ROOT}/branch/twig/nest.md"));
+		${PAUSE(600)}
+		const c = app.workspace.getMostRecentLeaf().view.containerEl
+			.querySelector(".view-header-title-container");
+		[...c.querySelectorAll(".view-header-title-parent .view-header-breadcrumb")]
+			.find((e) => e.textContent === "branch")
+			.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+		${PAUSE(500)}
+		return true;
+	`);
+	const armed = await page.evaluate(dropdownState);
+	// The click leaves the whole tail in the field with the folder selected.
+	expect("the tail is in the field", armed.field, "branch/twig/nest.md");
+
+	// Typed over that selection: the field becomes "br" + the tail, and the
+	// query is only the segment being edited. Filtering by the whole value
+	// looked for a child called "br/twig/nest.md", matched nothing, and shut
+	// the dropdown on the first keystroke — the reported bug.
+	await page.send("Input.insertText", { text: "br" });
+	await page.evaluate(PAUSE(400) + "return true;");
+	const typed = await page.evaluate(dropdownState);
+	expect("the segment was replaced", typed.field, "br/twig/nest.md");
+	expect("the dropdown is still up", typed.rows.length > 0, true);
+	expect("filtered by that segment alone", typed.rows, (v) =>
+		Array.isArray(v) && v.includes("branch") && v.includes("brioche") && !v.includes("inner"));
+
+	// And a name that matches nothing still closes it, as an empty list must.
+	await page.send("Input.insertText", { text: "zzz" });
+	await page.evaluate(PAUSE(400) + "return true;");
+	const missed = await page.evaluate(dropdownState);
+	expect("no matches, no list", missed.rows, []);
 });
 
 // ------------------------------------------------------------- long paths

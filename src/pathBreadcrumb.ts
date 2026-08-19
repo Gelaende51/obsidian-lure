@@ -187,6 +187,40 @@ function stemLength(name: string): number {
  * file with no extension would have the cut land inside the folder name
  * and hand back half a path.
  */
+/**
+ * A prefilled path and the part of it that opens selected: its first folder,
+ * or the whole thing when there is only a name.
+ */
+function asLanding(relative: string): { path: string; select: number } | null {
+	if (!relative) return null;
+	const cut = relative.indexOf("/");
+	return { path: relative, select: cut < 0 ? relative.length : cut };
+}
+
+/**
+ * The path segment the caret sits in.
+ *
+ * What the dropdown should be filtering by: a field can hold a whole path —
+ * a folder click leaves everything to the right of the clicked folder in it,
+ * and the focus command fills in the lot — but only one segment of it is
+ * being edited, and the list is showing one folder's contents.
+ */
+function segmentAtCaret(input: HTMLInputElement): string {
+	const value = input.value;
+	const caret = input.selectionEnd ?? value.length;
+	let start = 0;
+	let end = value.length;
+	for (let i = 0; i < value.length; i++) {
+		if (value[i] !== "/" && value[i] !== "\\") continue;
+		if (i < caret) start = i + 1;
+		else {
+			end = i;
+			break;
+		}
+	}
+	return value.slice(start, end);
+}
+
 function pathStem(path: string): string {
 	const cut = Math.max(path.lastIndexOf("/"), path.lastIndexOf("\\"));
 	const name = path.slice(cut + 1);
@@ -3031,22 +3065,29 @@ export class PathBreadcrumb {
 	 */
 	private preselectPath(): string | null {
 		const folder = this.currentFolderPath();
+		// What the field is pointing at, when it holds a path: the first
+		// segment names a child of the folder being listed, and that child is
+		// where you are. It covers every way in — a folder click, a landing
+		// under a newly picked place, the whole path from the focus command —
+		// because all of them put that segment first.
+		const first = (this.inputEl?.value ?? "").split(/[\\/]/)[0] ?? "";
 
 		if (this.externalPath !== null) {
+			if (first) return externalJoin(this.externalPath, first);
 			const name = this.externalFileName;
 			return name ? externalJoin(this.externalPath, name) : null;
 		}
-		// Standing in the file's own folder: the file is what "here" means.
+
+		if (first) {
+			const candidate = folder ? `${folder}/${first}` : first;
+			if (this.plugin.app.vault.getAbstractFileByPath(candidate)) return candidate;
+		}
+
+		// Nothing typed yet: the file this bar holds, when its own folder is
+		// the one being listed.
 		const parent = this.file?.parent?.path ?? "";
 		const own = parent === "/" ? "" : parent;
-		if (this.file && folder === own) return this.file.path;
-
-		// Standing one above some folder on the row: that folder is "here".
-		const suffix = this.pathSuffixAfter(folder);
-		const next = suffix.split("/")[0] ?? "";
-		if (!next) return null;
-		const candidate = folder ? `${folder}/${next}` : next;
-		return this.plugin.app.vault.getAbstractFileByPath(candidate) ? candidate : null;
+		return this.file && folder === own ? this.file.path : null;
 	}
 
 	/** Where autocomplete/typed-path resolution should be scoped to right now. */
@@ -3140,13 +3181,19 @@ export class PathBreadcrumb {
 			icon: location ? iconFor(location) : LOCATION_ICONS.root,
 		};
 		const twin = this.twinOfCurrentFile(absolutePath);
-		this.externalPath = twin?.folder ?? absolutePath;
+		this.externalPath = absolutePath;
 		this.browsePath = null;
 		this.mode = "browsing";
 		this.hideNativeBreadcrumb();
 		this.render();
 		this.attachDocumentClickAway();
-		this.enterTypingMode(twin?.name ?? "", twin ? "all" : "none");
+		// The whole path from the place you picked, with its *first folder*
+		// selected — the same shape a folder click gives, and for the same
+		// reason: the step you are most likely to change when you jump
+		// somewhere else is the one nearest the top, and everything below it
+		// stays visible while you do. Landing deep with only the file name in
+		// the field hid the path it had chosen for you.
+		this.enterTypingMode(twin?.path ?? "", twin ? twin.select : "none");
 	}
 
 	/**
@@ -3163,7 +3210,7 @@ export class PathBreadcrumb {
 	 * would read as a file you could open, and Enter would offer to create
 	 * it in a vault you have only just glanced at.
 	 */
-	private twinOfCurrentFile(base: string): { folder: string; name: string } | null {
+	private twinOfCurrentFile(base: string): { path: string; select: number } | null {
 		const here = this.currentAbsolutePath();
 		if (here === null) return null;
 
@@ -3174,11 +3221,7 @@ export class PathBreadcrumb {
 		// looked for the vault-relative path directly under home, found
 		// nothing, and landed you at the top of your home folder.
 		if (isInside(here, base) && !samePath(here, base)) {
-			const relative = here.slice(base.length).replace(/^[\\/]+/, "");
-			const cut = Math.max(relative.lastIndexOf("/"), relative.lastIndexOf("\\"));
-			return cut < 0
-				? { folder: base, name: relative }
-				: { folder: externalJoin(base, relative.slice(0, cut)), name: relative.slice(cut + 1) };
+			return asLanding(here.slice(base.length).replace(/^[\\/]+/, ""));
 		}
 
 		// A place beside this one — another vault, another drive. Vaults are
@@ -3190,14 +3233,21 @@ export class PathBreadcrumb {
 		const parts = path.split("/");
 		const name = parts.pop() ?? "";
 		let folder = base;
+		let depth = 0;
 		for (const part of parts) {
 			const next = externalJoin(folder, part);
-			if (!isExternalFolder(next)) return folder === base ? null : { folder, name: "" };
+			// Only as far as this place actually goes; what is left is not
+			// offered, because a prefill naming something that isn't there
+			// reads as a file you could open.
+			if (!isExternalFolder(next)) break;
 			folder = next;
+			depth += 1;
 		}
-		return isExternalFile(externalJoin(folder, name))
-			? { folder, name }
-			: { folder, name: "" };
+		if (depth === 0 && !isExternalFile(externalJoin(base, name))) return null;
+		const reached = [...parts.slice(0, depth), isExternalFile(externalJoin(folder, name)) ? name : ""]
+			.filter((part) => part !== "")
+			.join("/");
+		return reached ? asLanding(reached) : null;
 	}
 
 	/** Descends to another absolute folder while already outside the vault. */
@@ -3341,7 +3391,13 @@ export class PathBreadcrumb {
 			// popover, and to fill the field from a suggestion — are
 			// untrusted, and must not be mistaken for the user typing.
 			if (evt.isTrusted) {
-				this.suggestQueryOverride = null;
+				// Filter by the segment the caret is in, not by everything in
+				// the field. A folder click leaves the rest of the path in
+				// there after the name being edited, so filtering by the whole
+				// value looked for a child called "2026/Kickoff.md", matched
+				// nothing, and the dropdown closed on the first keystroke —
+				// whatever was typed, valid or not.
+				this.suggestQueryOverride = segmentAtCaret(inputEl);
 				// What is in the field is now what was typed, so there is no
 				// earlier text to go back to.
 				this.previewTyped = null;
@@ -3550,15 +3606,14 @@ export class PathBreadcrumb {
 			if (this.previewTyped === null) return;
 			input.value = this.previewTyped;
 			this.previewTyped = null;
-			this.suggestQueryOverride = null;
 			this.autoSizeInput?.();
 			return;
 		}
 
-		if (this.previewTyped === null) {
-			this.previewTyped = input.value;
-			this.suggestQueryOverride = input.value;
-		}
+		// The query is not touched here. It already holds the segment that was
+		// being edited, and leaving it alone is what keeps the list still
+		// while you move through it.
+		if (this.previewTyped === null) this.previewTyped = input.value;
 		input.value = value.label;
 		// Shown selected, the way a completion is: it marks the text as a
 		// suggestion rather than something you typed, and typing replaces it
