@@ -72,6 +72,29 @@ export interface SuggestContext {
 	 * first real keystroke and the folder stays fully listed.
 	 */
 	queryOverride: string | null;
+	/**
+	 * The row the list should open on: the file this bar is showing, or the
+	 * folder it is standing in when the listing is that folder's parent.
+	 *
+	 * Obsidian's suggester always opens on the first entry, which in a
+	 * folder of two hundred notes is nowhere near where you are. Null when
+	 * nothing in the list is "here".
+	 */
+	preselectPath: string | null;
+}
+
+/**
+ * The list object Obsidian keeps behind the popover.
+ *
+ * Not in the public typings, which is why every use of it is guarded and
+ * why nothing here does more than read the selected index and move it. The
+ * two calls that matter are documented at their use sites.
+ */
+interface SuggestionList {
+	selectedItem: number;
+	containerEl?: HTMLElement;
+	setSelectedItem(index: number, evt: unknown): void;
+	forceSetSelectedItem(index: number, evt: unknown): void;
 }
 
 /**
@@ -89,6 +112,12 @@ const DEFAULT_SUGGESTION_LIMIT = 100;
 export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 	/** Kept so dragging an entry can hold the popover open — see wireNativeFileItem. */
 	private readonly dragKeepFocusEl: HTMLInputElement;
+	/** Index of the entry the list should open on, worked out while building it. */
+	private preselectIndex = -1;
+	/** Guards the re-selection below against answering its own call. */
+	private preselecting = false;
+	/** Set once the list has been wrapped for the "up past the top" gesture. */
+	private wrapped = false;
 
 	constructor(
 		app: App,
@@ -100,9 +129,82 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		 * neither of which a suggester has any other business knowing.
 		 */
 		private onExternalContextMenu?: (evt: MouseEvent, path: string, isFolder: boolean) => void,
+		/**
+		 * Shows what landing on an entry would mean, in the field itself —
+		 * the address-bar gesture. Null means "back to what was typed".
+		 * The path bar owns the input and the query, so it does the writing.
+		 */
+		private onPreview?: (value: PathSuggestion | null) => void,
 	) {
 		super(app, inputEl);
 		this.dragKeepFocusEl = inputEl;
+	}
+
+	/**
+	 * Obsidian calls this whenever the highlighted row changes, with the
+	 * event that caused it — and with `null` for the selection it makes
+	 * itself when a list is rendered. That distinction is the whole hook:
+	 * a *user* moving through the list previews into the field, while the
+	 * list simply appearing must not overwrite what is being typed.
+	 */
+	onSelectedChange(value: PathSuggestion | undefined, evt: unknown): void {
+		this.wrapList();
+		if (this.preselecting) return;
+		if (!evt) {
+			// The list has just been rendered and opened on its first row.
+			// Move it to where the user actually is, once.
+			if (this.preselectIndex > 0) {
+				this.preselecting = true;
+				try {
+					this.list()?.setSelectedItem(this.preselectIndex, null);
+				} finally {
+					this.preselecting = false;
+				}
+			}
+			return;
+		}
+		// The overflow row is a count, not a destination; previewing it would
+		// put a sentence in the field.
+		this.onPreview?.(value && value.kind !== "more" ? value : null);
+	}
+
+	/**
+	 * Makes moving up off the first row let go of the list instead of
+	 * jumping to the last one.
+	 *
+	 * Obsidian's own `setSelectedItem` wraps a negative index round to the
+	 * end, so there is no way to stop being on an entry — and no way back to
+	 * the text you had typed before you started arrowing. This lets the
+	 * selection rest at "nothing", which restores that text; pressing up
+	 * again from there wraps to the bottom as it always did.
+	 */
+	private wrapList(): void {
+		const list = this.list();
+		if (!list || this.wrapped) return;
+		this.wrapped = true;
+		const original = list.setSelectedItem.bind(list);
+		list.setSelectedItem = (index: number, evt: unknown) => {
+			if (index < 0 && evt && list.selectedItem === 0) {
+				// -1 is a real state for the renderer: it clears the marking
+				// and reports the change with no value, which is what tells
+				// the field to put the typed text back.
+				list.forceSetSelectedItem(-1, evt);
+				return;
+			}
+			original(index, evt);
+		};
+
+		// Hovering a row previews it, so taking the pointer off the list has
+		// to be a way back — otherwise a stray sweep of the mouse would
+		// leave the field holding a name nobody chose.
+		list.containerEl?.addEventListener("mouseleave", (evt) => {
+			if (list.selectedItem >= 0) list.forceSetSelectedItem(-1, evt);
+		});
+	}
+
+	/** Obsidian's list object behind the popover. Undocumented, so every use is guarded. */
+	private list(): SuggestionList | null {
+		return (this as unknown as { suggestions?: SuggestionList }).suggestions ?? null;
 	}
 
 	/**
@@ -121,6 +223,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 
 	protected getSuggestions(query: string): PathSuggestion[] {
 		const context = this.getContext();
+		this.preselectIndex = -1;
 		const { folderPath, renameMode, keepName, shouldList, queryOverride } = context;
 
 		const q = (queryOverride ?? query).trim().toLowerCase();
@@ -243,6 +346,12 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 	 * keep typing.
 	 */
 	private capped(suggestions: PathSuggestion[]): PathSuggestion[] {
+		// Every listing funnels through here, so this is the one place that
+		// has to find "where you are" — and it must be found *after* the
+		// list is built, since the index is what the selection is set by.
+		const wanted = this.getContext().preselectPath;
+		this.preselectIndex = wanted === null ? -1 : suggestions.findIndex((s) => s.path === wanted);
+
 		const limit = this.limit > 0 ? this.limit : DEFAULT_SUGGESTION_LIMIT;
 		if (suggestions.length <= limit) return suggestions;
 

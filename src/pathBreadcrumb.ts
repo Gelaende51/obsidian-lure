@@ -20,7 +20,7 @@ import type BreadcrumbPathPlugin from "./main";
 import type { BreadcrumbManager } from "./breadcrumbManager";
 import { ConfirmCreateFileModal } from "./createFileModal";
 import { planFit, shortestUnique } from "./pathFit";
-import { FolderChildSuggest } from "./folderChildSuggest";
+import { FolderChildSuggest, PathSuggestion } from "./folderChildSuggest";
 import { ExternalChild, PATH_SEP, externalJoin, externalParent, externalSegments, isExternalFile, isExternalFolder, listExternalChildren } from "./externalFs";
 import {
 	CURRENT_VAULT_ICON,
@@ -288,6 +288,21 @@ export class PathBreadcrumb {
 	private validationError = "";
 	/** Suppresses the input's text as an autocomplete query while a prefilled selection is still untouched (see enterTypingMode). */
 	private suggestQueryOverride: string | null = null;
+	/**
+	 * What was typed before arrowing into the dropdown, held so that
+	 * stepping back off it restores the field. Null when no preview is
+	 * showing.
+	 */
+	private previewTyped: string | null = null;
+	/**
+	 * Re-measures the open input's width. Held so a preview can resize the
+	 * field without dispatching an `input` event: that event re-queries and
+	 * re-renders the list, which resets the selection — so previewing an
+	 * entry destroyed the very selection that was about to be used, and
+	 * Enter or a click landed on whatever row the fresh list happened to
+	 * open on.
+	 */
+	private autoSizeInput: (() => void) | null = null;
 	/**
 	 * How far along the end-of-path selection ladder Tab has walked, or null
 	 * while it is still completing folders. Reset whenever the session ends,
@@ -2954,10 +2969,24 @@ export class PathBreadcrumb {
 			case 1:
 				this.setLadderField(parent, name, "all");
 				return;
-			case 2:
+			case 2: {
 				// From the vault folder — what a link or a search wants.
-				this.setLadderField(external ? parent : "", external ? name : target, "all");
+				// Outside, the equivalent is the place the row was drawn
+				// from, which is what its chips are counting from.
+				if (!external) {
+					this.setLadderField("", target, "all");
+					return;
+				}
+				const base = this.externalBase?.path ?? null;
+				if (base !== null && isInside(target, base)) {
+					const relative = target.slice(base.length).replace(/^[\\/]+/, "");
+					this.extendExternalPath(base);
+					this.enterTypingMode(relative, "all");
+					return;
+				}
+				this.setLadderField(parent, name, "all");
 				return;
+			}
 			case 3: {
 				// From the system root — what anything outside Obsidian wants.
 				const base = this.vaultBasePath();
@@ -2991,10 +3020,47 @@ export class PathBreadcrumb {
 		this.enterTypingMode("");
 	}
 
+	/**
+	 * The entry the dropdown should open on: where you already are.
+	 *
+	 * Which of the two that is depends on what the list is showing. A
+	 * folder's own contents open on the file this bar holds; the parent
+	 * listing a folder click produces opens on that folder, since it is the
+	 * one being swapped. Obsidian would otherwise open on the first row,
+	 * which in a folder of two hundred notes is nowhere near either.
+	 */
+	private preselectPath(): string | null {
+		const folder = this.currentFolderPath();
+
+		if (this.externalPath !== null) {
+			const name = this.externalFileName;
+			return name ? externalJoin(this.externalPath, name) : null;
+		}
+		// Standing in the file's own folder: the file is what "here" means.
+		const parent = this.file?.parent?.path ?? "";
+		const own = parent === "/" ? "" : parent;
+		if (this.file && folder === own) return this.file.path;
+
+		// Standing one above some folder on the row: that folder is "here".
+		const suffix = this.pathSuffixAfter(folder);
+		const next = suffix.split("/")[0] ?? "";
+		if (!next) return null;
+		const candidate = folder ? `${folder}/${next}` : next;
+		return this.plugin.app.vault.getAbstractFileByPath(candidate) ? candidate : null;
+	}
+
 	/** Where autocomplete/typed-path resolution should be scoped to right now. */
 	private currentFolderPath(): string {
 		if (this.browsePath !== null) return this.browsePath;
 		return this.file?.parent?.path ?? "";
+	}
+
+	/** Where the row's own file is on disk, whichever side of the vault boundary it is. */
+	private currentAbsolutePath(): string | null {
+		if (this.externalPath !== null) {
+			return this.externalFileName ? externalJoin(this.externalPath, this.externalFileName) : this.externalPath;
+		}
+		return this.file ? this.absolutePathFor(this.file) : null;
 	}
 
 	/** Absolute path of the open vault on disk, or null if it isn't a real folder (in-memory adapters). */
@@ -3098,6 +3164,26 @@ export class PathBreadcrumb {
 	 * it in a vault you have only just glanced at.
 	 */
 	private twinOfCurrentFile(base: string): { folder: string; name: string } | null {
+		const here = this.currentAbsolutePath();
+		if (here === null) return null;
+
+		// The picked place *contains* the file you are on — home, or the
+		// folder your vaults live in. Then there is no guessing to do: the
+		// file's own path from that place is the answer, and it is always
+		// valid. This is the common case for "~", where the old reading
+		// looked for the vault-relative path directly under home, found
+		// nothing, and landed you at the top of your home folder.
+		if (isInside(here, base) && !samePath(here, base)) {
+			const relative = here.slice(base.length).replace(/^[\\/]+/, "");
+			const cut = Math.max(relative.lastIndexOf("/"), relative.lastIndexOf("\\"));
+			return cut < 0
+				? { folder: base, name: relative }
+				: { folder: externalJoin(base, relative.slice(0, cut)), name: relative.slice(cut + 1) };
+		}
+
+		// A place beside this one — another vault, another drive. Vaults are
+		// often near-copies, so the same relative path is worth trying, as
+		// deep as it actually goes.
 		const path = this.file?.path;
 		if (!path) return null;
 
@@ -3256,6 +3342,9 @@ export class PathBreadcrumb {
 			// untrusted, and must not be mistaken for the user typing.
 			if (evt.isTrusted) {
 				this.suggestQueryOverride = null;
+				// What is in the field is now what was typed, so there is no
+				// earlier text to go back to.
+				this.previewTyped = null;
 				// Typing also ends the selection ladder, so Tab goes back to
 				// completing folders. Without this, reaching the field
 				// through the focus command (which opens on a rung) left
@@ -3313,6 +3402,7 @@ export class PathBreadcrumb {
 		});
 		this.plugin.app.keymap.pushScope(scope);
 
+		this.autoSizeInput = autoSize;
 		inputEl.addEventListener("keydown", onKeydown);
 		inputEl.addEventListener("input", onInput);
 		inputEl.addEventListener("dblclick", onDblClick);
@@ -3324,6 +3414,8 @@ export class PathBreadcrumb {
 			window.removeEventListener("keydown", onEscapeCapture, true);
 			this.plugin.app.keymap.popScope(scope);
 			this.suggestQueryOverride = null;
+			this.previewTyped = null;
+			this.autoSizeInput = null;
 			this.validationError = "";
 			this.clearErrorTooltip();
 			this.suggest?.close();
@@ -3352,6 +3444,7 @@ export class PathBreadcrumb {
 				shouldListExternal: (child) => this.shouldListExternalChild(child),
 				warnsOnOpen: (extension) => this.warnsOnOpen(extension),
 				queryOverride: this.suggestQueryOverride,
+				preselectPath: this.preselectPath(),
 			}),
 			(evt, path, isFolder) =>
 				showExternalMenu(
@@ -3367,6 +3460,7 @@ export class PathBreadcrumb {
 					// refresh in this file uses.
 					() => this.inputEl?.dispatchEvent(new Event("input")),
 				),
+			(value) => this.previewSuggestion(value),
 			);
 			this.suggest.onSelect((value, evt) => {
 				evt.preventDefault();
@@ -3434,6 +3528,44 @@ export class PathBreadcrumb {
 		inputEl.dispatchEvent(new Event("input"));
 
 		this.attachDocumentClickAway();
+	}
+
+	/**
+	 * Shows what landing on the highlighted entry would give you, in the
+	 * field itself — what an address bar does as you arrow through its list.
+	 *
+	 * Two things make it safe. The text typed before arrowing is kept and
+	 * put back the moment the selection lets go (moving up off the top row,
+	 * or the pointer leaving the list), so nothing is lost by looking. And
+	 * the *query* is pinned to that typed text while a preview is showing:
+	 * without that, writing a folder's name into the field would re-filter
+	 * the list to it, and the next press would move through a different list
+	 * than the one on screen.
+	 */
+	private previewSuggestion(value: PathSuggestion | null): void {
+		const input = this.inputEl;
+		if (!input) return;
+
+		if (value === null) {
+			if (this.previewTyped === null) return;
+			input.value = this.previewTyped;
+			this.previewTyped = null;
+			this.suggestQueryOverride = null;
+			this.autoSizeInput?.();
+			return;
+		}
+
+		if (this.previewTyped === null) {
+			this.previewTyped = input.value;
+			this.suggestQueryOverride = input.value;
+		}
+		input.value = value.label;
+		// Shown selected, the way a completion is: it marks the text as a
+		// suggestion rather than something you typed, and typing replaces it
+		// instead of running on from its end — which otherwise produced
+		// strings like "way_deep.mdway" from one keystroke.
+		input.setSelectionRange(0, input.value.length);
+		this.autoSizeInput?.();
 	}
 
 	/** Removes the typing input (if any) and returns filenameEl to plain text, without touching browsePath. */
@@ -3560,11 +3692,13 @@ export class PathBreadcrumb {
 			return;
 		}
 
-		const confirmed = await ConfirmCreateFileModal.ask(this.plugin.app, normalized);
-		if (!confirmed) {
-			this.inputEl?.focus();
-			return;
-		}
+		// No confirmation inside the vault. Typing a path that isn't there is
+		// how a note gets made here, the notice afterwards says where it
+		// landed, and Obsidian's own trash makes it a keystroke to undo —
+		// so the prompt was a click between the user and the thing they had
+		// just asked for. It stays outside the vault, where the same typo
+		// writes into a system folder and neither the notice nor the trash
+		// is much comfort.
 		try {
 			const parentPath = normalized.substring(0, normalized.lastIndexOf("/"));
 			await this.ensureFolderExists(parentPath);
@@ -3934,14 +4068,24 @@ export class PathBreadcrumb {
 	}
 
 	private startFullPathEdit(): void {
-		// Outside the vault the whole path is absolute, and an absolute path
-		// typed outright is exactly what submitExternal already accepts — so
-		// this needs no browse reset, unlike the vault case below.
+		// Outside the vault the row reads from the place you picked — a
+		// vault, a drive, your home folder — so the field reads from there
+		// too, and the trail collapses to that place exactly as the vault
+		// case below collapses to the vault root. It used to open on the
+		// machine's absolute path instead, which contradicted the row above
+		// it and made the field far longer than the pane.
 		if (this.externalPath !== null) {
-			this.enterTypingMode(
-				this.externalFileName ? externalJoin(this.externalPath, this.externalFileName) : this.externalPath,
-				"all",
-			);
+			const base = this.externalBase?.path ?? null;
+			const here = this.currentAbsolutePath() ?? this.externalPath;
+			if (base !== null && isInside(here, base)) {
+				const relative = here.slice(base.length).replace(/^[\\/]+/, "");
+				this.extendExternalPath(base);
+				this.enterTypingMode(relative, "all");
+				return;
+			}
+			// Above the place it was drawn from — reachable by typing an
+			// absolute path — where the absolute form is the only honest one.
+			this.enterTypingMode(here, "all");
 			return;
 		}
 		if (!this.file) return;
