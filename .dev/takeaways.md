@@ -765,3 +765,27 @@ that reads it for its own purposes would find a shape it did not choose. It is
 also the one thing `scripts/check-min-app-version.mjs` reports as newer than
 the floor, and the report is right that the name is new and wrong that we use
 it — which is exactly why that script says a hit is a question, not a finding.
+
+## A TypeScript module can be tested without a build step
+
+Every suite here drives a real Obsidian through CDP, which is right for
+anything about gestures, focus or layout and absurd for `src/pathFit.ts`: it
+is string maths with the widths handed in through a callback. Testing it
+through the app meant a fixture vault, a split pane, and assertions phrased as
+"whatever the window happens to be" — which is how the old long-path test came
+to assert the *opposite* rule to the one it was named after and still pass.
+
+esbuild is already a dependency, and it can compile to memory:
+
+```js
+const bundle = await build({ entryPoints: ["src/pathFit.ts"], bundle: true,
+	format: "esm", write: false });
+const mod = await import(
+	`data:text/javascript;base64,${Buffer.from(bundle.outputFiles[0].text).toString("base64")}`);
+```
+
+`.dev/test-fit.mjs` runs in under a second, needs no vault, no debug port and
+no running application, and every assertion is exact — `Docu…`, not "shorter
+than it was". The rule of thumb it suggests: if a module was deliberately kept
+free of the DOM, testing it through the DOM throws away the reason it was
+written that way.

@@ -185,7 +185,9 @@ Copying refuses to overwrite, exactly as moving does — including onto the note
 
 **This is off by default.** Turn on **Access external files** in the settings first — reading and writing outside the vault is the one thing this plugin does that Obsidian itself won't, so it is opted into rather than out of. With it off the vault name simply reveals your vault in the File Explorer, and nothing here ever looks past it.
 
-Clicking the **vault name** (or the 🏠 icon, when *Show vault name* is off) opens a dropdown of places rather than contents:
+Clicking the **vault name** (or the 🏠 icon, when *Show vault name* is off) opens a dropdown of places rather than contents. The field it opens holds **the whole path you were on, written out in full**, with the place it starts at selected — so picking somewhere else, or typing over the selection, swaps just that leading part and leaves the rest of the path in front of you. Change your mind and <kbd>Esc</kbd> puts the row back as it was.
+
+The places on offer:
 
 - **Your other vaults**, read from Obsidian's own registry, most recently opened first, each under Obsidian's own vault icon — the one the app itself uses for vault commands. The vault you already have open takes a house instead: it's where the row starts from by default, not somewhere to go.
 - **Home**, under its own account name, marked by a `~`. Lucide has no tilde, so this one is drawn by the plugin on Lucide's own 24×24 grid with the same stroke — an icon the set is missing rather than a text character sitting among icons.
@@ -325,19 +327,29 @@ different things would be worse than one icon each.
 
 ## When the path is longer than the pane
 
-Folder names are **shortened rather than squeezed**, and never below what tells
-them apart: `Projects2025` and `Projects2026` in the same folder both keep
-eleven characters, because ten would make them the same word, while an `Archive`
-with nothing like it beside it can go down to `A…`. The characters an ellipsis
-eats are the ones that were carrying no information.
+Names are **shortened rather than squeezed**, in the order of what you are
+least likely to need:
 
-Shortening starts at the **left**, so the folders nearest the file keep their
-names longest. The file's own name is never shortened at all — it is what the
-header is for. Nothing wraps
-onto a second line. When even the shortest honest names don't fit, the row
-**scrolls sideways**, parked at the end where the file is — at that point there
-is nothing left to compress, and cutting further would hide rather than shorten.
-A shortened name shows the whole of itself on hover.
+1. **The vault name first**, down to its icon. You know which vault you are in;
+   the icon keeps saying where the path starts.
+2. **Then the folders**, longest first. The longest name shrinks alone until it
+   is as short as the next longest, then the two come down together — so one
+   very long folder never costs the short names beside it their letters.
+3. **The file's own name last**, and it keeps about eight characters. It is what
+   the header is for.
+
+Nothing is cut past what tells it apart from its neighbours: `Projects2025` and
+`Projects2026` in the same folder are never shortened at all, because any cut
+would make them the same word, while `Reports` beside `Receipts` can come down
+to `Rep…`. On top of that a folder keeps about four characters and short names
+are left alone entirely — a name ground down to `A…` is unique and still
+unreadable.
+
+Nothing wraps onto a second line. When even the shortest honest names don't fit,
+the row **scrolls sideways**, parked at the end where the file is — at that
+point there is nothing left to compress, and cutting further would hide rather
+than shorten. A shortened name shows the whole of itself on hover; so does the
+vault icon once its name is gone.
 
 ## The two warning colours
 
@@ -428,7 +440,7 @@ This works by wrapping the `workspace:edit-file-title` command rather than grabb
 | Cancel anything | <kbd>Esc</kbd>, or click outside the header bar |
 | Try entries on for size before committing | Arrow or hover through the dropdown; <kbd>↑</kbd> past the top gives your text back |
 | Walk two parallel folder trees together | Three-dot pane menu → *Lock navigation across panes* |
-| See a shortened folder name in full | Hover it, or widen the pane |
+| See a shortened folder name in full | Hover it, or widen the pane (the vault icon carries the tooltip once the name is gone) |
 | Take a note out of the vault | Pencil → browse outside → confirm the dialog (links will break) |
 
 ## Settings

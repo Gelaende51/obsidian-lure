@@ -72,7 +72,7 @@ main.ts                 plugin lifecycle, wraps the rename command
 | `src/obsidianLabels.ts` | Obsidian's own wording for entries this plugin mirrors, and the lookup that resolves it. | `obsidianLabel(keys, fallback, params?)`. Keys are arrays because Obsidian renamed its i18n table from camelCase to kebab-case — see [Borrowing Obsidian's strings](#borrowing-obsidians-strings). Add a key here rather than adding a string to `lang/`. |
 | `src/prompts.ts` | A name prompt and a confirmation, for paths that have no `TFile` for Obsidian's own dialogs to take. | `promptForName(app, {...})` resolves the name or `null`; `confirmAction(app, {...})` resolves a boolean. Every form of dismissal is a cancel. |
 | `src/fileKinds.ts` | Classifies an extension: binary, Markdown, or "Obsidian has no editor for this". | `isBinaryExtension`, `isMarkdownExtension`, `warnsOnOpen` — the last one decides the orange warning tier. |
-| `src/pathFit.ts` | Decides what a row shows when the path is wider than the pane: which names to shorten, and by how much. | `shortestUnique(name, siblings)` is the floor a name may not go below — one character past the longest prefix it shares with a neighbour — and `planFit` spends the overflow from the left, stopping as soon as the row fits. Pure string maths: widths arrive through a `measure` callback, so the same code serves Obsidian's own segments and this plugin's chips. The DOM half is `PathBreadcrumb.fitRow`, which re-measures after applying a plan because a canvas measurement and real layout do not agree. |
+| `src/pathFit.ts` | Decides what a row shows when the path is wider than the pane: which names to shorten, and by how much. | `shortestUnique(name, siblings)` is the floor a name may not go below — one character past the longest prefix it shares with a neighbour — and `planFit` spends the overflow in stages (`root`, then `folder`, then `name`), capping each stage's names at a length that comes down until the row fits, so the longest name in a stage pays first and short ones are left whole. A folder keeps `MIN_FOLDER_CHARS`, the file name `MIN_NAME_CHARS`, whatever their siblings allow; only the root may go to nothing, because its icon stays. Pure string maths: widths arrive through a `measure` callback, so the same code serves Obsidian's own segments and this plugin's chips. The DOM half is `PathBreadcrumb.fitRow`, which re-measures after applying a plan because a canvas measurement and real layout do not agree. |
 
 ### Outside the vault
 
@@ -193,6 +193,7 @@ node .dev/test-rename.mjs            # the rename key's alternation
 node .dev/test-urls.mjs              # URLs and encoded paths typed into the bar
 node .dev/test-tab.mjs               # Tab completion and the selection ladder
 node .dev/test-navlock.mjs           # panes coupled by the navigation lock
+node .dev/test-fit.mjs               # the fitting maths alone — no Obsidian, no vault, no port
 node .dev/test-gestures.mjs          # right-click runs, Escape, the keyboard entry points, long paths
 node .dev/test-compat.mjs            # against installed peer plugins
 node .dev/test-compat.mjs Quick      # one peer

@@ -19,7 +19,7 @@ import type { FileExplorerView } from "obsidian";
 import type BreadcrumbPathPlugin from "./main";
 import type { BreadcrumbManager } from "./breadcrumbManager";
 import { ConfirmCreateFileModal } from "./createFileModal";
-import { planFit, shortestUnique } from "./pathFit";
+import { FitStage, planFit, shortestUnique } from "./pathFit";
 import { FolderChildSuggest, PathSuggestion } from "./folderChildSuggest";
 import { ExternalChild, PATH_SEP, externalJoin, externalParent, externalSegments, isExternalFile, isExternalFolder, listExternalChildren } from "./externalFs";
 import {
@@ -116,6 +116,14 @@ const SCROLL_CLASS = "lure-row-scrolls";
  * of looping.
  */
 const FIT_PASSES = 4;
+
+/** A row segment the fitter may shorten, tied to the element showing it. */
+interface FittableSegment {
+	el: HTMLElement;
+	full: string;
+	stage: FitStage;
+	floor: () => number;
+}
 /** On whatever would make a legal locked move — a segment, or a history button. */
 const NAV_LEGAL_CLASS = "lure-nav-legal";
 /** Passed when clearing, so a cleared bar cannot accidentally be told a move is legal. */
@@ -1794,8 +1802,9 @@ export class PathBreadcrumb {
 	 * ellipsis to say anything was cut, and a name containing a space wraps
 	 * onto a second line. So the segments are pinned to their natural width
 	 * (see `lure-fit` in the stylesheet) and shortened here instead, by the
-	 * rule in pathFit: from the left, and never past what tells a folder
-	 * apart from its neighbours.
+	 * rules in pathFit: the opening segment gives way first and may go down
+	 * to its icon, then the folders longest-first, then the file's own name
+	 * — and none of them past what tells it apart or leaves it readable.
 	 *
 	 * When even that is not enough the row scrolls sideways rather than
 	 * cutting into names that have nothing left to give, and is parked at
@@ -1822,6 +1831,21 @@ export class PathBreadcrumb {
 		// So the residual is fed back and the plan redrawn, from the full
 		// names each time, until the row fits or there is nothing left to cut.
 		const plan = { texts: segments.map((segment) => segment.full), overflows: true };
+		// The planner walks a cap down one character at a time and measures
+		// every name against each step, so the same string is asked about
+		// repeatedly; each measurement reads computed style, which is a
+		// layout flush. Remembered for the duration of this fit — the fonts
+		// cannot change inside it.
+		const widths = new Map<string, number>();
+		const measure = (text: string, index: number): number => {
+			const key = `${index} ${text}`;
+			let width = widths.get(key);
+			if (width === undefined) {
+				width = textWidth(text, segments[index]?.el ?? container);
+				widths.set(key, width);
+			}
+			return width;
+		};
 		let demand = 0;
 		for (let pass = 0; pass < FIT_PASSES; pass++) {
 			const residual = container.scrollWidth - container.clientWidth;
@@ -1831,9 +1855,13 @@ export class PathBreadcrumb {
 			}
 			demand += residual;
 			const next = planFit(
-				segments.map((segment) => ({ full: segment.full, floor: segment.floor })),
+				segments.map((segment) => ({
+					full: segment.full,
+					floor: segment.floor,
+					stage: segment.stage,
+				})),
 				demand,
-				(text, index) => textWidth(text, segments[index]?.el ?? container),
+				measure,
 			);
 			// Nothing moved: every name is already as short as it may go, and
 			// another pass would only measure the same row again.
@@ -1849,7 +1877,11 @@ export class PathBreadcrumb {
 			// The full name is a hover away, so shortening costs nothing but
 			// a moment. Only where something was actually cut: a tooltip
 			// repeating what is already on screen is noise.
-			if (text !== segment.full) setTooltip(segment.el, segment.full);
+			if (text === segment.full) continue;
+			// A name cut away entirely has no box left to hover, so the
+			// tooltip goes on what is still there: the icon standing in for
+			// it.
+			setTooltip(text === "" ? (segment.el.parentElement ?? segment.el) : segment.el, segment.full);
 		}
 
 		if (plan.overflows && container.scrollWidth > container.clientWidth) {
@@ -1860,15 +1892,18 @@ export class PathBreadcrumb {
 
 	/**
 	 * The row's shortenable names, left to right, each with the floor its
-	 * siblings impose.
-	 *
-	 * The file's own name comes last so it is the last thing cut — by the
-	 * time the fitter reaches it, every folder is already at its floor.
+	 * siblings impose and the stage that decides when it is asked to give
+	 * way (see pathFit: the opening segment, then the folders, then the
+	 * file's own name).
 	 */
-	private fittableSegments(): { el: HTMLElement; full: string; floor: () => number }[] {
-		const out: { el: HTMLElement; full: string; floor: () => number }[] = [];
+	private fittableSegments(): FittableSegment[] {
+		const out: FittableSegment[] = [];
 
-		const add = (el: HTMLElement | null | undefined, siblings: () => string[]): void => {
+		const add = (
+			el: HTMLElement | null | undefined,
+			stage: FitStage,
+			siblings: () => string[],
+		): void => {
 			if (!el) return;
 			// Read once and remembered: after the first cut the element's own
 			// text is the shortened one, and re-deriving the floor from that
@@ -1876,40 +1911,45 @@ export class PathBreadcrumb {
 			const full = el.dataset.lureFull ?? el.textContent ?? "";
 			if (!full) return;
 			el.dataset.lureFull = full;
-			out.push({ el, full, floor: () => shortestUnique(full, siblings()) });
+			out.push({ el, full, stage, floor: () => shortestUnique(full, siblings()) });
 		};
 
-		// The opening segment shortens like any other, and first: it names
-		// where the path starts, which is the least useful thing on the row
-		// once you are several folders deep. Its floor is one character —
-		// nothing else on the row is a vault or a drive, so there is nothing
-		// for it to be confused with.
-		add(this.vaultSegmentEl.querySelector<HTMLElement>(".lure-root-name"), () => []);
+		// The opening segment goes first and furthest: it names where the
+		// path starts, which is the least useful thing on the row once you
+		// are several folders deep, and its icon stays behind to say the row
+		// still begins at a vault or a place rather than a folder.
+		add(this.vaultSegmentEl.querySelector<HTMLElement>(".lure-root-name"), "root", () => []);
 
-		// The file's own name is deliberately not in this list. It is what the
-		// header is *for*, the tab beside it is already showing a shortened
-		// copy, and there is a fallback that costs nothing: when the folders
-		// are all at their floor and the row still does not fit, it scrolls.
-		// Cutting the name to "l…" to save eight pixels of folder trail gets
-		// that backwards.
 		if (this.externalPath !== null) {
 			for (const chip of this.chipElements()) {
 				const path = chip.dataset.lurePath;
-				add(chip, () => (path ? this.externalSiblingNames(path) : []));
+				add(chip, "folder", () => (path ? this.externalSiblingNames(path) : []));
 			}
-			return out;
+		} else {
+			// Inside the vault the trail is either Obsidian's own breadcrumb
+			// or, while browsing, our chips standing in for it. Both are
+			// fitted the same way; only where the names come from differs.
+			const chips = this.chipElements();
+			const elements = chips.length ? chips : this.nativeSegments();
+			for (const [index, el] of elements.entries()) {
+				const path = chips.length ? el.dataset.lurePath : this.ancestorFolderPaths()[index];
+				add(el, "folder", () => this.vaultSiblingNames(path ?? null));
+			}
 		}
 
-		// Inside the vault the trail is either Obsidian's own breadcrumb or,
-		// while browsing, our chips standing in for it. Both are fitted the
-		// same way; only where the names come from differs.
-		const chips = this.chipElements();
-		const elements = chips.length ? chips : this.nativeSegments();
-		for (const [index, el] of elements.entries()) {
-			const path = chips.length ? el.dataset.lurePath : this.ancestorFolderPaths()[index];
-			add(el, () => this.vaultSiblingNames(path ?? null));
-		}
+		// Last, and it keeps more than any folder does. It is what the header
+		// is *for*: shortening it to save a few pixels of folder trail is the
+		// wrong trade until the trail has nothing left to give.
+		add(this.filenameEl.querySelector<HTMLElement>(".lure-filename-text"), "name", () =>
+			this.filenameSiblingNames(),
+		);
 		return out;
+	}
+
+	/** The names beside the file this row is showing, so its own may not be cut into one of them. */
+	private filenameSiblingNames(): string[] {
+		if (this.externalPath !== null) return this.externalSiblingNames(this.rowPath());
+		return this.vaultSiblingNames(this.file?.path ?? null);
 	}
 
 	/**
@@ -3167,7 +3207,37 @@ export class PathBreadcrumb {
 		// so the input created next occupies exactly where the vault name
 		// was — which is where Obsidian will left-align the popover.
 		this.render();
-		this.enterTypingMode("", "none", this.vaultSegmentEl);
+		const prefill = this.locationPrefill();
+		this.enterTypingMode(prefill.text, prefill.select, this.vaultSegmentEl);
+	}
+
+	/**
+	 * What the locations field opens on: the path the row was showing,
+	 * written out in full, with the place it starts at selected.
+	 *
+	 * The row is cleared to make room for the field (see
+	 * `renderVaultSegment`), so opening it empty threw away everything that
+	 * was on screen — glance at another vault, change your mind, and the
+	 * path you had was gone. Absolute rather than vault-relative because
+	 * that is what this dropdown deals in, and because it makes the gesture
+	 * the same as every other segment's: the part being swapped opens
+	 * selected, the tail below it stays put. Picking a place, or typing one
+	 * over the selection, replaces exactly the leading part.
+	 */
+	private locationPrefill(): { text: string; select: "all" | "none" | number } {
+		const display = this.rowDisplayPath();
+		const base =
+			this.externalPath !== null ? (this.externalBase?.path ?? null) : this.vaultBasePath();
+		if (base === null) return { text: display, select: display ? "all" : "none" };
+
+		const text =
+			this.externalPath !== null ? display : display ? `${base}/${display}` : base;
+		// Only when the row really is under that place: browsing above an
+		// external base leaves the row showing a path the label no longer
+		// covers, and selecting its first N characters would highlight an
+		// arbitrary slice of some other folder's name.
+		const select = isInside(text, base) || samePath(text, base) ? base.length : 0;
+		return { text, select: select > 0 ? select : "none" };
 	}
 
 	/** The jump targets for the dropdown, resolved fresh each time so a newly mounted device shows up. */

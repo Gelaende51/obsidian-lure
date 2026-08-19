@@ -1,19 +1,30 @@
 /**
  * Making a long path fit the row.
  *
- * Two rules, and they are the whole module:
+ * Three rules, and they are the whole module:
  *
- * 1. A name is shortened from its *end*, but never past the point where it
- *    stops being telling apart from the folders beside it. `Projects2025`
- *    and `Projects2026` in the same parent keep eleven characters each,
- *    because ten would make them the same word; `Archive`, alone in its
- *    parent, can go down to `A…`. The characters an ellipsis eats are the
- *    ones that were carrying no information.
+ * 1. **Least useful first.** The row gives up its opening segment before
+ *    anything else — the vault or the place the path starts in, which you
+ *    already know, and which keeps its icon so the row still says where it
+ *    begins. Then the folders. The file's own name is last, because it is
+ *    what the header is *for*.
  *
- * 2. Shortening starts at the left and stops as soon as the row fits, so
- *    the folders nearest the file — the ones you are actually working in —
- *    keep their names longest. The file's own name is never given to this at
- *    all: it is what the header is for, and the row scrolls instead.
+ * 2. **Within a stage, the longest name pays.** Names are capped at a
+ *    common length that comes down until the row fits, so the longest
+ *    shrinks alone until it is as short as the next longest, then the two
+ *    shrink together, and so on. A short name is never cut while a long one
+ *    beside it still has characters to spare — which is the difference
+ *    between a row that reads and one where every name is a stump.
+ *
+ * 3. **Nothing shrinks past what it is telling you.** A name stops where it
+ *    would stop being distinguishable from the folders beside it
+ *    (`shortestUnique`): `Reports` beside `Receipts` may come down to
+ *    `Rep…` and no further, because `Re…` would fit either of them — and
+ *    two names differing only in their last character are never cut at
+ *    all. On top of that a folder keeps about four characters and a
+ *    file name about eight, whatever their siblings allow — a name cut to
+ *    `A…` is distinguishable and still unreadable. Names already at or
+ *    below their minimum are left alone entirely.
  *
  * Anything still too wide when every name is at its floor is left to
  * scroll: at that point there are no redundant characters left to drop, and
@@ -27,6 +38,23 @@
 
 /** What a shortened name ends with. One character, and the one every file manager uses. */
 export const ELLIPSIS = "…";
+
+/** Characters a folder keeps whatever the room, ellipsis aside. */
+export const MIN_FOLDER_CHARS = 4;
+
+/** Characters the file's own name keeps. Higher: it is the one name on the row you are reading. */
+export const MIN_NAME_CHARS = 8;
+
+/**
+ * Which part of the row a segment is, which is the order they are spent in.
+ *
+ * "root" is the opening segment — the vault name, or the label of the place
+ * an external path starts at. It alone may go all the way to nothing: its
+ * icon stays behind and carries the meaning.
+ */
+export type FitStage = "root" | "folder" | "name";
+
+const STAGE_ORDER: readonly FitStage[] = ["root", "folder", "name"];
 
 /**
  * The fewest leading characters that still tell this name apart from the
@@ -69,6 +97,8 @@ export interface FitSegment {
 	 * knowledge it never uses, and most rows fit.
 	 */
 	floor: () => number;
+	/** Where in the row it sits, which decides when it is asked to give way. */
+	stage: FitStage;
 }
 
 export interface FitPlan {
@@ -76,6 +106,26 @@ export interface FitPlan {
 	texts: string[];
 	/** True when the row still does not fit with every name at its floor. */
 	overflows: boolean;
+}
+
+/**
+ * The shortest this segment may get: what its siblings need, and what a
+ * reader needs, whichever is longer — but never more than the name has.
+ */
+function floorOf(segment: FitSegment): number {
+	const full = segment.full.length;
+	if (segment.stage === "root") return Math.min(1, full);
+	const unique = Math.max(1, Math.min(segment.floor(), full));
+	const readable = segment.stage === "folder" ? MIN_FOLDER_CHARS : MIN_NAME_CHARS;
+	return Math.min(full, Math.max(unique, readable));
+}
+
+/** This name capped at `level` characters, or emptied when the root is asked for everything. */
+function cutTo(segment: FitSegment, level: number, floor: number): string {
+	if (level <= 0 && segment.stage === "root") return "";
+	const keep = Math.max(level, floor);
+	if (keep >= segment.full.length) return segment.full;
+	return segment.full.slice(0, keep) + ELLIPSIS;
 }
 
 /**
@@ -95,29 +145,68 @@ export function planFit(
 	if (overflow <= 0) return { texts, overflows: false };
 
 	let saved = 0;
-	for (const [index, segment] of segments.entries()) {
+	for (const stage of STAGE_ORDER) {
 		if (saved >= overflow) break;
-		const fullWidth = measure(segment.full, index);
-		const floor = Math.max(1, Math.min(segment.floor(), segment.full.length));
-		// Longest first, so the chosen cut is the smallest one that buys
-		// enough room rather than the harshest one available.
-		for (let length = segment.full.length - 1; length >= floor; length--) {
-			const candidate = segment.full.slice(0, length) + ELLIPSIS;
-			const width = measure(candidate, index);
-			const gain = fullWidth - width;
-			const atFloor = length === floor;
-			if (gain >= overflow - saved || atFloor) {
-				// An "…" can be wider than the two characters it replaces on
-				// a proportional font, so a cut that gains nothing is not
-				// worth making: it would cost information for no room.
-				if (gain > 0) {
-					texts[index] = candidate;
-					saved += gain;
-				}
-				break;
-			}
+		const group: [number, FitSegment][] = [];
+		for (const [index, segment] of segments.entries()) {
+			if (segment.stage === stage) group.push([index, segment]);
 		}
+		if (!group.length) continue;
+		saved += shrinkStage(group, overflow - saved, texts, measure);
 	}
 
 	return { texts, overflows: saved < overflow };
+}
+
+/**
+ * Brings one stage's names down together until they have found `need`
+ * pixels, or have nothing left to give.
+ *
+ * The cap descends one character at a time and every name in the stage is
+ * measured against it, which is what makes the longest name pay first: it
+ * is the only one the cap touches until the others are just as long. Each
+ * level is planned from the full names rather than from the level before,
+ * so a name that reached its floor early simply stops moving instead of
+ * being cut again by the next round.
+ */
+function shrinkStage(
+	group: readonly [number, FitSegment][],
+	need: number,
+	texts: string[],
+	measure: (text: string, index: number) => number,
+): number {
+	const floors = group.map(([, segment]) => floorOf(segment));
+	const fullWidths = group.map(([index, segment]) => measure(segment.full, index));
+	const longest = Math.max(...group.map(([, segment]) => segment.full.length));
+	// The root is the one segment allowed to disappear, so its stage is the
+	// one whose cap may reach zero.
+	const lowest = Math.min(
+		...group.map(([, segment], at) => (segment.stage === "root" ? 0 : floors[at] ?? 1)),
+	);
+
+	let bestTexts: string[] | null = null;
+	let bestSaving = 0;
+	for (let level = longest - 1; level >= lowest; level--) {
+		let saving = 0;
+		const applied = group.map(([index, segment], at) => {
+			const candidate = cutTo(segment, level, floors[at] ?? segment.full.length);
+			if (candidate === segment.full) return segment.full;
+			const gain = (fullWidths[at] ?? 0) - measure(candidate, index);
+			// An "…" can be wider than the two characters it replaces on a
+			// proportional font, so a cut that gains nothing is not worth
+			// making: it would cost information for no room.
+			if (gain <= 0) return segment.full;
+			saving += gain;
+			return candidate;
+		});
+		bestTexts = applied;
+		bestSaving = saving;
+		if (saving >= need) break;
+	}
+
+	if (!bestTexts) return 0;
+	for (const [at, [index]] of group.entries()) {
+		texts[index] = bestTexts[at] ?? texts[index] ?? "";
+	}
+	return bestSaving;
 }

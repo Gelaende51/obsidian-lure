@@ -54,6 +54,9 @@ const buildVaultFixture = `
 	await mk("${ROOT}/aaaa-common-two");
 	await mk("${ROOT}/aaaa-common-one/unmistakable");
 	await app.vault.create("${ROOT}/aaaa-common-one/unmistakable/leaf.md", "# deep");
+	// A file name long enough to be worth cutting, for the stage that is
+	// only reached once every folder is at its floor.
+	await app.vault.create("${ROOT}/aaaa-common-one/unmistakable/a very long note name indeed.md", "# long");
 	// A folder to type *into* from a clicked segment, with a sibling that
 	// shares its first letter so filtering has something to do.
 	await mk("${ROOT}/branch");
@@ -597,18 +600,53 @@ test("dropdown: a preview swaps one step and leaves the rest of the path", async
 
 // ------------------------------------------------------------- long paths
 
-/** Splits the pane down to roughly a third, which is where fitting starts to bite. */
-const narrowPane = `
+test("the vault name opens the path in full, with the place selected", async () => {
+	await page.evaluate(buildVaultFixture);
+	const out = await page.evaluate(`
+		for (const type of ["markdown", "lure-external-file", "empty"]) {
+			app.workspace.getLeavesOfType(type).forEach((l) => l.detach());
+		}
+		${PAUSE(300)}
+		await app.workspace.getLeaf(false)
+			.openFile(app.vault.getAbstractFileByPath("${ROOT}/inner/leaf.md"));
+		${PAUSE(400)}
+		const c = app.workspace.getLeavesOfType("markdown")[0].view.containerEl
+			.querySelector(".view-header-title-container");
+		c.querySelector(".lure-vault-segment")
+			.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+		${PAUSE(400)}
+		const input = c.querySelector("input");
+		return {
+			value: input?.value ?? null,
+			selected: input ? input.value.slice(input.selectionStart, input.selectionEnd) : null,
+			rows: document.querySelectorAll(".suggestion-item").length,
+		};
+	`);
+	// The row is cleared to make room for the field, so what it was showing
+	// has to survive inside it — otherwise a glance at another place costs
+	// you the path you were on.
+	expect("the whole path, written out", out.value, `${app.vaultPath}/${ROOT}/inner/leaf.md`);
+	expect("with the place selected", out.selected, app.vaultPath);
+	// The prefill must not double as the query, or the list the click just
+	// opened would filter itself down to nothing.
+	expect("and the places still listed", out.rows, (v) => v > 0);
+	await pressKey(page, "Escape");
+});
+
+/**
+ * Opens a file and splits the pane down, which is where fitting starts to
+ * bite: two splits leaves roughly a third of the window, three a quarter.
+ */
+const narrowPane = (name, splits) => `
 	for (const type of ["markdown", "lure-external-file", "empty"]) {
 		app.workspace.getLeavesOfType(type).forEach((l) => l.detach());
 	}
 	${PAUSE(300)}
-	await app.workspace.getLeaf(false)
-		.openFile(app.vault.getAbstractFileByPath("${ROOT}/aaaa-common-one/unmistakable/leaf.md"));
+	const target = app.vault.getAbstractFileByPath("${ROOT}/aaaa-common-one/unmistakable/${name}");
+	await app.workspace.getLeaf(false).openFile(target);
 	${PAUSE(400)}
-	for (let i = 0; i < 2; i++) {
-		await app.workspace.getLeaf("split", "vertical")
-			.openFile(app.vault.getAbstractFileByPath("${ROOT}/inner/leaf.md"));
+	for (let i = 0; i < ${splits}; i++) {
+		await app.workspace.getLeaf("split", "vertical").openFile(target);
 		${PAUSE(400)}
 	}
 	app.plugins.plugins.lure.manager.refreshAll();
@@ -624,32 +662,64 @@ const rowState = `
 		content: c.scrollWidth,
 		scrolls: c.classList.contains("lure-row-scrolls"),
 		scrollLeft: Math.round(c.scrollLeft),
+		root: c.querySelector(".lure-root-name")?.textContent ?? null,
 		names: [...c.querySelectorAll(".view-header-title-parent .view-header-breadcrumb")].map((e) => e.textContent),
 		file: c.querySelector(".lure-filename-text")?.textContent ?? null,
 		lines: Math.round(c.querySelector(".lure-filename-text")?.getBoundingClientRect().height ?? 0),
 	};
 `;
 
+/** Characters still on screen, ellipsis aside. */
+const kept = (text) => text.replace("…", "").length;
+const isCut = (text) => text.endsWith("…");
+
+test("long paths: the vault name gives way before any folder", async () => {
+	await page.evaluate(buildVaultFixture);
+	await page.evaluate(narrowPane("leaf.md", 1));
+	const row = await page.evaluate(rowState);
+	expect("something had to give", row.width < row.content || row.root !== app.vaultName, true);
+	// Whatever the window happens to be, the order holds: no folder is
+	// touched while the opening segment still has characters to spend.
+	if (row.names.some(isCut)) {
+		expect("the vault name is down to its icon", row.root, "");
+	} else {
+		expect("only the vault name has been cut", isCut(row.root ?? ""), true);
+	}
+});
+
 test("long paths: a name is cut only to where it stays distinguishable", async () => {
 	await page.evaluate(buildVaultFixture);
-	await page.evaluate(narrowPane);
+	await page.evaluate(narrowPane("leaf.md", 2));
 	const row = await page.evaluate(rowState);
 	// Its sibling is "aaaa-common-two", so twelve characters would make the
 	// two the same word; the cut has to stop at thirteen.
 	const shared = row.names.find((n) => n.startsWith("aaaa"));
 	expect("the shared prefix survives", shared, (v) => typeof v === "string" && v.startsWith("aaaa-common-o"));
-	// The outermost folder has nothing resembling it, so it has no
-	// information to protect and gives way first and furthest — which is
-	// also why the sibling pair below it still reads: cutting starts at the
-	// end of the path you are least interested in.
-	expect("a name with no lookalike gives way first", row.names[0],
-		(v) => typeof v === "string" && v.length < "GestureTest".length);
+	// "unmistakable" is one character longer than "GestureTest" and has
+	// nothing resembling it either, so the cap reaches it first and it can
+	// never be the one left longer.
+	const outer = row.names[0] ?? "";
+	const inner = row.names[2] ?? "";
+	expect("the longer name pays at least as much", "GestureTest".length - kept(outer) <= "unmistakable".length - kept(inner), true);
+	expect("no folder is ground below four letters", row.names.every((n) => kept(n) >= 4), true);
 	expect("the file's own name is untouched", row.file, "leaf");
+});
+
+test("long paths: the file's name is the last thing cut, and keeps eight letters", async () => {
+	await page.evaluate(buildVaultFixture);
+	await page.evaluate(narrowPane("a very long note name indeed.md", 2));
+	const row = await page.evaluate(rowState);
+	expect("it was cut", isCut(row.file ?? ""), true);
+	expect("but not below eight letters", kept(row.file ?? ""), (v) => v >= 8);
+	// Only after everything cheaper: the vault name is gone and every
+	// folder is at the floor its siblings and the four-letter minimum leave.
+	expect("the vault name went first", row.root, "");
+	expect("and the folders are at their floor", row.names.every(isCut), true);
 });
 
 test("long paths: the row scrolls rather than cutting past the floor", async () => {
 	await page.evaluate(buildVaultFixture);
-	await page.evaluate(narrowPane);
+	await page.evaluate(narrowPane("leaf.md", 2));
 	const row = await page.evaluate(rowState);
 	if (row.content > row.width) {
 		expect("it scrolls", row.scrolls, true);
