@@ -25,8 +25,10 @@ Obsidian 1.8.7+ · desktop only · AGPL-3.0
 - **Hold <kbd>Ctrl</kbd>** to open in a new tab — or, in move/rename mode, to copy the note there instead. The note's name and the folder segments take the same modifiers, and drag, as their File Explorer rows do.
 - **<kbd>Tab</kbd> completes the path** a folder at a time, then widens the selection: name, name with extension, path from the vault, path from the system root.
 - **Right-click to copy** — twice for a name, three times for everything to the right of it, and on the empty space for the whole path or the system path.
-- **Type a URL** — `https://`, `obsidian://`, or a `file://` or percent-encoded path — and it is opened rather than treated as a note name.
-- **<kbd>F2</kbd>** alternates between the inline title and the path bar, passing cleanly through Obsidian's rename dialog when the title is scrolled out of view. A *Focus the path bar* command is there to bind if you want the address-bar gesture.
+- **Type a URL** — `https://`, `obsidian://`, or a `file://` or percent-encoded path — and it is opened rather than treated as a note name. Web addresses go to a tab of Obsidian's own Web viewer where you have it on.
+- **Lock navigation across panes** to walk two parallel folder trees in step: only moves every pane can make are offered, and the lock lets go the moment one of them is closed or goes somewhere on its own.
+- **Long paths shorten where the letters are redundant** — never past what tells a folder from the one beside it — and scroll only when there is nothing left to compress.
+- **<kbd>F2</kbd>** alternates between the inline title and the path bar, opening on the name without its extension and walking out to the full paths on further presses. It passes cleanly through Obsidian's rename dialog when the title is scrolled out of view. A *Focus the path bar* command is there to bind if you want the address-bar gesture.
 - **Click the vault name** to browse your other vaults, home, the filesystem root and mounted drives without switching vaults. Read-only until you open a padlock, and framed in the error colour throughout. Off by default — see [outside the vault](#outside-the-vault).
 - **Two warning tiers** — red outside the vault, orange for text files Obsidian has no editor for. See [the warning colours](docs/usage.md#the-two-warning-colours).
 - **Themeable icons**, swapped from a CSS snippet — and **45 locales**, every language Obsidian ships.
@@ -51,7 +53,9 @@ Obsidian's developer policies require plugins to explain any access to files out
 - The viewer's **Edit as text** button unlocks the file in front of you, for that one file in that one tab. Your edits are then saved back to it as you type.
 - The header's **padlock**, shown only while the path bar points outside your vault, unlocks creating, renaming and moving at external paths. It re-locks when you come back inside, so permission never outlives the folder you granted it for.
 
-Neither unlock is stored in the workspace or in settings, so writing is never armed on a file you don't remember opening. Nothing is ever overwritten in either state — an existing target is refused, using the filesystem's own exclusive-create rather than a check that could lose a race — and a note can never be *moved* out of your vault, because links to it would break silently; holding <kbd>Ctrl</kbd> copies it out instead.
+Neither unlock is stored in the workspace or in settings, so writing is never armed on a file you don't remember opening. Nothing is ever overwritten in either state — an existing target is refused, using the filesystem's own exclusive-create rather than a check that could lose a race.
+
+Moving a note *out* of your vault is the one write that costs something nothing can give back: Obsidian only updates links inside the vault, so every link pointing at that note breaks. It is offered behind a dialog that says so and counts the notes affected, and it happens as copy-then-delete through Obsidian's own trash, so it is as recoverable as deleting a note. Holding <kbd>Ctrl</kbd> copies it out instead.
 
 **Why.** Notes you want are often in another vault, a sync folder, or a USB stick, and Obsidian's own answer — switch vaults — closes everything you had open. This lets you go and look without leaving, and fix a typo while you're there.
 

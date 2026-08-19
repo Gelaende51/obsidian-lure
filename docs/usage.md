@@ -56,7 +56,7 @@ Menu wording comes from Obsidian's own translations, so it matches the rest of t
 - Typing while a breadcrumb trail is showing converts the trailing segment into a small input with live autocomplete scoped to the current folder.
 - `/` commits the current segment and descends into it.
 - <kbd>Backspace</kbd> in an empty input steps back out to the parent folder, reopening its name with the cursor at the end.
-- <kbd>Enter</kbd> commits; <kbd>Esc</kbd> or a click elsewhere cancels back to the file's real path.
+- <kbd>Enter</kbd> commits; <kbd>Esc</kbd> or a click elsewhere cancels back to the file's real path. One press of <kbd>Esc</kbd> is enough: it closes the dropdown, leaves the field and hands focus back to the note, rather than taking one press per layer.
 
 The input is chrome-free — no box, no border — so it reads as the path text itself, and it auto-grows as you type.
 
@@ -66,11 +66,19 @@ Every target on the row answers a right-click, and how many presses you give it 
 
 | Where you press | Once | Twice | Three times |
 | --- | --- | --- | --- |
-| The **vault name** | A new empty tab | | |
+| The **vault name** | A new empty tab | Copies the vault's name | Copies the file's path from the system root, extension and all |
 | A **delimiter** | That folder's menu — its folder note's, where a folder-note plugin is running and the folder has one | | |
 | A **folder name** | That folder's menu | Copies the folder's name | Copies it and everything to the right of it |
 | The **note's name** | Opens the outline sidebar | Copies the name | Copies it with its extension |
-| The **empty space** | | Copies the path from your vault folder | Copies it from the system root |
+| The **empty space** | | Copies the path from your vault folder, without the extension | The same, with it |
+
+The two copies on the **empty space** are the row as it is written — what a link
+or a search wants — and the one on the **vault name** is the path the filesystem
+knows, which is what anything outside Obsidian wants. Obsidian draws the same
+distinction in its own two commands, *from vault folder* and *from system root*;
+here the second one sits on the segment that is itself outside the path.
+
+All of this works outside the vault too, on the same targets.
 
 Every copy says so in a notice, because a copy leaves nothing on screen to show it happened and a miscounted press should not look like a successful one.
 
@@ -105,7 +113,7 @@ Each rung changes what is *in* the field, not only what is highlighted — a sel
 
 | What you type | What happens |
 | --- | --- |
-| `https://…` | Opens as a link — in the Web Viewer if you have it on, your browser otherwise |
+| `https://…` | Opens in a new tab in Obsidian's **Web viewer**, if you have that core plugin on; your desktop browser otherwise |
 | `obsidian://…` | Handed to Obsidian's own URI handler |
 | `file:///…` | Decoded and opened: as a real note if it is inside your vault, in the viewer if not |
 | `/home/you/a%20b.md` | The same, for a path pasted out of a browser or file manager |
@@ -121,7 +129,7 @@ Only explicit schemes count — a note called `100%20` is still a note. A `/` th
 In the default (navigation) mode the currently open note is **never** renamed or moved.
 
 - A path that resolves to an existing file opens it.
-- A path that doesn't exist yet prompts *"Create file here?"*. Confirming creates any missing parent folders and the file; cancelling does nothing at all.
+- A path that doesn't exist yet prompts *"Create file here?"*. Confirming creates any missing parent folders and the file; cancelling does nothing at all. Every file and folder created this way says so in a notice — a new folder is otherwise invisible until you go looking for it.
 
 ## <kbd>Ctrl</kbd> — new tab, and copy instead of move
 
@@ -149,6 +157,8 @@ Clicking the **vault name** (or the 🏠 icon, when *Show vault name* is off) op
 - **Mounted drives**, with an icon per type where that's cheap to determine: network shares, optical discs, floppies and removable media get their own; anything else gets a generic drive. On Windows drives show as `C:` with a generic icon — volume names and precise types need WMI, which is deliberately not done.
 
 Picking another vault **does not switch Obsidian to it.** Everything you have open stays open; the breadcrumb simply starts browsing there. That's the whole point of having it on the path bar rather than deferring to the sidebar's vault switcher.
+
+It also lands **as close to the note you're on as that place actually goes**. Vaults are often near-copies of each other — an archive, a synced twin, last year's — and the reason for jumping to one is usually the same note over there, so the row follows your note's own path down as far as it exists and offers the file name selected when the whole path is there. Nothing is ever prefilled that isn't really on disk.
 
 ### While you're outside
 
@@ -179,9 +189,11 @@ With the padlock open, the path bar behaves out there the way it does inside:
 
 Locked, all of those report what's blocking them instead of happening. Nothing is ever overwritten in either state: a target that already exists is refused, and the refusal is the filesystem's own (`COPYFILE_EXCL`, an exclusive create) rather than a check that could lose a race. A move across filesystems — off a USB stick, off a network share — falls back to copy-then-delete, and the original is only removed once the copy has landed.
 
-**One thing the padlock does not unlock: moving a note *out* of your vault.** `fileManager` can't follow a file across that boundary, so every link pointing at the note would break silently and Obsidian would simply see it vanish. Holding <kbd>Ctrl</kbd> copies it out instead, which has none of that problem, and the notice says so. Going the other way — bringing an outside file *into* the vault — isn't wired up yet either.
+**Moving a note *out* of your vault asks first.** `fileManager` can't follow a file across that boundary: every link pointing at the note stops resolving, nothing updates them, and the note leaves the vault's index. So the move is offered as a decision rather than refused or done quietly — a dialog states what it costs and how many notes link to the one you're moving. Confirm and it really moves: copied out, then removed from the vault through Obsidian's own delete, so it is recoverable exactly as a deleted note is, and a failure at either step leaves the note where it was. Holding <kbd>Ctrl</kbd> still copies it out instead, which has none of that problem. Going the other way — bringing an outside file *into* the vault — isn't wired up yet.
 
 ### Opening an external file
+
+Browsing the filesystem can walk back **into the vault you have open** — from the root, from home, from wherever your vaults live. A file reached that way is an ordinary note, so it opens as one: the real editor, links and backlinks, and the row snaps back to the vault-rooted breadcrumb. Only files Obsidian has no view for stay in the preview, since out there the preview is the better answer. Where a preview is showing such a note anyway — a reopened workspace, say — its top line offers **Open in *(vault)***, which is the same offer made by hand.
 
 Obsidian's editor only works on files inside the vault, so an external file **cannot** be opened as a real note with links, backlinks and the rest — that's a limit of the app, not of this plugin. Picking one opens a **preview** instead, read-only until you say otherwise:
 
@@ -233,6 +245,58 @@ The viewer also answers a **right-click**: inside the text editor with *Cut* / *
 
 Nothing outside your vault is written unless you press *Edit as text* first. See the README's [Outside the vault](../README.md#outside-the-vault) section for the full disclosure.
 
+## Walking two folder trees in step
+
+Parallel structures — `Clients/Acme/2026/` beside `Clients/Beta/2026/` — are
+usually walked by navigating each pane and keeping them aligned by hand.
+**Lock navigation across panes**, in Obsidian's own three-dot pane menu beside
+*Split right* and *Split down*, does it for you: the open panes are coupled,
+and they move together.
+
+- A move is offered **only where every coupled pane can make it**. What is legal
+  is painted in blue — on the segments and on the back/forward buttons alike —
+  and everything else simply does nothing rather than taking one pane somewhere
+  the others cannot follow.
+- **Back**, **forward**, **up** and a **sibling step** are the moves. The sibling
+  step walks the folder names every pane has beside its own, in order, and comes
+  back round; the name is chosen once for all of them, so they never step into
+  differently-named folders.
+- A move that would bring two panes to the **same folder** is refused: from there
+  they are the same view twice, and there is no move back apart.
+- **Renaming a folder they share renames it in every pane.** A rename that would
+  leave them standing in differently-named folders asks first — keep the rename,
+  or keep the lock.
+- The lock is an arrangement between *those* panes. **Close one, or let one
+  navigate on its own** — a link, the quick switcher, a bookmark — and the lock
+  lets go and says so, rather than staying on over a parallel that has already
+  ended. (Obsidian reports a navigation only after it has happened, so this
+  cannot be a warning beforehand.)
+- Panes **outside the vault** take part like any others: a folder tree out there
+  can be parallel to one in here. The three-dot menu carries the toggle there too.
+- Typing a path is suspended while the lock is on — an arbitrary destination is
+  exactly what the lock exists to rule out — but **renaming is not**, so the
+  pencil button keeps working.
+
+The coupling is shown by a **chain** on each coupled pane's header, which is also
+the way out of it. It is deliberately not a padlock: the padlock a few pixels
+away is a *permission* to write outside the vault, and two padlocks meaning
+different things would be worse than one icon each.
+
+## When the path is longer than the pane
+
+Folder names are **shortened rather than squeezed**, and never below what tells
+them apart: `Projects2025` and `Projects2026` in the same folder both keep
+eleven characters, because ten would make them the same word, while an `Archive`
+with nothing like it beside it can go down to `A…`. The characters an ellipsis
+eats are the ones that were carrying no information.
+
+Shortening starts at the **left**, so the folders nearest the file keep their
+names longest and the file's own name is the last thing touched. Nothing wraps
+onto a second line. When even the shortest honest names don't fit, the row
+**scrolls sideways**, parked at the end where the file is — at that point there
+is nothing left to compress, and cutting further would hide rather than shorten.
+A shortened name shows the whole of itself on hover.
+
 ## The two warning colours
 
 | | When | What it means |
@@ -259,7 +323,19 @@ While renaming:
 
 ## One key for both renames
 
-The rename command (<kbd>F2</kbd> by default, or whatever you've rebound it to) **alternates** between Obsidian's inline-title rename and this plugin's header path bar with the full path selected. If you've turned Obsidian's inline title off, the header path bar becomes the only target, so the key never does nothing.
+The rename command (<kbd>F2</kbd> by default, or whatever you've rebound it to) **alternates** between Obsidian's inline-title rename and this plugin's header path bar. If you've turned Obsidian's inline title off, the header path bar becomes the only target, so the key never does nothing.
+
+In the path bar it opens on the **name without its extension** — the edit a rename
+almost always is, and the same thing clicking the name selects. Press it again and
+it walks the same rungs <kbd>Tab</kbd> does: the name with its extension, the path
+from your vault folder, the path from the system root. Typing hands the key back to
+renaming, so the ladder never gets in the way of the edit you came for.
+
+The **Focus the path bar** command walks the same rungs, starting where an address
+bar starts: the whole path selected.
+
+Outside the vault the key works too — there is no inline title out there, so the
+first press goes straight to the path bar.
 
 This works by wrapping the `workspace:edit-file-title` command rather than grabbing the key, so rebinding the hotkey and running the command from the palette both work unchanged.
 
@@ -308,6 +384,9 @@ This works by wrapping the `workspace:edit-file-title` command rather than grabb
 | Reach the path bar from the keyboard | Bind *Focus the path bar* in Hotkeys |
 | Open a web address or an `obsidian://` link | Type it into the bar and press <kbd>Enter</kbd> |
 | Cancel anything | <kbd>Esc</kbd>, or click outside the header bar |
+| Walk two parallel folder trees together | Three-dot pane menu → *Lock navigation across panes* |
+| See a shortened folder name in full | Hover it, or widen the pane |
+| Take a note out of the vault | Pencil → browse outside → confirm the dialog (links will break) |
 
 ## Settings
 
