@@ -12,7 +12,8 @@
  *
  * 2. Shortening starts at the left and stops as soon as the row fits, so
  *    the folders nearest the file — the ones you are actually working in —
- *    keep their names longest, and the file's own name is touched last.
+ *    keep their names longest. The file's own name is never given to this at
+ *    all: it is what the header is for, and the row scrolls instead.
  *
  * Anything still too wide when every name is at its floor is left to
  * scroll: at that point there are no redundant characters left to drop, and

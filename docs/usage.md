@@ -47,8 +47,10 @@ The list opens on the entry you are standing in — the note this bar belongs to
 or, when a folder click has listed its parent, that folder — rather than on the
 first row. In a folder of two hundred notes the first row is nowhere near you.
 
-Moving through the list **fills the field with what you are pointing at**, by
-arrow key or by hovering, so the row you are on is also the path you would get.
+Moving through the list **puts what you are pointing at into the field**, by
+arrow key or by hovering — in place of the segment you were editing, with the
+rest of the path left standing — so the row you are on is also the path you
+would get.
 The text you had typed is kept: moving **up off the first entry** lets go of the
 list and puts it back, and so does taking the pointer off the list. Pressing up
 again from there wraps to the bottom, as it always did.
@@ -62,8 +64,17 @@ preview and filters as usual.
 field. Clicking a folder leaves the rest of the path in there behind the name
 you are changing, so filtering by the whole of it would look for a child called
 `2026/Kickoff.md` and find nothing — the list would close on your first
-keystroke whatever you typed. A name that genuinely matches nothing still
-closes it, because an empty list is the honest answer.
+keystroke whatever you typed. The **extension is left out of it too**, for as
+long as the caret is in front of the dot: clicking a note's name selects the
+stem and leaves `.md` behind it, so typing one letter makes the field read
+`a.md`, and that is not what you are looking for. Put the caret past the dot
+and the extension counts like anything else. A name that genuinely matches
+nothing still closes the list, because an empty list is the honest answer.
+
+A preview **swaps that one segment and leaves the rest of the path alone**:
+pointing at a folder asks what if this step were that one, not throw the path
+away. Stepping off the list restores the text *and* the selection you had, so
+the next keystroke replaces what it was going to replace before you looked.
 
 ## Dropdown entries are real file-manager rows
 
@@ -321,7 +332,8 @@ with nothing like it beside it can go down to `A…`. The characters an ellipsis
 eats are the ones that were carrying no information.
 
 Shortening starts at the **left**, so the folders nearest the file keep their
-names longest and the file's own name is the last thing touched. Nothing wraps
+names longest. The file's own name is never shortened at all — it is what the
+header is for. Nothing wraps
 onto a second line. When even the shortest honest names don't fit, the row
 **scrolls sideways**, parked at the end where the file is — at that point there
 is nothing left to compress, and cutting further would hide rather than shorten.

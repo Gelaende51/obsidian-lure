@@ -503,6 +503,98 @@ test("dropdown: typing after a folder click filters instead of closing", async (
 	expect("no matches, no list", missed.rows, []);
 });
 
+test("dropdown: renaming a note keeps the list, extension and all", async () => {
+	await page.evaluate(buildVaultFixture);
+	await page.evaluate(openVaultNote);
+	await page.evaluate(openDropdown);
+	const armed = await page.evaluate(dropdownState);
+	expect("the name is in the field", armed.field, "leaf.md");
+
+	// Clicking a note's name selects the stem and leaves ".md" behind it, so
+	// one keystroke makes the field read "a.md". Filtering by that looked for
+	// a child whose name contained "a.md" — nothing does, and the list closed
+	// on the first keystroke of an ordinary rename.
+	await page.send("Input.insertText", { text: "a" });
+	await page.evaluate(PAUSE(400) + "return true;");
+	const typed = await page.evaluate(dropdownState);
+	expect("the extension survived", typed.field, "a.md");
+	expect("the list is still up", typed.rows.length > 0, true);
+	expect("filtered by the stem alone", typed.rows, (v) => Array.isArray(v) && v.includes("aside.md"));
+
+	// Put the caret past the dot and the extension counts like any other
+	// text: nothing here is called "a.mdx".
+	const after = await page.evaluate(`
+		const input = document.querySelector(".view-header-title-container input");
+		input.setSelectionRange(input.value.length, input.value.length);
+		return true;
+	`);
+	void after;
+	await page.send("Input.insertText", { text: "x" });
+	await page.evaluate(PAUSE(400) + "return true;");
+	const past = await page.evaluate(dropdownState);
+	expect("the extension is now part of the query", past.rows, []);
+});
+
+test("dropdown: a preview swaps one step and leaves the rest of the path", async () => {
+	await page.evaluate(buildVaultFixture);
+	await page.evaluate(`
+		for (const type of ["markdown", "lure-external-file", "empty"]) {
+			app.workspace.getLeavesOfType(type).forEach((l) => l.detach());
+		}
+		${PAUSE(300)}
+		await app.workspace.getLeaf(false)
+			.openFile(app.vault.getAbstractFileByPath("${ROOT}/branch/twig/nest.md"));
+		${PAUSE(600)}
+		const c = app.workspace.getMostRecentLeaf().view.containerEl
+			.querySelector(".view-header-title-container");
+		[...c.querySelectorAll(".view-header-title-parent .view-header-breadcrumb")]
+			.find((e) => e.textContent === "branch")
+			.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+		${PAUSE(500)}
+		const input = c.querySelector("input");
+		return { field: input.value, selected: input.value.slice(input.selectionStart, input.selectionEnd) };
+	`);
+
+	await pressKey(page, "ArrowDown");
+	await page.evaluate(PAUSE(300) + "return true;");
+	const moved = await page.evaluate(`
+		const input = document.querySelector(".view-header-title-container input");
+		const rows = [...document.querySelectorAll(".suggestion-item")];
+		return {
+			field: input.value,
+			selected: input.value.slice(input.selectionStart, input.selectionEnd),
+			row: rows[rows.findIndex((e) => e.classList.contains("is-selected"))]?.textContent ?? null,
+		};
+	`);
+	// One step swapped, the rest of the path left alone: pointing at a folder
+	// asks "what if this step were that one", not "throw the path away".
+	expect("only the step changed", moved.field, `${moved.row}/twig/nest.md`);
+	expect("and it is the part selected", moved.selected, moved.row);
+
+	// Stepping off the list gives back the text *and* the selection: without
+	// the selection the next keystroke appends instead of replacing. The
+	// list opened partway down it, so walk up until it lets go rather than
+	// assuming how far that is.
+	for (let i = 0; i < 12; i++) {
+		const at = await page.evaluate(`
+			return [...document.querySelectorAll(".suggestion-item")]
+				.findIndex((e) => e.classList.contains("is-selected"));
+		`);
+		if (at < 0) break;
+		await pressKey(page, "ArrowUp");
+		await page.evaluate(PAUSE(150) + "return true;");
+	}
+	const released = await page.evaluate(`
+		const input = document.querySelector(".view-header-title-container input");
+		return {
+			field: input.value,
+			selected: input.value.slice(input.selectionStart, input.selectionEnd),
+		};
+	`);
+	expect("the path is back", released.field, "branch/twig/nest.md");
+	expect("with the segment still picked out", released.selected, "branch");
+});
+
 // ------------------------------------------------------------- long paths
 
 /** Splits the pane down to roughly a third, which is where fitting starts to bite. */

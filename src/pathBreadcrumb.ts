@@ -198,16 +198,14 @@ function asLanding(relative: string): { path: string; select: number } | null {
 }
 
 /**
- * The path segment the caret sits in.
+ * Where the path segment the caret sits in begins and ends.
  *
- * What the dropdown should be filtering by: a field can hold a whole path —
- * a folder click leaves everything to the right of the clicked folder in it,
- * and the focus command fills in the lot — but only one segment of it is
- * being edited, and the list is showing one folder's contents.
+ * A field can hold a whole path — a folder click leaves everything to the
+ * right of the clicked folder in it, and the focus command fills in the
+ * lot — but only one segment of it is being edited, and the list is showing
+ * one folder's contents.
  */
-function segmentAtCaret(input: HTMLInputElement): string {
-	const value = input.value;
-	const caret = input.selectionEnd ?? value.length;
+function segmentBoundsAtCaret(value: string, caret: number): { start: number; end: number } {
 	let start = 0;
 	let end = value.length;
 	for (let i = 0; i < value.length; i++) {
@@ -218,7 +216,29 @@ function segmentAtCaret(input: HTMLInputElement): string {
 			break;
 		}
 	}
-	return value.slice(start, end);
+	return { start, end };
+}
+
+/**
+ * What the dropdown should filter by, given where the caret is.
+ *
+ * The segment being edited — minus its extension, for as long as the caret
+ * is in front of the dot. Clicking a note's name selects the stem and leaves
+ * `.md` behind it, so typing one letter made the field read `a.md`, and
+ * filtering by that looked for a child whose name contained "a.md": nothing
+ * matched, and the list closed on the first keystroke of a perfectly ordinary
+ * rename. The extension is not what you are typing until you put the caret
+ * past the dot, and then it counts like anything else.
+ */
+function queryAtCaret(input: HTMLInputElement): string {
+	const value = input.value;
+	const caret = input.selectionEnd ?? value.length;
+	const { start, end } = segmentBoundsAtCaret(value, caret);
+	const segment = value.slice(start, end);
+	const dot = segment.lastIndexOf(".");
+	// `dot > 0` leaves dot-files alone: ".hidden" is a name, not an extension.
+	if (dot > 0 && caret - start <= dot) return segment.slice(0, dot);
+	return segment;
 }
 
 function pathStem(path: string): string {
@@ -323,11 +343,17 @@ export class PathBreadcrumb {
 	/** Suppresses the input's text as an autocomplete query while a prefilled selection is still untouched (see enterTypingMode). */
 	private suggestQueryOverride: string | null = null;
 	/**
-	 * What was typed before arrowing into the dropdown, held so that
-	 * stepping back off it restores the field. Null when no preview is
-	 * showing.
+	 * The field as it was before arrowing into the dropdown — text, selection
+	 * and the bounds of the segment being edited — held so that stepping back
+	 * off the list restores it exactly, and so that each preview is built
+	 * from it rather than from the last preview. Null when none is showing.
 	 */
-	private previewTyped: string | null = null;
+	private preview: {
+		text: string;
+		selectionStart: number;
+		selectionEnd: number;
+		segment: { start: number; end: number };
+	} | null = null;
 	/**
 	 * Re-measures the open input's width. Held so a preview can resize the
 	 * field without dispatching an `input` event: that event re-queries and
@@ -1860,13 +1886,17 @@ export class PathBreadcrumb {
 		// for it to be confused with.
 		add(this.vaultSegmentEl.querySelector<HTMLElement>(".lure-root-name"), () => []);
 
+		// The file's own name is deliberately not in this list. It is what the
+		// header is *for*, the tab beside it is already showing a shortened
+		// copy, and there is a fallback that costs nothing: when the folders
+		// are all at their floor and the row still does not fit, it scrolls.
+		// Cutting the name to "l…" to save eight pixels of folder trail gets
+		// that backwards.
 		if (this.externalPath !== null) {
 			for (const chip of this.chipElements()) {
 				const path = chip.dataset.lurePath;
 				add(chip, () => (path ? this.externalSiblingNames(path) : []));
 			}
-			const nameEl = this.filenameEl.querySelector<HTMLElement>(".lure-filename-text");
-			add(nameEl, () => this.externalSiblingNames(externalJoin(this.externalPath ?? "", "x")));
 			return out;
 		}
 
@@ -1879,8 +1909,6 @@ export class PathBreadcrumb {
 			const path = chips.length ? el.dataset.lurePath : this.ancestorFolderPaths()[index];
 			add(el, () => this.vaultSiblingNames(path ?? null));
 		}
-		const nameEl = this.filenameEl.querySelector<HTMLElement>(".lure-filename-text");
-		add(nameEl, () => this.vaultSiblingNames(this.file?.path ?? null));
 		return out;
 	}
 
@@ -3397,10 +3425,10 @@ export class PathBreadcrumb {
 				// value looked for a child called "2026/Kickoff.md", matched
 				// nothing, and the dropdown closed on the first keystroke —
 				// whatever was typed, valid or not.
-				this.suggestQueryOverride = segmentAtCaret(inputEl);
+				this.suggestQueryOverride = queryAtCaret(inputEl);
 				// What is in the field is now what was typed, so there is no
 				// earlier text to go back to.
-				this.previewTyped = null;
+				this.preview = null;
 				// Typing also ends the selection ladder, so Tab goes back to
 				// completing folders. Without this, reaching the field
 				// through the focus command (which opens on a rung) left
@@ -3470,7 +3498,7 @@ export class PathBreadcrumb {
 			window.removeEventListener("keydown", onEscapeCapture, true);
 			this.plugin.app.keymap.popScope(scope);
 			this.suggestQueryOverride = null;
-			this.previewTyped = null;
+			this.preview = null;
 			this.autoSizeInput = null;
 			this.validationError = "";
 			this.clearErrorTooltip();
@@ -3601,11 +3629,18 @@ export class PathBreadcrumb {
 	private previewSuggestion(value: PathSuggestion | null): void {
 		const input = this.inputEl;
 		if (!input) return;
+		const held = this.preview;
 
 		if (value === null) {
-			if (this.previewTyped === null) return;
-			input.value = this.previewTyped;
-			this.previewTyped = null;
+			if (!held) return;
+			input.value = held.text;
+			// The selection comes back too. Restoring the text alone left the
+			// caret at the end of it, so stepping off the list gave you your
+			// path back with the segment you had been editing no longer
+			// picked out — and the next keystroke appended instead of
+			// replacing.
+			input.setSelectionRange(held.selectionStart, held.selectionEnd);
+			this.preview = null;
 			this.autoSizeInput?.();
 			return;
 		}
@@ -3613,13 +3648,25 @@ export class PathBreadcrumb {
 		// The query is not touched here. It already holds the segment that was
 		// being edited, and leaving it alone is what keeps the list still
 		// while you move through it.
-		if (this.previewTyped === null) this.previewTyped = input.value;
-		input.value = value.label;
+		const base = held ?? {
+			text: input.value,
+			selectionStart: input.selectionStart ?? input.value.length,
+			selectionEnd: input.selectionEnd ?? input.value.length,
+			segment: segmentBoundsAtCaret(input.value, input.selectionEnd ?? input.value.length),
+		};
+		this.preview = base;
+
+		// Only the segment being edited is swapped; everything to the right of
+		// it stays. Pointing at a folder asks "what if this step were that
+		// one", not "throw the rest of the path away" — and every preview is
+		// built from the text as it was, so moving through the list does not
+		// compound.
+		const { start, end } = base.segment;
+		input.value = base.text.slice(0, start) + value.label + base.text.slice(end);
 		// Shown selected, the way a completion is: it marks the text as a
 		// suggestion rather than something you typed, and typing replaces it
-		// instead of running on from its end — which otherwise produced
-		// strings like "way_deep.mdway" from one keystroke.
-		input.setSelectionRange(0, input.value.length);
+		// instead of running on from its end.
+		input.setSelectionRange(start, start + value.label.length);
 		this.autoSizeInput?.();
 	}
 
