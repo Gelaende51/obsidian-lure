@@ -41,6 +41,21 @@ rmSync(BED, { recursive: true, force: true });
 mkdirSync(BED, { recursive: true });
 writeFileSync(join(BED, "a b.md"), "# spaced name\n");
 
+/**
+ * The note every case is typed into, made rather than assumed — the suite
+ * used to expect one that existed only in the vault it was written against,
+ * and failed wholesale anywhere else.
+ */
+await page.evaluate(`
+	const mk = async (p) => { if (!app.vault.getAbstractFileByPath(p)) await app.vault.createFolder(p); };
+	await mk("Schemes");
+	for (const p of ["Trumpet.md", "Schemes/Master plan.md"]) {
+		if (!app.vault.getAbstractFileByPath(p)) await app.vault.create(p, "# fixture\\n");
+	}
+	${PAUSE(400)}
+	return true;
+`);
+
 /** Opens a note, opens the path input on its name, and clears the field. */
 const armInput = `
 	// Cancel whatever the last case left open first: while an input is up
@@ -97,10 +112,39 @@ async function typeAndEnter(text) {
 	return JSON.parse(await page.evaluate(state));
 }
 
-test("a web URL is handed to the host, not treated as a path", async () => {
+test("a web URL opens in the Web viewer when it is on", async () => {
+	await page.evaluate(`
+		const wv = app.internalPlugins.getPluginById("webviewer");
+		if (!wv.enabled) await wv.enable();
+		app.workspace.detachLeavesOfType("webviewer");
+		${PAUSE(400)}
+		return true;
+	`);
 	const s = await typeAndEnter("https://obsidian.md");
-	expect("opened as a link", s.opened, ["https://obsidian.md"]);
-	expect("no note was created for it", s.activeFile, "Trumpet.md");
+	const tabs = JSON.parse(await page.evaluate(`
+		${PAUSE(600)}
+		return JSON.stringify(app.workspace.getLeavesOfType("webviewer").map((l) => l.getViewState().state?.url ?? null));
+	`));
+	// A tab of this application, which is what typing an address into an
+	// address bar means. `window.open` — the old answer — left Obsidian
+	// altogether unless the user had also turned on the viewer's own
+	// "open external links here" setting.
+	expect("opened in a Web viewer tab", tabs, (v) => Array.isArray(v) && v.some((url) => (url ?? "").includes("obsidian.md")));
+	expect("nothing handed to the desktop", s.opened, []);
+	expect("no note was created for it", s.activeFile, null);
+});
+
+test("a web URL falls back to the browser when the Web viewer is off", async () => {
+	await page.evaluate(`
+		const wv = app.internalPlugins.getPluginById("webviewer");
+		if (wv.enabled) await wv.disable();
+		app.workspace.detachLeavesOfType("webviewer");
+		${PAUSE(400)}
+		return true;
+	`);
+	const s = await typeAndEnter("https://obsidian.md");
+	expect("handed to the host instead", s.opened, ["https://obsidian.md"]);
+	expect("and no note was created for it", s.activeFile, "Trumpet.md");
 });
 
 test("an obsidian:// URI goes to Obsidian's own handler", async () => {

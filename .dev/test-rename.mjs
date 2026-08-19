@@ -107,7 +107,12 @@ test("scrolled: the rename key closes the dialog and hands over to the path bar"
 	const s = await look();
 	expect("the dialog is gone", s.modals, 0);
 	expect("the path bar has focus", s.activeEl, (v) => typeof v === "string" && v.includes("lure-path-input"));
-	expect("prefilled with the whole path", s.pathValue, NOTE);
+	// The name, not the whole path: the rename key opens what a rename
+	// usually changes, and further presses walk out to the paths (see
+	// test-gestures). Renaming used to start with the whole path selected,
+	// which put the extension and every folder in the firing line of the
+	// first keystroke.
+	expect("prefilled with the file's name", s.pathValue, NOTE.split("/").pop());
 	// Cancel, not save: the press meant "the other target", and committing a
 	// rename nobody typed would be a destructive reading of a navigation key.
 	expect("the file was not renamed", s.file, NOTE);

@@ -228,6 +228,60 @@ test("rename: one that would break the parallel asks first", async () => {
 	expect("dialog closed", s.modals, 0);
 });
 
+test("the lock ends when a coupled pane is closed", async () => {
+	await page.evaluate(buildFixture);
+	await page.evaluate(openPanes(["alpha", "beta", "gamma"]));
+	await lock(true);
+	const before = await look();
+	expect("locked over three", [before.locked, before.folders.length], [true, 3]);
+
+	// Two panes would still be enough to couple, so this is the case that
+	// distinguishes "the lock needs two" from "the lock is an arrangement
+	// between these panes". Closing one ends it either way.
+	const after = JSON.parse(await page.evaluate(`
+		app.workspace.getLeavesOfType("markdown")[2].detach();
+		${PAUSE(700)}
+		${lockState.trim()}
+	`));
+	expect("the lock let go", after.locked, false);
+	expect("and nothing is still marked", after.legal, []);
+});
+
+test("the lock ends when a coupled pane navigates on its own", async () => {
+	await page.evaluate(buildFixture);
+	await page.evaluate(openPanes(["alpha", "beta"]));
+	await lock(true);
+	expect("locked", (await look()).locked, true);
+
+	// What a link click, the quick switcher or a bookmark does: one pane
+	// goes somewhere the lock did not send it, so the panes no longer line
+	// up and the coupling is over.
+	const after = JSON.parse(await page.evaluate(`
+		await app.workspace.getLeavesOfType("markdown")[1]
+			.openFile(app.vault.getAbstractFileByPath("${ROOT}/alpha/onlyalpha/leaf.md"));
+		${PAUSE(800)}
+		${lockState.trim()}
+	`));
+	expect("the lock let go", after.locked, false);
+});
+
+test("the lock survives its own moves", async () => {
+	await page.evaluate(buildFixture);
+	await page.evaluate(openPanes(["alpha", "beta"]));
+	await lock(true);
+	// Back and forward open files exactly as a link does; if the lock could
+	// not tell its own moves from a pane wandering off, every move it made
+	// would release it.
+	const after = JSON.parse(await page.evaluate(`
+		app.plugins.plugins.lure.manager.navLock.move("sibling");
+		${PAUSE(700)}
+		app.plugins.plugins.lure.manager.navLock.move("sibling");
+		${PAUSE(700)}
+		${lockState.trim()}
+	`));
+	expect("still locked", after.locked, true);
+});
+
 test("outside the vault: two panes out there couple like any others", async () => {
 	buildExternalFixtureOnDisk();
 	await page.evaluate(openExternalPanes(["one", "two"]));

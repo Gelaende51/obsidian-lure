@@ -509,6 +509,39 @@ test("path bar: rename moves the file and follows it", async () => {
 	expect("view followed the move", r.viewPath, to);
 });
 
+test("path bar: pressing the padlock mid-rename keeps what was typed", async () => {
+	const from = join(BED, "padlock-rename.txt");
+	const to = join(BED, "padlock-renamed.txt");
+	writeFileSync(from, "rename me\n");
+	// The order the interface actually asks for: arm the rename, type, and
+	// only then press the padlock, because the refusal is what tells you to
+	// press it. The padlock lives outside the breadcrumb container, so it
+	// used to count as a click *away* from the row — which threw the typed
+	// name away and left Enter doing nothing. Every other rename test sets
+	// the unlock flag directly and so could never see it.
+	const r = await page.evaluate(`
+		${open(from)}
+		${breadcrumb}
+		bc.startHeaderRename();
+		${PAUSE(300)}
+		bc.inputEl.value = "padlock-renamed.txt";
+		const container = app.workspace.activeLeaf.view.containerEl;
+		container.querySelector(".lure-unlock-btn").dispatchEvent(new MouseEvent("click", { bubbles: true }));
+		${PAUSE(300)}
+		const survived = {
+			value: bc.inputEl?.value ?? null,
+			unlocked: container.querySelector(".lure-unlock-btn").classList.contains("is-active"),
+		};
+		if (bc.inputEl) await bc.handleTypedSubmit(bc.inputEl.value, false);
+		${PAUSE(500)}
+		return survived;
+	`);
+	expect("the field survived the press", r.value, "padlock-renamed.txt");
+	expect("and the padlock opened", r.unlocked, true);
+	expect("old name gone", existsSync(from), false);
+	expect("new name present", existsSync(to), true);
+});
+
 test("path bar: refuses to overwrite an existing target", async () => {
 	const r = await page.evaluate(`
 		${open(join(BED, "renamed.txt"))}
@@ -526,9 +559,22 @@ test("path bar: refuses to overwrite an existing target", async () => {
 		(v) => (v ?? "").includes(T("noticeAlreadyExists").split("{path}")[1]));
 });
 
-test("path bar: a note cannot be moved out of the vault", async () => {
-	const r = await page.evaluate(`
-		const md = app.vault.getMarkdownFiles()[0];
+test("path bar: moving a note out of the vault asks, then really moves it", async () => {
+	// The one move Obsidian's own rename cannot follow: links to the note
+	// stop resolving and nothing updates them. It is allowed, because
+	// wanting a note out of the vault is legitimate — but only through a
+	// dialog that says what it costs, and only as copy-then-trash, so a
+	// failure at either step leaves the note where it was.
+	// A note made for this test. It used to act on `getMarkdownFiles()[0]`,
+	// which was harmless while the move was refused and destructive the
+	// moment it stopped being: the run took a real note out of the vault and
+	// left it in the testbed.
+	const asked = await page.evaluate(`
+		const at = app.vault.getAbstractFileByPath("lure-move-out.md");
+		if (at) await app.fileManager.trashFile(at);
+		${PAUSE(200)}
+		const md = await app.vault.create("lure-move-out.md", "# expendable");
+		${PAUSE(200)}
 		await app.workspace.getLeaf(false).openFile(md);
 		${PAUSE(300)}
 		${breadcrumb}
@@ -536,14 +582,41 @@ test("path bar: a note cannot be moved out of the vault", async () => {
 		bc.externalWritesUnlocked = true;
 		bc.renameMode = true;
 		${CLEAR_NOTICES}
-		await bc.submitExternal("exported.md", false);
-		${PAUSE(300)}
-		return { notice: ${LAST_NOTICE}, still: !!app.vault.getAbstractFileByPath(md.path) };
+		// Not awaited: the commit stops on the dialog, and awaiting it would
+		// wait for the click this step is about to make.
+		bc.submitExternal("exported.md", false);
+		${PAUSE(700)}
+		return {
+			title: document.querySelector(".modal-title")?.textContent ?? null,
+			path: md.path,
+			writtenYet: false,
+		};
 	`);
-	expect("nothing written outside", existsSync(join(BED, "exported.md")), false);
-	expect("note still in the vault", r.still, true);
-	expect("explained, and offered the copy", r.notice,
-		(v) => (v ?? "").startsWith(T("noticeExternalMoveOut").split("{mod}")[0]));
+	expect("it asked first", asked.title, T("moveOutTitle"));
+	expect("and wrote nothing while asking", existsSync(join(BED, "exported.md")), false);
+
+	const cancelled = await page.evaluate(`
+		document.querySelector(".modal .lure-modal-buttons button")?.click();
+		${PAUSE(500)}
+		return { still: !!app.vault.getAbstractFileByPath(${JSON.stringify(asked.path)}) };
+	`);
+	expect("cancelling leaves the note alone", cancelled.still, true);
+	expect("and writes nothing outside", existsSync(join(BED, "exported.md")), false);
+
+	const done = await page.evaluate(`
+		${breadcrumb}
+		bc.externalPath = ${JSON.stringify(BED)};
+		bc.externalWritesUnlocked = true;
+		bc.renameMode = true;
+		bc.submitExternal("exported.md", false);
+		${PAUSE(700)}
+		const buttons = [...document.querySelectorAll(".modal .lure-modal-buttons button")];
+		buttons[buttons.length - 1]?.click();
+		${PAUSE(900)}
+		return { still: !!app.vault.getAbstractFileByPath(${JSON.stringify(asked.path)}) };
+	`);
+	expect("confirming takes it out of the vault", done.still, false);
+	expect("and it landed outside", existsSync(join(BED, "exported.md")), true);
 });
 
 // -------------------------------------------------------------- dropdown

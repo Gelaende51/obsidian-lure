@@ -31,6 +31,27 @@ const expect = (label, actual, wanted) => {
 const page = await connect();
 await reloadPlugin(page);
 
+/**
+ * The note and folders this suite walks, made rather than assumed.
+ *
+ * They used to be taken for granted, which tied the suite to one particular
+ * vault: run against any other and every case failed on a null element,
+ * reporting the plugin broken when it was the fixture that was missing.
+ */
+await page.evaluate(`
+	const mk = async (p) => { if (!app.vault.getAbstractFileByPath(p)) await app.vault.createFolder(p); };
+	await mk("Schemes");
+	await mk("Schemes/2026");
+	// A second folder sharing the first letters, so completing "S" is not
+	// unambiguous by accident.
+	await mk("Schemes/2025");
+	if (!app.vault.getAbstractFileByPath(${JSON.stringify(NOTE)})) {
+		await app.vault.create(${JSON.stringify(NOTE)}, "# fixture");
+	}
+	${PAUSE(500)}
+	return true;
+`);
+
 /** Opens the path input on the note's own name, emptied and focused. */
 const arm = `
 	document.querySelector(".lure-path-input")?.blur();
@@ -94,13 +115,18 @@ async function armAtRoot() {
 		${PAUSE(700)}
 		app.commands.executeCommandById("lure:focus-path-bar");
 		${PAUSE(500)}
-		const input = document.querySelector(".lure-path-input");
-		input.value = "";
-		input.focus();
-		input.setSelectionRange(0, 0);
+		document.querySelector(".lure-path-input")?.focus();
 		return true;
 	`);
+	// Cleared by a real key over the selection the command leaves, not by
+	// assigning to `value`. The command now opens on a rung of the selection
+	// ladder, and it is *typing* that hands Tab back to completing folders —
+	// so a field emptied from script would leave the ladder running and make
+	// the first Tab widen instead of complete.
+	await pressKey(page, "Backspace");
+	await page.evaluate(PAUSE(250) + "return true;");
 	expect("field is focused at the root", await page.evaluate(focusField), true);
+	expect("and empty", await page.evaluate(`return document.querySelector(".lure-path-input")?.value ?? null;`), "");
 }
 
 test("Tab completes a folder and steps into it", async () => {
