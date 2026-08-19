@@ -130,9 +130,17 @@ The note's name and the folder segments behave like their rows in the File Explo
 
 A folder is not something Obsidian can open, so sending one to a tab does one of two things: opens its folder note, where a folder-note plugin is running and there is one, or opens an empty tab whose path bar already stands in that folder — leaving you only the name to type.
 
-## Tab: complete the path, then widen the selection
+## Tab: complete the name, then the path, then widen the selection
 
-While there is a folder left to complete, <kbd>Tab</kbd> completes it and steps into it, so a path can be typed as far as its first unambiguous letters. Once there is nothing left to descend into, the presses stop moving along the path and start widening what is selected:
+<kbd>Tab</kbd> completes the way a shell does: **a press extends what you typed as far as the names in that folder agree, and stops where they disagree.** Type `Sk` where only `Sketches` starts that way and the word is finished; type `Al` where `Alpha-one`, `Alpha-two` and `Alpine` all do and you get `Alp`, because the next character is a question only you can answer.
+
+Press again without typing and it walks toward one name — the row the dropdown has highlighted, or the first — stopping at that name's next ambiguity: `Alpha-`, then `Alpha-one`. The list opens on where you already are, so in your own folder the first press heads for the note you have open rather than for whatever sorts first.
+
+**A press never chooses between names for you.** <kbd>Tab</kbd> steps into a folder only once what you typed leaves exactly one candidate, at which point there was no choice to make. One consequence is worth knowing: where a folder's whole name is the opening of another — `Schemes` beside `Schemes2026` — <kbd>Tab</kbd> keeps completing toward the longer one. <kbd>Enter</kbd> and the dropdown are the gestures that mean *this one*.
+
+Two smaller things that follow: what lands in the field is spelled the way the folder spells it, so `sk` becomes `Sketches`; and only the name being typed is replaced, so a path with more to the right of it keeps that.
+
+Once there is nothing left to complete, the presses stop moving along the path and start widening what is selected:
 
 1. the name
 2. the name with its extension
@@ -142,7 +150,9 @@ While there is a folder left to complete, <kbd>Tab</kbd> completes it and steps 
 
 A fourth click reaches that same fourth rung directly.
 
-Each rung changes what is *in* the field, not only what is highlighted — a selection has to be over the text it names, or <kbd>Enter</kbd> would commit something other than what you can see is selected. The ladder belongs to one editing session: click away and the next <kbd>Tab</kbd> completes a folder again.
+Each rung changes what is *in* the field, not only what is highlighted — a selection has to be over the text it names, or <kbd>Enter</kbd> would commit something other than what you can see is selected. The ladder belongs to one editing session: click away, or type anything at all, and the next <kbd>Tab</kbd> completes a name again.
+
+Text that opens **already selected** — what a folder click leaves behind it, or the whole path the focus command fills in — is about to be typed over rather than extended, so <kbd>Tab</kbd> goes straight to widening.
 
 ## Typing something that is not a path
 
@@ -431,7 +441,8 @@ This works by wrapping the `workspace:edit-file-title` command rather than grabb
 | Rename in place | <kbd>F2</kbd> twice (first press goes to the inline title, second to the header) |
 | Jump to another vault, home or a drive | Click the vault name |
 | Open a file from outside the vault | Vault name → pick a location → browse → pick the file (read-only until *Edit as text*) |
-| Complete a folder while typing | <kbd>Tab</kbd> |
+| Complete the name being typed | <kbd>Tab</kbd> |
+| Step into it, once one name is left | <kbd>Tab</kbd> again |
 | Grab the whole path, or the system path | <kbd>Tab</kbd> past the end, or click four times |
 | Copy a name, a path, or a system path | Right-click it twice; the empty space three times for the system path |
 | Open a folder segment in a new tab | <kbd>Ctrl</kbd> or middle-click it |

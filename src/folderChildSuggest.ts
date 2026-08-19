@@ -92,10 +92,21 @@ export interface SuggestContext {
  */
 interface SuggestionList {
 	selectedItem: number;
+	/** The rows behind the popover, in the order they are shown. Read to find the highlighted one. */
+	values?: PathSuggestion[];
 	containerEl?: HTMLElement;
 	setSelectedItem(index: number, evt: unknown): void;
 	forceSetSelectedItem(index: number, evt: unknown): void;
 }
+
+/**
+ * Whether a name belongs in a listing.
+ *
+ * The dropdown and Tab want different answers from the same folder — the
+ * dropdown searches (substring), completion extends (prefix) — so the rule
+ * is the parameter and the listing is shared.
+ */
+type NameMatcher = (name: string) => boolean;
 
 /**
  * Obsidian's own fallback when a suggester doesn't set `limit`. Used only
@@ -208,31 +219,64 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 	}
 
 	/**
-	 * The entry Tab would complete to: the first real child matching what has
-	 * been typed. "keep-name", "location" and the overflow row are skipped —
-	 * none of them is a thing you can descend into or land on.
+	 * Every child whose name *starts with* what has been typed — the set Tab
+	 * completes against.
 	 *
-	 * Reads the same list the popover shows, so completion can never offer
-	 * something the dropdown does not.
+	 * A prefix, where the dropdown lists by substring: completion extends
+	 * what you typed, so it can only offer names that begin with it.
+	 * Uncapped, because the longest common prefix is a fact about the whole
+	 * set — cut the list at a hundred and what Tab completed to would change
+	 * with the size of the folder. "keep-name", "location" and the overflow
+	 * row are skipped: none of them is a thing you can descend into or land
+	 * on.
 	 */
-	firstMatch(query: string): PathSuggestion | null {
-		return (
-			this.getSuggestions(query).find((s) => s.kind === "folder" || s.kind === "file") ?? null
-		);
+	completions(prefix: string): PathSuggestion[] {
+		const lower = prefix.toLowerCase();
+		return this.buildSuggestions(this.getContext(), (name) =>
+			name.toLowerCase().startsWith(lower),
+		).filter((s) => s.kind === "folder" || s.kind === "file");
+	}
+
+	/**
+	 * The row the popover has highlighted, which is the one Tab steps
+	 * toward. Null when the selection is resting at nothing.
+	 *
+	 * The list object is undocumented, so this reads two of its fields and
+	 * gives up quietly if either is not what it expects.
+	 */
+	highlighted(): PathSuggestion | null {
+		const list = this.list();
+		const values = list?.values;
+		const index = list?.selectedItem ?? -1;
+		if (!Array.isArray(values) || index < 0 || index >= values.length) return null;
+		return values[index] ?? null;
 	}
 
 	protected getSuggestions(query: string): PathSuggestion[] {
 		const context = this.getContext();
 		this.preselectIndex = -1;
-		const { folderPath, renameMode, keepName, shouldList, queryOverride } = context;
+		const q = (context.queryOverride ?? query).trim().toLowerCase();
+		// Substring rather than prefix: the dropdown doubles as a search of
+		// the folder, and finding "Weekly kickoff" by typing "kick" is most
+		// of what that is for. Tab is the one that needs a prefix.
+		return this.capped(
+			this.buildSuggestions(context, (name) => !q || name.toLowerCase().includes(q)),
+		);
+	}
 
-		const q = (queryOverride ?? query).trim().toLowerCase();
-		const matches = (name: string) => !q || name.toLowerCase().includes(q);
+	/**
+	 * The folder's contents as rows, filtered by whichever rule the caller
+	 * brings. Uncapped, and without the preselect bookkeeping `capped` does,
+	 * so completion can read the folder without moving the popover's
+	 * selection out from under the user.
+	 */
+	private buildSuggestions(context: SuggestContext, matches: NameMatcher): PathSuggestion[] {
+		const { folderPath, renameMode, keepName, shouldList } = context;
 
 		// The vault-root dropdown replaces the listing outright: it offers
 		// places to go, not things in a folder.
 		if (context.locations) {
-			return this.capped(context.locations
+			return context.locations
 				.filter((location) => matches(location.label))
 				.map((location) => ({
 					label: location.label,
@@ -241,11 +285,11 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 					disabled: false,
 					icon: iconFor(location),
 					external: !location.isCurrentVault,
-				})));
+				}));
 		}
 
 		if (context.externalFolder !== null) {
-			return this.capped(this.externalSuggestions(context.externalFolder, context, matches));
+			return this.externalSuggestions(context.externalFolder, context, matches);
 		}
 
 		const resolved = folderPath
@@ -282,7 +326,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			}
 		}
 
-		if (!folder) return this.capped(suggestions);
+		if (!folder) return suggestions;
 
 		const children = [...folder.children]
 			.filter((child) => {
@@ -332,7 +376,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			}
 		}
 
-		return this.capped(suggestions);
+		return suggestions;
 	}
 
 	/**

@@ -24,7 +24,7 @@ Obsidian 1.8.7+ · desktop only · AGPL-3.0
 - **The dropdown opens on the entry you're standing in**, and arrowing or hovering through it fills the field with what you're pointing at. Moving up off the top gives back what you had typed.
 - **Pencil Folder button** switches the same interactions to move/rename, validated as Obsidian validates.
 - **Hold <kbd>Ctrl</kbd>** to open in a new tab — or, in move/rename mode, to copy the note there instead. The note's name and the folder segments take the same modifiers, and drag, as their File Explorer rows do.
-- **<kbd>Tab</kbd> completes the path** a folder at a time, then widens the selection: name, name with extension, path from the vault, path from the system root.
+- **<kbd>Tab</kbd> completes like a shell**: it extends what you typed as far as the names in that folder agree, walks toward one of them a step at a time when they don't, and steps into a folder only once one name is left. Past the end of the path it widens the selection instead: name, name with extension, path from the vault, path from the system root.
 - **Right-click to copy** — twice for a name, three times for everything to the right of it, and on the empty space for the whole path or the system path.
 - **Type a URL** — `https://`, `obsidian://`, or a `file://` or percent-encoded path — and it is opened rather than treated as a note name. Web addresses go to a tab of Obsidian's own Web viewer where you have it on.
 - **Lock navigation across panes** to walk two parallel folder trees in step: only moves every pane can make are offered, and the lock lets go the moment one of them is closed or goes somewhere on its own.

@@ -18,7 +18,7 @@
 import { mkdirSync, rmSync, writeFileSync, readFileSync, existsSync, chmodSync } from "fs";
 import { join } from "path";
 import { homedir, userInfo } from "os";
-import { connect, PAUSE, reloadPlugin } from "./cdpSession.mjs";
+import { connect, PAUSE, pressKey, reloadPlugin } from "./cdpSession.mjs";
 import { build } from "esbuild";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve as resolvePath } from "node:path";
@@ -76,6 +76,11 @@ function buildFixtures() {
 	writeFileSync(join(BED, "config.json"), '{ "key": "value" }\n');
 	writeFileSync(join(BED, ".hidden.txt"), "hidden\n");
 	writeFileSync(join(BED, "sub", "nested.md"), "nested\n");
+	// For Tab: two folders agreeing as far as "twin-", and one nothing else
+	// starts like.
+	mkdirSync(join(BED, "twin-east"), { recursive: true });
+	mkdirSync(join(BED, "twin-west"), { recursive: true });
+	mkdirSync(join(BED, "lonely"), { recursive: true });
 	writeFileSync(join(BED, "rename-me.txt"), "rename me\n");
 	writeFileSync(join(BED, "occupied.txt"), "do not clobber\n");
 	// 2 MB, well past the cap — the size that used to kill the renderer.
@@ -458,6 +463,50 @@ test("path bar: adopts the external file and rings red", async () => {
 	expect("red ring up", r.outside, true);
 	expect("orange ring not also up", r.warn, false);
 	expect("padlock shown", r.padlock, true);
+});
+
+test("path bar: Tab completes and steps, out here too", async () => {
+	// Stepping into a folder outside the vault is a different move from
+	// stepping into one inside it — the row is drawn from an absolute path,
+	// not a vault-relative one. Completion used to make the vault's move
+	// wherever it was, which wrote an absolute path into the browse path and
+	// left the row pointing at a folder that could not exist.
+	const arm = () => `
+		${open(join(BED, "note.md"))}
+		${breadcrumb}
+		bc.enterTypingMode("");
+		${PAUSE(400)}
+		const input = document.querySelector(".lure-path-input");
+		input.focus();
+		return document.activeElement === input;
+	`;
+
+	const read = `
+		${breadcrumb}
+		const input = document.querySelector(".lure-path-input");
+		return JSON.stringify({ value: input ? input.value : null, folder: bc?.externalPath });
+	`;
+	const press = async () => {
+		await page.evaluate(`document.querySelector(".lure-path-input")?.focus(); return true;`);
+		await pressKey(page, "Tab");
+		await page.evaluate(PAUSE(500) + "return true;");
+	};
+
+	expect("field open outside the vault", await page.evaluate(arm()), true);
+	await page.send("Input.insertText", { text: "twin-" });
+	await page.evaluate(PAUSE(400) + "return true;");
+	await press();
+	const ambiguous = JSON.parse(await page.evaluate(read));
+	expect("two names, so it completes toward one", ambiguous.value, "twin-east");
+	expect("and steps nowhere", ambiguous.folder, BED);
+
+	expect("field reopened", await page.evaluate(arm()), true);
+	await page.send("Input.insertText", { text: "lone" });
+	await page.evaluate(PAUSE(400) + "return true;");
+	await press();
+	const only = JSON.parse(await page.evaluate(read));
+	expect("one name, so it steps in", only.folder, join(BED, "lonely"));
+	expect("ready for the next segment", only.value, "");
 });
 
 test("path bar: locked padlock refuses to create", async () => {

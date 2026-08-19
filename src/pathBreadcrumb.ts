@@ -20,6 +20,7 @@ import type BreadcrumbPathPlugin from "./main";
 import type { BreadcrumbManager } from "./breadcrumbManager";
 import { ConfirmCreateFileModal } from "./createFileModal";
 import { FitStage, planFit, shortestUnique } from "./pathFit";
+import { planTab } from "./tabComplete";
 import { FolderChildSuggest, PathSuggestion } from "./folderChildSuggest";
 import { ExternalChild, PATH_SEP, externalJoin, externalParent, externalSegments, isExternalFile, isExternalFolder, listExternalChildren } from "./externalFs";
 import {
@@ -350,6 +351,17 @@ export class PathBreadcrumb {
 	private validationError = "";
 	/** Suppresses the input's text as an autocomplete query while a prefilled selection is still untouched (see enterTypingMode). */
 	private suggestQueryOverride: string | null = null;
+	/**
+	 * True while the field is still holding text it opened *selected* — a
+	 * folder click's remainder, the focus command's whole path — and nothing
+	 * has been typed over it yet.
+	 *
+	 * Tab needs to know: that text is about to be replaced, so it is not a
+	 * prefix anybody is extending. The query override cannot answer it,
+	 * because the empty string it uses to mean "suppressed" is also what a
+	 * field typed empty legitimately reports.
+	 */
+	private prefillSelected = false;
 	/**
 	 * The field as it was before arrowing into the dropdown — text, selection
 	 * and the bounds of the segment being edited — held so that stepping back
@@ -2999,36 +3011,113 @@ export class PathBreadcrumb {
 	 * final target is committed.
 	 */
 	/**
-	 * Tab walks the path, then walks how much of it is selected.
+	 * Tab completes the name being typed, then walks the path, then walks
+	 * how much of it is selected.
 	 *
-	 * While there is still a folder to complete, Tab completes it and steps
-	 * into it, so a path can be typed as far as its first unambiguous letters
-	 * and Tab does the rest. Once there is nothing left to descend into, the
-	 * presses stop moving along the path and start widening what is
-	 * selected — name, name with extension, the path from the vault, the path
-	 * from the system root — and then wrap back to the first folder, which is
-	 * where the walk began.
+	 * The completing is a shell's: a press extends what you typed as far as
+	 * the names in the folder agree, and stops where they disagree — see
+	 * `planTab`, which holds the rule itself. Tab steps into a folder only
+	 * once what you typed leaves exactly one candidate, so a press never
+	 * chooses between names on your behalf. Once there is nothing left to
+	 * complete, the presses stop moving along the path and start widening
+	 * what is selected — name, name with extension, the path from the vault,
+	 * the path from the system root — and then wrap back to the first
+	 * folder, which is where the walk began.
 	 *
 	 * Widening changes what is *in* the field, not just what is highlighted:
 	 * the selection has to be over the text it names, or Enter would commit
 	 * something other than what the user can see is selected.
 	 */
-	private handleTabCompletion(typed: string): void {
+	private handleTabCompletion(input: HTMLInputElement): void {
 		if (this.tabStage !== null) {
 			this.advanceLadder();
 			return;
 		}
 
-		const match = this.suggest?.firstMatch(typed) ?? null;
-		if (match?.kind === "folder") {
-			this.extendBrowsePath(match.path);
-			this.enterTypingMode("");
+		// Text that opened selected is a prefill about to be typed over, not
+		// a prefix somebody is extending — there is nothing to complete
+		// *from*, so the press goes straight to widening. Without this the
+		// press would complete against the whole prefilled path and land on
+		// whichever child happened to sort first.
+		if (this.prefillSelected) {
+			this.startLadder(null);
 			return;
 		}
 
-		// Either Tab landed on a file, or there is nothing left to complete.
-		// Both mean the walk is over and the ladder begins.
-		this.tabTargetPath = match?.kind === "file" ? match.path : this.ladderTargetPath();
+		// Matched by what the dropdown is filtering by — the segment the caret
+		// is in, minus an extension the caret has not reached — so Tab can
+		// never fail to complete something the list is offering. Typing "Cak"
+		// over a name leaves the field reading "Cak.md", and matching that
+		// literally found nothing while the list showed the very file it
+		// names.
+		const bounds = segmentBoundsAtCaret(input.value, input.selectionEnd ?? input.value.length);
+		const typed = queryAtCaret(input);
+		const rows = this.suggest?.completions(typed) ?? [];
+		const candidates = rows.map((row) => ({
+			label: row.label,
+			path: row.path,
+			folder: row.kind === "folder",
+		}));
+
+		// Which name a press with nothing left to complete walks toward: the
+		// row the dropdown is showing as highlighted, when that row is one of
+		// the candidates. Arrowing to a name and pressing Tab then heads for
+		// that name rather than for whatever sorts first.
+		const marked = this.suggest?.highlighted() ?? null;
+		const target = candidates.find((candidate) => candidate.path === marked?.path) ?? null;
+
+		const action = planTab(typed, candidates, target);
+		if (action.kind === "ladder") {
+			this.startLadder(action.path);
+			return;
+		}
+		if (action.kind === "descend") {
+			// Whatever was typed after the segment is carried into the folder
+			// rather than dropped: a path pasted in and Tab-walked keeps the
+			// rest of itself.
+			const rest = input.value.slice(bounds.end).replace(/^[\\/]+/, "");
+			if (this.externalPath !== null) this.extendExternalPath(action.path);
+			else this.extendBrowsePath(action.path);
+			this.enterTypingMode(rest);
+			return;
+		}
+		this.writeSegment(input, bounds, action.text);
+	}
+
+	/**
+	 * Puts a completion in the field, in place of the segment it completes.
+	 *
+	 * Only that segment: the rest of the path stays, exactly as it does when
+	 * arrowing through the dropdown. The whole segment goes, extension and
+	 * all, because a completion is a whole name — replacing only the part
+	 * that was matched would leave the old extension behind it. The caret
+	 * lands at the end of what was written: this is text you asked for, not
+	 * a suggestion to type over, so the next keystroke carries on from it.
+	 */
+	private writeSegment(
+		input: HTMLInputElement,
+		bounds: { start: number; end: number },
+		text: string,
+	): void {
+		input.value = input.value.slice(0, bounds.start) + text + input.value.slice(bounds.end);
+		const caret = bounds.start + text.length;
+		input.setSelectionRange(caret, caret);
+		// A completion is a deliberate choice of what the field holds, so it
+		// supersedes any prefill and any preview, and it becomes what the
+		// list filters by — otherwise the dropdown would go on showing the
+		// names that matched before the press.
+		this.preview = null;
+		this.prefillSelected = false;
+		this.suggestQueryOverride = queryAtCaret(input);
+		// Untrusted by construction, so `onInput` re-measures and re-lists
+		// without mistaking this for the user typing — which would end the
+		// selection ladder we may be about to start.
+		input.dispatchEvent(new Event("input"));
+	}
+
+	/** Hands the key over to widening the selection, over `target` or over whatever the row shows. */
+	private startLadder(target: string | null): void {
+		this.tabTargetPath = target ?? this.ladderTargetPath();
 		this.tabStage = 0;
 		this.applyLadderStage();
 	}
@@ -3403,6 +3492,7 @@ export class PathBreadcrumb {
 		// dropdown the click just opened. Suppressed until the first real
 		// keystroke supersedes it (see onInput).
 		this.suggestQueryOverride = selectionEnd > 0 ? "" : null;
+		this.prefillSelected = selectionEnd > 0;
 
 		const inputEl = host.createEl("input", {
 			type: "text",
@@ -3440,7 +3530,7 @@ export class PathBreadcrumb {
 				this.stepOutOfFolder();
 			} else if (evt.key === "Tab") {
 				evt.preventDefault();
-				this.handleTabCompletion(inputEl.value);
+				this.handleTabCompletion(inputEl);
 			} else if (evt.key === "/") {
 				// Except where the slash is part of a scheme: "https:/" +
 				// "/" is a URL being typed, not a folder called "https:".
@@ -3496,6 +3586,7 @@ export class PathBreadcrumb {
 				// nothing, and the dropdown closed on the first keystroke —
 				// whatever was typed, valid or not.
 				this.suggestQueryOverride = queryAtCaret(inputEl);
+				this.prefillSelected = false;
 				// What is in the field is now what was typed, so there is no
 				// earlier text to go back to.
 				this.preview = null;
@@ -3568,6 +3659,7 @@ export class PathBreadcrumb {
 			window.removeEventListener("keydown", onEscapeCapture, true);
 			this.plugin.app.keymap.popScope(scope);
 			this.suggestQueryOverride = null;
+			this.prefillSelected = false;
 			this.preview = null;
 			this.autoSizeInput = null;
 			this.validationError = "";

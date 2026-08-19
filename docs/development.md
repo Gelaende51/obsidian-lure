@@ -31,6 +31,7 @@ main.ts                 plugin lifecycle, wraps the rename command
   └── breadcrumbManager.ts     one PathBreadcrumb per leaf, kept in sync
         └── pathBreadcrumb.ts  the header row itself: render + all interaction
               ├── folderChildSuggest.ts   autocomplete for the input
+              ├── tabComplete.ts          what a Tab press completes to
               ├── nativeFileItem.ts       drag + context menu on entries
               ├── createFileModal.ts      "create it?" confirmation
               └── (outside the vault)
@@ -64,7 +65,7 @@ main.ts                 plugin lifecycle, wraps the rename command
 
 | File | What it does | How you interact with it |
 | --- | --- | --- |
-| `src/folderChildSuggest.ts` | Autocomplete over a folder's children, and over external folders. Extends Obsidian's `AbstractInputSuggest`. | Driven entirely by the `SuggestContext` the path bar hands it: which folder, whether rename mode is on, which name to pin (`keepName`) and which path is the file itself (`keepPath`, so a file never counts as a conflict with itself). Extend the context rather than reaching back into the breadcrumb. |
+| `src/folderChildSuggest.ts` | Autocomplete over a folder's children, and over external folders. Extends Obsidian's `AbstractInputSuggest`. | One listing, two filters: `buildSuggestions(context, matches)` reads the folder, `getSuggestions` filters it by substring for the dropdown, `completions(prefix)` filters it by prefix and uncapped for <kbd>Tab</kbd>. Driven entirely by the `SuggestContext` the path bar hands it: which folder, whether rename mode is on, which name to pin (`keepName`) and which path is the file itself (`keepPath`, so a file never counts as a conflict with itself). Extend the context rather than reaching back into the breadcrumb. |
 | `src/nativeFileItem.ts` | Makes an arbitrary element behave like a File Explorer row: Obsidian's own drag payload, and the same right-click menu including other plugins' contributions. | `wireNativeFileItem(app, el, target, keepFocusEl)`. Sits on undocumented API (`app.dragManager`), so every entry point is guarded — a failure must degrade to an ordinary element, never throw inside an event handler. |
 | `src/createFileModal.ts` | The "create it?" confirmation for a typed path that doesn't exist. | `ConfirmCreateFileModal.ask(app, path)` resolves `true`/`false`; every form of cancel resolves `false`. |
 | `src/navLock.ts` | Couples several path bars so they walk parallel folder structures in step. Owns the lock, the legality rule and the shared-sibling choice. | `NavLockParticipant` is the whole contract — questions and instructions, so the lock never reaches into a bar's state. A move is offered only where every coupled bar can make it, and refused outright otherwise: half a ghost move is the drift the lock exists to prevent. |
@@ -72,6 +73,7 @@ main.ts                 plugin lifecycle, wraps the rename command
 | `src/obsidianLabels.ts` | Obsidian's own wording for entries this plugin mirrors, and the lookup that resolves it. | `obsidianLabel(keys, fallback, params?)`. Keys are arrays because Obsidian renamed its i18n table from camelCase to kebab-case — see [Borrowing Obsidian's strings](#borrowing-obsidians-strings). Add a key here rather than adding a string to `lang/`. |
 | `src/prompts.ts` | A name prompt and a confirmation, for paths that have no `TFile` for Obsidian's own dialogs to take. | `promptForName(app, {...})` resolves the name or `null`; `confirmAction(app, {...})` resolves a boolean. Every form of dismissal is a cancel. |
 | `src/fileKinds.ts` | Classifies an extension: binary, Markdown, or "Obsidian has no editor for this". | `isBinaryExtension`, `isMarkdownExtension`, `warnsOnOpen` — the last one decides the orange warning tier. |
+| `src/tabComplete.ts` | Decides what a <kbd>Tab</kbd> press puts in the field: how far the typed name can be extended, and whether there is still a choice to make. | `planTab(typed, candidates, target)` returns one of three things — `write` a completion, `descend` into a folder, or hand the key over to the selection `ladder`. It extends to the candidates' longest common prefix; where that is already reached it walks toward `target` (the row the popover has highlighted, else the first), stopping at that name's next ambiguity, and skipping a candidate with nothing left to add — which is why `Schemes` beside `Schemes2026` completes on rather than being stepped into. Descending happens only when one candidate is left, so a press never chooses between names. Pure string maths, like `pathFit.ts`: no DOM, no vault. The DOM half is `PathBreadcrumb.handleTabCompletion`, which collects the candidates from `FolderChildSuggest.completions` (a **prefix** match, where the dropdown itself lists by substring) and writes the result back over the caret's segment. |
 | `src/pathFit.ts` | Decides what a row shows when the path is wider than the pane: which names to shorten, and by how much. | `shortestUnique(name, siblings)` is the floor a name may not go below — one character past the longest prefix it shares with a neighbour — and `planFit` spends the overflow in stages (`root`, then `folder`, then `name`), capping each stage's names at a length that comes down until the row fits, so the longest name in a stage pays first and short ones are left whole. A folder keeps `MIN_FOLDER_CHARS`, the file name `MIN_NAME_CHARS`, whatever their siblings allow; only the root may go to nothing, because its icon stays. Pure string maths: widths arrive through a `measure` callback, so the same code serves Obsidian's own segments and this plugin's chips. The DOM half is `PathBreadcrumb.fitRow`, which re-measures after applying a plan because a canvas measurement and real layout do not agree. |
 
 ### Outside the vault
@@ -194,6 +196,7 @@ node .dev/test-urls.mjs              # URLs and encoded paths typed into the bar
 node .dev/test-tab.mjs               # Tab completion and the selection ladder
 node .dev/test-navlock.mjs           # panes coupled by the navigation lock
 node .dev/test-fit.mjs               # the fitting maths alone — no Obsidian, no vault, no port
+node .dev/test-complete.mjs          # what a Tab press completes to, likewise
 node .dev/test-gestures.mjs          # right-click runs, Escape, the keyboard entry points, long paths
 node .dev/test-compat.mjs            # against installed peer plugins
 node .dev/test-compat.mjs Quick      # one peer

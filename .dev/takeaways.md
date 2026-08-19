@@ -789,3 +789,57 @@ no running application, and every assertion is exact — `Docu…`, not "shorter
 than it was". The rule of thumb it suggests: if a module was deliberately kept
 free of the DOM, testing it through the DOM throws away the reason it was
 written that way.
+
+## The highlighted row is readable, but only off an undocumented field
+
+`AbstractInputSuggest` exposes the values it is given and the selection it
+makes (`onSelectedChange`), but not *which row is highlighted right now* —
+and Tab needs that to know which name to walk toward. The list object behind
+the popover has it, under `this.suggestions`, as an index into a parallel
+array:
+
+```ts
+const list = (this as unknown as { suggestions?: SuggestionList }).suggestions;
+const row = list?.values?.[list.selectedItem];
+```
+
+Neither `values` nor `selectedItem` is in the public typings. Both have been
+stable across the versions this plugin has been built against, but the read is
+written to fail into `null` rather than to throw — an unhighlighted list and a
+renamed internal then look the same to the caller, and the feature degrades to
+"walk toward the first row" instead of breaking.
+
+Worth knowing alongside it: **arrowing through the list already writes the
+name into the field** (the address-bar preview). So the highlight only tells
+Tab anything in the case where the list highlighted a row *by itself* — the
+preselect that opens it on the file you already have open. That is the case
+worth testing, and the one a test written around arrow keys would miss.
+
+## A press that suppresses the query is not the same as a field typed empty
+
+The path bar suppresses the input's text as an autocomplete query while a
+prefill is still selected, by setting the query override to `""`. Tab then
+wanted the same fact — "this text is about to be typed over, not extended" —
+and reading the override for it looked free.
+
+It is not: `queryAtCaret` also returns `""` for a field the user has genuinely
+emptied, so clearing a name and pressing Tab took the "prefill" branch and
+widened the selection instead of completing. Two different facts had been
+folded into one sentinel because the sentinel happened to be reachable. A
+separate `prefillSelected` flag, set where the prefill is set and cleared on
+the first real keystroke, is three lines and says what it means.
+
+## A test can pass because two mechanisms produce the same string
+
+The case for "Tab walks toward the highlighted row" cleared the field with one
+Backspace, pressed Tab, and asserted the note's name was in it. It passed —
+and it was testing nothing. Clicking a file name selects the *stem* and leaves
+`.md` behind it, so one Backspace left `.md` in the field; no name starts with
+`.md`, so the press fell through to the selection ladder, whose first rung
+writes exactly that same name into the field.
+
+The assertion could not tell the two apart. What caught it was asserting the
+*precondition* as well — that the field really was empty — which failed while
+the interesting assertion passed. When a test's subject and its fallback can
+produce the same output, assert the state the test needs to be in, not only
+the result it expects.
