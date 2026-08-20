@@ -254,6 +254,19 @@ function segmentBoundsAtCaret(value: string, caret: number): { start: number; en
 }
 
 /**
+ * The folder being stepped out of, with whatever the field was holding left
+ * standing behind it.
+ *
+ * A chip becoming text again must not cost the path to its right: a row
+ * showing `Schemes › |2026/note.md` reads as `Schemes/2026/note.md` once the
+ * chip is given back — which is exactly the text a click on that folder
+ * produces, so stepping out and clicking in land in the same place.
+ */
+function pathBack(name: string, separator: string, rest: string): string {
+	return rest ? `${name}${separator}${rest}` : name;
+}
+
+/**
  * Where two strings stop being the same, counting characters.
  *
  * Case-sensitive on purpose, unlike everything that matches names: when a
@@ -453,6 +466,16 @@ export class PathBreadcrumb {
 	 * it, and is treated as text like any other.
 	 */
 	private tabGivenBack: { start: number; end: number } | null = null;
+	/**
+	 * The field as the ladder found it, which is where wrapping past its
+	 * last rung comes back to.
+	 *
+	 * The rungs are a loop and have to close: a folder click opens the field
+	 * on the rest of the path, and a lap of Tab that ended by emptying it
+	 * threw that path away — the one place a walk of nothing but Tab could
+	 * cost you what was on screen.
+	 */
+	private tabLadderStart: TabStep | null = null;
 	/** Set while re-dispatching a click onto a native segment, so our own capture listener lets it through (see openNativeSegment). */
 	private delegatingToNative = false;
 	/**
@@ -3038,7 +3061,10 @@ export class PathBreadcrumb {
 	 * that chip is dropped and its name reopened for editing, cursor at
 	 * the end, so a mistyped folder can be corrected in place.
 	 */
-	private stepOutOfFolder(): void {
+	private stepOutOfFolder(mark = false): void {
+		// Read before anything moves: stepping out tears the field down, and
+		// what it was holding is what has to survive the move.
+		const rest = this.inputEl?.value ?? "";
 		if (this.externalPath !== null) {
 			// Stops at the location that was picked rather than walking on
 			// up into the machine's directory layout, which is exactly what
@@ -3050,7 +3076,7 @@ export class PathBreadcrumb {
 			if (!parent) return;
 			const name = this.externalPath.slice(parent.length).replace(/^[\\/]+/, "");
 			this.extendExternalPath(parent);
-			this.enterTypingMode(name);
+			this.enterTypingMode(pathBack(name, PATH_SEP, rest), mark ? name.length : "none");
 			return;
 		}
 
@@ -3062,7 +3088,7 @@ export class PathBreadcrumb {
 		const name = cut === -1 ? current : current.slice(cut + 1);
 
 		this.extendBrowsePath(parent);
-		this.enterTypingMode(name);
+		this.enterTypingMode(pathBack(name, "/", rest), mark ? name.length : "none");
 	}
 
 	/**
@@ -3262,9 +3288,10 @@ export class PathBreadcrumb {
 			return;
 		}
 
-		// Carry on up the path itself. This is the move Backspace makes on
-		// an empty field.
-		this.stepOutOfFolder();
+		// Carry on up the path itself — the move Backspace makes on an empty
+		// field, with the folder's name marked here because this press is
+		// giving it back rather than deleting it.
+		this.stepOutOfFolder(true);
 	}
 
 	/**
@@ -3318,22 +3345,26 @@ export class PathBreadcrumb {
 		input.dispatchEvent(new Event("input"));
 	}
 
-	/** Puts the row back exactly as one press of Tab found it. */
-	private rewindTo(step: TabStep): void {
+	/** Puts the row back in the folder a snapshot was taken in, leaving the field to the caller. */
+	private standWhere(step: TabStep): void {
 		const moved = step.folder !== this.browsePath || step.external !== this.externalPath;
 		// `exitTypingInput` is what runs the field's cleanup, and it reads
 		// the browse path to decide what the row falls back to — so it has
 		// to happen before that path is put back.
 		this.exitTypingInput();
-		if (moved) {
-			this.pinRowStart();
-			this.browsePath = step.folder;
-			this.externalPath = step.external;
-			this.mode = step.folder !== null || step.external !== null ? "browsing" : "breadcrumb";
-			this.hideNativeBreadcrumb();
-			this.render();
-			this.attachDocumentClickAway();
-		}
+		if (!moved) return;
+		this.pinRowStart();
+		this.browsePath = step.folder;
+		this.externalPath = step.external;
+		this.mode = step.folder !== null || step.external !== null ? "browsing" : "breadcrumb";
+		this.hideNativeBreadcrumb();
+		this.render();
+		this.attachDocumentClickAway();
+	}
+
+	/** Puts the row back exactly as one press of Tab found it. */
+	private rewindTo(step: TabStep): void {
+		this.standWhere(step);
 		this.enterTypingMode(step.value, "none");
 		const input = this.inputEl;
 		// The caret goes back where it was, which for a path with more to the
@@ -3341,11 +3372,53 @@ export class PathBreadcrumb {
 		if (input) input.setSelectionRange(step.caret, step.caret);
 	}
 
+	/**
+	 * Puts the row back as the gesture that opened the field left it — the
+	 * end of a lap of the ladder.
+	 *
+	 * The selection comes back as a *prefill* rather than as a completion
+	 * given back: it is text about to be typed over, which is what it was
+	 * when the walk started, and what makes the next press start the ladder
+	 * again instead of completing against it.
+	 */
+	private restartFrom(step: TabStep): void {
+		this.standWhere(step);
+		this.enterTypingMode(step.value, step.mark ? step.mark.end : "none");
+		const input = this.inputEl;
+		if (!input) return;
+		if (step.mark) input.setSelectionRange(step.mark.start, step.mark.end);
+		else input.setSelectionRange(step.caret, step.caret);
+	}
+
 	/** Hands the key over to widening the selection, over `target` or over whatever the row shows. */
 	private startLadder(target: string | null): void {
+		this.rememberLadderStart();
 		this.tabTargetPath = target ?? this.ladderTargetPath();
 		this.tabStage = 0;
 		this.applyLadderStage();
+	}
+
+	/**
+	 * Notes where the field stood before the first rung, selection and all,
+	 * so the wrap can put it back exactly — including the state of being a
+	 * prefill, so that the press after the wrap starts the ladder again and
+	 * the loop really is a loop.
+	 */
+	private rememberLadderStart(): void {
+		const input = this.inputEl;
+		if (!input) {
+			this.tabLadderStart = null;
+			return;
+		}
+		const start = input.selectionStart ?? 0;
+		const end = input.selectionEnd ?? 0;
+		this.tabLadderStart = {
+			folder: this.browsePath,
+			external: this.externalPath,
+			value: input.value,
+			caret: end,
+			...(end > start ? { mark: { start, end } } : {}),
+		};
 	}
 
 	/** The path the ladder describes when Tab did not land on anything: whatever the row is showing. */
@@ -3412,9 +3485,20 @@ export class PathBreadcrumb {
 				return;
 			}
 			default: {
-				// Wrap: back to the first folder of the path, ready to type on.
+				// Wrap: back to where the walk began, which closes the loop
+				// without costing anything. A lap of the rungs is a way of
+				// looking at the path, not a way of clearing it.
+				const began = this.tabLadderStart;
 				this.tabStage = null;
 				this.tabTargetPath = null;
+				this.tabLadderStart = null;
+				if (began) {
+					this.restartFrom(began);
+					return;
+				}
+				// No field to go back to — the ladder was started without
+				// one. The first folder of the path is where the walk would
+				// have begun.
 				const first = target.split(separator)[0] ?? "";
 				this.extendBrowsePath(external ? "" : first);
 				this.enterTypingMode("");
@@ -3827,6 +3911,7 @@ export class PathBreadcrumb {
 				this.tabTargetPath = null;
 				this.tabTrail = [];
 				this.tabGivenBack = null;
+				this.tabLadderStart = null;
 			}
 			autoSize();
 			if (this.renameMode) this.updateValidation(inputEl.value, this.currentFolderPath());
@@ -4107,6 +4192,7 @@ export class PathBreadcrumb {
 		this.tabTargetPath = null;
 		this.tabTrail = [];
 		this.tabGivenBack = null;
+		this.tabLadderStart = null;
 		this.editCleanup?.();
 		this.editCleanup = null;
 		this.inputEl = null;
@@ -4563,6 +4649,7 @@ export class PathBreadcrumb {
 			this.startFullPathEdit();
 			return;
 		}
+		this.rememberLadderStart();
 		this.tabTargetPath = target;
 		this.tabStage = stage;
 		this.applyLadderStage();

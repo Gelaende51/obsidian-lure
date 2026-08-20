@@ -273,6 +273,10 @@ test("the row the list opens on is the one Tab walks toward", async () => {
 
 test("ladder: Tab past the end widens the selection a rung at a time", async () => {
 	await armed();
+	// Where the walk begins, read rather than assumed: clicking the note's
+	// name stands the row in the note's own folder, so the chips are part of
+	// that state and the wrap has to bring them back too.
+	const begun = await look();
 	await tab();
 	const stem = await look();
 	expect("first rung is the name without its extension", stem.selected, "Cake catapult");
@@ -290,9 +294,53 @@ test("ladder: Tab past the end widens the selection a rung at a time", async () 
 
 	await tab();
 	const wrapped = await look();
-	expect("then it wraps back to the first folder", wrapped.chips, (v) =>
-		Array.isArray(v) && v.includes("Schemes"));
-	expect("ready to type there", wrapped.value, "");
+	// The rungs are a loop, and it closes where it opened: this session was
+	// armed by clicking the note's name, so that is what comes back —
+	// selected, exactly as the click left it. A lap that ended by emptying
+	// the field would have thrown the name away for a walk of nothing but
+	// Tab presses.
+	expect("then it wraps back to where the walk began", wrapped.value, "Cake catapult.md");
+	expect("selected as the click left it", wrapped.selected, "Cake catapult");
+	expect("standing where it began too", wrapped.chips, begun.chips);
+});
+
+test("a lap of the rungs from a folder click costs nothing", async () => {
+	// The gesture the whole rule is for: click a folder, then never type —
+	// only ever press Tab. Nothing on the row may disappear, however many
+	// laps it takes.
+	await page.evaluate(arm.replace("root.querySelector(\".lure-filename-text\").click();", ""));
+	const clicked = await page.evaluate(`
+		const root = app.workspace.getMostRecentLeaf().view.containerEl
+			.querySelector(".view-header-title-container");
+		const seg = [...root.querySelectorAll(".view-header-breadcrumb")]
+			.find((e) => e.textContent === "2026");
+		if (!seg) return null;
+		seg.click();
+		${PAUSE(500)}
+		const input = document.querySelector(".lure-path-input");
+		return JSON.stringify({
+			value: input ? input.value : null,
+			selected: input ? input.value.slice(input.selectionStart, input.selectionEnd) : null,
+			chips: [...root.querySelectorAll(".lure-browse-chip")].map((c) => c.textContent),
+		});
+	`);
+	expect("the click opens the rest of the path", clicked, (v) => typeof v === "string");
+	const start = JSON.parse(clicked ?? "null");
+	expect("with the folder selected in it", start && start.selected, "2026");
+	expect("and the path behind it", start && start.value, "2026/Cake catapult.md");
+
+	// Four rungs, then the wrap.
+	await page.evaluate(focusField);
+	for (let i = 0; i < 4; i++) await tab();
+	const top = await look();
+	expect("the last rung is the path from the system root", top.selected, (v) =>
+		typeof v === "string" && v.endsWith(`/${NOTE}`) && v.startsWith("/"));
+
+	await tab();
+	const round = await look();
+	expect("the lap comes back to the click", round.value, start.value);
+	expect("selection and all", round.selected, start.selected);
+	expect("standing where the click left it", round.chips, start.chips);
 });
 
 test("a fourth click reaches the system path too", async () => {
@@ -413,7 +461,11 @@ test("Shift+Tab keeps going up the path once the walk is undone", async () => {
 	await back();
 	const out = await look();
 	expect("then the folder is left", out.chips, (v) => Array.isArray(v) && !v.includes(`${PREFIX}only`));
-	expect("with its name back for editing", out.value, `${PREFIX}only`);
+	// The chip becomes text again *in front of* what the field was holding,
+	// so leaving a folder costs nothing either: this is the same text a
+	// click on that folder would have produced.
+	expect("its name back in front of the rest", out.value, `${PREFIX}only/scratch`);
+	expect("marked, because this press gave it back", out.selected, `${PREFIX}only`);
 });
 
 test("Shift+Tab narrows the selection a rung at a time", async () => {

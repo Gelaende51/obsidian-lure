@@ -875,6 +875,30 @@ Worth generalising: when two rules are each stated over a different notion of
 the same value (here, "the name" as matched and "the name" as displayed),
 their interaction is where the bug will be.
 
+## A cycle that does not close is a leak
+
+The selection ladder wrapped past its last rung by standing at the top folder
+of the path with an empty field — "ready to type from again", and reasonable
+on its own terms. It was written when the only way into the ladder was to run
+out of things to complete, where the field was empty or held a name you had
+typed.
+
+Then the ladder became reachable from a *folder click*, which opens the field
+on the whole rest of the path. Now one lap of a key that had never destroyed
+anything ended with the path gone: five presses, no typing, nothing on screen.
+Neither change was wrong; the wrap simply had an assumption in it about where
+laps begin, and the new entry point broke it.
+
+The fix is the general one for any cycle: **remember where the lap started and
+return there**, rather than computing a plausible-looking starting point. A
+snapshot of the field (the same one Shift+Tab already used) closes the loop
+exactly, selection included — and "selection included" matters, because being
+*a prefill* is part of that state and is what makes the next press start the
+lap again instead of completing against it.
+
+Worth checking wherever a feature grows a second entry point: the code that
+ends the interaction usually encodes what the *first* entry point looked like.
+
 ## An undo that deletes is a different gesture from one that marks
 
 Walking a completion back by restoring the earlier text is correct and feels

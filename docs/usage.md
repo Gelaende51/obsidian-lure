@@ -148,9 +148,11 @@ Once there is nothing left to complete, the presses stop moving along the path a
 2. the name with its extension
 3. the path from your vault folder
 4. the path from the system root
-5. back to the first folder, ready to type from again
+5. back to where the walk began — the field as the click that opened it left it, selection and all
 
 A fourth click reaches that same fourth rung directly.
+
+The rungs are a **loop, and it costs nothing to go round it**. Click a folder and press nothing but <kbd>Tab</kbd>: the rest of the path is walked, shown from the vault, shown from the system root, and handed back to you exactly as the click left it. The only thing that ever leaves the row is the absolute prefix, on the press that stops showing it.
 
 Each rung changes what is *in* the field, not only what is highlighted — a selection has to be over the text it names, or <kbd>Enter</kbd> would commit something other than what you can see is selected. The ladder belongs to one editing session: click away, or type anything at all, and the next <kbd>Tab</kbd> completes a name again.
 
@@ -169,7 +171,7 @@ Each rung changes what is *in* the field, not only what is highlighted — a sel
 
 Typing replaces the marked part, as it does anywhere else. <kbd>Tab</kbd> puts back exactly what the mark gave back, so walking two steps out and two steps in again returns you where you were.
 
-Once the whole name is marked there is nothing left that a press put there, and the next press goes *up the path*: it leaves the folder you are standing in, exactly as <kbd>Backspace</kbd> on an empty field does. Back is a direction rather than an undo history — but marking the name first means one press never both takes back what you wrote and takes you out of the folder you wrote it in.
+Once the whole name is marked there is nothing left that a press put there, and the next press goes *up the path*: it leaves the folder you are standing in, exactly as <kbd>Backspace</kbd> on an empty field does. That costs nothing either — the folder's name comes back into the field **in front of** whatever was in it, marked, which is the same text clicking that folder would have given you. Back is a direction rather than an undo history — but marking the name first means one press never both takes back what you wrote and takes you out of the folder you wrote it in.
 
 Text that opens **already selected** — what a folder click leaves behind it, or the whole path the focus command fills in — is about to be typed over rather than extended, so <kbd>Tab</kbd> goes straight to widening.
 
