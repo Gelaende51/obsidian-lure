@@ -3200,15 +3200,25 @@ export class PathBreadcrumb {
 			const rest = input.value.slice(bounds.end).replace(/^[\\/]+/, "");
 			if (this.externalPath !== null) this.extendExternalPath(action.path);
 			else this.extendBrowsePath(action.path);
-			// Marked only while there is another folder to walk. The last
-			// segment is the file's name, and the ladder's first rung is
-			// about to mark it: marking it here too would spend a press
-			// showing the name with its extension, immediately before the
-			// rung that shows it without.
 			const landing = asLanding(rest);
-			const more = landing !== null && landing.select < landing.path.length;
-			if (landing) this.enterTypingMode(landing.path, more ? landing.select : "none");
-			else this.enterTypingMode("");
+			if (landing === null) {
+				this.enterTypingMode("");
+				return;
+			}
+			// Another folder to walk: it opens marked, ready for the press
+			// after this one.
+			if (landing.select < landing.path.length) {
+				this.enterTypingMode(landing.path, landing.select);
+				return;
+			}
+			// A name rather than a folder, so the walk has arrived — and the
+			// ladder's first rung is what it has arrived at. Landing with the
+			// caret parked at the end instead cost a press that showed the
+			// name and marked nothing, immediately before the rung that
+			// marks it.
+			this.enterTypingMode(landing.path);
+			const separator = this.externalPath !== null ? PATH_SEP : "/";
+			this.startLadder(`${action.path}${separator}${landing.path}`);
 			return;
 		}
 		this.writeSegment(input, bounds, action.text);
@@ -3411,7 +3421,21 @@ export class PathBreadcrumb {
 		this.rememberLadderStart();
 		this.tabTargetPath = target ?? this.ladderTargetPath();
 		this.tabStage = 0;
+		const before = this.fieldState();
 		this.applyLadderStage();
+		// A rung that changes nothing is not worth a press. Clicking a note's
+		// name already shows it without its extension, which is exactly what
+		// the first rung shows — so from there the key starts on the second.
+		if (this.tabStage === 0 && before !== null && before === this.fieldState()) {
+			this.advanceLadder();
+		}
+	}
+
+	/** The field as one string, for telling whether a press changed anything. */
+	private fieldState(): string | null {
+		const input = this.inputEl;
+		if (!input) return null;
+		return `${input.selectionStart ?? 0}:${input.selectionEnd ?? 0}:${input.value}`;
 	}
 
 	/**

@@ -280,19 +280,20 @@ test("ladder: Tab past the end widens the selection a rung at a time", async () 
 	// name stands the row in the note's own folder, so the chips are part of
 	// that state and the wrap has to bring them back too.
 	const begun = await look();
-	await tab();
-	const stem = await look();
-	expect("first rung is the name without its extension", stem.selected, "Cake catapult");
+	// Clicking the name already shows it without its extension, which is
+	// what the first rung shows — so the key starts on the second rather
+	// than spending a press on a state that is already on screen.
+	expect("the click is already the first rung", begun.selected, "Cake catapult");
 
 	await tab();
-	expect("second adds the extension", (await look()).selected, "Cake catapult.md");
+	expect("so the first press adds the extension", (await look()).selected, "Cake catapult.md");
 
 	await tab();
-	expect("third is the path from the vault", (await look()).selected, NOTE);
+	expect("then the path from the vault", (await look()).selected, NOTE);
 
 	await tab();
 	const system = await look();
-	expect("fourth is the path from the system root", system.selected, (v) =>
+	expect("then the path from the system root", system.selected, (v) =>
 		typeof v === "string" && v.endsWith(`/${NOTE}`) && v.startsWith("/"));
 
 	await tab();
@@ -340,10 +341,10 @@ test("a lap of the rungs from a folder click costs nothing", async () => {
 	expect("the clicked folder is stepped into", stepped.chips, (v) => Array.isArray(v) && v.includes("2026"));
 	expect("carrying the rest of the path with it", stepped.value, "Cake catapult.md");
 
-	// The name is left plain, not marked: the first rung is about to mark it
-	// without its extension, and marking it *with* one first would be a
-	// press that showed the same name twice over.
-	expect("the file name is not marked on arrival", stepped.selected, "");
+	// Arriving at the name *is* the first rung: it opens without its
+	// extension, marked. Landing plain and marking it on the press after
+	// would be a press that showed the name and did nothing to it.
+	expect("the file name arrives on the first rung", stepped.selected, "Cake catapult");
 
 	// Then the rungs, however many this path needs.
 	let top = null;
@@ -407,13 +408,10 @@ test("every folder in the path gets its own press", async () => {
 	expect("the third takes that one", three.chips, (v) => Array.isArray(v) && v.includes("deeper"));
 	expect("leaving only the file name", three.value, "leaf.md");
 
-	expect("left plain, for the first rung to mark", three.selected, "");
-
-	await tab();
-	// Only now, with no folder left to walk, does the key start widening —
-	// and it starts on the name without its extension, with no redundant
-	// press showing the name with one first.
-	expect("and only then does the ladder start", (await look()).selected, "leaf");
+	// With no folder left to walk, the same press arrives on the ladder's
+	// first rung: the name without its extension, marked. No press is spent
+	// showing the name with the caret parked at its end.
+	expect("arriving on the first rung", three.selected, "leaf");
 
 	await tab();
 	expect("the rung after adds the extension", (await look()).selected, "leaf.md");
@@ -441,7 +439,7 @@ test("a fourth click reaches the system path too", async () => {
 test("the ladder does not survive into the next session", async () => {
 	await armed();
 	await tab();
-	expect("ladder started", (await look()).selected, "Cake catapult");
+	expect("ladder started", (await look()).selected, "Cake catapult.md");
 	await page.evaluate(`document.querySelector(".lure-path-input")?.blur(); document.body.click(); ${PAUSE(400)} return true;`);
 	await armAtRoot();
 	await type(`${PREFIX}on`);
@@ -548,12 +546,15 @@ test("Shift+Tab narrows the selection a rung at a time", async () => {
 	await armed();
 	await tab();
 	await tab();
-	expect("two rungs up", (await look()).selected, "Cake catapult.md");
+	// The click was the first rung, so two presses reach the third.
+	expect("two presses up", (await look()).selected, NOTE);
 	await back();
-	expect("and one back down", (await look()).selected, "Cake catapult");
-	// Below the first rung the ladder is over and the press carries on
-	// walking back, which here means marking the whole name: the press after
-	// it is the one that leaves the folder.
+	expect("and one back down", (await look()).selected, "Cake catapult.md");
+	await back();
+	expect("and down to the first rung", (await look()).selected, "Cake catapult");
+	// Below it the ladder is over and the press carries on walking back,
+	// which here means marking the whole name: the press after it is the one
+	// that leaves the folder.
 	await back();
 	const whole = await look();
 	expect("below the first rung the name is marked", whole.selected, "Cake catapult.md");

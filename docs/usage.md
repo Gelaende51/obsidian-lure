@@ -142,7 +142,7 @@ A **file** never holds a folder up that way. A folder beside a note of its own n
 
 Two smaller things that follow: what lands in the field is spelled the way the folder spells it, so `sk` becomes `Sketches`; and only the name being typed is replaced, so a path with more to the right of it keeps that.
 
-Once there is nothing left to complete, the presses stop moving along the path and start widening what is selected:
+Arriving at the file's name **is** the first rung — no press is spent parking the caret at the end of a name it is about to mark. From there the presses stop moving along the path and start widening what is selected:
 
 1. the name
 2. the name with its extension
@@ -159,10 +159,12 @@ The ladder is where the walk **arrives**, not where it starts. Click a folder in
 | clicked `a` | | `a/b/c/leaf.md` | `a` |
 | <kbd>Tab</kbd> | `a` | `b/c/leaf.md` | `b` |
 | <kbd>Tab</kbd> | `a › b` | `c/leaf.md` | `c` |
-| <kbd>Tab</kbd> | `a › b › c` | `leaf.md` | |
 | <kbd>Tab</kbd> | `a › b › c` | `leaf.md` | `leaf` — the first rung |
+| <kbd>Tab</kbd> | `a › b › c` | `leaf.md` | `leaf.md` |
 
 The whole thing is a **loop, and it costs nothing to go round it**: the press after the last rung hands the row back exactly as the click left it, folders and all, ready to go round again. The only thing that ever leaves the row is the absolute prefix, on the press that stops showing it.
+
+No press is spent on a rung that changes nothing, either: clicking a note's name already shows it without its extension, which is what the first rung shows, so from there <kbd>Tab</kbd> starts on the second.
 
 Each rung changes what is *in* the field, not only what is highlighted — a selection has to be over the text it names, or <kbd>Enter</kbd> would commit something other than what you can see is selected. The ladder belongs to one editing session: click away, or type anything at all, and the next <kbd>Tab</kbd> completes a name again.
 
