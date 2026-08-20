@@ -36,7 +36,10 @@ const FOLDERS = [
 	`${PREFIX}only`,
 	`${PREFIX}short`,
 	`${PREFIX}short2026`,
+	`${PREFIX}noted`,
 ];
+/** Files made beside the folders, and taken out again with them. */
+const FILES = [`${PREFIX}noted.md`];
 const results = [];
 const tests = [];
 const test = (name, fn) => tests.push({ name, fn });
@@ -72,6 +75,8 @@ await page.evaluate(`
 	// nothing else starts like, and a pair where one name is the other's
 	// opening.
 	for (const name of ${JSON.stringify(FOLDERS)}) await mk(name);
+	// A folder note: a note carrying the name of the folder beside it.
+	for (const name of ${JSON.stringify(FILES)}) await mkf(name);
 	${PAUSE(500)}
 	return true;
 `);
@@ -128,6 +133,13 @@ async function type(text) {
 async function tab() {
 	await pressKey(page, "Tab");
 	await page.evaluate(PAUSE(500) + "return true;");
+	await page.evaluate(focusField);
+}
+
+/** One press of Shift+Tab, which walks the same road backwards. */
+async function back() {
+	await pressKey(page, "shift+Tab");
+	await page.evaluate(PAUSE(550) + "return true;");
 	await page.evaluate(focusField);
 }
 
@@ -316,6 +328,73 @@ test("the ladder does not survive into the next session", async () => {
 	expect("Tab completes rather than widening", s.value, "");
 });
 
+test("a folder is stepped into even with a note of its name beside it", async () => {
+	await armAtRoot();
+	// The folder and its note share every character of the folder's name, so
+	// the press that finishes that name has a file still matching it. A file
+	// is a destination rather than a step, so it does not hold the folder up
+	// — before, the press wrote the note's name instead, and every press
+	// after that rewrote it, so the folder could not be entered at all.
+	await type(`${PREFIX}not`);
+	await tab();
+	expect("the folder's name completes", (await look()).value, `${PREFIX}noted`);
+
+	await tab();
+	const s = await look();
+	expect("and the folder is entered", s.chips, (v) => Array.isArray(v) && v.includes(`${PREFIX}noted`));
+	expect("ready for the next segment", s.value, "");
+});
+
+test("Shift+Tab walks back out the way Tab walked in", async () => {
+	await armAtRoot();
+	await type(`${PREFIX}a`);
+	for (let i = 0; i < 4; i++) await tab();
+	const walked = await look();
+	expect("walked all the way in", walked.chips, (v) => Array.isArray(v) && v.includes(`${PREFIX}alpha-one`));
+
+	// Every press mirrors one press of Tab, in reverse order.
+	await back();
+	const out = await look();
+	expect("out of the folder again", out.chips, (v) => Array.isArray(v) && !v.includes(`${PREFIX}alpha-one`));
+	expect("holding the name it had completed", out.value, `${PREFIX}alpha-one`);
+
+	await back();
+	expect("back a branch", (await look()).value, `${PREFIX}alpha-`);
+	await back();
+	expect("back to the shared opening", (await look()).value, `${PREFIX}alp`);
+	await back();
+	expect("and back to what was typed", (await look()).value, `${PREFIX}a`);
+});
+
+test("Shift+Tab keeps going up the path once the walk is undone", async () => {
+	await armAtRoot();
+	await type(`${PREFIX}on`);
+	await tab();
+	expect("inside the folder", (await look()).chips, (v) => Array.isArray(v) && v.includes(`${PREFIX}only`));
+	// Typing empties the trail, so there is no press of Tab left to mirror:
+	// from here Shift+Tab is a direction, not an undo, and carries on up.
+	await type("scratch");
+	await back();
+	expect("what was typed is given up first", (await look()).value, "");
+	await back();
+	const out = await look();
+	expect("then the folder is left", out.chips, (v) => Array.isArray(v) && !v.includes(`${PREFIX}only`));
+	expect("with its name back for editing", out.value, `${PREFIX}only`);
+});
+
+test("Shift+Tab narrows the selection a rung at a time", async () => {
+	await armed();
+	await tab();
+	await tab();
+	expect("two rungs up", (await look()).selected, "Cake catapult.md");
+	await back();
+	expect("and one back down", (await look()).selected, "Cake catapult");
+	// Below the first rung the ladder is over and the press carries on
+	// walking back, which here means giving up the text in the field.
+	await back();
+	expect("below the first rung it walks on", (await look()).value, "");
+});
+
 const filter = process.argv[2];
 for (const { name, fn } of tests) {
 	if (filter && !name.toLowerCase().includes(filter.toLowerCase())) continue;
@@ -339,9 +418,9 @@ await page.evaluate(`
 	// The completion fixtures are named to be unmistakable, and are taken out
 	// again: left behind, they would sit in the vault root of whatever vault
 	// this was pointed at.
-	for (const name of ${JSON.stringify(FOLDERS)}) {
-		const folder = app.vault.getAbstractFileByPath(name);
-		if (folder) await app.fileManager.trashFile(folder);
+	for (const name of [...${JSON.stringify(FOLDERS)}, ...${JSON.stringify(FILES)}]) {
+		const entry = app.vault.getAbstractFileByPath(name);
+		if (entry) await app.fileManager.trashFile(entry);
 	}
 	const abacus = app.vault.getAbstractFileByPath("Schemes/2026/Abacus.md");
 	if (abacus) await app.fileManager.trashFile(abacus);

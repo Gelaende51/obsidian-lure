@@ -843,3 +843,49 @@ The assertion could not tell the two apart. What caught it was asserting the
 the interesting assertion passed. When a test's subject and its fallback can
 produce the same output, assert the state the test needs to be in, not only
 the result it expects.
+
+## Two reasonable rules can meet in a press that does nothing
+
+Tab skipped a candidate with nothing left to add, so that a folder whose name
+is another's opening (`Schemes` beside `Schemes2026`) is completed past rather
+than entered. Separately, the match query drops an extension the caret has not
+reached, so typing `Cak` over `Cak.md` still finds `Cake catapult.md`. Each is
+defensible on its own.
+
+Together they made a folder beside its own note — the thing every folder-note
+plugin creates — impossible to enter:
+
+```
+Projects/ + Projects.md      typed "Projects"
+  → "Projects" has nothing to add, so it is skipped
+  → "Projects.md" is written into the field
+  → the field is matched as "Projects" again … forever
+```
+
+Every press after the first did *nothing at all*, and no press could ever
+enter the folder. Two things came out of it. First, **progress has to be
+measured against what the user can see**, not against the internal string the
+candidates were matched with — the write was longer than the query and looked
+like progress while the field never changed. Second, **a rule about "what
+extends this name" needs to know what kind of thing is doing the extending**:
+a folder is a fork in the path and a file is a destination, so only a folder
+should be able to hold a folder up.
+
+Worth generalising: when two rules are each stated over a different notion of
+the same value (here, "the name" as matched and "the name" as displayed),
+their interaction is where the bug will be.
+
+## Walking a walk backwards needs no inverses
+
+`Shift+Tab` mirrors `Tab`: it narrows the selection, gives back completions,
+and steps out of folders. Writing an inverse for each of those — un-complete,
+un-descend, un-respell — would have been a small pile of nearly-right string
+surgery.
+
+Pushing a **snapshot of the field** before each forward press instead made the
+whole thing one line of restore: `{ browsePath, externalPath, value, caret }`
+in, the same back out. The trail is emptied by typing, exactly as the
+selection ladder is, so it can never restore a row nobody is standing on any
+more — and when it is empty the key falls through to stepping out of the
+folder, which is the same move one step coarser. The forward code needed one
+push added to it and nothing else.

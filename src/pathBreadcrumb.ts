@@ -118,6 +118,24 @@ const SCROLL_CLASS = "lure-row-scrolls";
  */
 const FIT_PASSES = 4;
 
+/**
+ * The field as it stood before one press of Tab, so <kbd>Shift</kbd>+Tab can
+ * put it back.
+ *
+ * A snapshot rather than a description of what the press did: taking a step
+ * back then needs no inverse of anything — completing, respelling, stepping
+ * into a folder and carrying the rest of a path along are all just "the row
+ * looked like this".
+ */
+interface TabStep {
+	/** The folder being browsed inside the vault, null while the row stands in the file's own. */
+	folder: string | null;
+	/** The folder being browsed outside it, null while inside. */
+	external: string | null;
+	value: string;
+	caret: number;
+}
+
 /** A row segment the fitter may shorten, tied to the element showing it. */
 interface FittableSegment {
 	el: HTMLElement;
@@ -392,6 +410,17 @@ export class PathBreadcrumb {
 	private tabStage: number | null = null;
 	/** The file the ladder is describing — the one Tab landed on, or the open note. */
 	private tabTargetPath: string | null = null;
+	/**
+	 * Where each press of Tab found the field, newest last, so Shift+Tab can
+	 * walk back out the way it walked in.
+	 *
+	 * Emptied by typing, exactly as the ladder is: once the field holds
+	 * something the walk did not put there, its earlier states describe a
+	 * path nobody is on any more, and restoring one would throw away what
+	 * was typed. Walking back from there steps out of the folder instead,
+	 * which is the same move one step coarser.
+	 */
+	private tabTrail: TabStep[] = [];
 	/** Set while re-dispatching a click onto a native segment, so our own capture listener lets it through (see openNativeSegment). */
 	private delegatingToNative = false;
 	/**
@@ -3066,11 +3095,22 @@ export class PathBreadcrumb {
 		const marked = this.suggest?.highlighted() ?? null;
 		const target = candidates.find((candidate) => candidate.path === marked?.path) ?? null;
 
-		const action = planTab(typed, candidates, target);
+		// What a write would replace: the segment as it stands, extension and
+		// all. `typed` is only what it was matched by.
+		const replacing = input.value.slice(bounds.start, bounds.end);
+		const action = planTab(typed, candidates, target, replacing);
 		if (action.kind === "ladder") {
 			this.startLadder(action.path);
 			return;
 		}
+		// Every press that moves the row records where it moved from. Only
+		// these two do: the ladder walks itself back by its own arithmetic.
+		this.tabTrail.push({
+			folder: this.browsePath,
+			external: this.externalPath,
+			value: input.value,
+			caret: input.selectionEnd ?? input.value.length,
+		});
 		if (action.kind === "descend") {
 			// Whatever was typed after the segment is carried into the folder
 			// rather than dropped: a path pasted in and Tab-walked keeps the
@@ -3113,6 +3153,71 @@ export class PathBreadcrumb {
 		// without mistaking this for the user typing — which would end the
 		// selection ladder we may be about to start.
 		input.dispatchEvent(new Event("input"));
+	}
+
+	/**
+	 * <kbd>Shift</kbd>+Tab: one step back the way Tab came.
+	 *
+	 * The mirror of `handleTabCompletion`, rung for rung and step for step —
+	 * the selection narrows again, then each completion is taken back, then
+	 * each folder is stepped out of. Past the beginning of the walk it keeps
+	 * going up the path rather than stopping, because "back" reads as a
+	 * direction rather than as an undo history.
+	 *
+	 * What was typed but never completed is given up first, on a press of
+	 * its own: one press should not both discard what you wrote and take you
+	 * out of the folder you wrote it in.
+	 */
+	private handleTabBack(input: HTMLInputElement): void {
+		if (this.tabStage !== null) {
+			if (this.tabStage > 0) {
+				this.tabStage -= 1;
+				this.applyLadderStage();
+				return;
+			}
+			// Below the first rung the ladder is over, and the press goes on
+			// to take back a step of the walk in the same breath.
+			this.tabStage = null;
+			this.tabTargetPath = null;
+		}
+
+		const step = this.tabTrail.pop();
+		if (step) {
+			this.rewindTo(step);
+			return;
+		}
+
+		if (input.value !== "") {
+			this.writeSegment(input, { start: 0, end: input.value.length }, "");
+			return;
+		}
+
+		// Nothing left of this walk: carry on up the path itself. This is
+		// the same move Backspace makes on an empty field.
+		this.stepOutOfFolder();
+	}
+
+	/** Puts the row back exactly as one press of Tab found it. */
+	private rewindTo(step: TabStep): void {
+		const moved = step.folder !== this.browsePath || step.external !== this.externalPath;
+		// `exitTypingInput` is what runs the field's cleanup, and it reads
+		// the browse path to decide what the row falls back to — so it has
+		// to happen before that path is put back.
+		this.exitTypingInput();
+		if (moved) {
+			this.pinRowStart();
+			this.browsePath = step.folder;
+			this.externalPath = step.external;
+			this.mode = step.folder !== null || step.external !== null ? "browsing" : "breadcrumb";
+			this.hideNativeBreadcrumb();
+			this.render();
+			this.attachDocumentClickAway();
+		}
+		this.enterTypingMode(step.value, "none");
+		const input = this.inputEl;
+		// The caret goes back where it was, which for a path with more to the
+		// right of the name being edited is not the end of the field.
+		if (input) input.setSelectionRange(step.caret, step.caret);
 	}
 
 	/** Hands the key over to widening the selection, over `target` or over whatever the row shows. */
@@ -3530,7 +3635,8 @@ export class PathBreadcrumb {
 				this.stepOutOfFolder();
 			} else if (evt.key === "Tab") {
 				evt.preventDefault();
-				this.handleTabCompletion(inputEl);
+				if (evt.shiftKey) this.handleTabBack(inputEl);
+				else this.handleTabCompletion(inputEl);
 			} else if (evt.key === "/") {
 				// Except where the slash is part of a scheme: "https:/" +
 				// "/" is a URL being typed, not a folder called "https:".
@@ -3598,6 +3704,7 @@ export class PathBreadcrumb {
 				// are untrusted and so leave it alone.
 				this.tabStage = null;
 				this.tabTargetPath = null;
+				this.tabTrail = [];
 			}
 			autoSize();
 			if (this.renameMode) this.updateValidation(inputEl.value, this.currentFolderPath());
@@ -3867,9 +3974,12 @@ export class PathBreadcrumb {
 	private cancelNavigation(): void {
 		// A ladder belongs to one editing session. Carrying it into the next
 		// would make the first Tab there widen a selection instead of
-		// completing a folder, for reasons the user could not see.
+		// completing a folder, for reasons the user could not see. The trail
+		// Shift+Tab walks back is the same: it describes a row that is about
+		// to stop existing.
 		this.tabStage = null;
 		this.tabTargetPath = null;
+		this.tabTrail = [];
 		this.editCleanup?.();
 		this.editCleanup = null;
 		this.inputEl = null;

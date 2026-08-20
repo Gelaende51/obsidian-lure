@@ -136,7 +136,9 @@ A folder is not something Obsidian can open, so sending one to a tab does one of
 
 Press again without typing and it walks toward one name — the row the dropdown has highlighted, or the first — stopping at that name's next ambiguity: `Alpha-`, then `Alpha-one`. The list opens on where you already are, so in your own folder the first press heads for the note you have open rather than for whatever sorts first.
 
-**A press never chooses between names for you.** <kbd>Tab</kbd> steps into a folder only once what you typed leaves exactly one candidate, at which point there was no choice to make. One consequence is worth knowing: where a folder's whole name is the opening of another — `Schemes` beside `Schemes2026` — <kbd>Tab</kbd> keeps completing toward the longer one. <kbd>Enter</kbd> and the dropdown are the gestures that mean *this one*.
+**A press never chooses between names for you.** <kbd>Tab</kbd> steps into a folder once what you typed leaves one candidate, or once you have typed the folder's whole name and no *other folder* extends it. Where one does — `Schemes` beside `Schemes2026` — <kbd>Tab</kbd> keeps completing toward the longer name; <kbd>Enter</kbd> and the dropdown are the gestures that mean *this one*.
+
+A **file** never holds a folder up that way. A folder beside a note of its own name is a folder note, not a fork in the path, and <kbd>Tab</kbd> walks folders — so `Projects` with a `Projects.md` next to it is stepped into like any other.
 
 Two smaller things that follow: what lands in the field is spelled the way the folder spells it, so `sk` becomes `Sketches`; and only the name being typed is replaced, so a path with more to the right of it keeps that.
 
@@ -151,6 +153,12 @@ Once there is nothing left to complete, the presses stop moving along the path a
 A fourth click reaches that same fourth rung directly.
 
 Each rung changes what is *in* the field, not only what is highlighted — a selection has to be over the text it names, or <kbd>Enter</kbd> would commit something other than what you can see is selected. The ladder belongs to one editing session: click away, or type anything at all, and the next <kbd>Tab</kbd> completes a name again.
+
+### <kbd>Shift</kbd>+<kbd>Tab</kbd>: the same road backwards
+
+<kbd>Shift</kbd>+<kbd>Tab</kbd> takes back one step per press, in the order the presses were made: the selection narrows a rung at a time, each completion is given back, and each folder is stepped out of — its name returning to the field so you can edit it rather than retype it.
+
+Past the beginning of the walk it keeps going *up the path*, because back is a direction rather than an undo history: it leaves the folder you are standing in, exactly as <kbd>Backspace</kbd> on an empty field does. Anything you typed but never completed is given up on a press of its own first, so one press never both discards what you wrote and takes you out of the folder you wrote it in.
 
 Text that opens **already selected** — what a folder click leaves behind it, or the whole path the focus command fills in — is about to be typed over rather than extended, so <kbd>Tab</kbd> goes straight to widening.
 
@@ -443,6 +451,7 @@ This works by wrapping the `workspace:edit-file-title` command rather than grabb
 | Open a file from outside the vault | Vault name → pick a location → browse → pick the file (read-only until *Edit as text*) |
 | Complete the name being typed | <kbd>Tab</kbd> |
 | Step into it, once one name is left | <kbd>Tab</kbd> again |
+| Take back a step, or leave the folder | <kbd>Shift</kbd>+<kbd>Tab</kbd> |
 | Grab the whole path, or the system path | <kbd>Tab</kbd> past the end, or click four times |
 | Copy a name, a path, or a system path | Right-click it twice; the empty space three times for the system path |
 | Open a folder segment in a new tab | <kbd>Ctrl</kbd> or middle-click it |

@@ -10,12 +10,15 @@
  * Three consequences worth stating, because they are what make it feel
  * predictable rather than clever:
  *
- * 1. **A name is completed, never chosen.** Tab steps into a folder only
- *    when what you typed leaves exactly one candidate — at which point
- *    there was no choice to make. `Schemes` beside `Schemes2026` therefore
+ * 1. **A name is completed, never chosen.** Tab steps into a folder when
+ *    what you typed leaves one candidate — at which point there was no
+ *    choice to make — or when you have typed the folder's whole name and no
+ *    *other folder* extends it. `Schemes` beside `Schemes2026` therefore
  *    keeps completing toward the longer name; the shorter one is reached
  *    with Enter or from the dropdown, which are the two gestures that mean
- *    "this one".
+ *    "this one". A *file* never blocks a folder this way: `Projects` beside
+ *    its own `Projects.md` is a folder note, not a fork in the path, and Tab
+ *    walks folders.
  * 2. **A press that cannot extend the common prefix walks toward one
  *    candidate instead**, stopping at its next ambiguity — the way a second
  *    Tab in a shell gets you somewhere rather than beeping twice. Which
@@ -25,6 +28,11 @@
  * 3. **Case is taken from the name, not from you.** `sk` completes to
  *    `Sketches`, because what ends up in the field has to be the path that
  *    exists.
+ *
+ * And one rule under all of them: **a press always does something.** A
+ * press that would leave the field exactly as it found it is not made; the
+ * key hands over to the selection ladder instead. Without that, a folder
+ * beside its own note produced a press that rewrote the same name forever.
  *
  * Kept free of the DOM and of the vault — names in, one decision out — so
  * the rule can be reasoned about, and tested, as plain string maths.
@@ -105,11 +113,18 @@ function stepToward(typed: string, names: readonly string[], toward: string): st
  * has already done the matching, because only it knows which folder is
  * being listed. `target` is the candidate a press with nothing left to
  * complete should walk toward, or null to walk toward the first.
+ *
+ * `replacing` is the text a write would actually replace, which is not
+ * always `typed`: the caller matches on the name without an extension the
+ * caret has not reached, so a field reading `Projects.md` is matched as
+ * `Projects`. Progress is measured against the field, or a press that
+ * rewrote what was already there would count as having done something.
  */
 export function planTab(
 	typed: string,
 	candidates: readonly TabCandidate[],
 	target: TabCandidate | null,
+	replacing: string = typed,
 ): TabAction {
 	if (!candidates.length) return { kind: "ladder", path: null };
 
@@ -120,7 +135,7 @@ export function planTab(
 		if (only.folder) return { kind: "descend", path: only.path };
 		// A file ends the path. Finish its name if it is not finished, and
 		// once it is, there is nothing left for Tab to complete.
-		if (!same(only.label, typed)) return { kind: "write", text: only.label };
+		if (!same(only.label, replacing)) return { kind: "write", text: only.label };
 		return { kind: "ladder", path: only.path };
 	}
 
@@ -130,19 +145,40 @@ export function planTab(
 	// took characters away would be the opposite of completing. The second
 	// arm is the respelling — same length, different case, because the names
 	// are what say how this is spelled.
-	if (prefix.length > typed.length) return { kind: "write", text: prefix };
-	if (prefix.length === typed.length && prefix !== typed) return { kind: "write", text: prefix };
+	if (prefix.length > typed.length && !same(prefix, replacing)) {
+		return { kind: "write", text: prefix };
+	}
+	if (prefix.length === typed.length && prefix !== typed && prefix !== replacing) {
+		return { kind: "write", text: prefix };
+	}
+
+	// The field already names one of them outright. A file there is the end
+	// of the walk — it is a destination, and Enter is what opens it.
+	const named = candidates.find((candidate) => same(candidate.label, replacing));
+	if (named && !named.folder) return { kind: "ladder", path: named.path };
+
+	// A folder typed out in full is stepped into, unless another *folder*
+	// extends its name and the choice is therefore still open. Files never
+	// block it: a folder beside its own note is a folder note, not a fork in
+	// the path, and this is the press that used to write that note's name
+	// over and over instead of going anywhere.
+	const exact = candidates.find((candidate) => candidate.folder && same(candidate.label, typed));
+	const forked = candidates.some((candidate) => candidate.folder && !same(candidate.label, typed));
+	if (exact && !forked) return { kind: "descend", path: exact.path };
 
 	// Nothing further is common to all of them, so the press walks toward
-	// one. A candidate that is already spelled out in full has nothing to
-	// walk toward, so it is passed over rather than spent a press on.
+	// one. A candidate that is already spelled out in the field has nothing
+	// to walk toward, so it is passed over rather than spent a press on.
 	const ordered = target ? [target, ...candidates] : [...candidates];
 	for (const candidate of ordered) {
 		const grown = stepToward(typed, labels, candidate.label);
-		if (grown.length > typed.length) return { kind: "write", text: grown };
+		if (grown.length > typed.length && !same(grown, replacing)) {
+			return { kind: "write", text: grown };
+		}
 	}
 
-	// Every candidate is exactly what was typed — which a real folder cannot
-	// produce, but a caller with a stale list can.
-	return { kind: "ladder", path: null };
+	// Nothing can be written. Stepping into a folder whose name is already
+	// there is the only move left; failing that, the key hands over.
+	if (exact) return { kind: "descend", path: exact.path };
+	return { kind: "ladder", path: named?.path ?? null };
 }

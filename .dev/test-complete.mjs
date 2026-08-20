@@ -143,8 +143,41 @@ test("a name already spelled out in full is walked past, not into", () => {
 test("a folder and a file can both be candidates", () => {
 	const mixed = [dir("Report"), file("Reports.md")];
 	expect("the shared opening is written", written("Rep", mixed), "Report");
-	// Two candidates still: "Report" and "Reports.md" both start with it.
-	expect("and the press after walks on", written("Report", mixed), "Reports.md");
+	// The folder's whole name is now in the field and only a file extends
+	// it, so the choice is not open: files are destinations, not steps.
+	expect("and the folder is stepped into", press("Report", mixed), {
+		kind: "descend",
+		path: "Here/Report",
+	});
+});
+
+test("a folder note does not stand in the way of its folder", () => {
+	// What a folder-note plugin makes: a folder and a note of the same name,
+	// side by side. This used to write the note's name into the field and
+	// then rewrite it on every further press, so the folder could not be
+	// entered with Tab at all.
+	const pair = [dir("Projects"), file("Projects.md")];
+	expect("the name completes", written("Pro", pair), "Projects");
+	expect("and the folder is entered", press("Projects", pair), {
+		kind: "descend",
+		path: "Here/Projects",
+	});
+	// Typed out in full, the note is a destination like any other file: the
+	// walk is over and the key hands over to the selection ladder.
+	expect("while the note itself ends the walk", planTab("Projects", starting("Projects", pair), null, "Projects.md"), {
+		kind: "ladder",
+		path: "Here/Projects.md",
+	});
+});
+
+test("a press that would rewrite what is already there is not made", () => {
+	// The caller matches on the name without the extension, so "Projects.md"
+	// in the field is matched as "Projects" — and the completion it produces
+	// is the text already showing. Measuring progress against the field is
+	// what stops that press repeating forever.
+	const pair = [dir("Projects"), file("Projects.md")];
+	const action = planTab("Projects", starting("Projects", pair), file("Projects.md"), "Projects.md");
+	expect("no write", action.kind, (v) => v !== "write");
 });
 
 // --------------------------------------------------------------- limits
@@ -160,9 +193,18 @@ test("a press never takes characters away", () => {
 });
 
 test("candidates that are all exactly what was typed give up", () => {
-	// A folder cannot produce this; a caller holding a stale list can.
+	// A folder cannot hold two entries of one name; a caller with a stale
+	// list can hand them over. Nothing can be written, so the press either
+	// steps into the folder among them or hands over — never nothing.
 	const twins = [dir("Same"), file("Same")];
-	expect("no press is wasted pretending", press("Same", twins), { kind: "ladder", path: null });
+	expect("the folder is the only move left", press("Same", twins), {
+		kind: "descend",
+		path: "Here/Same",
+	});
+	expect("and with no folder at all, it hands over", press("Same", [file("Same"), file("Same")]), {
+		kind: "ladder",
+		path: "Here/Same",
+	});
 });
 
 // ---------------------------------------------------------------------- run
