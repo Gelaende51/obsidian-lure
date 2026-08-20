@@ -148,7 +148,7 @@ Once there is nothing left to complete, the presses stop moving along the path a
 2. the name with its extension
 3. the path from your vault folder
 4. the path from the system root
-5. back to where the walk began — the field as the click that opened it left it, selection and all
+5. back to the front of the walk — the field as the click that opened it left it, selection and all
 
 A fourth click reaches that same fourth rung directly.
 
@@ -159,10 +159,10 @@ The ladder is where the walk **arrives**, not where it starts. Click a folder in
 | clicked `a` | | `a/b/c/leaf.md` | `a` |
 | <kbd>Tab</kbd> | `a` | `b/c/leaf.md` | `b` |
 | <kbd>Tab</kbd> | `a › b` | `c/leaf.md` | `c` |
-| <kbd>Tab</kbd> | `a › b › c` | `leaf.md` | `leaf.md` |
+| <kbd>Tab</kbd> | `a › b › c` | `leaf.md` | |
 | <kbd>Tab</kbd> | `a › b › c` | `leaf.md` | `leaf` — the first rung |
 
-The rungs are a **loop, and it costs nothing to go round it**: the last press hands the field back exactly as the ladder found it. The only thing that ever leaves the row is the absolute prefix, on the press that stops showing it.
+The whole thing is a **loop, and it costs nothing to go round it**: the press after the last rung hands the row back exactly as the click left it, folders and all, ready to go round again. The only thing that ever leaves the row is the absolute prefix, on the press that stops showing it.
 
 Each rung changes what is *in* the field, not only what is highlighted — a selection has to be over the text it names, or <kbd>Enter</kbd> would commit something other than what you can see is selected. The ladder belongs to one editing session: click away, or type anything at all, and the next <kbd>Tab</kbd> completes a name again.
 

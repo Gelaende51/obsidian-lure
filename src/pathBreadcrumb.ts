@@ -472,13 +472,14 @@ export class PathBreadcrumb {
 	 */
 	private tabGivenBack: { start: number; end: number } | null = null;
 	/**
-	 * The field as the ladder found it, which is where wrapping past its
-	 * last rung comes back to.
+	 * The field as the ladder found it — where a lap comes back to when no
+	 * folder was walked before the rungs began.
 	 *
-	 * The rungs are a loop and have to close: a folder click opens the field
-	 * on the rest of the path, and a lap of Tab that ended by emptying it
-	 * threw that path away — the one place a walk of nothing but Tab could
-	 * cost you what was on screen.
+	 * When one was, the front of the walk is the first thing on `tabTrail`
+	 * and that is used instead. Either way the lap has to close somewhere
+	 * real: a folder click opens the field on the rest of the path, and a
+	 * lap of Tab that ended by emptying it threw that path away — the one
+	 * place a walk of nothing but Tab could cost you what was on screen.
 	 */
 	private tabLadderStart: TabStep | null = null;
 	/** Set while re-dispatching a click onto a native segment, so our own capture listener lets it through (see openNativeSegment). */
@@ -3199,8 +3200,14 @@ export class PathBreadcrumb {
 			const rest = input.value.slice(bounds.end).replace(/^[\\/]+/, "");
 			if (this.externalPath !== null) this.extendExternalPath(action.path);
 			else this.extendBrowsePath(action.path);
+			// Marked only while there is another folder to walk. The last
+			// segment is the file's name, and the ladder's first rung is
+			// about to mark it: marking it here too would spend a press
+			// showing the name with its extension, immediately before the
+			// rung that shows it without.
 			const landing = asLanding(rest);
-			if (landing) this.enterTypingMode(landing.path, landing.select);
+			const more = landing !== null && landing.select < landing.path.length;
+			if (landing) this.enterTypingMode(landing.path, more ? landing.select : "none");
 			else this.enterTypingMode("");
 			return;
 		}
@@ -3497,10 +3504,15 @@ export class PathBreadcrumb {
 				// Wrap: back to where the walk began, which closes the loop
 				// without costing anything. A lap of the rungs is a way of
 				// looking at the path, not a way of clearing it.
-				const began = this.tabLadderStart;
+				// The front of the *walk*, not of the ladder: the folders were
+				// walked before the rungs began, and a lap that came back
+				// only as far as the file name would leave you halfway down a
+				// path you had asked to go round.
+				const began = this.tabTrail[0] ?? this.tabLadderStart;
 				this.tabStage = null;
 				this.tabTargetPath = null;
 				this.tabLadderStart = null;
+				this.tabTrail = [];
 				if (began) {
 					this.restartFrom(began);
 					return;

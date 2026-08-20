@@ -340,8 +340,12 @@ test("a lap of the rungs from a folder click costs nothing", async () => {
 	expect("the clicked folder is stepped into", stepped.chips, (v) => Array.isArray(v) && v.includes("2026"));
 	expect("carrying the rest of the path with it", stepped.value, "Cake catapult.md");
 
+	// The name is left plain, not marked: the first rung is about to mark it
+	// without its extension, and marking it *with* one first would be a
+	// press that showed the same name twice over.
+	expect("the file name is not marked on arrival", stepped.selected, "");
+
 	// Then the rungs, however many this path needs.
-	const began = await look();
 	let top = null;
 	for (let i = 0; i < 6 && !top; i++) {
 		await tab();
@@ -353,8 +357,12 @@ test("a lap of the rungs from a folder click costs nothing", async () => {
 
 	await tab();
 	const round = await look();
-	expect("and the lap comes back with the name still there", round.value, began.value);
-	expect("standing where the ladder began", round.chips, began.chips);
+	// All the way round: the front of the walk is the click, not the rung
+	// the ladder happened to start on, so the folders that were walked are
+	// given back too.
+	expect("the lap comes back to the click", round.value, start.value);
+	expect("selection and all", round.selected, start.selected);
+	expect("standing where the click left it", round.chips, start.chips);
 });
 
 test("every folder in the path gets its own press", async () => {
@@ -399,9 +407,16 @@ test("every folder in the path gets its own press", async () => {
 	expect("the third takes that one", three.chips, (v) => Array.isArray(v) && v.includes("deeper"));
 	expect("leaving only the file name", three.value, "leaf.md");
 
+	expect("left plain, for the first rung to mark", three.selected, "");
+
 	await tab();
-	// Only now, with no folder left to walk, does the key start widening.
+	// Only now, with no folder left to walk, does the key start widening —
+	// and it starts on the name without its extension, with no redundant
+	// press showing the name with one first.
 	expect("and only then does the ladder start", (await look()).selected, "leaf");
+
+	await tab();
+	expect("the rung after adds the extension", (await look()).selected, "leaf.md");
 });
 
 test("a fourth click reaches the system path too", async () => {
