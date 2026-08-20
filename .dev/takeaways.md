@@ -875,6 +875,30 @@ Worth generalising: when two rules are each stated over a different notion of
 the same value (here, "the name" as matched and "the name" as displayed),
 their interaction is where the bug will be.
 
+## An undo that deletes is a different gesture from one that marks
+
+Walking a completion back by restoring the earlier text is correct and feels
+wrong: the name you were looking at disappears a piece at a time, and a press
+that overshoots has cost you something. Marking the characters instead — the
+text stays, the run the press added is selected — is the same information
+presented as a *proposal*, and it composes with the editor's own rules: typing
+replaces a selection, so "walk back two steps and type something else" needs no
+extra handling at all.
+
+Two things had to follow from it, and both were only visible once it was
+running:
+
+- **A press forward has to know a mark is not typing.** Marked text ends where
+  the segment ends, exactly as a dropdown preview's selection does, so the
+  range is remembered when it is made and honoured only while it is still
+  the selection showing. Everything else that writes to the field clears it.
+- **"Did this press change anything?" has to be asked about the right text.**
+  The guard against a press that rewrites what is already there (see the
+  folder-note takeaway) fired on the press that *restores* a marked name,
+  which changes no characters — so it was skipped, and walking one step back
+  and one step forward landed on the name beside the one you started on.
+  While resuming, what a write must differ from is the text before the mark.
+
 ## Walking a walk backwards needs no inverses
 
 `Shift+Tab` mirrors `Tab`: it narrows the selection, gives back completions,

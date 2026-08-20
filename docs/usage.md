@@ -158,7 +158,18 @@ Each rung changes what is *in* the field, not only what is highlighted — a sel
 
 <kbd>Shift</kbd>+<kbd>Tab</kbd> takes back one step per press, in the order the presses were made: the selection narrows a rung at a time, each completion is given back, and each folder is stepped out of — its name returning to the field so you can edit it rather than retype it.
 
-Past the beginning of the walk it keeps going *up the path*, because back is a direction rather than an undo history: it leaves the folder you are standing in, exactly as <kbd>Backspace</kbd> on an empty field does. Anything you typed but never completed is given up on a press of its own first, so one press never both discards what you wrote and takes you out of the folder you wrote it in.
+**Nothing is deleted on the way back.** A completion is given back by *marking* the characters it added, exactly as going forward marks what it has widened over — the name stays in front of you, and each further press marks one step more of it:
+
+| | field | marked |
+| --- | --- | --- |
+| walked in | `Alpha-one` | |
+| <kbd>Shift</kbd>+<kbd>Tab</kbd> | `Alpha-one` | `one` |
+| <kbd>Shift</kbd>+<kbd>Tab</kbd> | `Alpha-one` | `ha-one` |
+| <kbd>Shift</kbd>+<kbd>Tab</kbd> | `Alpha-one` | `Alpha-one` |
+
+Typing replaces the marked part, as it does anywhere else. <kbd>Tab</kbd> puts back exactly what the mark gave back, so walking two steps out and two steps in again returns you where you were.
+
+Once the whole name is marked there is nothing left that a press put there, and the next press goes *up the path*: it leaves the folder you are standing in, exactly as <kbd>Backspace</kbd> on an empty field does. Back is a direction rather than an undo history — but marking the name first means one press never both takes back what you wrote and takes you out of the folder you wrote it in.
 
 Text that opens **already selected** — what a folder click leaves behind it, or the whole path the focus command fills in — is about to be typed over rather than extended, so <kbd>Tab</kbd> goes straight to widening.
 

@@ -352,18 +352,50 @@ test("Shift+Tab walks back out the way Tab walked in", async () => {
 	const walked = await look();
 	expect("walked all the way in", walked.chips, (v) => Array.isArray(v) && v.includes(`${PREFIX}alpha-one`));
 
-	// Every press mirrors one press of Tab, in reverse order.
+	// Every press mirrors one press of Tab, in reverse order — and none of
+	// them takes a character away. What a press gave back is *marked*, the
+	// way going forward marks what it has widened over, so the name stays in
+	// front of you and typing replaces the marked part.
 	await back();
 	const out = await look();
 	expect("out of the folder again", out.chips, (v) => Array.isArray(v) && !v.includes(`${PREFIX}alpha-one`));
 	expect("holding the name it had completed", out.value, `${PREFIX}alpha-one`);
 
 	await back();
-	expect("back a branch", (await look()).value, `${PREFIX}alpha-`);
+	const one = await look();
+	expect("the name is still there", one.value, `${PREFIX}alpha-one`);
+	expect("with the last step marked", one.selected, "one");
+
 	await back();
-	expect("back to the shared opening", (await look()).value, `${PREFIX}alp`);
+	expect("a branch further back", (await look()).selected, "ha-one");
 	await back();
-	expect("and back to what was typed", (await look()).value, `${PREFIX}a`);
+	expect("back to the shared opening", (await look()).selected, "lpha-one");
+	await back();
+	const all = await look();
+	expect("then what was typed is marked too", all.selected, `${PREFIX}alpha-one`);
+	expect("and still nothing has been deleted", all.value, `${PREFIX}alpha-one`);
+});
+
+test("a press forward from a mark puts back exactly what it gave back", async () => {
+	await armAtRoot();
+	await type(`${PREFIX}a`);
+	for (let i = 0; i < 3; i++) await tab();
+	expect("walked to a whole name", (await look()).value, `${PREFIX}alpha-one`);
+
+	await back();
+	expect("one step marked", (await look()).selected, "one");
+	await tab();
+	const again = await look();
+	// The mark means "this was given back", so the press resumes the walk
+	// from where the retreat stopped — and the same rule on the same folder
+	// makes the same step, rather than moving on to the name beside it.
+	expect("the same step is made again", again.value, `${PREFIX}alpha-one`);
+	expect("and nothing is left marked", again.selected, "");
+
+	// And the way back from there re-marks it, rather than spending a press
+	// on a field that does not change.
+	await back();
+	expect("marked once more", (await look()).selected, "one");
 });
 
 test("Shift+Tab keeps going up the path once the walk is undone", async () => {
@@ -375,7 +407,9 @@ test("Shift+Tab keeps going up the path once the walk is undone", async () => {
 	// from here Shift+Tab is a direction, not an undo, and carries on up.
 	await type("scratch");
 	await back();
-	expect("what was typed is given up first", (await look()).value, "");
+	const marked = await look();
+	expect("what was typed is marked, not deleted", marked.value, "scratch");
+	expect("all of it", marked.selected, "scratch");
 	await back();
 	const out = await look();
 	expect("then the folder is left", out.chips, (v) => Array.isArray(v) && !v.includes(`${PREFIX}only`));
@@ -390,9 +424,12 @@ test("Shift+Tab narrows the selection a rung at a time", async () => {
 	await back();
 	expect("and one back down", (await look()).selected, "Cake catapult");
 	// Below the first rung the ladder is over and the press carries on
-	// walking back, which here means giving up the text in the field.
+	// walking back, which here means marking the whole name: the press after
+	// it is the one that leaves the folder.
 	await back();
-	expect("below the first rung it walks on", (await look()).value, "");
+	const whole = await look();
+	expect("below the first rung the name is marked", whole.selected, "Cake catapult.md");
+	expect("and it is all still there", whole.value, "Cake catapult.md");
 });
 
 const filter = process.argv[2];

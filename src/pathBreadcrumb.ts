@@ -134,6 +134,13 @@ interface TabStep {
 	external: string | null;
 	value: string;
 	caret: number;
+	/**
+	 * The run that was showing as given back when the press was made, if
+	 * any. A press that resumes the walk commits marked text without
+	 * changing a character of it, so there is no difference for the way
+	 * back to find: the mark itself is what has to be remembered.
+	 */
+	mark?: { start: number; end: number };
 }
 
 /** A row segment the fitter may shorten, tied to the element showing it. */
@@ -244,6 +251,20 @@ function segmentBoundsAtCaret(value: string, caret: number): { start: number; en
 		}
 	}
 	return { start, end };
+}
+
+/**
+ * Where two strings stop being the same, counting characters.
+ *
+ * Case-sensitive on purpose, unlike everything that matches names: when a
+ * press respelled `lure` as `Lure` the difference is the whole word, and
+ * walking that press back has to mark the whole word.
+ */
+function firstDifference(a: string, b: string): number {
+	const limit = Math.min(a.length, b.length);
+	let at = 0;
+	while (at < limit && a[at] === b[at]) at += 1;
+	return at;
 }
 
 /**
@@ -421,6 +442,17 @@ export class PathBreadcrumb {
 	 * which is the same move one step coarser.
 	 */
 	private tabTrail: TabStep[] = [];
+	/**
+	 * The selection Shift+Tab last made, if it is still the one showing.
+	 *
+	 * That selection means something particular — "these characters were
+	 * completed for you and are being given back" — which the next press
+	 * forward needs to know, so that it resumes the walk from where the
+	 * retreat stopped instead of reading the marked text as typed. Any other
+	 * selection in the field (a preview, a drag of the mouse) will not match
+	 * it, and is treated as text like any other.
+	 */
+	private tabGivenBack: { start: number; end: number } | null = null;
 	/** Set while re-dispatching a click onto a native segment, so our own capture listener lets it through (see openNativeSegment). */
 	private delegatingToNative = false;
 	/**
@@ -3080,7 +3112,17 @@ export class PathBreadcrumb {
 		// literally found nothing while the list showed the very file it
 		// names.
 		const bounds = segmentBoundsAtCaret(input.value, input.selectionEnd ?? input.value.length);
-		const typed = queryAtCaret(input);
+		// A run marked by Shift+Tab is text the walk gave back, not text
+		// anybody typed. The press resumes from where the retreat stopped —
+		// which recomputes the very step it had given back, since the same
+		// rule made it — and writes over the mark. Any other selection in
+		// the field is text like any other.
+		const given = this.tabGivenBack;
+		const resuming =
+			given !== null && given.start === input.selectionStart && given.end === input.selectionEnd;
+		this.tabGivenBack = null;
+		const typed =
+			resuming && given ? input.value.slice(bounds.start, given.start) : queryAtCaret(input);
 		const rows = this.suggest?.completions(typed) ?? [];
 		const candidates = rows.map((row) => ({
 			label: row.label,
@@ -3097,7 +3139,14 @@ export class PathBreadcrumb {
 
 		// What a write would replace: the segment as it stands, extension and
 		// all. `typed` is only what it was matched by.
-		const replacing = input.value.slice(bounds.start, bounds.end);
+		//
+		// Except while resuming, where the marked run is text the walk has
+		// already given back — provisional, not "already there". Measuring
+		// progress against it would make the press that puts the given-back
+		// name *back* look like a press that did nothing, and it would be
+		// skipped in favour of the next name along: walking back one step
+		// and forward one step would land somewhere else entirely.
+		const replacing = resuming ? typed : input.value.slice(bounds.start, bounds.end);
 		const action = planTab(typed, candidates, target, replacing);
 		if (action.kind === "ladder") {
 			this.startLadder(action.path);
@@ -3110,6 +3159,7 @@ export class PathBreadcrumb {
 			external: this.externalPath,
 			value: input.value,
 			caret: input.selectionEnd ?? input.value.length,
+			...(resuming && given ? { mark: { start: given.start, end: given.end } } : {}),
 		});
 		if (action.kind === "descend") {
 			// Whatever was typed after the segment is carried into the folder
@@ -3148,6 +3198,7 @@ export class PathBreadcrumb {
 		// names that matched before the press.
 		this.preview = null;
 		this.prefillSelected = false;
+		this.tabGivenBack = null;
 		this.suggestQueryOverride = queryAtCaret(input);
 		// Untrusted by construction, so `onInput` re-measures and re-lists
 		// without mistaking this for the user typing — which would end the
@@ -3159,14 +3210,17 @@ export class PathBreadcrumb {
 	 * <kbd>Shift</kbd>+Tab: one step back the way Tab came.
 	 *
 	 * The mirror of `handleTabCompletion`, rung for rung and step for step —
-	 * the selection narrows again, then each completion is taken back, then
+	 * the selection narrows again, then each completion is given back, then
 	 * each folder is stepped out of. Past the beginning of the walk it keeps
 	 * going up the path rather than stopping, because "back" reads as a
 	 * direction rather than as an undo history.
 	 *
-	 * What was typed but never completed is given up first, on a press of
-	 * its own: one press should not both discard what you wrote and take you
-	 * out of the folder you wrote it in.
+	 * **Nothing is deleted on the way.** A completion is given back by
+	 * *selecting* the characters it added, exactly as going forward marks
+	 * what it has widened over: the name stays in front of you, typing
+	 * replaces the marked part, and a press forward carries on from where
+	 * the retreat stopped. Only when the whole name is marked — nothing left
+	 * that a press put there — does the next press leave the folder.
 	 */
 	private handleTabBack(input: HTMLInputElement): void {
 		if (this.tabStage !== null) {
@@ -3176,25 +3230,92 @@ export class PathBreadcrumb {
 				return;
 			}
 			// Below the first rung the ladder is over, and the press goes on
-			// to take back a step of the walk in the same breath.
+			// to give back a step of the walk in the same breath.
 			this.tabStage = null;
 			this.tabTargetPath = null;
 		}
 
 		const step = this.tabTrail.pop();
 		if (step) {
-			this.rewindTo(step);
+			// A step that changed folders is given back by coming out of the
+			// folder, which puts its name back in the field as text.
+			if (step.folder !== this.browsePath || step.external !== this.externalPath) {
+				this.rewindTo(step);
+				return;
+			}
+			this.giveBack(input, step);
 			return;
 		}
 
-		if (input.value !== "") {
-			this.writeSegment(input, { start: 0, end: input.value.length }, "");
+		// Nothing this walk put there is left. What remains was typed, and
+		// marking it is the last press before leaving: one press should not
+		// both take back what you wrote and take you out of the folder you
+		// wrote it in.
+		const bounds = segmentBoundsAtCaret(input.value, input.selectionEnd ?? input.value.length);
+		const marked = input.selectionStart === bounds.start && input.selectionEnd === bounds.end;
+		if (!marked && bounds.end > bounds.start) {
+			// Not a step of the walk, so a press forward from here does not
+			// resume anything: it completes the name that is showing, which
+			// is what the field says. Marked all the same, so that typing
+			// replaces it and the press after this one leaves the folder.
+			this.markGivenBack(input, bounds.start, bounds.end, false);
 			return;
 		}
 
-		// Nothing left of this walk: carry on up the path itself. This is
-		// the same move Backspace makes on an empty field.
+		// Carry on up the path itself. This is the move Backspace makes on
+		// an empty field.
 		this.stepOutOfFolder();
+	}
+
+	/**
+	 * Gives one completion back without taking its characters away: the name
+	 * stays as it is and the part that press added is marked instead.
+	 *
+	 * When the step being given back holds *more* text than the field does —
+	 * which happens after walking back and then forward again — that text
+	 * comes back rather than the difference being dropped. Backwards never
+	 * costs you a name.
+	 */
+	private giveBack(input: HTMLInputElement, step: TabStep): void {
+		const caret = input.selectionEnd ?? input.value.length;
+		const bounds = segmentBoundsAtCaret(input.value, caret);
+		// Everything after the name being edited is untouched by completion,
+		// so it is the same in both, and it is what fixes where the name ends.
+		const tail = input.value.slice(bounds.end);
+		const text = step.value.length > input.value.length ? step.value : input.value;
+		input.value = text;
+		if (step.mark) {
+			this.markGivenBack(input, step.mark.start, step.mark.end);
+			return;
+		}
+		const end = Math.max(text.length - tail.length, 0);
+		const start = Math.min(firstDifference(text, step.value), end);
+		this.markGivenBack(input, start, end);
+	}
+
+	/**
+	 * Marks a run of the name as given back, and re-opens the list on what
+	 * is left standing.
+	 *
+	 * The query is the part *before* the mark — what the walk still holds —
+	 * so the dropdown widens back out as the retreat goes on, showing again
+	 * the names the completion had narrowed away.
+	 */
+	private markGivenBack(
+		input: HTMLInputElement,
+		start: number,
+		end: number,
+		resumable = true,
+	): void {
+		input.setSelectionRange(start, end);
+		this.tabGivenBack = resumable ? { start, end } : null;
+		this.preview = null;
+		this.prefillSelected = false;
+		const bounds = segmentBoundsAtCaret(input.value, start);
+		this.suggestQueryOverride = input.value.slice(bounds.start, start);
+		// Untrusted, so this re-lists and re-measures without being taken
+		// for the user typing — which would empty the trail being walked.
+		input.dispatchEvent(new Event("input"));
 	}
 
 	/** Puts the row back exactly as one press of Tab found it. */
@@ -3705,6 +3826,7 @@ export class PathBreadcrumb {
 				this.tabStage = null;
 				this.tabTargetPath = null;
 				this.tabTrail = [];
+				this.tabGivenBack = null;
 			}
 			autoSize();
 			if (this.renameMode) this.updateValidation(inputEl.value, this.currentFolderPath());
@@ -3767,6 +3889,7 @@ export class PathBreadcrumb {
 			this.plugin.app.keymap.popScope(scope);
 			this.suggestQueryOverride = null;
 			this.prefillSelected = false;
+			this.tabGivenBack = null;
 			this.preview = null;
 			this.autoSizeInput = null;
 			this.validationError = "";
@@ -3931,6 +4054,9 @@ export class PathBreadcrumb {
 		// built from the text as it was, so moving through the list does not
 		// compound.
 		const { start, end } = base.segment;
+		// The mark Shift+Tab left is gone the moment the list writes its own
+		// selection over it; what is showing now is a row, not a retreat.
+		this.tabGivenBack = null;
 		input.value = base.text.slice(0, start) + value.label + base.text.slice(end);
 		// Shown selected, the way a completion is: it marks the text as a
 		// suggestion rather than something you typed, and typing replaces it
@@ -3980,6 +4106,7 @@ export class PathBreadcrumb {
 		this.tabStage = null;
 		this.tabTargetPath = null;
 		this.tabTrail = [];
+		this.tabGivenBack = null;
 		this.editCleanup?.();
 		this.editCleanup = null;
 		this.inputEl = null;
