@@ -152,7 +152,17 @@ Once there is nothing left to complete, the presses stop moving along the path a
 
 A fourth click reaches that same fourth rung directly.
 
-The rungs are a **loop, and it costs nothing to go round it**. Click a folder and press nothing but <kbd>Tab</kbd>: the rest of the path is walked, shown from the vault, shown from the system root, and handed back to you exactly as the click left it. The only thing that ever leaves the row is the absolute prefix, on the press that stops showing it.
+The ladder is where the walk **arrives**, not where it starts. Click a folder in the middle of a path and the field opens on everything below it with that folder's name marked; each <kbd>Tab</kbd> then takes **one** folder — marking the next one, keeping the rest of the path behind it — and only once nothing but the file name is left does the widening begin:
+
+| press | chips | field | marked |
+| --- | --- | --- | --- |
+| clicked `a` | | `a/b/c/leaf.md` | `a` |
+| <kbd>Tab</kbd> | `a` | `b/c/leaf.md` | `b` |
+| <kbd>Tab</kbd> | `a › b` | `c/leaf.md` | `c` |
+| <kbd>Tab</kbd> | `a › b › c` | `leaf.md` | `leaf.md` |
+| <kbd>Tab</kbd> | `a › b › c` | `leaf.md` | `leaf` — the first rung |
+
+The rungs are a **loop, and it costs nothing to go round it**: the last press hands the field back exactly as the ladder found it. The only thing that ever leaves the row is the absolute prefix, on the press that stops showing it.
 
 Each rung changes what is *in* the field, not only what is highlighted — a selection has to be over the text it names, or <kbd>Enter</kbd> would commit something other than what you can see is selected. The ladder belongs to one editing session: click away, or type anything at all, and the next <kbd>Tab</kbd> completes a name again.
 
@@ -173,7 +183,7 @@ Typing replaces the marked part, as it does anywhere else. <kbd>Tab</kbd> puts b
 
 Once the whole name is marked there is nothing left that a press put there, and the next press goes *up the path*: it leaves the folder you are standing in, exactly as <kbd>Backspace</kbd> on an empty field does. That costs nothing either — the folder's name comes back into the field **in front of** whatever was in it, marked, which is the same text clicking that folder would have given you. Back is a direction rather than an undo history — but marking the name first means one press never both takes back what you wrote and takes you out of the folder you wrote it in.
 
-Text that opens **already selected** — what a folder click leaves behind it, or the whole path the focus command fills in — is about to be typed over rather than extended, so <kbd>Tab</kbd> goes straight to widening.
+Text that opens **already selected** — what a folder click leaves behind it — is the name <kbd>Tab</kbd> works on next: it is completed and stepped into like anything else, and typing replaces it. Only the focus command opens on a rung of the ladder itself, because it is showing you the whole path rather than a folder to walk.
 
 ## Typing something that is not a path
 

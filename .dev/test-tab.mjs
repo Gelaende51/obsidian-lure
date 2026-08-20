@@ -37,9 +37,12 @@ const FOLDERS = [
 	`${PREFIX}short`,
 	`${PREFIX}short2026`,
 	`${PREFIX}noted`,
+	`${PREFIX}deep`,
+	`${PREFIX}deep/inner`,
+	`${PREFIX}deep/inner/deeper`,
 ];
 /** Files made beside the folders, and taken out again with them. */
-const FILES = [`${PREFIX}noted.md`];
+const FILES = [`${PREFIX}noted.md`, `${PREFIX}deep/inner/deeper/leaf.md`];
 const results = [];
 const tests = [];
 const test = (name, fn) => tests.push({ name, fn });
@@ -329,18 +332,76 @@ test("a lap of the rungs from a folder click costs nothing", async () => {
 	expect("with the folder selected in it", start && start.selected, "2026");
 	expect("and the path behind it", start && start.value, "2026/Cake catapult.md");
 
-	// Four rungs, then the wrap.
+	// The clicked folder is walked first — it is a folder, and Tab walks
+	// folders — and only then does the ladder begin.
 	await page.evaluate(focusField);
-	for (let i = 0; i < 4; i++) await tab();
-	const top = await look();
-	expect("the last rung is the path from the system root", top.selected, (v) =>
-		typeof v === "string" && v.endsWith(`/${NOTE}`) && v.startsWith("/"));
+	await tab();
+	const stepped = await look();
+	expect("the clicked folder is stepped into", stepped.chips, (v) => Array.isArray(v) && v.includes("2026"));
+	expect("carrying the rest of the path with it", stepped.value, "Cake catapult.md");
+
+	// Then the rungs, however many this path needs.
+	const began = await look();
+	let top = null;
+	for (let i = 0; i < 6 && !top; i++) {
+		await tab();
+		const rung = await look();
+		if (typeof rung.selected === "string" && rung.selected.startsWith("/")) top = rung;
+	}
+	expect("a rung shows the path from the system root", top && top.selected, (v) =>
+		typeof v === "string" && v.endsWith(`/${NOTE}`));
 
 	await tab();
 	const round = await look();
-	expect("the lap comes back to the click", round.value, start.value);
-	expect("selection and all", round.selected, start.selected);
-	expect("standing where the click left it", round.chips, start.chips);
+	expect("and the lap comes back with the name still there", round.value, began.value);
+	expect("standing where the ladder began", round.chips, began.chips);
+});
+
+test("every folder in the path gets its own press", async () => {
+	// The complaint this is here for: clicking a folder and pressing Tab
+	// jumped to the file name, and the folders in between were never walked
+	// at all — the ladder took over while there was still path to cover.
+	const deep = `${PREFIX}deep`;
+	const leaf = `${deep}/inner/deeper/leaf.md`;
+	const opened = await page.evaluate(`
+		document.querySelector(".lure-path-input")?.blur();
+		document.body.click();
+		${PAUSE(300)}
+		await app.workspace.getLeaf(false).openFile(app.vault.getAbstractFileByPath(${JSON.stringify(leaf)}));
+		${PAUSE(800)}
+		const c = app.workspace.getMostRecentLeaf().view.containerEl
+			.querySelector(".view-header-title-container");
+		const seg = [...c.querySelectorAll(".view-header-breadcrumb")]
+			.find((e) => e.textContent === ${JSON.stringify(deep)});
+		if (!seg) return false;
+		seg.click();
+		${PAUSE(500)}
+		return true;
+	`);
+	expect("the top folder of the path is clicked", opened, true);
+	const start = await look();
+	expect("the field holds the whole path below it", start.value, `${deep}/inner/deeper/leaf.md`);
+	expect("with that folder marked", start.selected, deep);
+
+	await tab();
+	const one = await look();
+	expect("the first press takes one folder", one.chips, (v) => Array.isArray(v) && v.includes(deep));
+	expect("and opens on the next one, marked", one.selected, "inner");
+	expect("with the rest of the path behind it", one.value, "inner/deeper/leaf.md");
+
+	await tab();
+	const two = await look();
+	expect("the second takes the next", two.chips, (v) => Array.isArray(v) && v.includes("inner"));
+	expect("and marks the one after", two.selected, "deeper");
+
+	await tab();
+	const three = await look();
+	expect("the third takes that one", three.chips, (v) => Array.isArray(v) && v.includes("deeper"));
+	expect("leaving only the file name", three.value, "leaf.md");
+
+	await tab();
+	// Only now, with no folder left to walk, does the key start widening.
+	expect("and only then does the ladder start", (await look()).selected, "leaf");
 });
 
 test("a fourth click reaches the system path too", async () => {

@@ -135,12 +135,17 @@ interface TabStep {
 	value: string;
 	caret: number;
 	/**
-	 * The run that was showing as given back when the press was made, if
-	 * any. A press that resumes the walk commits marked text without
-	 * changing a character of it, so there is no difference for the way
-	 * back to find: the mark itself is what has to be remembered.
+	 * What was selected when the press was made, if anything — a run the
+	 * walk had given back, or the name a folder click opened selected.
+	 *
+	 * Both have to come back on the way out, and the difference matters:
+	 * only a run the walk itself gave back may be *resumed* from, so
+	 * `given` is what tells the two apart. A press that resumes commits
+	 * marked text without changing a character of it, which is why the mark
+	 * has to be remembered at all: there is no difference in the text for
+	 * the way back to find.
 	 */
-	mark?: { start: number; end: number };
+	mark?: { start: number; end: number; given?: boolean };
 }
 
 /** A row segment the fitter may shorten, tied to the element showing it. */
@@ -251,6 +256,17 @@ function segmentBoundsAtCaret(value: string, caret: number): { start: number; en
 		}
 	}
 	return { start, end };
+}
+
+/** Whatever is selected in the field, and whether the walk is what marked it. */
+function markOf(
+	input: HTMLInputElement,
+	given: boolean,
+): { mark?: { start: number; end: number; given?: boolean } } {
+	const start = input.selectionStart ?? 0;
+	const end = input.selectionEnd ?? 0;
+	if (end <= start) return {};
+	return { mark: { start, end, ...(given ? { given: true } : {}) } };
 }
 
 /**
@@ -403,17 +419,6 @@ export class PathBreadcrumb {
 	private validationError = "";
 	/** Suppresses the input's text as an autocomplete query while a prefilled selection is still untouched (see enterTypingMode). */
 	private suggestQueryOverride: string | null = null;
-	/**
-	 * True while the field is still holding text it opened *selected* — a
-	 * folder click's remainder, the focus command's whole path — and nothing
-	 * has been typed over it yet.
-	 *
-	 * Tab needs to know: that text is about to be replaced, so it is not a
-	 * prefix anybody is extending. The query override cannot answer it,
-	 * because the empty string it uses to mean "suppressed" is also what a
-	 * field typed empty legitimately reports.
-	 */
-	private prefillSelected = false;
 	/**
 	 * The field as it was before arrowing into the dropdown — text, selection
 	 * and the bounds of the segment being edited — held so that stepping back
@@ -3103,7 +3108,13 @@ export class PathBreadcrumb {
 	 *
 	 * The completing is a shell's: a press extends what you typed as far as
 	 * the names in the folder agree, and stops where they disagree — see
-	 * `planTab`, which holds the rule itself. Tab steps into a folder only
+	 * `planTab`, which holds the rule itself. What the caret is in is what
+	 * gets completed, so a folder click — which opens the field on the rest
+	 * of the path with that folder's name selected — walks *that* folder
+	 * first and the ones under it after, rather than skipping to the end of
+	 * the path. The ladder is where the walk arrives, not where it starts:
+	 * a file name that is already whole has nothing left to complete, and
+	 * that is what hands the key over. Tab steps into a folder only
 	 * once what you typed leaves exactly one candidate, so a press never
 	 * chooses between names on your behalf. Once there is nothing left to
 	 * complete, the presses stop moving along the path and start widening
@@ -3118,16 +3129,6 @@ export class PathBreadcrumb {
 	private handleTabCompletion(input: HTMLInputElement): void {
 		if (this.tabStage !== null) {
 			this.advanceLadder();
-			return;
-		}
-
-		// Text that opened selected is a prefill about to be typed over, not
-		// a prefix somebody is extending — there is nothing to complete
-		// *from*, so the press goes straight to widening. Without this the
-		// press would complete against the whole prefilled path and land on
-		// whichever child happened to sort first.
-		if (this.prefillSelected) {
-			this.startLadder(null);
 			return;
 		}
 
@@ -3185,16 +3186,22 @@ export class PathBreadcrumb {
 			external: this.externalPath,
 			value: input.value,
 			caret: input.selectionEnd ?? input.value.length,
-			...(resuming && given ? { mark: { start: given.start, end: given.end } } : {}),
+			...(markOf(input, resuming)),
 		});
 		if (action.kind === "descend") {
-			// Whatever was typed after the segment is carried into the folder
-			// rather than dropped: a path pasted in and Tab-walked keeps the
-			// rest of itself.
+			// Whatever stood after the segment is carried into the folder
+			// rather than dropped, and the field opens on its *next* name,
+			// marked — the same state a click on that folder would give.
+			// With the caret at the far end instead, the press after this one
+			// read the file name at the end of the path, found nothing to
+			// complete, and jumped the ladder straight to the file's own
+			// folder: every folder in between swallowed by one press.
 			const rest = input.value.slice(bounds.end).replace(/^[\\/]+/, "");
 			if (this.externalPath !== null) this.extendExternalPath(action.path);
 			else this.extendBrowsePath(action.path);
-			this.enterTypingMode(rest);
+			const landing = asLanding(rest);
+			if (landing) this.enterTypingMode(landing.path, landing.select);
+			else this.enterTypingMode("");
 			return;
 		}
 		this.writeSegment(input, bounds, action.text);
@@ -3223,7 +3230,6 @@ export class PathBreadcrumb {
 		// list filters by — otherwise the dropdown would go on showing the
 		// names that matched before the press.
 		this.preview = null;
-		this.prefillSelected = false;
 		this.tabGivenBack = null;
 		this.suggestQueryOverride = queryAtCaret(input);
 		// Untrusted by construction, so `onInput` re-measures and re-lists
@@ -3312,7 +3318,7 @@ export class PathBreadcrumb {
 		const text = step.value.length > input.value.length ? step.value : input.value;
 		input.value = text;
 		if (step.mark) {
-			this.markGivenBack(input, step.mark.start, step.mark.end);
+			this.markGivenBack(input, step.mark.start, step.mark.end, step.mark.given === true);
 			return;
 		}
 		const end = Math.max(text.length - tail.length, 0);
@@ -3337,7 +3343,6 @@ export class PathBreadcrumb {
 		input.setSelectionRange(start, end);
 		this.tabGivenBack = resumable ? { start, end } : null;
 		this.preview = null;
-		this.prefillSelected = false;
 		const bounds = segmentBoundsAtCaret(input.value, start);
 		this.suggestQueryOverride = input.value.slice(bounds.start, start);
 		// Untrusted, so this re-lists and re-measures without being taken
@@ -3367,9 +3372,13 @@ export class PathBreadcrumb {
 		this.standWhere(step);
 		this.enterTypingMode(step.value, "none");
 		const input = this.inputEl;
-		// The caret goes back where it was, which for a path with more to the
-		// right of the name being edited is not the end of the field.
-		if (input) input.setSelectionRange(step.caret, step.caret);
+		if (!input) return;
+		// The selection comes back too — the folder name a click opened
+		// marked, say — and failing that the caret, which for a path with
+		// more to the right of the name being edited is not the end.
+		if (step.mark) input.setSelectionRange(step.mark.start, step.mark.end);
+		else input.setSelectionRange(step.caret, step.caret);
+		if (step.mark?.given) this.tabGivenBack = { start: step.mark.start, end: step.mark.end };
 	}
 
 	/**
@@ -3802,7 +3811,6 @@ export class PathBreadcrumb {
 		// dropdown the click just opened. Suppressed until the first real
 		// keystroke supersedes it (see onInput).
 		this.suggestQueryOverride = selectionEnd > 0 ? "" : null;
-		this.prefillSelected = selectionEnd > 0;
 
 		const inputEl = host.createEl("input", {
 			type: "text",
@@ -3897,7 +3905,6 @@ export class PathBreadcrumb {
 				// nothing, and the dropdown closed on the first keystroke —
 				// whatever was typed, valid or not.
 				this.suggestQueryOverride = queryAtCaret(inputEl);
-				this.prefillSelected = false;
 				// What is in the field is now what was typed, so there is no
 				// earlier text to go back to.
 				this.preview = null;
@@ -3973,7 +3980,6 @@ export class PathBreadcrumb {
 			window.removeEventListener("keydown", onEscapeCapture, true);
 			this.plugin.app.keymap.popScope(scope);
 			this.suggestQueryOverride = null;
-			this.prefillSelected = false;
 			this.tabGivenBack = null;
 			this.preview = null;
 			this.autoSizeInput = null;

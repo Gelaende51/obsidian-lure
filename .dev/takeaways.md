@@ -875,6 +875,26 @@ Worth generalising: when two rules are each stated over a different notion of
 the same value (here, "the name" as matched and "the name" as displayed),
 their interaction is where the bug will be.
 
+## The caret is the argument, so where it is left is an API decision
+
+Tab completes "the segment the caret is in". Stepping into a folder carries
+whatever stood to the right of it into the new folder — and left the caret at
+the far end of that text, because that is where a caret naturally goes.
+
+Which meant the next press asked about the *last* segment of the path, found
+`leaf.md` with nothing to complete against, and handed the key to the
+selection ladder — whose first rung stands in the file's own folder. Clicking
+a folder and pressing Tab twice therefore swallowed every folder in between in
+one press, with no code anywhere deciding to skip them: three separate,
+individually sensible behaviours composing into a jump.
+
+The fix is one line — land on the *next* name, marked, exactly as a click on
+that folder would — but the lesson is about the shape of the bug. When a
+function's real argument is a piece of UI state (a caret, a scroll offset, a
+focus ring), every place that leaves that state somewhere is silently choosing
+that argument for the next call. Those are the calls worth tracing when
+something "jumps".
+
 ## A cycle that does not close is a leak
 
 The selection ladder wrapped past its last rung by standing at the top folder
