@@ -5,6 +5,7 @@
 	"minAppVersion": "1.8.7",
 	"description": "Shows a clickable, editable breadcrumb of the vault path in each note's header, like a Dolphin file manager address bar.",
 	"author": "Vault51",
+	"authorUrl": "https://github.com/Gelaende51",
 	"fundingUrl": {
 		"Ko-fi": "https://ko-fi.com/vault51"
 	},
