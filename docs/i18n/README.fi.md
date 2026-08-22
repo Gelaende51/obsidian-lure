@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · vain työpöytä · AGPL-3.0
 ## Tekoälyilmoitus
 
 - **Agentti** — **Claude Opus 5** ja **Claude Sonnet 5** (Anthropic, Claude Coden kautta): kirjoitti TypeScriptin, CSS:n, kaikki 45 käännösjoukkoa ja dokumentaation. Käännökset ovat koneellisia, eivätkä äidinkieliset puhujat ole niitä tarkastaneet.
-- **Kulutus** — 3.–13. elokuuta 2026, yhdeksän istuntoa, \~4 928 vastausta: \~7,2 milj. tuotettua tokenia, \~23,7 milj. lähetettyä, \~1169,6 milj. uudelleenlukua välimuistista (\~1200,5 milj. yhteensä).
+- **Kulutus** — 3.–22. elokuuta 2026, 22 istuntoa, \~11 820 vastausta: \~15,4 milj. tuotettua tokenia, \~55,5 milj. lähetettyä, \~3644,2 milj. uudelleenlukua välimuistista (\~3715,0 milj. yhteensä).
 - **Lähde** — malli oppi avoimesta lähdekoodista, dokumentaatiosta ja yhteisön kirjoituksista, jotka muut ovat julkaisseet. Suurin osa ansiosta kuuluu sinne.
 - **Tekijä** — Vault51: määritteli jokaisen ominaisuuden, kokeili jokaista versiota oikeassa holvissa, ohjasi korjaukset ja luki kaikki tulokset läpi.
 
@@ -28,11 +28,18 @@ Obsidian 1.8.7+ · vain työpöytä · AGPL-3.0
 - **Napsauta tiedostonimeä tai tyhjää tilaa** kirjoittaaksesi polun, täydennyksen kanssa. `/` laskeutuu alaspäin, <kbd>Askelpalautin</kbd> nousee tason ylöspäin, <kbd>Enter</kbd> vahvistaa.
 - **Kansion kynäpainike** vaihtaa samat toiminnot siirto-/nimeämistilaan, samoilla tarkistuksilla kuin Obsidian itse tekee.
 - **Pidä <kbd>Ctrl</kbd> pohjassa** avataksesi uudessa välilehdessä — tai siirto-/nimeämistilassa kopioidaksesi muistiinpanon sinne sen sijaan, että siirtäisit sen.
+- **Luettelo avautuu siihen kohtaan, jossa olet**, ja sen selaaminen nuolilla tai osoittimella täyttää kentän sillä, mitä osoitat. Kummankin pään ohi se palauttaa sen, minkä olit kirjoittanut.
+- **Nimet täydentyvät kirjoittaessa** — siltä osin kuin kansion nimet ovat yhtenevät, yhteneväisyys ilmestyy kohdistimen jälkeen valittuna; <kbd>Sarkain</kbd> tai <kbd>→</kbd> ottaa sen kokonaan, <kbd>Askelpalautin</kbd> ottaa sen takaisin.
+- **<kbd>Sarkain</kbd> täydentää kuin komentotulkki**: se jatkaa kirjoittamaasi niin pitkälle kuin nimet ovat yhtenevät, ja astuu kansioon heti kun yksi nimi on jäljellä. Polun lopun jälkeen se sen sijaan laajentaa valintaa: nimi, nimi päätteineen, polku holvista, polku järjestelmän juuresta. <kbd>Vaihto</kbd>+<kbd>Sarkain</kbd> kulkee saman matkan takaperin.
+- **Kopioi napsauttamalla hiiren oikealla** — kahdesti nimen, kolmesti kaiken sen oikealla puolella, ja tyhjässä tilassa koko polun tai järjestelmäpolun.
+- **Vedä muistiinpano rivin kansion päälle** siirtääksesi sen sinne, linkkeineen. Myös holvin nimi ottaa vastaan, juureen; koko valinta siirtyy yhtenä, eikä kansio joka ei voi ottaa vastaan näytä mitään.
+- **Kirjoita URL** — `https://`, `obsidian://`, tai `file://`- tai prosenttikoodattu polku — ja se avataan sen sijaan että sitä luettaisiin muistiinpanon nimenä.
+- **Pitkät polut lyhenevät siitä, missä kirjaimet ovat tarpeettomia** — ei koskaan yli sen, mikä erottaa kansion viereisestä — ja vierivät vasta kun mitään ei ole enää tiivistettävissä. Osoita lyhennettyä nimeä nähdäksesi sen kokonaan.
 - **<kbd>F2</kbd>** vaihtaa muistiinpanon sisäisen otsikon ja polkurivin välillä.
 - **Napsauta holvin nimeä** selataksesi muita holvejasi, kotikansiotasi, tiedostojärjestelmän juurta ja liitettyjä asemia holvia vaihtamatta. Vain luku, kunnes avaat riippulukon, ja kehystettynä virhevärillä koko ajan. Oletuksena pois päältä — katso [holvin ulkopuolella](#holvin-ulkopuolella).
 - **Kaksi varoitustasoa** — punainen holvin ulkopuolella, oranssi tekstitiedostoille, joille Obsidianilla ei ole muokkainta. Katso [kaksi varoitusväriä](usage.fi.md#kaksi-varoitusväriä).
 - **Teemaan mukautuvat kuvakkeet**, vaihdettavissa CSS-pätkästä — ja **45 kieltä**, jokainen jonka Obsidian toimittaa.
-- **Asetukset:** tasaus, valmiit erottimet, mikä napsautus avaa luettelon, holvin nimi, piilotiedostot.
+- **Asetukset:** tasaus, valmiit erottimet, mikä napsautus avaa luettelon, holvin nimi, piilotiedostot, tiedostopäätteet.
 
 ![Sama luettelo siirto-/nimeämistilassa: tiedoston nykyinen nimi kiinnitettynä ylimmäksi, naapurikansiot alapuolella, ja olemassa olevat muistiinpanot himmennettyinä](../images/dropdown.png)
 

@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · chỉ trên máy tính · AGPL-3.0
 ## Công bố về AI
 
 - **Tác nhân** — **Claude Opus 5** và **Claude Sonnet 5** (Anthropic, qua Claude Code): đã viết phần TypeScript, CSS, toàn bộ 45 bộ bản dịch và tài liệu. Các bản dịch do máy tạo ra và chưa được người bản ngữ hiệu đính.
-- **Mức dùng** — 3–13 tháng 8 năm 2026, chín phiên, khoảng 4.928 lượt trả lời: khoảng 7,2 triệu token sinh ra, khoảng 23,7 triệu gửi đi, khoảng 1169,6 triệu lượt đọc lại từ bộ nhớ đệm (tổng khoảng 1200,5 triệu).
+- **Mức dùng** — 3–22 tháng 8 năm 2026, 22 phiên, khoảng 11.820 lượt trả lời: khoảng 15,4 triệu token sinh ra, khoảng 55,5 triệu gửi đi, khoảng 3644,2 triệu lượt đọc lại từ bộ nhớ đệm (tổng khoảng 3715,0 triệu).
 - **Nguồn cội** — mô hình đã học từ mã nguồn mở, tài liệu và các bài viết cộng đồng do người khác công bố. Phần lớn công lao thuộc về họ.
 - **Tác giả** — Vault51: xác định từng tính năng, thử từng phiên bản trong một kho thật, chỉ đạo các sửa chữa, xem lại toàn bộ kết quả.
 
@@ -28,11 +28,18 @@ Obsidian 1.8.7+ · chỉ trên máy tính · AGPL-3.0
 - **Bấm vào tên tệp hoặc chỗ trống** để gõ một đường dẫn, có gợi ý hoàn tất. `/` đi xuống, <kbd>Backspace</kbd> lùi lên một cấp, <kbd>Enter</kbd> xác nhận.
 - **Nút bút chì trên thư mục** chuyển chính những thao tác ấy sang chế độ di chuyển/đổi tên, với đúng những kiểm tra mà Obsidian vẫn làm.
 - **Giữ <kbd>Ctrl</kbd>** để mở trong thẻ mới — hoặc, trong chế độ di chuyển/đổi tên, để sao chép ghi chú tới đó thay vì di chuyển nó.
+- **Danh sách mở ngay tại mục bạn đang đứng**, và di chuyển qua nó bằng phím mũi tên hay con trỏ sẽ điền vào ô thứ bạn đang trỏ tới. Vượt quá đầu nào của danh sách, nó trả lại thứ bạn đã gõ.
+- **Tên tự hoàn thành khi bạn gõ** — ở chỗ các tên trong thư mục trùng nhau, phần trùng hiện ra sau con trỏ, được chọn sẵn; <kbd>Tab</kbd> hoặc <kbd>→</kbd> lấy trọn nó, <kbd>Backspace</kbd> trả lại.
+- **<kbd>Tab</kbd> hoàn thành như một shell**: nó kéo dài phần bạn gõ đến hết chỗ các tên còn trùng nhau, và bước vào một thư mục ngay khi chỉ còn một tên. Vượt quá cuối đường dẫn, nó mở rộng vùng chọn thay vì vậy: tên, tên kèm phần mở rộng, đường dẫn từ kho, đường dẫn từ gốc hệ thống. <kbd>Shift</kbd>+<kbd>Tab</kbd> đi ngược lại chính con đường ấy.
+- **Bấm chuột phải để chép** — hai lần cho một tên, ba lần cho mọi thứ bên phải nó, và trên khoảng trống cho cả đường dẫn hoặc đường dẫn hệ thống.
+- **Kéo một ghi chú thả lên một thư mục trên thanh** để chuyển nó tới đó, kèm cả liên kết. Tên kho cũng nhận, để đưa về gốc; cả một vùng chọn di chuyển như một, và thư mục không nhận được thì không hiện gì cả.
+- **Gõ một URL** — `https://`, `obsidian://`, hoặc đường dẫn `file://` hay mã hoá phần trăm — và nó được mở thay vì bị coi là tên ghi chú.
+- **Đường dẫn dài rút ngắn ở chỗ các chữ cái là thừa** — không bao giờ vượt quá thứ phân biệt một thư mục với thư mục bên cạnh — và chỉ cuộn khi không còn gì để nén. Trỏ vào một tên đã rút gọn để thấy lại đầy đủ.
 - **<kbd>F2</kbd>** chuyển qua lại giữa tiêu đề trong ghi chú và thanh đường dẫn.
 - **Bấm vào tên kho** để duyệt các kho khác của bạn, thư mục nhà, gốc hệ thống tệp và các ổ đã gắn mà không phải đổi kho. Chỉ đọc cho tới khi bạn mở ổ khóa, và được viền bằng màu lỗi suốt thời gian đó. Mặc định tắt — xem [ngoài kho](#ngoài-kho).
 - **Hai mức cảnh báo** — đỏ khi ở ngoài kho, cam cho những tệp văn bản mà Obsidian không có trình sửa. Xem [hai màu cảnh báo](usage.vi.md#hai-màu-cảnh-báo).
 - **Biểu tượng theo giao diện**, thay được từ một đoạn CSS — và **45 ngôn ngữ**, đủ mọi ngôn ngữ Obsidian mang theo.
-- **Cài đặt:** căn lề, các dấu phân cách dựng sẵn, cú bấm nào mở danh sách, tên kho, tệp ẩn.
+- **Cài đặt:** căn lề, các dấu phân cách dựng sẵn, cú bấm nào mở danh sách, tên kho, tệp ẩn, phần mở rộng tệp.
 
 ![Vẫn danh sách ấy trong chế độ di chuyển/đổi tên: tên hiện thời của tệp ghim trên cùng, các thư mục bên cạnh nằm dưới, còn những ghi chú đã có thì mờ đi](../images/dropdown.png)
 

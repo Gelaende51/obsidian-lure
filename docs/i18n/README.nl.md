@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · alleen desktop · AGPL-3.0
 ## AI-verantwoording
 
 - **Agent** — **Claude Opus 5** en **Claude Sonnet 5** (Anthropic, via Claude Code): schreef de TypeScript, de CSS, alle 45 vertaalsets en de documentatie. De vertalingen zijn machinaal gemaakt en niet nagekeken door moedertaalsprekers.
-- **Verbruik** — 3–13 augustus 2026, negen sessies, \~4.928 antwoorden: \~7,2 mln. tokens gegenereerd, \~23,7 mln. verzonden, \~1169,6 mln. herlezingen uit de cache (\~1200,5 mln. in totaal).
+- **Verbruik** — 3–22 augustus 2026, 22 sessies, \~11.820 antwoorden: \~15,4 mln. tokens gegenereerd, \~55,5 mln. verzonden, \~3644,2 mln. herlezingen uit de cache (\~3715,0 mln. in totaal).
 - **Herkomst** — het model heeft geleerd van opensourcecode, documentatie en teksten van de gemeenschap die anderen hebben gepubliceerd. De meeste eer komt hun toe.
 - **Auteur** — Vault51: bepaalde elke functie, testte elke versie in een echte kluis, stuurde de correcties aan en las alle resultaten na.
 
@@ -28,11 +28,18 @@ Obsidian 1.8.7+ · alleen desktop · AGPL-3.0
 - **Klik op de bestandsnaam of op lege ruimte** om een pad te typen, met aanvulling. `/` daalt af, <kbd>Backspace</kbd> gaat een niveau omhoog, <kbd>Enter</kbd> bevestigt.
 - **De potlood-mapknop** zet dezelfde interacties om naar verplaatsen/hernoemen, met dezelfde controles die Obsidian zelf doet.
 - **Houd <kbd>Ctrl</kbd> ingedrukt** om in een nieuw tabblad te openen — of, in verplaats-/hernoemmodus, om de notitie daarheen te kopiëren in plaats van te verplaatsen.
+- **De lijst opent op de vermelding waar je staat**, en er met de pijltjes of de muis doorheen gaan vult het veld met waar je op wijst. Voorbij een van beide uiteinden krijg je terug wat je had getypt.
+- **Namen vullen zichzelf aan terwijl je typt** — waar de namen van de map overeenkomen, verschijnt de overeenkomst achter de cursor, geselecteerd; <kbd>Tab</kbd> of <kbd>→</kbd> neemt hem heel, <kbd>Backspace</kbd> geeft hem terug.
+- **<kbd>Tab</kbd> vult aan zoals een shell**: het verlengt wat je typte tot zover de namen overeenkomen, en stapt een map in zodra er één naam over is. Voorbij het einde van het pad verbreedt het in plaats daarvan de selectie: naam, naam met extensie, pad vanaf de kluis, pad vanaf de systeemwortel. <kbd>Shift</kbd>+<kbd>Tab</kbd> loopt dezelfde weg terug.
+- **Rechtsklik om te kopiëren** — twee keer voor een naam, drie keer voor alles rechts ervan, en op de lege ruimte voor het hele pad of het systeempad.
+- **Sleep een notitie op een map in de rij** om hem daarheen te verplaatsen, links en al. De naam van de kluis neemt hem ook aan, voor de wortel; een hele selectie verhuist als één, en een map die hem niet kan aannemen laat niets zien.
+- **Typ een URL** — `https://`, `obsidian://`, of een `file://`- of procentgecodeerd pad — en die wordt geopend in plaats van als notitienaam gelezen.
+- **Lange paden korten in waar letters overbodig zijn** — nooit verder dan wat een map van de buurmap onderscheidt — en schuiven pas als er niets meer te comprimeren valt. Wijs een ingekort naam aan om hem weer heel te zien.
 - **<kbd>F2</kbd>** wisselt tussen de titel in de notitie en de padbalk.
 - **Klik op de kluisnaam** om door je andere kluizen, je persoonlijke map, de hoofdmap van het bestandssysteem en aangekoppelde stations te bladeren zonder van kluis te wisselen. Alleen-lezen tot je een slot opent, en de hele tijd omkaderd in de foutkleur. Standaard uit — zie [buiten de kluis](#buiten-de-kluis).
 - **Twee waarschuwingsniveaus** — rood buiten de kluis, oranje voor tekstbestanden waarvoor Obsidian geen editor heeft. Zie [de twee waarschuwingskleuren](usage.nl.md#de-twee-waarschuwingskleuren).
 - **Themabare pictogrammen**, te vervangen vanuit een CSS-snippet — en **45 talen**, elke taal die Obsidian meelevert.
-- **Instellingen:** uitlijning, voorkeuzes voor het scheidingsteken, welke klik de lijst opent, kluisnaam, verborgen bestanden.
+- **Instellingen:** uitlijning, voorkeuzes voor het scheidingsteken, welke klik de lijst opent, kluisnaam, verborgen bestanden, bestandsextensies.
 
 ![Dezelfde lijst in verplaats-/hernoemmodus: de huidige bestandsnaam bovenaan vastgezet, daaronder buurmappen, en bestaande notities grijs](../images/dropdown.png)
 

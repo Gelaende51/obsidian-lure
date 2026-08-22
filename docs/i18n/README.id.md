@@ -15,7 +15,7 @@ Obsidian 1.8.7+ · hanya desktop · AGPL-3.0
 ## Pengungkapan AI
 
 - **Agen** — **Claude Opus 5** dan **Claude Sonnet 5** (Anthropic, lewat Claude Code): menulis TypeScript, CSS, seluruh 45 set terjemahan, dan dokumentasinya. Terjemahan dibuat mesin dan belum ditinjau penutur asli.
-- **Pemakaian** — 3–13 Agustus 2026, sembilan sesi, \~4.928 balasan: \~7,2 juta token dihasilkan, \~23,7 juta dikirim, \~1169,6 juta pembacaan ulang dari singgahan (\~1200,5 juta total).
+- **Pemakaian** — 3–22 Agustus 2026, 22 sesi, \~11.820 balasan: \~15,4 juta token dihasilkan, \~55,5 juta dikirim, \~3644,2 juta pembacaan ulang dari singgahan (\~3715,0 juta total).
 - **Hulu** — model belajar dari kode sumber terbuka, dokumentasi, dan tulisan komunitas yang diterbitkan orang lain. Sebagian besar kreditnya milik mereka.
 - **Penulis** — Vault51: menentukan setiap fitur, mencoba tiap versi di vault sungguhan, mengarahkan perbaikan, meninjau seluruh hasilnya.
 
@@ -27,11 +27,18 @@ Obsidian 1.8.7+ · hanya desktop · AGPL-3.0
 - **Klik nama berkas atau ruang kosong** untuk mengetik jalur, dengan pelengkapan otomatis. `/` turun ke dalam, <kbd>Backspace</kbd> naik satu tingkat, <kbd>Enter</kbd> mengesahkan.
 - **Tombol pensil pada folder** mengalihkan interaksi yang sama ke mode pindah/ganti nama, dengan pemeriksaan yang sama seperti yang Obsidian lakukan.
 - **Tahan <kbd>Ctrl</kbd>** untuk membuka di tab baru — atau, dalam mode pindah/ganti nama, untuk menyalin catatan ke sana alih-alih memindahkannya.
+- **Daftar terbuka pada entri tempat kamu berada**, dan menelusurinya dengan panah atau penunjuk mengisi bidang dengan apa yang kamu tunjuk. Melewati salah satu ujungnya, ia mengembalikan apa yang kamu ketik.
+- **Nama melengkapi dirinya saat kamu mengetik** — sejauh nama-nama di folder itu sama, kesamaannya muncul setelah kursor, tersorot; <kbd>Tab</kbd> atau <kbd>→</kbd> mengambilnya utuh, <kbd>Backspace</kbd> mengembalikannya.
+- **<kbd>Tab</kbd> melengkapi seperti shell**: ia memanjangkan yang kamu ketik sejauh nama-nama itu sama, dan masuk ke sebuah folder begitu tinggal satu nama. Melewati ujung jalur, ia justru memperluas pilihan: nama, nama dengan ekstensi, jalur dari vault, jalur dari akar sistem. <kbd>Shift</kbd>+<kbd>Tab</kbd> menempuh jalan yang sama ke belakang.
+- **Klik kanan untuk menyalin** — dua kali untuk sebuah nama, tiga kali untuk semua yang di sebelah kanannya, dan pada ruang kosong untuk seluruh jalur atau jalur sistem.
+- **Seret catatan ke sebuah folder di baris itu** untuk memindahkannya ke sana, berikut tautannya. Nama vault juga menerimanya, untuk akar; satu pilihan utuh berpindah sebagai satu, dan folder yang tak dapat menerimanya tidak menampilkan apa pun.
+- **Ketik URL** — `https://`, `obsidian://`, atau jalur `file://` maupun berkode persen — dan ia dibuka alih-alih dibaca sebagai nama catatan.
+- **Jalur panjang memendek di tempat hurufnya berlebih** — tak pernah melewati apa yang membedakan sebuah folder dari tetangganya — dan baru bergulir ketika tak ada lagi yang bisa dimampatkan. Tunjuk nama yang dipendekkan untuk melihatnya utuh.
 - **<kbd>F2</kbd>** berganti antara judul di dalam catatan dan bilah jalur.
 - **Klik nama vault** untuk menjelajahi vault Anda yang lain, folder rumah, akar sistem berkas, dan diska yang terpasang tanpa berpindah vault. Hanya-baca sampai Anda membuka gembok, dan berbingkai warna galat sepanjang waktu. Mati secara bawaan — lihat [di luar vault](#di-luar-vault).
 - **Dua tingkat peringatan** — merah di luar vault, jingga untuk berkas teks yang tak punya penyunting di Obsidian. Lihat [dua warna peringatan](usage.id.md#dua-warna-peringatan).
 - **Ikon yang mengikuti tema**, bisa ditukar dari potongan CSS — dan **45 bahasa**, setiap bahasa yang dibawa Obsidian.
-- **Pengaturan:** perataan, pemisah siap pakai, klik mana yang membuka daftar, nama vault, berkas tersembunyi.
+- **Pengaturan:** perataan, pemisah siap pakai, klik mana yang membuka daftar, nama vault, berkas tersembunyi, ekstensi berkas.
 
 ![Daftar yang sama dalam mode pindah/ganti nama: nama berkas saat ini disematkan di atas, folder tetangga di bawahnya, dan catatan yang sudah ada diredupkan](../images/dropdown.png)
 

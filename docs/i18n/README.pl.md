@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · tylko komputer · AGPL-3.0
 ## Ujawnienie użycia SI
 
 - **Agent** — **Claude Opus 5** i **Claude Sonnet 5** (Anthropic, przez Claude Code): napisał TypeScript, CSS, wszystkie 45 zestawów tłumaczeń i dokumentację. Tłumaczenia powstały maszynowo i nie były sprawdzane przez native speakerów.
-- **Zużycie** — 3–13 sierpnia 2026, dziewięć sesji, \~4928 odpowiedzi: \~7,2 mln wygenerowanych tokenów, \~23,7 mln wysłanych, \~1169,6 mln odczytów z pamięci podręcznej (\~1200,5 mln łącznie).
+- **Zużycie** — 3–22 sierpnia 2026, 22 sesje, \~11820 odpowiedzi: \~15,4 mln wygenerowanych tokenów, \~55,5 mln wysłanych, \~3644,2 mln odczytów z pamięci podręcznej (\~3715,0 mln łącznie).
 - **Źródło** — model nauczył się z otwartego kodu, dokumentacji i tekstów społeczności opublikowanych przez innych. Większość zasługi należy do nich.
 - **Autor** — Vault51: określił każdą funkcję, przetestował każdą wersję w prawdziwym skarbcu, pokierował poprawkami, przejrzał wszystkie wyniki.
 
@@ -28,11 +28,18 @@ Obsidian 1.8.7+ · tylko komputer · AGPL-3.0
 - **Kliknięcie nazwy pliku lub pustego miejsca** pozwala wpisać ścieżkę, z uzupełnianiem. `/` schodzi w dół, <kbd>Backspace</kbd> wychodzi poziom wyżej, <kbd>Enter</kbd> zatwierdza.
 - **Przycisk ołówka na folderze** przełącza te same interakcje na przenoszenie/zmianę nazwy, ze sprawdzeniami takimi, jakie robi sam Obsidian.
 - **Przytrzymaj <kbd>Ctrl</kbd>**, aby otworzyć w nowej karcie — albo, w trybie przenoszenia/zmiany nazwy, aby skopiować tam notatkę zamiast ją przenosić.
+- **Lista otwiera się na wpisie, w którym stoisz**, a przechodzenie po niej strzałkami lub wskaźnikiem wypełnia pole tym, co wskazujesz. Za którymkolwiek z końców oddaje to, co wpisałeś.
+- **Nazwy uzupełniają się w trakcie pisania** — tam, gdzie nazwy w folderze się zgadzają, zgodność pojawia się za kursorem, zaznaczona; <kbd>Tab</kbd> lub <kbd>→</kbd> bierze ją w całości, <kbd>Backspace</kbd> ją oddaje.
+- **<kbd>Tab</kbd> uzupełnia jak powłoka**: przedłuża wpisane tak daleko, jak nazwy się zgadzają, i wchodzi do folderu, gdy zostanie tylko jedna. Za końcem ścieżki poszerza natomiast zaznaczenie: nazwa, nazwa z rozszerzeniem, ścieżka od skarbca, ścieżka od katalogu głównego systemu. <kbd>Shift</kbd>+<kbd>Tab</kbd> idzie tą samą drogą wstecz.
+- **Kliknij prawym, aby skopiować** — dwa razy nazwę, trzy razy wszystko na prawo od niej, a na pustym miejscu całą ścieżkę albo ścieżkę systemową.
+- **Przeciągnij notatkę na folder na pasku**, aby ją tam przenieść, razem z odnośnikami. Nazwa skarbca też ją przyjmie, do katalogu głównego; całe zaznaczenie przenosi się jako jedno, a folder, który nie może go przyjąć, nie pokazuje nic.
+- **Wpisz adres URL** — `https://`, `obsidian://` albo ścieżkę `file://` lub zakodowaną procentowo — a zostanie otwarty zamiast potraktowany jak nazwa notatki.
+- **Długie ścieżki skracają się tam, gdzie litery są zbędne** — nigdy poza to, co odróżnia folder od sąsiedniego — a przewijają się dopiero, gdy nie ma już czego ściskać. Wskaż skrócona nazwę, aby zobaczyć ją w całości.
 - **<kbd>F2</kbd>** przełącza między tytułem w treści a paskiem ścieżki.
 - **Kliknięcie nazwy skarbca** pozwala przeglądać inne skarbce, katalog domowy, katalog główny systemu plików i zamontowane napędy bez zmiany skarbca. Tylko do odczytu, dopóki nie otworzysz kłódki, i przez cały czas obramowane kolorem błędu. Domyślnie wyłączone — zobacz [poza skarbcem](#poza-skarbcem).
 - **Dwa poziomy ostrzeżenia** — czerwony poza skarbcem, pomarańczowy dla plików tekstowych, dla których Obsidian nie ma edytora. Zobacz [dwa kolory ostrzeżeń](usage.pl.md#dwa-kolory-ostrzeżeń).
 - **Ikony podatne na motywy**, wymienne z poziomu fragmentu CSS — i **45 języków**, wszystkie, które dostarcza Obsidian.
-- **Ustawienia:** wyrównanie, gotowe separatory, które kliknięcie otwiera listę, nazwa skarbca, pliki ukryte.
+- **Ustawienia:** wyrównanie, gotowe separatory, które kliknięcie otwiera listę, nazwa skarbca, pliki ukryte, rozszerzenia plików.
 
 ![Ta sama lista w trybie przenoszenia/zmiany nazwy: bieżąca nazwa pliku przypięta na górze, poniżej foldery sąsiednie, a istniejące notatki wyszarzone](../images/dropdown.png)
 

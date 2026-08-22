@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · solo escritorio · AGPL-3.0
 ## Divulgación sobre IA
 
 - **Agente** — **Claude Opus 5** y **Claude Sonnet 5** (Anthropic, mediante Claude Code): escribió el TypeScript, el CSS, los 45 juegos de traducciones y la documentación. Las traducciones son automáticas y no han sido revisadas por hablantes nativos.
-- **Consumo** — del 3 al 13 de agosto de 2026, nueve sesiones, \~4.928 respuestas: \~7,2 M de tokens generados, \~23,7 M enviados, \~1169,6 M de relecturas en caché (\~1200,5 M en total).
+- **Consumo** — del 3 al 22 de agosto de 2026, 22 sesiones, \~11.820 respuestas: \~15,4 M de tokens generados, \~55,5 M enviados, \~3644,2 M de relecturas en caché (\~3715,0 M en total).
 - **Origen** — el modelo aprendió de código abierto, documentación y escritos de la comunidad publicados por otras personas. La mayor parte del mérito es suya.
 - **Autor** — Vault51: definió cada función, probó cada iteración en una bóveda real, dirigió las correcciones y revisó todos los resultados.
 
@@ -28,11 +28,18 @@ Obsidian 1.8.7+ · solo escritorio · AGPL-3.0
 - **Clic en el nombre del archivo o en el espacio vacío** para escribir una ruta, con autocompletado. `/` desciende, <kbd>Retroceso</kbd> sube un nivel, <kbd>Intro</kbd> confirma.
 - **El botón de lápiz sobre carpeta** cambia las mismas interacciones a mover/renombrar, con las mismas validaciones que aplica Obsidian.
 - **Mantén <kbd>Ctrl</kbd>** para abrir en una pestaña nueva — o, en modo mover/renombrar, para copiar la nota allí en lugar de moverla.
+- **El desplegable se abre en la entrada donde estás**, y recorrerlo con las flechas o el puntero rellena el campo con aquello a lo que apuntas. Al pasar de cualquiera de los extremos te devuelve lo que habías escrito.
+- **Los nombres se completan mientras escribes** — donde los nombres de la carpeta coinciden, la coincidencia aparece tras el cursor, seleccionada; <kbd>Tab</kbd> o <kbd>→</kbd> la toma entera, <kbd>Retroceso</kbd> la devuelve.
+- **<kbd>Tab</kbd> completa como un intérprete de comandos**: extiende lo escrito hasta donde los nombres coinciden, y entra en una carpeta en cuanto queda una sola. Pasado el final de la ruta amplía la selección: nombre, nombre con extensión, ruta desde el almacén, ruta desde la raíz del sistema. <kbd>Mayús</kbd>+<kbd>Tab</kbd> recorre el mismo camino al revés.
+- **Clic derecho para copiar** — dos veces para un nombre, tres para todo lo que está a su derecha, y en el espacio vacío para la ruta entera o la del sistema.
+- **Arrastra una nota sobre una carpeta de la barra** para moverla allí, con sus enlaces. El nombre del almacén también la acepta, para la raíz; una selección entera se mueve como una sola, y una carpeta que no puede aceptarla no muestra nada.
+- **Escribe una URL** — `https://`, `obsidian://`, o una ruta `file://` o codificada en porcentaje — y se abre en vez de tratarse como nombre de nota.
+- **Las rutas largas se acortan donde las letras sobran** — nunca más allá de lo que distingue una carpeta de la de al lado — y solo se desplazan cuando ya no queda nada que comprimir. Apunta a un nombre acortado para verlo completo.
 - **<kbd>F2</kbd>** alterna entre el título en línea y la barra de ruta.
 - **Clic en el nombre de la bóveda** para recorrer tus otras bóvedas, tu carpeta personal, la raíz del sistema de archivos y las unidades montadas sin cambiar de bóveda. Solo lectura hasta que abras un candado, y enmarcado en el color de error todo el tiempo. Desactivado por defecto — véase [fuera de la bóveda](#fuera-de-la-bóveda).
 - **Dos niveles de aviso** — rojo fuera de la bóveda, naranja para los archivos de texto que Obsidian no sabe editar. Véase [los dos colores de aviso](usage.es.md#los-dos-colores-de-aviso).
 - **Iconos adaptables al tema**, sustituibles desde un fragmento CSS — y **45 idiomas**, todos los que Obsidian incluye.
-- **Opciones:** alineación, separadores predefinidos, qué clic abre el desplegable, nombre de la bóveda, archivos ocultos.
+- **Opciones:** alineación, separadores predefinidos, qué clic abre el desplegable, nombre de la bóveda, archivos ocultos, extensiones de archivo.
 
 ![El mismo desplegable en modo mover/renombrar: el nombre actual del archivo fijado arriba, las carpetas hermanas debajo y las notas existentes atenuadas](../images/dropdown.png)
 

@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · faqat kompyuter uchun · AGPL-3.0
 ## Sun'iy intellekt haqida ma'lumot
 
 - **Agent** — **Claude Opus 5** va **Claude Sonnet 5** (Anthropic, Claude Code orqali): TypeScript kodini, CSS'ni, barcha 45 ta tarjima to'plamini va hujjatlarni yozdi. Tarjimalar mashina tomonidan qilingan va ona tili egalari tomonidan tekshirilmagan.
-- **Sarf** — 2026-yil 3–13-avgust, to‘qqiz seans, \~4 928 javob: \~7,2 mln yaratilgan token, \~23,7 mln yuborilgan, keshdan \~1169,6 mln qayta o'qish (jami \~1200,5 mln).
+- **Sarf** — 2026-yil 3–22-avgust, 22 seans, \~11 820 javob: \~15,4 mln yaratilgan token, \~55,5 mln yuborilgan, keshdan \~3644,2 mln qayta o'qish (jami \~3715,0 mln).
 - **Manba** — model boshqalar e'lon qilgan ochiq kodli dastur, hujjatlar va hamjamiyat yozuvlaridan o'rgangan. E'tirofning katta qismi ularga tegishli.
 - **Muallif** — Vault51: har bir imkoniyatni belgiladi, har bir versiyani haqiqiy omborda sinab ko'rdi, tuzatishlarni yo'naltirdi, barcha natijalarni ko'rib chiqdi.
 
@@ -28,11 +28,18 @@ Obsidian 1.8.7+ · faqat kompyuter uchun · AGPL-3.0
 - **Fayl nomiga yoki bo'sh joyga bosing** — yo'lni yozish mumkin bo'ladi, to'ldirish bilan. `/` pastga tushadi, <kbd>Backspace</kbd> bir pog'ona yuqoriga chiqadi, <kbd>Enter</kbd> tasdiqlaydi.
 - **Papkadagi qalam tugmasi** xuddi shu amallarni ko'chirish/nomini o'zgartirish rejimiga o'tkazadi, Obsidian o'zi qiladigan tekshiruvlar bilan.
 - **<kbd>Ctrl</kbd> ni bosib turing** — yangi ilovada ochiladi; ko'chirish/nomini o'zgartirish rejimida esa qaydni u yerga ko'chirish o'rniga nusxalaydi.
+- **Ro'yxat siz turgan yozuv ustida ochiladi**, uni o'q tugmalari yoki ko'rsatkich bilan kezish esa maydonni siz ko'rsatayotgan narsa bilan to'ldiradi. Ikkala uchidan o'tganda u siz yozgan narsani qaytaradi.
+- **Nomlar yozayotganingizda o'zini to'ldiradi** — papkadagi nomlar mos kelgan joyigacha, moslik kursordan keyin belgilangan holda paydo bo'ladi; <kbd>Tab</kbd> yoki <kbd>→</kbd> uni butunlay oladi, <kbd>Backspace</kbd> qaytaradi.
+- **<kbd>Tab</kbd> qobiq kabi to'ldiradi**: yozganingizni nomlar mos kelgunicha uzaytiradi va bitta nom qolishi bilan o'sha papkaga kiradi. Yo'l oxiridan o'tgach esa tanlovni kengaytiradi: nom, kengaytmali nom, ombordan boshlangan yo'l, tizim ildizidan boshlangan yo'l. <kbd>Shift</kbd>+<kbd>Tab</kbd> o'sha yo'ldan orqaga yuradi.
+- **Nusxa olish uchun o'ng tugma** — nom uchun ikki marta, uning o'ng tomonidagi hamma narsa uchun uch marta, bo'sh joyda esa butun yo'l yoki tizim yo'li uchun.
+- **Qaydni qatordagi papka ustiga torting** — havolalari bilan birga o'sha yerga ko'chadi. Ombor nomi ham qabul qiladi, ildizga; butun tanlov bir bo'lib ko'chadi, qabul qila olmaydigan papka esa hech nima ko'rsatmaydi.
+- **URL yozing** — `https://`, `obsidian://`, yoki `file://` yoxud foizli kodlangan yo'l — u qayd nomi deb o'qilish o'rniga ochiladi.
+- **Uzun yo'llar harflar ortiqcha bo'lgan joydan qisqaradi** — papkani qo'shnisidan ajratib turadigan narsadan nariga hech qachon o'tmay — va siqishga hech narsa qolmagandagina suriladi. Qisqargan nomga ko'rsating, u to'liq qaytadi.
 - **<kbd>F2</kbd>** qayd ichidagi sarlavha bilan yo'l satri orasida almashtiradi.
 - **Ombor nomiga bosing** — omborni almashtirmasdan boshqa omborlaringizni, uy papkasini, fayl tizimi ildizini va ulangan disklarni ko'rib chiqing. Qulfni ochmaguningizcha faqat o'qish uchun, va shu davomida xato rangi bilan ramkalangan. Sukut bo'yicha o'chiq — qarang: [ombordan tashqarida](#ombordan-tashqarida).
 - **Ikki darajali ogohlantirish** — ombordan tashqarida qizil, Obsidian'da muharriri yo'q matn fayllari uchun to'q sariq. Qarang: [ikki ogohlantirish rangi](usage.uz.md#ikki-ogohlantirish-rangi).
 - **Mavzuga moslashadigan belgilar**, CSS parchasidan almashtiriladi — va **45 til**, Obsidian olib keladigan har biri.
-- **Sozlamalar:** tekislash, tayyor ajratgichlar, qaysi bosish ro'yxatni ochadi, ombor nomi, yashirin fayllar.
+- **Sozlamalar:** tekislash, tayyor ajratgichlar, qaysi bosish ro'yxatni ochadi, ombor nomi, yashirin fayllar, fayl kengaytmalari.
 
 ![Ko'chirish/nomini o'zgartirish rejimidagi o'sha ro'yxat: faylning hozirgi nomi eng tepaga qadalgan, ostida qo'shni papkalar, mavjud qaydlar esa xiralashtirilgan](../images/dropdown.png)
 

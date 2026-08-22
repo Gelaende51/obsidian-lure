@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · només escriptori · AGPL-3.0
 ## Divulgació sobre la IA
 
 - **Agent** — **Claude Opus 5** i **Claude Sonnet 5** (Anthropic, mitjançant Claude Code): va escriure el TypeScript, el CSS, els 45 jocs de traduccions i la documentació. Les traduccions són automàtiques i no han estat revisades per parlants nadius.
-- **Consum** — del 3 al 13 d'agost de 2026, nou sessions, \~4.928 respostes: \~7,2 M de tokens generats, \~23,7 M enviats, \~1169,6 M de relectures de la memòria cau (\~1200,5 M en total).
+- **Consum** — del 3 al 22 d'agost de 2026, 22 sessions, \~11.820 respostes: \~15,4 M de tokens generats, \~55,5 M enviats, \~3644,2 M de relectures de la memòria cau (\~3715,0 M en total).
 - **Origen** — el model ho ha après de codi obert, documentació i escrits de la comunitat publicats per altres. La major part del mèrit és seva.
 - **Autor** — Vault51: va definir cada funció, va provar cada versió en un cofre real, va dirigir les correccions i va revisar tots els resultats.
 
@@ -28,11 +28,18 @@ Obsidian 1.8.7+ · només escriptori · AGPL-3.0
 - **Clica el nom del fitxer o l'espai buit** per escriure un camí, amb compleció automàtica. `/` baixa, <kbd>Retrocés</kbd> puja un nivell, <kbd>Retorn</kbd> confirma.
 - **El botó de llapis sobre carpeta** passa les mateixes interaccions a moure/reanomenar, amb les mateixes comprovacions que fa Obsidian.
 - **Mantén <kbd>Ctrl</kbd>** per obrir en una pestanya nova — o, en mode moure/reanomenar, per copiar-hi la nota en lloc de moure-la.
+- **El desplegable s'obre a l'entrada on ets**, i recórrer-lo amb les fletxes o el punter omple el camp amb allò que assenyales. Passant de qualsevol dels extrems et torna el que havies escrit.
+- **Els noms es completen mentre escrius** — allà on els noms de la carpeta coincideixen, la coincidència apareix després del cursor, seleccionada; <kbd>Tab</kbd> o <kbd>→</kbd> la pren sencera, <kbd>Retrocés</kbd> la torna.
+- **<kbd>Tab</kbd> completa com un intèrpret d'ordres**: allarga el que has escrit fins on els noms coincideixen, i entra en una carpeta tan bon punt en queda una de sola. Passat el final del camí eixampla la selecció: nom, nom amb extensió, camí des del cofre, camí des de l'arrel del sistema. <kbd>Maj</kbd>+<kbd>Tab</kbd> refà el mateix camí a l'inrevés.
+- **Clic dret per copiar** — dos cops per a un nom, tres per a tot el que hi ha a la seva dreta, i a l'espai buit per al camí sencer o el del sistema.
+- **Arrossega una nota sobre una carpeta de la barra** per moure-la allà, amb els enllaços. El nom del cofre també l'accepta, per a l'arrel; una selecció sencera es mou com una de sola, i una carpeta que no la pot rebre no mostra res.
+- **Escriu un URL** — `https://`, `obsidian://`, o un camí `file://` o codificat amb percentatges — i s'obre en comptes de tractar-se com un nom de nota.
+- **Els camins llargs s'escurcen on les lletres són redundants** — mai més enllà del que distingeix una carpeta de la del costat — i només es desplacen quan ja no queda res per comprimir. Assenyala un nom escurçat per veure'l sencer.
 - **<kbd>F2</kbd>** alterna entre el títol dins la nota i la barra de camí.
 - **Clica el nom del cofre** per navegar pels teus altres cofres, la carpeta personal, l'arrel del sistema de fitxers i les unitats muntades sense canviar de cofre. Només lectura fins que obris un cadenat, i emmarcat amb el color d'error tota l'estona. Desactivat per defecte — vegeu [fora del cofre](#fora-del-cofre).
 - **Dos nivells d'avís** — vermell fora del cofre, taronja per als fitxers de text que Obsidian no sap editar. Vegeu [els dos colors d'avís](usage.ca.md#els-dos-colors-davís).
 - **Icones adaptables al tema**, substituïbles des d'un fragment CSS — i **45 idiomes**, tots els que porta Obsidian.
-- **Opcions:** alineació, separadors predefinits, quin clic obre la llista, nom del cofre, fitxers ocults.
+- **Opcions:** alineació, separadors predefinits, quin clic obre la llista, nom del cofre, fitxers ocults, extensions de fitxer.
 
 ![La mateixa llista en mode moure/reanomenar: el nom actual del fitxer fixat a dalt, les carpetes veïnes a sota i les notes existents en gris](../images/dropdown.png)
 

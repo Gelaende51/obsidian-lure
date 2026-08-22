@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · endast dator · AGPL-3.0
 ## AI-redovisning
 
 - **Agent** — **Claude Opus 5** och **Claude Sonnet 5** (Anthropic, via Claude Code): skrev TypeScript-koden, CSS:en, alla 45 översättningsuppsättningar och dokumentationen. Översättningarna är maskinellt gjorda och inte granskade av modersmålstalare.
-- **Förbrukning** — 3–13 augusti 2026, nio sessioner, \~4 928 svar: \~7,2 M genererade tokens, \~23,7 M skickade, \~1169,6 M omläsningar ur cachen (\~1200,5 M totalt).
+- **Förbrukning** — 3–22 augusti 2026, 22 sessioner, \~11 820 svar: \~15,4 M genererade tokens, \~55,5 M skickade, \~3644,2 M omläsningar ur cachen (\~3715,0 M totalt).
 - **Ursprung** — modellen har lärt sig av öppen källkod, dokumentation och gemenskapstexter som andra publicerat. Merparten av äran tillkommer dem.
 - **Författare** — Vault51: bestämde varje funktion, provade varje version i ett riktigt valv, styrde rättelserna och läste igenom allt resultat.
 
@@ -28,11 +28,18 @@ Obsidian 1.8.7+ · endast dator · AGPL-3.0
 - **Klicka på filnamnet eller på tom yta** för att skriva en sökväg, med komplettering. `/` går nedåt, <kbd>Backsteg</kbd> går upp en nivå, <kbd>Retur</kbd> bekräftar.
 - **Pennknappen på mapp** ställer om samma interaktioner till flytta/byt namn, med samma kontroller som Obsidian själv gör.
 - **Håll <kbd>Ctrl</kbd>** för att öppna i en ny flik — eller, i flytta/byt namn-läget, för att kopiera anteckningen dit i stället för att flytta den.
+- **Listan öppnas på posten du står i**, och att gå igenom den med piltangenterna eller pekaren fyller fältet med det du pekar på. Förbi någondera änden ger den tillbaka det du hade skrivit.
+- **Namn fyller i sig själva medan du skriver** — där mappens namn stämmer överens visas överensstämmelsen efter markören, markerad; <kbd>Tabb</kbd> eller <kbd>→</kbd> tar den hel, <kbd>Backsteg</kbd> tar tillbaka den.
+- **<kbd>Tabb</kbd> kompletterar som ett skal**: den förlänger det du skrivit så långt namnen stämmer överens, och stiger in i en mapp så snart bara ett namn återstår. Förbi sökvägens slut vidgar den i stället markeringen: namn, namn med filändelse, sökväg från valvet, sökväg från systemroten. <kbd>Skift</kbd>+<kbd>Tabb</kbd> går samma väg tillbaka.
+- **Högerklicka för att kopiera** — två gånger för ett namn, tre gånger för allt till höger om det, och på det tomma utrymmet för hela sökvägen eller systemsökvägen.
+- **Dra en anteckning till en mapp i raden** för att flytta den dit, länkar och allt. Valvets namn tar också emot, till roten; en hel markering flyttas som en, och en mapp som inte kan ta emot visar ingenting.
+- **Skriv en URL** — `https://`, `obsidian://`, eller en `file://`- eller procentkodad sökväg — och den öppnas i stället för att läsas som ett anteckningsnamn.
+- **Långa sökvägar kortas där bokstäverna är överflödiga** — aldrig bortom det som skiljer en mapp från grannen — och rullar först när det inte finns mer att pressa ihop. Peka på ett förkortat namn för att få det helt igen.
 - **<kbd>F2</kbd>** växlar mellan rubriken i anteckningen och sökvägsraden.
 - **Klicka på valvets namn** för att bläddra i dina andra valv, hemmappen, filsystemets rot och monterade enheter utan att byta valv. Skrivskyddat tills du öppnar ett hänglås, och inramat i felfärgen hela tiden. Avstängt som standard — se [utanför valvet](#utanför-valvet).
 - **Två varningsnivåer** — rött utanför valvet, orange för textfiler som Obsidian saknar redigerare för. Se [de två varningsfärgerna](usage.sv.md#de-två-varningsfärgerna).
 - **Temabara ikoner**, utbytbara från ett CSS-utdrag — och **45 språk**, alla som Obsidian levererar.
-- **Inställningar:** justering, förvalda avskiljare, vilket klick som öppnar listan, valvets namn, dolda filer.
+- **Inställningar:** justering, förvalda avskiljare, vilket klick som öppnar listan, valvets namn, dolda filer, filändelser.
 
 ![Samma lista i flytta/byt namn-läget: filens nuvarande namn fastnålat överst, grannmappar under, och befintliga anteckningar nedtonade](../images/dropdown.png)
 

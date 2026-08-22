@@ -11,7 +11,7 @@ Obsidian 1.8.7+ · desktop only · AGPL-3.0
 ## AI disclosure
 
 - **Agent** — **Claude Opus 5** and **Claude Sonnet 5** (Anthropic, via Claude Code): wrote the TypeScript, the CSS, all 45 translation sets and the documentation. Translations are machine-generated and unreviewed by native speakers.
-- **Usage** — 3–13 Aug 2026, nine sessions, \~4,928 responses: \~7.2 M tokens generated, \~23.7 M sent, \~1169.6 M cached re-reads (\~1200.5 M total).
+- **Usage** — 3–22 Aug 2026, 22 sessions, \~11,820 responses: \~15.4 M tokens generated, \~55.5 M sent, \~3644.2 M cached re-reads (\~3715.0 M total).
 - **Upstream** — the model learned from open source code, documentation and community writing published by others. Most of the credit goes there.
 - **Author** — Vault51: specified every feature, tested each iteration in a live vault, directed the fixes, reviewed all output.
 
@@ -34,7 +34,7 @@ Obsidian 1.8.7+ · desktop only · AGPL-3.0
 - **Click the vault name** to browse your other vaults, home, the filesystem root and mounted drives without switching vaults. Read-only until you open a padlock, and framed in the error colour throughout. Off by default — see [outside the vault](#outside-the-vault).
 - **Two warning tiers** — red outside the vault, orange for text files Obsidian has no editor for. See [the warning colours](docs/usage.md#the-two-warning-colours).
 - **Themeable icons**, swapped from a CSS snippet — and **45 locales**, every language Obsidian ships.
-- **Settings:** alignment, delimiter presets, which click opens the dropdown, vault name, dot files.
+- **Settings:** alignment, delimiter presets, which click opens the dropdown, vault name, dot files, file extensions.
 
 ![The same dropdown in move/rename mode: the current filename pinned at the top, sibling folders below it, and existing notes greyed out](docs/images/dropdown.png)
 

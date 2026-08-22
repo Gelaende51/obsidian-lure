@@ -15,7 +15,7 @@ Obsidian 1.8.7+ · pouze počítač · AGPL-3.0
 ## Prohlášení o AI
 
 - **Agent** — **Claude Opus 5** a **Claude Sonnet 5** (Anthropic, přes Claude Code): napsal TypeScript, CSS, všech 45 sad překladů a dokumentaci. Překlady vznikly strojově a rodilí mluvčí je nekontrolovali.
-- **Spotřeba** — 3.–13. srpna 2026, devět sezení, \~4928 odpovědí: \~7,2 mil. vygenerovaných tokenů, \~23,7 mil. odeslaných, \~1169,6 mil. opětovných čtení z mezipaměti (\~1200,5 mil. celkem).
+- **Spotřeba** — 3.–22. srpna 2026, 22 sezení, \~11820 odpovědí: \~15,4 mil. vygenerovaných tokenů, \~55,5 mil. odeslaných, \~3644,2 mil. opětovných čtení z mezipaměti (\~3715,0 mil. celkem).
 - **Zdroj** — model se učil z otevřeného kódu, dokumentace a textů komunity, které zveřejnili jiní. Většina zásluh patří tam.
 - **Autor** — Vault51: určil každou funkci, každou verzi vyzkoušel ve skutečném trezoru, řídil opravy, prošel všechny výstupy.
 
@@ -27,11 +27,18 @@ Obsidian 1.8.7+ · pouze počítač · AGPL-3.0
 - **Kliknutí na název souboru nebo na prázdné místo** umožní napsat cestu, s doplňováním. `/` sestupuje, <kbd>Backspace</kbd> vystoupí o úroveň výš, <kbd>Enter</kbd> potvrdí.
 - **Tlačítko tužky na složce** přepne stejné interakce na přesun/přejmenování, se stejnými kontrolami, jaké dělá sám Obsidian.
 - **Podrž <kbd>Ctrl</kbd>** pro otevření na nové kartě — nebo, v režimu přesunu/přejmenování, pro zkopírování poznámky tam místo jejího přesunutí.
+- **Seznam se otevře na položce, ve které stojíte**, a procházení šipkami nebo ukazatelem vyplní pole tím, na co ukazujete. Za kterýmkoli koncem vám vrátí to, co jste napsali.
+- **Názvy se doplňují při psaní** — kde se názvy ve složce shodují, objeví se shoda za kurzorem, označená; <kbd>Tab</kbd> nebo <kbd>→</kbd> ji vezme celou, <kbd>Backspace</kbd> ji vrátí.
+- **<kbd>Tab</kbd> doplňuje jako shell**: prodlouží napsané tak daleko, jak se názvy shodují, a vstoupí do složky, jakmile zbude jediný název. Za koncem cesty místo toho rozšíří výběr: název, název s příponou, cesta od trezoru, cesta od kořene systému. <kbd>Shift</kbd>+<kbd>Tab</kbd> jde toutéž cestou zpět.
+- **Kliknutím pravým tlačítkem zkopírujete** — dvakrát název, třikrát vše napravo od něj, a na prázdném místě celou cestu nebo cestu systémovou.
+- **Přetáhněte poznámku na složku v řádku** a přesune se tam i s odkazy. Název trezoru ji přijme také, do kořene; celý výběr se přesune jako jeden a složka, která jej přijmout nemůže, neukáže nic.
+- **Napište URL** — `https://`, `obsidian://`, nebo cestu `file://` či zakódovanou procenty — a otevře se, místo aby se četla jako název poznámky.
+- **Dlouhé cesty se zkracují tam, kde jsou písmena nadbytečná** — nikdy za hranici toho, co odliší složku od sousední — a posouvají se, teprve když už není co stlačit. Ukažte na zkrácený název, ať jej uvidíte celý.
 - **<kbd>F2</kbd>** přepíná mezi nadpisem v textu a řádkem cesty.
 - **Kliknutí na název trezoru** umožní procházet ostatní trezory, domovskou složku, kořen souborového systému a připojené jednotky, aniž bys měnil trezor. Jen ke čtení, dokud neotevřeš zámek, a po celou dobu orámováno chybovou barvou. Ve výchozím stavu vypnuto — viz [mimo trezor](#mimo-trezor).
 - **Dva stupně varování** — červená mimo trezor, oranžová pro textové soubory, pro které Obsidian nemá editor. Viz [dvě varovné barvy](usage.cs.md#dvě-varovné-barvy).
 - **Ikony přizpůsobitelné motivu**, vyměnitelné z úryvku CSS — a **45 jazyků**, každý, který Obsidian přináší.
-- **Nastavení:** zarovnání, přednastavené oddělovače, které kliknutí otevírá seznam, název trezoru, skryté soubory.
+- **Nastavení:** zarovnání, přednastavené oddělovače, které kliknutí otevírá seznam, název trezoru, skryté soubory, přípony souborů.
 
 ![Tentýž seznam v režimu přesunu/přejmenování: současný název souboru připnutý nahoře, pod ním sousední složky a existující poznámky zašedlé](../images/dropdown.png)
 

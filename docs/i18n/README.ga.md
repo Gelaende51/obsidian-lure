@@ -15,7 +15,7 @@ Obsidian 1.8.7+ · deasc amháin · AGPL-3.0
 ## Nochtadh faoin IS
 
 - **Gníomhaire** — **Claude Opus 5** agus **Claude Sonnet 5** (Anthropic, trí Claude Code): scríobh sé an TypeScript, an CSS, na 45 sraith aistriúcháin ar fad agus an doiciméadú. Is aistriúcháin mheaisín iad agus níor léigh cainteoirí dúchais iad.
-- **Úsáid** — 3–13 Lúnasa 2026, naoi seisiún, \~4,928 freagra: \~7.2 milliún ceadchomhartha ginte, \~23.7 milliún seolta, \~1169.6 milliún athléamh ón taisce (\~1200.5 milliún san iomlán).
+- **Úsáid** — 3–22 Lúnasa 2026, 22 seisiún, \~11,820 freagra: \~15.4 milliún ceadchomhartha ginte, \~55.5 milliún seolta, \~3644.2 milliún athléamh ón taisce (\~3715.0 milliún san iomlán).
 - **Foinse** — d'fhoghlaim an múnla ó chód foinse oscailte, ó dhoiciméadú agus ó scríbhinní pobail a d'fhoilsigh daoine eile. Is leo formhór an chreidiúna.
 - **Údar** — Vault51: shocraigh sé gach gné, thriail sé gach leagan i dtaisceadán fíor, stiúir sé na ceartúcháin, léigh sé gach toradh.
 
@@ -27,11 +27,18 @@ Obsidian 1.8.7+ · deasc amháin · AGPL-3.0
 - **Cliceáil ar ainm an chomhaid nó ar an spás folamh** chun conair a chlóscríobh, le comhlánú. Téann `/` síos isteach, téann <kbd>Cúlspás</kbd> leibhéal amháin suas, agus daingníonn <kbd>Enter</kbd>.
 - **Athraíonn cnaipe an phinn luaidhe ar fhillteán** na hidirghníomhaíochtaí céanna go mód bogtha/athainmnithe, leis na seiceálacha céanna a dhéanann Obsidian féin.
 - **Coinnigh <kbd>Ctrl</kbd> síos** chun é a oscailt i gcluaisín nua — nó, sa mhód bogtha/athainmnithe, chun an nóta a chóipeáil ann in ionad é a bhogadh.
+- **Osclaíonn an liosta ar an iontráil ina bhfuil tú**, agus é a shiúl leis na saigheada nó leis an bpointeoir líonann sé an réimse leis an rud a bhfuil tú ag díriú air. Thar cheachtar ceann tugann sé ar ais duit an rud a chlóscríobh tú.
+- **Comhlánaíonn ainmneacha iad féin agus tú ag clóscríobh** — mar a réitíonn ainmneacha an fhillteáin, taispeántar an réiteach i ndiaidh an chúrsóra, roghnaithe; tógann <kbd>Tab</kbd> nó <kbd>→</kbd> ina iomláine é, tugann <kbd>Cúlspás</kbd> ar ais é.
+- **Comhlánaíonn <kbd>Tab</kbd> ar nós blaoisce**: síneann sé an méid a chlóscríobh tú chomh fada is a réitíonn na hainmneacha, agus téann sé isteach i bhfillteán a luaithe is nach bhfuil ach ainm amháin fágtha. Thar dheireadh na conaire leathnaíonn sé an roghnú ina áit sin: ainm, ainm le hiarmhír, conair ón taisce, conair ó fhréamh an chórais. Siúlann <kbd>Shift</kbd>+<kbd>Tab</kbd> an bóthar céanna ar gcúl.
+- **Deaschliceáil chun cóipeáil** — dhá uair le haghaidh ainm, trí huaire le haghaidh gach a bhfuil ar a dheis, agus ar an spás folamh le haghaidh na conaire iomláine nó conair an chórais.
+- **Tarraing nóta ar fhillteán sa ró** chun é a bhogadh ann, naisc san áireamh. Glacann ainm na taisce leis freisin, don fhréamh; bogann roghnú iomlán mar aon rud amháin, agus fillteán nach féidir leis glacadh leis, ní thaispeánann sé faic.
+- **Clóscríobh URL** — `https://`, `obsidian://`, nó conair `file://` nó ionchódaithe le céatadáin — agus osclaítear é seachas é a léamh mar ainm nóta.
+- **Giorraíonn conairí fada san áit a bhfuil na litreacha iomarcach** — riamh thar an méid a dhealaíonn fillteán ón gceann in aice leis — agus ní scrollaíonn siad ach nuair nach bhfuil aon rud fágtha le comhbhrú. Dírigh ar ainm giorraithe chun é a fháil ina iomláine.
 - **Malartaíonn <kbd>F2</kbd>** idir an teideal laistigh den nóta agus barra na conaire.
 - **Cliceáil ar ainm an taisceadáin** chun do thaisceadáin eile, an fillteán baile, fréamh an chórais comhad agus na tiomántáin fheistithe a bhrabhsáil gan taisceadán a athrú. Léamh amháin go dtí go n-osclaíonn tú glas fraincín, agus fráma an dath earráide air an t-am ar fad. Múchta de réir réamhshocraithe — féach [lasmuigh den taisceadán](#lasmuigh-den-taisceadán).
 - **Dhá leibhéal rabhaidh** — dearg lasmuigh den taisceadán, flannbhuí do chomhaid téacs nach bhfuil eagarthóir ag Obsidian dóibh. Féach [an dá dhath rabhaidh](usage.ga.md#an-dá-dhath-rabhaidh).
 - **Deilbhíní a leanann an téama**, is féidir iad a mhalartú ó ghearrthóg CSS — agus **45 teanga**, gach ceann a thugann Obsidian leis.
-- **Socruithe:** ailíniú, deighilteoirí réamhshocraithe, cén chliceáil a osclaíonn an liosta, ainm an taisceadáin, comhaid fholaithe.
+- **Socruithe:** ailíniú, deighilteoirí réamhshocraithe, cén chliceáil a osclaíonn an liosta, ainm an taisceadáin, comhaid fholaithe, iarmhíreanna comhaid.
 
 ![An liosta céanna sa mhód bogtha/athainmnithe: ainm reatha an chomhaid pionnáilte ag an mbarr, fillteáin bhéal dorais faoi, agus na nótaí atá ann cheana lagaithe](../images/dropdown.png)
 

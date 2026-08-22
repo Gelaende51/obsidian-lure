@@ -662,6 +662,7 @@ appear in a real name, where an apostrophe very much can.
 | **Show vault name** | On / Off | On | Whether the vault itself is the first breadcrumb segment. Turned off, that segment becomes a 🏠 icon rather than disappearing, so the path still starts somewhere clickable. |
 | **Folder name opens the dropdown** | On / Off | On | Swaps what a folder name and the delimiter after it do — see [the table above](#the-breadcrumb). With [Folder notes](obsidian://show-plugin?id=folder-notes) the delimiter opens folder notes. Never applies in rename/move mode. |
 | **Show dot files** | On / Off | Off | Whether dot-files and dot-folders are listed in the dropdowns. Overwrite protection applies either way. |
+| **Show file extensions** | On / Off | Off | Whether the file's name on the row carries its extension. Off, it is left off — as Obsidian leaves it off a note's title. On, the row names the file the way the filesystem does. Either way the extension is the second thing given up when the row runs out of room, straight after the vault name. |
 | **Access external files** | On / Off | **Off** | Whether the vault name opens the locations dropdown. Off, nothing in the plugin ever looks past this vault. |
 
 ## Replacing the icons

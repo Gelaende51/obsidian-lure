@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · csak asztali gépen · AGPL-3.0
 ## MI-nyilatkozat
 
 - **Ügynök** — **Claude Opus 5** és **Claude Sonnet 5** (Anthropic, a Claude Code-on keresztül): megírta a TypeScript kódot, a CSS-t, mind a 45 fordításkészletet és a dokumentációt. A fordítások gépiek, anyanyelvi lektorálás nélkül.
-- **Fogyasztás** — 2026. augusztus 3–13., kilenc munkamenet, \~4928 válasz: \~7,2 M előállított token, \~23,7 M elküldött, \~1169,6 M újraolvasás a gyorsítótárból (összesen \~1200,5 M).
+- **Fogyasztás** — 2026. augusztus 3–22., 22 munkamenet, \~11820 válasz: \~15,4 M előállított token, \~55,5 M elküldött, \~3644,2 M újraolvasás a gyorsítótárból (összesen \~3715,0 M).
 - **Forrás** — a modell nyílt forráskódú kódból, dokumentációból és mások által közzétett közösségi írásokból tanult. Az érdem nagyobb része őket illeti.
 - **Szerző** — Vault51: meghatározott minden funkciót, valódi széfben próbálta ki az egyes változatokat, irányította a javításokat, átnézte az összes eredményt.
 
@@ -28,11 +28,18 @@ Obsidian 1.8.7+ · csak asztali gépen · AGPL-3.0
 - **Kattints a fájlnévre vagy az üres helyre**, és beírhatsz egy útvonalat, kiegészítéssel. A `/` lefelé lép be, a <kbd>Backspace</kbd> egy szinttel feljebb, az <kbd>Enter</kbd> jóváhagy.
 - **A mappán lévő ceruzagomb** ugyanezeket a műveleteket áthelyezés/átnevezés módba kapcsolja, ugyanazokkal az ellenőrzésekkel, amelyeket az Obsidian is végez.
 - **Tartsd nyomva a <kbd>Ctrl</kbd> billentyűt**, hogy új lapon nyíljon meg — vagy áthelyezés/átnevezés módban, hogy a jegyzetet oda másold ahelyett, hogy áthelyeznéd.
+- **A lista azon a bejegyzésen nyílik meg, amelyikben állsz**, és a nyilakkal vagy az egérrel végigmenni rajta azzal tölti ki a mezőt, amire mutatsz. Bármelyik végén túl visszaadja, amit begépeltél.
+- **A nevek gépelés közben kiegészülnek** — ahol a mappa nevei megegyeznek, az egyezés a kurzor mögött jelenik meg, kijelölve; a <kbd>Tab</kbd> vagy a <kbd>→</kbd> egészben elveszi, a <kbd>Backspace</kbd> visszaadja.
+- **A <kbd>Tab</kbd> úgy egészít ki, mint egy parancsértelmező**: addig nyújtja a begépeltet, ameddig a nevek megegyeznek, és belép egy mappába, amint egyetlen név marad. Az útvonal vége után inkább a kijelölést tágítja: név, név kiterjesztéssel, útvonal a széftől, útvonal a rendszer gyökerétől. A <kbd>Shift</kbd>+<kbd>Tab</kbd> ugyanezt az utat járja visszafelé.
+- **Jobb kattintás másol** — kétszer a nevet, háromszor mindent, ami tőle jobbra van, az üres helyen pedig a teljes vagy a rendszerbeli útvonalat.
+- **Húzz egy jegyzetet a sor egyik mappájára**, hogy oda kerüljön, hivatkozásostul. A széf neve is befogadja, a gyökérbe; egy egész kijelölés egyben mozdul, és az a mappa, amelyik nem tudja befogadni, semmit sem mutat.
+- **Írj be egy URL-t** — `https://`, `obsidian://`, vagy egy `file://` illetve százalékkódolt útvonalat — és megnyílik ahelyett, hogy jegyzetnévnek olvasná.
+- **A hosszú útvonalak ott rövidülnek, ahol a betűk fölöslegesek** — sosem azon túl, ami egy mappát megkülönböztet a szomszédjától — és csak akkor gördülnek, ha már nincs mit összenyomni. Mutass rá egy lerövidített névre, hogy egészben lásd.
 - Az **<kbd>F2</kbd>** a jegyzeten belüli cím és az útvonalsáv között vált.
 - **Kattints a széf nevére**, és széfváltás nélkül böngészheted a többi széfedet, a saját mappádat, a fájlrendszer gyökerét és a csatolt meghajtókat. Csak olvasható, amíg ki nem nyitsz egy lakatot, és végig a hibaszínnel van keretezve. Alapból kikapcsolva — lásd [a széfen kívül](#a-széfen-kívül).
 - **Két figyelmeztetési szint** — piros a széfen kívül, narancs azoknál a szövegfájloknál, amelyekhez az Obsidiannak nincs szerkesztője. Lásd [a két figyelmeztető szín](usage.hu.md#a-két-figyelmeztető-szín).
 - **Témát követő ikonok**, egy CSS-részletből cserélhetők — és **45 nyelv**, minden, amit az Obsidian hoz magával.
-- **Beállítások:** igazítás, előre megadott elválasztók, melyik kattintás nyitja a listát, a széf neve, rejtett fájlok.
+- **Beállítások:** igazítás, előre megadott elválasztók, melyik kattintás nyitja a listát, a széf neve, rejtett fájlok, fájlkiterjesztések.
 
 ![Ugyanaz a lista áthelyezés/átnevezés módban: a fájl jelenlegi neve legfelül rögzítve, alatta a szomszédos mappák, a meglévő jegyzetek pedig halványan](../images/dropdown.png)
 

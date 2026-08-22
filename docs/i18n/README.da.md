@@ -15,7 +15,7 @@ Obsidian 1.8.7+ · kun computer · AGPL-3.0
 ## AI-oplysning
 
 - **Agent** — **Claude Opus 5** og **Claude Sonnet 5** (Anthropic, via Claude Code): skrev TypeScript-koden, CSS'en, alle 45 oversættelsessæt og dokumentationen. Oversættelserne er lavet maskinelt og ikke gennemlæst af modersmålstalere.
-- **Forbrug** — 3.–13. august 2026, ni sessioner, \~4.928 svar: \~7,2 mio. genererede tokens, \~23,7 mio. sendte, \~1169,6 mio. genlæsninger fra cachen (\~1200,5 mio. i alt).
+- **Forbrug** — 3.–22. august 2026, 22 sessioner, \~11.820 svar: \~15,4 mio. genererede tokens, \~55,5 mio. sendte, \~3644,2 mio. genlæsninger fra cachen (\~3715,0 mio. i alt).
 - **Ophav** — modellen har lært af open source-kode, dokumentation og fællesskabstekster udgivet af andre. Størstedelen af æren tilfalder dem.
 - **Forfatter** — Vault51: fastlagde hver funktion, prøvede hver udgave i en rigtig boks, styrede rettelserne og læste alle resultater igennem.
 
@@ -27,11 +27,18 @@ Obsidian 1.8.7+ · kun computer · AGPL-3.0
 - **Klik på filnavnet eller på tom plads** for at skrive en sti, med fuldførelse. `/` går nedad, <kbd>Backspace</kbd> går et niveau op, <kbd>Enter</kbd> bekræfter.
 - **Blyantsknappen på mappe** stiller de samme handlinger om til flyt/omdøb, med de samme kontroller, som Obsidian selv laver.
 - **Hold <kbd>Ctrl</kbd>** for at åbne i en ny fane — eller, i flyt/omdøb-tilstand, for at kopiere noten derhen i stedet for at flytte den.
+- **Listen åbner på den post, du står i**, og at gå gennem den med piletasterne eller markøren fylder feltet med det, du peger på. Forbi begge ender giver den dig tilbage, hvad du havde skrevet.
+- **Navne fuldfører sig selv, mens du skriver** — hvor mappens navne stemmer overens, vises overensstemmelsen efter markøren, markeret; <kbd>Tab</kbd> eller <kbd>→</kbd> tager den hel, <kbd>Backspace</kbd> tager den tilbage.
+- **<kbd>Tab</kbd> fuldfører som en shell**: den forlænger det skrevne, så langt navnene stemmer overens, og træder ind i en mappe, så snart der kun er ét navn tilbage. Forbi stiens ende udvider den i stedet markeringen: navn, navn med endelse, sti fra boksen, sti fra systemroden. <kbd>Skift</kbd>+<kbd>Tab</kbd> går samme vej tilbage.
+- **Højreklik for at kopiere** — to gange for et navn, tre gange for alt til højre for det, og på det tomme felt for hele stien eller systemstien.
+- **Træk en note hen på en mappe i rækken** for at flytte den derhen, links og det hele. Boksens navn tager også imod, til roden; en hel markering flytter som én, og en mappe, der ikke kan tage imod, viser ingenting.
+- **Skriv en URL** — `https://`, `obsidian://` eller en `file://`- eller procentkodet sti — og den åbnes i stedet for at blive læst som et notenavn.
+- **Lange stier forkortes, hvor bogstaverne er overflødige** — aldrig ud over det, der skiller en mappe fra naboen — og ruller først, når der ikke er mere at presse sammen. Peg på et forkortet navn for at få det helt igen.
 - **<kbd>F2</kbd>** skifter mellem overskriften i noten og stilinjen.
 - **Klik på boksens navn** for at gennemse dine andre bokse, hjemmemappen, filsystemets rod og tilsluttede drev uden at skifte boks. Skrivebeskyttet, indtil du åbner en hængelås, og indrammet i fejlfarven hele vejen. Slået fra som standard — se [uden for boksen](#uden-for-boksen).
 - **To advarselstrin** — rødt uden for boksen, orange for tekstfiler, som Obsidian ikke har en editor til. Se [de to advarselsfarver](usage.da.md#de-to-advarselsfarver).
 - **Ikoner der følger temaet**, kan udskiftes fra et CSS-uddrag — og **45 sprog**, alle dem Obsidian leverer.
-- **Indstillinger:** justering, foruddefinerede adskillere, hvilket klik der åbner listen, boksens navn, skjulte filer.
+- **Indstillinger:** justering, foruddefinerede adskillere, hvilket klik der åbner listen, boksens navn, skjulte filer, filendelser.
 
 ![Den samme liste i flyt/omdøb-tilstand: filens nuværende navn fastgjort øverst, nabomapper nedenunder, og eksisterende noter nedtonede](../images/dropdown.png)
 

@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · solo desktop · AGPL-3.0
 ## Divulgazione sull'IA
 
 - **Agente** — **Claude Opus 5** e **Claude Sonnet 5** (Anthropic, tramite Claude Code): ha scritto il TypeScript, il CSS, tutti i 45 set di traduzioni e la documentazione. Le traduzioni sono generate automaticamente e non sono state riviste da madrelingua.
-- **Consumo** — 3–13 agosto 2026, nove sessioni, \~4.928 risposte: \~7,2 M di token generati, \~23,7 M inviati, \~1169,6 M di riletture dalla cache (\~1200,5 M in totale).
+- **Consumo** — 3–22 agosto 2026, 22 sessioni, \~11.820 risposte: \~15,4 M di token generati, \~55,5 M inviati, \~3644,2 M di riletture dalla cache (\~3715,0 M in totale).
 - **A monte** — il modello ha imparato da codice open source, documentazione e scritti della comunità pubblicati da altri. Gran parte del merito è loro.
 - **Autore** — Vault51: ha definito ogni funzione, provato ogni versione in un vault reale, indirizzato le correzioni e riletto tutti i risultati.
 
@@ -28,11 +28,18 @@ Obsidian 1.8.7+ · solo desktop · AGPL-3.0
 - **Clic sul nome del file o sullo spazio vuoto** per digitare un percorso, con completamento automatico. `/` scende, <kbd>Backspace</kbd> risale di un livello, <kbd>Invio</kbd> conferma.
 - **Il pulsante matita su cartella** porta le stesse interazioni in modalità sposta/rinomina, con le stesse verifiche che fa Obsidian.
 - **Tieni premuto <kbd>Ctrl</kbd>** per aprire in una nuova scheda — oppure, in modalità sposta/rinomina, per copiarvi la nota anziché spostarla.
+- **L'elenco si apre sulla voce in cui ti trovi**, e percorrerlo con le frecce o col puntatore riempie il campo con ciò che stai indicando. Oltre l'una o l'altra estremità ti restituisce quello che avevi scritto.
+- **I nomi si completano mentre scrivi** — dove i nomi della cartella concordano, la concordanza compare dopo il cursore, selezionata; <kbd>Tab</kbd> o <kbd>→</kbd> la prende intera, <kbd>Backspace</kbd> la restituisce.
+- **<kbd>Tab</kbd> completa come una shell**: estende quanto hai scritto fin dove i nomi concordano, ed entra in una cartella appena ne resta una sola. Oltre la fine del percorso allarga invece la selezione: nome, nome con estensione, percorso dal vault, percorso dalla radice del sistema. <kbd>Maiusc</kbd>+<kbd>Tab</kbd> ripercorre la stessa strada all'indietro.
+- **Clic destro per copiare** — due volte per un nome, tre per tutto ciò che sta alla sua destra, e sullo spazio vuoto per l'intero percorso o per quello di sistema.
+- **Trascina una nota su una cartella della barra** per spostarla lì, collegamenti compresi. Anche il nome del vault la accetta, per la radice; un'intera selezione si sposta come una sola, e una cartella che non può accoglierla non mostra nulla.
+- **Digita un URL** — `https://`, `obsidian://`, oppure un percorso `file://` o codificato in percentuale — e viene aperto anziché trattato come nome di nota.
+- **I percorsi lunghi si accorciano dove le lettere sono ridondanti** — mai oltre ciò che distingue una cartella da quella accanto — e scorrono solo quando non c'è più nulla da comprimere. Punta un nome accorciato per rivederlo per intero.
 - **<kbd>F2</kbd>** alterna fra il titolo in linea e la barra del percorso.
 - **Clic sul nome del vault** per sfogliare gli altri vault, la cartella home, la radice del file system e le unità montate senza cambiare vault. Sola lettura finché non apri un lucchetto, e incorniciato nel colore di errore per tutto il tempo. Disattivato di default — vedi [fuori dal vault](#fuori-dal-vault).
 - **Due livelli di avviso** — rosso fuori dal vault, arancione per i file di testo per cui Obsidian non ha un editor. Vedi [i due colori di avviso](usage.it.md#i-due-colori-di-avviso).
 - **Icone adattabili al tema**, sostituibili da uno snippet CSS — e **45 lingue**, tutte quelle che Obsidian include.
-- **Impostazioni:** allineamento, separatori predefiniti, quale clic apre l'elenco, nome del vault, file nascosti.
+- **Impostazioni:** allineamento, separatori predefiniti, quale clic apre l'elenco, nome del vault, file nascosti, estensioni dei file.
 
 ![Lo stesso elenco in modalità sposta/rinomina: il nome attuale del file fissato in cima, sotto le cartelle vicine, e le note esistenti in grigio](../images/dropdown.png)
 

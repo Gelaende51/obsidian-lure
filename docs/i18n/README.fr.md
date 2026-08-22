@@ -15,7 +15,7 @@ Obsidian 1.8.7+ · bureau uniquement · AGPL-3.0
 ## Divulgation de l'IA
 
 - **Agent** — **Claude Opus 5** et **Claude Sonnet 5** (Anthropic, via Claude Code) : a écrit le TypeScript, le CSS, les 45 jeux de traductions et la documentation. Les traductions sont générées automatiquement et n'ont pas été relues par des locuteurs natifs.
-- **Consommation** — du 3 au 13 août 2026, neuf sessions, \~4 928 réponses : \~7,2 M de tokens générés, \~23,7 M envoyés, \~1169,6 M de relectures mises en cache (\~1200,5 M au total).
+- **Consommation** — du 3 au 22 août 2026, 22 sessions, \~11 820 réponses : \~15,4 M de tokens générés, \~55,5 M envoyés, \~3644,2 M de relectures mises en cache (\~3715,0 M au total).
 - **Origine** — le modèle a appris de code libre, de documentation et d'écrits communautaires publiés par d'autres. L'essentiel du mérite leur revient.
 - **Auteur** — Vault51 : a spécifié chaque fonctionnalité, testé chaque version dans un coffre réel, dirigé les corrections, relu l'ensemble des résultats.
 
@@ -27,11 +27,18 @@ Obsidian 1.8.7+ · bureau uniquement · AGPL-3.0
 - **Cliquez sur le nom de fichier ou sur un espace vide** pour saisir un chemin, avec autocomplétion. `/` descend, <kbd>Retour arrière</kbd> remonte d'un niveau, <kbd>Entrée</kbd> valide.
 - **Le bouton crayon-dossier** bascule les mêmes interactions en mode renommer/déplacer, avec les mêmes validations qu'Obsidian applique.
 - **Maintenez <kbd>Ctrl</kbd>** pour ouvrir dans un nouvel onglet — ou, en mode renommer/déplacer, pour y copier la note au lieu de la déplacer.
+- **Le menu s'ouvre sur l'entrée où vous vous trouvez**, et le parcourir aux flèches ou au pointeur remplit le champ avec ce que vous visez. Au-delà de l'une ou l'autre extrémité, il vous rend ce que vous aviez tapé.
+- **Les noms se complètent à la frappe** — là où les noms du dossier concordent, la concordance apparaît après le curseur, sélectionnée ; <kbd>Tab</kbd> ou <kbd>→</kbd> la prend entière, <kbd>Retour arrière</kbd> la reprend.
+- **<kbd>Tab</kbd> complète comme un shell** : il prolonge ce que vous avez tapé aussi loin que les noms concordent, et entre dans un dossier dès qu'il n'en reste qu'un. Au-delà de la fin du chemin, il élargit la sélection : nom, nom avec extension, chemin depuis le coffre, chemin depuis la racine du système. <kbd>Maj</kbd>+<kbd>Tab</kbd> refait le chemin en sens inverse.
+- **Clic droit pour copier** — deux fois pour un nom, trois fois pour tout ce qui est à sa droite, et sur l'espace vide pour le chemin entier ou le chemin système.
+- **Faites glisser une note sur un dossier de la barre** pour l'y déplacer, liens compris. Le nom du coffre l'accepte aussi, pour la racine ; une sélection entière se déplace d'un bloc, et un dossier qui ne peut pas la prendre n'affiche rien.
+- **Saisissez une URL** — `https://`, `obsidian://`, ou un chemin `file://` ou encodé en pourcentage — et elle est ouverte au lieu d'être prise pour un nom de note.
+- **Les chemins longs se raccourcissent là où les lettres sont redondantes** — jamais au-delà de ce qui distingue un dossier de son voisin — et ne défilent que lorsqu'il n'y a plus rien à comprimer. Pointez un nom raccourci pour le revoir en entier.
 - **<kbd>F2</kbd>** alterne entre le titre en ligne et la barre de chemin.
 - **Cliquez sur le nom du coffre** pour parcourir vos autres coffres, votre dossier personnel, la racine du système de fichiers et les disques montés sans changer de coffre. En lecture seule tant que vous n'ouvrez pas un cadenas, et encadré de la couleur d'erreur en permanence. Désactivé par défaut — voir [hors du coffre](#hors-du-coffre).
 - **Deux niveaux d'avertissement** — rouge hors du coffre, orange pour les fichiers texte qu'Obsidian ne sait pas éditer. Voir [les deux couleurs d'avertissement](usage.fr.md#les-deux-couleurs-davertissement).
 - **Icônes thématisables**, remplaçables depuis un extrait CSS — et **45 langues**, toutes celles qu'Obsidian propose.
-- **Paramètres :** alignement, séparateurs prédéfinis, quel clic ouvre le menu, nom du coffre, fichiers cachés.
+- **Paramètres :** alignement, séparateurs prédéfinis, quel clic ouvre le menu, nom du coffre, fichiers cachés, extensions de fichier.
 
 ![Le même menu en mode renommer/déplacer : le nom de fichier actuel épinglé en haut, les dossiers voisins en dessous, et les notes existantes grisées](../images/dropdown.png)
 

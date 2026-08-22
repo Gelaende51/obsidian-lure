@@ -15,7 +15,7 @@ Obsidian 1.8.7+ · somente desktop · AGPL-3.0
 ## Divulgação sobre IA
 
 - **Agente** — **Claude Opus 5** e **Claude Sonnet 5** (Anthropic, via Claude Code): escreveu o TypeScript, o CSS, os 45 conjuntos de traduções e a documentação. As traduções são geradas por máquina e não foram revisadas por falantes nativos.
-- **Consumo** — 3 a 13 de agosto de 2026, nove sessões, \~4.928 respostas: \~7,2 M de tokens gerados, \~23,7 M enviados, \~1169,6 M de releituras em cache (\~1200,5 M no total).
+- **Consumo** — 3 a 22 de agosto de 2026, 22 sessões, \~11.820 respostas: \~15,4 M de tokens gerados, \~55,5 M enviados, \~3644,2 M de releituras em cache (\~3715,0 M no total).
 - **Origem** — o modelo aprendeu com código aberto, documentação e textos da comunidade publicados por outras pessoas. A maior parte do crédito é deles.
 - **Autor** — Vault51: especificou cada funcionalidade, testou cada versão em um cofre real, orientou as correções e revisou todos os resultados.
 
@@ -27,11 +27,18 @@ Obsidian 1.8.7+ · somente desktop · AGPL-3.0
 - **Clique no nome do arquivo ou no espaço vazio** para digitar um caminho, com autocompletar. `/` desce, <kbd>Backspace</kbd> sobe um nível, <kbd>Enter</kbd> confirma.
 - **O botão de lápis sobre pasta** muda as mesmas interações para mover/renomear, com as mesmas validações que o Obsidian faz.
 - **Segure <kbd>Ctrl</kbd>** para abrir em uma nova aba — ou, no modo mover/renomear, para copiar a nota para lá em vez de movê-la.
+- **A lista abre na entrada onde você está**, e percorrê-la com as setas ou o ponteiro preenche o campo com aquilo que você aponta. Ao passar de qualquer das extremidades, devolve o que você tinha digitado.
+- **Os nomes se completam enquanto você digita** — onde os nomes da pasta concordam, a concordância aparece depois do cursor, selecionada; <kbd>Tab</kbd> ou <kbd>→</kbd> leva ela inteira, <kbd>Backspace</kbd> devolve.
+- **<kbd>Tab</kbd> completa como um shell**: estende o que você digitou até onde os nomes concordam, e entra numa pasta assim que resta apenas uma. Passado o fim do caminho, amplia a seleção: nome, nome com extensão, caminho a partir do cofre, caminho a partir da raiz do sistema. <kbd>Shift</kbd>+<kbd>Tab</kbd> faz o mesmo percurso ao contrário.
+- **Clique com o botão direito para copiar** — duas vezes para um nome, três para tudo o que está à direita dele, e no espaço vazio para o caminho inteiro ou o do sistema.
+- **Arraste uma nota para uma pasta da barra** para movê-la para lá, com os links. O nome do cofre também aceita, para a raiz; uma seleção inteira se move como uma só, e uma pasta que não pode recebê-la não mostra nada.
+- **Digite uma URL** — `https://`, `obsidian://`, ou um caminho `file://` ou codificado em porcentagem — e ela é aberta em vez de tratada como nome de nota.
+- **Caminhos longos encurtam onde as letras são dispensáveis** — nunca além do que distingue uma pasta da vizinha — e só rolam quando não há mais nada a comprimir. Aponte para um nome encurtado para vê-lo por inteiro.
 - **<kbd>F2</kbd>** alterna entre o título embutido e a barra de caminho.
 - **Clique no nome do cofre** para percorrer seus outros cofres, sua pasta pessoal, a raiz do sistema de arquivos e as unidades montadas sem trocar de cofre. Somente leitura até você abrir um cadeado, e emoldurado na cor de erro o tempo todo. Desativado por padrão — veja [fora do cofre](#fora-do-cofre).
 - **Dois níveis de aviso** — vermelho fora do cofre, laranja para arquivos de texto que o Obsidian não sabe editar. Veja [as duas cores de aviso](usage.pt-BR.md#as-duas-cores-de-aviso).
 - **Ícones adaptáveis ao tema**, substituíveis por um trecho de CSS — e **45 idiomas**, todos os que o Obsidian traz.
-- **Configurações:** alinhamento, separadores prontos, qual clique abre a lista, nome do cofre, arquivos ocultos.
+- **Configurações:** alinhamento, separadores prontos, qual clique abre a lista, nome do cofre, arquivos ocultos, extensões de arquivo.
 
 ![A mesma lista no modo mover/renomear: o nome atual do arquivo fixado no topo, as pastas vizinhas abaixo e as notas existentes em cinza](../images/dropdown.png)
 

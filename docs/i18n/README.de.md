@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · nur Desktop · AGPL-3.0
 ## KI-Offenlegung
 
 - **Agent** — **Claude Opus 5** und **Claude Sonnet 5** (Anthropic, über Claude Code): schrieb das TypeScript, das CSS, alle 45 Übersetzungssätze und die Dokumentation. Die Übersetzungen sind maschinell erstellt und wurden nicht von Muttersprachlern geprüft.
-- **Verbrauch** — 3.–13. August 2026, neun Sitzungen, \~4.928 Antworten: \~7,2 Mio. Token erzeugt, \~23,7 Mio. gesendet, \~1169,6 Mio. zwischengespeicherte Wiederholungen (\~1200,5 Mio. gesamt).
+- **Verbrauch** — 3.–22. August 2026, 22 Sitzungen, \~11.820 Antworten: \~15,4 Mio. Token erzeugt, \~55,5 Mio. gesendet, \~3644,2 Mio. zwischengespeicherte Wiederholungen (\~3715,0 Mio. gesamt).
 - **Herkunft** — das Modell hat aus quelloffenem Code, Dokumentation und Beiträgen der Gemeinschaft gelernt, die andere veröffentlicht haben. Der größte Teil der Anerkennung gebührt ihnen.
 - **Autor** — Vault51: legte jede Funktion fest, testete jede Fassung in einem echten Vault, gab die Korrekturen vor, prüfte alle Ergebnisse.
 
@@ -28,11 +28,18 @@ Obsidian 1.8.7+ · nur Desktop · AGPL-3.0
 - **Klick auf den Dateinamen oder auf freie Fläche** öffnet ein Eingabefeld für einen Pfad, mit Autovervollständigung. `/` steigt hinab, <kbd>Rücktaste</kbd> geht eine Ebene hinaus, <kbd>Enter</kbd> bestätigt.
 - **Die Stift-Ordner-Schaltfläche** stellt dieselben Interaktionen auf Umbenennen/Verschieben um, geprüft so, wie Obsidian selbst prüft.
 - **<kbd>Strg</kbd> halten** öffnet in einem neuen Tab — oder kopiert die Notiz im Umbenennen-/Verschieben-Modus dorthin, statt sie zu verschieben.
+- **Das Dropdown öffnet auf dem Eintrag, in dem du stehst**, und mit Pfeiltasten oder Zeiger füllt es das Feld mit dem, worauf du zeigst. Über das Ende hinaus gibt es dir zurück, was du getippt hattest.
+- **Namen vervollständigen sich beim Tippen** — soweit die Namen des Ordners übereinstimmen, erscheint die Übereinstimmung hinter dem Cursor, markiert; <kbd>Tab</kbd> oder <kbd>→</kbd> übernimmt sie ganz, <kbd>Rücktaste</kbd> nimmt sie zurück.
+- **<kbd>Tab</kbd> vervollständigt wie eine Shell**: es verlängert das Getippte so weit, wie die Namen übereinstimmen, und steigt in einen Ordner hinab, sobald nur einer übrig ist. Hinter dem Ende des Pfads erweitert es stattdessen die Auswahl: Name, Name mit Endung, Pfad ab dem Vault, Pfad ab der Systemwurzel. <kbd>Umschalt</kbd>+<kbd>Tab</kbd> geht denselben Weg zurück.
+- **Rechtsklick zum Kopieren** — zweimal für einen Namen, dreimal für alles rechts davon, und auf der freien Fläche für den ganzen Pfad oder den Systempfad.
+- **Zieh eine Notiz auf einen Ordner der Leiste**, um sie dorthin zu verschieben, samt Links. Der Vault-Name nimmt sie auch, für die Wurzel; eine ganze Auswahl wandert als eine, und ein Ordner, der sie nicht nehmen kann, zeigt gar nichts an.
+- **Gib eine URL ein** — `https://`, `obsidian://` oder einen `file://`- bzw. prozentkodierten Pfad — und sie wird geöffnet statt als Notizname gelesen.
+- **Lange Pfade kürzen sich dort, wo Buchstaben entbehrlich sind** — nie über das hinaus, was einen Ordner vom Nachbarn unterscheidet — und scrollen erst, wenn nichts mehr zu stauchen ist. Zeig auf einen gekürzten Namen, um ihn ganz zu sehen.
 - **<kbd>F2</kbd>** wechselt zwischen dem Inline-Titel und der Pfadleiste.
 - **Klick auf den Vault-Namen** öffnet deine anderen Vaults, den Persönlichen Ordner, das Wurzelverzeichnis und eingehängte Laufwerke, ohne den Vault zu wechseln. Nur lesend, bis du ein Schloss öffnest, und durchgehend in der Fehlerfarbe umrandet. Standardmäßig aus — siehe [Außerhalb des Vaults](#außerhalb-des-vaults).
 - **Zwei Warnstufen** — Rot außerhalb des Vaults, Orange für Textdateien, für die Obsidian keinen Editor hat. Siehe [die beiden Warnfarben](usage.de.md#die-beiden-warnfarben).
 - **Themenfähige Symbole**, über ein CSS-Snippet austauschbar — und **45 Sprachen**, jede die Obsidian mitbringt.
-- **Einstellungen:** Ausrichtung, Trennzeichen-Vorlagen, welcher Klick das Dropdown öffnet, Vault-Name, Punktdateien.
+- **Einstellungen:** Ausrichtung, Trennzeichen-Vorlagen, welcher Klick das Dropdown öffnet, Vault-Name, Punktdateien, Dateiendungen.
 
 ![Dasselbe Dropdown im Umbenennen-/Verschieben-Modus: der aktuelle Dateiname oben angeheftet, darunter benachbarte Ordner, und bereits vergebene Namen ausgegraut](../images/dropdown.png)
 

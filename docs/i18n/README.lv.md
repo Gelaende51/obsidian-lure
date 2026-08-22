@@ -15,7 +15,7 @@ Obsidian 1.8.7+ · tikai datoram · AGPL-3.0
 ## Paziņojums par MI
 
 - **Aģents** — **Claude Opus 5** un **Claude Sonnet 5** (Anthropic, caur Claude Code): uzrakstīja TypeScript kodu, CSS, visus 45 tulkojumu komplektus un dokumentāciju. Tulkojumi ir mašīnas veidoti, un dzimtās valodas runātāji tos nav pārlasījuši.
-- **Patēriņš** — 2026. gada 3.–13. augusts, deviņas sesijas, \~4928 atbildes: \~7,2 milj. ģenerētu marķieru, \~23,7 milj. nosūtītu, \~1169,6 milj. atkārtotu nolasījumu no kešatmiņas (\~1200,5 milj. kopā).
+- **Patēriņš** — 2026. gada 3.–22. augusts, 22 sesijas, \~11820 atbildes: \~15,4 milj. ģenerētu marķieru, \~55,5 milj. nosūtītu, \~3644,2 milj. atkārtotu nolasījumu no kešatmiņas (\~3715,0 milj. kopā).
 - **Pirmavots** — modelis mācījās no atvērtā pirmkoda, dokumentācijas un kopienas rakstiem, ko publicējuši citi. Lielākā daļa nopelnu pieder tiem.
 - **Autors** — Vault51: noteica katru funkciju, izmēģināja katru versiju īstā glabātavā, vadīja labojumus, pārskatīja visus rezultātus.
 
@@ -27,11 +27,18 @@ Obsidian 1.8.7+ · tikai datoram · AGPL-3.0
 - **Uzklikšķini uz faila nosaukuma vai tukšas vietas**, lai ierakstītu ceļu, ar papildināšanu. `/` nolaižas dziļāk, <kbd>Atpakaļatkāpe</kbd> paceļas vienu līmeni augstāk, <kbd>Enter</kbd> apstiprina.
 - **Zīmuļa poga uz mapes** pārslēdz tās pašas darbības uz pārvietošanas/pārdēvēšanas režīmu, ar tādām pašām pārbaudēm, kādas veic pats Obsidian.
 - **Turi <kbd>Ctrl</kbd>**, lai atvērtu jaunā cilnē — vai, pārvietošanas/pārdēvēšanas režīmā, lai piezīmi tur nokopētu, nevis pārvietotu.
+- **Saraksts atveras pie ieraksta, kurā atrodies**, un pārvietošanās pa to ar bultiņām vai rādītāju aizpilda lauku ar to, uz ko norādi. Aiz jebkura gala tas atdod to, ko biji ierakstījis.
+- **Nosaukumi papildinās rakstīšanas gaitā** — kur mapes nosaukumi sakrīt, sakritība parādās aiz kursora, iezīmēta; <kbd>Tab</kbd> vai <kbd>→</kbd> paņem to visu, <kbd>Atpakaļatkāpe</kbd> to atdod atpakaļ.
+- **<kbd>Tab</kbd> papildina kā čaula**: tas pagarina ierakstīto tik tālu, cik nosaukumi sakrīt, un ieiet mapē, tiklīdz paliek viens nosaukums. Aiz ceļa gala tas tā vietā paplašina iezīmējumu: nosaukums, nosaukums ar paplašinājumu, ceļš no glabātavas, ceļš no sistēmas saknes. <kbd>Shift</kbd>+<kbd>Tab</kbd> iet to pašu ceļu atpakaļ.
+- **Labais klikšķis kopē** — divreiz nosaukumu, trīsreiz visu, kas pa labi no tā, bet tukšajā vietā — visu ceļu vai sistēmas ceļu.
+- **Velc piezīmi uz mapi rindā**, lai pārvietotu to turp kopā ar saitēm. Glabātavas nosaukums to pieņem arī, uz sakni; viss iezīmējums pārvietojas kā viens, un mape, kas to pieņemt nevar, nerāda neko.
+- **Ieraksti URL** — `https://`, `obsidian://`, vai `file://` vai procentkodētu ceļu — un tas tiek atvērts, nevis lasīts kā piezīmes nosaukums.
+- **Gari ceļi saīsinās tur, kur burti ir lieki** — nekad tālāk par to, kas atšķir mapi no blakusesošās — un ritina tikai tad, kad vairs nav ko saspiest. Norādi uz saīsinātu nosaukumu, lai redzētu to visu.
 - **<kbd>F2</kbd>** pārslēdzas starp virsrakstu pašā piezīmē un ceļa joslu.
 - **Uzklikšķini uz glabātavas nosaukuma**, lai pārlūkotu savas pārējās glabātavas, mājas mapi, failu sistēmas sakni un pievienotos diskus, nemainot glabātavu. Tikai lasāms, kamēr neatver piekaramo atslēgu, un visu laiku ierāmēts kļūdas krāsā. Pēc noklusējuma izslēgts — sk. [ārpus glabātavas](#ārpus-glabātavas).
 - **Divi brīdinājuma līmeņi** — sarkans ārpus glabātavas, oranžs teksta failiem, kuriem Obsidian nav redaktora. Sk. [divas brīdinājuma krāsas](usage.lv.md#divas-brīdinājuma-krāsas).
 - **Motīvam pielāgojamas ikonas**, nomaināmas no CSS fragmenta — un **45 valodas**, katra, ko Obsidian piedāvā.
-- **Iestatījumi:** līdzinājums, sagatavoti atdalītāji, kurš klikšķis atver sarakstu, glabātavas nosaukums, slēptie faili.
+- **Iestatījumi:** līdzinājums, sagatavoti atdalītāji, kurš klikšķis atver sarakstu, glabātavas nosaukums, slēptie faili, failu paplašinājumi.
 
 ![Tas pats saraksts pārvietošanas/pārdēvēšanas režīmā: faila pašreizējais nosaukums piesprausts augšā, zem tā kaimiņmapes, un esošās piezīmes pelēkotas](../images/dropdown.png)
 

@@ -20,7 +20,7 @@ Obsidian 1.8.7+ · kun datamaskin · AGPL-3.0
 ## AI-erklæring
 
 - **Agent** — **Claude Opus 5** og **Claude Sonnet 5** (Anthropic, via Claude Code): skrev TypeScript-koden, CSS-en, alle 45 oversettelsessettene og dokumentasjonen. Oversettelsene er laget maskinelt og ikke gjennomlest av morsmålsbrukere.
-- **Forbruk** — 3.–13. august 2026, ni økter, \~4928 svar: \~7,2 mill. genererte tokens, \~23,7 mill. sendte, \~1169,6 mill. gjenlesinger fra hurtiglageret (\~1200,5 mill. totalt).
+- **Forbruk** — 3.–22. august 2026, 22 økter, \~11820 svar: \~15,4 mill. genererte tokens, \~55,5 mill. sendte, \~3644,2 mill. gjenlesinger fra hurtiglageret (\~3715,0 mill. totalt).
 - **Opphav** — modellen har lært av åpen kildekode, dokumentasjon og fellesskapstekster utgitt av andre. Mesteparten av æren tilfaller dem.
 - **Forfatter** — Vault51: fastsatte hver funksjon, prøvde hver utgave i et ekte hvelv, styrte rettelsene og leste gjennom alle resultater.
 
@@ -32,11 +32,18 @@ Obsidian 1.8.7+ · kun datamaskin · AGPL-3.0
 - **Klikk på filnavnet eller på tom plass** for å skrive en sti, med fullføring. `/` går nedover, <kbd>Rettetast</kbd> går ett nivå opp, <kbd>Enter</kbd> bekrefter.
 - **Blyantknappen på mappe** stiller de samme handlingene om til flytt/gi nytt navn, med de samme kontrollene Obsidian selv gjør.
 - **Hold <kbd>Ctrl</kbd>** for å åpne i en ny fane — eller, i flytt/gi nytt navn-modus, for å kopiere notatet dit i stedet for å flytte det.
+- **Listen åpner på oppføringen du står i**, og å gå gjennom den med piltastene eller pekeren fyller feltet med det du peker på. Forbi begge ender gir den deg tilbake det du hadde skrevet.
+- **Navn fullfører seg selv mens du skriver** — der mappens navn stemmer overens, vises overensstemmelsen etter markøren, merket; <kbd>Tab</kbd> eller <kbd>→</kbd> tar den hel, <kbd>Rettetast</kbd> tar den tilbake.
+- **<kbd>Tab</kbd> fullfører som et skall**: det forlenger det du skrev så langt navnene stemmer overens, og går inn i en mappe så snart bare ett navn står igjen. Forbi enden av stien utvider det i stedet merkingen: navn, navn med endelse, sti fra hvelvet, sti fra systemroten. <kbd>Skift</kbd>+<kbd>Tab</kbd> går samme vei tilbake.
+- **Høyreklikk for å kopiere** — to ganger for et navn, tre ganger for alt til høyre for det, og på det tomme feltet for hele stien eller systemstien.
+- **Dra en notat til en mappe i raden** for å flytte det dit, lenker og alt. Hvelvets navn tar imot også, til roten; en hel merking flytter som én, og en mappe som ikke kan ta imot, viser ingenting.
+- **Skriv en URL** — `https://`, `obsidian://` eller en `file://`- eller prosentkodet sti — og den åpnes i stedet for å leses som et notatnavn.
+- **Lange stier kortes ned der bokstavene er overflødige** — aldri lenger enn det som skiller en mappe fra nabomappen — og ruller først når det ikke er mer å presse sammen. Pek på et forkortet navn for å få det helt igjen.
 - **<kbd>F2</kbd>** veksler mellom overskriften i notatet og stilinjen.
 - **Klikk på navnet på hvelvet** for å bla i de andre hvelvene dine, hjemmemappen, roten av filsystemet og monterte stasjoner uten å bytte hvelv. Skrivebeskyttet til du åpner en hengelås, og innrammet i feilfargen hele veien. Av som standard — se [utenfor hvelvet](#utenfor-hvelvet).
 - **To varselnivåer** — rødt utenfor hvelvet, oransje for tekstfiler Obsidian ikke har noen redigerer for. Se [de to varselfargene](usage.no.md#de-to-varselfargene).
 - **Temavennlige ikoner**, som kan byttes ut fra et CSS-utdrag — og **45 språk**, alle Obsidian leverer.
-- **Innstillinger:** justering, ferdige skilletegn, hvilket klikk som åpner listen, navnet på hvelvet, skjulte filer.
+- **Innstillinger:** justering, ferdige skilletegn, hvilket klikk som åpner listen, navnet på hvelvet, skjulte filer, filendelser.
 
 ![Den samme listen i flytt/gi nytt navn-modus: filens nåværende navn festet øverst, nabomapper under, og eksisterende notater nedtonet](../images/dropdown.png)
 

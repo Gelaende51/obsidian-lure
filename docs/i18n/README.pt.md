@@ -15,7 +15,7 @@ Obsidian 1.8.7+ · apenas computador · AGPL-3.0
 ## Divulgação sobre IA
 
 - **Agente** — **Claude Opus 5** e **Claude Sonnet 5** (Anthropic, através do Claude Code): escreveu o TypeScript, o CSS, os 45 conjuntos de traduções e a documentação. As traduções são geradas automaticamente e não foram revistas por falantes nativos.
-- **Consumo** — 3 a 13 de agosto de 2026, nove sessões, \~4928 respostas: \~7,2 M de tokens gerados, \~23,7 M enviados, \~1169,6 M de releituras em cache (\~1200,5 M no total).
+- **Consumo** — 3 a 22 de agosto de 2026, 22 sessões, \~11820 respostas: \~15,4 M de tokens gerados, \~55,5 M enviados, \~3644,2 M de releituras em cache (\~3715,0 M no total).
 - **Origem** — o modelo aprendeu com código aberto, documentação e textos da comunidade publicados por outras pessoas. A maior parte do mérito é deles.
 - **Autor** — Vault51: definiu cada funcionalidade, testou cada versão num cofre real, orientou as correções e reviu todos os resultados.
 
@@ -27,11 +27,18 @@ Obsidian 1.8.7+ · apenas computador · AGPL-3.0
 - **Clique no nome do ficheiro ou no espaço vazio** para escrever um caminho, com preenchimento automático. `/` desce, <kbd>Retrocesso</kbd> sobe um nível, <kbd>Enter</kbd> confirma.
 - **O botão de lápis sobre pasta** passa as mesmas interações para mover/renomear, com as mesmas validações que o Obsidian faz.
 - **Mantenha <kbd>Ctrl</kbd>** para abrir num separador novo — ou, no modo mover/renomear, para copiar a nota para lá em vez de a mover.
+- **A lista abre na entrada onde está**, e percorrê-la com as setas ou o ponteiro preenche o campo com aquilo para que aponta. Ao passar de qualquer das extremidades, devolve o que tinha escrito.
+- **Os nomes completam-se enquanto escreve** — onde os nomes da pasta concordam, a concordância aparece depois do cursor, selecionada; <kbd>Tab</kbd> ou <kbd>→</kbd> leva-a inteira, <kbd>Retrocesso</kbd> devolve-a.
+- **<kbd>Tab</kbd> completa como uma shell**: estende o que escreveu até onde os nomes concordam, e entra numa pasta assim que resta apenas uma. Passado o fim do caminho alarga antes a seleção: nome, nome com extensão, caminho a partir do cofre, caminho a partir da raiz do sistema. <kbd>Shift</kbd>+<kbd>Tab</kbd> faz o mesmo percurso ao contrário.
+- **Clique com o botão direito para copiar** — duas vezes para um nome, três para tudo o que está à sua direita, e no espaço vazio para o caminho inteiro ou o do sistema.
+- **Arraste uma nota para uma pasta da barra** para a mover para lá, com as ligações. O nome do cofre também a aceita, para a raiz; uma seleção inteira move-se como uma só, e uma pasta que não a possa receber não mostra nada.
+- **Escreva um URL** — `https://`, `obsidian://`, ou um caminho `file://` ou codificado em percentagem — e é aberto em vez de tratado como nome de nota.
+- **Os caminhos longos encurtam onde as letras são dispensáveis** — nunca além do que distingue uma pasta da vizinha — e só deslizam quando já não há nada para comprimir. Aponte para um nome encurtado para o ver por inteiro.
 - **<kbd>F2</kbd>** alterna entre o título em linha e a barra de caminho.
 - **Clique no nome do cofre** para percorrer os seus outros cofres, a sua pasta pessoal, a raiz do sistema de ficheiros e as unidades montadas sem mudar de cofre. Apenas leitura até abrir um cadeado, e emoldurado na cor de erro todo o tempo. Desativado por predefinição — veja [fora do cofre](#fora-do-cofre).
 - **Dois níveis de aviso** — vermelho fora do cofre, laranja para os ficheiros de texto para os quais o Obsidian não tem editor. Veja [as duas cores de aviso](usage.pt.md#as-duas-cores-de-aviso).
 - **Ícones adaptáveis ao tema**, substituíveis a partir de um fragmento CSS — e **45 idiomas**, todos os que o Obsidian traz.
-- **Definições:** alinhamento, separadores predefinidos, que clique abre a lista, nome do cofre, ficheiros ocultos.
+- **Definições:** alinhamento, separadores predefinidos, que clique abre a lista, nome do cofre, ficheiros ocultos, extensões de ficheiro.
 
 ![A mesma lista no modo mover/renomear: o nome atual do ficheiro fixado no topo, as pastas vizinhas por baixo e as notas existentes a cinzento](../images/dropdown.png)
 

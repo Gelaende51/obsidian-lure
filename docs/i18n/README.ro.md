@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · doar desktop · AGPL-3.0
 ## Divulgare privind IA
 
 - **Agent** — **Claude Opus 5** și **Claude Sonnet 5** (Anthropic, prin Claude Code): a scris codul TypeScript, CSS-ul, toate cele 45 de seturi de traduceri și documentația. Traducerile sunt generate automat și nu au fost revizuite de vorbitori nativi.
-- **Consum** — 3–13 august 2026, nouă sesiuni, \~4.928 de răspunsuri: \~7,2 mil. jetoane generate, \~23,7 mil. trimise, \~1169,6 mil. recitiri din memoria tampon (\~1200,5 mil. în total).
+- **Consum** — 3–22 august 2026, 22 de sesiuni, \~11.820 de răspunsuri: \~15,4 mil. jetoane generate, \~55,5 mil. trimise, \~3644,2 mil. recitiri din memoria tampon (\~3715,0 mil. în total).
 - **Amonte** — modelul a învățat din cod deschis, documentație și scrieri ale comunității publicate de alții. Cea mai mare parte a meritului le revine lor.
 - **Autor** — Vault51: a stabilit fiecare funcție, a încercat fiecare versiune într-un seif real, a îndrumat corecturile și a citit toate rezultatele.
 
@@ -28,11 +28,18 @@ Obsidian 1.8.7+ · doar desktop · AGPL-3.0
 - **Clic pe numele fișierului sau pe spațiul gol** pentru a scrie o cale, cu completare automată. `/` coboară, <kbd>Backspace</kbd> urcă un nivel, <kbd>Enter</kbd> confirmă.
 - **Butonul cu creion pe dosar** comută aceleași interacțiuni pe mutare/redenumire, cu aceleași verificări pe care le face Obsidian.
 - **Ține <kbd>Ctrl</kbd>** pentru a deschide într-o filă nouă — sau, în modul mutare/redenumire, pentru a copia notița acolo în loc să o muți.
+- **Lista se deschide pe intrarea în care te afli**, iar parcurgerea ei cu săgețile sau cu indicatorul umple câmpul cu ceea ce indici. Dincolo de oricare capăt îți dă înapoi ce scriseseși.
+- **Numele se completează pe măsură ce scrii** — acolo unde numele din dosar coincid, coincidența apare după cursor, selectată; <kbd>Tab</kbd> sau <kbd>→</kbd> o ia întreagă, <kbd>Backspace</kbd> o dă înapoi.
+- **<kbd>Tab</kbd> completează ca un shell**: prelungește ce ai scris atât cât numele coincid și intră într-un dosar de îndată ce rămâne unul singur. Dincolo de capătul căii lărgește în schimb selecția: nume, nume cu extensie, cale de la seif, cale de la rădăcina sistemului. <kbd>Shift</kbd>+<kbd>Tab</kbd> face același drum înapoi.
+- **Clic dreapta pentru a copia** — de două ori pentru un nume, de trei ori pentru tot ce e la dreapta lui, iar pe spațiul gol pentru calea întreagă sau cea de sistem.
+- **Trage o notiță pe un dosar din rând** ca s-o muți acolo, cu tot cu legături. Numele seifului o primește și el, pentru rădăcină; o selecție întreagă se mută ca una singură, iar un dosar care n-o poate primi nu arată nimic.
+- **Scrie un URL** — `https://`, `obsidian://`, ori o cale `file://` sau codificată procentual — și se deschide în loc să fie citit ca nume de notiță.
+- **Căile lungi se scurtează acolo unde literele sunt de prisos** — niciodată dincolo de ce deosebește un dosar de vecinul lui — și derulează abia când nu mai e nimic de comprimat. Indică un nume scurtat ca să-l vezi întreg.
 - **<kbd>F2</kbd>** alternează între titlul din notiță și bara de cale.
 - **Clic pe numele seifului** pentru a răsfoi celelalte seifuri, dosarul personal, rădăcina sistemului de fișiere și unitățile montate fără a schimba seiful. Doar citire până deschizi un lacăt, și încadrat în culoarea de eroare tot timpul. Dezactivat implicit — vezi [în afara seifului](#în-afara-seifului).
 - **Două niveluri de avertizare** — roșu în afara seifului, portocaliu pentru fișierele text pentru care Obsidian nu are editor. Vezi [cele două culori de avertizare](usage.ro.md#cele-două-culori-de-avertizare).
 - **Pictograme care urmează tema**, se pot schimba dintr-un fragment CSS — și **45 de limbi**, fiecare pe care o aduce Obsidian.
-- **Setări:** aliniere, separatoare predefinite, care clic deschide lista, numele seifului, fișiere ascunse.
+- **Setări:** aliniere, separatoare predefinite, care clic deschide lista, numele seifului, fișiere ascunse, extensii de fișier.
 
 ![Aceeași listă în modul mutare/redenumire: numele actual al fișierului fixat sus, dosarele vecine dedesubt, iar notițele existente estompate](../images/dropdown.png)
 

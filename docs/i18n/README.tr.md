@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · yalnızca masaüstü · AGPL-3.0
 ## Yapay zekâ bildirimi
 
 - **Aracı** — **Claude Opus 5** ve **Claude Sonnet 5** (Anthropic, Claude Code üzerinden): TypeScript kodunu, CSS'i, 45 çeviri takımının tamamını ve belgeleri yazdı. Çeviriler makineyle üretildi ve ana dili konuşanlarca gözden geçirilmedi.
-- **Tüketim** — 3–13 Ağustos 2026, dokuz oturum, \~4.928 yanıt: \~7,2 M üretilen jeton, \~23,7 M gönderilen, \~1169,6 M önbellekten yeniden okuma (\~1200,5 M toplam).
+- **Tüketim** — 3–22 Ağustos 2026, 22 oturum, \~11.820 yanıt: \~15,4 M üretilen jeton, \~55,5 M gönderilen, \~3644,2 M önbellekten yeniden okuma (\~3715,0 M toplam).
 - **Kaynak** — model, başkalarının yayımladığı açık kaynak koddan, belgelerden ve topluluk yazılarından öğrendi. Kredinin büyük kısmı onlara aittir.
 - **Yazar** — Vault51: her özelliği belirledi, her sürümü gerçek bir kasada denedi, düzeltmeleri yönlendirdi, bütün çıktıları gözden geçirdi.
 
@@ -28,11 +28,18 @@ Obsidian 1.8.7+ · yalnızca masaüstü · AGPL-3.0
 - **Dosya adına veya boş alana tıklayın**, tamamlamayla birlikte bir yol yazın. `/` aşağı iner, <kbd>Geri Silme</kbd> bir seviye yukarı çıkar, <kbd>Enter</kbd> onaylar.
 - **Klasör üzerindeki kalem düğmesi** aynı etkileşimleri taşı/yeniden adlandır kipine geçirir, Obsidian'ın kendi yaptığı denetimlerle.
 - **<kbd>Ctrl</kbd> tuşunu basılı tutun**, yeni bir sekmede açılsın — ya da taşı/yeniden adlandır kipinde, notu taşımak yerine oraya kopyalayın.
+- **Liste, bulunduğun girdinin üzerinde açılır** ve ok tuşlarıyla ya da imleçle gezinmek alanı işaret ettiğin şeyle doldurur. İki uçtan birinin ötesine geçince yazdığını geri verir.
+- **Adlar yazarken kendini tamamlar** — klasördeki adların uyuştuğu yere kadar, uyuşma imlecin ardında seçili olarak belirir; <kbd>Tab</kbd> ya da <kbd>→</kbd> onu bütün olarak alır, <kbd>Geri Al</kbd> geri verir.
+- **<kbd>Tab</kbd> bir kabuk gibi tamamlar**: yazdığını adların uyuştuğu yere kadar uzatır ve tek ad kalır kalmaz klasöre girer. Yolun sonunu geçince bunun yerine seçimi genişletir: ad, uzantılı ad, kasadan itibaren yol, sistem kökünden itibaren yol. <kbd>Shift</kbd>+<kbd>Tab</kbd> aynı yolu geriye yürür.
+- **Kopyalamak için sağ tıkla** — bir ad için iki kez, sağındaki her şey için üç kez, boş alanda ise yolun tamamı ya da sistem yolu için.
+- **Bir notu satırdaki bir klasörün üzerine sürükle**, bağlantılarıyla birlikte oraya taşınsın. Kasanın adı da kabul eder, kök için; bütün bir seçim tek parça hâlinde taşınır ve alamayacak bir klasör hiçbir şey göstermez.
+- **Bir URL yaz** — `https://`, `obsidian://` ya da bir `file://` veya yüzde kodlu yol — not adı sayılmak yerine açılır.
+- **Uzun yollar harflerin gereksiz olduğu yerden kısalır** — bir klasörü yanındakinden ayıran şeyin ötesine asla geçmeden — ve ancak sıkıştıracak bir şey kalmayınca kayar. Kısaltılmış bir adı tamamını görmek için işaret et.
 - **<kbd>F2</kbd>** notun içindeki başlıkla yol çubuğu arasında geçiş yapar.
 - **Kasanın adına tıklayın**, kasa değiştirmeden diğer kasalarınıza, ev klasörünüze, dosya sisteminin köküne ve bağlı sürücülere göz atın. Bir asma kilidi açana kadar salt okunur, ve baştan sona hata renginde çerçeveli. Öntanımlı olarak kapalı — bkz. [kasanın dışında](#kasanın-dışında).
 - **İki uyarı düzeyi** — kasanın dışında kırmızı, Obsidian'ın düzenleyicisi bulunmayan metin dosyaları için turuncu. Bkz. [uyarıların iki rengi](usage.tr.md#uyarıların-iki-rengi).
 - **Temaya uyan simgeler**, bir CSS parçacığından değiştirilebilir — ve **45 dil**, Obsidian'ın getirdiği her dil.
-- **Ayarlar:** hizalama, hazır ayıraçlar, hangi tıklamanın listeyi açacağı, kasanın adı, gizli dosyalar.
+- **Ayarlar:** hizalama, hazır ayıraçlar, hangi tıklamanın listeyi açacağı, kasanın adı, gizli dosyalar, dosya uzantıları.
 
 ![Taşı/yeniden adlandır kipinde aynı liste: dosyanın şimdiki adı en üste sabitlenmiş, altında komşu klasörler, var olan notlar ise soluk](../images/dropdown.png)
 

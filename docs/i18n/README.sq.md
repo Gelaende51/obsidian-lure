@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · vetëm në kompjuter · AGPL-3.0
 ## Deklarim për IA-në
 
 - **Agjenti** — **Claude Opus 5** dhe **Claude Sonnet 5** (Anthropic, përmes Claude Code): shkroi TypeScript-in, CSS-në, të 45 grupet e përkthimeve dhe dokumentimin. Përkthimet janë prodhuar me makinë dhe nuk janë shqyrtuar nga folës amtarë.
-- **Konsumi** — 3–13 gusht 2026, nëntë seanca, \~4.928 përgjigje: \~7,2 milionë token të prodhuar, \~23,7 milionë të dërguar, \~1169,6 milionë rilexime nga fshehtina (\~1200,5 milionë gjithsej).
+- **Konsumi** — 3–22 gusht 2026, 22 seanca, \~11.820 përgjigje: \~15,4 milionë token të prodhuar, \~55,5 milionë të dërguar, \~3644,2 milionë rilexime nga fshehtina (\~3715,0 milionë gjithsej).
 - **Burimi** — modeli mësoi nga kodi me burim të hapur, dokumentimi dhe shkrimet e komunitetit të botuara nga të tjerë. Pjesa më e madhe e meritës u takon atyre.
 - **Autori** — Vault51: përcaktoi çdo veçori, provoi çdo version në një kasafortë të vërtetë, drejtoi ndreqjet, shqyrtoi të gjitha rezultatet.
 
@@ -28,11 +28,18 @@ Obsidian 1.8.7+ · vetëm në kompjuter · AGPL-3.0
 - **Kliko emrin e skedarit ose hapësirën bosh** për të shkruar një shteg, me plotësim. `/` zbret brenda, <kbd>Backspace</kbd> ngjitet një nivel, <kbd>Enter</kbd> konfirmon.
 - **Butoni me laps mbi dosje** i kalon po ato veprime në mënyrën zhvendos/riemërto, me po ato kontrolle që bën vetë Obsidian.
 - **Mbaj shtypur <kbd>Ctrl</kbd>** për ta hapur në një skedë të re — ose, në mënyrën zhvendos/riemërto, për ta kopjuar shënimin atje në vend që ta zhvendosësh.
+- **Lista hapet te zëri ku ndodhesh**, dhe kalimi nëpër të me shigjetat ose me treguesin e mbush fushën me atë që po tregon. Përtej njërës a tjetrës skaj të kthen atë që kishe shkruar.
+- **Emrat plotësohen ndërsa shkruan** — aty ku emrat e dosjes përputhen, përputhja shfaqet pas kursorit, e përzgjedhur; <kbd>Tab</kbd> ose <kbd>→</kbd> e merr të tërë, <kbd>Backspace</kbd> e kthen.
+- **<kbd>Tab</kbd> plotëson si një guaskë**: e zgjat atë që shkrove aq sa emrat përputhen, dhe hyn në një dosje sapo mbetet vetëm një emër. Përtej fundit të shtegut zgjeron përzgjedhjen: emri, emri me prapashtesë, shtegu nga kasaforta, shtegu nga rrënja e sistemit. <kbd>Shift</kbd>+<kbd>Tab</kbd> e bën të njëjtën rrugë mbrapsht.
+- **Klik i djathtë për kopjim** — dy herë për një emër, tri herë për gjithçka në të djathtë të tij, dhe në hapësirën bosh për shtegun e plotë ose atë të sistemit.
+- **Zvarrit një shënim mbi një dosje të rreshtit** për ta zhvendosur atje, bashkë me lidhjet. Edhe emri i kasafortës e pranon, për rrënjën; një përzgjedhje e tërë zhvendoset si një, dhe një dosje që nuk mund ta pranojë nuk tregon asgjë.
+- **Shkruaj një URL** — `https://`, `obsidian://`, ose një shteg `file://` a të koduar me përqindje — dhe hapet në vend që të merret si emër shënimi.
+- **Shtigjet e gjata shkurtohen aty ku shkronjat janë të tepërta** — kurrë përtej asaj që e dallon një dosje nga fqinja — dhe rrëshqasin vetëm kur nuk mbetet më gjë për t'u ngjeshur. Trego një emër të shkurtuar për ta parë të tërë.
 - **<kbd>F2</kbd>** kalon mes titullit brenda shënimit dhe shiritit të shtegut.
 - **Kliko emrin e kasafortës** për të shfletuar kasafortat e tua të tjera, dosjen shtëpi, rrënjën e sistemit të skedarëve dhe disqet e montuara pa ndërruar kasafortë. Vetëm për lexim derisa të hapësh një dry, dhe i kornizuar me ngjyrën e gabimit gjatë gjithë kohës. I fikur si parazgjedhje — shih [jashtë kasafortës](#jashtë-kasafortës).
 - **Dy shkallë paralajmërimi** — e kuqe jashtë kasafortës, portokalli për skedarët tekst për të cilët Obsidian nuk ka redaktues. Shih [dy ngjyrat e paralajmërimit](usage.sq.md#dy-ngjyrat-e-paralajmërimit).
 - **Ikona që ndjekin temën**, të këmbyeshme nga një copëz CSS — dhe **45 gjuhë**, çdo gjuhë që sjell Obsidian.
-- **Cilësimet:** drejtimi, ndarës të gatshëm, cili klikim hap listën, emri i kasafortës, skedarët e fshehur.
+- **Cilësimet:** drejtimi, ndarës të gatshëm, cili klikim hap listën, emri i kasafortës, skedarët e fshehur, prapashtesat e skedarëve.
 
 ![E njëjta listë në mënyrën zhvendos/riemërto: emri i tanishëm i skedarit i ngjitur në krye, dosjet fqinje poshtë tij, dhe shënimet ekzistuese të zbehta](../images/dropdown.png)
 

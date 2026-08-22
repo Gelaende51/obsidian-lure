@@ -15,7 +15,7 @@ Obsidian 1.8.7+ · komputer meja sahaja · AGPL-3.0
 ## Pendedahan AI
 
 - **Ejen** — **Claude Opus 5** dan **Claude Sonnet 5** (Anthropic, melalui Claude Code): menulis TypeScript, CSS, kesemua 45 set terjemahan dan dokumentasi. Terjemahan dihasilkan mesin dan belum disemak penutur jati.
-- **Penggunaan** — 3–13 Ogos 2026, sembilan sesi, \~4,928 balasan: \~7.2 juta token dijana, \~23.7 juta dihantar, \~1169.6 juta bacaan semula daripada cache (\~1200.5 juta kesemuanya).
+- **Penggunaan** — 3–22 Ogos 2026, 22 sesi, \~11,820 balasan: \~15.4 juta token dijana, \~55.5 juta dihantar, \~3644.2 juta bacaan semula daripada cache (\~3715.0 juta kesemuanya).
 - **Hulu** — model belajar daripada kod sumber terbuka, dokumentasi dan tulisan komuniti yang diterbitkan orang lain. Sebahagian besar kreditnya milik mereka.
 - **Penulis** — Vault51: menetapkan setiap ciri, mencuba setiap versi dalam bilik kebal sebenar, mengarahkan pembetulan, menyemak semua hasilnya.
 
@@ -27,11 +27,18 @@ Obsidian 1.8.7+ · komputer meja sahaja · AGPL-3.0
 - **Klik nama fail atau ruang kosong** untuk menaip laluan, dengan pelengkapan automatik. `/` turun ke dalam, <kbd>Backspace</kbd> naik satu tingkat, <kbd>Enter</kbd> mengesahkan.
 - **Butang pensel pada folder** menukar interaksi yang sama kepada mod alih/tukar nama, dengan pemeriksaan yang sama seperti dilakukan Obsidian.
 - **Tahan <kbd>Ctrl</kbd>** untuk membuka dalam tab baharu — atau, dalam mod alih/tukar nama, untuk menyalin nota ke sana dan bukannya mengalihkannya.
+- **Senarai terbuka pada entri tempat anda berada**, dan menyusurinya dengan anak panah atau penuding mengisi medan dengan apa yang anda tuding. Melepasi mana-mana hujungnya, ia memulangkan apa yang anda taip.
+- **Nama melengkapkan dirinya sambil anda menaip** — setakat nama-nama dalam folder itu sama, persamaannya muncul selepas kursor, tersorot; <kbd>Tab</kbd> atau <kbd>→</kbd> mengambilnya sepenuhnya, <kbd>Backspace</kbd> memulangkannya.
+- **<kbd>Tab</kbd> melengkapkan seperti shell**: ia memanjangkan apa yang anda taip sejauh nama-nama itu sama, dan masuk ke sebuah folder sebaik sahaja tinggal satu nama. Melepasi hujung laluan, ia sebaliknya meluaskan pilihan: nama, nama dengan sambungan, laluan dari bilik kebal, laluan dari akar sistem. <kbd>Shift</kbd>+<kbd>Tab</kbd> menyusuri jalan yang sama ke belakang.
+- **Klik kanan untuk menyalin** — dua kali untuk sebuah nama, tiga kali untuk segala yang di sebelah kanannya, dan pada ruang kosong untuk seluruh laluan atau laluan sistem.
+- **Seret nota ke sebuah folder pada baris itu** untuk memindahkannya ke sana, berserta pautannya. Nama bilik kebal turut menerimanya, untuk akar; satu pilihan penuh berpindah sebagai satu, dan folder yang tidak dapat menerimanya tidak memaparkan apa-apa.
+- **Taip URL** — `https://`, `obsidian://`, atau laluan `file://` mahupun berkod peratus — dan ia dibuka dan bukannya dibaca sebagai nama nota.
+- **Laluan panjang memendek di tempat hurufnya berlebihan** — tidak pernah melepasi apa yang membezakan sebuah folder daripada jirannya — dan hanya menatal apabila tiada lagi yang boleh dimampatkan. Tuding nama yang dipendekkan untuk melihatnya sepenuhnya.
 - **<kbd>F2</kbd>** berselang antara tajuk dalam nota dan bar laluan.
 - **Klik nama bilik kebal** untuk melayari bilik kebal anda yang lain, folder rumah, akar sistem fail dan pemacu yang dilekapkan tanpa bertukar bilik kebal. Baca sahaja sehingga anda membuka mangga, dan berbingkai warna ralat sepanjang masa. Dimatikan secara lalai — lihat [di luar bilik kebal](#di-luar-bilik-kebal).
 - **Dua tahap amaran** — merah di luar bilik kebal, jingga untuk fail teks yang tiada penyunting dalam Obsidian. Lihat [dua warna amaran](usage.ms.md#dua-warna-amaran).
 - **Ikon yang mengikut tema**, boleh ditukar daripada cebisan CSS — dan **45 bahasa**, setiap satu yang dibawa Obsidian.
-- **Tetapan:** penjajaran, pemisah sedia ada, klik yang mana membuka senarai, nama bilik kebal, fail tersembunyi.
+- **Tetapan:** penjajaran, pemisah sedia ada, klik yang mana membuka senarai, nama bilik kebal, fail tersembunyi, sambungan fail.
 
 ![Senarai yang sama dalam mod alih/tukar nama: nama fail semasa disematkan di atas, folder jiran di bawahnya, dan nota sedia ada dikelabukan](../images/dropdown.png)
 
