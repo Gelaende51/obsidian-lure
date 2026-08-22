@@ -92,6 +92,43 @@ declare module "obsidian" {
 		dragFile(evt: DragEvent, file: TFile): DragData | null;
 		dragFolder(evt: DragEvent, folder: TFolder): DragData | null;
 		onDragStart(evt: DragEvent, data: DragData): void;
+		/**
+		 * The drag in flight, or nothing while none is. Read rather than
+		 * built, and deliberately untyped past the two members that matter:
+		 * a payload from a source this plugin did not create is still a
+		 * payload, and the useful question is only ever "is it a file this
+		 * vault knows".
+		 */
+		draggable?: { type?: string; file?: TAbstractFile } | null;
+		/**
+		 * Registers the element as a drop target, the way the File Explorer
+		 * registers its folder rows.
+		 *
+		 * `handler` is called twice for one drop: once per `dragover` with
+		 * `isOver` true, which is a dry run asking what *would* happen, and
+		 * once on the drop itself with it false, which is when to act.
+		 * Returning a descriptor accepts the drop and draws Obsidian's own
+		 * feedback for it; returning null declines it silently.
+		 */
+		handleDrop(
+			el: HTMLElement,
+			handler: (
+				evt: DragEvent,
+				draggable: DragManager["draggable"],
+				isOver: boolean,
+			) => DropDescriptor | null,
+			always?: boolean,
+		): void;
+	}
+
+	/** What accepting a drop looks like: the label, the cursor, the highlight. */
+	interface DropDescriptor {
+		/** Text for the floating label beside the pointer, e.g. "Move into Notes". */
+		action?: string;
+		dropEffect?: "move" | "copy" | "link" | "none";
+		/** The element to highlight, and the class to highlight it with. */
+		hoverEl?: HTMLElement;
+		hoverClass?: string;
 	}
 
 	interface FileManager {
@@ -155,6 +192,13 @@ declare module "obsidian" {
 	}
 
 	interface App {
+		/**
+		 * The vault's own identifier — what Obsidian keys its vault registry,
+		 * its per-vault settings folder and its `obsidian://` links by. Not
+		 * derivable from the vault's name or its path, and not part of the
+		 * public API, so it is read defensively.
+		 */
+		appId?: string;
 		internalPlugins: InternalPlugins;
 		viewRegistry: ViewRegistry;
 		commands: CommandRegistry;

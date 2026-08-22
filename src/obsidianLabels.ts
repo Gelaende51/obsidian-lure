@@ -50,6 +50,11 @@ export const LABELS = {
 	copy: ["interface.menu.copy"],
 	paste: ["interface.menu.paste"],
 	selectAll: ["interface.menu.select-all"],
+	// The floating label Obsidian shows while a dragged file hovers a folder
+	// it could be dropped into. Resolved against a live 1.13.7 as
+	// `Move into “{{folder}}”` — curly quotes and all — so the breadcrumb's
+	// drop target says what the File Explorer's rows say, word for word.
+	moveInto: ["interface.drag-and-drop.move-into-folder", "interface.dragAndDrop.moveIntoFolder"],
 	showInSystemExplorer: [
 		"plugins.open-with-default-app.action-show-in-folder",
 		"plugins.openWithDefaultApp.actionShowInFolder",

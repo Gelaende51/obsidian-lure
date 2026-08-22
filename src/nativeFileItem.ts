@@ -114,6 +114,151 @@ export function makeDraggable(
 	});
 }
 
+/** What a drop target needs from its owner. */
+export interface DropTargetOptions {
+	/**
+	 * The floating label Obsidian shows while the pointer is over the target,
+	 * worded by the caller so it comes out in the app's own phrasing rather
+	 * than this plugin's.
+	 */
+	label: (folderName: string) => string;
+	/** Called with the file once it has landed, to show it where it now lives. */
+	onMoved?: (file: TAbstractFile) => void;
+}
+
+/**
+ * Makes the element accept a dragged file or folder, moving it into
+ * `folder` — the File Explorer's own gesture, on the breadcrumb.
+ *
+ * The drag *source* has been right for a while: every segment, the file's
+ * name and the dropdown rows all produce Obsidian's payload. Nothing had
+ * ever accepted one, which is the half of "drag and drop" that was missing.
+ *
+ * `dragManager.handleDrop` is Obsidian's own, so the hover feedback is the
+ * app's rather than an imitation of it: the floating "Move into…" label, the
+ * cursor's move effect, and the same highlight class the File Explorer puts
+ * on a folder row. Returning null is how a drop is declined, and a declined
+ * drop shows nothing at all — no label, no highlight — so an illegal target
+ * is silent rather than misleading.
+ *
+ * The move itself goes through `fileManager.renameFile`, not `vault.rename`:
+ * the former updates every link that pointed at the file, which is the whole
+ * difference between moving a note and breaking it.
+ */
+export function makeDropTarget(
+	app: App,
+	el: HTMLElement,
+	folderPath: string,
+	{ label, onMoved }: DropTargetOptions,
+): void {
+	const dragManager = app.dragManager;
+	if (!dragManager?.handleDrop) return;
+
+	// Which folder this element stands for, kept *on* the element rather than
+	// captured in the handler. Obsidian owns these segments and reuses the
+	// same nodes as the row is re-wired, so a captured path is the path the
+	// row happened to be showing when the listener was added — and a drop
+	// would then move the file into a folder from a path you had navigated
+	// away from. Written every time; read at the moment of the drop.
+	el.dataset.lureDropPath = folderPath;
+
+	// `handleDrop` adds listeners and has no way to take them off, so
+	// registering per re-wire would stack one handler per refresh — and every
+	// one of the stale ones would still fire.
+	if (el.dataset.lureDropWired === "1") return;
+	el.dataset.lureDropWired = "1";
+
+	try {
+		dragManager.handleDrop(el, (_evt, draggable, isOver) => {
+			const moving = draggedFile(app, draggable);
+			const at = el.dataset.lureDropPath;
+			const folder = at === undefined ? null : app.vault.getAbstractFileByPath(at);
+			if (!moving || !(folder instanceof TFolder)) return null;
+			if (!canMoveInto(moving, folder)) return null;
+
+			// The hover pass is a dry run: it says what the drop would do and
+			// changes nothing. Only the drop itself acts.
+			if (!isOver) void moveInto(app, moving, folder, onMoved);
+
+			return {
+				action: label(folder.name),
+				dropEffect: "move",
+				hoverEl: el,
+				// Obsidian's own class for "a drop would land here", so a
+				// theme that restyles the File Explorer restyles this too.
+				hoverClass: "is-being-dragged-over",
+			};
+		});
+	} catch {
+		// Internal API moved: the element simply does not accept drops.
+	}
+}
+
+/** The file or folder a drag is carrying, if it is carrying one this vault knows. */
+function draggedFile(app: App, draggable: unknown): TAbstractFile | null {
+	const data = draggable as { type?: string; file?: TAbstractFile } | null | undefined;
+	if (!data || (data.type !== "file" && data.type !== "folder")) return null;
+	const file = data.file;
+	if (!(file instanceof TFile) && !(file instanceof TFolder)) return null;
+	// Dragged out of a *different* vault's window, the payload's file belongs
+	// to that vault's tree and moving it here would write to the wrong place.
+	return app.vault.getAbstractFileByPath(file.path) === file ? file : null;
+}
+
+/**
+ * Whether the move is one worth offering.
+ *
+ * Three refusals, and each is silent rather than a notice, because they are
+ * all answers to "would this do anything", asked while the pointer is still
+ * moving:
+ *
+ * - **Into its own parent.** It is already there.
+ * - **A folder into itself, or into its own descendant.** There would be
+ *   nowhere left for it to come from; the filesystem refuses this too, but
+ *   later and less kindly.
+ * - **Onto a name already taken.** Nothing here overwrites, ever.
+ */
+function canMoveInto(moving: TAbstractFile, folder: TFolder): boolean {
+	if (moving === folder) return false;
+	if (moving.parent?.path === folder.path) return false;
+	if (moving instanceof TFolder && isInside(folder, moving)) return false;
+	return !folder.children.some((child) => child.name === moving.name);
+}
+
+/** Whether `folder` sits anywhere below `ancestor`. */
+function isInside(folder: TFolder, ancestor: TFolder): boolean {
+	for (let at: TFolder | null = folder; at; at = at.parent) {
+		if (at === ancestor) return true;
+	}
+	return false;
+}
+
+/**
+ * Moves it, and hands the result to whoever asked for the drop target.
+ *
+ * No success notice on purpose: a move committed from the path bar does not
+ * announce itself either — it shows the file where it now lives, which says
+ * the same thing in the place you would go looking. `onMoved` is that,
+ * supplied by the caller rather than rebuilt here, because the path bar
+ * already owns a reveal that suppresses Obsidian's own flash first.
+ */
+async function moveInto(
+	app: App,
+	moving: TAbstractFile,
+	folder: TFolder,
+	onMoved?: (file: TAbstractFile) => void,
+): Promise<void> {
+	const to = folder.path === "/" ? moving.name : `${folder.path}/${moving.name}`;
+	try {
+		await app.fileManager.renameFile(moving, to);
+	} catch (err) {
+		new Notice(t("noticeRenameFailed", { error: (err as Error).message }));
+		return;
+	}
+	const moved = app.vault.getAbstractFileByPath(to);
+	if (moved) onMoved?.(moved);
+}
+
 async function createNoteIn(app: App, folder: TFolder): Promise<void> {
 	try {
 		const file = await app.fileManager.createNewMarkdownFile(folder);
@@ -213,7 +358,7 @@ function buildFolderMenu(app: App, menu: Menu, folder: TFolder): void {
 	menu.addItem((item) =>
 		item
 			.setSection("action")
-			.setTitle(obsidianLabel(LABELS.rename, "Rename..."))
+			.setTitle(obsidianLabel(LABELS.rename, "Rename…"))
 			.setIcon("lucide-edit-3")
 			.onClick(() => void app.fileManager.promptForFileRename(folder)),
 	);
@@ -252,7 +397,7 @@ function buildFileMenu(app: App, menu: Menu, file: TFile): void {
 	menu.addItem((item) =>
 		item
 			.setSection("action")
-			.setTitle(obsidianLabel(LABELS.rename, "Rename..."))
+			.setTitle(obsidianLabel(LABELS.rename, "Rename…"))
 			.setIcon("lucide-edit-3")
 			.onClick(() => void app.fileManager.promptForFileRename(file)),
 	);
