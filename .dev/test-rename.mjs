@@ -23,21 +23,21 @@
  * Requires --remote-debugging-port=9222 (see .dev/cdp.mjs) and a vault open.
  */
 
-import { connect, PAUSE, pressKey, reloadPlugin } from "./cdpSession.mjs";
+import { appIsFocused, connect, PAUSE, pressKey, quiesce, reloadPlugin } from "./cdpSession.mjs";
+import { createSuite } from "./harness.mjs";
 
 const FIXTURE = "LureRename";
 const NOTE = `${FIXTURE}/Scrolling note.md`;
-const results = [];
-const tests = [];
-
-const test = (name, fn) => tests.push({ name, fn });
-const expect = (label, actual, wanted) => {
-	const ok = typeof wanted === "function" ? wanted(actual) : JSON.stringify(actual) === JSON.stringify(wanted);
-	results.push({ ok, label, actual: ok ? "" : JSON.stringify(actual) });
-};
 
 const page = await connect();
-await reloadPlugin(page);
+
+/**
+ * The state every case here starts from. `reset` and `teardown` are
+ * declared at the foot of the file, beside the fixtures they act on;
+ * function declarations hoist, so the suite can still be built here,
+ * above the cases that register into it.
+ */
+const { test, expect, run } = createSuite({ reset, teardown });
 
 /**
  * A note tall enough that scrolling puts the inline title off screen, which
@@ -88,7 +88,6 @@ const state = `
 const look = async () => JSON.parse(await page.evaluate(state));
 
 test("scrolled: Obsidian answers the first press with its dialog, not the inline title", async () => {
-	await reloadPlugin(page);
 	await page.evaluate(arrange(4000));
 	await pressKey(page, "F2");
 	await page.evaluate(PAUSE(600) + "return true;");
@@ -98,7 +97,6 @@ test("scrolled: Obsidian answers the first press with its dialog, not the inline
 });
 
 test("scrolled: the rename key closes the dialog and hands over to the path bar", async () => {
-	await reloadPlugin(page);
 	await page.evaluate(arrange(4000));
 	await pressKey(page, "F2");
 	await page.evaluate(PAUSE(600) + "return true;");
@@ -119,7 +117,6 @@ test("scrolled: the rename key closes the dialog and hands over to the path bar"
 });
 
 test("scrolled: only the rename key closes the dialog", async () => {
-	await reloadPlugin(page);
 	await page.evaluate(arrange(4000));
 	await pressKey(page, "F2");
 	await page.evaluate(PAUSE(600) + "return true;");
@@ -135,7 +132,6 @@ test("scrolled: only the rename key closes the dialog", async () => {
 });
 
 test("the rename key leaves other dialogs alone", async () => {
-	await reloadPlugin(page);
 	await page.evaluate(arrange(4000));
 	// Obsidian's delete confirmation, opened without the rename command being
 	// involved. "Only that one dialog" is the requirement: the key that
@@ -173,7 +169,6 @@ test("the rename key leaves other dialogs alone", async () => {
 });
 
 test("at the top: the alternation is untouched — inline title, then path bar", async () => {
-	await reloadPlugin(page);
 	await page.evaluate(arrange(0));
 	await pressKey(page, "F2");
 	await page.evaluate(PAUSE(600) + "return true;");
@@ -187,38 +182,49 @@ test("at the top: the alternation is untouched — inline title, then path bar",
 	expect("the path bar takes the second", second.activeEl, (v) => typeof v === "string" && v.includes("lure-path-input"));
 });
 
-const filter = process.argv[2];
-await buildFixture();
-
-for (const { name, fn } of tests) {
-	if (filter && !name.toLowerCase().includes(filter.toLowerCase())) continue;
-	console.log(`\n${name}`);
-	const start = results.length;
-	try {
-		await fn();
-	} catch (err) {
-		results.push({ ok: false, label: `${name} — threw`, actual: err.message });
-	}
-	for (let i = start; i < results.length; i++) {
-		const r = results[i];
-		console.log(`  ${r.ok ? "PASS" : "FAIL"}  ${r.label}${r.ok ? "" : `  → got ${r.actual}`}`);
-	}
+async function reset() {
+	await reloadPlugin(page);
+	await buildFixture();
 }
 
-// This vault is also the one the README screenshots come from, and a test
-// that throws never reaches its own cleanup — so the fixture is dropped here,
-// where every run arrives regardless of outcome.
-await page.evaluate(`
-	document.querySelector(".modal.mod-file-rename .mod-cancel")?.click();
-	${PAUSE(150)}
-	document.activeElement?.blur?.();
-	const folder = app.vault.getAbstractFileByPath(${JSON.stringify(FIXTURE)});
-	if (folder) await app.vault.adapter.rmdir(folder.path, true);
-	return true;
-`);
+async function teardown() {
+	// This vault is also the one the README screenshots come from, and a test
+	// that throws never reaches its own cleanup — so the fixture is dropped here,
+	// where every run arrives regardless of outcome.
+	await page.evaluate(`
+		document.querySelector(".modal.mod-file-rename .mod-cancel")?.click();
+		${PAUSE(150)}
+		document.activeElement?.blur?.();
+		const folder = app.vault.getAbstractFileByPath(${JSON.stringify(FIXTURE)});
+		if (folder) await app.vault.adapter.rmdir(folder.path, true);
+		return true;
+	`);
+	page.close();
+}
 
-page.close();
+/**
+ * This suite is about where the *focus* goes, so it cannot run against a
+ * window that does not have any.
+ *
+ * Obsidian's own `workspace:edit-file-title` reports success and does nothing
+ * while its window is not frontmost — verified with this plugin disabled, so
+ * it is the app's behaviour rather than anything here — and a contenteditable
+ * cannot be focused in that state either. Every assertion below then reports
+ * `document.body` where it wanted an editable element, which reads exactly
+ * like a broken feature and has been mistaken for one more than once.
+ *
+ * Refused outright rather than reported as failures: a suite that cannot
+ * observe what it is about has nothing to say, and saying nothing loudly is
+ * more use than saying the wrong thing six times.
+ */
+if (!(await appIsFocused(page))) {
+	console.log(
+		"\nObsidian's window is not focused, so nothing here can be measured.\n" +
+			"Click the Obsidian window and run this again. (Under Wayland it cannot be\n" +
+			"focused from a script: wmctrl and xdotool only see XWayland windows.)",
+	);
+	await teardown();
+	process.exit(2);
+}
 
-const failed = results.filter((r) => !r.ok).length;
-console.log(`\n${results.length - failed}/${results.length} assertions passed`);
-process.exit(failed ? 1 : 0);
+await run();

@@ -20,6 +20,7 @@
  */
 
 import { connect, PAUSE, reloadPlugin } from "./cdpSession.mjs";
+import { createSuite } from "./harness.mjs";
 
 /**
  * Every community plugin known to contend for the header or the folder
@@ -47,18 +48,7 @@ const PEERS = [
 	  why: "renders a hierarchy trail in the note body" },
 ];
 
-const results = [];
-const tests = [];
 let page;
-
-function test(name, fn) {
-	tests.push({ name, fn });
-}
-
-const expect = (label, actual, wanted) => {
-	const ok = typeof wanted === "function" ? wanted(actual) : JSON.stringify(actual) === JSON.stringify(wanted);
-	results.push({ ok, label, actual: ok ? "" : JSON.stringify(actual) });
-};
 
 // ------------------------------------------------------------- page-side
 
@@ -370,7 +360,6 @@ function adjacentTests(peer) {
 
 // ----------------------------------------------------------------- runner
 
-const filter = process.argv[2];
 page = await connect();
 
 for (let i = 0; ; i++) {
@@ -410,8 +399,27 @@ for (const peer of PEERS) {
 	console.log(`  ${here ? "✓" : "·"} ${peer.name} (${peer.id}) — ${here ? peer.why : "not installed"}`);
 }
 
-await page.evaluate(`${BUILD_FIXTURE} return true;`);
 const original = await page.evaluate(`return [...app.plugins.enabledPlugins];`);
+
+/**
+ * A known starting state for every case: this session's build and the fixture
+ * tree as declared.
+ *
+ * Deliberately without `quiesce` — this suite turns *other* plugins on and
+ * off, and several of the peers under test own views of their own. Detaching
+ * every leaf between cases would be tidying up after the plugin being tested
+ * rather than after the one doing the testing.
+ */
+const { test, expect, run } = createSuite({
+	reset: async () => {
+		await reloadPlugin(page);
+		await page.evaluate(`${BUILD_FIXTURE} return true;`);
+	},
+	teardown: async () => {
+		await restoreEnabled();
+		page.close();
+	},
+});
 
 for (const peer of PEERS.filter((p) => installed.includes(p.id))) {
 	if (peer.kind === "header") headerTests(peer);
@@ -419,45 +427,32 @@ for (const peer of PEERS.filter((p) => installed.includes(p.id))) {
 	else adjacentTests(peer);
 }
 
-if (!tests.length) {
+if (!installed.length) {
 	console.log("\nNo peer plugins installed — nothing to test.");
 	process.exit(0);
 }
 
-for (const { name, fn } of tests) {
-	if (filter && !name.includes(filter)) continue;
-	console.log(`\n${name}`);
-	const start = results.length;
-	try {
-		await fn();
-	} catch (err) {
-		results.push({ ok: false, label: `${name} — threw`, actual: err.message });
-	}
-	for (let i = start; i < results.length; i++) {
-		const r = results[i];
-		console.log(`  ${r.ok ? "PASS" : "FAIL"}  ${r.label}${r.ok ? "" : `  → got ${r.actual}`}`);
-	}
+/**
+ * Put the vault back the way it was found.
+ */
+async function restoreEnabled() {
+	// Put the vault back the way it was found — these tests toggle a lot, and the
+	// fixture is a folder that shows up in the File Explorer of every screenshot
+	// taken afterwards. Unconditional, and after the loop rather than inside it: a
+	// test that throws never reaches its own cleanup.
+	await page.evaluate(`
+		for (const id of ${JSON.stringify(PEERS.map((p) => p.id))}) {
+			if (${JSON.stringify(original)}.includes(id)) await app.plugins.enablePlugin(id);
+			else if ((app.plugins.manifests || {})[id]) await app.plugins.disablePlugin(id);
+		}
+		await app.plugins.enablePlugin("lure");
+		const fixture = app.vault.getAbstractFileByPath(${JSON.stringify(FIXTURE)});
+		// Straight to delete, not trash: the trash is inside the vault too, and a
+		// .trash folder in the sidebar is the same problem one level down.
+		if (fixture) await app.vault.delete(fixture, true);
+		return true;
+	`);
 }
 
-// Put the vault back the way it was found — these tests toggle a lot, and the
-// fixture is a folder that shows up in the File Explorer of every screenshot
-// taken afterwards. Unconditional, and after the loop rather than inside it: a
-// test that throws never reaches its own cleanup.
-await page.evaluate(`
-	for (const id of ${JSON.stringify(PEERS.map((p) => p.id))}) {
-		if (${JSON.stringify(original)}.includes(id)) await app.plugins.enablePlugin(id);
-		else if ((app.plugins.manifests || {})[id]) await app.plugins.disablePlugin(id);
-	}
-	await app.plugins.enablePlugin("lure");
-	const fixture = app.vault.getAbstractFileByPath(${JSON.stringify(FIXTURE)});
-	// Straight to delete, not trash: the trash is inside the vault too, and a
-	// .trash folder in the sidebar is the same problem one level down.
-	if (fixture) await app.vault.delete(fixture, true);
-	return true;
-`);
+await run();
 
-const passed = results.filter((r) => r.ok).length;
-console.log(`\n${passed}/${results.length} assertions passed`);
-for (const r of results.filter((x) => !x.ok)) console.log(`  FAIL  ${r.label} → ${r.actual}`);
-page.close();
-process.exit(results.length === passed ? 0 : 1);

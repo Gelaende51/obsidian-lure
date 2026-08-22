@@ -214,3 +214,54 @@ export async function reloadPlugin(page, id = "lure") {
 		return true;
 	`);
 }
+
+/**
+ * Puts the window back into a state a case can start from.
+ *
+ * Everything here is something a previous case was seen to leave behind: an
+ * open path input (whose handlers correctly make the next gesture bail), a
+ * context menu or a suggestion popover still in the DOM (which swallows the
+ * next click), a modal holding a keymap scope (which swallows the next key),
+ * and panes accumulated by cases that split or opened files. Each one
+ * produced a failure that vanished when the case was run on its own.
+ *
+ * Called from a suite's reset rather than from its teardown on purpose: a
+ * case cannot rely on the one before it having tidied up, only on the runner
+ * having done so before it started.
+ */
+export async function quiesce(page, { leaveTypes = ["markdown", "lure-external-file", "empty"] } = {}) {
+	await page.evaluate(`
+		const input = document.querySelector(".lure-path-input");
+		if (input) { input.blur(); }
+		document.querySelectorAll(".menu, .suggestion-container, .tooltip").forEach((el) => el.remove());
+		// A modal is closed rather than removed: it owns a keymap scope that
+		// stays pushed if its element is merely taken out of the document.
+		app.workspace.containerEl.doc.querySelectorAll(".modal-container").forEach((el) => {
+			const close = el.querySelector(".modal-close-button");
+			if (close) close.click(); else el.remove();
+		});
+		for (const type of ${JSON.stringify(leaveTypes)}) {
+			app.workspace.getLeavesOfType(type).forEach((l) => l.detach());
+		}
+		await new Promise((r) => setTimeout(r, 150));
+		return true;
+	`);
+}
+
+/**
+ * Whether Obsidian considers its own window focused.
+ *
+ * Not the same question as `document.hasFocus()`, which answers true for a
+ * window the compositor has not focused at all. Obsidian tracks the real
+ * thing and puts `is-focused` on the body; anything that depends on the app
+ * being frontmost — most of all, focusing the inline title — only works when
+ * this is true.
+ *
+ * Worth asking before a suite that asserts about focus, because the failure
+ * mode otherwise is a handful of assertions all reporting `document.body`
+ * where an editable element was expected, which reads exactly like a bug in
+ * the feature under test.
+ */
+export async function appIsFocused(page) {
+	return await page.evaluate(`return document.body.classList.contains("is-focused");`);
+}

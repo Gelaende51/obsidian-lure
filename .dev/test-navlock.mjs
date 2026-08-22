@@ -19,23 +19,24 @@
  * Requires OBSIDIAN_VAULT set to a vault with this plugin installed.
  */
 
-import { connect, PAUSE, reloadPlugin } from "./cdpSession.mjs";
+import { connect, PAUSE, quiesce, reloadPlugin } from "./cdpSession.mjs";
+import { createSuite } from "./harness.mjs";
 import { mkdirSync, rmSync, writeFileSync } from "fs";
 import { join } from "path";
 
 const ROOT = "NavTest";
 /** Outside every vault on purpose — that is the thing under test. */
 const EXT = `${process.env.HOME}/lure-navlock-fixtures`;
-const results = [];
-const tests = [];
-const test = (name, fn) => tests.push({ name, fn });
-const expect = (label, actual, wanted) => {
-	const ok = typeof wanted === "function" ? wanted(actual) : JSON.stringify(actual) === JSON.stringify(wanted);
-	results.push({ ok, label, actual: ok ? "" : JSON.stringify(actual) });
-};
 
 const page = await connect();
-await reloadPlugin(page);
+
+/**
+ * The state every case here starts from. `reset` and `teardown` are
+ * declared at the foot of the file, beside the fixtures they act on;
+ * function declarations hoist, so the suite can still be built here,
+ * above the cases that register into it.
+ */
+const { test, expect, run } = createSuite({ reset, teardown });
 
 /** Rebuilt before every test: earlier ones rename these folders. */
 const buildFixture = `
@@ -142,7 +143,6 @@ const lock = async (on) =>
 	page.evaluate(`app.plugins.plugins.lure.manager.navLock.setLocked(${on}); ${PAUSE(500)} return true;`);
 
 test("two panes: the sibling step walks only what they share", async () => {
-	await page.evaluate(buildFixture);
 	expect("two panes open", await page.evaluate(openPanes(["alpha", "beta"])), 2);
 	await lock(true);
 	const s = await look();
@@ -160,7 +160,6 @@ test("two panes: the sibling step walks only what they share", async () => {
 });
 
 test("three panes: a name only two of them share is not offered", async () => {
-	await page.evaluate(buildFixture);
 	expect("three panes open", await page.evaluate(openPanes(["alpha", "beta", "gamma"])), 3);
 	await lock(true);
 	const s = await look();
@@ -172,7 +171,6 @@ test("three panes: a name only two of them share is not offered", async () => {
 });
 
 test("rename: a shared folder is renamed in every coupled pane", async () => {
-	await page.evaluate(buildFixture);
 	await page.evaluate(openPanes(["alpha", "beta"]));
 	await lock(true);
 	const r = await page.evaluate(`
@@ -197,7 +195,6 @@ test("rename: a shared folder is renamed in every coupled pane", async () => {
 });
 
 test("rename: links to every renamed pane's notes still resolve", async () => {
-	await page.evaluate(buildFixture);
 	await page.evaluate(openPanes(["alpha", "beta"]));
 	// A note linking into both trees, written as full paths — the form a
 	// folder rename actually has to rewrite. Shortest-form links would keep
@@ -240,7 +237,6 @@ test("rename: links to every renamed pane's notes still resolve", async () => {
 });
 
 test("rename: one that would break the parallel asks first", async () => {
-	await page.evaluate(buildFixture);
 	await page.evaluate(openPanes(["alpha", "beta"]));
 	await lock(true);
 	const r = await page.evaluate(`
@@ -272,7 +268,6 @@ test("rename: one that would break the parallel asks first", async () => {
 });
 
 test("the lock ends when a coupled pane is closed", async () => {
-	await page.evaluate(buildFixture);
 	await page.evaluate(openPanes(["alpha", "beta", "gamma"]));
 	await lock(true);
 	const before = await look();
@@ -291,7 +286,6 @@ test("the lock ends when a coupled pane is closed", async () => {
 });
 
 test("the lock ends when a coupled pane navigates on its own", async () => {
-	await page.evaluate(buildFixture);
 	await page.evaluate(openPanes(["alpha", "beta"]));
 	await lock(true);
 	expect("locked", (await look()).locked, true);
@@ -309,7 +303,6 @@ test("the lock ends when a coupled pane navigates on its own", async () => {
 });
 
 test("the lock survives its own moves", async () => {
-	await page.evaluate(buildFixture);
 	await page.evaluate(openPanes(["alpha", "beta"]));
 	await lock(true);
 	// Back and forward open files exactly as a link does; if the lock could
@@ -326,7 +319,6 @@ test("the lock survives its own moves", async () => {
 });
 
 test("outside the vault: two panes out there couple like any others", async () => {
-	buildExternalFixtureOnDisk();
 	await page.evaluate(openExternalPanes(["one", "two"]));
 	const s = await look();
 	expect("both take part", s.folders.length, 2);
@@ -342,7 +334,6 @@ test("outside the vault: two panes out there couple like any others", async () =
 });
 
 test("outside the vault: hidden folders are not offered unless they are shown", async () => {
-	buildExternalFixtureOnDisk();
 	await page.evaluate(openExternalPanes(["one", "two"]));
 	const r = await page.evaluate(`
 		const mgr = app.plugins.plugins.lure.manager;
@@ -365,8 +356,6 @@ test("outside the vault: hidden folders are not offered unless they are shown", 
 });
 
 test("mixed: a vault pane and an external one walk together", async () => {
-	await page.evaluate(buildFixture);
-	buildExternalFixtureOnDisk();
 	await page.evaluate(`
 		for (const type of ["markdown", "lure-external-file", "empty"]) {
 			app.workspace.getLeavesOfType(type).forEach((l) => l.detach());
@@ -401,8 +390,6 @@ test("mixed: a vault pane and an external one walk together", async () => {
 });
 
 test("mixed: a shared rename asks rather than half-renaming", async () => {
-	await page.evaluate(buildFixture);
-	buildExternalFixtureOnDisk();
 	await page.evaluate(`
 		for (const type of ["markdown", "lure-external-file", "empty"]) {
 			app.workspace.getLeavesOfType(type).forEach((l) => l.detach());
@@ -450,37 +437,28 @@ test("mixed: a shared rename asks rather than half-renaming", async () => {
 	expect("and the lock is still on", s.stillLocked, true);
 });
 
-const filter = process.argv[2];
-for (const { name, fn } of tests) {
-	if (filter && !name.toLowerCase().includes(filter.toLowerCase())) continue;
-	console.log(`\n${name}`);
-	const start = results.length;
-	try {
-		await fn();
-	} catch (err) {
-		results.push({ ok: false, label: `${name} — threw`, actual: err.message });
-	}
-	for (let i = start; i < results.length; i++) {
-		const r = results[i];
-		console.log(`  ${r.ok ? "PASS" : "FAIL"}  ${r.label}${r.ok ? "" : `  → got ${r.actual}`}`);
-	}
+async function reset() {
+	await reloadPlugin(page);
+	await quiesce(page);
+	await page.evaluate(buildFixture);
+	buildExternalFixtureOnDisk();
 }
 
-// The fixture is created inside a real vault, so it goes whether the run
-// passed or not.
-await page.evaluate(`
-	app.plugins.plugins.lure.manager.navLock.setLocked(false);
-	document.querySelectorAll(".modal-container").forEach((m) => m.remove());
-	for (const type of ["lure-external-file", "empty"]) {
-		app.workspace.getLeavesOfType(type).forEach((l) => l.detach());
-	}
-	const folder = app.vault.getAbstractFileByPath("${ROOT}");
-	if (folder) await app.vault.adapter.rmdir("${ROOT}", true);
-	return true;
-`);
-rmSync(EXT, { recursive: true, force: true });
-page.close();
+async function teardown() {
+	// The fixture is created inside a real vault, so it goes whether the run
+	// passed or not.
+	await page.evaluate(`
+		app.plugins.plugins.lure.manager.navLock.setLocked(false);
+		document.querySelectorAll(".modal-container").forEach((m) => m.remove());
+		for (const type of ["lure-external-file", "empty"]) {
+			app.workspace.getLeavesOfType(type).forEach((l) => l.detach());
+		}
+		const folder = app.vault.getAbstractFileByPath("${ROOT}");
+		if (folder) await app.vault.adapter.rmdir("${ROOT}", true);
+		return true;
+	`);
+	rmSync(EXT, { recursive: true, force: true });
+	page.close();
+}
 
-const failed = results.filter((r) => !r.ok).length;
-console.log(`\n${results.length - failed}/${results.length} assertions passed`);
-process.exit(failed ? 1 : 0);
+await run();

@@ -20,33 +20,37 @@
  * Requires --remote-debugging-port=9222 and OBSIDIAN_VAULT set.
  */
 
-import { connect, PAUSE, pressKey, reloadPlugin } from "./cdpSession.mjs";
+import { connect, PAUSE, pressKey, quiesce, reloadPlugin } from "./cdpSession.mjs";
+import { createSuite } from "./harness.mjs";
 import { mkdirSync, rmSync, writeFileSync } from "fs";
 import { homedir } from "os";
 import { join } from "path";
 
 const BED = join(homedir(), "lure-url-fixtures");
-const results = [];
-const tests = [];
-const test = (name, fn) => tests.push({ name, fn });
-const expect = (label, actual, wanted) => {
-	const ok = typeof wanted === "function" ? wanted(actual) : JSON.stringify(actual) === JSON.stringify(wanted);
-	results.push({ ok, label, actual: ok ? "" : JSON.stringify(actual) });
-};
 
 const page = await connect();
-await reloadPlugin(page);
 
-rmSync(BED, { recursive: true, force: true });
-mkdirSync(BED, { recursive: true });
-writeFileSync(join(BED, "a b.md"), "# spaced name\n");
+/**
+ * The state every case here starts from. `reset` and `teardown` are
+ * declared at the foot of the file, beside the fixtures they act on;
+ * function declarations hoist, so the suite can still be built here,
+ * above the cases that register into it.
+ */
+const { test, expect, run } = createSuite({ reset, teardown });
+
+/** The files outside every vault that the `file://` cases are pointed at. */
+function buildBed() {
+	rmSync(BED, { recursive: true, force: true });
+	mkdirSync(BED, { recursive: true });
+	writeFileSync(join(BED, "a b.md"), "# spaced name\n");
+}
 
 /**
  * The note every case is typed into, made rather than assumed — the suite
  * used to expect one that existed only in the vault it was written against,
  * and failed wholesale anywhere else.
  */
-await page.evaluate(`
+const buildFixture = `
 	const mk = async (p) => { if (!app.vault.getAbstractFileByPath(p)) await app.vault.createFolder(p); };
 	await mk("Schemes");
 	for (const p of ["Trumpet.md", "Schemes/Master plan.md"]) {
@@ -54,7 +58,7 @@ await page.evaluate(`
 	}
 	${PAUSE(400)}
 	return true;
-`);
+`;
 
 /** Opens a note, opens the path input on its name, and clears the field. */
 const armInput = `
@@ -184,32 +188,41 @@ test("an ordinary path is still an ordinary path", async () => {
 	expect("nothing handed to the host", s.opened, []);
 });
 
-const filter = process.argv[2];
-for (const { name, fn } of tests) {
-	if (filter && !name.toLowerCase().includes(filter.toLowerCase())) continue;
-	console.log(`\n${name}`);
-	const start = results.length;
-	try {
-		await fn();
-	} catch (err) {
-		results.push({ ok: false, label: `${name} — threw`, actual: err.message });
-	}
-	for (let i = start; i < results.length; i++) {
-		const r = results[i];
-		console.log(`  ${r.ok ? "PASS" : "FAIL"}  ${r.label}${r.ok ? "" : `  → got ${r.actual}`}`);
-	}
+test("a path wrapped in quotes is unwrapped", async () => {
+	// What "Copy as path" hands out on Windows, and what a shell gives for
+	// any path with a space in it. Taken literally the quotes become part of
+	// the name and the row goes looking for a file that starts with one.
+	const s = await typeAndEnter('"Schemes/Master plan.md"');
+	expect("navigated inside the vault", s.activeFile, "Schemes/Master plan.md");
+	expect("nothing handed to the host", s.opened, []);
+});
+
+test("a quoted path outside the vault is unwrapped before it is read", async () => {
+	// The case the quotes exist for: a path with a space in it, which is
+	// exactly when a file manager decides to wrap one. Unwrapping has to
+	// happen before the scheme and encoding checks, or the leading quote
+	// makes it look like an ordinary name to be created in the vault.
+	const s = await typeAndEnter(`"${BED}/a%20b.md"`);
+	expect("decoded and opened outside", s.externalPath, `${BED}/a b.md`);
+});
+
+async function reset() {
+	await reloadPlugin(page);
+	await quiesce(page);
+	buildBed();
+	await page.evaluate(buildFixture);
 }
 
-await page.evaluate(`
-	if (window.__realOpen) window.open = window.__realOpen;
-	app.workspace.detachLeavesOfType("lure-external-file");
-	app.workspace.getLeavesOfType("empty").forEach((l) => l.detach());
-	document.querySelectorAll(".notice").forEach((n) => n.remove());
-	return true;
-`);
-rmSync(BED, { recursive: true, force: true });
-page.close();
+async function teardown() {
+	await page.evaluate(`
+		if (window.__realOpen) window.open = window.__realOpen;
+		app.workspace.detachLeavesOfType("lure-external-file");
+		app.workspace.getLeavesOfType("empty").forEach((l) => l.detach());
+		document.querySelectorAll(".notice").forEach((n) => n.remove());
+		return true;
+	`);
+	rmSync(BED, { recursive: true, force: true });
+	page.close();
+}
 
-const failed = results.filter((r) => !r.ok).length;
-console.log(`\n${results.length - failed}/${results.length} assertions passed`);
-process.exit(failed ? 1 : 0);
+await run();

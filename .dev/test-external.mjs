@@ -18,7 +18,8 @@
 import { mkdirSync, rmSync, writeFileSync, readFileSync, existsSync, chmodSync } from "fs";
 import { join } from "path";
 import { homedir, userInfo } from "os";
-import { connect, PAUSE, pressKey, reloadPlugin } from "./cdpSession.mjs";
+import { connect, PAUSE, pressKey, quiesce, reloadPlugin } from "./cdpSession.mjs";
+import { createSuite } from "./harness.mjs";
 import { build } from "esbuild";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve as resolvePath } from "node:path";
@@ -63,7 +64,6 @@ const BED = "/tmp/lure-testbed";
 const HOME = homedir();
 const ACCOUNT = userInfo().username;
 const EXDEV = join(HOME, "lure-exdev-target");
-const results = [];
 let page;
 
 /** Fixtures live outside every vault on purpose — that is the thing under test. */
@@ -108,15 +108,21 @@ function buildFixtures() {
  */
 const RENDER_CEILING_MS = 14000;
 
-function test(name, fn) {
-	tests.push({ name, fn });
-}
-const tests = [];
-
-const expect = (label, actual, wanted) => {
-	const ok = typeof wanted === "function" ? wanted(actual) : JSON.stringify(actual) === JSON.stringify(wanted);
-	results.push({ ok, label, actual: ok ? "" : JSON.stringify(actual) });
-};
+/**
+ * The state every case here starts from. `reset` and `teardown` are declared
+ * at the foot of the file, beside the fixtures and the settings snapshot they
+ * act on; function declarations hoist, so the suite is built here, above the
+ * cases that register into it.
+ *
+ * The two cases that kill the renderer outright are left out of a plain run
+ * and reachable by name — the caps they prove are also proved by the
+ * "truncated" assertions beside them, at no risk to the rest of the run.
+ */
+const { test, expect, run } = createSuite({
+	reset,
+	teardown,
+	skip: (name) => name.includes("[crashes"),
+});
 
 /** Opens a path in the plugin's viewer and waits for the render to settle. */
 const open = (path, extra = "") => `
@@ -592,6 +598,12 @@ test("path bar: pressing the padlock mid-rename keeps what was typed", async () 
 });
 
 test("path bar: refuses to overwrite an existing target", async () => {
+	// Its own file to move, rather than the one the rename case above leaves
+	// behind. Standing on that was invisible for as long as the cases ran in
+	// declaration order, and became a failure the moment the fixtures were
+	// rebuilt per case: the file simply was not there, and the assertion that
+	// noticed — "source still there" — reads like the plugin having deleted it.
+	writeFileSync(join(BED, "renamed.txt"), "moved once\n");
 	const r = await page.evaluate(`
 		${open(join(BED, "renamed.txt"))}
 		${breadcrumb}
@@ -1170,6 +1182,199 @@ test("locations: picking a place that contains this note lands on the note", asy
 	expect("with the first folder selected", r.selected, relative.split("/")[0]);
 });
 
+test("locations: Tab sets in the place being pointed at", async () => {
+	// A place is not a name to complete against — it is somewhere the whole
+	// path is counted from — so Tab in this dropdown had nothing to do and
+	// fell through to widening a selection. It locks the place in now, which
+	// is what picking it does: the key and the pointer agree here as they do
+	// everywhere else on the row.
+	const r = await page.evaluate(`
+		const md = app.vault.getMarkdownFiles()[0];
+		await app.workspace.getLeaf(false).openFile(md);
+		${PAUSE(400)}
+		${breadcrumb}
+		bc.openLocationMenu();
+		${PAUSE(600)}
+		const rows = [...document.querySelectorAll(".suggestion-item")];
+		const places = bc.locationEntries().map((l) => ({ label: l.label, path: l.path }));
+		const wanted = places.find((pl) => !bc.currentAbsolutePath().startsWith(pl.path));
+		const row = rows.find((e) => e.textContent === wanted?.label);
+		if (!row) return { listed: false };
+		// Point at it the way arrowing to it would, then press the key.
+		row.dispatchEvent(new MouseEvent("mousemove", { bubbles: true }));
+		${PAUSE(250)}
+		const input = document.querySelector(".lure-path-input");
+		input.focus();
+		input.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", bubbles: true, cancelable: true }));
+		${PAUSE(700)}
+		const out = {
+			listed: true,
+			wanted,
+			showing: bc.showingLocations,
+			external: bc.externalPath,
+			base: bc.externalBase?.path ?? null,
+		};
+		bc.cancelNavigation();
+		return out;
+	`);
+	expect("a place other than this vault is listed", r.listed, true);
+	expect("the press sets it in", r.external, r.wanted.path);
+	expect("the row is drawn from it", r.base, r.wanted.path);
+	expect("and the dropdown of places is done with", r.showing, false);
+});
+
+test("locations: typing a place is offered the rest of its name, and Tab takes it", async () => {
+	// Places are listed *instead of* a folder's children, and the set the
+	// completion reads was filtered to children — so in this dropdown, the
+	// one place where every row is a name you are typing at, nothing was
+	// ever offered.
+	const r = await page.evaluate(`
+		const md = app.vault.getMarkdownFiles()[0];
+		await app.workspace.getLeaf(false).openFile(md);
+		${PAUSE(400)}
+		${breadcrumb}
+		bc.openLocationMenu();
+		${PAUSE(600)}
+		const input = document.querySelector(".lure-path-input");
+		input.focus();
+		// A place whose name nothing else here begins with, found rather than
+		// assumed: this suite must not know what is mounted on the machine.
+		const places = bc.locationEntries().map((l) => l.label);
+		const alone = places.find(
+			(label) => places.filter((other) => other[0].toLowerCase() === label[0].toLowerCase()).length === 1,
+		);
+		if (!alone) return { testable: false };
+		return { testable: true, alone, places };
+	`);
+	if (!r.testable) {
+		expect("no place here has a first letter of its own — nothing to test", true, true);
+		return;
+	}
+
+	// Type its first letter, as a person would.
+	await pressKey(page, r.alone[0].toLowerCase());
+	await page.evaluate(PAUSE(400) + "return true;");
+	const offered = await page.evaluate(`
+		const input = document.querySelector(".lure-path-input");
+		const rows = [...document.querySelectorAll(".suggestion-item")];
+		return {
+			value: input.value,
+			selected: input.value.slice(input.selectionStart, input.selectionEnd),
+			underlined: rows.map((e) => e.querySelector(".lure-suggest-offer")?.textContent ?? null),
+		};
+	`);
+	expect("the rest of the name is offered", offered.value, (v) =>
+		String(v).toLowerCase().startsWith(r.alone.toLowerCase()));
+	expect("marked, as the part nobody typed", offered.selected, r.alone.slice(1));
+	expect("and the row underlines what it would add", offered.underlined, (v) =>
+		Array.isArray(v) && v.includes(r.alone.slice(1)));
+
+	const taken = await page.evaluate(`
+		${breadcrumb}
+		const wanted = bc.locationEntries().find((l) => l.label === ${JSON.stringify(r.alone)});
+		const input = document.querySelector(".lure-path-input");
+		input.focus();
+		input.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", bubbles: true, cancelable: true }));
+		${PAUSE(700)}
+		// Where the row now stands, as one absolute path, whichever side of
+		// the vault boundary the place turned out to be on.
+		const base = app.vault.adapter.getBasePath();
+		const landed = bc.externalPath ?? (bc.browsePath ? base + "/" + bc.browsePath : base);
+		const out = { showing: bc.showingLocations, landed, wanted: wanted?.path ?? null };
+		bc.cancelNavigation();
+		return out;
+	`);
+	expect("the press sets that very place in", taken.landed, taken.wanted);
+	expect("and the dropdown of places is done with", taken.showing, false);
+});
+
+test("locations: a path carried into a place keeps the part that is not there yet", async () => {
+	// The report: carry a path into another place and walking it works once,
+	// then the rest is gone. The rest was being cut against the folder just
+	// entered — which is right when a folder has been *swapped* for another,
+	// and wrong when it is the very folder the path hangs from. A path is
+	// typed ahead of itself; the folders it names are the ones about to be
+	// made.
+	const r = await page.evaluate(`
+		${open(join(BED, "note.md"))}
+		${breadcrumb}
+		bc.goToLocation(${JSON.stringify(BED)});
+		${PAUSE(600)}
+		// The state a jump leaves when the place holds a twin of the path:
+		// its first folder marked, the rest of it behind.
+		bc.enterTypingMode("sub/nothere/untitled.md", "sub".length);
+		${PAUSE(400)}
+		const input = document.querySelector(".lure-path-input");
+		input.focus();
+		const before = { value: input.value, anchor: bc.tailAnchor };
+		input.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", bubbles: true, cancelable: true }));
+		${PAUSE(700)}
+		const now = document.querySelector(".lure-path-input");
+		const out = {
+			before,
+			external: bc.externalPath,
+			value: now ? now.value : null,
+			selected: now ? now.value.slice(now.selectionStart, now.selectionEnd) : null,
+		};
+		bc.cancelNavigation();
+		return out;
+	`);
+	expect("the path hangs from its first folder", r.before.anchor, "sub");
+	expect("the press steps into that folder", r.external, `${BED}/sub`);
+	expect("and the rest of the path comes with it", r.value, "nothere/untitled.md");
+	expect("opening on the folder about to be made", r.selected, "nothere");
+});
+
+test("locations: pointing at a place shows that place's own path, not this one's", async () => {
+	// Two faults in one preview. The place was swapped in as though it were
+	// a *segment* of the path on screen, so everything in front of it stayed
+	// — the current vault's parent folder, spliced in front of a vault that
+	// lives somewhere else entirely, or in front of "/" — and only the last
+	// word of it was marked, though the whole place is what a press replaces.
+	// What followed it was this vault's path, which is exactly the part that
+	// is not true of anywhere else.
+	const r = await page.evaluate(`
+		const md = app.vault.getMarkdownFiles()[0];
+		await app.workspace.getLeaf(false).openFile(md);
+		${PAUSE(400)}
+		${breadcrumb}
+		bc.openLocationMenu();
+		${PAUSE(600)}
+		const container = app.workspace.activeLeaf.view.containerEl
+			.querySelector(".view-header-title-container");
+		const input = container.querySelector("input");
+		const places = bc.locationEntries().map((l) => ({ label: l.label, path: l.path }));
+		const rows = [...document.querySelectorAll(".suggestion-item")];
+		// Somewhere that is not the open vault, so "this vault's path" and
+		// "that place's path" cannot agree by accident.
+		const wanted = places.find((pl) => !bc.currentAbsolutePath().startsWith(pl.path));
+		const row = rows.find((e) => e.textContent === wanted?.label);
+		if (!row) return { listed: false, places };
+		row.dispatchEvent(new MouseEvent("mousemove", { bubbles: true }));
+		${PAUSE(300)}
+		const out = {
+			listed: true,
+			wanted,
+			field: input.value,
+			selected: input.value.slice(input.selectionStart, input.selectionEnd),
+			here: bc.currentAbsolutePath(),
+		};
+		bc.cancelNavigation();
+		return out;
+	`);
+	expect("a place other than this vault is listed", r.listed, true);
+	expect("the field shows that place's own path", r.field, (v) =>
+		typeof v === "string" && v.startsWith(r.wanted.path));
+	expect("all of it marked, since all of it is what a press replaces", r.selected, r.wanted.path);
+	expect("counted from it, not spliced into this one's parent", r.field, (v) =>
+		v === r.wanted.path || String(v).startsWith(`${r.wanted.path}/`));
+	// The strongest form of it: whatever the preview shows, you could go
+	// there. What used to follow the place was *this* vault's path, which is
+	// exactly the part that is not true of anywhere else — and the result
+	// named a folder that existed on no disk at all.
+	expect("and what it shows is really there", existsSync(r.field), true);
+});
+
 test("path bar: the field outside reads from the place you picked", async () => {
 	// The row counts from the location the dropdown offered, so the field
 	// has to as well — it used to open on the machine's absolute path,
@@ -1258,8 +1463,6 @@ test("writes: Ctrl copies a note out instead of moving it", async () => {
 
 // ------------------------------------------------------------------ run
 
-const filter = process.argv[2];
-buildFixtures();
 page = await connect();
 // Read the locale the app is actually in, so T() resolves the same strings
 // the user is looking at rather than the ones the author happened to write.
@@ -1298,8 +1501,6 @@ for (let i = 0; ; i++) {
 	await new Promise((r) => setTimeout(r, 500));
 }
 
-// Only now, with the plugin definitely up: swap in whatever is on disk.
-await reloadPlugin(page);
 
 /**
  * Settings this suite flips, captured before the first test.
@@ -1318,12 +1519,18 @@ const SETTINGS_AT_START = JSON.parse(
 	`),
 );
 
-for (const { name, fn } of tests) {
-	if (filter ? !name.includes(filter) : name.includes("[crashes")) continue;
-	console.log(`\n${name}`);
-	// A test that fails with a modal open leaves it on Obsidian's modal
-	// stack, and every later `.modal button` query then finds the *stale*
-	// modal's buttons first — one failure silently becomes a dozen.
+/**
+ * A known starting state for every case: this session's build, no modal left
+ * on Obsidian's stack, nothing open from the case before, and the fixture
+ * tree outside the vault as it was declared.
+ *
+ * The modal half is the one that was found the hard way. A case that fails
+ * with a modal open leaves it on the stack, and every later `.modal button`
+ * query then finds the *stale* modal's buttons first — one failure silently
+ * became a dozen.
+ */
+async function reset() {
+	await reloadPlugin(page);
 	await page.evaluate(`
 		for (let i = 0; i < 4 && document.querySelector(".modal"); i++) {
 			document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
@@ -1332,34 +1539,28 @@ for (const { name, fn } of tests) {
 		document.querySelectorAll(".modal-container").forEach((m) => m.remove());
 		return true;
 	`);
-	const start = results.length;
-	try {
-		await fn();
-	} catch (err) {
-		results.push({ ok: false, label: `${name} — threw`, actual: err.message });
-	}
-	for (let i = start; i < results.length; i++) {
-		results[i].test = name;
-		const r = results[i];
-		console.log(`  ${r.ok ? "PASS" : "FAIL"}  ${r.label}${r.ok ? "" : `  → got ${r.actual}`}`);
-	}
+	await quiesce(page);
+	buildFixtures();
 }
 
-// The fixture folder is created inside the vault, and this vault is also the
-// one the README screenshots are taken from. Individual tests drop it, but a
-// test that throws does not reach its own cleanup — so drop it here too,
-// where every run passes regardless of outcome.
-await page.evaluate(`
-	const folder = app.vault.getAbstractFileByPath("LureFocus");
-	if (folder) await app.vault.adapter.rmdir(folder.path, true);
-	const at = ${JSON.stringify(SETTINGS_AT_START)};
-	app.vault.setConfig("showUnsupportedFiles", at.showUnsupportedFiles);
-	Object.assign(app.plugins.plugins.lure.settings, at.lure);
-	return true;
-`);
+/**
+ * The fixture folder is created inside the vault, and this vault is also the
+ * one the README screenshots are taken from. Individual tests drop it, but a
+ * test that throws does not reach its own cleanup — so drop it here too,
+ * where every run passes regardless of outcome.
+ */
+async function teardown() {
+	await page.evaluate(`
+		const folder = app.vault.getAbstractFileByPath("LureFocus");
+		if (folder) await app.vault.adapter.rmdir(folder.path, true);
+		const at = ${JSON.stringify(SETTINGS_AT_START)};
+		app.vault.setConfig("showUnsupportedFiles", at.showUnsupportedFiles);
+		Object.assign(app.plugins.plugins.lure.settings, at.lure);
+		return true;
+	`);
+	rmSync(BED, { recursive: true, force: true });
+	page.close();
+}
 
-page.close();
+await run();
 
-const failed = results.filter((r) => !r.ok).length;
-console.log(`\n${results.length - failed}/${results.length} assertions passed`);
-process.exit(failed ? 1 : 0);

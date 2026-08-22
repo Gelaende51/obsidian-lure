@@ -12,6 +12,7 @@
  *     node .dev/test-complete.mjs [name filter]
  */
 
+import { createSuite } from "./harness.mjs";
 import { build } from "esbuild";
 
 const bundle = await build({
@@ -22,18 +23,11 @@ const bundle = await build({
 	logLevel: "silent",
 });
 const source = bundle.outputFiles[0].text;
-const { planTab, commonPrefix } = await import(
+const { planTab, commonPrefix, planSuggestion } = await import(
 	`data:text/javascript;base64,${Buffer.from(source).toString("base64")}`
 );
 
-const results = [];
-const tests = [];
-const test = (name, fn) => tests.push({ name, fn });
-const expect = (label, actual, wanted) => {
-	const ok =
-		typeof wanted === "function" ? wanted(actual) : JSON.stringify(actual) === JSON.stringify(wanted);
-	results.push({ ok, label, actual: ok ? "" : JSON.stringify(actual) });
-};
+const { test, expect, run } = createSuite();
 
 /** A folder called `name`, in the folder being listed. */
 const dir = (name) => ({ label: name, path: `Here/${name}`, folder: true });
@@ -209,22 +203,34 @@ test("candidates that are all exactly what was typed give up", () => {
 
 // ---------------------------------------------------------------------- run
 
-const filter = process.argv[2];
-for (const { name, fn } of tests) {
-	if (filter && !name.includes(filter)) continue;
-	const at = results.length;
-	try {
-		fn();
-	} catch (err) {
-		results.push({ ok: false, label: `${name} — threw`, actual: err.message });
-	}
-	const failed = results.slice(at).filter((r) => !r.ok).length;
-	console.log(`${failed ? "✗" : "✓"} ${name}`);
-	for (const r of results.slice(at).filter((r) => !r.ok)) {
-		console.log(`    ${r.label}: got ${r.actual}`);
-	}
-}
+// ------------------------------------------------- what is offered inline
 
-const failed = results.filter((r) => !r.ok).length;
-console.log(`\n${results.length - failed}/${results.length} assertions passed`);
-process.exit(failed ? 1 : 0);
+/** What would be shown after the caret, having typed `typed` in this folder. */
+const offered = (typed, children) => planSuggestion(typed, starting(typed, children));
+
+test("the agreement between the names is offered as already made", () => {
+	const family = [dir("Alpha-one"), dir("Alpha-two"), dir("Alpine")];
+	// All three agree as far as "Alp", so "Al" is offered the "p".
+	expect("as far as they agree, and no further", offered("Al", family), "p");
+	expect("nothing once the agreement is used up", offered("Alp", family), "");
+	// One candidate agrees with itself all the way to its end.
+	expect("a single name is offered whole", offered("Alpi", family), "ne");
+});
+
+test("what is offered is the continuation, never a rewrite of what was typed", () => {
+	const family = [dir("Sketches")];
+	// Typed in the wrong case: the letters already in the field are the
+	// user's, and only what follows them is offered.
+	expect("the tail only, in the folder's spelling", offered("sk", family), "etches");
+	expect("nothing is offered for a name typed out in full", offered("Sketches", family), "");
+});
+
+test("nothing is offered where there is nothing to agree on", () => {
+	const family = [dir("Alpha"), dir("Beta")];
+	expect("no shared opening, nothing offered", offered("", family), "");
+	expect("a name nothing starts with offers nothing", offered("zz", family), "");
+	expect("an empty folder offers nothing", offered("a", []), "");
+});
+
+await run();
+

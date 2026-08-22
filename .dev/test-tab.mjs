@@ -24,7 +24,8 @@
  * Requires --remote-debugging-port=9222 and OBSIDIAN_VAULT set.
  */
 
-import { connect, PAUSE, pressKey, reloadPlugin } from "./cdpSession.mjs";
+import { connect, PAUSE, pressKey, quiesce, reloadPlugin } from "./cdpSession.mjs";
+import { createSuite } from "./harness.mjs";
 
 const NOTE = "Schemes/2026/Cake catapult.md";
 /** Named so nothing in a real vault can collide with them, and deleted at the end. */
@@ -40,19 +41,25 @@ const FOLDERS = [
 	`${PREFIX}deep`,
 	`${PREFIX}deep/inner`,
 	`${PREFIX}deep/inner/deeper`,
+	// Carries the first step of `deep`'s path and not the second, so a swap
+	// onto it has something to keep and something to cut.
+	`${PREFIX}half`,
+	`${PREFIX}half/inner`,
+	// A second child of `deep`, mirroring the first all the way down, so the
+	// walk can be forked onto it halfway and carry on to the same depth.
+	`${PREFIX}deep/other`,
+	`${PREFIX}deep/other/deeper`,
 ];
 /** Files made beside the folders, and taken out again with them. */
-const FILES = [`${PREFIX}noted.md`, `${PREFIX}deep/inner/deeper/leaf.md`];
-const results = [];
-const tests = [];
-const test = (name, fn) => tests.push({ name, fn });
-const expect = (label, actual, wanted) => {
-	const ok = typeof wanted === "function" ? wanted(actual) : JSON.stringify(actual) === JSON.stringify(wanted);
-	results.push({ ok, label, actual: ok ? "" : JSON.stringify(actual) });
-};
-
+const FILES = [
+	`${PREFIX}noted.md`,
+	`${PREFIX}deep/inner/deeper/leaf.md`,
+	`${PREFIX}deep/other/deeper/leaf.md`,
+	// A plain file with no folder of its name beside it, so completing it
+	// leaves a whole filename standing and nothing else to walk into.
+	`${PREFIX}deep/unique.md`,
+];
 const page = await connect();
-await reloadPlugin(page);
 
 /**
  * The note and folders this suite walks, made rather than assumed.
@@ -60,8 +67,13 @@ await reloadPlugin(page);
  * They used to be taken for granted, which tied the suite to one particular
  * vault: run against any other and every case failed on a null element,
  * reporting the plugin broken when it was the fixture that was missing.
+ *
+ * Rebuilt before every case rather than once per run: several cases here
+ * complete a name by *creating* what they complete into, and one that trails
+ * a mutating case would otherwise walk a tree that no longer looks the way it
+ * was declared.
  */
-await page.evaluate(`
+const buildFixture = `
 	const mk = async (p) => { if (!app.vault.getAbstractFileByPath(p)) await app.vault.createFolder(p); };
 	const mkf = async (p) => { if (!app.vault.getAbstractFileByPath(p)) await app.vault.create(p, "# fixture"); };
 	await mk("Schemes");
@@ -82,7 +94,23 @@ await page.evaluate(`
 	for (const name of ${JSON.stringify(FILES)}) await mkf(name);
 	${PAUSE(500)}
 	return true;
-`);
+`;
+
+/**
+ * The state every case here starts from: this session's build, nothing left
+ * open from the case before, and the fixture tree as declared.
+ */
+const { test, expect, run } = createSuite({
+	reset: async () => {
+		await reloadPlugin(page);
+		await quiesce(page);
+		await page.evaluate(buildFixture);
+	},
+	teardown: async () => {
+		await page.evaluate(teardown);
+		page.close();
+	},
+});
 
 /** Opens the path input on the note's own name, emptied and focused. */
 const arm = `
@@ -116,6 +144,7 @@ const field = `
 		value: input ? input.value : null,
 		selected: input ? input.value.slice(input.selectionStart, input.selectionEnd) : null,
 		chips: [...document.querySelectorAll(".lure-browse-chip")].map((c) => c.textContent),
+		rows: [...document.querySelectorAll(".suggestion-item .lure-suggest-label")].map((e) => e.textContent),
 	});
 `;
 
@@ -188,11 +217,19 @@ test("Tab completes a folder and steps into it, once only one is left", async ()
 
 test("Tab stops where the names stop agreeing", async () => {
 	await armAtRoot();
-	// Three folders start this way and agree as far as "alp".
+	// Three folders start this way and agree as far as "alp", and that much
+	// is offered before any key is pressed for it.
 	await type(`${PREFIX}a`);
+	const offered = await look();
+	expect("the shared opening is offered", offered.value, `${PREFIX}alp`);
+	expect("marked, as the part nobody typed", offered.selected, "lp");
+
+	// The press takes it, and stops there. Where the names stop agreeing is
+	// a question for the user: walking on toward one of them would be the
+	// press answering it, and picking whichever name sorts first.
 	await tab();
 	const s = await look();
-	expect("completed to the shared opening", s.value, `${PREFIX}alp`);
+	expect("the press takes it and stops at the fork", s.value, `${PREFIX}alp`);
 	expect("and stepped into nothing", s.chips, (v) => Array.isArray(v) && !v.some((c) => c.startsWith(PREFIX)));
 	// The caret sits after the completion, ready to be typed on: this is text
 	// you asked for, not a suggestion to type over.
@@ -202,8 +239,10 @@ test("Tab stops where the names stop agreeing", async () => {
 test("a further press walks toward one name, a step at a time", async () => {
 	await armAtRoot();
 	await type(`${PREFIX}a`);
+	expect("the shared opening arrives with the typing", (await look()).value, `${PREFIX}alp`);
+
 	await tab();
-	expect("at the shared opening", (await look()).value, `${PREFIX}alp`);
+	expect("the press takes it and stops", (await look()).value, `${PREFIX}alp`);
 
 	await tab();
 	expect("one branch further", (await look()).value, `${PREFIX}alpha-`);
@@ -221,8 +260,13 @@ test("arrowing to a row and pressing Tab takes that row", async () => {
 	await armAtRoot();
 	await type(`${PREFIX}a`);
 	await page.evaluate(`document.querySelector(".lure-path-input")?.focus(); return true;`);
-	await pressKey(page, "ArrowDown");
-	await page.evaluate(PAUSE(400) + "return true;");
+	// Twice: typing leaves nothing highlighted, so the first press lands on
+	// the first row and the second is what makes "the row you arrowed to"
+	// different from "the row that sorts first".
+	for (let i = 0; i < 2; i++) {
+		await pressKey(page, "ArrowDown");
+		await page.evaluate(PAUSE(400) + "return true;");
+	}
 	// Arrowing previews the row into the field, which leaves a complete name
 	// there — so the press has nothing left to choose and simply takes it.
 	expect("the row is in the field", (await look()).value, `${PREFIX}alpha-two`);
@@ -270,8 +314,18 @@ test("the row the list opens on is the one Tab walks toward", async () => {
 
 	await tab();
 	// "Abacus.md" is the first row. Walking toward the highlighted row
-	// instead is what puts this one in the field.
-	expect("walked toward where you already are", (await look()).value, "Cake catapult.md");
+	// instead is what heads the field this way.
+	//
+	// Which way, not how far: a press walks toward a name only as far as the
+	// names agree, so how much of it lands depends on what else is in the
+	// folder — and this folder belongs to whatever vault the suite is run
+	// against, not to the suite. Asserting the whole name made the test a
+	// statement about somebody's notes.
+	const walked = (await look()).value;
+	expect("headed toward where you already are", walked, (v) =>
+		typeof v === "string" && v.length > 0 && "Cake catapult.md".toLowerCase().startsWith(v.toLowerCase()));
+	expect("and not toward the row that merely sorts first", walked, (v) =>
+		!"Abacus.md".toLowerCase().startsWith(String(v).toLowerCase()));
 });
 
 test("ladder: Tab past the end widens the selection a rung at a time", async () => {
@@ -422,7 +476,11 @@ test("a fourth click reaches the system path too", async () => {
 	await page.evaluate(`
 		const input = document.querySelector(".lure-path-input");
 		const r = input.getBoundingClientRect();
-		for (let n = 1; n <= 4; n++) {
+		// From the second: the press that opened the field is the first of
+		// this run. Starting again at one would be a fresh press *inside* a
+		// text field, which is not this gesture — it is somebody putting the
+		// caret somewhere, and what follows it belongs to the browser.
+		for (let n = 2; n <= 4; n++) {
 			input.dispatchEvent(new MouseEvent("click", {
 				bubbles: true, cancelable: true, detail: n,
 				clientX: r.left + 4, clientY: r.top + 4,
@@ -458,9 +516,10 @@ test("a folder is stepped into even with a note of its name beside it", async ()
 	// — before, the press wrote the note's name instead, and every press
 	// after that rewrote it, so the folder could not be entered at all.
 	await type(`${PREFIX}not`);
-	await tab();
-	expect("the folder's name completes", (await look()).value, `${PREFIX}noted`);
+	expect("the folder's name is offered", (await look()).value, `${PREFIX}noted`);
 
+	// One press: it takes the offer and steps in, because one candidate is
+	// not a choice. The note beside the folder is a destination, not a fork.
 	await tab();
 	const s = await look();
 	expect("and the folder is entered", s.chips, (v) => Array.isArray(v) && v.includes(`${PREFIX}noted`));
@@ -490,11 +549,17 @@ test("Shift+Tab walks back out the way Tab walked in", async () => {
 
 	await back();
 	expect("a branch further back", (await look()).selected, "ha-one");
+
+	// The press that took the offer is a step like any other, and comes back
+	// marked exactly as the offer was.
 	await back();
-	expect("back to the shared opening", (await look()).selected, "lpha-one");
+	expect("back to what was offered", (await look()).selected, "lp");
+
+	// And there the presses run out: what is left was typed, and is marked
+	// whole, ready to be typed over.
 	await back();
 	const all = await look();
-	expect("then what was typed is marked too", all.selected, `${PREFIX}alpha-one`);
+	expect("then the whole name is marked", all.selected, `${PREFIX}alpha-one`);
 	expect("and still nothing has been deleted", all.value, `${PREFIX}alpha-one`);
 });
 
@@ -552,32 +617,439 @@ test("Shift+Tab narrows the selection a rung at a time", async () => {
 	expect("and one back down", (await look()).selected, "Cake catapult.md");
 	await back();
 	expect("and down to the first rung", (await look()).selected, "Cake catapult");
-	// Below it the ladder is over and the press carries on walking back,
-	// which here means marking the whole name: the press after it is the one
-	// that leaves the folder.
+	// Below it the ladder is over and the same press leaves the folder.
+	// Marking the whole name here instead would have shown the rung above —
+	// the name with its extension — a second time, so the way back spent a
+	// press on nothing new: full path, name, name without its extension,
+	// name again, and only then the folder.
 	await back();
 	const whole = await look();
-	expect("below the first rung the name is marked", whole.selected, "Cake catapult.md");
-	expect("and it is all still there", whole.value, "Cake catapult.md");
+	expect("below the first rung the folder is left", whole.value, "2026/Cake catapult.md");
+	expect("its name marked, because this press gave it back", whole.selected, "2026");
 });
 
-const filter = process.argv[2];
-for (const { name, fn } of tests) {
-	if (filter && !name.toLowerCase().includes(filter.toLowerCase())) continue;
-	console.log(`\n${name}`);
-	const start = results.length;
-	try {
-		await fn();
-	} catch (err) {
-		results.push({ ok: false, label: `${name} — threw`, actual: err.message });
+test("a folder swapped for a sibling keeps the path only as far as it exists there", async () => {
+	// Two complaints in one. Completing a folder carries the rest of the
+	// path into it — but a rest that names nothing over there is not a path,
+	// and leaving it standing put the field at odds with the dropdown beside
+	// it. Worse, the next press then had nothing to complete and described
+	// the *note's own* path instead, dragging the row back to the note's
+	// parent: a press that looked like completion and was really a teleport.
+	const deep = `${PREFIX}deep`;
+	const leaf = `${deep}/inner/deeper/leaf.md`;
+	const openOnFolder = `
+		document.querySelector(".lure-path-input")?.blur();
+		document.body.click();
+		${PAUSE(300)}
+		await app.workspace.getLeaf(false).openFile(app.vault.getAbstractFileByPath(${JSON.stringify(leaf)}));
+		${PAUSE(800)}
+		const c = app.workspace.getMostRecentLeaf().view.containerEl
+			.querySelector(".view-header-title-container");
+		const seg = [...c.querySelectorAll(".view-header-breadcrumb")]
+			.find((e) => e.textContent === ${JSON.stringify(deep)});
+		if (!seg) return false;
+		seg.click();
+		${PAUSE(500)}
+		return true;
+	`;
+
+	// A sibling with nothing under it at all: none of the carried path
+	// survives the move.
+	expect("the folder click opens the path", await page.evaluate(openOnFolder), true);
+	await page.evaluate(focusField);
+	await type(`${PREFIX}on`);
+	await tab();
+	const bare = await look();
+	expect("the sibling is stepped into", bare.chips, (v) =>
+		Array.isArray(v) && v.includes(`${PREFIX}only`) && !v.some((c) => c.startsWith(deep)));
+	expect("and nothing of the old path comes with it", bare.value, "");
+
+	// A sibling carrying the first step of it and not the second.
+	expect("the folder click opens the path again", await page.evaluate(openOnFolder), true);
+	await page.evaluate(focusField);
+	await type(`${PREFIX}ha`);
+	await tab();
+	const half = await look();
+	expect("this sibling is stepped into too", half.chips, (v) =>
+		Array.isArray(v) && v.includes(`${PREFIX}half`) && !v.some((c) => c.startsWith(deep)));
+	expect("keeping the step that is there", half.value, "inner");
+	expect("marked, because it is still a folder to walk", half.selected, "inner");
+
+	// And it really is still a folder to walk: the press after steps into
+	// it rather than starting to widen a selection over its name.
+	await tab();
+	const walked = await look();
+	expect("the press after walks into it", walked.chips, (v) =>
+		Array.isArray(v) && v.includes(`${PREFIX}half`) && v.includes("inner"));
+	expect("with nothing left of the old path", walked.value, "");
+});
+
+test("a name nothing matches is marked, not answered with somewhere else", async () => {
+	// The same teleport, reached without completing anything: one press on a
+	// name no child starts with used to empty the field, show the note's own
+	// name and stand the row in the note's folder.
+	await armAtRoot();
+	await type(`${PREFIX}zzz-nothing`);
+	const typed = await look();
+	expect("nothing in the root matches it", typed.value, `${PREFIX}zzz-nothing`);
+
+	await tab();
+	const pressed = await look();
+	expect("the text stays in front of you", pressed.value, `${PREFIX}zzz-nothing`);
+	expect("marked, ready to be typed over", pressed.selected, `${PREFIX}zzz-nothing`);
+	expect("and the row has not moved", pressed.chips, (v) => Array.isArray(v) && v.length === 0);
+});
+
+test("a folder picked from the list leaves the row where Tab leaves it", async () => {
+	// Setting a name in is setting it in, however you did it: the press after
+	// the gesture has to mean the same thing after a click as after a key.
+	// Picking a folder used to empty the field instead, throwing away a path
+	// that the very same folder reached with Tab would have kept.
+	const deep = `${PREFIX}deep`;
+	const leaf = `${deep}/inner/deeper/leaf.md`;
+	const openOnFolder = `
+		document.querySelector(".lure-path-input")?.blur();
+		document.body.click();
+		${PAUSE(300)}
+		await app.workspace.getLeaf(false).openFile(app.vault.getAbstractFileByPath(${JSON.stringify(leaf)}));
+		${PAUSE(800)}
+		const c = app.workspace.getMostRecentLeaf().view.containerEl
+			.querySelector(".view-header-title-container");
+		const seg = [...c.querySelectorAll(".view-header-breadcrumb")]
+			.find((e) => e.textContent === ${JSON.stringify(deep)});
+		if (!seg) return false;
+		seg.click();
+		${PAUSE(500)}
+		return true;
+	`;
+
+	// The keyed way in.
+	expect("the folder click opens the path", await page.evaluate(openOnFolder), true);
+	await page.evaluate(focusField);
+	await tab();
+	const walked = await look();
+	expect("Tab steps in", walked.chips, (v) => Array.isArray(v) && v.includes(deep));
+	expect("carrying the rest of the path", walked.value, "inner/deeper/leaf.md");
+
+	// The pointed way in: the same folder, picked out of the list the same
+	// click opened.
+	expect("the folder click opens the path again", await page.evaluate(openOnFolder), true);
+	const picked = await page.evaluate(`
+		const row = [...document.querySelectorAll(".suggestion-item")]
+			.find((e) => e.textContent === ${JSON.stringify(deep)});
+		if (!row) return "not listed";
+		row.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+		row.click();
+		${PAUSE(600)}
+		return true;
+	`);
+	expect("the folder is listed to pick", picked, true);
+	const clicked = await look();
+	expect("picking steps into the same folder", clicked.chips, walked.chips);
+	expect("carrying the same path", clicked.value, walked.value);
+	expect("marked the same way", clicked.selected, walked.selected);
+});
+
+test("a folder set in by clicking is given back by one press, not swallowed", async () => {
+	// The walk used to be recorded by Tab alone, so a folder set in by
+	// picking it out of the list left no trace on the way back: one press of
+	// Shift+Tab jumped over the click *and* the press before it, two folders
+	// gone at once, and every press after that did nothing at all.
+	const deep = `${PREFIX}deep`;
+	const leaf = `${deep}/inner/deeper/leaf.md`;
+	await page.evaluate(`
+		document.querySelector(".lure-path-input")?.blur();
+		document.body.click();
+		${PAUSE(300)}
+		await app.workspace.getLeaf(false).openFile(app.vault.getAbstractFileByPath(${JSON.stringify(leaf)}));
+		${PAUSE(800)}
+		const c = app.workspace.getMostRecentLeaf().view.containerEl
+			.querySelector(".view-header-title-container");
+		const seg = [...c.querySelectorAll(".view-header-breadcrumb")]
+			.find((e) => e.textContent === ${JSON.stringify(deep)});
+		if (!seg) return false;
+		seg.click();
+		${PAUSE(500)}
+		return true;
+	`);
+	await page.evaluate(focusField);
+
+	await tab();
+	const walked = await look();
+	expect("Tab sets the first folder in", walked.chips, (v) => Array.isArray(v) && v.includes(deep));
+
+	// The second folder is set in by pointing at it instead.
+	await page.evaluate(`
+		const row = [...document.querySelectorAll(".suggestion-item")]
+			.find((e) => e.textContent === "inner");
+		if (!row) return "not listed";
+		row.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+		row.click();
+		${PAUSE(600)}
+		return true;
+	`);
+	await page.evaluate(focusField);
+	const picked = await look();
+	expect("picking sets the second in", picked.chips, (v) =>
+		Array.isArray(v) && v.includes(deep) && v.includes("inner"));
+
+	// One press, one folder — the click is a step of the walk like any other.
+	await back();
+	const once = await look();
+	expect("the click is given back on its own", once.chips, walked.chips);
+	expect("with the path it was standing on", once.value, walked.value);
+	expect("marked as the press before left it", once.selected, walked.selected);
+
+	// And the press after that gives back the keyed step.
+	await back();
+	expect("then the press before it", (await look()).chips, (v) => Array.isArray(v) && v.length === 0);
+});
+
+test("a lap of the rungs comes back to the path the walk built, not the one it set out from", async () => {
+	// The lap used to close on a snapshot of the field taken before the
+	// walk's first press, so anything the walk had changed about *which*
+	// path you were on was undone by going round: fork onto a sibling
+	// halfway and the lap handed back the open note's own path. The four
+	// rungs before the wrap all describe the path as it stands; this one
+	// described the past.
+	const deep = `${PREFIX}deep`;
+	const leaf = `${deep}/inner/deeper/leaf.md`;
+	const built = `${deep}/other/deeper/leaf.md`;
+	await page.evaluate(`
+		document.querySelector(".lure-path-input")?.blur();
+		document.body.click();
+		${PAUSE(300)}
+		await app.workspace.getLeaf(false).openFile(app.vault.getAbstractFileByPath(${JSON.stringify(leaf)}));
+		${PAUSE(800)}
+		const c = app.workspace.getMostRecentLeaf().view.containerEl
+			.querySelector(".view-header-title-container");
+		const seg = [...c.querySelectorAll(".view-header-breadcrumb")]
+			.find((e) => e.textContent === ${JSON.stringify(deep)});
+		if (!seg) return false;
+		seg.click();
+		${PAUSE(500)}
+		return true;
+	`);
+	await page.evaluate(focusField);
+	await tab();
+
+	// Fork the walk onto the sibling by pointing at it, which is the gesture
+	// that leaves the snapshot stale: typing clears the trail, picking does
+	// not.
+	await page.evaluate(`
+		const row = [...document.querySelectorAll(".suggestion-item")]
+			.find((e) => e.textContent === "other");
+		if (!row) return "not listed";
+		row.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+		row.click();
+		${PAUSE(600)}
+		return true;
+	`);
+	await page.evaluate(focusField);
+	expect("the walk is forked onto the sibling", (await look()).chips, (v) =>
+		Array.isArray(v) && v.includes("other"));
+
+	// Round the rungs until the lap closes. Not merely "no chips": the rung
+	// showing the path from the vault root stands at the root too, and holds
+	// the same text. What tells them apart is the marking — a rung selects
+	// the whole of what it shows, while the lap comes back to the *front* of
+	// the path, one segment marked, as the click that opened it left it.
+	let wrapped = null;
+	for (let i = 0; i < 8 && !wrapped; i++) {
+		await tab();
+		const at = await look();
+		if (Array.isArray(at.chips) && at.chips.length === 0 && at.selected === deep) wrapped = at;
 	}
-	for (let i = start; i < results.length; i++) {
-		const r = results[i];
-		console.log(`  ${r.ok ? "PASS" : "FAIL"}  ${r.label}${r.ok ? "" : `  → got ${r.actual}`}`);
+	expect("the lap closes", wrapped, (v) => v !== null);
+	expect("on the path the walk built", wrapped && wrapped.value, built);
+	expect("with its front marked, ready to be walked again", wrapped && wrapped.selected, deep);
+	expect("and no trace of the path it set out from", wrapped && wrapped.value, (v) => !String(v).includes("/inner/"));
+});
+
+test("walking back past the front of the path loops round to the system path", async () => {
+	// The two directions are one ring: forward, the last rung wraps to the
+	// front of the path; backward, the front wraps to the last rung. It used
+	// to dead-end there instead, every further press doing nothing at all.
+	const deep = `${PREFIX}deep`;
+	const leaf = `${deep}/inner/deeper/leaf.md`;
+	await page.evaluate(`
+		document.querySelector(".lure-path-input")?.blur();
+		document.body.click();
+		${PAUSE(300)}
+		await app.workspace.getLeaf(false).openFile(app.vault.getAbstractFileByPath(${JSON.stringify(leaf)}));
+		${PAUSE(800)}
+		const c = app.workspace.getMostRecentLeaf().view.containerEl
+			.querySelector(".view-header-title-container");
+		const seg = [...c.querySelectorAll(".view-header-breadcrumb")]
+			.find((e) => e.textContent === ${JSON.stringify(deep)});
+		if (!seg) return false;
+		seg.click();
+		${PAUSE(500)}
+		return true;
+	`);
+	await page.evaluate(focusField);
+	// Nothing has been walked, so there is nothing to give back and nowhere
+	// further up: this press is the one that used to do nothing.
+	await back();
+	const looped = await look();
+	expect("the press loops round to the path from the system root", looped.value, (v) =>
+		typeof v === "string" && v.startsWith("/") && v.endsWith(`/${leaf}`));
+	expect("selected whole, as that rung shows it", looped.selected, looped.value);
+
+	// And from there it goes on narrowing down the rungs, rather than
+	// starting a second lap.
+	await back();
+	expect("the press after narrows to the path from the vault", (await look()).value, leaf);
+});
+
+test("the way back spends no press on a rung it has already shown", async () => {
+	// The complaint: walking back went full path, name with extension, name
+	// without it, *name with extension again*, and only then the folder. The
+	// duplicate came from the press that leaves the ladder falling through to
+	// "mark the whole segment before leaving" — which is the rung it had just
+	// come down from.
+	await armed();
+	await tab();
+	await tab();
+
+	const seen = [];
+	for (let i = 0; i < 5; i++) {
+		await back();
+		const at = await look();
+		seen.push(`${JSON.stringify(at.value)} [${at.selected}]`);
+		if (Array.isArray(at.chips) && !at.chips.includes("2026")) break;
 	}
+
+	// Each press shows something the one before it did not.
+	const repeats = seen.filter((state, i) => i > 0 && state === seen[i - 1]);
+	expect("no two presses in a row show the same thing", repeats, []);
+	expect("and the walk back reaches the folder", seen[seen.length - 1], (v) =>
+		String(v).startsWith('"2026/Cake catapult.md"'));
+	// Specifically: the name never appears twice on the way down.
+	const withExtension = seen.filter((state) => state === '"Cake catapult.md" [Cake catapult.md]');
+	expect("the name with its extension is shown once", withExtension.length, 1);
+});
+
+test("a name that is already whole is widened over, not shortened", async () => {
+	// A press that has nothing left to complete used to start the ladder on
+	// its first rung — the name without its extension — which, from a name
+	// the same key had just completed, is a press spent going backwards.
+	await armAtRoot();
+	await type(`${PREFIX}de`);
+	await tab();
+	expect("the first press steps into the folder", (await look()).chips, (v) =>
+		Array.isArray(v) && v.includes(`${PREFIX}deep`));
+
+	await type("uniq");
+	const offered = await look();
+	expect("the rest of the only name is offered", offered.value, "unique.md");
+	expect("marked, as the part nobody typed", offered.selected, "ue.md");
+
+	await tab();
+	const taken = await look();
+	expect("the press takes the offer", taken.value, "unique.md");
+	// A file cannot be stepped into, so the same press arrives at the
+	// ladder — on the whole name, not on its stem, which is the shortening
+	// this test is here to rule out.
+	expect("and marks the whole of it, never its stem", taken.selected, "unique.md");
+
+	// And only then does it widen past the name.
+	await tab();
+	expect("then the path from the vault", (await look()).selected, `${PREFIX}deep/unique.md`);
+});
+
+/** One character, as a person types it — so the swallowing can be watched. */
+async function press(ch) {
+	await pressKey(page, ch);
+	await page.evaluate(PAUSE(260) + "return true;");
+	await page.evaluate(focusField);
 }
 
-await page.evaluate(`
+test("what the names agree on is offered after the caret as you type", async () => {
+	await armAtRoot();
+	// Three folders agree as far as "Lure-tab-alp", so the moment the typing
+	// is unambiguous that far, the rest of the agreement is put in front of
+	// you rather than waiting to be asked for.
+	await type(`${PREFIX}a`);
+	const offered = await look();
+	expect("the agreement is shown", offered.value, `${PREFIX}alp`);
+	expect("with the offered part marked", offered.selected, "lp");
+	// The critical one: the list must go on filtering by what was *typed*.
+	// Filtering by the offer would narrow the list to the offer, and the
+	// offer would then be confirming itself.
+	expect("and the list still filters by what was typed", offered.rows, (v) =>
+		Array.isArray(v) && v.filter((r) => r.startsWith(`${PREFIX}alp`)).length === 3);
+
+	// Typing the offered letters swallows them one at a time.
+	await press("l");
+	const swallowed = await look();
+	expect("typing the offered letter keeps the word", swallowed.value, `${PREFIX}alp`);
+	expect("with one letter less offered", swallowed.selected, "p");
+
+	await press("p");
+	const whole = await look();
+	expect("and then nothing is left to offer", whole.value, `${PREFIX}alp`);
+	expect("nothing marked", whole.selected, "");
+});
+
+test("an offer disappears the moment the typing leaves it", async () => {
+	await armAtRoot();
+	await type(`${PREFIX}a`);
+	expect("something is offered", (await look()).selected, "lp");
+
+	// "Lure-tab-az" matches nothing at all.
+	await press("z");
+	const gone = await look();
+	expect("the offer is gone", gone.selected, "");
+	expect("leaving exactly what was typed", gone.value, `${PREFIX}az`);
+	expect("and nothing to list", gone.rows, []);
+});
+
+test("Backspace takes the offer back without taking a letter with it", async () => {
+	await armAtRoot();
+	await type(`${PREFIX}a`);
+	expect("something is offered", (await look()).selected, "lp");
+
+	await press("Backspace");
+	const dropped = await look();
+	expect("the offer is taken back", dropped.selected, "");
+	expect("and every letter typed is still there", dropped.value, `${PREFIX}a`);
+	// Nothing is offered again until something is typed, or there would be
+	// no way out of an offer you did not want.
+	expect("with nothing offered in its place", dropped.value, (v) => v === `${PREFIX}a`);
+
+	// The press after it deletes a letter of your own, as it always did.
+	await press("Backspace");
+	expect("the press after deletes a letter", (await look()).value, PREFIX);
+});
+
+test("taking an offer stops at the fork, and never chooses past it", async () => {
+	// The complaint: the press took the offer and then walked straight on
+	// into whichever name sorted first, so a fork between three folders was
+	// answered by the key rather than by the user.
+	await armAtRoot();
+	await type(`${PREFIX}a`);
+	const offered = await look();
+	expect("the offer reaches the fork", offered.value, `${PREFIX}alp`);
+	expect("and stops there", offered.selected, "lp");
+	expect("with every name past it still listed", offered.rows, (v) =>
+		Array.isArray(v) && v.filter((r) => r.startsWith(`${PREFIX}alp`)).length === 3);
+
+	await tab();
+	const taken = await look();
+	expect("the press takes it", taken.value, `${PREFIX}alp`);
+	expect("leaving nothing marked", taken.selected, "");
+	expect("no name chosen for you", taken.chips, (v) => Array.isArray(v) && v.length === 0);
+	expect("and all of them still on offer", taken.rows, (v) =>
+		Array.isArray(v) && v.filter((r) => r.startsWith(`${PREFIX}alp`)).length === 3);
+
+	// Typing past the fork is one way on; the press after is the other, and
+	// that one is a deliberate second ask.
+	await tab();
+	expect("a further press walks toward one of them", (await look()).value, `${PREFIX}alpha-`);
+});
+
+const teardown = `
 	document.querySelector(".lure-path-input")?.blur();
 	document.body.click();
 	app.workspace.getLeavesOfType("empty").forEach((l) => l.detach());
@@ -591,9 +1063,7 @@ await page.evaluate(`
 	const abacus = app.vault.getAbstractFileByPath("Schemes/2026/Abacus.md");
 	if (abacus) await app.fileManager.trashFile(abacus);
 	return true;
-`);
-page.close();
+`;
 
-const failed = results.filter((r) => !r.ok).length;
-console.log(`\n${results.length - failed}/${results.length} assertions passed`);
-process.exit(failed ? 1 : 0);
+await run();
+
