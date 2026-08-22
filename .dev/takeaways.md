@@ -22,6 +22,13 @@ Focusing the input from code — as a delimiter click does — shows nothing
 until the user types. Dispatching a synthetic `new Event("input")` after
 focusing is the workaround.
 
+**`setSelectedItem` wraps the index it is given, so the index you asked for is
+not the row you got.** An arrow off the end of the list is passed on as the
+index *past* the end and wraps to the front inside the call. Anything that wants
+to remember which row the list is on has to read `selectedItem` back after the
+call rather than record the argument — recording the argument remembers a row
+that is not there, and any later use of it silently falls out of range.
+
 **The suggestion list commits an entry on `auxclick` as well as `click`.**
 
 ```js
@@ -943,6 +950,66 @@ running:
   and one step forward landed on the name beside the one you started on.
   While resuming, what a write must differ from is the text before the mark.
 
+## A paste and an IME arrive with no key pressed
+
+Inline completion has to answer one question on every edit: did that edit *add*
+text or take it away? Text appearing in answer to a deletion is a trap with no
+way out — you press Backspace, the folder offers the name straight back, and
+the field will not let go of it.
+
+Reading that off `keydown` looks right and is wrong. `Input.insertText` — which
+is how the CDP suites type, and how a paste and every IME commit arrive —
+dispatches an `input` event with **no `keydown` before it**. A flag set on
+Backspace's keydown therefore stays set through the next paste, and forever
+through a suite that types without keys, which is exactly how this surfaced:
+every inline completion silently stopped being offered after the first
+Backspace.
+
+`InputEvent.inputType` is the answer that is actually about the edit:
+`"insertText"`, `"deleteContentBackward"`, `"insertFromPaste"`,
+`"insertCompositionText"`. Ask the event what it did, not the keyboard what it
+pressed.
+
+## The field was one flat string, and three different things lived in it
+
+The row keeps *where it stands* in `browsePath`/`externalPath` and *what a
+preview is covering up* in `preview`, but everything else — the name being
+typed, and the rest of the path carried in behind it — was a single
+`input.value` with no structure. The segment being edited was re-derived from
+the caret on every keystroke, and the tail behind it had no owner at all.
+
+Three complaints turned out to be that one gap:
+
+- A commit could not decide whether to keep the tail, so a path from the
+  folder you had just left stayed in the field while the dropdown beside it
+  listed the folder you had just entered. The field and the list are drawn
+  from different sources and nothing made them agree.
+- A rewind could not tell what to give back, and only `Tab` recorded a step at
+  all — so a folder set in by clicking was invisible to the way back, and one
+  press of `Shift+Tab` swallowed it *and* the press before it.
+- A press that had nothing to complete fell through to describing the row's
+  own file, because "the walk arrived" and "there is nothing here" were the
+  same answer.
+
+A fourth turned up in the same place, and it is the sharpest statement of the
+rule: **a snapshot answers "what was", a target answers "what is", and a
+feature that mixes them is wrong in exactly the cases nobody tests.** Four of
+the ladder's five rungs rendered `tabTargetPath` — the live path — while the
+fifth, the wrap, replayed a saved copy of the field from before the walk's
+first press. Fork the walk halfway and a lap handed back the path you set out
+from. It survived three rounds of testing because the two answers agree
+whenever the walk does not change the path, and because typing clears the
+trail, so a *typed* change is always newer than the snapshot. Only the gestures
+that change the path without typing — picking a row, completing toward an
+arrowed one — could tell the two apart.
+
+The fix in each case was to give the missing thing a name — `reachableTail`
+for how much of a path is real, `trailStep` for what a gesture is giving up,
+`standingTargetPath` for what the field is naming, `pathFrom` for where a lap
+comes back to — rather than to special-case the symptom. Worth remembering the
+next time something in the field looks almost right: ask which of the states it
+belongs to, and whether the code is asking about now or about then.
+
 ## Walking a walk backwards needs no inverses
 
 `Shift+Tab` mirrors `Tab`: it narrows the selection, gives back completions,
@@ -957,3 +1024,491 @@ selection ladder is, so it can never restore a row nobody is standing on any
 more — and when it is empty the key falls through to stepping out of the
 folder, which is the same move one step coarser. The forward code needed one
 push added to it and nothing else.
+
+## The browser had been doing the hard part all along
+
+The row was fitted by walking a character cap downwards, measuring every name
+against every step, and feeding the residual back for another pass. It worked,
+and everything about how it felt was wrong: a letter is worth several pixels,
+so every cut overshot and the trail jumped; four passes were not always enough
+to reach the folders on a deep path, so names sat well above their floors; and
+the whole thing had to re-run on every resize.
+
+`text-overflow: ellipsis` does this natively, continuously, and in fractions of
+a pixel. What it cannot do is choose *which* end to clip — it only ever clips
+the end — and the end is the wrong thing to lose when every folder beside this
+one begins the same way. So the split is: the code decides the shape and the
+floor, the browser does the fitting.
+
+Three findings made it work:
+
+- **Middle elision is available.** Two spans, a clipping one and a pinned one,
+  and the ellipsis lands between them: `annual…2026.md`. A name clipped at its
+  *start* is `direction: rtl` with the text in a `<bdi>`, which moves the
+  ellipsis to the other edge without reordering anything.
+- **`white-space: nowrap` poisons `min-width: auto`.** A nowrap name's
+  min-content width is the whole name, so any flex box containing one refuses
+  to shrink a single pixel however small its names are willing to go. The trail
+  had to stop being a box at all — `display: contents` on
+  `.view-header-title-parent` dissolves it and makes every name a flex item of
+  the row, which is the only level where the sharing out can see them all. The
+  two boxes that must stay (the sticky vault wrapper, the stretching filename
+  box) are floored from script instead.
+- **The floor wants to be a custom property, not `min-width`.** It is measured,
+  so it cannot live in a stylesheet; written as `--lure-floor` and read by one
+  rule, it stays visible to themes, satisfies Obsidian's lint, and lets the
+  hover state lift it in CSS rather than saving and restoring an inline value.
+  It has to be declared `@property { inherits: false }` — inherited, a name's
+  floor becomes the floor of each part inside it, and every part then holds out
+  for the whole name's width.
+
+Staging — the vault name first, then the folders, then the file's own name —
+falls out of `flex-shrink` factors a hundred apart. It is not quite the old
+rule: flexbox shares shrinkage in proportion to factor × width, so the longest
+name pays most rather than paying alone. In exchange there is no stepping at
+all.
+
+One cost, and it is unavoidable: where a name is spent in the middle, the
+clipping part's box is a little wider than the text the browser drew into it,
+so a few pixels of slack can show between the `…` and the pinned ending.
+`text-align: right` does not close it — the truncation happens after alignment.
+Single-sided shapes have no such seam, because their slack falls at the outer
+edge where the delimiter's own air already is.
+
+## A shared ending is not a reason to keep a name whole
+
+The rule for how short a name may get took the longest opening any neighbour
+shared and the longest ending any neighbour shared, and demanded that
+everything *between* them survive. In a vault whose root holds `Schemes` and
+`parallel structures`, the two happen to end in the same two letters — so a
+nineteen-character folder was pinned at seventeen, could save about two pixels
+by cutting, and the fitter correctly decided that was not worth an ellipsis.
+The row simply never shortened.
+
+The mistake is treating the two ends as one requirement. They are alternatives:
+to tell this name from that one you need to keep more than the shared *opening*
+(if you are keeping the front) **or** more than the shared *ending* (if you are
+keeping the back) — never both. And agreement shorter than the minimum a name
+keeps anyway costs nothing to carry, so it should not steer the shape either.
+
+Both fall out of asking the question per shape instead of per name:
+`keepFront = head + 1`, `keepBack = tail + 1`, cheaper wins, and a run shorter
+than the readable minimum is not counted at all.
+
+## `grep` on this repo needs `-a`
+
+Several hours across this project went into "I made the edit and the marker
+isn't there", "the patch script wrote nothing", "this function is dead code".
+None of it was true. Plain `grep` decides these TypeScript sources are binary
+and prints **nothing at all** — no matches, no `Binary file matches` line, no
+non-zero exit worth noticing — while `grep -a` on the same file and pattern
+finds everything. The files are valid UTF-8 with no NUL bytes, so whatever
+triggers the heuristic is not obvious from the content.
+
+It is a silent wrong answer to a question asked constantly, which makes it the
+most expensive thing in this file. Use `grep -a` here, always, and distrust any
+conclusion of the form "it isn't there" that rests on a bare `grep`.
+
+## A field is not a name
+
+Letting the row's flexbox shrink the file name's box — which is what made the
+file name the last thing to give way — quietly took the *edit field* with it,
+since the field lives in that box. Clicking a folder deep in a narrow pane then
+opened a sixty-pixel field already scrolled past the very folder the click was
+about.
+
+Nothing in a field can be given up: it is text being edited, not a name being
+fitted. So while one is open its box keeps the width it was measured at and the
+row scrolls instead. Two smaller things fell out of the same fix:
+
+- `focus()` scrolls every box around the field to reveal the caret, and that
+  runs *after* the code that opened it. Putting the field's front on screen has
+  to happen again on the next frame or the browser's own scroll wins.
+- `letRowScroll` parked the row at its right-hand end on every call, not only
+  when the row first became too long. Anything that touched it — the pointer
+  leaving the row, most of all — dragged the view back to the end and hid what
+  had just been put on screen. Parking now happens only on the transition.
+
+## Hiding a name and removing it are not the same thing
+
+With *Show vault name* off the opening segment used to be built without a name
+element at all — icon only, with the name as a tooltip. That is fine right up
+until the row can give a shortened name back on hover, at which point the one
+segment that most needs the gesture has nothing to give: there is no element to
+widen.
+
+The name is always in the row now, held at `max-width: 0` by a class when the
+setting is off and widened by the same `.lure-name-open` rule that gives back a
+name the row had to shorten. A setting that means "do not show this" is better
+expressed as no width than as no element — the element is what the rest of the
+row's behaviour is written against, and it keeps the name in the accessibility
+tree, which the tooltip-only version had taken it out of.
+
+## A tooltip that is only there when something is wrong is a tooltip nobody finds
+
+The opening segment's tooltip used to appear only when the row had shortened
+something, and to repeat the vault's name — which is the word already printed
+next to it. Both halves were wrong. It now carries the vault's **absolute path**
+and carries it always: that is the one fact about the row nothing on screen can
+show, since the name says which vault and never where it is. It sits on the
+segment rather than the name inside it, so it answers over the icon too — which
+is the whole of the segment when the name is turned off.
+
+## Gestures that read and gestures that change should not share a trigger
+
+Restoring a name on `mouseover` is a reading gesture. Scrolling the row and
+typing into it are not, and both move things under a pointer that is not
+moving — so names arriving beneath a still cursor opened themselves, widened
+the row, and shifted everything after them out from under the very gesture
+trying to read them. Two guards, both on the reading side: nothing opens while
+a field is up, and nothing opens for 400 ms after a wheel. The quiet window is
+what makes a slow scroll one gesture rather than a series of pauses to read in.
+
+## The gap was the container's, not the boxes'
+
+"There is still some padding between the `…` and the `/`" survived two rounds of
+looking, because every box involved reported `padding: 0px` and `margin: 0px`
+and the measurement kept coming back the same 4 px. It was the flex container's
+own `column-gap` — Obsidian sets one on the header — which no amount of
+inspecting the *items* will ever show. Dumping every box's left and right edges
+in order is what found it: consistent 4 px between one box's right and the
+next's left, with nothing on either box to explain it.
+
+It is now routed through the same variable the fitter spends, so the row's air
+is one number that goes to nothing under pressure. Worth remembering as a
+measuring habit: when boxes are further apart than their own properties can
+account for, the space belongs to whatever is laying them out.
+
+## `text-overflow` leaves a strip, and capping the part just moves it
+
+The browser fills a box with whole glyphs and then the ellipsis, stopping at the
+last one that fits — so a clipped box is nearly always a little wider than what
+it drew, by up to the width of the character it could not fit. Eight pixels, in
+the row's font. There is no way to ask CSS for "as wide as what you drew", so
+the run is worked out here — a binary search over the prefix, or over the suffix
+for a name clipped at its start, measured in the part's own font — and the box
+capped at exactly that.
+
+Three things it took to actually land:
+
+- **The box has to be read as a fraction.** `clientWidth` rounds down, so a part
+  floored at 30.45 px reports 30, and the very run its floor was measured from
+  no longer fits the box the floor had made for it — the part sat at its floor
+  drawing one character less than it had room for.
+- **The cap has to go on the name's box as well as its parts.** Capping only the
+  part leaves the pixels between the crumb's edge and the delimiter instead of
+  between the `…` and the crumb's edge. Identical on screen.
+- **It has to run twice.** Capping one part hands its width back to the row,
+  which moves every other part a little, so a cap worked out against the first
+  layout is a pixel or two stale by the time the row settles. Two passes, and a
+  cap that can only ever narrow, so it cannot run away.
+
+What is left after all that is the ellipsis glyph's own right side bearing,
+which is part of the character and not of the layout.
+
+## A press belongs to where it began
+
+Sweeping a selection out of the path field and letting go over the editor closed
+the field. The click-away listener was reading `evt.target`, and a click is
+reported against the nearest common ancestor of the press and the release — so
+a gesture that started *inside* the field arrived looking like a click on the
+editor. Watching `mousedown` instead and remembering whether the press began on
+the row is the whole fix. Any "click outside closes this" handler has the same
+bug until it asks where the press started.
+
+## Giving something up frees width for whatever gave up the most
+
+The file's extension goes second on the row, straight after the vault name. The
+first attempt dropped it as soon as anything past the opening segment was
+clipped — and the row promptly put the vault name *back*, because flexbox hands
+freed width to the items that shrank hardest and the vault name is by far the
+hardest-shrinking thing there. So the two swapped rather than being spent in
+turn: the extension went and the vault name reappeared.
+
+Two things fixed it. The drop waits until the opening segment is actually spent
+to nothing, not merely until something else is clipped; and while the extension
+is gone the opening segment is *held* at nothing, so what the drop freed can
+only go to the folders. Anything given up in stages needs both halves — a
+condition for when the previous stage is finished, and a latch keeping it
+finished.
+
+## A field that fits its text changes where a gesture lands
+
+Sizing the path field to its content is right, and it quietly broke the press
+counting: the run of presses that widens the selection was wired to the field
+alone, so once the field stopped running the whole row, a second press in the
+space *past* the text landed on the box instead and only moved the caret. The
+gesture had been depending on the field being as wide as the row without anyone
+saying so.
+
+The counting lives in one method now and both the field and the space beside it
+call it. Worth watching for whenever an element stops covering ground it used
+to: every listener on it silently loses the part of the surface it gave up.
+
+## A decision must not be measured from a layout it changed
+
+The file extension flickered in and out across a slow drag — shown at 464,
+gone at 462, shown at 460 — and only settled once the row was squeezed far
+enough that the question stopped being close.
+
+The condition was "the opening segment is spent to nothing, and something past
+it is clipped". Both halves were measured after the previous fit had run, and
+the previous fit's own answer was one of the things being measured: giving up
+the extension latches the opening segment at nothing, clearing the latch hands
+it a pixel or two back, and a test for *exactly* nothing then flips on
+alternate widths. The row was reading its own last answer as evidence.
+
+The fix was to ask one question, always of the row in one state — extension
+shown, nothing latched — and to drop the second half entirely: the opening
+segment shrinks ten thousand times faster than a folder, so a folder that has
+had to give up a letter is already standing on a vault name that has given up
+everything. A staged decision needs a predicate that does not depend on which
+stage the row is currently in.
+
+## Counting characters that are worth reading
+
+A name kept to six characters has six characters to say which file it is, and
+spending one on a blank says nothing: `My N…` beats `My …` at the same width.
+So spaces are not counted towards a minimum, and one is never left sitting
+against the `…`, where it is invisible anyway. The spaces *between* the kept
+characters ride along free — removing them would change how the name reads,
+which is a different thing from not paying for them.
+
+## A cap on an element that outlives the fit has to be cleared by the fit
+
+Names shrank as the pane narrowed and never grew back. The per-box cap that
+takes the empty strip off a clipped name is written to the name's own box —
+and that box is Obsidian's element, not one this plugin builds. The parts
+inside are made fresh on every fit and carry nothing over, so clearing them was
+never needed and the box was forgotten. Left capped at the width it drew into
+when the pane was narrower, a name could only ever get smaller.
+
+The general shape: anything written to an element the fit does not create must
+be cleared by the fit that runs next, and "the children are rebuilt" is not the
+same as "the element is clean".
+
+## A minimum that means something visual has to be measured, not counted
+
+Four characters of `WWWW` and four of `illi` are not the same amount of name,
+and a floor counted in characters made them two very different things to be
+left with. The floor is a width now — measured against a run of one letter in
+the row's own font, so it is the same visual amount for every name and still
+follows the interface font size. `pathFit` answers only what the *siblings*
+force, which is genuinely a count of characters; the fitter, which is the only
+part that knows about fonts, turns that into a width.
+
+## Sharing means the stage that is not paying still pays a little
+
+Flexbox shares shrinkage across every item at once, weighted by factor × width.
+At a hundred to one between stages, a folder had already lost a visible pixel
+by the time the vault name had lost its whole hundred — so "the vault name goes
+first" was true of the ratio and false of the pixels, and a test asserting the
+order strictly failed. Raising the ratio to a thousand to one drops the folder's
+share to a tenth of a pixel, below anything that can be drawn: the order reads
+as strict without a second mechanism enforcing it.
+
+## Test the resize a user can actually perform
+
+The space-constraint suite set `width` on the header element, which is not a
+gesture and not what a resize is: the header changed size while the pane around
+it did not, nothing else in Obsidian's layout responded, and the row was
+refitted by being told to rather than by noticing. It now moves a real divider —
+`split.children[i].dimension` plus `recomputeChildrenDimensions()` — so the pane
+genuinely changes width and the row's own observer is what answers. Targeting
+the *row's* width still works: measure what the rest of the header takes and
+correct for it in a second pass.
+
+## A dropdown anchored to where the field opened, not to where the caret is
+
+Clicking a folder opens the field on the whole path with that folder's name
+picked out, and the list showing its parent's children. Move the caret by hand —
+drag over a different segment, arrow along — and two things stayed behind: the
+query, which was only ever recomputed on `input`, and the folder being listed,
+which was fixed to where the row was standing. So the list went on offering the
+first folder's siblings while the caret sat three segments deeper, and pointing
+at one of them wrote the right name into the wrong place.
+
+Both had the same shape of fix — ask the question of the caret rather than of
+the session:
+
+- The query is recomputed on `select`, `keyup` and `mouseup` as well as on
+  `input`, and the list re-queried. Element events rather than `selectionchange`
+  on the document, so they go when the field does. Skipped while a preview is
+  standing, because then it is the list moving the caret rather than the user,
+  and re-querying would rebuild the list under the row being pointed at.
+- The folder listed is the one the text *before* the caret's segment names,
+  falling back to where the row is standing whenever that text is not a real
+  folder — which is most of the time while a path is being typed.
+
+And the third piece: taking the pointer off the list restored the *highlight*
+but not the field, so a stray sweep left the last hovered name standing where
+the user's own selection had been. It restores both now — the text and the
+selection it was made with — whenever the row it goes back to is not one the
+user chose.
+
+## A dropdown that follows the caret changes what Enter means
+
+Clicking a folder opens the field on the whole path with the list showing that
+folder's parent. Move the caret by hand and two things stay behind: the query,
+recomputed only on `input`, and the folder being listed, fixed to where the row
+is standing. The first is fixed — the query is recomputed on `select`, `keyup`
+and `mouseup` too, guarded so it fires only when the caret has moved to a
+*different segment*, and never while a preview or an offer is standing (both
+move the caret themselves, and re-querying then rebuilds the list under the row
+being pointed at or throws away the run being offered).
+
+The second is **not landed**, and the reason is worth writing down. Listing the
+caret's folder is a two-line change and it works. What it breaks is Enter: an
+open popover answers Enter through Obsidian's keymap scope, which runs ahead of
+any listener the field can add, and *with no row highlighted it answers by doing
+nothing at all* — swallowing the press. That was unreachable only for as long as
+the list was of the wrong folder: a fully typed path never matched anything in
+it, so there were never any rows to swallow on behalf of. Give the list the
+caret's folder and a typed path matches its own file, and Enter silently stops
+committing.
+
+Two ways out were tried and neither works: a capture-phase listener on the input
+(the keymap gets there first, from the document) and registering a second
+`Enter` in the popover's own scope (not reached). What is left is either
+preselecting the row that exactly matches the typed segment — so Enter picks it,
+which for a file is the same thing but for a folder is not — or a change in how
+the field and the popover divide the key up. Neither is a small change, and
+neither should be made at the end of a long session.
+
+## Interleaving manual probes with a stateful suite hides the signal
+
+Several conclusions in this batch had to be thrown away because a suite run and
+a hand-driven probe had left the workspace in states neither expected: a test
+"failing in isolation" that passed in the suite, and vice versa. Reset the
+workspace to a known file with everything else detached before drawing a
+conclusion from a single test, and prefer running the whole suite when comparing
+two versions of a change.
+
+## A gesture that opens something should not go on owning what it opened
+
+Clicking the file's name opens a field and starts a run of presses that widens
+what is selected — name, name with extension, path, the machine's path. The
+counting was wired to the field rather than to the run, so it never stopped: a
+double-click in that field an hour later still answered "the whole path",
+taking away the one selection a text field cannot make any other way. The word
+under the pointer is what a double-click means everywhere else, and there was
+no way to get it.
+
+The run is now a state of its own — set by the click on the row that opened the
+field, and ended by anything that says the user has moved on: a fresh press, a
+keystroke, or opening the field any way other than by clicking. Worth watching
+for wherever a gesture opens a mode: the mode outlives the gesture, and the
+gesture's own rules should not.
+
+Testing it needed real presses rather than synthetic clicks, and one at a time:
+a burst sent as press-1-then-press-2 restarts the run at its first press, which
+is exactly the case the second half of the test is about. `clickCount` on a
+single `Input.dispatchMouseEvent` is what says "this is the second press of a
+run" without being the first as well.
+
+## A test suite that shares a live app is testing the order as much as the code
+
+Nine suites here drive one running Obsidian, and the numbers had never quite
+settled: the Tab suite reported 179/190 inside a combined battery and 190/190
+run on its own, with a different failure each time. That was read for a long
+while as flakiness in the app — long automated sessions do genuinely degrade
+Obsidian's own command handling, which is recorded a few sections up, and it
+made a convenient explanation.
+
+It was not flakiness. Each suite reloaded the plugin *once* and built its
+fixtures *once*, before the first case; every case after that inherited
+whatever the case before it had left behind — an input still open (whose
+handlers correctly make the next gesture bail), a menu still in the DOM
+(swallowing the next click), a modal still on the keymap stack (swallowing the
+next key), and, worst of the four, a fixture tree that a mutating case had
+moved or renamed. The cases had drifted into an order that worked. Reordering
+them was enough to break the code's own regression tests, which is another way
+of saying they were not testing the code.
+
+The fix has two halves and only the second one is interesting. The first is a
+`reset` the runner calls before every case, in `.dev/harness.mjs` — including
+rebuilding the fixtures, because "the fixtures are built once" is precisely
+what lets one case's rename become the next case's missing file.
+
+The second is `--shuffle`. A reset makes the cases independent; a shuffle is
+the only thing that *demonstrates* it, and it earned its keep on the first run
+by naming a real order-dependence that the reset had not yet covered. The seed
+is printed at the top and again at the end, because an order that fails is
+worth nothing if it cannot be replayed. A suite that only ever runs in
+declaration order is asserting something about that order, and nobody wrote
+that assertion down.
+
+Worth generalising: shared mutable state plus a fixed order is not a test
+suite, it is a single very long test with a lot of assertions in it.
+
+## The half of a drag nobody had built was the half that receives
+
+"Drag and drop not working" sat open for a long time and could never be
+reproduced. Every check said the drag *source* was right: the file name, the
+folder segments and the dropdown rows all produced Obsidian's own payload,
+with the correct type, path and title. A real pointer drag driven through CDP
+started nothing at all — but neither did one on Obsidian's own File Explorer
+row, so the probe was what was broken, and that is where the investigation
+stopped each time.
+
+The thing never checked was whether anything *accepted* a drop. Nothing did.
+Both halves of the gesture look like "drag and drop" from the outside, and a
+report that names the gesture rather than the direction reads as a bug in the
+half you happen to have implemented.
+
+The receiving half turned out to be Obsidian's own, and worth using rather
+than imitating. `app.dragManager.handleDrop(el, handler)` registers `dragover`
+and `drop` on one element and calls the handler for both, distinguished by an
+`isOver` flag: true is a dry run asking what *would* happen, false is the drop
+itself. Returning a descriptor — action text, drop effect, element and class
+to highlight — accepts it and draws the app's own feedback; returning null
+declines it silently. So an illegal target shows nothing at all, which is
+better than the alternative of offering a drop and then failing.
+
+Two things fell out of using the host's mechanism. The floating label resolves
+from Obsidian's own i18n table — `interface.drag-and-drop.move-into-folder`,
+which is `Move into “{{folder}}”`, curly quotes included — so it reads as the
+File Explorer reads in all 45 locales without a string of this plugin's own.
+And the highlight is `is-being-dragged-over`, Obsidian's own class, so a theme
+that restyles the File Explorer restyles the breadcrumb with it.
+
+The move goes through `fileManager.renameFile`, never `vault.rename`: the
+former updates every link that pointed at the file, which is the whole
+difference between moving a note and breaking it.
+
+## "It stopped working after a long session" was the wrong variable
+
+`workspace:edit-file-title` had been observed to start reporting success and
+doing nothing, with the plugin disabled, after Obsidian had been driven by
+automation for hours. The note written at the time said a restart restored it
+and prescribed restarting before debugging a command that had begun no-opping.
+That advice worked often enough to look right for months.
+
+It was the wrong cause. On 22 Aug a restart did not restore it, which is what
+finally separated the two candidate explanations. What actually governs it is
+whether Obsidian's **window is focused**: the app tracks that itself and puts
+`is-focused` on the body, and while it is absent the command runs, returns
+true, and focuses nothing. A restart usually fixes it only because a new window
+comes up frontmost. That day something else — a game — held the focus, and the
+restarted window came up behind it.
+
+Three measurements pinned it, all with the plugin off so none of them could be
+about this code: the command reported `ran: true` and moved
+`document.activeElement` nowhere; `document.body` lacked `is-focused` while
+`document.hasFocus()` still answered true, which is why the obvious check had
+never caught it; and a direct `.focus()` on the inline title — already
+`contenteditable="true"` — did nothing, while an `<input>` in the same window
+focused perfectly well. That last pair is why the Tab suite passes at 190/190
+in exactly the conditions the rename suite cannot run in at all.
+
+Under Wayland the window cannot be focused from a script to work around it:
+`wmctrl -l` and `xdotool` see only XWayland clients, and Obsidian is a native
+Wayland one. So the suite refuses to run and says which window to click, rather
+than producing six assertions that all report `document.body` where they wanted
+an editable element — a failure that reads exactly like a broken feature, and
+has been mistaken for one more than once.
+
+Worth generalising twice over. A remedy that works most of the time will
+protect a wrong diagnosis indefinitely, because every success confirms it and
+the failures look like noise. And a test that depends on an ambient condition
+it never checks does not fail — it lies.

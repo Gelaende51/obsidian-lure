@@ -32,7 +32,7 @@ main.ts                 plugin lifecycle, wraps the rename command
         └── pathBreadcrumb.ts  the header row itself: render + all interaction
               ├── folderChildSuggest.ts   autocomplete for the input
               ├── tabComplete.ts          what a Tab press completes to
-              ├── nativeFileItem.ts       drag + context menu on entries
+              ├── nativeFileItem.ts       drag, drop + context menu on entries
               ├── createFileModal.ts      "create it?" confirmation
               └── (outside the vault)
                     ├── systemLocations.ts   vaults, home, root, drives
@@ -66,9 +66,9 @@ main.ts                 plugin lifecycle, wraps the rename command
 | File | What it does | How you interact with it |
 | --- | --- | --- |
 | `src/folderChildSuggest.ts` | Autocomplete over a folder's children, and over external folders. Extends Obsidian's `AbstractInputSuggest`. | One listing, two filters: `buildSuggestions(context, matches)` reads the folder, `getSuggestions` filters it by substring for the dropdown, `completions(prefix)` filters it by prefix and uncapped for <kbd>Tab</kbd>. Driven entirely by the `SuggestContext` the path bar hands it: which folder, whether rename mode is on, which name to pin (`keepName`) and which path is the file itself (`keepPath`, so a file never counts as a conflict with itself). Extend the context rather than reaching back into the breadcrumb. |
-| `src/nativeFileItem.ts` | Makes an arbitrary element behave like a File Explorer row: Obsidian's own drag payload, and the same right-click menu including other plugins' contributions. | `wireNativeFileItem(app, el, target, keepFocusEl)`. Sits on undocumented API (`app.dragManager`), so every entry point is guarded — a failure must degrade to an ordinary element, never throw inside an event handler. |
+| `src/nativeFileItem.ts` | Makes an arbitrary element behave like a File Explorer row at both ends of a drag: Obsidian's own drag payload going out, `makeDropTarget` taking one in, and the same right-click menu including other plugins' contributions. | `wireNativeFileItem(app, el, target, keepFocusEl)` and `makeDropTarget(app, el, folderPath, { label, onMoved })`. Both sit on undocumented API (`app.dragManager`), so every entry point is guarded — a failure must degrade to an ordinary element, never throw inside an event handler. A drop moves through `fileManager.renameFile`, never `vault.rename`: only the former carries the links. |
 | `src/createFileModal.ts` | The "create it?" confirmation for a typed path that doesn't exist. | `ConfirmCreateFileModal.ask(app, path)` resolves `true`/`false`; every form of cancel resolves `false`. |
-| `src/navLock.ts` | Couples several path bars so they walk parallel folder structures in step. Owns the lock, the legality rule and the shared-sibling choice. | `NavLockParticipant` is the whole contract — questions and instructions, so the lock never reaches into a bar's state. A move is offered only where every coupled bar can make it, and refused outright otherwise: half a ghost move is the drift the lock exists to prevent. |
+| `src/navLock.ts` | **Shelved — not registered, not documented for users.** Couples several path bars so they walk parallel folder structures in step. Owns the lock, the legality rule and the shared-sibling choice. | `NavLockParticipant` is the whole contract — questions and instructions, so the lock never reaches into a bar's state. A move is offered only where every coupled bar can make it, and refused outright otherwise: half a ghost move is the drift the lock exists to prevent. | The two menu entries that reach it are commented out in `main.ts` and `externalFileView.ts`; nothing else was removed, so uncommenting them brings the feature back whole.
 | `src/segmentGestures.ts` | Counts consecutive right-clicks so one target can carry three meanings, and classifies what a click landed on. | `RightClickCounter` fires once the run settles; `classifyTarget(el)` returns which column of the gesture table applies. The window runs from the *last* press, so a slow triple stays a triple. Because a second press may follow, the first cannot act immediately — every plain right-click on the row waits `MULTI_CLICK_WINDOW_MS`. |
 | `src/obsidianLabels.ts` | Obsidian's own wording for entries this plugin mirrors, and the lookup that resolves it. | `obsidianLabel(keys, fallback, params?)`. Keys are arrays because Obsidian renamed its i18n table from camelCase to kebab-case — see [Borrowing Obsidian's strings](#borrowing-obsidians-strings). Add a key here rather than adding a string to `lang/`. |
 | `src/prompts.ts` | A name prompt and a confirmation, for paths that have no `TFile` for Obsidian's own dialogs to take. | `promptForName(app, {...})` resolves the name or `null`; `confirmAction(app, {...})` resolves a boolean. Every form of dismissal is a cancel. |
@@ -93,7 +93,7 @@ Off by default behind `accessExternalFiles`; the vault-root segment is the only 
 | File | What it does | How you interact with it |
 | --- | --- | --- |
 | `src/settings.ts` | The settings interface and defaults. | Add a key with its default, and `loadSettings` will drop stale keys from `data.json` automatically. |
-| `src/settingsTab.ts` | The settings UI. | One `new Setting(containerEl)` per option, no headings (single section). `withPluginLinks()` turns a plugin name inside a description into a link to its page. |
+| `src/settingsTab.ts` | The settings UI. | `getSettingDefinitions()` declares every option once; Obsidian renders it from 1.13.0, which is also what puts these settings in its search. `display()` walks the same list for older hosts inside the declared `minAppVersion` — it is deprecated, and stays until the floor reaches 1.13.0, because the alternative is cutting off those users to silence a warning. `withPluginLinks()` turns a plugin name inside a description into a link to its page. |
 | `src/lang/` | `strings.ts` (English source of truth), `translations.ts` (45 locales), `index.ts` (`t()`). | See [Localization](#localization). |
 | `src/types/obsidian-internal.d.ts` | Typings for the undocumented Obsidian internals used: `internalPlugins` and the File Explorer view, `dragManager`, `commands`, `viewRegistry`, and the extra `FileManager`/`Menu` members. | Anything undocumented gets a typing here *and* a guard at the call site. The typing is a description of observed behaviour, not a promise Obsidian made. |
 | `scripts/check-translations.mjs` | Fails the build on missing, unknown or malformed locale keys, including `{placeholder}` mismatches. | `npm run check:lang`. |
@@ -164,7 +164,11 @@ The alternative was rewriting all three of the newest calls to keep the floor at
 
 **Electron is imported, not required.** The bundle still emits `require("electron")` — esbuild marks it external, and the manifest is `isDesktopOnly` — but at source level it is a typed import against a fifteen-line ambient declaration in `src/types/electron.d.ts`. Declaring the one method used beats installing `@types/electron` and keeping it in step with whichever Electron Obsidian ships. This is also a case where the lint earned its keep directly: with the call untyped, nobody had noticed that `shell.openPath` reports failure by **resolving with an error string** rather than rejecting, so the `try`/`catch` around it could not have caught a missing file.
 
-**The settings tab keeps `display()`.** The declarative `getSettingDefinitions()` API would make the settings appear in Obsidian's settings search, but it needs 1.13.0 — five minor versions above what the code actually requires. Adopting it means either raising the floor that far for one search integration, or carrying both code paths and keeping two descriptions of the same seven settings in step. It stays imperative until `minAppVersion` reaches 1.13.0 for reasons of its own; the two warnings are the accepted cost.
+**The settings tab declares its settings, and still draws them.** `getSettingDefinitions()` is what puts the seven options into Obsidian's settings search, so a user looking for "delimiter" finds it without knowing which plugin owns it. It needs 1.13.0 — five minor versions above what the rest of the code requires — so `display()` stays for everyone below that floor.
+
+The objection to carrying both used to be that it meant two descriptions of the same seven settings, kept in step by hand. It does not: `display()` *walks* `getSettingDefinitions()`, mapping each declared control to the imperative call that draws it. There is one list, and the older host renders it with our loop while 1.13.0 and up render it with Obsidian's.
+
+`npm run check:minver` reports thirteen hits above the floor after this change, and all thirteen are that API. They are safe for a reason worth stating rather than rediscovering: they are either **types**, which are erased at compile time and have no runtime existence, or **methods this plugin defines on its own subclass** — `getSettingDefinitions`, `getControlValue`, `setControlValue` — which exist because we wrote them. An Obsidian that has never heard of them simply never calls them, and our own `display()` does. Nothing here calls a host API that 1.8.7 lacks, so the floor is unchanged. The one remaining lint warning is `display`'s own deprecation, which cannot be suppressed — the shared Obsidian config forbids disabling that rule — and which goes when the floor reaches 1.13.0.
 
 **`:has` and `!important` stay in `styles.css`.** Both are flagged as advisory, and both are load-bearing. The `:has` selectors react to state deep inside header DOM the plugin does not own; replacing them means a mutation observer and a class the plugin has to keep in sync by hand, which is a correctness risk taken on to avoid a performance one nobody has measured here. The `!important` rules override community themes — most importantly `display: none !important` on the native title, which is what guarantees Obsidian's own contenteditable rename can never fire. A theme can always out-specify a fixed selector, so trading that for specificity would trade a warning for the loss of a safety property.
 
@@ -194,13 +198,43 @@ node .dev/test-external.mjs edit     # only tests whose name matches
 node .dev/test-rename.mjs            # the rename key's alternation
 node .dev/test-urls.mjs              # URLs and encoded paths typed into the bar
 node .dev/test-tab.mjs               # Tab completion and the selection ladder
-node .dev/test-navlock.mjs           # panes coupled by the navigation lock
+node .dev/test-navlock.mjs           # panes coupled by the navigation lock (shelved; drives the API directly, so it still runs)
 node .dev/test-fit.mjs               # the fitting maths alone — no Obsidian, no vault, no port
 node .dev/test-complete.mjs          # what a Tab press completes to, likewise
 node .dev/test-gestures.mjs          # right-click runs, Escape, the keyboard entry points, long paths
 node .dev/test-compat.mjs            # against installed peer plugins
 node .dev/test-compat.mjs Quick      # one peer
 ```
+
+Every suite takes the same flags:
+
+```bash
+node .dev/test-tab.mjs ladder        # only cases whose name contains "ladder"
+node .dev/test-tab.mjs --shuffle     # random order; prints the seed
+node .dev/test-tab.mjs --shuffle=4242  # that order again, exactly
+node .dev/test-tab.mjs --verbose     # every assertion, not only the failures
+```
+
+**A green run in declaration order proves less than it looks.** The cases run
+against one live app, and several of them move, rename and delete the files the
+others navigate — so a case can pass because the case before it happened to
+leave the right thing on screen, and fail on its own for no reason of its own.
+That produced months of contradictory numbers: a suite reporting 179/190 in a
+combined run and 190/190 alone, with different failures each time.
+
+The cure is in `.dev/harness.mjs`, which every suite now shares. It calls the
+suite's `reset` **before every case** — this session's build reloaded, nothing
+left open from the case before, the fixture tree rebuilt as declared — so no
+case can inherit anything from its predecessor except the app itself. `--shuffle`
+is how that is *checked* rather than assumed: run the suite in a random order
+and it either still passes or it names the case that was leaning on a
+neighbour. The seed is printed twice, at the top and again at the end, because
+a failing order is only useful if it can be replayed.
+
+Fixtures belong in `reset`, not in a one-off before the first case. It cost a
+shuffled run exactly one failure to establish: `empty space: middle presses
+paste` opened a note that `moving a note shows it where it now lives` had
+already moved, and reported the empty pane as the feature misbehaving.
 
 **Anything about a hotkey must use a real key press.** `.dev/cdp.mjs key F2`,
 and `pressKey(page, spec)` in the suites, dispatch through the browser;

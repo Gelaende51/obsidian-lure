@@ -51,9 +51,28 @@ Moving through the list **puts what you are pointing at into the field**, by
 arrow key or by hovering — in place of the segment you were editing, with the
 rest of the path left standing — so the row you are on is also the path you
 would get.
-The text you had typed is kept: moving **up off the first entry** lets go of the
-list and puts it back, and so does taking the pointer off the list. Pressing up
-again from there wraps to the bottom, as it always did.
+
+The rest of the path is shown **only as far as it exists under what you are
+pointing at**. Standing in one folder with `2026/note.md` behind the segment you
+are editing, pointing at a folder that has a `2026` with a `note.md` in it shows
+all of it; one that has the `2026` and no note shows `2026`; one that has neither
+shows nothing after the name at all, and neither does a file, since nothing lives
+under one. What **you have typed** keeps its whole path while you are
+typing it, however little of it is there yet — a half-typed name is not a
+decision. Setting a name in is a decision, and what cannot be reached from it
+is cut at that point; the folders you are creating are the ones you type
+*after* it, which is where <kbd>Enter</kbd> makes them.
+The text you had typed is kept: moving **off either end of the list** — up off
+the first entry, or down off the last — lets go of it and puts your text back,
+with nothing highlighted. The field is a stop on the ring like any entry, so a
+lap passes through it rather than jumping from the last row to the first, and
+pressing on from there carries round to the other end.
+
+Taking the **pointer off the list** puts your text back too — and hands the
+highlight back to whatever had it before the mouse arrived: the entry you had
+arrowed to, showing in the field again, or the one the list opened on because it
+is where you are. Hovering is a way of looking rather than of choosing, so a
+sweep of the pointer across the list costs you nothing.
 
 The list itself doesn't change while you move through it — it keeps filtering by
 what you typed, not by what has been previewed into the field — so the entry
@@ -87,11 +106,20 @@ Menu wording comes from Obsidian's own translations, so it matches the rest of t
 
 ## Typing a path
 
-- Clicking the **empty space** before or after the breadcrumbs opens a text input prefilled with the whole path and fully selected — type over it, or edit in place. (Clicking the filename itself selects just the file name; see above.)
+- Clicking the **empty space** before or after the breadcrumbs opens a text input on the whole path, and **counts your presses**: one selects the path without the extension, two select it with, three select the path the machine knows. Clicking the **file's name** counts the same way but starts one rung lower, on the name itself: one selects it without the extension, two with, and three widen to the whole path *from your vault folder* — the form a link or a search wants, rather than the machine's. A fourth press reaches that one.
+- **The counting belongs to the run that opened the field.** Once it has lapsed — you paused, typed, or clicked once somewhere in the text — the field is a text field like any other, and a double-click in it picks out the word under the pointer as it would anywhere else. Type over what is selected, or edit in place. (Clicking the filename itself selects just the file name; see above.) Right-clicking the same space **copies** those same three, at two, three and four presses — one button shows them, the other takes them. A **single** right-press opens the path with all of it selected and offers what can be done to it: cut, copy, paste, select all, in Obsidian's own words.
+- **Middle-click the empty space** to paste over the path: the field opens on the whole path *from the vault root*, so the clipboard replaces all of it, and what lands is selected. <kbd>Enter</kbd> then goes there.
+- **<kbd>Ctrl</kbd>+click the empty space** to open this note again in a tab of its own, flashed in the File Explorer so the second tab is not mistaken for the first. On the **vault name**, <kbd>Ctrl</kbd>+click or middle-click opens a tab holding nothing, standing at the vault root with the list already showing — somewhere to type a path from scratch.
 - Typing while a breadcrumb trail is showing converts the trailing segment into a small input with live autocomplete scoped to the current folder.
-- `/` commits the current segment and descends into it.
+- **What the names agree on is offered as you type.** Where every child that starts with what you have typed goes on agreeing for a while, that agreement appears after the caret, selected. Type those letters and it is swallowed one at a time; type anything else and it is gone. <kbd>Tab</kbd> or <kbd>→</kbd> takes it, <kbd>Backspace</kbd> takes it back without touching a letter you typed, and nothing is offered again until you type — so there is always a way out of a name you did not want. What the dropdown lists is filtered by what **you** typed, never by what was offered.
+- In the field the offered part is simply **selected**. The list is where it is spelled out: each row shows the part of it that **matched what you typed in bold**, wherever in the name it matched — `kick` finds `Weekly kickoff` and says so — and, on the rows the offer is about, the part **taking it would add is underlined**.
+- **Typing lets go of the highlighted row.** The list opens on the entry you are standing in, but the moment you type it is about somewhere else, and a highlight nobody put there reads as a choice already made.
+- The offer is only ever text in front of you: the letters you typed stay spelled the way you typed them while you type, and taking the offer rewrites the name the way the folder spells it, because a path has to match the disk. `sk` + <kbd>Tab</kbd> reaches `Skyline`, not `skyline`.
+- `/` commits the segment you are typing and descends into it, keeping whatever is behind it — the same thing <kbd>Tab</kbd> does when it steps in.
 - <kbd>Backspace</kbd> in an empty input steps back out to the parent folder, reopening its name with the cursor at the end.
-- <kbd>Enter</kbd> commits; <kbd>Esc</kbd> or a click elsewhere cancels back to the file's real path. One press of <kbd>Esc</kbd> is enough: it closes the dropdown, leaves the field and hands focus back to the note, rather than taking one press per layer.
+- **The list follows the caret.** Pick out a different part of the path — drag over it, or arrow along — and the dropdown lists *that* folder's children, not the one the field was opened on. Pointing at a row writes it into the segment the caret is in, and taking the pointer off the list gives you your text and your selection back, exactly as they were.
+- **Sweeping a selection out of the field** and letting go somewhere else does not close it. A press that begins in the field belongs to the edit however far it travels; only a press that *begins* outside is a click away.
+- <kbd>Enter</kbd> commits — and when the field names nothing at all, as in an empty folder where there was never anything to complete, it says *No file selected* and stays open rather than closing as though something had been chosen. <kbd>Esc</kbd> or a click elsewhere cancels back to the file's real path. One press of <kbd>Esc</kbd> is enough: it closes the dropdown, leaves the field and hands focus back to the note, rather than taking one press per layer.
 
 The input is chrome-free — no box, no border — so it reads as the path text itself, and it auto-grows as you type.
 
@@ -101,17 +129,40 @@ Every target on the row answers a right-click, and how many presses you give it 
 
 | Where you press | Once | Twice | Three times |
 | --- | --- | --- | --- |
-| The **vault name** | A new empty tab | Copies the vault's name | Copies the file's path from the system root, extension and all |
+| The **vault name** | What can be done to the vault it names — including *Open this vault*, where that vault is not the one you are in | Copies the vault's name | Copies where the vault is — and a fourth press, where the open file is |
 | A **delimiter** | That folder's menu — its folder note's, where a folder-note plugin is running and the folder has one | | |
 | A **folder name** | That folder's menu | Copies the folder's name | Copies it and everything to the right of it |
 | The **note's name** | Opens the outline sidebar | Copies the name | Copies it with its extension |
 | The **empty space** | | Copies the path from your vault folder, without the extension | The same, with it |
 
+A single press on the **vault name** opens what can be done to whatever that
+segment is naming. For **the vault you are in**: open it in a new window,
+manage vaults, copy where it lives, copy its ID, show it in your file manager.
+For **another vault**, reached through the locations dropdown, the same minus
+the new window — which would open *this* vault, not that one — plus the one
+thing only a vault you are not in can offer: **Open this vault**. It is named
+to Obsidian by its ID rather than by its folder name, since two vaults may
+share one. For somewhere that is not a vault at all — your home folder, a
+mounted drive — there is no ID to copy and nothing to open, and the menu says
+so by not offering them.
+
+This is not Obsidian's own three-dot menu, which belongs to the starter window
+and cannot be opened from inside a running vault — these are the same entries
+rebuilt, in Obsidian's own wording, taken from its commands so they arrive in
+your language. Three of that menu's entries are deliberately **not** here:
+*rename vault*, *move vault* and *remove from list* all act on the vault's own
+folder or on Obsidian's registry of vaults, and doing that to the vault you are
+standing in — with its files open and its watchers running — is how a vault gets
+broken. Open the vault manager (*Open another vault*) and do them there, where
+the vault is closed.
+
 The two copies on the **empty space** are the row as it is written — what a link
-or a search wants — and the one on the **vault name** is the path the filesystem
-knows, which is what anything outside Obsidian wants. Obsidian draws the same
-distinction in its own two commands, *from vault folder* and *from system root*;
-here the second one sits on the segment that is itself outside the path.
+or a search wants — and the ones on the **vault name** are the paths the
+filesystem knows, which is what anything outside Obsidian wants. Each press
+there widens what the copy is good for: two give the vault's name, three where
+the vault is, four where the open file is. Obsidian draws the same distinction
+in its own two commands, *from vault folder* and *from system root*; here the
+outward-facing ones sit on the segment that is itself outside the path.
 
 All of this works outside the vault too, on the same targets.
 
@@ -142,15 +193,19 @@ A **file** never holds a folder up that way. A folder beside a note of its own n
 
 Two smaller things that follow: what lands in the field is spelled the way the folder spells it, so `sk` becomes `Sketches`; and only the name being typed is replaced, so a path with more to the right of it keeps that.
 
+With a name offered as you type, <kbd>Tab</kbd> **takes the offer and stops at the fork.** Where the names stop agreeing is a question only you can answer, and a press that walked on would be answering it by picking whichever name sorts first — so arrow to the one you want, or type past the fork. Only where the offer leaves *one* name is there no fork, and then the same press steps into it. The press after the fork still walks toward a name a branch at a time, as it always did: that one is a deliberate second ask.
+
 Arriving at the file's name **is** the first rung — no press is spent parking the caret at the end of a name it is about to mark. From there the presses stop moving along the path and start widening what is selected:
 
 1. the name
 2. the name with its extension
 3. the path from your vault folder
 4. the path from the system root
-5. back to the front of the walk — the field as the click that opened it left it, selection and all
+5. back to the front of the path **as it now stands** — standing where the walk began, first segment marked, ready to be walked again
 
 A fourth click reaches that same fourth rung directly.
+
+Widening only ever **widens**. A name that is already whole in the field — completed by the same key, or chosen from the dropdown — is marked entire rather than having its extension taken back off it first: the first rung is for a name the walk has just *arrived* at, where the extension is not yet the subject.
 
 The ladder is where the walk **arrives**, not where it starts. Click a folder in the middle of a path and the field opens on everything below it with that folder's name marked; each <kbd>Tab</kbd> then takes **one** folder — marking the next one, keeping the rest of the path behind it — and only once nothing but the file name is left does the widening begin:
 
@@ -162,7 +217,34 @@ The ladder is where the walk **arrives**, not where it starts. Click a folder in
 | <kbd>Tab</kbd> | `a › b › c` | `leaf.md` | `leaf` — the first rung |
 | <kbd>Tab</kbd> | `a › b › c` | `leaf.md` | `leaf.md` |
 
-The whole thing is a **loop, and it costs nothing to go round it**: the press after the last rung hands the row back exactly as the click left it, folders and all, ready to go round again. The only thing that ever leaves the row is the absolute prefix, on the press that stops showing it.
+**A name that is set in is set in, however you set it.** Completing it with
+<kbd>Tab</kbd>, committing it with `/`, and picking it out of the dropdown all
+leave the row in the same place holding the same path, so the press after the
+gesture means the same thing whichever way you came. Picking a folder from the
+list used to empty the field instead, throwing away a path that reaching the
+same folder with <kbd>Tab</kbd> would have kept.
+
+**A path you are still writing comes along whole.** Stepping into the very folder the rest of the path hangs from is not a claim that the rest exists — it is how a path gets typed ahead of itself, and the folders it names are the ones <kbd>Enter</kbd> is about to make. So walking down `Dokumente/plans/untitled.md` into `Dokumente` keeps `plans/untitled.md` in front of you, whether or not `plans` is there yet. The same goes for a path you typed from nothing: none of it was inherited from anywhere, so none of it is taken away.
+
+**Swapping a step for another one is the other story, and then the path comes along only as far as it is really there.** Swap a folder in the middle of a path for a sibling — click `a`, type another name, press <kbd>Tab</kbd> — and everything below it comes with you, because the path you were on is usually most of the path you want. Only what exists over there survives the move, though, so the field and the dropdown beside it never disagree: what is left in front of you is a path you could really walk. Starting from `a/b/c/leaf.md`, with `a` clicked and its name marked:
+
+| what you set in | chips | field | marked |
+| --- | --- | --- | --- |
+| `x`, which has no `b` at all | `x` | | nothing came with it |
+| `y`, which has a `b` but no `c` in it | `y` | `b` | `b` |
+| `z`, a twin of `a` all the way down | `z` | `b/c/leaf.md` | `b` |
+
+A folder left standing alone that way is still a folder to walk into: the press after it steps in, rather than starting to widen a selection over its name.
+
+A name **nothing** in the folder matches is answered differently, because nothing has been set in by it: the press marks what you typed, ready for you to type over it, rather than answering with somewhere else.
+
+The whole thing is a **loop, and it costs nothing to go round it**: the press after the last rung hands the row back to the front of the path, folders and all, ready to go round again. The only thing that ever leaves the row is the absolute prefix, on the press that stops showing it.
+
+What comes back is **the path you built**, not the one you set out from. Fork the walk halfway — pick a different sibling out of the dropdown, complete toward another name — and the lap closes on where you actually are; the four rungs before it describe that same path, and this one used to be the odd rung out that described the past.
+
+<kbd>Shift</kbd>+<kbd>Tab</kbd> closes the same ring the other way round: at the front of the path, with nothing left to give back and nowhere further up, the next press loops to the **far** rung — the path from the system root — and carries on narrowing from there. Neither direction dead-ends.
+
+It spends no press on a rung it has already shown, either. Below the last rung — the name without its extension — the ladder is over, and *the same press* leaves the folder: the path from the system root, the path from your vault, the name, the name without its extension, then the folder, one step each.
 
 No press is spent on a rung that changes nothing, either: clicking a note's name already shows it without its extension, which is what the first rung shows, so from there <kbd>Tab</kbd> starts on the second.
 
@@ -212,6 +294,8 @@ In the default (navigation) mode the currently open note is **never** renamed or
 
 ## <kbd>Ctrl</kbd> — new tab, and copy instead of move
 
+A note **created, moved or copied inside the vault is shown where it landed** in the File Explorer, marked for a moment in Obsidian's accent colour — the tree is where you look for it afterwards, so it is put in front of you rather than left in a folder that may not even be open. Duplicating says so as well: a copy leaves the original where it was and opens the copy in its own pane, which without a word is easy to read as nothing having happened.
+
 Holding <kbd>Ctrl</kbd> (<kbd>Cmd</kbd> on macOS) while picking a file from the dropdown, or while pressing <kbd>Enter</kbd> on a path, sends the result to a **new tab** instead of this one:
 
 | | Plain | With <kbd>Ctrl</kbd> |
@@ -229,6 +313,8 @@ Copying refuses to overwrite, exactly as moving does — including onto the note
 **This is off by default.** Turn on **Access external files** in the settings first — reading and writing outside the vault is the one thing this plugin does that Obsidian itself won't, so it is opted into rather than out of. With it off the vault name simply reveals your vault in the File Explorer, and nothing here ever looks past it.
 
 Clicking the **vault name** (or the 🏠 icon, when *Show vault name* is off) opens a dropdown of places rather than contents. The field it opens holds **the whole path you were on, written out in full**, with the place it starts at selected — so picking somewhere else, or typing over the selection, swaps just that leading part and leaves the rest of the path in front of you. Change your mind and <kbd>Esc</kbd> puts the row back as it was.
+
+Typing here is offered the rest of a place's name like anywhere else, and <kbd>Tab</kbd> **sets that place in** — the one you are pointing at, or the one the name can only mean. Where several places still share what you have typed, the press stops at the fork, as it does everywhere. Pointing at a place shows **that place's own path**, all of it selected, followed by your note's path only as far as it really goes over there — which is exactly what picking it would land you on. A place is not a step inside the path on screen but somewhere to count the whole path from, so nothing of where you were stays in front of it.
 
 The places on offer:
 
@@ -331,42 +417,31 @@ The viewer also answers a **right-click**: inside the text editor with *Cut* / *
 
 Nothing outside your vault is written unless you press *Edit as text* first. See the README's [Outside the vault](../README.md#outside-the-vault) section for the full disclosure.
 
-## Walking two folder trees in step
+## Dropping a file onto a folder in the path
 
-Parallel structures — `Clients/Acme/2026/` beside `Clients/Beta/2026/` — are
-usually walked by navigating each pane and keeping them aligned by hand.
-**Lock navigation across panes**, in Obsidian's own three-dot pane menu beside
-*Split right* and *Split down*, does it for you: the open panes are coupled,
-and they move together.
+Every folder in the row is a drop target, so **a note dragged onto one moves
+there** — the shortest route there is between a note and any folder above it,
+since the destination is already on screen. Drag from the File Explorer, from
+the dropdown, from the note's own name in the header, or from anywhere else in
+Obsidian that produces a file: it is the app's own drag, so the hover label,
+the cursor and the highlight are the ones the File Explorer draws.
 
-- A move is offered **only where every coupled pane can make it**. What is legal
-  is painted in blue — on the segments and on the back/forward buttons alike —
-  and everything else simply does nothing rather than taking one pane somewhere
-  the others cannot follow.
-- **Back**, **forward**, **up** and a **sibling step** are the moves. The sibling
-  step walks the folder names every pane has beside its own, in order, and comes
-  back round; the name is chosen once for all of them, so they never step into
-  differently-named folders.
-- A move that would bring two panes to the **same folder** is refused: from there
-  they are the same view twice, and there is no move back apart.
-- **Renaming a folder they share renames it in every pane.** A rename that would
-  leave them standing in differently-named folders asks first — keep the rename,
-  or keep the lock.
-- The lock is an arrangement between *those* panes. **Close one, or let one
-  navigate on its own** — a link, the quick switcher, a bookmark — and the lock
-  lets go and says so, rather than staying on over a parallel that has already
-  ended. (Obsidian reports a navigation only after it has happened, so this
-  cannot be a warning beforehand.)
-- Panes **outside the vault** take part like any others: a folder tree out there
-  can be parallel to one in here. The three-dot menu carries the toggle there too.
-- Typing a path is suspended while the lock is on — an arbitrary destination is
-  exactly what the lock exists to rule out — but **renaming is not**, so the
-  pencil button keeps working.
+Links follow the note, exactly as they do when it is moved from the File
+Explorer or by typing a path.
 
-The coupling is shown by a **chain** on each coupled pane's header, which is also
-the way out of it. It is deliberately not a padlock: the padlock a few pixels
-away is a *permission* to write outside the vault, and two padlocks meaning
-different things would be worse than one icon each.
+A folder that **could not take the drop shows nothing at all** — no label, no
+highlight — rather than offering something that would then fail. Three cases:
+
+- the folder the file is **already in**, since it is already there;
+- a **name already taken** in that folder, because nothing here overwrites;
+- a folder dropped **into itself or into its own descendant**, which would
+  leave it nowhere to have come from.
+
+Only folders **inside your vault** take drops. While the row is pointing
+outside the vault its segments decline, because taking a note out of the vault
+breaks every link to it — a decision worth a question rather than a gesture.
+The way to do it deliberately is still to type the path, which asks first and
+tells you how many notes would be affected.
 
 ## When the path is longer than the pane
 
@@ -375,24 +450,93 @@ least likely to need:
 
 1. **The vault name first**, down to its icon. You know which vault you are in;
    the icon keeps saying where the path starts.
-2. **Then the folders**, longest first. The longest name shrinks alone until it
-   is as short as the next longest, then the two come down together — so one
-   very long folder never costs the short names beside it their letters.
-3. **The file's own name last**, and it keeps about eight characters. It is what
+2. **Then the file's extension**, if you have it turned on — the same three
+   characters on nearly every file in a vault. It goes whole rather than being
+   shortened: half an extension says nothing that no extension doesn't.
+3. **Then the folders**, the longest paying most. Room is taken in proportion
+   to how much a name has, so one very long folder gives up far more than the
+   short names beside it.
+4. **The file's own name last**, and it keeps about six characters. It is what
    the header is for.
 
+Room is given up **continuously**, in fractions of a pixel rather than a letter
+at a time, so a pane dragged slowly narrows the row smoothly instead of making
+it step and jump. Before any letter goes, the air around the delimiters is
+spent — it is the row's only spacing and it costs no information at all — and a
+shortened name ends where the delimiter begins, with no strip of empty box
+between the two.
+
+**The field takes what it holds.** Opening one to type a path does not squeeze
+the folders beside it out of the way: it is as wide as the text in it and grows
+as you type, so the trail keeps everything the field does not need. Only when
+there is not enough for both does the row scroll, and then the field is the one
+thing that never gives way — it is text being edited, not a name being fitted.
+
 Nothing is cut past what tells it apart from its neighbours: `Projects2025` and
-`Projects2026` in the same folder are never shortened at all, because any cut
-would make them the same word, while `Reports` beside `Receipts` can come down
-to `Rep…`. On top of that a folder keeps about four characters and short names
-are left alone entirely — a name ground down to `A…` is unique and still
-unreadable.
+`Projects2026` in the same folder come down to `…025` and `…026` rather than to
+a prefix that would make them the same word, while `Reports` beside `Receipts`
+can come down to `Rep…`. On top of that a folder keeps about three characters
+can come down to `Rep…`. On top of that every name keeps a **readable width** —
+about four letters' worth for a folder and six for a file name, measured in the
+font the row is actually drawn in rather than counted. Four narrow letters and
+four wide ones are not the same amount of name, so `lilliliillil` is allowed to
+keep more of itself than `WWMMWWMMWWMM` is, and what is left on screen is the
+same size either way. Short names are left alone entirely — a name ground down
+to `A…` is unique and still unreadable. **Spaces don't count towards it.** Six
+characters to say which file this is are six characters worth reading, so the
+blanks between them ride along free and one is never left sitting against the
+`…`, where it would be invisible anyway.
+
+**A name is cut wherever its neighbours agree with it, and in the middle when
+they agree nowhere.** Two folders called `aaaa-common-one` and `aaaa-common-two`
+share everything but their last three characters, so cutting the tail keeps the
+half that says nothing: they come down to `…one` and `…two` instead, which is
+shorter *and* tells them apart. Where the agreement is at the end — `alpha-draft`
+beside `beta-draft` — the end is what goes; where it is at both ends, what
+stands is the middle. A name with no near neighbours loses its middle, since a
+name opens with what it is and closes with which one it is — for a file, its
+extension: `annual…2026.md`.
+
+A short run in common doesn't count. `parallel structures` happens to end in the
+same two letters as `Schemes` beside it, and that is no reason to keep either of
+them whole — three characters from the front already tell them apart.
 
 Nothing wraps onto a second line. When even the shortest honest names don't fit,
 the row **scrolls sideways**, parked at the end where the file is — at that
 point there is nothing left to compress, and cutting further would hide rather
-than shorten. A shortened name shows the whole of itself on hover; so does the
-vault icon once its name is gone.
+than shorten. The wheel scrolls it wherever the pointer is over the row, and
+both ends can be reached: while it scrolls the row aligns to its start,
+whatever the alignment setting says, because content centred in a box it has
+outgrown spills off the left as well as the right — and that half cannot be
+scrolled to at all.
+
+**Point at a shortened name and it comes back in full**, for as long as you are
+pointing at it, scrolled to the left edge so all of what came back is on screen.
+**Click one and it stays**: the field opens showing the folder you clicked, what
+is offered after it and whatever you type, and it goes on showing them once the
+pointer has moved away. Names stay put while you are scrolling the row or typing
+into it — one springing open under a gesture meant to read the row would move
+everything after it out from under you.
+
+The **opening segment always carries a tooltip, and it is the absolute path** —
+`/home/you/Vaults/Notes`, or wherever the row begins. That is the one thing
+about the row nothing on screen can say: the name tells you *which* vault, never
+where it is. It is there whether or not anything had to be shortened.
+
+With **Show vault name** off the name is not removed, only held at nothing —
+so pointing at the icon gives it back exactly the way pointing at a name the row
+had to shorten does.
+
+**Show file extensions** puts the extension back on the row's file name. Off — the
+default — the row names a note the way Obsidian titles it, without the `.md`
+that almost every file in a vault shares; on, it names it the way the filesystem
+does, which is what you want when the vault holds more than notes. It is also
+the second thing the row gives up when space runs short, straight after the
+vault name.
+A tooltip gives you the rest: not just the name but everything the row shows
+under it, as `…/name/folder/note.md`, so one hover answers both "what is this"
+and "what is under it". The vault icon names its vault the same way, when the
+name is turned off or has been squeezed away.
 
 ## The two warning colours
 
@@ -444,6 +588,7 @@ This works by wrapping the `workspace:edit-file-title` command rather than grabb
 | **Orange** | A text type Obsidian has no view for; see [the warning colours](#the-two-warning-colours) |
 | **Muted** | Outside your vault, so the vault's own handling doesn't apply |
 | **Blue** | The note you're on. Browsing, that's its own entry; in rename/move mode the *keep this name* entry stands in its place — the same note either way |
+| **Blue** | Where you already are: this bar's own note, and the folder the path bar is standing on |
 | **Greyed** | Rename/move mode only: the name is taken. Still selectable — picking one fills the input, where validation flags the conflict |
 
 ## Visibility rules
@@ -454,6 +599,12 @@ This works by wrapping the `workspace:edit-file-title` command rather than grabb
 - **Overwrite protection works identically regardless of visibility** — a hidden file still blocks you from overwriting it.
 
 ## Cheat sheet
+
+A path **wrapped in quotes** is unwrapped for you. Windows' *Copy as path* hands
+out `"C:\Users\you\note.md"`, quotes included, and a shell does the same for any
+path with a space in it; pasting one in or typing it works either way. Only the
+double quote, and only as a matching pair around the whole thing — it cannot
+appear in a real name, where an apostrophe very much can.
 
 | You want to… | Do this |
 | --- | --- |
@@ -479,13 +630,18 @@ This works by wrapping the `workspace:edit-file-title` command rather than grabb
 | Take back a step, or leave the folder | <kbd>Shift</kbd>+<kbd>Tab</kbd> |
 | Grab the whole path, or the system path | <kbd>Tab</kbd> past the end, or click four times |
 | Copy a name, a path, or a system path | Right-click it twice; the empty space three times for the system path |
+| Reach what the vault manager offers for this vault | Right-click the icon at the start of the row |
+| Copy the vault's ID | Right-click the icon at the start of the row |
+| Open another vault you were browsing | Right-click its name at the start of the row |
+| See the file's extension on the row | Turn on **Show file extensions** in the settings |
 | Open a folder segment in a new tab | <kbd>Ctrl</kbd> or middle-click it |
 | Reach the path bar from the keyboard | Bind *Focus the path bar* in Hotkeys |
 | Open a web address or an `obsidian://` link | Type it into the bar and press <kbd>Enter</kbd> |
 | Cancel anything | <kbd>Esc</kbd>, or click outside the header bar |
 | Try entries on for size before committing | Arrow or hover through the dropdown; <kbd>↑</kbd> past the top gives your text back |
-| Walk two parallel folder trees together | Three-dot pane menu → *Lock navigation across panes* |
-| See a shortened folder name in full | Hover it, or widen the pane (the vault icon carries the tooltip once the name is gone) |
+| Move a note into a folder above it | Drag it onto that folder in the row |
+| See a shortened folder name in full | Hover it, or widen the pane |
+| Find out where the vault itself lives | Hover the icon at the start of the row |
 | Take a note out of the vault | Pencil → browse outside → confirm the dialog (links will break) |
 
 ## Settings
