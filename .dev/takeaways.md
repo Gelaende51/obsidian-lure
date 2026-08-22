@@ -1551,3 +1551,36 @@ running, nothing it loads may be touched. Documentation, notes and scratch
 files are fine. `main.js`, `styles.css` and the suite's own source are not.
 A failure produced that way costs more than the wait, because it looks like a
 regression and gets investigated as one.
+
+## An occluded window is not a working test environment
+
+A long afternoon of contradictory results came down to one thing: the Obsidian
+window was unfocused and behind a fullscreen application. In that state the app
+reports success and does nothing for anything that needs focus — its own
+`workspace:edit-file-title` among them — and layout measurements come back
+degenerate: a breadcrumb container reporting `clientWidth: 0` while its
+`scrollWidth` is 169, and a row that spends the same fraction of its gaps at
+100px as at 360px.
+
+What made it expensive is that the environment fails *selectively*. The
+renderer still paints at 61 frames a second. `document.hasFocus()` still
+answers true. An `<input>` still focuses. A `ResizeObserver` still fires. So
+every obvious check for "is this window alive" passes, and only the specific
+things under test misbehave — which reads exactly like the code under test
+being broken.
+
+Two false trails came out of it, both worth naming because they are the shape
+of the mistake rather than its details. A `ResizeObserver` appeared not to fire
+at all, until the same observer was armed and triggered inside a single
+`evaluate` and fired perfectly — the element had been replaced between two CDP
+round-trips, which is the same trap as reusing an element handle across a
+plugin reload. And a plausible defect in `spendAir` was found, fixed, and
+reverted: the fix did not change the failing numbers, which is the evidence
+that it was not the cause. Shipping it anyway would have been a change to the
+fitting model justified by a test failing for a reason that had nothing to do
+with it.
+
+The rule: before believing a measurement about layout or focus, check the
+window is focused and unobscured — and when it is not, refuse to measure rather
+than measuring badly. A suite that reports a number it cannot stand behind is
+worse than one that declines to run.
