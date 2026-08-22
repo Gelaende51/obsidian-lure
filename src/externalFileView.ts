@@ -315,7 +315,10 @@ export class ExternalFileView extends ItemView {
 		// The pane-wide entries the vault branch above gets from Obsidian's
 		// own menu. A pane outside the vault takes part in the navigation
 		// lock like any other, so the way out of it has to be here too.
-		this.plugin.addNavLockItem(menu);
+		// Shelved along with the lock itself — see `registerNavLockMenu` in
+		// main.ts. Uncommented together or not at all: the entry that engages
+		// the lock and the entry that releases it out here are one feature.
+		// this.plugin.addNavLockItem(menu);
 	}
 
 	async onOpen(): Promise<void> {

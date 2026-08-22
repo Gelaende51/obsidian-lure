@@ -59,7 +59,12 @@ export default class BreadcrumbPathPlugin extends Plugin {
 		this.manager.registerEvents();
 
 		this.registerFocusCommand();
-		this.registerNavLockMenu();
+		// The navigation lock is shelved: it works, but not well enough to
+		// support in the wild, and a mode nobody can reach is a mode nobody
+		// can be surprised by. Everything behind it — the lock, its strings,
+		// its styles and its test suite — stays where it is; this one line is
+		// the whole switch, and putting the feature back is uncommenting it.
+		// this.registerNavLockMenu();
 		this.app.workspace.onLayoutReady(() => this.patchRenameCommand());
 	}
 
