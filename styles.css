@@ -38,8 +38,14 @@
    (stretch), which floats the separator glyphs to the top of their
    boxes — a few px above the ones we render in .lure-vault-wrapper.
    Centering puts both sets on the same line. */
-.view-header-title-container:has(.lure-filename) .view-header-title-parent {
+.view-header-title-container:has(.lure-filename) {
 	align-items: center;
+	/* Every gap on the row, in one place. Obsidian's own header sets a
+	   `column-gap` here, and that — not any padding — is what sat between a
+	   shortened name's `…` and the delimiter after it: the boxes themselves
+	   have none. Routed through the same variable the fitter spends, so the
+	   row's air is one number that goes to nothing under pressure. */
+	column-gap: var(--lure-gap, 4px);
 }
 
 /* Delimiters open a dropdown rather than navigating directly, so they
@@ -51,7 +57,21 @@
 .view-header-title-container:has(.lure-filename) .view-header-breadcrumb-separator {
 	cursor: default;
 	border-radius: var(--radius-s);
-	padding: 2px;
+	/* The air around a delimiter is the cheapest thing on the row: losing it
+	   costs no information at all, where losing a letter costs some. So it is
+	   spent first, and spent *continuously* — the fitter sets this to
+	   whatever fraction of a pixel makes the row fit, which is also why a
+	   pane dragged slowly no longer steps a letter at a time until the air is
+	   gone. */
+	/* The row's only air, and the first thing it gives up. Four pixels a side
+	   is what a name's own padding used to add to the same gap, so a row
+	   under no pressure reads exactly as it did; under pressure this goes to
+	   nothing, and it goes smoothly — the fitter sets it to whatever fraction
+	   of a pixel makes the row fit, rather than taking a letter. */
+	/* No air of its own: the row's spacing is the container's column-gap,
+	   which already puts the same amount on both sides of this glyph. */
+	padding: 2px 0;
+	flex: 0 0 auto;
 	color: var(--text-muted);
 	font-weight: var(--font-bold);
 }
@@ -640,37 +660,23 @@
 	cursor: default;
 }
 
-/* ---------------------------------------------------------------------
-   Fitting a long path into a narrow pane.
+/* One name, one line. A folder called "parallel structures" is one name, and
+   breaking it across two makes it read as two — and a wrapped name has no
+   clipped edge for the browser to put an ellipsis at.
 
-   Left to flexbox, every segment shrinks together: in a third-width pane
-   each folder name became two or three pixels of a letter, with nothing to
-   say it had been cut, and a name containing a space wrapped onto a second
-   line. Pinning the segments to their natural width moves that decision
-   into the code (see fitRow / pathFit), which can cut where the characters
-   are redundant instead of where the box happens to end.
-
-   `:has(.lure-filename)` keeps all of this to rows this plugin has taken
-   over — an unpatched header is Obsidian's business. */
-.view-header-title-container:has(.lure-filename) .view-header-title-parent,
+   `:has(.lure-filename)` keeps this to rows this plugin has taken over — an
+   unpatched header is Obsidian's business. */
 .view-header-title-container:has(.lure-filename) .view-header-breadcrumb,
 .view-header-title-container:has(.lure-filename) .lure-filename-text,
-/* The box around the name keeps its stretch (it is what makes the empty
-   space beside the name clickable) but loses its shrink. With shrink on it
-   collapsed to nothing in a narrow pane: the name vanished, and — worse for
-   the fitting — the row then measured as if it fit, so nothing was ever
-   shortened and nothing ever scrolled. */
 .view-header-title-container:has(.lure-filename) .lure-filename {
-	flex: 0 0 auto;
-	min-width: auto;
-	overflow: visible;
-	/* Item and row alike: a folder called "parallel structures" is one
-	   name, and breaking it across two lines makes it read as two. */
 	white-space: nowrap;
 }
 
+/* The box around the file's name keeps its stretch — it is what makes the
+   empty space beside the name clickable — and now takes a share of the
+   shrinking too, last of the three. */
 .view-header-title-container[data-lure-align="left"]:has(.lure-filename) .lure-filename {
-	flex: 1 0 auto;
+	flex: 1 1 auto;
 }
 
 /* Only once every name is down to what still tells it apart from its
@@ -678,11 +684,362 @@
    to compress, so the row lets you reach the rest rather than hiding it.
    The scrollbar itself is suppressed — this is a one-line strip a few
    pixels tall, and a bar across it would cost more than it explains. */
+/* The one thing that never scrolls away: the segment saying which vault (or
+   which place) the row begins at. A row that cannot fit is parked at its
+   right-hand end, where the file is — which slid the icon off the left edge
+   by however many pixels it was over, and an icon half cut off reads as a
+   drawing error rather than as a row that has more on it than fits. Pinned,
+   it stays legible and the path scrolls beneath it. */
+.view-header-title-container.lure-row-scrolls .lure-vault-wrapper {
+	position: sticky;
+	left: 0;
+	z-index: 1;
+	background-color: var(--background-primary);
+}
+
 .view-header-title-container.lure-row-scrolls {
 	overflow-x: auto;
 	scrollbar-width: none;
+	/* Aligned to the start for as long as it is scrolling, whatever the
+	   alignment setting says. Centred content that outgrows its box spills
+	   off *both* edges, and only the end-side spill can be scrolled to — the
+	   start side is simply unreachable, however far you scroll. With a deep
+	   path in a narrow pane that put the vault name and the first folders
+	   two hundred pixels off the left edge with no way to get to them. The
+	   setting is honoured again the moment the row fits. */
+	justify-content: flex-start !important;
 }
 
 .view-header-title-container.lure-row-scrolls::-webkit-scrollbar {
 	display: none;
+}
+
+/* The part of a row's name that matches what you typed. The listing matches
+   by substring, so it is not always at the front of the name. */
+.lure-suggest-match {
+	font-weight: var(--font-bold, 700);
+}
+
+/* The run a row would gain if the offer standing in the field were taken:
+   from the end of what was typed to the end of the opening every candidate
+   shares. Shown on the rows themselves, where the choice is, rather than on
+   the field, where the same run is already marked by being selected. */
+.lure-suggest-offer {
+	text-decoration: underline;
+}
+
+/* The wash a written-to row wears: the accent, a fifth of it — Obsidian's own
+   active-hover mix is a tenth, which is quieter than this wants to be while
+   still being something you can read a file name through. */
+.workspace {
+	--lure-flash-wash: color-mix(in oklch, var(--interactive-accent) 38%, transparent);
+}
+
+/* A row this plugin has just written to — created, moved, copied. Obsidian's
+   accent, which is purple in the default theme and follows whatever accent
+   the user has set; deliberately not its own reveal flash, which is a
+   different colour and answers a different question ("here is the file you
+   asked to see" rather than "this is the one that just moved"). */
+/* Three classes deep on purpose: revealing also puts Obsidian's own
+   `is-flashing` on the row, and that rule is two deep — so anything less
+   here loses the cascade and the mark comes out orange. */
+/* Faded in and then left standing until it is taken away.
+   
+   Keyframes rather than a transition, though Obsidian's own mark uses one: a
+   transition has nothing to move *from* on an element that appears already
+   wearing the class, and the File Explorer rebuilds the row for a file it has
+   just been told about — so the colour simply snapped on. An animation runs
+   whenever the element does.
+   
+   Both colours are Obsidian's own. The wash is the one it uses for an active
+   *hover* — a tenth of the accent — which is quiet enough to read a name
+   through and, being accent rather than the flat black wash a selected file
+   gets, tells the two apart at a glance. The line around it is Obsidian's
+   orange, which nothing else in the tree wears; it carries the contrast so
+   the wash does not have to. Drawn as an inset shadow rather than a border,
+   which would move the row by a pixel on each side. */
+.tree-item-self.nav-file-title.lure-flash,
+.tree-item-self.nav-folder-title.lure-flash {
+	animation: lure-flash 0.25s ease-in forwards;
+	border-radius: var(--radius-s);
+}
+
+/* Obsidian's own mark is put on by the reveal, and for the frame or two
+   before ours lands on the same row — or before that row even exists, when
+   the file has only just been created — its yellow is what shows. Suppressed
+   outright for as long as our own mark is running, which is the only window
+   in which the two could ever collide. */
+body.lure-no-native-flash .nav-file-title.is-flashing,
+body.lure-no-native-flash .nav-folder-title.is-flashing {
+	background-color: transparent !important;
+	mix-blend-mode: normal !important;
+}
+
+/* Revealing puts Obsidian's own mark on the row too, and that one is yellow
+   and carries `!important` — so for the moment before it is taken off again
+   it painted straight over this. Answered in kind: same weight, more
+   specific selector, so the row never flashes a colour that is not ours. */
+.tree-item-self.nav-file-title.lure-flash.is-flashing,
+.tree-item-self.nav-folder-title.lure-flash.is-flashing {
+	background-color: var(--lure-flash-wash) !important;
+	/* Obsidian's mark also sets a blend mode, which tints whatever is behind
+	   it — so overriding only the colour left the yellow showing through the
+	   blend. */
+	mix-blend-mode: normal !important;
+}
+
+@keyframes lure-flash {
+	from {
+		background-color: transparent;
+		box-shadow: 0 0 0 2px transparent;
+	}
+	to {
+		background-color: var(--lure-flash-wash);
+		/* Two pixels, drawn outside the row — the same ring Obsidian puts on
+		   a focused tree item (`0 0 0 2px`), so it reads as part of the app
+		   rather than as a thinner imitation of it. */
+		box-shadow: 0 0 0 2px var(--color-orange);
+	}
+}
+
+/* The row's own path field takes the whole width it is given. It has no
+   border and no background of its own, so one that stopped at its text was
+   invisible anyway — and one that runs to the edge lets a long path scroll
+   inside the field rather than pushing the row about. */
+/* ------------------------------------------------------------------ fitting
+
+   The row makes a long path fit by letting the browser clip its names, not
+   by cutting them up in script. Each name is laid out as one or two spans
+   and given a `min-width` — the width of that name at its floor, measured in
+   its own font — and flexbox does the rest: it takes the room away
+   continuously, in fractions of a pixel, and paints the `…` itself at the
+   clipped edge, hard against the delimiter.
+
+   The old way walked a character cap downwards and re-measured the row at
+   every step. That cost a letter for every few pixels of drag (which is
+   where the stepping came from), needed several passes over the row, and ran
+   out of passes before it reached the folders on a deep path. None of it is
+   needed: `text-overflow` has done this natively all along, and this is also
+   how Obsidian's own breadcrumb behaves.
+
+   Which end is clipped is still ours to decide — see `chooseCut` — because
+   the browser only ever clips the end, and the end is the wrong thing to
+   lose when the names around it all begin the same way. A name clipped at
+   its *start* is set `direction: rtl`, which moves the ellipsis to the other
+   edge; the text itself is isolated in a `<bdi>` so nothing reorders. */
+
+/* The three parts of the row give way in turn, and flexbox does the turn
+   taking: shrinkage is shared out in proportion to shrink factor × width, so
+   a factor a hundred times larger takes essentially all of it until that
+   part reaches its own floor and the rest carries on. Least useful first —
+   where the path begins, then the folders, then the file's own name.
+
+   A thousand to one between stages, not a hundred: shrinking is *shared*, so
+   the stage that is not yet paying still pays a little, and at a hundred to
+   one a folder had lost a visible pixel by the time the vault name had lost
+   its hundred. At a thousand it loses a tenth of one, which is below
+   anything that can be drawn — so the order reads as strict without being
+   enforced by a second mechanism.
+
+   None of the three is given `min-width: 0`. Left at `auto` each one bottoms
+   out at the sum of what its own names insist on keeping — plus the icons
+   and delimiters between them, which insist on all of themselves. Zeroed,
+   they would squash past that and paint their contents over whatever came
+   next. */
+/* The folder trail is not a box of its own for this purpose. Left as one,
+   its `min-width: auto` resolves to the min-content width of everything
+   inside it — and a name set `white-space: nowrap` has a min-content width
+   of the whole name, so the trail would refuse to give up a single pixel
+   however small its names were willing to go. `display: contents` dissolves
+   the box and makes every name a flex item of the row itself, which is the
+   only level where the sharing out can see them all. */
+.view-header-title-container:has(.lure-filename) > .view-header-title-parent {
+	display: contents;
+}
+
+.view-header-title-container:has(.lure-filename) > .lure-vault-wrapper {
+	flex-shrink: 1000000;
+	/* Its own flex container, so the row's gap does not reach inside it. The
+	   air between the opening segment and the delimiter after it is spent
+	   with all the rest. */
+	column-gap: var(--lure-gap, 4px);
+}
+
+.view-header-title-container:has(.lure-filename) > .lure-filename {
+	flex-shrink: 1;
+}
+
+.view-header-title-container:has(.lure-filename) .view-header-breadcrumb,
+.view-header-title-container:has(.lure-filename) .lure-root-name,
+.view-header-title-container:has(.lure-filename) .lure-filename-text {
+	display: flex;
+	align-items: center;
+	flex: 0 1000 auto;
+}
+
+/* No air of their own. Every gap on the row belongs to the delimiter between
+   two names, which is the one place it can be spent from — air split between
+   a name's own box and the spacer beside it is air in two places that have to
+   agree, and the half sitting inside a name's box is also width that name is
+   holding onto while claiming to be at its floor.
+
+   What the padding was doing besides spacing was giving the hover highlight
+   and the drop target something to be. That is a box-shadow now: it paints
+   the same few pixels around the name without occupying them, so the
+   highlight looks the way it did and costs the row nothing. */
+.view-header-title-container:has(.lure-filename) .view-header-breadcrumb,
+.view-header-title-container:has(.lure-filename) .lure-filename-text {
+	padding-inline: 0;
+}
+
+.view-header-title-container:has(.lure-filename) .view-header-breadcrumb:hover,
+.view-header-title-container:has(.lure-filename) .lure-filename-text:hover {
+	box-shadow: 0 0 0 3px var(--background-modifier-hover);
+}
+
+/* A name, or the part of one that may be clipped. Below its floor flexbox
+   stops taking, and what is left is a name still worth reading. */
+.lure-name-lead,
+.lure-name-trail {
+	/* Block, not inline: `overflow` has no effect on an inline box, so an
+	   inline part simply spills over whatever is beside it. */
+	display: block;
+	flex: 0 1 auto;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+/* The part that never gives way: the closing of a name whose neighbours
+   share nothing with it — for a file, its extension. Everything before it
+   clips, so the `…` lands between the two and the name still ends the way it
+   really ends. */
+.lure-name-pinned {
+	flex: 0 0 auto;
+	white-space: nowrap;
+}
+
+/* Clipped at its start instead of its end, for a name whose neighbours all
+   begin the way it does. */
+.lure-name-back {
+	direction: rtl;
+	text-align: left;
+}
+
+/* The floor a box may not be shrunk past, measured by the fitter and written
+   to each box as it lays the name out. Declared so it does *not* inherit: a
+   floor on a name is the sum of what its parts insist on, and inherited it
+   would become each part's floor as well — every part then holding out for
+   the whole name's width. */
+@property --lure-floor {
+	syntax: "*";
+	inherits: false;
+}
+
+/* The floor while a name is open, which has to be a second property rather
+   than a value of the first: the boxes that hold a name without being one
+   are floored from script, and an inline value cannot be outranked by a
+   rule however the rule is written. Read first and falling back to the
+   measured floor, it lifts them without either one having to know about the
+   other. */
+@property --lure-open {
+	syntax: "*";
+	inherits: false;
+}
+
+/* What a clipped part actually drew, so its box can be capped at exactly
+   that and leave no empty strip between the `…` and the delimiter. Set only
+   on parts that are already clipped, and cleared whenever the row is
+   refitted. */
+@property --lure-tight {
+	syntax: "*";
+	inherits: false;
+}
+
+.view-header-title-container:has(.lure-filename) .view-header-breadcrumb,
+.view-header-title-container:has(.lure-filename) .lure-root-name,
+.view-header-title-container:has(.lure-filename) .lure-filename-text,
+.view-header-title-container:has(.lure-filename) > .lure-vault-wrapper,
+.view-header-title-container:has(.lure-filename) > .lure-filename,
+.lure-name-lead,
+.lure-name-trail {
+	min-width: var(--lure-open, var(--lure-floor, 0px));
+	/* And no wider than what was actually drawn into it — see
+	   `tightenClipped`. On a name's own box as well as on its parts: capping
+	   only the part moves the leftover pixels from inside it to inside the
+	   box around it, which looks exactly the same. */
+	max-width: var(--lure-tight, none);
+}
+
+/* Hovered, or held open by its dropdown: a shortened name comes back in full
+   for as long as you are pointing at it, and so does the box around it. The
+   row is made scrollable while that lasts, and the script scrolls the
+   restored name to the left edge so what came back is what you can see. */
+.lure-name-open,
+.lure-name-open .lure-name-lead,
+.lure-name-open .lure-name-trail,
+.lure-name-open .lure-root-name,
+.lure-filename:has(.lure-name-open),
+.lure-vault-wrapper:has(.lure-name-open) {
+	--lure-open: max-content;
+	/* The cap on a clipped part is a cap on the clipped drawing of it, and
+	   there is nothing to cap once the whole name is back. */
+	--lure-tight: none;
+}
+
+/* The file's extension, when it is being shown. Never clipped: it is three
+   characters that mean one thing, and half of them mean nothing at all — so
+   the row either shows it or gives it up whole, which is what
+   `lure-given-up` does. Second in that order, straight after the vault
+   name. */
+.lure-filename-ext {
+	flex: 0 0 auto;
+	white-space: nowrap;
+}
+
+.lure-given-up {
+	display: none;
+}
+
+/* A name held at nothing because the setting says so, rather than because the
+   row ran out of room. It is still in the row — an element that is not there
+   has nothing to give back — and pointing at the icon gives it back exactly
+   the way pointing at a shortened name does. `max-width` rather than
+   `display: none`, so there is a box for the hover to widen. */
+.view-header-title-container:has(.lure-filename) .lure-name-folded,
+.view-header-title-container:has(.lure-filename) .lure-name-spent {
+	max-width: 0;
+}
+
+.view-header-title-container:has(.lure-filename) .lure-name-open .lure-name-folded,
+.view-header-title-container:has(.lure-filename) .lure-name-open .lure-name-spent {
+	max-width: none;
+}
+
+/* A field is not a name, and nothing in it can be given up: it is text being
+   edited, not a name being fitted. So while it is open its box keeps the
+   width it was measured at and the row scrolls instead — squeezed with the
+   names, a click on a folder deep in a narrow pane opened a sixty-pixel
+   field already scrolled past the very folder it was opened on.
+
+   Down here rather than beside the rest of the editing styles because the
+   alignment rules set `flex` as a shorthand, which resets the shrink factor;
+   this has to be read after them. */
+.view-header-title-container:has(.lure-filename) > .lure-filename.lure-editing {
+	flex-shrink: 0;
+	--lure-open: auto;
+	/* Still stretches: the field is only as wide as its own text now, and
+	   the row beside it has to stay part of the edit — clicking there puts
+	   the caret at the end of the path. Growing costs the trail nothing,
+	   since flexbox only hands out room nothing else wanted. */
+	flex-grow: 1;
+}
+
+/* An open dropdown belongs to the row it was opened from, and a scrolled row
+   can carry the field it is placed under right off its own start or end.
+   Nudged rather than moved, so Obsidian goes on placing it exactly as it
+   would and this only adjusts the result — and so the adjustment costs no
+   layout, which matters for something run on every scroll frame. */
+.suggestion-container {
+	transform: translateX(var(--lure-popover-shift, 0px));
 }

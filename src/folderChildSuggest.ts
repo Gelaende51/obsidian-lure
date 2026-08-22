@@ -21,7 +21,7 @@ export interface PathSuggestion {
 	warn?: boolean;
 	/** A note — tinted so the files Obsidian actually opens as notes stand out from the rest. */
 	markdown?: boolean;
-	/** The note this path bar belongs to, tinted to mark where you already are. */
+	/** Where you already are — this bar's own note, or the folder it is standing in — tinted to say so. */
 	current?: boolean;
 }
 
@@ -55,6 +55,13 @@ export interface SuggestContext {
 	 */
 	currentPath: string | null;
 	/**
+	 * The folder the row is standing in. Marked the same way the note is,
+	 * and for the same reason: a folder click lists the folder's *parent*,
+	 * so the one you are in is a row among its siblings and there is
+	 * otherwise nothing to say which of them you came from.
+	 */
+	currentFolder: string | null;
+	/**
 	 * Whether a child should appear in the list at all. Purely a display
 	 * filter — hidden entries still occupy their name, so overwrite
 	 * protection is unaffected by it.
@@ -72,6 +79,12 @@ export interface SuggestContext {
 	 * first real keystroke and the folder stays fully listed.
 	 */
 	queryOverride: string | null;
+	/**
+	 * The completion standing in the field, so each row can show the part of
+	 * itself that taking it would add: how many characters were typed, and
+	 * the whole opening the names agree on. Null when nothing is offered.
+	 */
+	offered: { typedLength: number; prefix: string } | null;
 	/**
 	 * The row the list should open on: the file this bar is showing, or the
 	 * folder it is standing in when the listing is that folder's parent.
@@ -129,6 +142,22 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 	private preselecting = false;
 	/** Set once the list has been wrapped for the "up past the top" gesture. */
 	private wrapped = false;
+	/** What the listing was last filtered by, lowercased — the run to mark in each row. */
+	private lastQuery = "";
+	/** What the field was offering when the listing was built — the run to underline in each row. */
+	private lastOffer: { typedLength: number; prefix: string } | null = null;
+	/**
+	 * The row the list is on when the pointer is not what put it there, and
+	 * whether that row had written itself into the field.
+	 *
+	 * Hovering is a way of looking, not of choosing, so taking the pointer
+	 * off the list gives the highlight back to whatever had it before the
+	 * mouse arrived — the row you arrowed to, or the one the list opened on
+	 * because it is where you already are.
+	 */
+	private kept: { index: number; previewed: boolean } = { index: -1, previewed: false };
+	/** Guards the restore below against previewing a row that never previewed. */
+	private restoring = false;
 
 	constructor(
 		app: App,
@@ -161,7 +190,32 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 	onSelectedChange(value: PathSuggestion | undefined, evt: unknown): void {
 		this.wrapList();
 		if (this.preselecting) return;
+		if (this.restoring) {
+			// The pointer has left, and the row it is handing the highlight
+			// back to is one that never wrote itself into the field. So the
+			// field goes back to what was typed rather than taking that
+			// row's name — the highlight moves, the text does not.
+			this.onPreview?.(null);
+			return;
+		}
 		if (!evt) {
+			// Whichever row the list settles on here is the one it opened
+			// on, and the one the pointer has to give back when it leaves.
+			this.kept = { index: Math.max(this.preselectIndex, 0), previewed: false };
+			// Nothing to open on — which is what typing leaves, since the row
+			// you were standing in is no longer what the list is about. Rest
+			// at nothing rather than on whichever row happens to sort first:
+			// a highlight nobody put there reads as a choice already made,
+			// and Enter would act on it.
+			if (this.preselectIndex < 0) {
+				this.preselecting = true;
+				try {
+					this.list()?.forceSetSelectedItem(-1, null);
+				} finally {
+					this.preselecting = false;
+				}
+				return;
+			}
 			// The list has just been rendered and opened on its first row.
 			// Move it to where the user actually is, once.
 			if (this.preselectIndex > 0) {
@@ -194,22 +248,70 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		if (!list || this.wrapped) return;
 		this.wrapped = true;
 		const original = list.setSelectedItem.bind(list);
+		const force = list.forceSetSelectedItem.bind(list);
+		// Anything but the pointer moving the highlight is a choice, and a
+		// choice is what the pointer has to give back. A keypress is also
+		// what previews into the field; the list's own selection is not.
+		//
+		// Read off the list *after* the move rather than taken from the
+		// index asked for: an arrow off the end of the list is passed on as
+		// the index past the end and wraps to the front inside, so
+		// remembering what was asked for remembered a row that isn't there.
+		const remember = (cause: unknown) => {
+			if (cause instanceof MouseEvent) return;
+			this.kept = { index: list.selectedItem, previewed: Boolean(cause) };
+		};
 		list.setSelectedItem = (index: number, evt: unknown) => {
-			if (index < 0 && evt && list.selectedItem === 0) {
-				// -1 is a real state for the renderer: it clears the marking
-				// and reports the change with no value, which is what tells
-				// the field to put the typed text back.
-				list.forceSetSelectedItem(-1, evt);
+			// Both ends of the list open onto the field. -1 is a real state
+			// for the renderer: it clears the marking and reports the change
+			// with no value, which is what tells the field to put the typed
+			// text back. Remembered as the choice it is — letting go of the
+			// list on purpose is not something the pointer should undo.
+			//
+			// Obsidian's own arithmetic takes an index past either end round
+			// to the other, so the list was a ring you could not step out of
+			// downwards: up off the top let go, while down off the bottom
+			// jumped to the first row and carried on. Now the field is a stop
+			// on the ring like any other, and a lap passes through it
+			// whichever way you are going.
+			const values = list.values;
+			const last = Array.isArray(values) ? values.length - 1 : -1;
+			const offTheTop = index < 0 && list.selectedItem === 0;
+			const offTheBottom = last >= 0 && index > last && list.selectedItem === last;
+			if (evt && (offTheTop || offTheBottom)) {
+				force(-1, evt);
+				remember(evt);
 				return;
 			}
 			original(index, evt);
+			remember(evt);
 		};
 
 		// Hovering a row previews it, so taking the pointer off the list has
 		// to be a way back — otherwise a stray sweep of the mouse would
-		// leave the field holding a name nobody chose.
+		// leave the field holding a name nobody chose. Back to the row that
+		// was standing before the mouse, though, not to nothing: clearing it
+		// outright threw away the row you had arrowed to, and the one the
+		// list had opened on because it is where you are.
 		list.containerEl?.addEventListener("mouseleave", (evt) => {
-			if (list.selectedItem >= 0) list.forceSetSelectedItem(-1, evt);
+			const values = list.values;
+			// The list is rebuilt on every query, so a remembered index can
+			// outlive the row it named.
+			const index =
+				Array.isArray(values) && this.kept.index < values.length ? this.kept.index : -1;
+			// The field comes back too, and first. Restoring the highlight
+			// alone left whatever the last hovered row had written standing
+			// in the field — with the user's own selection gone, which is
+			// the thing they were in the middle of. `null` puts back the
+			// text *and* the selection it was made with.
+			if (!this.kept.previewed) this.onPreview?.(null);
+			if (list.selectedItem === index) return;
+			this.restoring = !this.kept.previewed;
+			try {
+				force(index, evt);
+			} finally {
+				this.restoring = false;
+			}
 		});
 	}
 
@@ -226,15 +328,19 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 	 * what you typed, so it can only offer names that begin with it.
 	 * Uncapped, because the longest common prefix is a fact about the whole
 	 * set — cut the list at a hundred and what Tab completed to would change
-	 * with the size of the folder. "keep-name", "location" and the overflow
-	 * row are skipped: none of them is a thing you can descend into or land
-	 * on.
+	 * with the size of the folder.
+	 *
+	 * Places count. They are listed *instead of* a folder's children rather
+	 * than beside them, so they can only turn up here while the vault
+	 * dropdown is open — and there they are exactly what is being typed at.
+	 * "keep-name" and the overflow row are skipped: neither is a thing you
+	 * can descend into or land on.
 	 */
 	completions(prefix: string): PathSuggestion[] {
 		const lower = prefix.toLowerCase();
 		return this.buildSuggestions(this.getContext(), (name) =>
 			name.toLowerCase().startsWith(lower),
-		).filter((s) => s.kind === "folder" || s.kind === "file");
+		).filter((s) => s.kind === "folder" || s.kind === "file" || s.kind === "location");
 	}
 
 	/**
@@ -256,6 +362,8 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		const context = this.getContext();
 		this.preselectIndex = -1;
 		const q = (context.queryOverride ?? query).trim().toLowerCase();
+		this.lastQuery = q;
+		this.lastOffer = context.offered;
 		// Substring rather than prefix: the dropdown doubles as a search of
 		// the folder, and finding "Weekly kickoff" by typing "kick" is most
 		// of what that is for. Tab is the one that needs a prefix.
@@ -353,6 +461,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 					kind: "folder",
 					path: child.path,
 					disabled: false,
+					current: child.path === context.currentFolder,
 				});
 			} else if (child instanceof TFile) {
 				// The file being renamed is already represented by the pinned
@@ -468,7 +577,54 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 				external: true,
 				warn: !child.isFolder && context.warnsOnOpen(child.extension),
 				markdown: !child.isFolder && isMarkdownExtension(child.extension),
+				current: child.isFolder && child.path === context.currentFolder,
 			})));
+	}
+
+	/**
+	 * The row's name, with the part you typed marked inside it.
+	 *
+	 * The listing matches by substring, so what you typed is not always at
+	 * the front of the name — "kick" finds "Weekly kickoff" — and pointing
+	 * at *where* it matched is most of what makes a long list readable.
+	 */
+	private writeLabel(el: HTMLElement, label: string): void {
+		const query = this.lastQuery;
+		const at = query ? label.toLowerCase().indexOf(query) : -1;
+
+		// The run this row would gain if the offer were taken: from the end
+		// of what was typed to the end of the opening every candidate shares.
+		// Only on the rows the offer is actually about — a row that matched
+		// somewhere in the middle of its name is not one of them.
+		const offer = this.lastOffer;
+		const offered =
+			offer && label.toLowerCase().startsWith(offer.prefix.toLowerCase())
+				? { start: offer.typedLength, end: offer.prefix.length }
+				: null;
+
+		if (at < 0 && !offered) {
+			el.setText(label);
+			return;
+		}
+
+		// Marked runs, in order, over a name that is written once. The two
+		// never overlap: a row the offer is about matched at its front, so
+		// what was typed ends exactly where the offered part begins.
+		const runs: { start: number; end: number; cls: string }[] = [];
+		if (at >= 0) runs.push({ start: at, end: at + query.length, cls: "lure-suggest-match" });
+		if (offered && offered.end > offered.start) {
+			runs.push({ start: offered.start, end: offered.end, cls: "lure-suggest-offer" });
+		}
+		runs.sort((a, b) => a.start - b.start);
+
+		let cut = 0;
+		for (const run of runs) {
+			if (run.start < cut) continue;
+			el.appendText(label.slice(cut, run.start));
+			el.createSpan({ cls: run.cls, text: label.slice(run.start, run.end) });
+			cut = run.end;
+		}
+		el.appendText(label.slice(cut));
 	}
 
 	renderSuggestion(value: PathSuggestion, el: HTMLElement): void {
@@ -480,6 +636,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			return;
 		}
 
+
 		if (value.disabled) el.addClass("lure-suggest-disabled");
 		if (value.external) el.addClass("lure-suggest-external");
 		if (value.markdown) el.addClass("lure-suggest-md");
@@ -490,7 +647,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			const iconEl = el.createSpan({ cls: "lure-suggest-icon" });
 			applyIcon(setIcon, iconEl, value.icon, "hard-drive");
 		}
-		el.createSpan({ cls: "lure-suggest-label", text: value.label });
+		this.writeLabel(el.createSpan({ cls: "lure-suggest-label" }), value.label);
 
 		// "keep-name" is a proposed destination that nothing exists at yet,
 		// so there is nothing to act on either way.

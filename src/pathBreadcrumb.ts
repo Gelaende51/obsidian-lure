@@ -2,6 +2,7 @@ import {
 	FileSystemAdapter,
 	FileView,
 	Keymap,
+	Menu,
 	Notice,
 	PaneType,
 	Scope,
@@ -19,8 +20,16 @@ import type { FileExplorerView } from "obsidian";
 import type BreadcrumbPathPlugin from "./main";
 import type { BreadcrumbManager } from "./breadcrumbManager";
 import { ConfirmCreateFileModal } from "./createFileModal";
-import { FitStage, planFit, shortestUnique } from "./pathFit";
-import { planTab } from "./tabComplete";
+import {
+	ELLIPSIS,
+	FitStage,
+	NameCut,
+	agreementWith,
+	chooseCut,
+	cutName,
+	readableMinimum,
+} from "./pathFit";
+import { commonPrefix, planSuggestion, planTab } from "./tabComplete";
 import { FolderChildSuggest, PathSuggestion } from "./folderChildSuggest";
 import { ExternalChild, PATH_SEP, externalJoin, externalParent, externalSegments, isExternalFile, isExternalFolder, listExternalChildren } from "./externalFs";
 import {
@@ -31,6 +40,7 @@ import {
 	iconFor,
 	isInside,
 	listSystemLocations,
+	listVaults,
 	samePath,
 } from "./systemLocations";
 import {
@@ -40,8 +50,8 @@ import {
 	moveExternalFile,
 } from "./externalFileOps";
 import { ExternalFileView, extensionOf, openExternalFile } from "./externalFileView";
-import { showExternalMenu } from "./externalMenu";
-import { UrlTarget, classifyTypedTarget, slashBelongsToScheme } from "./urlTargets";
+import { showExternalMenu, showInFolder } from "./externalMenu";
+import { UrlTarget, classifyTypedTarget, slashBelongsToScheme, unquotePath } from "./urlTargets";
 import { NavMove } from "./navLock";
 import {
 	FOLDER_NOTE_PLUGIN_IDS,
@@ -50,7 +60,7 @@ import {
 	classifyTarget,
 } from "./segmentGestures";
 import { LABELS, obsidianLabel } from "./obsidianLabels";
-import { makeDraggable, showContextMenu } from "./nativeFileItem";
+import { makeDraggable, makeDropTarget, showContextMenu } from "./nativeFileItem";
 import { warnsOnOpen } from "./fileKinds";
 import { t } from "./lang";
 import { confirmAction } from "./prompts";
@@ -85,6 +95,35 @@ const EXTERNAL_MODE_CLASS = "lure-external-active";
 const WARN_MODE_CLASS = "lure-warn-active";
 /** Freezes the row's content at the offset it had when a session started. */
 const PIN_CLASS = "lure-pin-start";
+/**
+ * The marking put on a row this plugin has just written to.
+ *
+ * Lure's own, tinted with Obsidian's accent — purple unless you have changed
+ * it. Obsidian's own reveal flash (`is-flashing`) is a different colour and
+ * means a different thing: "here is the file you asked to see". This one
+ * means "this is the file that just moved".
+ */
+const FLASH_CLASS = "lure-flash";
+/** Obsidian's own reveal marking, taken off a row we are marking ourselves. */
+const OBSIDIAN_FLASH_CLASS = "is-flashing";
+/**
+ * How much air a delimiter has on each side when the row is not under
+ * pressure — which is all the air on the row.
+ *
+ * Four, because that is what a name's own padding used to add to the same
+ * gap: with the padding gone the row under no pressure reads exactly as it
+ * did, and there is now one number to spend instead of two that had to agree.
+ */
+const GAP_PX = 4;
+/** The custom property that air is set through, so the fitter can spend it by fractions. */
+const GAP_VAR = "--lure-gap";
+
+/** Put on the body while our own marking runs, so Obsidian's cannot show underneath it. */
+const NO_NATIVE_FLASH_CLASS = "lure-no-native-flash";
+/** How long that marking stays up, animation and all. Obsidian's own flash is about this long. */
+const FLASH_MS = 1000;
+/** When to try again for a row that is not in the tree yet, in milliseconds after the write. */
+const FLASH_TRIES = [0, 80, 250, 600];
 const PIN_OFFSET_VAR = "--lure-pin-offset";
 
 // Mirrors Obsidian's own file-explorer rename validation: same
@@ -110,13 +149,55 @@ const SEGMENT_DOUBLE_CLICK_MS = 500;
 const NAV_LOCKED_CLASS = "lure-nav-locked";
 /** On the row when even the shortest honest names do not fit; turns it into a scroller. */
 const SCROLL_CLASS = "lure-row-scrolls";
+/** The clipping part of a name, cut at its end unless it also carries `NAME_BACK_CLASS`. */
+const NAME_LEAD_CLASS = "lure-name-lead";
+/** The part after it, where a name is spent in the middle rather than at an end. */
+const NAME_TRAIL_CLASS = "lure-name-trail";
+/** On a part that is drawn right to left, so the browser clips its start. */
+const NAME_BACK_CLASS = "lure-name-back";
+/** On a part that never gives way — a pinned extension, or a name already at its floor. */
+const NAME_PINNED_CLASS = "lure-name-pinned";
+/** On the segment whose name is being shown in full because it is hovered or open. */
+const NAME_OPEN_CLASS = "lure-name-open";
+/** On a name held at no width by a setting rather than by the row running out of room. */
+const NAME_FOLDED_CLASS = "lure-name-folded";
 /**
- * How many times the fitter re-measures. Each pass costs one layout read
- * and converges quickly — three is comfortably enough for the paths that
- * exist, and a bound means a row that cannot be satisfied scrolls instead
- * of looping.
+ * What "short enough to still be worth reading" is measured against.
+ *
+ * A string rather than a number of pixels, so the floor scales with whatever
+ * interface font the vault is using — but one *string*, so it is the same
+ * width for every name at that point in the row however wide that name's own
+ * letters happen to be.
  */
-const FIT_PASSES = 4;
+const MIN_FOLDER_REF = "nnnn";
+/**
+ * Keys the field acts on itself, which therefore do not count as the caret
+ * being moved: each of them shifts it as a side effect of something the row
+ * has already answered.
+ */
+const FIELD_DRIVING_KEYS = new Set(["Tab", "Enter", "Escape", "ArrowUp", "ArrowDown"]);
+
+/** How far an open dropdown has been nudged to keep it on the row. */
+const POPOVER_SHIFT_VAR = "--lure-popover-shift";
+const MIN_NAME_REF = "nnnnnn";
+
+/** The file's extension, in a box of its own so the row can give it up whole. */
+const EXTENSION_CLASS = "lure-filename-ext";
+/** On whatever the row has given up entirely rather than shortened. */
+const GIVEN_UP_CLASS = "lure-given-up";
+/** On a name the fitter has spent to nothing, so what it freed cannot come back to it. */
+const NAME_SPENT_CLASS = "lure-name-spent";
+/**
+ * How long after a scroll a name may not open itself.
+ *
+ * Long enough to cover the gap between two turns of a wheel, so a slow scroll
+ * counts as one gesture rather than as a series of pauses to read in.
+ */
+const SCROLL_QUIET_MS = 400;
+/** The custom property each box's floor is written to; the stylesheet reads it. */
+const FLOOR_VAR = "--lure-floor";
+/** And the one a clipped part's exact drawn width is written to, so no empty strip is left. */
+const TIGHT_VAR = "--lure-tight";
 
 /**
  * The field as it stood before one press of Tab, so <kbd>Shift</kbd>+Tab can
@@ -153,7 +234,7 @@ interface FittableSegment {
 	el: HTMLElement;
 	full: string;
 	stage: FitStage;
-	floor: () => number;
+	cut: () => NameCut;
 }
 /** On whatever would make a legal locked move — a segment, or a history button. */
 const NAV_LEGAL_CLASS = "lure-nav-legal";
@@ -324,6 +405,28 @@ function pathStem(path: string): string {
 	return path.slice(0, cut + 1) + name.slice(0, stemLength(name));
 }
 
+/**
+ * The width below which flexbox may not take this box.
+ *
+ * A custom property rather than `min-width` itself, for two reasons. The
+ * number is measured — this name, in this font, at its own floor — so no
+ * stylesheet could hold the set of values it takes. And going through a
+ * property leaves the rule that reads it in the stylesheet, where a theme
+ * can see it, and lets the hover state override the floor in CSS instead of
+ * having to save and restore an inline one.
+ *
+ * Declared `inherits: false` (see styles.css), so a floor on a name is not
+ * also a floor on the parts inside it.
+ */
+function setFloor(el: HTMLElement, width: string): void {
+	el.setCssProps({ [FLOOR_VAR]: width });
+}
+
+/** The width a box actually drew into, so nothing is left over at its edge. */
+function setTight(el: HTMLElement, width: string): void {
+	el.setCssProps({ [TIGHT_VAR]: width });
+}
+
 function textWidth(text: string, el: HTMLElement): number {
 	if (!measureCtx) measureCtx = createEl("canvas").getContext("2d");
 	if (!measureCtx) return 0;
@@ -392,12 +495,40 @@ export class PathBreadcrumb {
 	private suggest: FolderChildSuggest | null = null;
 	private editCleanup: (() => void) | null = null;
 	private documentClickAway: ((evt: MouseEvent) => void) | null = null;
+	/** Watches where a press begins, so a selection dragged out of the field is not a click away. */
+	private documentPressDown: ((evt: MouseEvent) => void) | null = null;
+	/** Whether the press that is about to produce a click started on the row. */
+	private pressedInRow = false;
 	private renameClickAway: ((evt: MouseEvent) => void) | null = null;
 	private renameFocusOut: (() => void) | null = null;
 	/** Detaches the listeners bound to Obsidian's own header element on destroy. */
 	private domListeners = new AbortController();
 	/** Refits the row when the pane is resized — the whole point of fitting it. */
 	private resizeObserver: ResizeObserver | null = null;
+	/** The name currently being shown in full because the pointer is on it. */
+	private openedName: HTMLElement | null = null;
+	/** When the row was last scrolled by hand, so names stay put while it is. */
+	private scrolledAt = 0;
+	/**
+	 * Whether the open field was reached by clicking the file's own name
+	 * rather than the empty space beside it.
+	 *
+	 * The two gestures open on different rungs — the name, or the whole path
+	 * — so a run of presses that keeps climbing has to know which ladder it
+	 * is on, or the third press on a name jumps straight past the path to
+	 * the one the machine knows.
+	 */
+	private editFromName = false;
+	/**
+	 * Whether the open field was reached by a click on the row, and the run
+	 * of presses that opened it is still going.
+	 *
+	 * The ladder — name, name with extension, path, path from the machine's
+	 * root — belongs to that run and to nothing else. Once it has lapsed the
+	 * field is a text field like any other, where a double-click picks out a
+	 * word.
+	 */
+	private climbFromClick = false;
 	/**
 	 * Counts right-clicks on the row so one press can mean three things.
 	 * One per bar: a run that starts on a folder and continues on the file
@@ -482,6 +613,38 @@ export class PathBreadcrumb {
 	 * place a walk of nothing but Tab could cost you what was on screen.
 	 */
 	private tabLadderStart: TabStep | null = null;
+	/**
+	 * The name the rest of the path hangs from — the segment a prefill opened
+	 * marked, with the tail behind it.
+	 *
+	 * What tells "walking into the folder this path names" apart from
+	 * "swapping that folder for another one". The first keeps the tail
+	 * whole, however little of it exists yet: a path being *made* is typed
+	 * ahead of itself, and cutting it at the first folder that is not there
+	 * yet threw away everything past the one you had just stepped into. The
+	 * second cuts it, because a rest that hung from some other folder says
+	 * nothing about this one — and leaving it standing put the field at odds
+	 * with the dropdown beside it.
+	 *
+	 * Null when the field holds no prefilled first segment to hang from.
+	 */
+	private tailAnchor: string | null = null;
+	/**
+	 * The run offered after the caret: text the folder's own names agree on,
+	 * put in front of you before you have typed it.
+	 *
+	 * It is never anybody's but this field's. Every way out of the field
+	 * settles it first — taken, or taken back — so that nothing downstream
+	 * ever reads a value with something in it the user did not type. `start`
+	 * is the caret it was offered at, `end` where it stops, and `prefix` is
+	 * the whole segment as the *names* spell it, which is what taking it
+	 * writes: the letters you typed are yours while you type, but a path has
+	 * to be spelled the way the disk spells it.
+	 */
+	private suggested: { start: number; end: number; prefix: string } | null = null;
+	/** Set while an IME is composing, when writing into the field would break the composition. */
+	private composing = false;
+
 	/** Set while re-dispatching a click onto a native segment, so our own capture listener lets it through (see openNativeSegment). */
 	private delegatingToNative = false;
 	/**
@@ -614,7 +777,37 @@ export class PathBreadcrumb {
 			// `mode` alone: if some earlier step failed and left a stale
 			// mode behind, a mode-only check would deaden the whole row
 			// permanently with no way back.
-			if (this.inputEl) return;
+			if (this.inputEl) {
+				if (evt.target === this.inputEl) return;
+				// The field is only as wide as what is in it, so the row
+				// beside it is empty space that still belongs to the edit.
+				// A run of presses out there means what it means on the field
+				// itself — the path, then the path with its extension, then
+				// the one the machine knows — and a single press puts the
+				// caret at the end rather than doing nothing, which is what a
+				// field that ran the whole width would have done.
+				// Pressed on the row rather than in the field: the empty
+				// space beside a path is part of the path bar, and a run of
+				// presses there means what it has always meant.
+				if (this.climbSelection(evt.detail, true)) {
+					evt.preventDefault();
+					this.inputEl.focus();
+					return;
+				}
+				// A press the ladder declined is not one to answer with
+				// anything else. The caret goes to the end of the path on a
+				// *first* press, which is what a click past the end of a text
+				// field means; a later press of a run is either the browser's
+				// to interpret or one the ladder has already acted on — and
+				// the same click reaching here a second time, after the
+				// ladder replaced the field under it, was collapsing the very
+				// selection the ladder had just made.
+				if (evt.detail > 1) return;
+				const end = this.inputEl.value.length;
+				this.inputEl.focus();
+				this.inputEl.setSelectionRange(end, end);
+				return;
+			}
 			const target = evt.target as HTMLElement;
 			if (target.closest(".view-header-breadcrumb, .view-header-breadcrumb-separator, .lure-vault-wrapper")) {
 				return;
@@ -629,8 +822,111 @@ export class PathBreadcrumb {
 				// and middle-click land where the user already expects.
 				const paneType = this.paneTypeFor(evt);
 				if (paneType && this.file) this.navigateToFile(this.file, paneType);
-				else this.handleFilenameClick();
-			} else this.startFullPathEdit();
+				else {
+					this.handleFilenameClick();
+					this.climbFromClick = true;
+				}
+				return;
+			}
+			// The empty space takes the same modifier, and means by it the
+			// one thing the space can mean: this note again, in a tab of its
+			// own. Opening the file that is already open *is* duplicating
+			// the tab, and the copy is flashed in the tree so the second one
+			// is not mistaken for the first. The middle button is *not* this
+			// gesture — it has its own, on its own event.
+			if (this.duplicateTab(evt)) return;
+			this.startFullPathEdit("stem");
+			this.climbFromClick = true;
+		}, { signal: this.domListeners.signal });
+
+		// On X11 a middle press over a text field is *itself* a paste — the
+		// primary selection, whatever was last highlighted anywhere on the
+		// screen, inserted by the browser before any of this runs. Over the
+		// path field that meant the second press of the pair committed
+		// whatever had been swept over in some other window rather than the
+		// path just pasted. Refusing the press at mousedown is what stops it;
+		// `auxclick` is far too late, and preventing that does nothing about
+		// it.
+		container?.addEventListener("mousedown", (evt) => {
+			if (evt.button !== 1) return;
+			// Refused so that X11's own middle-click paste — the primary
+			// selection, inserted by the browser before any of this runs —
+			// cannot drop whatever was last highlighted elsewhere into the
+			// path field.
+			evt.preventDefault();
+		}, { signal: this.domListeners.signal });
+
+		// A wheel over the row scrolls it sideways once it has more path than
+		// pane. Left to the browser this works only where the pointer happens
+		// to be over the scrolling box itself and only for a wheel it decides
+		// to redirect — which is why it comes and goes depending on where you
+		// are pointing. Taking the event means the whole row answers it.
+		container?.addEventListener("wheel", (evt) => {
+			if (!container.hasClass(SCROLL_CLASS)) return;
+			// A sideways wheel, or a shifted one, is already asking for this
+			// and the browser does it correctly.
+			if (evt.shiftKey || evt.deltaX !== 0 || evt.deltaY === 0) return;
+			// Whatever was open closes for the duration: the row is being
+			// read across, and a name widening mid-scroll moves everything
+			// after it out from under the pointer.
+			this.scrolledAt = Date.now();
+			this.openName(null);
+			const before = container.scrollLeft;
+			container.scrollLeft += evt.deltaY;
+			// Only claimed when it actually moved, so a row scrolled to its
+			// end hands the wheel back to whatever is under it.
+			if (container.scrollLeft !== before) evt.preventDefault();
+		}, { passive: false, signal: this.domListeners.signal });
+
+		// Obsidian keeps the dropdown under the field it belongs to, and
+		// follows the row when it scrolls — which walks the popover clean off
+		// the row, since the field it is following goes with it. Re-clamped
+		// on the frame after, because Obsidian's own placement runs first.
+		container?.addEventListener("scroll", () => {
+			window.requestAnimationFrame(() => this.clampPopover());
+		}, { signal: this.domListeners.signal });
+
+		// Pointing at a shortened name gives it back in full for as long as
+		// you are pointing at it. Delegated rather than bound per segment,
+		// because the trail is rebuilt whenever the row changes and per
+		// segment listeners would have to be rebuilt with it.
+		container?.addEventListener("mouseover", (evt) => {
+			// Not while a field is open: the row is being edited, not read,
+			// and widening a name under the field moves the text somebody is
+			// typing into. Not while the row is being scrolled either —
+			// names slide under a still pointer as it moves, and each one
+			// arriving would open, widen the row and shift the rest along
+			// under the very gesture trying to read them.
+			if (this.inputEl || Date.now() - this.scrolledAt < SCROLL_QUIET_MS) return;
+			const name = (evt.target as HTMLElement).closest<HTMLElement>(
+				".view-header-breadcrumb, .lure-filename-text",
+			);
+			this.openName(name);
+		}, { signal: this.domListeners.signal });
+
+		// Leaving the row entirely, rather than moving between two names on
+		// it: `mouseover` already handles the second, and using `mouseout`
+		// for both would close a name on the way to its own child span.
+		container?.addEventListener("mouseleave", () => this.openName(null), {
+			signal: this.domListeners.signal,
+		});
+
+		// A middle press is not a "click" in the browser's sense and never
+		// reaches the handler above, so its gestures are wired on their own
+		// event — and counted, like the right button's, because it carries
+		// more than one meaning. The wait before the first acts is the same
+		// price paid there, for the same reason.
+		container?.addEventListener("auxclick", (evt) => {
+			if (evt.button !== 1) return;
+			const target = evt.target as HTMLElement;
+			if (target.closest(".view-header-breadcrumb, .view-header-breadcrumb-separator, .lure-vault-wrapper")) {
+				return;
+			}
+			evt.preventDefault();
+			// The one thing the middle button does here: paste over the path,
+			// from the vault root, with what lands marked.
+			this.startFullPathEdit("all");
+			void this.pasteIntoField(true);
 		}, { signal: this.domListeners.signal });
 
 		// While coupled, a click on the row is a request to move every pane,
@@ -739,6 +1035,7 @@ export class PathBreadcrumb {
 			if (folderPath === null) return;
 			evt.stopPropagation();
 			this.handleSegmentClick(folderPath);
+			this.climbFromClick = true;
 		}, { capture: true, signal: this.domListeners.signal });
 
 		// Right-click on the row. Every press is counted rather than acted
@@ -829,16 +1126,18 @@ export class PathBreadcrumb {
 	private runGesture(count: number, at: { clientX: number; clientY: number }): void {
 		switch (this.gestureTarget) {
 			case "vault":
-				// The one segment that is not a path segment gets the one
-				// action that is not about this file.
-				if (count === 1) void this.plugin.app.commands.executeCommandById("workspace:new-tab");
-				// Two presses take what this segment names — the vault, or
-				// the location standing in for it out there. Three take the
-				// path the filesystem knows, extension included: the copy
-				// that has to mean something outside Obsidian belongs on
-				// the segment that is itself outside the path.
+				// The one segment that is not a path segment gets the menu
+				// that is not about this file: what can be done to the vault
+				// itself, which is what the vault manager offers behind its
+				// own three dots.
+				if (count === 1) this.showVaultMenu(at);
+				// Then out from the segment itself: what it is called, where
+				// it is, and where the open file is. Each press widens what
+				// the copy is good for — the name means something inside
+				// Obsidian, the two paths mean something outside it.
 				else if (count === 2) void this.copyToClipboard(this.rootSegmentName());
-				else if (count === 3) void this.copyToClipboard(this.systemPath());
+				else if (count === 3) void this.copyToClipboard(this.openingTooltip());
+				else if (count === 4) void this.copyToClipboard(this.systemPath());
 				return;
 			case "delimiter":
 				if (count === 1) this.showDelimiterMenu(this.gestureFolderPath, at);
@@ -855,12 +1154,147 @@ export class PathBreadcrumb {
 				// row spells it, without the extension; three give it the
 				// way the filesystem does, with. The pair matches what the
 				// file name's own two presses copy, one path longer.
+				// Four presses take the path the filesystem knows, which is
+				// the one thing on this row that means something outside
+				// Obsidian. The three counts line up with what one, two and
+				// three *left* presses select, so the two buttons say the
+				// same three things — one shows them, the other takes them.
 				const row = this.rowDisplayPath();
+				// One press opens the path for editing with the whole of it
+				// marked — the same thing two left presses select — and then
+				// says what can be done to marked text. The OS menu is out of
+				// reach from here (the press that could have raised it is
+				// spent by the time the count is known), so the entries are
+				// Obsidian's own words for the same four things.
+				if (count === 1) {
+					this.startFullPathEdit("all");
+					this.showTextMenu(at);
+					return;
+				}
 				if (count === 2) void this.copyToClipboard(pathStem(row));
 				else if (count === 3) void this.copyToClipboard(row);
+				else if (count === 4) void this.copyToClipboard(this.systemPath());
 				return;
 			}
 		}
+	}
+
+	/**
+	 * What can be done to the vault itself.
+	 *
+	 * The vault manager keeps these behind the three dots beside each vault
+	 * in its list, and that menu belongs to the starter window — there is no
+	 * API that opens it, and nothing in the vault list is reachable from a
+	 * running vault. So the entries are rebuilt here from the things
+	 * Obsidian can actually be asked to do, with its own wording: the titles
+	 * come from the commands themselves, so they arrive already translated
+	 * and stay in step if Obsidian renames one.
+	 *
+	 * Outside the vault the same press asks about the place the row was
+	 * drawn from instead, which is the thing that segment is naming there.
+	 */
+	private showVaultMenu(at: { clientX: number; clientY: number }): void {
+		const menu = new Menu();
+		const path = this.openingTooltip();
+		const command = (id: string, fallback: string): string =>
+			this.plugin.app.commands.commands[id]?.name ?? fallback;
+
+		// Which vault this segment is naming — the open one, or whichever
+		// registered vault the row was drawn from. The two differ only in
+		// where the id comes from, so everything below is written once.
+		const here = this.externalPath === null;
+		const registered = here ? null : this.registeredVaultAt(path);
+		const vaultId = here ? (this.plugin.app.appId ?? null) : (registered?.vaultId ?? null);
+
+		// A vault this window is not standing in, but which Obsidian knows
+		// about: the one action the segment can take that the open vault has
+		// no use for. Named by id rather than by path, because two vaults may
+		// share a folder name and only the id tells Obsidian which is meant.
+		if (registered?.vaultId) {
+			menu.addItem((item) =>
+				item
+					.setSection("open")
+					.setTitle(t("menuOpenThisVault"))
+					.setIcon("lucide-vault")
+					.onClick(() => {
+						void this.openTypedTarget(
+							{ kind: "obsidian", href: `obsidian://open?vault=${encodeURIComponent(registered.vaultId ?? "")}` },
+							false,
+						);
+					}),
+			);
+		}
+
+		// Only the open vault has a window to open another of. For anywhere
+		// else the entry would open a second window of *this* vault, which is
+		// not what a menu hanging off another vault's name is offering.
+		if (here) {
+			menu.addItem((item) =>
+				item
+					.setSection("open")
+					.setTitle(command("workspace:new-window", "Open in new window"))
+					.setIcon("lucide-picture-in-picture-2")
+					.onClick(() => {
+						void this.plugin.app.commands.executeCommandById("workspace:new-window");
+					}),
+			);
+		}
+
+		// Everywhere: the vault manager is where a vault is renamed, moved or
+		// taken off the list, and none of those can be done to a vault that is
+		// open — so the way to reach them is the same wherever you ask.
+		menu.addItem((item) =>
+			item
+				.setSection("open")
+				.setTitle(command("app:open-vault", "Open another vault"))
+				.setIcon("lucide-library")
+				.onClick(() => {
+					void this.plugin.app.commands.executeCommandById("app:open-vault");
+				}),
+		);
+
+		menu.addItem((item) =>
+			item
+				.setSection("system")
+				.setTitle(obsidianLabel(LABELS.copyPath, "Copy path"))
+				.setIcon("lucide-copy")
+				.onClick(() => void this.copyToClipboard(path)),
+		);
+		// The identifier Obsidian keys its registry, its per-vault settings
+		// and its `obsidian://` links by. Nothing on the row can show it and
+		// nothing else here can reach it — it is not derivable from the name
+		// or the path. Offered only where there is one: a home folder or a
+		// drive is not a vault and has no id.
+		if (vaultId) {
+			menu.addItem((item) =>
+				item
+					.setSection("system")
+					.setTitle(t("menuVaultId"))
+					.setIcon("lucide-fingerprint")
+					.onClick(() => void this.copyToClipboard(vaultId)),
+			);
+		}
+		menu.addItem((item) =>
+			item
+				.setSection("system")
+				.setTitle(obsidianLabel(LABELS.showInSystemExplorer, "Show in system explorer"))
+				.setIcon("lucide-folder-open")
+				.onClick(() => showInFolder(path)),
+		);
+		menu.showAtPosition({ x: at.clientX, y: at.clientY });
+	}
+
+	/**
+	 * The registered vault at this path, if Obsidian knows one there.
+	 *
+	 * The locations dropdown can be pointed at anything — a vault, a home
+	 * folder, a mounted drive — and only a vault has an id or anything to
+	 * open. Matched by path rather than by name, since two vaults may share
+	 * a folder name.
+	 */
+	private registeredVaultAt(path: string): SystemLocation | null {
+		if (!path) return null;
+		return listVaults(this.vaultBasePath() ?? "").find((one) => samePath(one.path, path)) ?? null;
 	}
 
 	private runFileGesture(count: number): void {
@@ -1034,6 +1468,112 @@ export class PathBreadcrumb {
 	 * success and the failure already, so the wording matches everything
 	 * else that touches the clipboard.
 	 */
+	/**
+	 * What can be done to the text now marked in the field.
+	 *
+	 * Four entries, in Obsidian's own wording — it translates all of them
+	 * already, so this menu reads correctly in every language the app ships
+	 * without a string of Lure's own. Focus goes back to the field after
+	 * each, because every one of them is a thing you do *to* the field and
+	 * leaving the caret elsewhere would strand it.
+	 */
+	private showTextMenu(at: { clientX: number; clientY: number }): void {
+		const input = this.inputEl;
+		if (!input) return;
+
+		const marked = () => input.value.slice(input.selectionStart ?? 0, input.selectionEnd ?? 0);
+		const replaceMarked = (text: string) => {
+			const start = input.selectionStart ?? 0;
+			const end = input.selectionEnd ?? 0;
+			input.value = input.value.slice(0, start) + text + input.value.slice(end);
+			const caret = start + text.length;
+			input.setSelectionRange(caret, caret);
+			// Untrusted by construction, so the listing re-queries without
+			// this being mistaken for typing.
+			input.dispatchEvent(new Event("input"));
+			input.focus();
+		};
+
+		const menu = new Menu();
+		menu.addItem((item) =>
+			item
+				.setTitle(obsidianLabel(LABELS.cut, "Cut"))
+				.setIcon("scissors")
+				.onClick(() => {
+					const text = marked();
+					if (!text) return;
+					void this.copyToClipboard(text);
+					replaceMarked("");
+				}),
+		);
+		menu.addItem((item) =>
+			item
+				.setTitle(obsidianLabel(LABELS.copy, "Copy"))
+				.setIcon("copy")
+				.onClick(() => {
+					const text = marked();
+					if (text) void this.copyToClipboard(text);
+					input.focus();
+				}),
+		);
+		menu.addItem((item) =>
+			item
+				.setTitle(obsidianLabel(LABELS.paste, "Paste"))
+				.setIcon("clipboard-paste")
+				.onClick(() => void this.pasteIntoField()),
+		);
+		menu.addItem((item) =>
+			item
+				.setTitle(obsidianLabel(LABELS.selectAll, "Select all"))
+				.setIcon("text-cursor-input")
+				.onClick(() => {
+					input.select();
+					input.focus();
+				}),
+		);
+		menu.showAtPosition({ x: at.clientX, y: at.clientY });
+	}
+
+	/**
+	 * Puts the clipboard in the field, over whatever is marked.
+	 *
+	 * With the whole path marked — which is how the field opens to a press
+	 * of the middle button — that is a replacement of the path outright,
+	 * which is the point of the gesture.
+	 */
+	private async pasteIntoField(mark = false): Promise<void> {
+		const input = this.inputEl;
+		if (!input) return;
+		let text = "";
+		try {
+			text = await navigator.clipboard.readText();
+		} catch {
+			new Notice(obsidianLabel(LABELS.copyFailed, "Unable to copy to your clipboard"));
+			return;
+		}
+		if (!text) return;
+		// Unwrapped here as well as on submit, so the completion has
+		// something it can match and the row is not showing a name nobody
+		// meant to type. Only when the paste is the whole field: dropping a
+		// quoted path into the middle of one is not the same gesture.
+		const start = input.selectionStart ?? 0;
+		const end = input.selectionEnd ?? 0;
+		if (start === 0 && end === input.value.length) text = unquotePath(text);
+		input.value = input.value.slice(0, start) + text + input.value.slice(end);
+		// Marked, where the paste was the whole gesture: it says what landed,
+		// and the press after it can replace the lot without a keystroke in
+		// between. From the menu the caret is what you want instead — you are
+		// in the middle of editing there.
+		if (mark) input.setSelectionRange(start, start + text.length);
+		else {
+			const caret = start + text.length;
+			input.setSelectionRange(caret, caret);
+		}
+		input.dispatchEvent(new Event("input"));
+		input.focus();
+	}
+
+
 	private async copyToClipboard(text: string): Promise<void> {
 		if (!text) return;
 		try {
@@ -1678,15 +2218,19 @@ export class PathBreadcrumb {
 
 		const cumulativePaths = this.ancestorFolderPaths();
 
-		// Each segment stands for a real folder, so it drags like that
-		// folder's row in the File Explorer — onto the tab bar, into the
-		// editor, onto another folder to move it. Drag only: the right-click
-		// on these is counted, and the menu it opens is built elsewhere.
+		// Each segment stands for a real folder, so it behaves like that
+		// folder's row in the File Explorer at both ends of a drag: it can be
+		// dragged onto the tab bar, into the editor or onto another folder,
+		// and a file dragged *onto* it moves there. Right-click is the one
+		// thing the row keeps for itself — a press there is counted, and the
+		// menu it opens is built elsewhere.
 		this.nativeSegments().forEach((el, index) => {
 			const folderPath = cumulativePaths[index];
 			if (folderPath === undefined) return;
 			const folder = this.plugin.app.vault.getAbstractFileByPath(folderPath);
-			if (folder instanceof TFolder) makeDraggable(this.plugin.app, el, folder);
+			if (!(folder instanceof TFolder)) return;
+			makeDraggable(this.plugin.app, el, folder);
+			this.acceptDropsInto(el, folderPath);
 		});
 
 		// Separator i sits directly after segment i, so both refer to the
@@ -1920,76 +2464,571 @@ export class PathBreadcrumb {
 		// typing into. The row is refitted when the session ends.
 		if (this.inputEl) return;
 
-		const segments = this.fittableSegments();
-		for (const segment of segments) segment.el.textContent = segment.full;
+		container.style.removeProperty(GAP_VAR);
 		container.removeClass(SCROLL_CLASS);
+
+		const segments = this.fittableSegments();
 		if (!segments.length) return;
 
-		// Planned against measured text and then checked against real layout,
-		// because the two do not agree: a canvas measurement knows nothing of
-		// the padding, letter-spacing and rounding each segment sits in, and
-		// it consistently over-credited the saving — one pass left the row
-		// still spilling with names it believed it had made short enough.
-		// So the residual is fed back and the plan redrawn, from the full
-		// names each time, until the row fits or there is nothing left to cut.
-		const plan = { texts: segments.map((segment) => segment.full), overflows: true };
-		// The planner walks a cap down one character at a time and measures
-		// every name against each step, so the same string is asked about
-		// repeatedly; each measurement reads computed style, which is a
-		// layout flush. Remembered for the duration of this fit — the fonts
-		// cannot change inside it.
-		const widths = new Map<string, number>();
-		const measure = (text: string, index: number): number => {
-			const key = `${index} ${text}`;
-			let width = widths.get(key);
-			if (width === undefined) {
-				width = textWidth(text, segments[index]?.el ?? container);
-				widths.set(key, width);
-			}
-			return width;
-		};
-		let demand = 0;
-		for (let pass = 0; pass < FIT_PASSES; pass++) {
-			const residual = container.scrollWidth - container.clientWidth;
-			if (residual <= 0) {
-				plan.overflows = false;
-				break;
-			}
-			demand += residual;
-			const next = planFit(
-				segments.map((segment) => ({
-					full: segment.full,
-					floor: segment.floor,
-					stage: segment.stage,
-				})),
-				demand,
-				measure,
-			);
-			// Nothing moved: every name is already as short as it may go, and
-			// another pass would only measure the same row again.
-			if (next.texts.every((text, index) => text === plan.texts[index])) break;
-			plan.texts = next.texts;
-			for (const [index, segment] of segments.entries()) {
-				segment.el.textContent = plan.texts[index] ?? segment.full;
-			}
+		// The trail is rebuilt from scratch here, so whatever was open is
+		// either gone or about to be laid out again from its full name.
+		this.openedName = null;
+		for (const segment of segments) this.layOutName(segment);
+		// Air first, then the floors — in that order, because a floor is the
+		// sum of what is inside a box *including the air around it*, and
+		// adding up air that is about to be spent leaves the box floored
+		// several pixels above its own contents. The surplus goes to the
+		// first name that can take it, which is the vault name, which is
+		// exactly the one that is supposed to disappear.
+		const extension = this.filenameEl.querySelector<HTMLElement>(`.${EXTENSION_CLASS}`);
+		extension?.removeClass(GIVEN_UP_CLASS);
+		this.vaultSegmentEl
+			.querySelector<HTMLElement>(".lure-root-name")
+			?.removeClass(NAME_SPENT_CLASS);
+		this.settleGeometry(container, segments);
+
+		// What the browser did, rather than what a plan hoped it would do: a
+		// part is clipped exactly when it holds more than it can show. Nothing
+		// in the text says so any more — the `…` is painted, not written — and
+		// this is the truthful question to ask instead.
+		let clipped = segments.map((segment) =>
+			Array.from(segment.el.children).some((part) => part.scrollWidth > part.clientWidth + 1),
+		);
+
+		// The extension goes second, straight after the vault name: it is the
+		// same three characters on nearly every file in a vault, so once the
+		// opening segment has nothing left to give it is the next thing on
+		// the row worth less than a folder's letters. Whole, not clipped —
+		// half an extension says nothing that no extension does not.
+		//
+		// "Straight after" is why the opening segment is held at nothing for
+		// as long as the extension is gone. Flexbox hands the freed width
+		// back to whichever name gave up the most, which is the vault name —
+		// so without this the row swapped the two rather than spending them
+		// in turn: the extension went and the vault name came back.
+		//
+		// The question asked is only ever "with the extension shown, is
+		// anything past the opening segment having to be clipped?", and it is
+		// always asked of the row in that state — extension shown, nothing
+		// latched. Asking it of a row that still carried the last fit's
+		// answer is what made the extension flicker in and out across a slow
+		// drag: the latch left the opening segment at nothing, clearing it
+		// gave the segment a pixel or two back, and a condition that tested
+		// for *exactly* nothing then flipped on alternate widths.
+		//
+		// No test for the opening segment being spent is needed either. It
+		// shrinks ten thousand times faster than a folder does, so a folder
+		// that has had to give up a letter is already standing on a vault
+		// name that has given up everything.
+		const opening = segments[0];
+		let spent = false;
+
+		// The last sliver of the vault name. Flexbox leaves it a pixel or two
+		// on its way to nothing, and a pixel or two of a letter is half a
+		// glyph appearing and disappearing as the pane moves — it says
+		// nothing, and it reads as the row misdrawing itself. Below a single
+		// character's width there is nothing worth showing, so it shows
+		// nothing.
+		if (opening && this.slivered(opening.el)) {
+			opening.el.addClass(NAME_SPENT_CLASS);
+			spent = true;
 		}
+
+		if (extension && clipped.slice(1).some(Boolean)) {
+			extension.addClass(GIVEN_UP_CLASS);
+			opening?.el.addClass(NAME_SPENT_CLASS);
+			spent = true;
+		}
+
+		if (spent) {
+			this.settleGeometry(container, segments);
+			clipped = segments.map((segment) =>
+				Array.from(segment.el.children).some((part) => part.scrollWidth > part.clientWidth + 1),
+			);
+		}
+		// Whether anything from here rightwards was shortened. A folder whose
+		// own name still fits can still be hiding what is under it, and the
+		// path below a segment is most of what you would hover it to learn.
+		const cutAtOrAfter = segments.map(() => false);
+		for (let index = segments.length - 1; index >= 0; index--) {
+			const below = index + 1 < segments.length ? cutAtOrAfter[index + 1] : false;
+			cutAtOrAfter[index] = below || (clipped[index] ?? false);
+		}
+
+		// The opening segment always carries one, cut or not, and what it
+		// carries is the absolute path of the place the row starts at. That
+		// is the one fact about the row nothing on screen can show — the
+		// name says which vault, never where it is — and it is what you would
+		// ask an icon standing alone for. It goes on the segment rather than
+		// the name inside it, so it answers over the icon too.
+		if (opening) setTooltip(opening.el.parentElement ?? opening.el, this.openingTooltip());
 
 		for (const [index, segment] of segments.entries()) {
-			const text = plan.texts[index] ?? segment.full;
-			// The full name is a hover away, so shortening costs nothing but
-			// a moment. Only where something was actually cut: a tooltip
-			// repeating what is already on screen is noise.
-			if (text === segment.full) continue;
-			// A name cut away entirely has no box left to hover, so the
-			// tooltip goes on what is still there: the icon standing in for
-			// it.
-			setTooltip(text === "" ? (segment.el.parentElement ?? segment.el) : segment.el, segment.full);
+			if (index === 0) continue;
+			// Only where something was actually cut: a tooltip repeating what
+			// is already on screen in full is noise.
+			if (!cutAtOrAfter[index]) {
+				setTooltip(segment.el, "");
+				continue;
+			}
+			// Every segment but the opening one says itself and everything
+			// the row shows under it, which is what was cut away.
+			const tip = `…/${segments.slice(index).map((one) => one.full).join("/")}`;
+			setTooltip(segment.el, tip);
 		}
 
-		if (plan.overflows && container.scrollWidth > container.clientWidth) {
-			container.addClass(SCROLL_CLASS);
-			container.scrollLeft = container.scrollWidth;
+		// Only where shortening has already run out of road: while there is
+		// still a name that could give way, giving way is the better answer.
+		// It is also what makes a restored name reachable, so the row is left
+		// scrollable whenever any name on it is being clipped at all.
+		this.letRowScroll(clipped.some(Boolean));
+	}
+
+	/**
+	 * Keeps an open dropdown's top-left corner within the row it belongs to.
+	 *
+	 * The popover is placed under the field, and a scrolled row can carry
+	 * that field right off its own start or end — leaving a list hanging
+	 * under a part of the header that has nothing to do with it, or off the
+	 * pane entirely.
+	 *
+	 * Nudged with a transform rather than by moving it, so Obsidian goes on
+	 * placing the popover exactly as it would and this only ever adjusts the
+	 * result. A transform also costs no layout, which matters for something
+	 * run on every scroll frame.
+	 */
+	private clampPopover(): void {
+		const container = this.titleEl.parentElement;
+		const popover = activeDocument.querySelector<HTMLElement>(".suggestion-container");
+		if (!container || !popover) return;
+		popover.setCssProps({ [POPOVER_SHIFT_VAR]: "0px" });
+		const row = container.getBoundingClientRect();
+		const here = popover.getBoundingClientRect().left;
+		const shift = Math.min(Math.max(row.left - here, 0), Math.max(row.right - here, 0));
+		if (shift !== 0) popover.setCssProps({ [POPOVER_SHIFT_VAR]: `${shift.toFixed(2)}px` });
+	}
+
+	/**
+	 * Whether a name has been left with too little width to draw a letter in.
+	 *
+	 * Measured against one character in the name's own font: below that there
+	 * is no whole glyph to show, only the left edge of one, which is worse
+	 * than nothing because it changes with every pixel the pane moves.
+	 */
+	private slivered(el: HTMLElement): boolean {
+		const width = el.getBoundingClientRect().width;
+		return width > 0 && width < textWidth("n", el);
+	}
+
+	/**
+	 * Settles the row's geometry: air first, then the floors it leaves, then
+	 * the strip `text-overflow` leaves at the end of every clipped box.
+	 *
+	 * Run again whenever something is taken off the row, because all three
+	 * are measured from a layout that has just changed.
+	 */
+	private settleGeometry(container: HTMLElement, segments: readonly FittableSegment[]): void {
+		this.spendAir(container);
+		this.floorBoxes();
+		this.tightenClipped(segments);
+	}
+
+	/**
+	 * Lays one name out as the parts the browser can clip between.
+	 *
+	 * The `min-width` each part carries is the name at its floor, measured in
+	 * the font it is actually drawn in — so flexbox takes room away
+	 * continuously and stops exactly where a reader would want it to, without
+	 * anyone counting characters.
+	 */
+	private layOutName(segment: FittableSegment): void {
+		const { el, full, stage } = segment;
+		el.empty();
+		setFloor(el, "");
+		// And the cap the last fit put on it. The parts inside are built
+		// fresh every time and carry nothing over, but the box around them is
+		// Obsidian's own element and outlives the fit — left capped at the
+		// width it drew into when the pane was narrower, a name could shrink
+		// and never grow back.
+		setTight(el, "");
+
+		// Each part's floor is also the box's: a name is a flex item of the
+		// row, and a flex item told it may go to nothing will, however much
+		// its contents insist. Adding them up as they are made is the only
+		// place the two numbers are both known.
+		let floorPx = 0;
+		const put = (text: string, cls: string, floorText?: string): void => {
+			const part = el.createSpan({ cls });
+			if (cls.includes(NAME_BACK_CLASS)) {
+				// Isolated, so `direction: rtl` only moves where the clipping
+				// happens. Without it the bidi algorithm reorders a name that
+				// opens or closes with a dash or a bracket.
+				part.createEl("bdi", { text });
+			} else {
+				part.setText(text);
+			}
+			const width = floorText === "" ? 0 : textWidth(floorText ?? text, el);
+			setFloor(part, floorText === undefined ? "" : `${width.toFixed(2)}px`);
+			floorPx += width;
+		};
+		const settle = (): void => {
+			if (floorPx > 0) setFloor(el, `${floorPx.toFixed(2)}px`);
+		};
+
+		// The opening segment is the one allowed to disappear altogether: its
+		// icon stays behind and goes on saying where the row begins. So it is
+		// the one part with no floor at all.
+		// The opening segment is the one part of the row with no floor at all:
+		// it may go to nothing, and its icon stays behind to say where the
+		// path begins. Written as an explicit zero rather than left unset,
+		// because the boxes above it add up what is inside them and an unset
+		// floor means "ask the contents", which would answer with a width.
+		if (stage === "root") {
+			put(full, NAME_LEAD_CLASS, "");
+			setFloor(el, "0px");
+			return;
 		}
+
+		const cut = segment.cut();
+		// How short this name may get, as a *width*. Four narrow letters and
+		// four wide ones are not the same amount of name, and a floor counted
+		// in characters made `illli` and `WWWWW` two very different things to
+		// be left with. The reference is a run of one letter in the row's own
+		// font, so the floor is the same visual amount for every name and
+		// still follows the interface font size.
+		//
+		// Never less than what the neighbours force: `cut.floor` is how much
+		// of this name they leave distinctive, and no width may undercut it.
+		const readable = textWidth(stage === "name" ? MIN_NAME_REF : MIN_FOLDER_REF, el);
+		let keep = cut.floor;
+		while (keep < full.length && textWidth(cutName(full, keep, cut), el) < readable) {
+			keep += 1;
+		}
+		// Already at or under what it has to keep. A name with nothing to give
+		// should not be able to give it, so it is pinned rather than clipped.
+		if (keep >= full.length) {
+			put(full, NAME_PINNED_CLASS);
+			settle();
+			return;
+		}
+		if (cut.shape === "tail") {
+			put(full, NAME_LEAD_CLASS, cutName(full, keep, cut));
+			settle();
+			return;
+		}
+		if (cut.shape === "head") {
+			put(full, `${NAME_TRAIL_CLASS} ${NAME_BACK_CLASS}`, cutName(full, keep, cut));
+			settle();
+			return;
+		}
+		if (cut.shape === "window") {
+			// Both ends are shared, so both go. The opening is clipped from its
+			// start and the shared ending from its end, which leaves the part
+			// that differs standing between two ellipses.
+			put(
+				full.slice(0, cut.span.end),
+				`${NAME_LEAD_CLASS} ${NAME_BACK_CLASS}`,
+				ELLIPSIS + full.slice(cut.span.start, cut.span.end),
+			);
+			put(full.slice(cut.span.end), NAME_TRAIL_CLASS, ELLIPSIS);
+			settle();
+			return;
+		}
+
+		// The middle, and the common case: the name keeps how it opens and how
+		// it closes — for a file, its extension — and spends what lies between.
+		const front = Math.ceil(keep / 2);
+		const back = keep - front;
+		if (back <= 0) {
+			put(full, NAME_LEAD_CLASS, cutName(full, keep, cut));
+			settle();
+			return;
+		}
+		put(full.slice(0, full.length - back), NAME_LEAD_CLASS, full.slice(0, front) + ELLIPSIS);
+		put(full.slice(full.length - back), `${NAME_TRAIL_CLASS} ${NAME_PINNED_CLASS}`);
+		settle();
+	}
+
+	/**
+	 * Shows one shortened name in full, and puts the last one back.
+	 *
+	 * The row is left scrollable whenever anything on it is clipped, so a
+	 * name restored past the right edge is reachable — but reaching it should
+	 * not be the reader's job. It is scrolled to the left edge instead, which
+	 * is the one position where all of what just came back is on screen.
+	 *
+	 * `null` closes whatever was open, which is also what leaving the row
+	 * does.
+	 */
+	private openName(name: HTMLElement | null): void {
+		if (this.openedName === name) return;
+		this.openedName?.removeClass(NAME_OPEN_CLASS);
+		this.openedName = name;
+		const container = this.titleEl.parentElement;
+		if (!name) {
+			// Back to whatever the row itself needs: with every name clipped
+			// again it fits, and a row that fits does not scroll.
+			if (container) this.letRowScroll(container.scrollWidth > container.clientWidth);
+			return;
+		}
+
+		// The class is the whole of it: the stylesheet lifts the floor on the
+		// name, on its parts, and on the box holding it where that is not the
+		// row itself — the file name sits inside the stretching box that
+		// makes the empty space clickable, and the opening segment inside the
+		// wrapper that keeps it pinned while the row scrolls.
+		name.addClass(NAME_OPEN_CLASS);
+
+		if (!container) return;
+		// A row whose names all clip fits by construction, so it is not
+		// scrollable — and the name that just came back in full would be
+		// clipped by the row instead, with no way to reach it. It is made
+		// scrollable for as long as the name is open.
+		this.letRowScroll(true);
+		this.scrollIntoRow(name);
+	}
+
+	/**
+	 * What the row's opening segment says when you point at it.
+	 *
+	 * Where the path begins, absolutely: the vault's own folder on disk, or
+	 * the place an external trail starts at. The name beside it says *which*
+	 * one; only this says where it is, and with the name turned off the icon
+	 * says neither.
+	 *
+	 * Falls back to the name where there is no path to give — a vault on an
+	 * in-memory adapter has no folder on disk — because a tooltip repeating
+	 * the name is still better than an icon that answers nothing.
+	 */
+	private openingTooltip(): string {
+		if (this.externalPath !== null) {
+			const base = this.externalBase?.path;
+			if (base) return base;
+		}
+		return this.vaultBasePath() ?? this.plugin.app.vault.getName();
+	}
+
+	/**
+	 * Brings something on the row to its left edge.
+	 *
+	 * Measured as the gap between two boxes on screen rather than from
+	 * `offsetLeft`, which is counted from whichever ancestor happens to be
+	 * positioned and had the row landing a dozen pixels off. The pinned
+	 * opening segment is subtracted because it is drawn over the row's left
+	 * edge, and anything scrolled flush to that edge arrives underneath it.
+	 */
+	private scrollIntoRow(el: HTMLElement): void {
+		const container = this.titleEl.parentElement;
+		if (!container?.hasClass(SCROLL_CLASS)) return;
+		const row = container.getBoundingClientRect();
+		const here = el.getBoundingClientRect();
+		const pinned = this.vaultSegmentEl.getBoundingClientRect().width;
+		container.scrollLeft = Math.max(0, container.scrollLeft + here.left - row.left - pinned);
+	}
+
+	/**
+	 * Floors the two boxes on the row that hold names without being one.
+	 *
+	 * Both are flex items of the row, and a flex item told it may go to
+	 * nothing will — however much its contents insist. The opening segment's
+	 * box would shrink out from under its own icon, which then paints over
+	 * the folder beside it; the file name's box would take its name with it.
+	 * Neither has a floor a stylesheet could carry, because both hold
+	 * measured names: in the browse trail the opening box holds the whole
+	 * path.
+	 */
+	private floorBoxes(): void {
+		setFloor(this.vaultSegmentEl, `${(this.boxFloor(this.vaultSegmentEl) ?? 0).toFixed(2)}px`);
+		setFloor(this.filenameEl, `${(this.boxFloor(this.filenameEl) ?? 0).toFixed(2)}px`);
+	}
+
+	/**
+	 * The least a box may be squeezed to, added up from what is inside it —
+	 * or `null` where nothing inside it gives way at all.
+	 *
+	 * A child carrying a floor of its own answers for itself and is not
+	 * looked into: that is what a floor means. Anything else is looked into,
+	 * and if nothing in there declared a floor either then the whole of it is
+	 * something that does not shrink — an icon, a delimiter — and it answers
+	 * with its full width. Which is why "no children" is the wrong test for a
+	 * leaf: the vault icon's only child is an `<svg>`, so counting HTML
+	 * children made it measure as nothing and the row squeezed the icon out
+	 * from under itself.
+	 */
+	private boxFloor(box: HTMLElement): number | null {
+		let total = 0;
+		let declared = false;
+		for (const child of Array.from(box.children)) {
+			if (!child.instanceOf(HTMLElement)) continue;
+			const style = window.getComputedStyle(child);
+			const outside =
+				parseFloat(style.marginLeft || "0") + parseFloat(style.marginRight || "0");
+			const frame =
+				child.offsetWidth -
+				child.clientWidth +
+				parseFloat(style.paddingLeft || "0") +
+				parseFloat(style.paddingRight || "0");
+			const own = parseFloat(child.style.getPropertyValue(FLOOR_VAR));
+			if (Number.isFinite(own)) {
+				declared = true;
+				total += own + frame + outside;
+				continue;
+			}
+			const inner = this.boxFloor(child);
+			if (inner === null) {
+				total += child.offsetWidth + outside;
+				continue;
+			}
+			declared = true;
+			total += inner + frame + outside;
+		}
+		return declared ? total : null;
+	}
+
+	/**
+	 * Takes the empty strip off the end of every clipped name.
+	 *
+	 * `text-overflow` fills a box with whole glyphs and then the `…`, and
+	 * stops at the last one that fits — so the box is nearly always a little
+	 * wider than what was drawn into it, by anything up to the width of the
+	 * character it could not fit. On screen that is a gap between the `…` and
+	 * the delimiter after it, which reads as padding nobody asked for and
+	 * which got wider the tighter the row was squeezed.
+	 *
+	 * There is no way to ask CSS for "as wide as what you drew", so the run
+	 * is worked out here — a binary search over the prefix (or, for a name
+	 * clipped at its start, the suffix), measured in the part's own font —
+	 * and the box capped at exactly that. The box is read as a fraction
+	 * rather than as `clientWidth`, which rounds down: a part floored at
+	 * 30.45px reports a box of 30, so the very run its floor was measured
+	 * from no longer fit the box the floor had made for it.
+	 *
+	 * Only ever narrower, and only on parts that are already clipped, so
+	 * nothing that fits can be made to stop fitting. The room it gives back
+	 * goes to the file name's box, which is the only thing on the row that
+	 * grows.
+	 */
+	private tightenClipped(segments: readonly FittableSegment[]): void {
+		// Twice. Capping one part hands its leftover width back to the row,
+		// which moves every other part a little — so a cap worked out against
+		// the first layout can be a pixel or two out by the time the row has
+		// settled. The second pass measures what actually happened. It cannot
+		// run away: a cap only ever narrows a box, and only ever to something
+		// the box was already drawing.
+		this.tightenOnce(segments);
+		this.tightenOnce(segments);
+	}
+
+	private tightenOnce(segments: readonly FittableSegment[]): void {
+		for (const segment of segments) {
+			// What the name will occupy once its parts are capped. The box
+			// around them has to come down by the same amount or the strip
+			// simply moves: a part capped inside a crumb that keeps its width
+			// leaves the empty pixels between the crumb's edge and the
+			// delimiter instead of between the `…` and the crumb's edge,
+			// which looks exactly the same.
+			let occupied = 0;
+			for (const part of Array.from(segment.el.children)) {
+				if (!part.instanceOf(HTMLElement)) continue;
+				if (part.scrollWidth <= part.clientWidth + 1) {
+					occupied += part.getBoundingClientRect().width;
+					continue;
+				}
+				const text = part.textContent ?? "";
+				const fromStart = part.hasClass(NAME_BACK_CLASS);
+				// Fractional, and with half a pixel of grace. `clientWidth`
+				// is rounded down to whole pixels, and a box floored at
+				// 30.45px reports 30 — so the very run the floor was measured
+				// from stopped fitting the box the floor had made for it, and
+				// the part sat at its floor drawing one character less.
+				const box = part.getBoundingClientRect().width + 0.5;
+				const runOf = (keep: number): string =>
+					fromStart
+						? ELLIPSIS + text.slice(text.length - keep)
+						: text.slice(0, keep) + ELLIPSIS;
+				let drawn = 0;
+				let low = 0;
+				let high = text.length;
+				while (low < high) {
+					const mid = Math.ceil((low + high) / 2);
+					const width = textWidth(runOf(mid), part);
+					if (width <= box) {
+						drawn = width;
+						low = mid;
+					} else {
+						high = mid - 1;
+					}
+				}
+				// Never wider than the box it is capping: a cap above the
+				// current width does nothing except go stale the moment the
+				// row moves under it.
+				if (drawn > 0 && drawn < box) {
+					setTight(part, `${drawn.toFixed(2)}px`);
+					occupied += drawn;
+				} else {
+					occupied += part.getBoundingClientRect().width;
+				}
+			}
+			if (occupied > 0 && occupied < segment.el.getBoundingClientRect().width) {
+				setTight(segment.el, `${occupied.toFixed(2)}px`);
+			}
+		}
+	}
+
+	/**
+	 * Gives up the row's air before it gives up any of its letters.
+	 *
+	 * The space around the delimiters is the one thing on the row that can be
+	 * lost without losing information, so it goes first — and
+	 * it goes smoothly, by fractions of a pixel, which is what stops a pane
+	 * dragged slowly from stepping.
+	 *
+	 * One pass is exact: every pixel of air handed back is a pixel of name
+	 * that stops being hidden, so there is nothing to converge on.
+	 */
+	private spendAir(container: HTMLElement): void {
+		const delimiters = container.querySelectorAll(".view-header-breadcrumb-separator").length;
+		const pool = delimiters * 2 * GAP_PX;
+		if (pool <= 0) return;
+
+		let hidden = Math.max(0, container.scrollWidth - container.clientWidth);
+		for (const part of Array.from(
+			container.querySelectorAll<HTMLElement>(`.${NAME_LEAD_CLASS}, .${NAME_TRAIL_CLASS}`),
+		)) {
+			hidden += Math.max(0, part.scrollWidth - part.clientWidth);
+		}
+		if (hidden <= 0) return;
+
+		const left = Math.max(0, 1 - hidden / pool);
+		container.style.setProperty(GAP_VAR, `${(GAP_PX * left).toFixed(2)}px`);
+	}
+
+	/**
+	 * Lets the row be scrolled, or stops it, according to whether it has more
+	 * on it than fits.
+	 *
+	 * `wanted` is the caller's own answer to "should this row scroll at all" —
+	 * the fitter says so only once shortening has run out, while a field
+	 * being typed into says so as soon as it overflows, having nothing it
+	 * could shorten. Either way the row has to actually overflow, or the box
+	 * would answer the wheel with nowhere to go.
+	 */
+	private letRowScroll(wanted: boolean): void {
+		const container = this.titleEl.parentElement;
+		if (!container) return;
+		if (wanted && container.scrollWidth > container.clientWidth) {
+			// Only where the row was not already scrolling. Parking it is
+			// what a row newly too long for its pane should do — the end is
+			// where the caret is and where the file's own name is — but a row
+			// that is *already* scrolled has somewhere it was put on purpose,
+			// and re-parking it here dragged the view back to the end every
+			// time the pointer left the row.
+			const already = container.hasClass(SCROLL_CLASS);
+			container.addClass(SCROLL_CLASS);
+			if (!already) container.scrollLeft = container.scrollWidth;
+			return;
+		}
+		container.removeClass(SCROLL_CLASS);
 	}
 
 	/**
@@ -2013,7 +3052,12 @@ export class PathBreadcrumb {
 			const full = el.dataset.lureFull ?? el.textContent ?? "";
 			if (!full) return;
 			el.dataset.lureFull = full;
-			out.push({ el, full, stage, floor: () => shortestUnique(full, siblings()) });
+			out.push({
+				el,
+				full,
+				stage,
+				cut: () => chooseCut(full, agreementWith(full, siblings()), readableMinimum(stage)),
+			});
 		};
 
 		// The opening segment goes first and furthest: it names where the
@@ -2069,12 +3113,12 @@ export class PathBreadcrumb {
 	}
 
 	/**
-	 * Puts every shortened name back.
+	 * Puts every clipped name back.
 	 *
 	 * The native segments are Obsidian's own elements and outlive this
-	 * instance, so a row left with `Proj…` on it after the plugin is
-	 * disabled would be debris of exactly the kind the teardown contract
-	 * exists to prevent.
+	 * instance, so a row left holding our own spans — and the widths and
+	 * directions set on them — after the plugin is disabled would be debris
+	 * of exactly the kind the teardown contract exists to prevent.
 	 */
 	private restoreFittedText(): void {
 		for (const el of this.nativeSegments()) {
@@ -2082,6 +3126,8 @@ export class PathBreadcrumb {
 			if (full === undefined) continue;
 			el.textContent = full;
 			delete el.dataset.lureFull;
+			setFloor(el, "");
+			el.removeClass(NAME_OPEN_CLASS);
 			setTooltip(el, "");
 		}
 	}
@@ -2286,15 +3332,53 @@ export class PathBreadcrumb {
 		// dropdown shows for this vault too, so the two match.
 		const iconEl = rootEl.createSpan({ cls: "lure-segment-icon lure-vault-icon" });
 		setIcon(iconEl, CURRENT_VAULT_ICON);
-		if (this.plugin.settings.showVaultName) {
-			rootEl.createSpan({ cls: "lure-root-name", text: this.plugin.app.vault.getName() });
-		} else {
-			rootEl.setAttribute("aria-label", t("vaultRootLabel"));
-		}
+		// The name is always in the row, whatever the setting: with the
+		// setting off it is held at no width rather than left out, so that
+		// pointing at the icon gives it back the same way pointing at a name
+		// the row had to shorten gives that back. An element that is not
+		// there has nothing to give.
+		const nameEl = rootEl.createSpan({
+			cls: "lure-root-name",
+			text: this.plugin.app.vault.getName(),
+		});
+		if (!this.plugin.settings.showVaultName) nameEl.addClass(NAME_FOLDED_CLASS);
 		rootEl.addEventListener("click", (evt) => {
 			evt.stopPropagation();
+			if (this.openRootInNewTab(evt)) return;
 			this.openLocationMenu();
 		});
+		// A middle press is not a "click", so it is heard on its own event —
+		// the same rule the row's empty space follows.
+		rootEl.addEventListener("auxclick", (evt) => {
+			if (evt.button !== 1) return;
+			evt.stopPropagation();
+			if (this.openRootInNewTab(evt)) evt.preventDefault();
+		});
+	}
+
+	/**
+	 * A fresh tab, standing at the vault root with the field open.
+	 *
+	 * The modifier means on this segment what it means everywhere else on
+	 * the row — "somewhere else, not here" — and what this segment names is
+	 * the top of the vault. So it opens a tab that holds nothing yet and
+	 * puts you at the root of the tree with the list already showing, ready
+	 * to type your way to whatever the tab is going to hold.
+	 *
+	 * Returns whether it acted, so a plain press falls through to the
+	 * dropdown of places.
+	 */
+	private openRootInNewTab(evt: MouseEvent): boolean {
+		if (!this.paneTypeFor(evt)) return false;
+		const leaf = this.plugin.app.workspace.getLeaf("tab");
+		// The new leaf holds no file, and its row is built on the frame after
+		// this one — so the browsing is started once it exists, the same way
+		// sending a folder to another pane waits for that pane.
+		window.setTimeout(() => {
+			this.manager.patchLeaf(leaf);
+			this.manager.breadcrumbFor(leaf)?.startBrowsingAt("");
+		}, 0);
+		return true;
 	}
 
 	/**
@@ -2332,11 +3416,8 @@ export class PathBreadcrumb {
 		// "Show vault name" is about the row's opening segment, whichever
 		// vault that is — showing another vault's name here while the open
 		// one is reduced to an icon would contradict the setting.
-		if (named || !base || remainder === null) {
-			rootEl.createSpan({ cls: "lure-root-name", text: baseLabel });
-		} else {
-			rootEl.setAttribute("aria-label", baseLabel);
-		}
+		const nameEl = rootEl.createSpan({ cls: "lure-root-name", text: baseLabel });
+		if (!(named || !base || remainder === null)) nameEl.addClass(NAME_FOLDED_CLASS);
 		rootEl.addEventListener("click", (evt) => {
 			evt.stopPropagation();
 			this.openLocationMenu();
@@ -2401,6 +3482,12 @@ export class PathBreadcrumb {
 
 		const nameEl = this.filenameEl.createSpan({
 			cls: "lure-filename-text",
+			// The extension is the same for almost every file in a vault, so
+			// by default the row leaves it off exactly as Obsidian leaves it
+			// off a note's title. The setting is for vaults that hold more
+			// than notes, where it is the one part of the name that says
+			// what the file *is*. It rides in a box of its own (below), so
+			// the row can give it up early without touching the name.
 			text: this.file.basename,
 		});
 		// The name stands for the open note, so it behaves like that note's
@@ -2408,6 +3495,16 @@ export class PathBreadcrumb {
 		// onto a folder to move it, onto the tab bar to open it. Only the
 		// drag is borrowed — the right-click here is counted rather than
 		// acted on, and builds its own menu.
+		// After the name and outside it: the fitter gives this up whole, as
+		// the second thing on the row to go, and a name being clipped by the
+		// browser has no room for a part that must be shown or not shown at
+		// all.
+		if (this.plugin.settings.showFileExtension && this.file.extension) {
+			this.filenameEl.createSpan({
+				cls: EXTENSION_CLASS,
+				text: this.file.name.slice(this.file.basename.length),
+			});
+		}
 		makeDraggable(this.plugin.app, nameEl, this.file);
 	}
 
@@ -2510,7 +3607,66 @@ export class PathBreadcrumb {
 	 * it — over a chip trail of the folders above, whose contents the
 	 * dropdown lists.
 	 */
+	/**
+	 * One more press of the left button while the field is open, widening
+	 * what is selected: the name, the name with its extension, the path from
+	 * the vault, the path the machine knows.
+	 *
+	 * `detail` is the browser's own click counter, so the run needs no timer
+	 * of its own and cannot disagree with what the platform considers a
+	 * multi-click. Shared by the field and by the empty space beside it,
+	 * because the field is only as wide as its text: pressing just past the
+	 * end of a path is the same gesture as pressing on it, and answering it
+	 * only on the input made the second press depend on where the text
+	 * happened to stop.
+	 *
+	 * Returns whether the press was one of these, so the caller can keep the
+	 * browser's own word-select from also firing.
+	 */
+	private climbSelection(detail: number, fromRow = false): boolean {
+		const input = this.inputEl;
+		if (!input) return false;
+		// A first press decides whose run this is. On the row — a name, or
+		// the empty space beside it — it starts one; inside the field it ends
+		// whichever was running, because from there on somebody is working
+		// in a text field rather than carrying on the gesture that opened it.
+		if (detail <= 1) {
+			this.climbFromClick = fromRow;
+			return false;
+		}
+		// A run that did not begin on the row is not this gesture at all.
+		// Double-clicking inside an open field means what it means in every
+		// other text field — the word under the pointer — and answering it
+		// with "the whole path" took away the one selection the field cannot
+		// make any other way.
+		if (!this.climbFromClick) return false;
+		if (detail === 2) {
+			// The same text, the extension now marked with the rest of it.
+			// Nothing is rewritten, so the caret can stay put.
+			input.select();
+			return true;
+		}
+		this.tabTargetPath = this.ladderTargetPath();
+		// Where the third press lands depends on what the first one was
+		// aimed at. Starting on the file's name, the run has climbed the
+		// name and the rung above it is the path from the vault — which is
+		// what a link or a search wants, and as far as a gesture about the
+		// *name* has any business going. Starting on the empty space, the run
+		// began on that path already, so the rung above it is the one the
+		// machine knows. Either way a further press carries on up the same
+		// ladder.
+		this.tabStage = (this.editFromName ? 2 : 3) + (detail - 3);
+		this.applyLadderStage();
+		// A rung rebuilds the field, and opening a field clears the run — but
+		// this run is the reason the field was rebuilt. Put it back, or the
+		// press after a rung would be treated as the first press into a text
+		// field and the ladder would stop after one step.
+		this.climbFromClick = true;
+		return true;
+	}
+
 	private handleFilenameClick(): void {
+		this.editFromName = true;
 		// An external file has no TFile to read a parent off; the row already
 		// holds its folder, so the name alone is what goes in the input.
 		if (this.externalFileName !== null && this.externalPath !== null) {
@@ -2667,6 +3823,104 @@ export class PathBreadcrumb {
 		});
 	}
 
+	/**
+	 * Lets a segment take a dropped file, moving it into the folder the
+	 * segment names.
+	 *
+	 * The breadcrumb is the shortest route there is between a note and any
+	 * folder above it: the destination is already on screen, so a move is one
+	 * drag rather than a trip through the File Explorer's tree. What it
+	 * cannot offer is a folder that is not on the path — that is what the
+	 * dropdown and the text field are for.
+	 *
+	 * The label is worded through Obsidian's own table so it reads as the
+	 * File Explorer reads, in whatever language the app is in, with this
+	 * plugin's own string only as the fallback.
+	 */
+	private acceptDropsInto(el: HTMLElement, folderPath: string): void {
+		makeDropTarget(this.plugin.app, el, folderPath, {
+			// Obsidian's own wording where it has one, and plain English
+			// where it does not — the same bargain every mirrored label in
+			// here strikes, rather than a 45-locale string of this plugin's
+			// own for a phrase the host already writes.
+			label: (name) => obsidianLabel(LABELS.moveInto, `Move into \u201C${name}\u201D`, { folder: name }),
+			onMoved: (file) => this.revealInExplorer(file),
+		});
+	}
+
+	/**
+	 * Shows a file where it now lives, in the File Explorer.
+	 *
+	 * A courtesy after a write rather than the write itself, so it keeps
+	 * quiet when it cannot be done: the move succeeded either way, and a
+	 * notice about the sidebar would be about the wrong thing. Only for
+	 * files the vault tracks — there is no row in that tree for anything
+	 * outside it.
+	 */
+	private revealInExplorer(file: TAbstractFile): void {
+		if (this.plugin.app.vault.getAbstractFileByPath(file.path) !== file) return;
+		const fileExplorer = this.plugin.app.internalPlugins.getPluginById("file-explorer");
+		if (!fileExplorer) return;
+		// Obsidian's own mark is shut off before the reveal, because the reveal
+		// is what puts it on — and for a file that has just been made, the row
+		// does not exist to take it off until its yellow has already shown.
+		document.body.addClass(NO_NATIVE_FLASH_CLASS);
+		this.timers.add(
+			window.setTimeout(() => document.body.removeClass(NO_NATIVE_FLASH_CLASS), FLASH_MS),
+		);
+		try {
+			fileExplorer.instance.revealInFolder(file);
+		} catch {
+			// The sidebar is not where the work happened; leave it be.
+			return;
+		}
+		this.flashInExplorer(file.path);
+	}
+
+	/**
+	 * Marks the row in Obsidian's accent colour, for a moment.
+	 *
+	 * Revealing flashes a file only when it is not already the one you are
+	 * on — and after creating or moving a note it *is*, so the row simply
+	 * went quietly active and the write had nothing to show for itself.
+	 *
+	 * Tried a few times over a short window rather than once: the row may
+	 * not exist yet. Revealing can have to open the explorer leaf first, and
+	 * a file that was *just created* has no row until the explorer hears the
+	 * vault's own event — which is a tick or two after the write returns.
+	 * The attempts stop as soon as one lands.
+	 */
+	private flashInExplorer(path: string): void {
+		const flash = (): boolean => {
+			const row = Array.from(
+				document.querySelectorAll<HTMLElement>(".nav-file-title"),
+			).find((el) => el.dataset.path === path);
+			if (!row) return false;
+			// Taken off on every attempt, not only the one that marks: the
+			// reveal can put it back after we have been here, and two
+			// colours running at once is what that looks like.
+			row.removeClass(OBSIDIAN_FLASH_CLASS);
+			if (row.hasClass(FLASH_CLASS)) return false;
+			// Revealing marks the row Obsidian's own way as well, and that
+			// marking carries `!important` — so it comes off rather than
+			// being out-argued: two colours on one row is one colour too
+			// many, and the one that answers "this is the file that just
+			// moved" is ours.
+			row.addClass(FLASH_CLASS);
+			// The fading is the animation's business; this only clears up
+			// after it, so a row is not left wearing a mark that has already
+			// played out.
+			this.timers.add(window.setTimeout(() => row.removeClass(FLASH_CLASS), FLASH_MS));
+			return true;
+		};
+		flash();
+		// Every tick runs, marking or not: the later ones are what keep the
+		// other colour off while the reveal settles.
+		for (const delay of FLASH_TRIES) {
+			this.timers.add(window.setTimeout(flash, delay));
+		}
+	}
+
 	private revealFolderInExplorer(path: string): void {
 		const target = path
 			? this.plugin.app.vault.getAbstractFileByPath(path)
@@ -2771,6 +4025,10 @@ export class PathBreadcrumb {
 			return;
 		}
 
+		// The note is where you sent it, and the tree is where you look for
+		// it afterwards — so it is shown there, rather than left for you to
+		// go and find.
+		this.revealInExplorer(this.file);
 		this.finishRename();
 	}
 
@@ -2880,6 +4138,13 @@ export class PathBreadcrumb {
 			new Notice(t("noticeCopyFailed", { error: (err as Error).message }));
 			return;
 		}
+
+		// A copy is the one write here that leaves the row showing something
+		// other than what it just did — the original stays put and the copy
+		// opens in its own pane — so without a word it is easy to believe
+		// nothing happened at all.
+		new Notice(t("noticeCopied", { path: copy.path }));
+		this.revealInExplorer(copy);
 
 		// The original is still what this leaf shows, so finishRename's
 		// repaint lands on the right file; the copy gets its own pane.
@@ -3033,8 +4298,7 @@ export class PathBreadcrumb {
 	 */
 	private selectExternalEntry(absolutePath: string, paneType: PaneType | false): void {
 		if (isExternalFolder(absolutePath)) {
-			this.extendExternalPath(absolutePath);
-			this.enterTypingMode("");
+			this.descendCarrying(absolutePath, this.restAfterEditedSegment());
 			return;
 		}
 		// Opening ends the session, exactly as picking a file inside the vault
@@ -3067,7 +4331,7 @@ export class PathBreadcrumb {
 	 * that chip is dropped and its name reopened for editing, cursor at
 	 * the end, so a mistyped folder can be corrected in place.
 	 */
-	private stepOutOfFolder(mark = false): void {
+	private stepOutOfFolder(mark = false): boolean {
 		// Read before anything moves: stepping out tears the field down, and
 		// what it was holding is what has to survive the move.
 		const rest = this.inputEl?.value ?? "";
@@ -3075,19 +4339,19 @@ export class PathBreadcrumb {
 			// Stops at the location that was picked rather than walking on
 			// up into the machine's directory layout, which is exactly what
 			// drawing the row relative to that location was for.
-			if (this.externalBase && samePath(this.externalPath, this.externalBase.path)) return;
+			if (this.externalBase && samePath(this.externalPath, this.externalBase.path)) return false;
 			const parent = externalParent(this.externalPath);
 			// At the filesystem root there is nowhere further up; the
 			// vault-root segment is still there to jump somewhere else.
-			if (!parent) return;
+			if (!parent) return false;
 			const name = this.externalPath.slice(parent.length).replace(/^[\\/]+/, "");
 			this.extendExternalPath(parent);
 			this.enterTypingMode(pathBack(name, PATH_SEP, rest), mark ? name.length : "none");
-			return;
+			return true;
 		}
 
 		const current = this.browsePath ?? "";
-		if (!current) return; // already at the vault root, nothing to step out of
+		if (!current) return false; // already at the vault root, nothing to step out of
 
 		const cut = current.lastIndexOf("/");
 		const parent = cut === -1 ? "" : current.slice(0, cut);
@@ -3095,6 +4359,7 @@ export class PathBreadcrumb {
 
 		this.extendBrowsePath(parent);
 		this.enterTypingMode(pathBack(name, "/", rest), mark ? name.length : "none");
+		return true;
 	}
 
 	/**
@@ -3128,6 +4393,37 @@ export class PathBreadcrumb {
 	 * something other than what the user can see is selected.
 	 */
 	private handleTabCompletion(input: HTMLInputElement): void {
+		// The locations dropdown lists places rather than children, and a
+		// place is not a name to complete against — it is somewhere the whole
+		// path is counted from. Tab sets in the one being pointed at, which
+		// is what picking it does, so the key and the pointer agree here as
+		// they do everywhere else.
+		if (this.showingLocations) {
+			// Whatever the names agree on is taken first, exactly as it is
+			// anywhere else, so the press acts on the whole name rather than
+			// on the half of it that was typed.
+			const took = this.settleSuggestion(true);
+			const at = input.selectionStart ?? 0;
+			const segment = segmentBoundsAtCaret(input.value, at);
+			const typedName = input.value.slice(segment.start, segment.end);
+			const places = (this.suggest?.completions(typedName) ?? []).filter(
+				(row) => row.kind === "location",
+			);
+			// The row being pointed at, when one is; failing that, the one
+			// place the name can mean. Typing lets go of the highlight, so
+			// after a keystroke it is the name that has to decide.
+			const pointed = this.suggest?.highlighted() ?? null;
+			const place =
+				pointed?.kind === "location" ? pointed : places.length === 1 ? places[0] : null;
+			if (place) {
+				this.goToLocation(place.path);
+				return;
+			}
+			// Several places still share the name: the offer went as far as
+			// they agree and the press stops there, as it does at any fork.
+			if (took) return;
+		}
+
 		if (this.tabStage !== null) {
 			this.advanceLadder();
 			return;
@@ -3139,6 +4435,13 @@ export class PathBreadcrumb {
 		// over a name leaves the field reading "Cak.md", and matching that
 		// literally found nothing while the list showed the very file it
 		// names.
+		// An offer standing in the field is what this press is for. It is
+		// taken first, and taken as a step of the walk in its own right, so
+		// the way back gives it back one press at a time like any other.
+		const took = this.suggested !== null;
+		const tookStep = took ? this.trailStep(false) : null;
+		if (took) this.settleSuggestion(true);
+
 		const bounds = segmentBoundsAtCaret(input.value, input.selectionEnd ?? input.value.length);
 		// A run marked by Shift+Tab is text the walk gave back, not text
 		// anybody typed. The press resumes from where the retreat stopped —
@@ -3176,52 +4479,244 @@ export class PathBreadcrumb {
 		// and forward one step would land somewhere else entirely.
 		const replacing = resuming ? typed : input.value.slice(bounds.start, bounds.end);
 		const action = planTab(typed, candidates, target, replacing);
+		// One press, one step: whichever way this press goes from here, the
+		// taking of the offer is the step it records.
+		if (tookStep) this.tabTrail.push(tookStep);
+
 		if (action.kind === "ladder") {
-			this.startLadder(action.path);
+			// From the second rung: the name is already whole in the field —
+			// completed by this very key, or chosen off the list — and the
+			// first rung would take its extension back off, which is a press
+			// spent going backwards. Widening starts from what you have. A
+			// walk that *arrives* at a name is the other story and still
+			// begins on the first rung, because there the name has only just
+			// appeared and its extension is not yet the subject.
+			this.startLadder(action.path, 1);
 			return;
 		}
-		// Every press that moves the row records where it moved from. Only
-		// these two do: the ladder walks itself back by its own arithmetic.
-		this.tabTrail.push({
-			folder: this.browsePath,
-			external: this.externalPath,
-			value: input.value,
-			caret: input.selectionEnd ?? input.value.length,
-			...(markOf(input, resuming)),
-		});
 		if (action.kind === "descend") {
-			// Whatever stood after the segment is carried into the folder
-			// rather than dropped, and the field opens on its *next* name,
-			// marked — the same state a click on that folder would give.
-			// With the caret at the far end instead, the press after this one
-			// read the file name at the end of the path, found nothing to
-			// complete, and jumped the ladder straight to the file's own
-			// folder: every folder in between swallowed by one press.
-			const rest = input.value.slice(bounds.end).replace(/^[\\/]+/, "");
-			if (this.externalPath !== null) this.extendExternalPath(action.path);
-			else this.extendBrowsePath(action.path);
-			const landing = asLanding(rest);
-			if (landing === null) {
-				this.enterTypingMode("");
-				return;
-			}
-			// Another folder to walk: it opens marked, ready for the press
-			// after this one.
-			if (landing.select < landing.path.length) {
-				this.enterTypingMode(landing.path, landing.select);
-				return;
-			}
-			// A name rather than a folder, so the walk has arrived — and the
-			// ladder's first rung is what it has arrived at. Landing with the
-			// caret parked at the end instead cost a press that showed the
-			// name and marked nothing, immediately before the rung that
-			// marks it.
-			this.enterTypingMode(landing.path);
-			const separator = this.externalPath !== null ? PATH_SEP : "/";
-			this.startLadder(`${action.path}${separator}${landing.path}`);
+			// The step is recorded by the way in itself, so that a folder set
+			// in by a click is recorded exactly as one reached by a press —
+			// unless taking the offer has already recorded this press.
+			this.descendCarrying(action.path, this.restAfterEditedSegment(), resuming, !took);
 			return;
 		}
+		if (took) {
+			// The offer went as far as the names agree, and this press has
+			// just taken all of it. Where they stop agreeing is a question
+			// for you: walking on toward one of them would be the press
+			// answering it, and picking the name that happens to sort first.
+			// Arrow to one, or type past the fork.
+			return;
+		}
+		// A press that only writes into the field moves the row nowhere, so
+		// it records its own step. The ladder walks itself back by its own
+		// arithmetic and records nothing.
+		const step = this.trailStep(resuming);
+		if (step) this.tabTrail.push(step);
 		this.writeSegment(input, bounds, action.text);
+	}
+
+	/**
+	 * Steps into a folder and carries the rest of the path in with it.
+	 *
+	 * The one way in, whichever gesture asked for it: Tab completing a name,
+	 * `/` committing one, or an entry picked from the dropdown. A name that
+	 * has been set in is set in, and what follows has to be the same however
+	 * you set it — otherwise the press after the gesture means one thing
+	 * after a click and another after a keypress. Picking a folder used to
+	 * empty the field instead, throwing away a path the same folder reached
+	 * with Tab would have kept.
+	 *
+	 * With the caret at the far end instead of on the next name, the press
+	 * after this one read the file name at the end of the path, found nothing
+	 * to complete, and jumped the ladder straight to the file's own folder:
+	 * every folder in between swallowed by one press.
+	 */
+	private descendCarrying(folderPath: string, rest: string, given = false, record = true): void {
+		// Every gesture that moves the row records where it moved from, so
+		// the way back is the way in run backwards whichever way you came.
+		// Only Tab used to record it, which made one Shift+Tab press swallow
+		// a folder set in by a click *and* the one walked into before it.
+		const step = record ? this.trailStep(given) : null;
+		if (step) this.tabTrail.push(step);
+
+		// What is carried is only ever what is really over there — unless
+		// this is the very folder the rest of the path hangs from, in which
+		// case it comes whole. Walking into `Dokumente` on the way to
+		// `Dokumente/plans/untitled.md` is not a claim that `plans` exists;
+		// it is how a path gets typed ahead of itself, and cutting there
+		// lost everything past the first press. Swapping that folder for
+		// another one is the other story, and the rest goes.
+		const carried = this.tailBelongsHere(folderPath)
+			? rest
+			: this.reachableTail(folderPath, rest, this.externalPath !== null);
+
+		if (this.externalPath !== null) this.extendExternalPath(folderPath);
+		else this.extendBrowsePath(folderPath);
+
+		const landing = asLanding(carried);
+		if (landing === null) {
+			this.enterTypingMode("");
+			return;
+		}
+		// Another folder to walk: it opens marked, ready for the press after
+		// this one.
+		if (landing.select < landing.path.length) {
+			this.enterTypingMode(landing.path, landing.select);
+			return;
+		}
+		// One name left, and what it *is* decides what happens to it. A
+		// folder is still somewhere to walk into, so it opens marked like
+		// every other step of the walk — cutting the tail where it stops
+		// existing can leave a folder standing there alone, and reading it
+		// as the end of the path would strand the walk one press short of
+		// the folder it was heading into.
+		const external = this.externalPath !== null;
+		const separator = external ? PATH_SEP : "/";
+		const full = external
+			? externalJoin(folderPath, landing.path)
+			: `${folderPath}${separator}${landing.path}`;
+		if (this.isFolderPath(full, external)) {
+			this.enterTypingMode(landing.path, landing.path.length);
+			return;
+		}
+		// A file ends the path, so the walk has arrived — and the ladder's
+		// first rung is what it has arrived at. Landing with the caret parked
+		// at the end instead cost a press that showed the name and marked
+		// nothing, immediately before the rung that marks it.
+		this.enterTypingMode(landing.path);
+		this.startLadder(full);
+	}
+
+	/**
+	 * Where the row stands and what the field holds, as one step of the walk
+	 * to be given back later.
+	 *
+	 * Read past any preview: what a row is showing you is not what you had,
+	 * and a rewind that put a preview back would hand you a name you never
+	 * chose. Null when there is no field to record.
+	 */
+	private trailStep(given: boolean): TabStep | null {
+		const input = this.inputEl;
+		if (!input) return null;
+		const where = { folder: this.browsePath, external: this.externalPath };
+		const held = this.preview;
+		if (!held) {
+			return {
+				...where,
+				value: input.value,
+				caret: input.selectionEnd ?? input.value.length,
+				...markOf(input, given),
+			};
+		}
+		const marked = held.selectionEnd > held.selectionStart;
+		return {
+			...where,
+			value: held.text,
+			caret: held.selectionEnd,
+			...(marked
+				? {
+						mark: {
+							start: held.selectionStart,
+							end: held.selectionEnd,
+							...(given ? { given: true } : {}),
+						},
+					}
+				: {}),
+		};
+	}
+
+	/**
+	 * What the field holds after the segment being edited, as it was
+	 * **typed** rather than as a preview is showing it.
+	 *
+	 * Pointing at an entry shows the path only as far as it exists over
+	 * there, because pointing decides nothing. Choosing decides — and what
+	 * you had is then what you keep, folders that are not there yet
+	 * included, since committing a path is what creates them.
+	 */
+	private restAfterEditedSegment(): string {
+		const input = this.inputEl;
+		if (!input) return "";
+		const held = this.preview;
+		const text = held?.text ?? input.value;
+		const end = held
+			? held.segment.end
+			: segmentBoundsAtCaret(input.value, input.selectionEnd ?? input.value.length).end;
+		return text.slice(end).replace(/^[\\/]+/, "");
+	}
+
+	/**
+	 * Offers what the folder's names agree on, after the caret and selected.
+	 *
+	 * Only ever from a keystroke of the user's own: everything this file
+	 * writes into the field dispatches an untrusted `input` event, and an
+	 * offer made from one of those would be the field completing its own
+	 * completions.
+	 */
+	private offerSuggestion(input: HTMLInputElement): void {
+		if (this.composing) return;
+		// Nothing is offered into a selection, or from the middle of a name:
+		// what is offered goes *after* what you are typing, and there has to
+		// be a caret at the end of it for it to go after.
+		const caret = input.selectionStart ?? 0;
+		if (caret !== (input.selectionEnd ?? 0)) return;
+		const bounds = segmentBoundsAtCaret(input.value, caret);
+		if (caret !== bounds.end) return;
+
+		const query = input.value.slice(bounds.start, bounds.end);
+		if (!query) return;
+		const rows = this.suggest?.completions(query) ?? [];
+		const candidates = rows.map((row) => ({
+			label: row.label,
+			path: row.path,
+			folder: row.kind === "folder",
+		}));
+		const add = planSuggestion(query, candidates);
+		if (!add) return;
+
+		input.value = input.value.slice(0, caret) + add + input.value.slice(caret);
+		input.setSelectionRange(caret, caret + add.length);
+		this.suggested = {
+			start: caret,
+			end: caret + add.length,
+			prefix: commonPrefix(candidates.map((candidate) => candidate.label)),
+		};
+	}
+
+	/**
+	 * Takes the offered run, or takes it back, and leaves the field as though
+	 * it had never been offered.
+	 *
+	 * Every way out of the field goes through here first — every key that is
+	 * not a character, every commit, every step off into the list — so the
+	 * rest of the row goes on reading a field that holds only what was
+	 * typed. Returns whether there was anything to settle, which is what
+	 * lets a press that only takes the offer back stop there.
+	 */
+	private settleSuggestion(accept: boolean): boolean {
+		const run = this.suggested;
+		const input = this.inputEl;
+		this.suggested = null;
+		if (!run || !input) return false;
+
+		const value = input.value;
+		if (accept) {
+			// The whole segment is rewritten, not merely unselected: what you
+			// typed may be spelled differently from what is on disk, and a
+			// path that is only nearly right resolves to nothing at all.
+			const start = segmentBoundsAtCaret(value, run.start).start;
+			input.value = value.slice(0, start) + run.prefix + value.slice(run.end);
+			const caret = start + run.prefix.length;
+			input.setSelectionRange(caret, caret);
+		} else {
+			input.value = value.slice(0, run.start) + value.slice(run.end);
+			input.setSelectionRange(run.start, run.start);
+		}
+		this.suggestQueryOverride = queryAtCaret(input);
+		this.autoSizeInput?.();
+		return true;
 	}
 
 	/**
@@ -3272,6 +4767,9 @@ export class PathBreadcrumb {
 	 * that a press put there — does the next press leave the folder.
 	 */
 	private handleTabBack(input: HTMLInputElement): void {
+		// Whether this press is the one that leaves the ladder, which decides
+		// what it may spend itself on below.
+		let leftLadder = false;
 		if (this.tabStage !== null) {
 			if (this.tabStage > 0) {
 				this.tabStage -= 1;
@@ -3282,6 +4780,7 @@ export class PathBreadcrumb {
 			// to give back a step of the walk in the same breath.
 			this.tabStage = null;
 			this.tabTargetPath = null;
+			leftLadder = true;
 		}
 
 		const step = this.tabTrail.pop();
@@ -3302,7 +4801,13 @@ export class PathBreadcrumb {
 		// wrote it in.
 		const bounds = segmentBoundsAtCaret(input.value, input.selectionEnd ?? input.value.length);
 		const marked = input.selectionStart === bounds.start && input.selectionEnd === bounds.end;
-		if (!marked && bounds.end > bounds.start) {
+		// Marking the whole segment is a rung the ladder has already shown —
+		// the name with its extension — so a press coming down off the rung
+		// below it would be spent showing that a second time. The way back
+		// keeps the same rule the way forward does: never a press on
+		// something that shows nothing new. From the ladder, the press that
+		// leaves the last rung leaves the folder with it.
+		if (!leftLadder && !marked && bounds.end > bounds.start) {
 			// Not a step of the walk, so a press forward from here does not
 			// resume anything: it completes the name that is showing, which
 			// is what the field says. Marked all the same, so that typing
@@ -3314,7 +4819,14 @@ export class PathBreadcrumb {
 		// Carry on up the path itself — the move Backspace makes on an empty
 		// field, with the folder's name marked here because this press is
 		// giving it back rather than deleting it.
-		this.stepOutOfFolder(true);
+		if (this.stepOutOfFolder(true)) return;
+
+		// Nowhere further up: the way back has reached the front of the path
+		// and closes its loop exactly as the way forward does, on the rung
+		// furthest from it — the path from the system root. Pressing on from
+		// there narrows back down the rungs and out along the walk again, so
+		// the two directions describe one ring rather than two dead ends.
+		this.startLadderAt(3, this.standingTargetPath());
 	}
 
 	/**
@@ -3407,26 +4919,42 @@ export class PathBreadcrumb {
 	 * when the walk started, and what makes the next press start the ladder
 	 * again instead of completing against it.
 	 */
-	private restartFrom(step: TabStep): void {
+	private restartFrom(step: TabStep, text: string, selection: "all" | "none" | number): void {
 		this.standWhere(step);
-		this.enterTypingMode(step.value, step.mark ? step.mark.end : "none");
-		const input = this.inputEl;
-		if (!input) return;
-		if (step.mark) input.setSelectionRange(step.mark.start, step.mark.end);
-		else input.setSelectionRange(step.caret, step.caret);
+		this.enterTypingMode(text, selection);
+	}
+
+	/**
+	 * A path as counted from the folder a step of the walk was standing in,
+	 * or null when it does not hang from there at all.
+	 *
+	 * What the lap needs in order to come back: the step says *where* the
+	 * walk began, and the target says *what* it built. Reading the path out
+	 * of the step instead is what made a lap undo the walk.
+	 */
+	private pathFrom(step: TabStep, target: string): string | null {
+		if (step.external !== null) {
+			if (samePath(step.external, target)) return "";
+			if (!isInside(target, step.external)) return null;
+			return target.slice(step.external.length).replace(/^[\\/]+/, "");
+		}
+		const folder = step.folder ?? "";
+		if (!folder) return target;
+		if (target === folder) return "";
+		return target.startsWith(`${folder}/`) ? target.slice(folder.length + 1) : null;
 	}
 
 	/** Hands the key over to widening the selection, over `target` or over whatever the row shows. */
-	private startLadder(target: string | null): void {
+	private startLadder(target: string | null, from = 0): void {
 		this.rememberLadderStart();
-		this.tabTargetPath = target ?? this.ladderTargetPath();
-		this.tabStage = 0;
+		this.tabTargetPath = target ?? this.standingTargetPath() ?? this.ladderTargetPath();
+		this.tabStage = from;
 		const before = this.fieldState();
 		this.applyLadderStage();
 		// A rung that changes nothing is not worth a press. Clicking a note's
 		// name already shows it without its extension, which is exactly what
 		// the first rung shows — so from there the key starts on the second.
-		if (this.tabStage === 0 && before !== null && before === this.fieldState()) {
+		if (this.tabStage === from && before !== null && before === this.fieldState()) {
 			this.advanceLadder();
 		}
 	}
@@ -3461,12 +4989,78 @@ export class PathBreadcrumb {
 		};
 	}
 
-	/** The path the ladder describes when Tab did not land on anything: whatever the row is showing. */
+	/** The path the ladder describes when there is no field open: whatever the row is showing. */
 	private ladderTargetPath(): string | null {
 		if (this.externalPath !== null) {
 			return this.externalFileName ? externalJoin(this.externalPath, this.externalFileName) : null;
 		}
 		return this.file?.path ?? null;
+	}
+
+	/**
+	 * The path the *field* is naming, counted from the folder the row is
+	 * standing in.
+	 *
+	 * What the ladder describes when a press found nothing to complete. The
+	 * row's own file is the wrong answer there and was the old one: the walk
+	 * may have carried you into a different folder entirely — swap a folder
+	 * for a sibling and the rest of the path comes with you — and describing
+	 * the note instead dragged the row back to the note's own parent, which
+	 * looked like a completion and was really a teleport. What is in front of
+	 * you is what the rungs are for, whether or not all of it exists yet.
+	 */
+	private standingTargetPath(): string | null {
+		const input = this.inputEl;
+		if (!input) return null;
+		// Leading separators go: what the field holds is counted from where
+		// the row stands, and a path is joined to that folder, not rooted.
+		const typed = input.value.trim().replace(/^[\\/]+/, "");
+		if (this.externalPath !== null) {
+			return typed ? externalJoin(this.externalPath, typed) : this.externalPath;
+		}
+		const here = this.currentFolderPath();
+		const target = typed ? (here ? `${here}/${typed}` : typed) : here;
+		// An empty field at the vault root names nothing at all, and there is
+		// no describing that; the row's own file is the only path left.
+		return target || null;
+	}
+
+	/**
+	 * A path split where it stops being real: the deepest folder along it
+	 * that exists, and everything after that.
+	 *
+	 * Tab walks a path as far as it can be stepped into and leaves the rest
+	 * standing in the field as text, so the rungs are drawn the same way —
+	 * the chips only ever name folders you could really be in, and what
+	 * could not be reached stays in front of you to be typed over.
+	 *
+	 * For a path that is entirely there this is the file's folder and the
+	 * file's name, which is what the rungs have always shown.
+	 */
+	private asFarAsItExists(target: string): { base: string; rest: string } {
+		const external = this.externalPath !== null;
+		let base = target;
+		if (external) {
+			while (base && !isExternalFolder(base)) base = externalParent(base) ?? "";
+		} else {
+			// The vault root is "" and is always a folder, so this ends.
+			while (base && !(this.plugin.app.vault.getAbstractFileByPath(base) instanceof TFolder)) {
+				const cut = base.lastIndexOf("/");
+				base = cut < 0 ? "" : base.slice(0, cut);
+			}
+		}
+
+		const rest = target.slice(base.length).replace(/^[\\/]+/, "");
+		if (rest) return { base, rest };
+
+		// The path names a folder outright, so there is nothing left over to
+		// widen a selection across. The rungs describe that folder from its
+		// parent instead, which is what they do for a file.
+		const separator = external ? PATH_SEP : "/";
+		const cut = target.lastIndexOf(separator);
+		return cut < 0
+			? { base: "", rest: target }
+			: { base: target.slice(0, cut), rest: target.slice(cut + 1) };
 	}
 
 	private advanceLadder(): void {
@@ -3490,14 +5084,21 @@ export class PathBreadcrumb {
 		const separator = external ? PATH_SEP : "/";
 		const cut = target.lastIndexOf(separator);
 		const name = cut < 0 ? target : target.slice(cut + 1);
-		const parent = cut < 0 ? "" : target.slice(0, cut);
+		// The first two rungs stand as deep down the path as it can really be
+		// walked, and hold everything past that as text — which for a path
+		// that is all there is the file's folder and the file's name.
+		const { base: reached, rest } = this.asFarAsItExists(target);
 
 		switch (this.tabStage) {
 			case 0:
-				this.setLadderField(parent, name, stemLength(name));
+				// The stem of the last segment, however many segments there
+				// are in front of it: `pathStem` looks for the dot in the
+				// name rather than in the path, so a folder called `v1.2`
+				// cannot pull the cut into itself.
+				this.setLadderField(reached, rest, pathStem(rest).length);
 				return;
 			case 1:
-				this.setLadderField(parent, name, "all");
+				this.setLadderField(reached, rest, "all");
 				return;
 			case 2: {
 				// From the vault folder — what a link or a search wants.
@@ -3514,7 +5115,10 @@ export class PathBreadcrumb {
 					this.enterTypingMode(relative, "all");
 					return;
 				}
-				this.setLadderField(parent, name, "all");
+				// Somewhere this row was not drawn from, so there is no
+				// folder here it could sensibly stand in: the rung shows the
+				// name and leaves the row where it is.
+				this.setLadderField("", name, "all");
 				return;
 			}
 			case 3: {
@@ -3525,45 +5129,108 @@ export class PathBreadcrumb {
 				return;
 			}
 			default: {
-				// Wrap: back to where the walk began, which closes the loop
+				// Wrap: back to the front of the path, which closes the loop
 				// without costing anything. A lap of the rungs is a way of
 				// looking at the path, not a way of clearing it.
-				// The front of the *walk*, not of the ladder: the folders were
-				// walked before the rungs began, and a lap that came back
-				// only as far as the file name would leave you halfway down a
-				// path you had asked to go round.
+				//
+				// The front of the *walk*, not of the ladder: the folders
+				// were walked before the rungs began, and a lap that came
+				// back only as far as the file name would leave you halfway
+				// down a path you had asked to go round.
+				//
+				// Where the walk began is remembered; what it built is not
+				// taken from that memory but from the target, which is the
+				// path as it now stands. Replaying the remembered *text* undid
+				// every step the walk had taken: pick a different sibling out
+				// of the list halfway round, and the lap handed back the path
+				// you set out from — which is to say the open note's, however
+				// far you had walked from it. The four rungs before this one
+				// all describe the target; this one used to describe the past.
 				const began = this.tabTrail[0] ?? this.tabLadderStart;
 				this.tabStage = null;
 				this.tabTargetPath = null;
 				this.tabLadderStart = null;
 				this.tabTrail = [];
-				if (began) {
-					this.restartFrom(began);
+
+				const relative = began ? this.pathFrom(began, target) : null;
+				if (began && relative !== null) {
+					const landing = asLanding(relative);
+					if (!landing) {
+						this.restartFrom(began, "", "none");
+						return;
+					}
+					// The front of the path opens marked, exactly as a click
+					// on that folder would leave it, so the lap can be walked
+					// again from where it started.
+					//
+					// Unless there is no folder in front of it to mark: a
+					// bare name has nothing to walk, and what the lap comes
+					// back to is then whatever the gesture that opened the
+					// field had marked — a click on a note's name shows it
+					// without its extension, and a lap that handed it back
+					// *with* one would have cost something after all.
+					const front = landing.select < landing.path.length;
+					const opened = began.mark && began.mark.start === 0 ? began.mark.end : "all";
+					this.restartFrom(began, landing.path, front ? landing.select : opened);
 					return;
 				}
-				// No field to go back to — the ladder was started without
-				// one. The first folder of the path is where the walk would
-				// have begun.
+				// Either there was no field to come back to, or the path no
+				// longer hangs from where the walk began — it was walked out
+				// of and away. The whole of it, from the vault root, is the
+				// front that is true either way.
+				if (!external) {
+					const landing = asLanding(target);
+					this.extendBrowsePath("");
+					this.enterTypingMode(landing?.path ?? "", landing?.select ?? "none");
+					return;
+				}
+				// Outside the vault there is no root to count from that the
+				// row could stand in, so the first folder of the path is
+				// where the walk would have begun.
 				const first = target.split(separator)[0] ?? "";
-				this.extendBrowsePath(external ? "" : first);
+				this.extendBrowsePath(first);
 				this.enterTypingMode("");
 			}
 		}
 	}
 
-	/** Puts the ladder's text in the field with the browse path that makes it resolvable. */
+	/**
+	 * Puts the ladder's text in the field with the browse path that makes it
+	 * resolvable, on whichever side of the vault boundary the row is.
+	 *
+	 * Outside the vault the row moves only when the rung is counting from
+	 * some other folder — passing nothing, or the folder already shown,
+	 * leaves it standing where it is.
+	 */
 	private setLadderField(browseFrom: string, text: string, selection: "all" | number): void {
 		if (this.externalPath === null) this.extendBrowsePath(browseFrom);
+		else if (browseFrom && !samePath(this.externalPath, browseFrom)) {
+			this.extendExternalPath(browseFrom);
+		}
 		this.enterTypingMode(text, selection);
 	}
 
 	private descendIntoTypedSegment(rawText: string): void {
-		const trimmed = rawText.trim();
-		if (!trimmed) return; // a stray "/" with nothing typed is a no-op
+		// Up to the end of the segment the caret is in — not the end of the
+		// field. A field holding a path has more to the right of what is
+		// being typed, and that part is carried in rather than committed as
+		// though it had been typed as folders.
+		const caret = this.inputEl?.selectionEnd ?? rawText.length;
+		const bounds = segmentBoundsAtCaret(rawText, caret);
+		const typed = rawText.slice(0, bounds.end).trim();
+		if (!typed) return; // a stray "/" with nothing typed is a no-op
+		const rest = rawText.slice(bounds.end).replace(/^[\\/]+/, "");
 
+		// Outside the vault the folder is counted from the place the row is
+		// standing in, as every other way in counts it. Resolving it against
+		// the vault out there named a folder that has nothing to do with
+		// where you are.
+		if (this.externalPath !== null) {
+			this.descendCarrying(externalJoin(this.externalPath, typed), rest);
+			return;
+		}
 		const base = this.currentFolderPath();
-		this.extendBrowsePath(normalizePath(base ? `${base}/${trimmed}` : trimmed));
-		this.enterTypingMode("");
+		this.descendCarrying(normalizePath(base ? `${base}/${typed}` : typed), rest);
 	}
 
 	/**
@@ -3576,6 +5243,12 @@ export class PathBreadcrumb {
 	 * which in a folder of two hundred notes is nowhere near either.
 	 */
 	private preselectPath(): string | null {
+		// Nothing once you have typed: the row you were standing in is not
+		// what the list is about any more, and a highlight left on it reads
+		// as a choice already made — one that Enter would act on. An
+		// untouched prefill is not typing, and keeps its place.
+		if (this.suggestQueryOverride) return null;
+
 		const folder = this.currentFolderPath();
 		// What the field is pointing at, when it holds a path: the first
 		// segment names a child of the folder being listed, and that child is
@@ -3602,7 +5275,129 @@ export class PathBreadcrumb {
 		return this.file && folder === own ? this.file.path : null;
 	}
 
+	/**
+	 * The folder the row is *on* — the one the field's first segment names,
+	 * when it names a folder at all.
+	 *
+	 * Not the folder being listed: a folder click lists that folder's
+	 * parent, so the one you came from is a row among its siblings and
+	 * nothing else in the list says which. Standing inside a folder instead
+	 * leaves the field empty and there is no such row, which is the honest
+	 * answer — you are not on any of the things you are looking at.
+	 *
+	 * Read past a standing offer, which is text nobody has committed to: it
+	 * would otherwise move the marking to a folder merely being suggested.
+	 */
+	private activeFolderPath(): string | null {
+		const first = this.typedFieldValue().split(/[\\/]/)[0] ?? "";
+		if (!first) return null;
+
+		if (this.externalPath !== null) {
+			const candidate = externalJoin(this.externalPath, first);
+			return isExternalFolder(candidate) ? candidate : null;
+		}
+		const folder = this.currentFolderPath();
+		const candidate = folder ? `${folder}/${first}` : first;
+		return this.plugin.app.vault.getAbstractFileByPath(candidate) instanceof TFolder
+			? candidate
+			: null;
+	}
+
+	/** What the field holds with any offered run taken out of it — the text that is actually the user's. */
+	private typedFieldValue(): string {
+		const input = this.inputEl;
+		if (!input) return "";
+		const run = this.suggested;
+		return run ? input.value.slice(0, run.start) + input.value.slice(run.end) : input.value;
+	}
+
 	/** Where autocomplete/typed-path resolution should be scoped to right now. */
+	/**
+	 * How much of the path after a previewed entry still names something
+	 * under it.
+	 *
+	 * Standing in `Alpha` with `Alpha/2026/note.md` in the field and
+	 * pointing at `Beta`, the `2026/note.md` is only worth showing if `Beta`
+	 * has a `2026` with a `note.md` in it. Where it stops being real the
+	 * text stops too — an entry with nothing of the sort under it shows
+	 * nothing after the name at all, which is the honest answer to "what
+	 * would landing here give me".
+	 *
+	 * Only what the pointer is on is judged this way. What you have *typed*
+	 * keeps its whole path, however little of it exists yet: half a name is
+	 * not a decision, and the folders it would be created in are the point
+	 * of being able to type them.
+	 */
+	private tailUnder(value: PathSuggestion, tail: string): string {
+		if (!tail) return "";
+		// A location is a place to jump to rather than a step in this path,
+		// and what a preview writes for one is its display name — there is
+		// nothing here for the rest of the path to be counted from.
+		if (value.kind === "location") return tail;
+		// Nothing lives under a file, so nothing follows one.
+		if (value.kind !== "folder") return "";
+		// The folder the rest of the path hangs from shows all of it, for the
+		// same reason committing it keeps all of it: pointing at where you
+		// were already going is not a change of path.
+		if (this.tailBelongsHere(value.path)) return tail;
+		return this.reachableTail(value.path, tail, value.external === true);
+	}
+
+	/**
+	 * Whether the rest of the path still belongs where it is about to be
+	 * carried — which is to say, whether this folder is the one it hangs
+	 * from rather than a swap for it.
+	 *
+	 * With nothing to hang from, it belongs: a path with no prefilled first
+	 * segment behind it is one you typed, and none of it was inherited from
+	 * a folder you have left. Cutting *that* at the first name it cannot
+	 * find would take away the path you were in the middle of writing.
+	 */
+	private tailBelongsHere(folderPath: string): boolean {
+		if (this.tailAnchor === null) return true;
+		const separator = this.externalPath !== null ? PATH_SEP : "/";
+		const cut = folderPath.lastIndexOf(separator);
+		const name = cut < 0 ? folderPath : folderPath.slice(cut + 1);
+		return name.toLowerCase() === this.tailAnchor.toLowerCase();
+	}
+
+	/**
+	 * The opening of `tail` that still names something under `folder`.
+	 *
+	 * The one rule for how much of a path is worth showing, asked by
+	 * everything that changes which folder the rest of the path hangs from:
+	 * the preview as you point at an entry, and the commit as you set one
+	 * in. What comes back is a slice of the text you gave, so separators and
+	 * spelling survive untouched; the cut lands in front of the first name
+	 * that is not there, which for a first name that is not there is the
+	 * whole of it.
+	 */
+	private reachableTail(folder: string, tail: string, external: boolean): string {
+		if (!tail) return "";
+		let at = folder;
+		// Leading separators optional: a carried tail has had them stripped
+		// already, while the text behind a previewed segment still has one.
+		for (const part of tail.matchAll(/[\\/]*([^\\/]+)/g)) {
+			const name = part[1];
+			const next = external ? externalJoin(at, name) : at ? `${at}/${name}` : name;
+			if (!this.entryExists(next, external)) return tail.slice(0, part.index ?? 0);
+			at = next;
+		}
+		return tail;
+	}
+
+	/** Whether anything at all is at a path — a folder or a file, on either side of the vault boundary. */
+	private entryExists(path: string, external: boolean): boolean {
+		if (external) return isExternalFolder(path) || isExternalFile(path);
+		return this.plugin.app.vault.getAbstractFileByPath(path) !== null;
+	}
+
+	/** Whether a path names a folder, which is to say somewhere the walk could go on into. */
+	private isFolderPath(path: string, external: boolean): boolean {
+		if (external) return isExternalFolder(path);
+		return this.plugin.app.vault.getAbstractFileByPath(path) instanceof TFolder;
+	}
+
 	private currentFolderPath(): string {
 		if (this.browsePath !== null) return this.browsePath;
 		return this.file?.parent?.path ?? "";
@@ -3818,6 +5613,14 @@ export class PathBreadcrumb {
 		selection: "all" | "none" | number = "none",
 		host: HTMLElement = this.filenameEl,
 	): void {
+		// Whatever the pointer had opened closes: the row is about to be
+		// edited, and a name still held wide under the field is width the
+		// field is not getting.
+		this.openName(null);
+		// No run in progress until a click on the row says so. Reached from
+		// the focus command or a key, the field is a text field from the
+		// start and a double-click in it picks out a word.
+		this.climbFromClick = false;
 		if (!this.file && this.externalPath === null && this.browsePath === null) return;
 		// Locked bars do not type. A typed path is an arbitrary destination,
 		// and arbitrary is exactly what the lock exists to rule out — the
@@ -3841,6 +5644,15 @@ export class PathBreadcrumb {
 					? 0
 					: Math.min(selection, initialText.length);
 
+		// A whole first segment opening marked is what the rest of the path
+		// hangs from. Only a whole one: the ladder marks a *stem* — a name
+		// without its extension — and nothing hangs from half a name.
+		const after = initialText[selectionEnd];
+		this.tailAnchor =
+			selectionEnd > 0 && (after === undefined || after === "/" || after === "\\")
+				? initialText.slice(0, selectionEnd)
+				: null;
+
 		// Text that opens selected is about to be typed over, so it must
 		// not double as the autocomplete query — filtering by a path
 		// remainder like "2026/Notes.md" would match nothing and close the
@@ -3860,19 +5672,86 @@ export class PathBreadcrumb {
 		// text it replaced, and grows by real glyph widths as you type
 		// instead of scrolling inside a fixed box.
 		const autoSize = () => {
+			// Measured against its own glyphs, wherever it is hosted. It used
+			// to take the whole width the row could give it instead, which
+			// meant a field holding three characters squeezed every folder
+			// beside it down to its floor for no reason. Sized to what is in
+			// it, the field asks for what it needs and the trail keeps the
+			// rest — and it still comes first when there is not enough for
+			// both, because a field cannot give anything up (see the
+			// `lure-editing` rule in styles.css).
 			const content = textWidth(inputEl.value, inputEl) + INPUT_SLACK_PX;
 			inputEl.style.width = `${Math.max(INPUT_MIN_PX, Math.ceil(content))}px`;
+			// A field grows with what is typed into it, and a path is longer
+			// than a pane long before it is finished. Nothing here can be
+			// shortened — it is text being edited, not names being fitted —
+			// so the row is simply made scrollable, which is what the fitter
+			// does when it runs out of room for the same reason.
+			this.letRowScroll(true);
 		};
 		autoSize();
 
 		inputEl.focus();
 		if (selectionEnd > 0) {
 			inputEl.setSelectionRange(0, selectionEnd);
+			// Focusing a field scrolls it to its caret, and settling the
+			// selection afterwards can leave it showing the far end of a path
+			// that does not fit. What the click was about is at the front —
+			// the folder being replaced, and after it whatever is offered or
+			// typed — so the front is what the field is left showing, inside
+			// the field and on the row alike.
+			inputEl.scrollLeft = 0;
+			// The row is made scrollable first, or there is nowhere to scroll
+			// to; and again on the next frame, because focusing a field also
+			// makes the browser scroll every box around it to reveal the
+			// caret, and that runs after this does.
+			const show = (): void => {
+				if (!inputEl.isConnected) return;
+				this.letRowScroll(true);
+				this.scrollIntoRow(host === this.filenameEl ? this.filenameEl : inputEl);
+			};
+			show();
+			window.requestAnimationFrame(show);
 		} else {
 			inputEl.setSelectionRange(inputEl.value.length, inputEl.value.length);
 		}
 
 		const onKeydown = (evt: KeyboardEvent) => {
+			// The offered run is settled before anything below looks at the
+			// field, so every handler reads a value holding only what was
+			// typed — and, where the press takes the offer, exactly what was
+			// taken.
+			if (this.suggested) {
+				const key = evt.key;
+				if (key === "Backspace" || key === "Delete") {
+					// Taking it back is the whole of this press. Nothing you
+					// typed is deleted with it.
+					evt.preventDefault();
+					this.settleSuggestion(false);
+					return;
+				}
+				if (key === "ArrowRight" || key === "End") {
+					evt.preventDefault();
+					this.settleSuggestion(true);
+					return;
+				}
+				if (key === "Enter" || key === "/") {
+					// Taken, and then the press goes on meaning what it has
+					// always meant.
+					this.settleSuggestion(true);
+				} else if (key === "Tab" && !evt.shiftKey) {
+					// Left standing: the completion below takes it, so that
+					// it can record where the field stood beforehand and
+					// Shift+Tab has something to give back.
+				} else if (key.length !== 1 || evt.ctrlKey || evt.metaKey) {
+					this.settleSuggestion(false);
+				}
+				// An ordinary character is left alone: the run is selected,
+				// so the browser types over it, and what is offered next is
+				// worked out from the field afterwards. That is the swallowing
+				// happening by itself, one letter at a time.
+			}
+
 			if (evt.key === "Enter") {
 				evt.preventDefault();
 				void this.handleTypedSubmit(inputEl.value, this.paneTypeFor(evt));
@@ -3915,18 +5794,69 @@ export class PathBreadcrumb {
 			inputEl.select();
 		};
 
-		// A fourth click reaches the same place Tab's last rung does. `detail`
-		// is the browser's own click counter, so this needs no timer of its
-		// own and cannot disagree with what the platform considers a
-		// multi-click.
+		// The empty space counts its presses: one takes the path without the
+		// extension, two take it with, three take the path the machine
+		// knows. `detail` is the browser's own click counter, so this needs
+		// no timer of its own and cannot disagree with what the platform
+		// considers a multi-click. The first press is the one that opened
+		// this field, and is handled where the row is clicked.
 		const onClick = (evt: MouseEvent) => {
-			if (evt.detail < 4) return;
-			evt.preventDefault();
-			this.tabTargetPath = this.ladderTargetPath();
-			this.tabStage = 3;
-			this.applyLadderStage();
+			if (this.climbSelection(evt.detail)) evt.preventDefault();
 		};
 		inputEl.addEventListener("click", onClick);
+
+		// The list follows the caret. Nothing but typing used to move it, so
+		// picking out a different part of the path by hand — dragging over
+		// it, or arrowing along — left the dropdown still listing the folder
+		// the field had opened on. Hovering a row of that list then wrote its
+		// name into bounds the caret had long since left: the right name, in
+		// the wrong place, taken from a list of the wrong folder's children.
+		//
+		// Skipped while a preview is standing, because then it is the list
+		// moving the caret rather than the user, and re-querying from a
+		// previewed value would rebuild the list under the row being pointed
+		// at.
+		// Which segment the caret was in when the field opened. Focusing a
+		// field can report a selection without one having been made, and
+		// re-querying from that is a rebuild of the list nobody asked for —
+		// which is enough to lose the row the walk was standing on.
+		const segmentKey = (): string => {
+			const bounds = segmentBoundsAtCaret(inputEl.value, inputEl.selectionEnd ?? 0);
+			return `${bounds.start}:${bounds.end}`;
+		};
+		let standingIn = segmentKey();
+
+		const onCaretMoved = (evt: Event) => {
+			// Not for the keys the field answers itself. Tab walks the path,
+			// Enter commits, the up and down arrows move through the list —
+			// all of them move the caret as part of doing something else, and
+			// all of them arrive here as a `keyup` after the handler that
+			// meant something has already run. Re-reading the caret then is
+			// reading the *result* of a gesture as though it were one.
+			if (evt instanceof KeyboardEvent && FIELD_DRIVING_KEYS.has(evt.key)) return;
+			// Nor while a preview or an offer is standing. Both put text in
+			// the field and move the caret to the end of it, so the segment
+			// looks as though it has changed when nothing the user did has —
+			// and re-querying would rebuild the list under the row being
+			// pointed at, or throw away the run being offered.
+			if (this.preview || this.suggested) return;
+			// A different segment, not merely a different caret. Moving
+			// within one changes nothing about which folder is being listed
+			// or what it is being filtered by.
+			const key = segmentKey();
+			if (key === standingIn) return;
+			standingIn = key;
+			const query = queryAtCaret(inputEl);
+			if (query === this.suggestQueryOverride) return;
+			this.suggestQueryOverride = query;
+			inputEl.dispatchEvent(new Event("input"));
+		};
+		// Three events rather than `selectionchange` on the document, so they
+		// go when the field does: dragging over the text fires `select`, the
+		// sideways arrows `keyup`, and a click placing the caret `mouseup`.
+		for (const moved of ["select", "keyup", "mouseup"]) {
+			inputEl.addEventListener(moved, onCaretMoved);
+		}
 
 		const onInput = (evt: Event) => {
 			// Only a genuine keystroke or paste retires the prefill. The
@@ -3934,6 +5864,10 @@ export class PathBreadcrumb {
 			// popover, and to fill the field from a suggestion — are
 			// untrusted, and must not be mistaken for the user typing.
 			if (evt.isTrusted) {
+				// Typing ends the run that opened the field: from here the
+				// field is being written in, and a double-click in it means
+				// what it means anywhere else.
+				this.climbFromClick = false;
 				// Filter by the segment the caret is in, not by everything in
 				// the field. A folder click leaves the rest of the path in
 				// there after the name being edited, so filtering by the whole
@@ -3955,6 +5889,16 @@ export class PathBreadcrumb {
 				this.tabTrail = [];
 				this.tabGivenBack = null;
 				this.tabLadderStart = null;
+				// Whatever was offered before this keystroke is gone: either
+				// it was typed over, or the caret has moved off the end of it.
+				this.suggested = null;
+				// An edit that took text away is never answered by text
+				// appearing, or there would be no way to back out of a name
+				// the folder kept offering. The event says which it was —
+				// asking the *keyboard* would miss a paste and an IME, which
+				// arrive with no key pressed at all.
+				const edit = (evt as InputEvent).inputType ?? "";
+				if (!edit.startsWith("delete")) this.offerSuggestion(inputEl);
 			}
 			autoSize();
 			if (this.renameMode) this.updateValidation(inputEl.value, this.currentFolderPath());
@@ -4005,18 +5949,36 @@ export class PathBreadcrumb {
 		this.plugin.app.keymap.pushScope(scope);
 
 		this.autoSizeInput = autoSize;
+		const onCompositionStart = () => {
+			this.composing = true;
+			this.settleSuggestion(false);
+		};
+		const onCompositionEnd = () => {
+			this.composing = false;
+			this.offerSuggestion(inputEl);
+			autoSize();
+		};
+
 		inputEl.addEventListener("keydown", onKeydown);
 		inputEl.addEventListener("input", onInput);
+		// Writing into the field mid-composition tears the composition up,
+		// which is every keystroke of Japanese, Korean or Chinese input.
+		inputEl.addEventListener("compositionstart", onCompositionStart);
+		inputEl.addEventListener("compositionend", onCompositionEnd);
 		inputEl.addEventListener("dblclick", onDblClick);
 		window.addEventListener("keydown", onEscapeCapture, true);
 		this.editCleanup = () => {
 			inputEl.removeEventListener("keydown", onKeydown);
 			inputEl.removeEventListener("input", onInput);
+			inputEl.removeEventListener("compositionstart", onCompositionStart);
+			inputEl.removeEventListener("compositionend", onCompositionEnd);
 			inputEl.removeEventListener("dblclick", onDblClick);
 			window.removeEventListener("keydown", onEscapeCapture, true);
 			this.plugin.app.keymap.popScope(scope);
 			this.suggestQueryOverride = null;
 			this.tabGivenBack = null;
+			this.suggested = null;
+			this.composing = false;
 			this.preview = null;
 			this.autoSizeInput = null;
 			this.validationError = "";
@@ -4043,10 +6005,17 @@ export class PathBreadcrumb {
 				// `keepPath` follows the external file, while "you are here"
 				// stays with the note whose header this bar is.
 				currentPath: this.file?.path ?? null,
+				currentFolder: this.activeFolderPath(),
 				shouldList: (child) => this.shouldListChild(child),
 				shouldListExternal: (child) => this.shouldListExternalChild(child),
 				warnsOnOpen: (extension) => this.warnsOnOpen(extension),
 				queryOverride: this.suggestQueryOverride,
+				offered: this.suggested
+					? {
+							typedLength: this.suggested.prefix.length - (this.suggested.end - this.suggested.start),
+							prefix: this.suggested.prefix,
+						}
+					: null,
 				preselectPath: this.preselectPath(),
 			}),
 			(evt, path, isFolder) =>
@@ -4096,8 +6065,7 @@ export class PathBreadcrumb {
 					return;
 				}
 				if (value.kind === "folder") {
-					this.extendBrowsePath(value.path);
-					this.enterTypingMode("");
+					this.descendCarrying(value.path, this.restAfterEditedSegment());
 					return;
 				}
 				if (this.renameMode) {
@@ -4148,6 +6116,11 @@ export class PathBreadcrumb {
 	private previewSuggestion(value: PathSuggestion | null): void {
 		const input = this.inputEl;
 		if (!input) return;
+		// A row of the list is about to write into the field, and what it
+		// writes replaces the segment — offered run and all. Taking the offer
+		// back first is what keeps the text it holds on to, and gives back,
+		// the text the user actually typed.
+		this.settleSuggestion(false);
 		const held = this.preview;
 
 		if (value === null) {
@@ -4175,16 +6148,42 @@ export class PathBreadcrumb {
 		};
 		this.preview = base;
 
+		// A location is not a step inside this path but a place to count the
+		// whole of it from, so pointing at one replaces the field outright.
+		// Swapping it in as though it were a segment kept the *old* place's
+		// path in front of it — which only looked right because vaults tend
+		// to sit side by side in one folder, and spliced "root" or your home
+		// folder into the middle of the open vault's path when they did not.
+		//
+		// What follows it is the open note's own path, as deep as it really
+		// goes over there — the same path picking the place would land you
+		// on, which is the point of showing it before you commit.
+		if (value.kind === "location") {
+			const twin = this.twinOfCurrentFile(value.path);
+			this.tabGivenBack = null;
+			input.value = twin ? externalJoin(value.path, twin.path) : value.path;
+			// The place itself is what a press would replace, so the place
+			// itself is what is marked — all of it, not the last word of it.
+			input.setSelectionRange(0, value.path.length);
+			this.autoSizeInput?.();
+			return;
+		}
+
 		// Only the segment being edited is swapped; everything to the right of
-		// it stays. Pointing at a folder asks "what if this step were that
-		// one", not "throw the rest of the path away" — and every preview is
-		// built from the text as it was, so moving through the list does not
-		// compound.
+		// it stays, as far as it still means anything under the entry being
+		// pointed at. Pointing at a folder asks "what if this step were that
+		// one", not "throw the rest of the path away" — but a rest that names
+		// nothing over there is not a path either, so it is shown only as far
+		// down as it is real. Every preview is built from the text as it was,
+		// so moving through the list does not compound, and letting go of the
+		// list brings the whole of it back: nothing is decided until a name
+		// is typed or chosen.
 		const { start, end } = base.segment;
 		// The mark Shift+Tab left is gone the moment the list writes its own
 		// selection over it; what is showing now is a row, not a retreat.
 		this.tabGivenBack = null;
-		input.value = base.text.slice(0, start) + value.label + base.text.slice(end);
+		input.value =
+			base.text.slice(0, start) + value.label + this.tailUnder(value, base.text.slice(end));
 		// Shown selected, the way a completion is: it marks the text as a
 		// suggestion rather than something you typed, and typing replaces it
 		// instead of running on from its end.
@@ -4268,9 +6267,18 @@ export class PathBreadcrumb {
 		rawText: string,
 		paneType: PaneType | false = false,
 	): Promise<void> {
-		const trimmed = rawText.trim();
+		// Unquoted before anything looks at it: a path handed over by a file
+		// manager arrives wrapped, and every branch below — the URL check,
+		// the folder lookup, the name being created — would otherwise be
+		// asked about a name that begins with a quotation mark.
+		const trimmed = unquotePath(rawText);
 		if (!trimmed) {
-			this.cancelNavigation();
+			// Nothing in the field names anything to open — standing in an
+			// empty folder, say, where there was never anything to complete.
+			// Closing the row here looked exactly like opening something,
+			// which is the one thing that did not happen; the field stays up
+			// so the path can be finished, and Escape is still the way out.
+			new Notice(t("noticeNoSelection"));
 			return;
 		}
 
@@ -4333,6 +6341,7 @@ export class PathBreadcrumb {
 			await this.ensureFolderExists(parentPath);
 			const newFile = await this.plugin.app.vault.create(normalized, "");
 			new Notice(t("noticeCreated", { path: newFile.path }));
+			this.revealInExplorer(newFile);
 			this.navigateToFile(newFile, paneType);
 		} catch (err) {
 			new Notice(t("noticeCreateFailed", { error: (err as Error).message }));
@@ -4685,8 +6694,11 @@ export class PathBreadcrumb {
 	 * describe — an empty tab browsing a folder, where the ladder has no
 	 * file name to start from.
 	 */
-	private startLadderAt(stage: number): void {
-		const target = this.ladderTargetPath();
+	private startLadderAt(stage: number, over: string | null = null): void {
+		// `over` is what the field is naming, for the callers that have one
+		// open; the rest are opening the row from nothing and the path it is
+		// showing is the only one there is.
+		const target = over ?? this.ladderTargetPath();
 		if (target === null) {
 			this.startFullPathEdit();
 			return;
@@ -4697,7 +6709,39 @@ export class PathBreadcrumb {
 		this.applyLadderStage();
 	}
 
-	private startFullPathEdit(): void {
+	/**
+	 * This note again, in a tab of its own — the empty space's answer to a
+	 * held modifier or a middle press.
+	 *
+	 * Opening the file that is already open is what duplicating a tab
+	 * means; there is nothing else the gesture could sensibly do out here,
+	 * where the row names one file and no folder. The new tab's copy is
+	 * flashed in the tree, because two tabs of one note look alike and the
+	 * tree is where you can see which note they are.
+	 *
+	 * Returns whether it acted, so the caller can fall through to editing
+	 * the path when no modifier was held.
+	 */
+	private duplicateTab(evt: MouseEvent): boolean {
+		const paneType = this.paneTypeFor(evt);
+		if (!paneType || !this.file) return false;
+		const file = this.file;
+		void this.plugin.app.workspace
+			.getLeaf(paneType)
+			.openFile(file)
+			.then(() => this.revealInExplorer(file));
+		return true;
+	}
+
+	private startFullPathEdit(selection: "all" | "stem" = "all"): void {
+		this.editFromName = false;
+		// How much of the path opens marked. The empty space is the gesture
+		// for taking the whole path, and a first press takes the part of it
+		// you would retype — the extension is rarely the thing being
+		// changed. A second press widens over that too; see `onClick`.
+		const marked = (text: string): "all" | number =>
+			selection === "all" ? "all" : pathStem(text).length;
+
 		// Outside the vault the row reads from the place you picked — a
 		// vault, a drive, your home folder — so the field reads from there
 		// too, and the trail collapses to that place exactly as the vault
@@ -4710,12 +6754,12 @@ export class PathBreadcrumb {
 			if (base !== null && isInside(here, base)) {
 				const relative = here.slice(base.length).replace(/^[\\/]+/, "");
 				this.extendExternalPath(base);
-				this.enterTypingMode(relative, "all");
+				this.enterTypingMode(relative, marked(relative));
 				return;
 			}
 			// Above the place it was drawn from — reachable by typing an
 			// absolute path — where the absolute form is the only honest one.
-			this.enterTypingMode(here, "all");
+			this.enterTypingMode(here, marked(here));
 			return;
 		}
 		if (!this.file) return;
@@ -4724,7 +6768,7 @@ export class PathBreadcrumb {
 		// except the whole current path starts out filled in and
 		// selected, so typing replaces it outright.
 		this.extendBrowsePath("");
-		this.enterTypingMode(this.file.path, "all");
+		this.enterTypingMode(this.file.path, marked(this.file.path));
 	}
 
 	private async ensureFolderExists(folderPath: string): Promise<void> {
@@ -4747,10 +6791,30 @@ export class PathBreadcrumb {
 	/** Escape/click-away cancellation while browsing or typing (see cancelNavigation). */
 	private attachDocumentClickAway(): void {
 		if (this.documentClickAway) return;
+		// Where the press that produced this click went *down*. A click is
+		// reported against the nearest ancestor of the press and the
+		// release, so sweeping a selection out of the field and letting go
+		// over the editor reports a click on the editor — the row never sees
+		// it, and the session it was in the middle of ended under the
+		// user's hand. What matters is where the gesture began.
+		const onDown = (evt: MouseEvent) => {
+			const container = this.titleEl.parentElement;
+			this.pressedInRow = Boolean(container?.contains(evt.target as HTMLElement));
+		};
+		document.addEventListener("mousedown", onDown, true);
+		this.documentPressDown = onDown;
+
 		const handler = (evt: MouseEvent) => {
 			const container = this.titleEl.parentElement;
 			const target = evt.target as HTMLElement;
 			if (container?.contains(target)) return;
+			// A selection dragged out of the field and released outside it.
+			// The release is not a click away from the edit; it is the end
+			// of one.
+			if (this.pressedInRow) {
+				this.pressedInRow = false;
+				return;
+			}
 			// The rename toggle sits outside the breadcrumb container — it
 			// lives among Obsidian's own .view-actions icons — but pressing
 			// it is part of the same edit, not a click away from it. This
@@ -4773,6 +6837,11 @@ export class PathBreadcrumb {
 	}
 
 	private removeDocumentClickAway(): void {
+		if (this.documentPressDown) {
+			document.removeEventListener("mousedown", this.documentPressDown, true);
+			this.documentPressDown = null;
+		}
+		this.pressedInRow = false;
 		if (!this.documentClickAway) return;
 		document.removeEventListener("click", this.documentClickAway, true);
 		this.documentClickAway = null;

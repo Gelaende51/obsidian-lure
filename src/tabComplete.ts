@@ -107,6 +107,32 @@ function stepToward(typed: string, names: readonly string[], toward: string): st
 }
 
 /**
+ * What an inline completion should put in front of you, given what you have
+ * typed and what the folder holds.
+ *
+ * The same arithmetic Tab does, offered before the key is pressed: where
+ * every name that starts with what you typed goes on agreeing for a while,
+ * that agreement is not a choice and can be shown as already made. What
+ * comes back is the *continuation* only — the part after what you typed —
+ * because the letters you have already put in are yours and rewriting them
+ * under the caret as you type would be a very strange thing for a field to
+ * do. Spelled the way the names spell it, so accepting it and then walking
+ * on lands on a path that really exists.
+ *
+ * Nothing is offered for an empty query: everything in the folder matches
+ * it, and a suggestion nobody has begun to type reads as text that appeared
+ * from nowhere.
+ */
+export function planSuggestion(typed: string, candidates: readonly TabCandidate[]): string {
+	if (!typed || !candidates.length) return "";
+	const prefix = commonPrefix(candidates.map((candidate) => candidate.label));
+	// Never shorter than what was typed: the names agree at least that far,
+	// or they would not be candidates.
+	if (prefix.length <= typed.length) return "";
+	return prefix.slice(typed.length);
+}
+
+/**
  * The whole rule, as one decision.
  *
  * `candidates` are the children whose names start with `typed` — the caller

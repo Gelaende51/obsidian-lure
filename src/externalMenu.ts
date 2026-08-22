@@ -173,7 +173,7 @@ export function buildExternalMenu(
 	menu.addItem((item) =>
 		item
 			.setSection("action")
-			.setTitle(obsidianLabel(LABELS.rename, "Rename..."))
+			.setTitle(obsidianLabel(LABELS.rename, "Rename…"))
 			.setIcon("lucide-edit-3")
 			.onClick(write(() => renameEntry(plugin, absolutePath))),
 	);
@@ -295,7 +295,7 @@ async function copyPath(absolutePath: string): Promise<void> {
 }
 
 /** Guarded like every other shell call here: a missing API leaves the entry inert, not throwing. */
-function showInFolder(absolutePath: string): void {
+export function showInFolder(absolutePath: string): void {
 	try {
 		shell.showItemInFolder(absolutePath);
 	} catch {

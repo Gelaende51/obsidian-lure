@@ -25,6 +25,16 @@ export interface SystemLocation {
 	device: DeviceType;
 	/** The vault this window has open — reachable, but never "external". */
 	isCurrentVault: boolean;
+	/**
+	 * The key Obsidian files this vault under in its registry, for the
+	 * vaults that have one.
+	 *
+	 * It is not derivable from the path or the name, and it is what an
+	 * `obsidian://open` link needs to name a vault unambiguously — two
+	 * vaults may share a folder name. Absent for anything that is not a
+	 * registered vault.
+	 */
+	vaultId?: string;
 }
 
 /** Lucide icon per device type, with a fallback the caller applies if one is missing. */
@@ -129,15 +139,20 @@ export function listVaults(currentVaultPath: string): SystemLocation[] {
 	const vaults = (parsed as { vaults?: Record<string, { path?: string; ts?: number }> })?.vaults;
 	if (!vaults || typeof vaults !== "object") return [];
 
-	return Object.values(vaults)
-		.filter((entry): entry is { path: string; ts?: number } => typeof entry?.path === "string")
-		.sort((a, b) => (b.ts ?? 0) - (a.ts ?? 0))
-		.map((entry) => ({
+	// Keyed by id, and the id is worth keeping: it is how Obsidian names a
+	// vault to itself, and the only way to ask it to open one when two
+	// vaults share a folder name.
+	return Object.entries(vaults)
+		.filter((pair): pair is [string, { path: string; ts?: number }] =>
+			typeof pair[1]?.path === "string")
+		.sort(([, a], [, b]) => (b.ts ?? 0) - (a.ts ?? 0))
+		.map(([id, entry]) => ({
 			label: parse(entry.path).base || entry.path,
 			path: entry.path,
 			kind: "vault" as const,
 			device: "unknown" as const,
 			isCurrentVault: samePath(entry.path, currentVaultPath),
+			vaultId: id,
 		}));
 }
 

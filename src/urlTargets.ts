@@ -17,11 +17,33 @@ export type UrlTarget =
 	/** A real filesystem path, already percent-decoded. */
 	| { kind: "path"; path: string };
 
+/**
+ * A path with the quotes a file manager wrapped it in taken back off.
+ *
+ * "Copy as path" in Windows Explorer hands out `"C:\\Users\\you\\note.md"`,
+ * quotes included, and a shell will do the same for any path with a space in
+ * it. Pasted as-is those quotes become part of the name, so the row goes
+ * looking for a file that begins with one and finds nothing.
+ *
+ * Only the double quote, and only as a matching pair around the whole
+ * string. It cannot appear in a real name — it is one of the characters
+ * Obsidian and Windows both refuse — so removing it can never take away a
+ * character that meant something. The single quote is left alone for the
+ * opposite reason: it is perfectly legal in a name, and a vault called
+ * `L'Éclaire, c'est moi` is not hypothetical.
+ */
+export function unquotePath(text: string): string {
+	const trimmed = text.trim();
+	if (trimmed.length < 2) return trimmed;
+	if (!trimmed.startsWith('"') || !trimmed.endsWith('"')) return trimmed;
+	return trimmed.slice(1, -1).trim();
+}
+
 /** Percent-encoding a path bar would otherwise take literally: "%20" is a space, not a folder. */
 const ENCODED = /%[0-9a-fA-F]{2}/;
 
 export function classifyTypedTarget(text: string): UrlTarget | null {
-	const trimmed = text.trim();
+	const trimmed = unquotePath(text);
 	if (!trimmed) return null;
 
 	if (/^https?:\/\//i.test(trimmed)) return { kind: "web", href: trimmed };

@@ -26,6 +26,12 @@ export const EN = {
 	settingDotFilesName: "Show dot files",
 	settingDotFilesDesc:
 		"List dot files in the dropdown. Hidden or not, they still block renaming onto their name.",
+	menuOpenThisVault: "Open this vault",
+	menuVaultId: "Copy vault ID",
+	settingExtensionName: "Show file extensions",
+	settingExtensionDesc:
+		"Name the file on the row the way the filesystem does. Off, the extension is left off, " +
+		"as Obsidian leaves it off a note's title.",
 	settingExternalName: "Access external files",
 	settingExternalDesc:
 		"Let the vault name open your other vaults, your home folder, the filesystem root and " +
@@ -42,7 +48,6 @@ export const EN = {
 
 	// Header controls
 	renameToggleLabel: "Toggle rename/move mode",
-	vaultRootLabel: "Vault root",
 
 	// Name validation (mirrors Obsidian's own rename messages)
 	msgEmpty: "File name cannot be empty.",
@@ -58,7 +63,9 @@ export const EN = {
 	noticeAlreadyExists: '"{path}" already exists.',
 	noticeRenameFailed: "Could not rename/move file: {error}",
 	noticeCopyFailed: "Could not copy file: {error}",
+	noticeCopied: 'Copied to "{path}"',
 	noticeIsFolder: '"{path}" is a folder.',
+	noticeNoSelection: "No file selected.",
 	noticeCreateFailed: "Could not create file: {error}",
 	/**
 	 * Creating leaves nothing on screen where it happened — the new file

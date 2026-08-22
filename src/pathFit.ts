@@ -1,49 +1,51 @@
 /**
- * Making a long path fit the row.
+ * Deciding how a long name should be shortened.
  *
- * Three rules, and they are the whole module:
+ * Not *whether*, and not by how much: the row is fitted by the browser,
+ * which clips a name continuously against a `min-width` and paints the `…`
+ * itself (see `fitRow` and the fitting block in styles.css). What the
+ * browser cannot decide is which end to clip — it only ever clips the end —
+ * and the end is the wrong thing to lose when every folder beside this one
+ * begins the same way.
  *
- * 1. **Least useful first.** The row gives up its opening segment before
- *    anything else — the vault or the place the path starts in, which you
- *    already know, and which keeps its icon so the row still says where it
- *    begins. Then the folders. The file's own name is last, because it is
- *    what the header is *for*.
+ * So this module answers two questions about one name:
  *
- * 2. **Within a stage, the longest name pays.** Names are capped at a
- *    common length that comes down until the row fits, so the longest
- *    shrinks alone until it is as short as the next longest, then the two
- *    shrink together, and so on. A short name is never cut while a long one
- *    beside it still has characters to spare — which is the difference
- *    between a row that reads and one where every name is a stump.
+ * 1. **Which part of it is worth losing.** Whichever part its neighbours
+ *    also have. They all open the same way, so the opening goes; they all
+ *    close the same way, so the closing goes; they agree at both ends, so
+ *    only the stretch between them is worth keeping. Where they agree
+ *    nowhere — the common case — the middle goes, because a name opens with
+ *    what it is and closes with which one it is, and for a file the closing
+ *    part is its extension.
  *
- * 3. **Nothing shrinks past what it is telling you.** A name stops where it
- *    would stop being distinguishable from the folders beside it
- *    (`shortestUnique`): `Reports` beside `Receipts` may come down to
- *    `Rep…` and no further, because `Re…` would fit either of them — and
- *    two names differing only in their last character are never cut at
- *    all. On top of that a folder keeps about four characters and a
- *    file name about eight, whatever their siblings allow — a name cut to
- *    `A…` is distinguishable and still unreadable. Names already at or
- *    below their minimum are left alone entirely.
+ * 2. **How short it may get before it stops telling you which one it is.**
+ *    Enough to differ from every neighbour, and no more. How short it may get
+ *    before it stops being worth *reading* is a separate floor, measured in
+ *    pixels rather than characters — four narrow letters and four wide ones
+ *    are not the same amount of name — and applied by `fitRow`, which is the
+ *    only part of this that knows about fonts.
  *
- * Anything still too wide when every name is at its floor is left to
- * scroll: at that point there are no redundant characters left to drop, and
- * cutting further would be hiding information rather than compressing it.
- *
- * Kept free of the DOM (widths come in through a measuring function) so the
- * same code serves Obsidian's own breadcrumb segments inside the vault and
- * this plugin's chips outside it, and so it can be reasoned about — and
- * tested — as plain string maths.
+ * Free of the DOM on purpose — widths never enter into it — so the same
+ * answers serve Obsidian's own breadcrumb segments inside the vault and this
+ * plugin's chips outside it, and so the rules can be reasoned about, and
+ * tested, as plain string maths.
  */
 
 /** What a shortened name ends with. One character, and the one every file manager uses. */
 export const ELLIPSIS = "…";
 
-/** Characters a folder keeps whatever the room, ellipsis aside. */
+/**
+ * The shortest run of agreement with a neighbour worth working around, for
+ * a folder and for the file's own name.
+ *
+ * A count of characters rather than a width, because it is about how much of
+ * a name is *redundant* — how many characters the folder beside it also has —
+ * and that is a fact about the text, not about how wide it happens to be
+ * drawn. How short a name may get is a different question, and that one is
+ * measured in pixels; see `fitRow`.
+ */
 export const MIN_FOLDER_CHARS = 4;
-
-/** Characters the file's own name keeps. Higher: it is the one name on the row you are reading. */
-export const MIN_NAME_CHARS = 8;
+export const MIN_NAME_CHARS = 6;
 
 /**
  * Which part of the row a segment is, which is the order they are spent in.
@@ -54,159 +56,233 @@ export const MIN_NAME_CHARS = 8;
  */
 export type FitStage = "root" | "folder" | "name";
 
-const STAGE_ORDER: readonly FitStage[] = ["root", "folder", "name"];
 
 /**
- * The fewest leading characters that still tell this name apart from the
- * others in its folder.
+ * How much of a name its neighbours also have, measured from each end.
  *
- * One more than the longest prefix it shares with any sibling: if `alpha`
- * sits beside `alpine`, three characters (`alp`) are common, so four are
- * needed. A name with nothing beside it needs one. Never more than the name
- * itself, so the floor is always reachable.
+ * Two numbers and nothing else, because the two ends are independent
+ * questions: `aaaa-common-one` beside `aaaa-common-two` agrees for twelve
+ * characters at the front and none at the back, so the front is the part
+ * worth losing. Kept apart deliberately — the earlier version demanded that
+ * everything *between* the two agreements survive, which is how a folder
+ * called `parallel structures` came to be pinned at seventeen of its
+ * nineteen characters because `Schemes` happens to end in the same two
+ * letters. Rhyming with a neighbour is not a reason to keep a name whole.
  *
  * Compared case-insensitively on purpose: `Notes` and `notes` cannot both
- * exist on Windows or macOS, and treating a case difference as a
+ * exist on Windows or macOS, so treating a difference in case as a
  * distinction would produce a shortening that only works on Linux.
  */
-export function shortestUnique(name: string, siblings: readonly string[]): number {
-	let common = 0;
+export interface NameAgreement {
+	/** Longest opening any neighbour also has. */
+	head: number;
+	/** Longest ending any neighbour also has. */
+	tail: number;
+}
+
+/** What `agreementWith` finds for a name with nothing beside it. */
+const ALONE: NameAgreement = { head: 0, tail: 0 };
+
+export function agreementWith(name: string, siblings: readonly string[]): NameAgreement {
 	const lower = name.toLowerCase();
+	let head = 0;
+	let tail = 0;
 	for (const sibling of siblings) {
 		const other = sibling.toLowerCase();
 		if (other === lower) continue;
-		let shared = 0;
-		while (shared < lower.length && shared < other.length && lower[shared] === other[shared]) {
-			shared += 1;
+		let opening = 0;
+		while (
+			opening < lower.length &&
+			opening < other.length &&
+			lower[opening] === other[opening]
+		) {
+			opening += 1;
 		}
-		if (shared > common) common = shared;
-	}
-	return Math.min(name.length, common + 1);
-}
-
-/** One segment of the row, as the fitter sees it. */
-export interface FitSegment {
-	/** The name as it really is. */
-	full: string;
-	/**
-	 * Fewest characters that keep it distinguishable — see `shortestUnique`.
-	 *
-	 * A function, and asked for only when this segment is about to be cut.
-	 * Answering it means listing the folder the segment sits in, which
-	 * outside the vault is a readdir: a row that fits should not pay for
-	 * knowledge it never uses, and most rows fit.
-	 */
-	floor: () => number;
-	/** Where in the row it sits, which decides when it is asked to give way. */
-	stage: FitStage;
-}
-
-export interface FitPlan {
-	/** What each segment should display, in the order given. */
-	texts: string[];
-	/** True when the row still does not fit with every name at its floor. */
-	overflows: boolean;
-}
-
-/**
- * The shortest this segment may get: what its siblings need, and what a
- * reader needs, whichever is longer — but never more than the name has.
- */
-function floorOf(segment: FitSegment): number {
-	const full = segment.full.length;
-	if (segment.stage === "root") return Math.min(1, full);
-	const unique = Math.max(1, Math.min(segment.floor(), full));
-	const readable = segment.stage === "folder" ? MIN_FOLDER_CHARS : MIN_NAME_CHARS;
-	return Math.min(full, Math.max(unique, readable));
-}
-
-/** This name capped at `level` characters, or emptied when the root is asked for everything. */
-function cutTo(segment: FitSegment, level: number, floor: number): string {
-	if (level <= 0 && segment.stage === "root") return "";
-	const keep = Math.max(level, floor);
-	if (keep >= segment.full.length) return segment.full;
-	return segment.full.slice(0, keep) + ELLIPSIS;
-}
-
-/**
- * Chooses what each segment shows.
- *
- * `overflow` is how many pixels too wide the row currently is with every
- * name in full; `measure` gives the width of a candidate string for the
- * segment at that index. Both come from the caller because only it knows
- * about fonts and layout.
- */
-export function planFit(
-	segments: readonly FitSegment[],
-	overflow: number,
-	measure: (text: string, index: number) => number,
-): FitPlan {
-	const texts = segments.map((segment) => segment.full);
-	if (overflow <= 0) return { texts, overflows: false };
-
-	let saved = 0;
-	for (const stage of STAGE_ORDER) {
-		if (saved >= overflow) break;
-		const group: [number, FitSegment][] = [];
-		for (const [index, segment] of segments.entries()) {
-			if (segment.stage === stage) group.push([index, segment]);
+		if (opening > head) head = opening;
+		let ending = 0;
+		while (
+			ending < lower.length &&
+			ending < other.length &&
+			lower[lower.length - 1 - ending] === other[other.length - 1 - ending]
+		) {
+			ending += 1;
 		}
-		if (!group.length) continue;
-		saved += shrinkStage(group, overflow - saved, texts, measure);
+		if (ending > tail) tail = ending;
 	}
+	return { head, tail };
+}
 
-	return { texts, overflows: saved < overflow };
+/** Where in a name the `…` goes, which is to say which part of it is spent. */
+export type CutShape = "middle" | "head" | "tail" | "window";
+
+/** Where the part that tells a name apart from its neighbours sits. */
+export interface NameSpan {
+	/** Where the part that tells this name apart begins. */
+	start: number;
+	/** Where it ends. */
+	end: number;
+}
+
+/** A name's shortening: which part goes, and how short it may get. */
+export interface NameCut {
+	shape: CutShape;
+	/** Fewest characters of the name that may still be shown. */
+	floor: number;
+	/** For `window`, the stretch that has to survive; ignored otherwise. */
+	span: NameSpan;
 }
 
 /**
- * Brings one stage's names down together until they have found `need`
- * pixels, or have nothing left to give.
+ * Whether a run shared with a neighbour is worth working around.
  *
- * The cap descends one character at a time and every name in the stage is
- * measured against it, which is what makes the longest name pay first: it
- * is the only one the cap touches until the others are just as long. Each
- * level is planned from the full names rather than from the level before,
- * so a name that reached its floor early simply stops moving instead of
- * being cut again by the next round.
+ * A name keeps `readable` characters whatever happens, so agreement shorter
+ * than that costs nothing to carry: `parallel structures` and `Schemes` end
+ * in the same two letters, and a folder that keeps three characters is
+ * already telling them apart from the front. Only a run at least as long as
+ * the minimum can actually crowd out the part that distinguishes, and only
+ * then is it worth eliding that end on purpose.
  */
-function shrinkStage(
-	group: readonly [number, FitSegment][],
-	need: number,
-	texts: string[],
-	measure: (text: string, index: number) => number,
-): number {
-	const floors = group.map(([, segment]) => floorOf(segment));
-	const fullWidths = group.map(([index, segment]) => measure(segment.full, index));
-	const longest = Math.max(...group.map(([, segment]) => segment.full.length));
-	// The root is the one segment allowed to disappear, so its stage is the
-	// one whose cap may reach zero.
-	const lowest = Math.min(
-		...group.map(([, segment], at) => (segment.stage === "root" ? 0 : floors[at] ?? 1)),
-	);
+function meaningful(shared: number, readable: number): boolean {
+	return shared >= readable && shared > 0;
+}
 
-	let bestTexts: string[] | null = null;
-	let bestSaving = 0;
-	for (let level = longest - 1; level >= lowest; level--) {
-		let saving = 0;
-		const applied = group.map(([index, segment], at) => {
-			const candidate = cutTo(segment, level, floors[at] ?? segment.full.length);
-			if (candidate === segment.full) return segment.full;
-			const gain = (fullWidths[at] ?? 0) - measure(candidate, index);
-			// An "…" can be wider than the two characters it replaces on a
-			// proportional font, so a cut that gains nothing is not worth
-			// making: it would cost information for no room.
-			if (gain <= 0) return segment.full;
-			saving += gain;
-			return candidate;
-		});
-		bestTexts = applied;
-		bestSaving = saving;
-		if (saving >= need) break;
+/**
+ * Decides which part of a name to spend, and how short it may get.
+ *
+ * Four outcomes, one per place the agreement sits:
+ *
+ * - Neighbours agree at the **front** — the front goes: `…mon-one`.
+ * - They agree at the **back** — the back goes: `report-2…`.
+ * - They agree at **both** ends — both go and the differing stretch stands
+ *   in a window: `…-07-…`.
+ * - They agree at **neither**, which is the common case and therefore the
+ *   default: the middle goes, because a name opens with what it is and
+ *   closes with which one it is — and for a file the closing part is its
+ *   extension. `annual…2026.md`.
+ */
+export function chooseCut(
+	full: string,
+	agree: NameAgreement,
+	readable: number,
+): NameCut {
+	// Only what the neighbours force. How short a name may get for a *reader*
+	// is not settled here: it is a width, and this module never sees one.
+	const floorAtLeast = (want: number): number => Math.min(full.length, Math.max(1, want));
+	const headShared = meaningful(agree.head, readable);
+	const tailShared = meaningful(agree.tail, readable);
+	const span: NameSpan = {
+		start: Math.min(agree.head, Math.max(0, full.length - 1)),
+		end: Math.max(Math.min(agree.head, full.length - 1) + 1, full.length - agree.tail),
+	};
+
+	if (headShared && tailShared) {
+		// Both ends are redundant, so neither is worth keeping and the part
+		// between them is the whole message. Cheaper than either single-sided
+		// cut whenever the agreement is long, which is exactly when both ends
+		// are shared.
+		const window = Math.max(1, span.end - span.start);
+		const oneSided = Math.min(agree.head, agree.tail) + 1;
+		if (window <= oneSided) return { shape: "window", floor: floorAtLeast(window), span };
+	}
+	if (headShared || tailShared) {
+		// One end is redundant, so the other is the one to keep — and keeping
+		// it means showing more of it than the neighbours already have. The
+		// cheaper side wins, which resolves the one-sided cases by itself:
+		// when only the front is shared, keeping the back is what is cheap.
+		const keepFront = agree.head + 1;
+		const keepBack = agree.tail + 1;
+		return keepFront <= keepBack
+			? { shape: "tail", floor: floorAtLeast(keepFront), span }
+			: { shape: "head", floor: floorAtLeast(keepBack), span };
 	}
 
-	if (!bestTexts) return 0;
-	for (const [at, [index]] of group.entries()) {
-		texts[index] = bestTexts[at] ?? texts[index] ?? "";
+	// Nothing meaningful at either end: the middle is what goes. It still has
+	// to come out distinct — two names agreeing on two characters at each end
+	// would otherwise be cut to the same three — so the floor rises until the
+	// halves it keeps say something the neighbours' do not. Two to begin
+	// with, which is the shortest a middle cut can be and still have a middle.
+	let keep = Math.min(full.length, 2);
+	while (keep < full.length) {
+		const front = Math.ceil(keep / 2);
+		const back = keep - front;
+		if (front > agree.head || back > agree.tail) break;
+		keep += 1;
 	}
-	return bestSaving;
+	return { shape: "middle", floor: keep, span };
+}
+
+/**
+ * The shortest opening of `text` holding `count` characters worth reading.
+ *
+ * Spaces do not count and are never left at the cut. A name kept to six
+ * characters has six characters to say which file it is with, and spending
+ * one of them on a blank says nothing — `My N…` tells you more than `My …`
+ * does, at the same six. The spaces between the kept characters ride along
+ * for free, because removing them would change how the name reads.
+ */
+function keepFront(text: string, count: number): string {
+	let kept = 0;
+	let at = 0;
+	while (at < text.length && kept < count) {
+		if (text[at] !== " ") kept += 1;
+		at += 1;
+	}
+	// Never a blank against the `…`: it is invisible there, and it is a
+	// character the next name along could have had.
+	while (at > 0 && text[at - 1] === " ") at -= 1;
+	return text.slice(0, at);
+}
+
+/** The same from the other end, for a name read backwards. */
+function keepBack(text: string, count: number): string {
+	let kept = 0;
+	let at = text.length;
+	while (at > 0 && kept < count) {
+		at -= 1;
+		if (text[at] !== " ") kept += 1;
+	}
+	while (at < text.length && text[at] === " ") at += 1;
+	return text.slice(at);
+}
+
+/**
+ * A name cut to `keep` characters in the shape its neighbours call for.
+ *
+ * The `…` counts as none of the `keep`: it stands for what was removed, not
+ * for what is shown, and pricing it as a kept character would make a cut
+ * name shorter than its own floor. Spaces do not count either — see
+ * `keepFront`.
+ */
+export function cutName(full: string, keep: number, cut: NameCut): string {
+	if (keep >= full.length) return full;
+	const room = Math.max(1, keep);
+
+	if (cut.shape === "window") {
+		// Centred on the part that differs, so widening the cap reveals more
+		// of its surroundings rather than sliding it along.
+		const spare = Math.max(0, room - (cut.span.end - cut.span.start));
+		const from = Math.max(
+			0,
+			Math.min(cut.span.start - Math.floor(spare / 2), full.length - room),
+		);
+		const to = Math.min(full.length, from + room);
+		return `${from > 0 ? ELLIPSIS : ""}${full.slice(from, to)}${to < full.length ? ELLIPSIS : ""}`;
+	}
+	if (cut.shape === "head") return ELLIPSIS + keepBack(full, room);
+	if (cut.shape === "tail") return keepFront(full, room) + ELLIPSIS;
+
+	const front = Math.ceil(room / 2);
+	const back = room - front;
+	if (back <= 0) return keepFront(full, front) + ELLIPSIS;
+	return keepFront(full, front) + ELLIPSIS + keepBack(full, back);
+}
+
+/** The shortest agreement worth working around at this point in the row. */
+export function readableMinimum(stage: FitStage): number {
+	return stage === "name" ? MIN_NAME_CHARS : MIN_FOLDER_CHARS;
+}
+
+/** The cut for a name with nothing beside it — the plain default. */
+export function cutAlone(full: string, stage: FitStage): NameCut {
+	return chooseCut(full, ALONE, readableMinimum(stage));
 }
