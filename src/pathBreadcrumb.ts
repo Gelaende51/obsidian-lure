@@ -2667,7 +2667,22 @@ export class PathBreadcrumb {
 			} else {
 				part.setText(text);
 			}
-			const width = floorText === "" ? 0 : textWidth(floorText ?? text, el);
+			// Never wider than what the part actually holds. The floor is the
+			// width of this part's *cut* form, and for a short name the cut
+			// can be the wider of the two: `atlas` keeps `atl` in its lead and
+			// would clip to `at…`, and an ellipsis is wider than the `l` it
+			// stands in for. A floor bigger than the box's own content is not
+			// a floor, it is padding — it held the lead open past its text and
+			// the name came out as `atl as`, split by the surplus.
+			//
+			// Clamping also says the right thing about clipping: where the cut
+			// form is no narrower than the whole, clipping this part buys
+			// nothing, so it should sit at its natural width and give up
+			// nothing at all.
+			const width =
+				floorText === ""
+					? 0
+					: Math.min(textWidth(floorText ?? text, el), textWidth(text, el));
 			setFloor(part, floorText === undefined ? "" : `${width.toFixed(2)}px`);
 			floorPx += width;
 		};
