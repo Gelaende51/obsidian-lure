@@ -437,12 +437,14 @@ Links follow the note, exactly as they do when it is moved from the File
 Explorer or by typing a path.
 
 A folder that **could not take the drop shows nothing at all** — no label, no
-highlight — rather than offering something that would then fail. Three cases:
+highlight — rather than offering something that would then fail. Four cases:
 
 - the folder the file is **already in**, since it is already there;
 - a **name already taken** in that folder, because nothing here overwrites;
 - a folder dropped **into itself or into its own descendant**, which would
-  leave it nowhere to have come from.
+  leave it nowhere to have come from;
+- a selection holding **a folder and something inside it**, since moving the
+  folder takes the child with it.
 
 Only folders **inside your vault** take drops. While the row is pointing
 outside the vault its segments decline, because taking a note out of the vault
