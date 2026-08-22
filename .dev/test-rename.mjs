@@ -23,7 +23,7 @@
  * Requires --remote-debugging-port=9222 (see .dev/cdp.mjs) and a vault open.
  */
 
-import { appIsFocused, connect, PAUSE, pressKey, quiesce, reloadPlugin } from "./cdpSession.mjs";
+import { canFocusEditable, connect, PAUSE, pressKey, quiesce, reloadPlugin } from "./cdpSession.mjs";
 import { createSuite } from "./harness.mjs";
 
 const FIXTURE = "LureRename";
@@ -203,25 +203,31 @@ async function teardown() {
 }
 
 /**
- * This suite is about where the *focus* goes, so it cannot run against a
- * window that does not have any.
+ * This suite is about where the *focus* goes, so it cannot run in a window
+ * that cannot give focus to anything.
  *
- * Obsidian's own `workspace:edit-file-title` reports success and does nothing
- * while its window is not frontmost — verified with this plugin disabled, so
- * it is the app's behaviour rather than anything here — and a contenteditable
- * cannot be focused in that state either. Every assertion below then reports
- * `document.body` where it wanted an editable element, which reads exactly
- * like a broken feature and has been mistaken for one more than once.
+ * Obsidian's own `workspace:edit-file-title` reports success and focuses
+ * nothing when its window is obscured by a fullscreen application — verified
+ * with this plugin disabled, so it is the app's behaviour rather than
+ * anything here. Every assertion below then reports `document.body` where it
+ * wanted an editable element, which reads exactly like a broken feature and
+ * has been mistaken for one more than once.
  *
- * Refused outright rather than reported as failures: a suite that cannot
- * observe what it is about has nothing to say, and saying nothing loudly is
- * more use than saying the wrong thing six times.
+ * The condition is *tried* rather than inferred. An earlier version of this
+ * guard read Obsidian's `is-focused` body class and was wrong both ways: an
+ * obscured window can report `document.hasFocus()` true, `visibilityState`
+ * "visible" and 61 frames a second, while a perfectly workable window driven
+ * from a terminal is simply not frontmost and has `is-focused` false. The
+ * flag refused runs that would have passed.
  */
-if (!(await appIsFocused(page))) {
+// The trial needs something to try on, and `reset` does not run until the
+// first case starts.
+await buildFixture();
+if (!(await canFocusEditable(page, NOTE))) {
 	console.log(
-		"\nObsidian's window is not focused, so nothing here can be measured.\n" +
-			"Click the Obsidian window and run this again. (Under Wayland it cannot be\n" +
-			"focused from a script: wmctrl and xdotool only see XWayland windows.)",
+		"\nThis window cannot put the caret in an editable element, so nothing\n" +
+			"here can be measured. Obsidian behaves this way while it is obscured by\n" +
+			"a fullscreen application — bring its window to the front and run again.",
 	);
 	await teardown();
 	process.exit(2);

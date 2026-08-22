@@ -262,19 +262,53 @@ export async function quiesce(page, { leaveTypes = ["markdown", "lure-external-f
 }
 
 /**
- * Whether Obsidian considers its own window focused.
+ * Whether this window can actually put the caret in an editable element.
  *
- * Not the same question as `document.hasFocus()`, which answers true for a
- * window the compositor has not focused at all. Obsidian tracks the real
- * thing and puts `is-focused` on the body; anything that depends on the app
- * being frontmost — most of all, focusing the inline title — only works when
- * this is true.
+ * The question every focus-dependent suite really wants answered, asked by
+ * trying it rather than by reading a flag. `workspace:edit-file-title` is the
+ * cheapest trial available: it reports success either way, so what is checked
+ * is whether the inline title ends up holding the caret.
  *
- * Worth asking before a suite that asserts about focus, because the failure
- * mode otherwise is a handful of assertions all reporting `document.body`
- * where an editable element was expected, which reads exactly like a bug in
- * the feature under test.
+ * It replaced a check on Obsidian's own `is-focused` body class, which was a
+ * correlate rather than the cause and wrong in both directions. A window
+ * behind a fullscreen application fails this while reporting
+ * `document.hasFocus()` true, `visibilityState` "visible" and 61 frames a
+ * second — and a window that is merely *not frontmost*, which is the normal
+ * state while a suite is driven from a terminal, passes it with `is-focused`
+ * false. Refusing on the flag would have refused to run in exactly the
+ * conditions the suite is meant for.
+ *
+ * `notePath` must be a note this vault holds; it is opened, tried on, and
+ * left open.
  */
-export async function appIsFocused(page) {
-	return await page.evaluate(`return document.body.classList.contains("is-focused");`);
+export async function canFocusEditable(page, notePath) {
+	return await page.evaluate(`
+		const file = app.vault.getAbstractFileByPath(${JSON.stringify(notePath)});
+		if (!file) return false;
+		await app.workspace.getLeaf(false).openFile(file);
+		await new Promise((r) => setTimeout(r, 700));
+		document.body.click();
+		await new Promise((r) => setTimeout(r, 200));
+		app.commands.executeCommandById("workspace:edit-file-title");
+		await new Promise((r) => setTimeout(r, 700));
+		// Either target counts. The question is whether this window can give
+		// the caret to an editable element at all — and with the plugin
+		// loaded the same command legitimately answers with its own path bar
+		// instead of the inline title, depending on where the alternation
+		// stands. Asking for the title specifically made the trial fail in a
+		// window where everything worked.
+		const el = document.activeElement;
+		const took = !!el && (
+			el.classList?.contains("inline-title") ||
+			el.classList?.contains("lure-path-input") ||
+			el.isContentEditable ||
+			el.tagName === "INPUT"
+		);
+		// Put it back: the trial leaves the title in rename mode otherwise,
+		// and the first case would start from a state it did not create.
+		document.activeElement?.blur?.();
+		document.body.click();
+		await new Promise((r) => setTimeout(r, 200));
+		return took;
+	`);
 }
