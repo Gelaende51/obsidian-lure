@@ -170,11 +170,19 @@ export function makeDropTarget(
 
 	try {
 		dragManager.handleDrop(el, (_evt, draggable, isOver) => {
-			const moving = draggedFile(app, draggable);
+			const moving = draggedFiles(app, draggable);
 			const at = el.dataset.lureDropPath;
 			const folder = at === undefined ? null : app.vault.getAbstractFileByPath(at);
-			if (!moving || !(folder instanceof TFolder)) return null;
-			if (!canMoveInto(moving, folder)) return null;
+			if (!moving.length || !(folder instanceof TFolder)) return null;
+			// All of them or none. A partial move that quietly skips the two it
+			// could not take is worse than a refusal you can see — and what is
+			// offered has to be what happens, or the hover is a lie.
+			if (!moving.every((file) => canMoveInto(file, folder))) return null;
+			// A selection holding both a folder and something inside it: moving
+			// the folder takes the child with it, and the second move would then
+			// be looking for a path that no longer exists. Refused rather than
+			// half-applied, and refused at the hover so it is never offered.
+			if (moving.some((file) => nestedIn(file, moving))) return null;
 
 			// The hover pass is a dry run: it says what the drop would do and
 			// changes nothing. Only the drop itself acts.
@@ -194,15 +202,36 @@ export function makeDropTarget(
 	}
 }
 
-/** The file or folder a drag is carrying, if it is carrying one this vault knows. */
-function draggedFile(app: App, draggable: unknown): TAbstractFile | null {
-	const data = draggable as { type?: string; file?: TAbstractFile } | null | undefined;
-	if (!data || (data.type !== "file" && data.type !== "folder")) return null;
-	const file = data.file;
-	if (!(file instanceof TFile) && !(file instanceof TFolder)) return null;
-	// Dragged out of a *different* vault's window, the payload's file belongs
-	// to that vault's tree and moving it here would write to the wrong place.
-	return app.vault.getAbstractFileByPath(file.path) === file ? file : null;
+/**
+ * What a drag is carrying, as far as this vault knows it.
+ *
+ * Obsidian builds three payloads and this takes all three: `file` and
+ * `folder` carry one under `file`, and a multiple selection carries them
+ * under `files`. Leaving the third out made a multi-select drag a silent
+ * dead end at a target that accepts the same gesture one file at a time.
+ */
+function draggedFiles(app: App, draggable: unknown): TAbstractFile[] {
+	const data = draggable as
+		| { type?: string; file?: TAbstractFile; files?: TAbstractFile[] }
+		| null
+		| undefined;
+	if (!data) return [];
+	const carried =
+		data.type === "file" || data.type === "folder"
+			? [data.file]
+			: data.type === "files"
+				? (data.files ?? [])
+				: [];
+	const known: TAbstractFile[] = [];
+	for (const file of carried) {
+		if (!(file instanceof TFile) && !(file instanceof TFolder)) return [];
+		// Dragged out of a *different* vault's window, the payload's file
+		// belongs to that vault's tree and moving it here would write to the
+		// wrong place.
+		if (app.vault.getAbstractFileByPath(file.path) !== file) return [];
+		known.push(file);
+	}
+	return known;
 }
 
 /**
@@ -225,9 +254,16 @@ function canMoveInto(moving: TAbstractFile, folder: TFolder): boolean {
 	return !folder.children.some((child) => child.name === moving.name);
 }
 
-/** Whether `folder` sits anywhere below `ancestor`. */
-function isInside(folder: TFolder, ancestor: TFolder): boolean {
-	for (let at: TFolder | null = folder; at; at = at.parent) {
+/** Whether `file` sits below any *other* member of the same selection. */
+function nestedIn(file: TAbstractFile, selection: readonly TAbstractFile[]): boolean {
+	return selection.some(
+		(other) => other !== file && other instanceof TFolder && isInside(file, other),
+	);
+}
+
+/** Whether `entry` sits anywhere below `ancestor` — or is it. */
+function isInside(entry: TAbstractFile, ancestor: TFolder): boolean {
+	for (let at: TFolder | null = entry instanceof TFolder ? entry : entry.parent; at; at = at.parent) {
 		if (at === ancestor) return true;
 	}
 	return false;
@@ -244,19 +280,26 @@ function isInside(folder: TFolder, ancestor: TFolder): boolean {
  */
 async function moveInto(
 	app: App,
-	moving: TAbstractFile,
+	moving: TAbstractFile[],
 	folder: TFolder,
 	onMoved?: (file: TAbstractFile) => void,
 ): Promise<void> {
-	const to = folder.path === "/" ? moving.name : `${folder.path}/${moving.name}`;
-	try {
-		await app.fileManager.renameFile(moving, to);
-	} catch (err) {
-		new Notice(t("noticeRenameFailed", { error: (err as Error).message }));
-		return;
+	const landed: TAbstractFile[] = [];
+	for (const file of moving) {
+		const to = folder.path === "/" ? file.name : `${folder.path}/${file.name}`;
+		try {
+			await app.fileManager.renameFile(file, to);
+		} catch (err) {
+			new Notice(t("noticeRenameFailed", { error: (err as Error).message }));
+			break;
+		}
+		const at = app.vault.getAbstractFileByPath(to);
+		if (at) landed.push(at);
 	}
-	const moved = app.vault.getAbstractFileByPath(to);
-	if (moved) onMoved?.(moved);
+	// One reveal, on the last one to arrive: revealing each in turn would
+	// scroll the tree once per file and settle on the same place anyway.
+	const last = landed[landed.length - 1];
+	if (last) onMoved?.(last);
 }
 
 async function createNoteIn(app: App, folder: TFolder): Promise<void> {

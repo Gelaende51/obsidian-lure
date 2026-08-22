@@ -3342,6 +3342,12 @@ export class PathBreadcrumb {
 			text: this.plugin.app.vault.getName(),
 		});
 		if (!this.plugin.settings.showVaultName) nameEl.addClass(NAME_FOLDED_CLASS);
+		// The vault's name is a folder like any other on the row — the one at
+		// the top — so it takes a drop like any other. Only while the row is
+		// showing this vault: out on a browsed path the same element names a
+		// place on the filesystem, and moving a note out there is a decision
+		// worth the question the typed path asks rather than a gesture.
+		if (this.browsePath === null) this.acceptDropsInto(rootEl, "/");
 		rootEl.addEventListener("click", (evt) => {
 			evt.stopPropagation();
 			if (this.openRootInNewTab(evt)) return;
@@ -3843,7 +3849,13 @@ export class PathBreadcrumb {
 			// where it does not — the same bargain every mirrored label in
 			// here strikes, rather than a 45-locale string of this plugin's
 			// own for a phrase the host already writes.
-			label: (name) => obsidianLabel(LABELS.moveInto, `Move into \u201C${name}\u201D`, { folder: name }),
+			label: (name) => {
+				// The vault's own root folder has no name of its own, so the
+				// label would read `Move into “”`. The vault's name is what
+				// that segment shows and what a user would call it.
+				const folder = name || this.rootSegmentName();
+				return obsidianLabel(LABELS.moveInto, `Move into \u201C${folder}\u201D`, { folder });
+			},
 			onMoved: (file) => this.revealInExplorer(file),
 		});
 	}

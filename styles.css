@@ -150,6 +150,21 @@
 	background-color: var(--background-modifier-hover);
 }
 
+/* A folder about to take a dropped file.
+   `is-being-dragged-over` is Obsidian's own class and the drop target sets
+   it through Obsidian's own drag manager — but every rule the app has for it
+   is scoped to an element this row does not contain (`.tree-item-self`,
+   `.nav-folder`, `.metadata-property-value`), so the class arrived carrying
+   nothing to look at. The declarations are copied from the File Explorer's
+   own rows rather than invented, so a drop onto a breadcrumb looks like a
+   drop onto the same folder in the sidebar, and a theme that restyles those
+   variables restyles this with them. */
+.view-header-breadcrumb.is-being-dragged-over {
+	color: var(--nav-item-color-highlighted);
+	background: color-mix(in oklch, var(--interactive-accent) 10%, transparent);
+	border-radius: var(--radius-s);
+}
+
 /* The vault root is a jump target rather than a path segment: it opens
    the locations dropdown, so it keeps the pointer even when the swap
    setting takes it away from the folder names beside it. Qualified up to
