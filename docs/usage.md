@@ -426,6 +426,13 @@ the dropdown, from the note's own name in the header, or from anywhere else in
 Obsidian that produces a file: it is the app's own drag, so the hover label,
 the cursor and the highlight are the ones the File Explorer draws.
 
+**The vault's name takes a drop too**, since it is the folder at the top of the
+row — the one gesture that puts a note in the vault root from here.
+
+**A whole selection can be dragged at once**, and it moves as one: if any of
+them could not be taken, the drop is refused rather than moving some and
+quietly skipping the rest.
+
 Links follow the note, exactly as they do when it is moved from the File
 Explorer or by typing a path.
 

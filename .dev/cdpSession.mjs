@@ -233,6 +233,19 @@ export async function quiesce(page, { leaveTypes = ["markdown", "lure-external-f
 	await page.evaluate(`
 		const input = document.querySelector(".lure-path-input");
 		if (input) { input.blur(); }
+		// A drag that was started and never finished. The suites drive the
+		// drag manager directly — a real pointer drag cannot be driven through
+		// CDP at all — so nothing dispatches the dragend that would normally
+		// tidy up, and the payload, the ghost and the "a drop would land here"
+		// highlight all survive into the next case.
+		if (app.dragManager) {
+			try { app.dragManager.onDragEnd(new DragEvent("dragend")); } catch (e) { /* shape moved */ }
+			app.dragManager.draggable = null;
+		}
+		document.querySelectorAll(".is-being-dragged-over, .drag-ghost").forEach((el) => {
+			el.classList.remove("is-being-dragged-over");
+			if (el.classList.contains("drag-ghost")) el.remove();
+		});
 		document.querySelectorAll(".menu, .suggestion-container, .tooltip").forEach((el) => el.remove());
 		// A modal is closed rather than removed: it owns a keymap scope that
 		// stays pushed if its element is merely taken out of the document.

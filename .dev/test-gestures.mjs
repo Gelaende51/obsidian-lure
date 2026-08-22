@@ -1283,6 +1283,70 @@ const squeeze = (px) => `
 	return true;
 `;
 
+/**
+ * Squeezes until the row has actually run out of air, and waits for it to
+ * settle rather than for a fixed number of milliseconds.
+ *
+ * Two assumptions were buried in "squeeze to 360 and pause 200ms", and both
+ * of them failed on the same afternoon. The width was a statement about this
+ * host's font metrics rather than about the feature — the row spends its
+ * column gaps in proportion to how much is hidden, all of them only once the
+ * overflow reaches the whole pool, and a slightly narrower header font meant
+ * the same path at the same width overflowed by half as much. And the pause
+ * was a statement about how fast the machine happened to be: the refit runs
+ * from a `ResizeObserver`, so on a loaded machine it lands after the pause
+ * and the assertions measure the previous width's answer.
+ *
+ * So both are measured now. The width comes down step by step until the row
+ * reports its gaps spent, and each step waits for two consecutive readings to
+ * agree before believing either of them.
+ */
+const squeezeTight = (from = 360) => `
+	const widths = [${from}, 320, 280, 240, 200, 170, 140];
+	const leaf = app.workspace.getLeavesOfType("markdown")[0];
+	let split = leaf.parent;
+	while (split && split.type !== "split") split = split.parent;
+	if (!split || split.children.length < 2) {
+		await app.workspace.getLeaf("split", "vertical").openFile(leaf.view.file);
+		${PAUSE(400)}
+		split = app.workspace.getLeavesOfType("markdown")[0].parent;
+		while (split && split.type !== "split") split = split.parent;
+	}
+	const pane = app.workspace.getLeavesOfType("markdown")[0];
+	const row = pane.view.containerEl.querySelector(".view-header-title-container");
+	const total = split.containerEl.getBoundingClientRect().width;
+	const mine = Math.max(0, split.children.findIndex((child) =>
+		child === pane || child.containerEl?.contains(pane.containerEl)));
+	const setTo = (wanted) => {
+		const share = Math.max(4, Math.min(96, (wanted / total) * 100));
+		const rest = (100 - share) / (split.children.length - 1);
+		split.children.forEach((child, i) => { child.dimension = i === mine ? share : rest; });
+		split.recomputeChildrenDimensions();
+	};
+	const gapNow = () => parseFloat(row.style.getPropertyValue("--lure-gap") || "4");
+	// The refit is driven by a ResizeObserver, so what settles it is frames,
+	// not milliseconds. Wait for the same answer twice running.
+	const settle = async () => {
+		let last = null;
+		for (let i = 0; i < 40; i++) {
+			await new Promise((r) => setTimeout(r, 60));
+			const now = gapNow() + ":" + row.clientWidth + ":" + row.scrollWidth;
+			if (now === last) return;
+			last = now;
+		}
+	};
+	let landed = null;
+	for (const want of widths) {
+		setTo(want);
+		await settle();
+		const overhead = pane.containerEl.getBoundingClientRect().width - row.clientWidth;
+		setTo(want + overhead);
+		await settle();
+		if (gapNow() <= 0.6) { landed = want; break; }
+	}
+	return JSON.stringify({ landed, gap: gapNow(), rowWidth: row.clientWidth });
+`;
+
 /** Hands the panes back an even share, so the next test starts clean. */
 const unsqueeze = `
 	for (const leaf of app.workspace.getLeavesOfType("markdown").slice(1)) leaf.detach();
@@ -1577,7 +1641,8 @@ test("long paths: nothing on the row is drawn over anything else", async () => {
 test("long paths: a shortened name ends where the delimiter begins", async () => {
 	await page.evaluate(buildVaultFixture);
 	await page.evaluate(narrowPane("leaf.md", 0));
-	await page.evaluate(squeeze(360));
+	const tight = JSON.parse(await page.evaluate(squeezeTight()));
+	expect("the row can be squeezed until its gaps are spent", tight, (v) => v.landed !== null);
 	const out = await page.evaluate(`
 		const c = app.workspace.getLeavesOfType("markdown")[0].view.containerEl
 			.querySelector(".view-header-title-container");
@@ -2175,33 +2240,78 @@ test("the vault name copies its name, then where it is, then where the file is",
  * happen and `drop` makes it happen, which is exactly the split the handler
  * is written around.
  */
-const dragOver = (segment, file) => `
-	const c = app.workspace.getMostRecentLeaf().view.containerEl
-		.querySelector(".view-header-title-container");
-	const el = [...c.querySelectorAll(".view-header-breadcrumb")]
-		.find((s) => s.textContent === ${JSON.stringify(segment)});
-	if (!el) return JSON.stringify({ error: "no segment " + ${JSON.stringify(segment)} });
-	app.dragManager.draggable = { type: "file", file: app.vault.getAbstractFileByPath(${JSON.stringify(file)}) };
-	el.dispatchEvent(new DragEvent("dragover", { bubbles: true, cancelable: true, dataTransfer: new DataTransfer() }));
-	${PAUSE(120)}
-	return JSON.stringify({
-		offered: el.classList.contains("is-being-dragged-over"),
-		label: app.dragManager.actionEl ? app.dragManager.actionEl.textContent : null,
-	});
+/**
+ * Starts a drag the way a drag source does, rather than writing a payload
+ * onto the manager by hand.
+ *
+ * It matters for more than fidelity. `dragManager` builds its floating action
+ * label lazily, on the first real `onDragStart`, so a hand-written payload
+ * leaves `actionEl` null — and an assertion about the label then reads as the
+ * feature failing to set one, which is exactly how it read.
+ */
+const startDrag = (paths) => `
+	const picked = ${JSON.stringify(paths)}.map((p) => app.vault.getAbstractFileByPath(p));
+	if (picked.some((f) => !f)) return JSON.stringify({ error: "missing fixture" });
+	const start = new DragEvent("dragstart", { bubbles: true, cancelable: true, dataTransfer: new DataTransfer() });
+	const dm = app.dragManager;
+	const payload = picked.length > 1
+		? dm.dragFiles(start, picked)
+		: picked[0].children ? dm.dragFolder(start, picked[0]) : dm.dragFile(start, picked[0]);
+	dm.onDragStart(start, payload);
+	${PAUSE(150)}
 `;
 
-const dropOn = (segment, file) => `
+/**
+ * Ends the drag this case started.
+ *
+ * Nothing dispatches `dragend` for a drag that was never really begun by a
+ * pointer, so without this the payload, the floating label and the "a drop
+ * would land here" highlight all survive into the next case — where a
+ * shuffled order put a measurement of the row's own geometry, and the
+ * leftover highlight measured as an empty strip at a segment's edge.
+ */
+const endDrag = `
+	app.dragManager.onDragEnd(new DragEvent("dragend"));
+	app.dragManager.draggable = null;
+	document.querySelectorAll(".is-being-dragged-over")
+		.forEach((n) => n.classList.remove("is-being-dragged-over"));
+	${PAUSE(120)}
+`;
+
+/** The segment named, or the vault's own, which has no text to match on. */
+const findSegment = (segment) => `
 	const c = app.workspace.getMostRecentLeaf().view.containerEl
 		.querySelector(".view-header-title-container");
-	const el = [...c.querySelectorAll(".view-header-breadcrumb")]
-		.find((s) => s.textContent === ${JSON.stringify(segment)});
+	const el = ${JSON.stringify(segment)} === "@vault"
+		? c.querySelector(".lure-vault-segment")
+		: [...c.querySelectorAll(".view-header-breadcrumb")]
+			.find((s) => s.textContent === ${JSON.stringify(segment)});
 	if (!el) return JSON.stringify({ error: "no segment " + ${JSON.stringify(segment)} });
-	app.dragManager.draggable = { type: "file", file: app.vault.getAbstractFileByPath(${JSON.stringify(file)}) };
+`;
+
+const dragOver = (segment, ...paths) => `
+	${findSegment(segment)}
+	${startDrag(paths)}
+	el.dispatchEvent(new DragEvent("dragover", { bubbles: true, cancelable: true, dataTransfer: new DataTransfer() }));
+	${PAUSE(150)}
+	const seen = {
+		offered: el.classList.contains("is-being-dragged-over"),
+		label: app.dragManager.actionEl ? app.dragManager.actionEl.textContent : null,
+	};
+	${endDrag}
+	return JSON.stringify(seen);
+`;
+
+const dropOn = (segment, ...paths) => `
+	${findSegment(segment)}
+	${startDrag(paths)}
 	el.dispatchEvent(new DragEvent("drop", { bubbles: true, cancelable: true, dataTransfer: new DataTransfer() }));
-	${PAUSE(700)}
+	${PAUSE(800)}
+	${endDrag}
 	return JSON.stringify({
 		tree: app.vault.getAllLoadedFiles()
 			.filter((f) => f.path.startsWith("${ROOT}")).map((f) => f.path).sort(),
+		root: app.vault.getRoot().children.map((f) => f.name).sort(),
 	});
 `;
 
@@ -2240,6 +2350,72 @@ test("a folder cannot be dropped inside itself", async () => {
 	expect("its own descendant offers nothing", out.offered, false);
 	const after = JSON.parse(await page.evaluate(dropOn("inner", `${ROOT}/inner`)));
 	expect("and the tree is untouched", after.tree, (v) => v.includes(`${ROOT}/inner/leaf.md`));
+});
+
+test("a multiple selection drops as one, or not at all", async () => {
+	// Obsidian carries a multi-select under `files` rather than `file`, and
+	// leaving that shape out made the same gesture a silent dead end for more
+	// than one note at a time.
+	const both = JSON.parse(
+		await page.evaluate(dragOver(`${ROOT}`, `${ROOT}/inner/leaf.md`, `${ROOT}/inner/aside.md`)),
+	);
+	expect("two that can both move are offered", both.offered, true);
+
+	const landed = JSON.parse(
+		await page.evaluate(dropOn(`${ROOT}`, `${ROOT}/inner/leaf.md`, `${ROOT}/inner/aside.md`)),
+	);
+	expect("and both land", landed.tree, (v) =>
+		v.includes(`${ROOT}/leaf.md`) && v.includes(`${ROOT}/aside.md`));
+
+	// Now one of the pair is already there, so the pair is refused whole: a
+	// partial move that quietly skips one is worse than a visible no.
+	await page.evaluate(`await app.vault.create("${ROOT}/inner/leaf.md", "# back again"); ${PAUSE(300)} return true;`);
+	const mixed = JSON.parse(
+		await page.evaluate(dragOver(`${ROOT}`, `${ROOT}/inner/leaf.md`, `${ROOT}/aside.md`)),
+	);
+	expect("a pair with one blocked is not offered", mixed.offered, false);
+	const after = JSON.parse(
+		await page.evaluate(dropOn(`${ROOT}`, `${ROOT}/inner/leaf.md`, `${ROOT}/aside.md`)),
+	);
+	expect("and neither moves", after.tree, (v) => v.includes(`${ROOT}/inner/leaf.md`));
+});
+
+test("a selection holding a folder and its own child is refused", async () => {
+	// Moving the folder takes the child with it, so the second move would be
+	// looking for a path that no longer exists. Refused at the hover, so it is
+	// never offered rather than half-applied.
+	const over = JSON.parse(
+		await page.evaluate(dragOver(`${ROOT}`, `${ROOT}/branch`, `${ROOT}/branch/twig`)),
+	);
+	expect("it is not offered", over.offered, false);
+	const after = JSON.parse(
+		await page.evaluate(dropOn(`${ROOT}`, `${ROOT}/branch`, `${ROOT}/branch/twig`)),
+	);
+	expect("the tree is intact", after.tree, (v) => v.includes(`${ROOT}/branch/twig/nest.md`));
+	expect("and the child did not move on its own", after.tree, (v) => !v.includes(`${ROOT}/twig`));
+});
+
+test("the vault name takes a drop, to the top of the tree", async () => {
+	// The vault's own name is the folder at the top of the row, so it accepts
+	// what every other folder on the row accepts. Nothing else here moves a
+	// note to the vault root in one gesture.
+	const over = JSON.parse(await page.evaluate(dragOver("@vault", `${ROOT}/inner/aside.md`)));
+	expect("the vault name offers to take it", over.offered, true);
+	// The root folder has no name of its own, so an unguarded label would read
+	// `Move into “”`. It says the vault's name, which is what the segment shows.
+	expect("and names the vault rather than nothing", over.label, (v) =>
+		typeof v === "string" && v.includes(app.vaultName));
+
+	const after = JSON.parse(await page.evaluate(dropOn("@vault", `${ROOT}/inner/aside.md`)));
+	expect("the note lands in the vault root", after.root, (v) => v.includes("aside.md"));
+	// Straight back out again: this vault is the one the README screenshots
+	// come from, and a stray note in its root shows up in every one of them.
+	await page.evaluate(`
+		const at = app.vault.getAbstractFileByPath("aside.md");
+		if (at) await app.fileManager.trashFile(at);
+		${PAUSE(300)}
+		return true;
+	`);
 });
 
 test("a segment reused for another path takes the drop to where it now points", async () => {

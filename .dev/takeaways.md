@@ -1476,6 +1476,30 @@ The move goes through `fileManager.renameFile`, never `vault.rename`: the
 former updates every link that pointed at the file, which is the whole
 difference between moving a note and breaking it.
 
+Two things the first version got wrong, both found by asking what the host
+actually does rather than what it plausibly does. It captured the folder in the
+handler's closure — but Obsidian *re-wires* these segments rather than
+rebuilding them, so the same node stands for `inner` on one file and `branch`
+on the next, and a captured path would have sent drops to a folder you had
+navigated away from. The path lives on the element now and is read at the
+moment of the drop. And `dragManager` builds three payload shapes, not one:
+`file` and `folder` carry a single item, while a multiple selection carries
+them under `files` — so supporting only the first two made a multi-select drag
+a silent dead end at a target that takes the same gesture one file at a time.
+
+A multiple selection moves whole or not at all. A partial move that quietly
+skips the two it could not take is worse than a refusal you can see, and the
+hover has to promise what the drop delivers or it is simply a lie.
+
+Testing it taught the same lesson a third time. The tests began by writing a
+payload onto `dragManager.draggable` directly, which is enough to drive the
+handler and not enough to be true: the manager builds its floating action
+label lazily, on the first real `onDragStart`, so `actionEl` stayed null and
+the assertion about the label read as the feature failing to set one. Going
+through `dragFile` / `dragFolder` / `dragFiles` and `onDragStart` — the calls a
+drag source actually makes — fixed the test and made it exercise all three
+payload shapes rather than the one shape the test author had in mind.
+
 ## "It stopped working after a long session" was the wrong variable
 
 `workspace:edit-file-title` had been observed to start reporting success and
@@ -1512,3 +1536,18 @@ Worth generalising twice over. A remedy that works most of the time will
 protect a wrong diagnosis indefinitely, because every success confirms it and
 the failures look like noise. And a test that depends on an ambient condition
 it never checks does not fail — it lies.
+
+## Do not edit what a running suite is measuring
+
+Twice in one afternoon a suite reported a failure that was nothing but the
+files changing underneath it: once when `main.js` was rebuilt mid-run, and once
+when a rule was added to `styles.css` while a geometry case was measuring the
+row. The runner reloads the plugin before every case, which is exactly what
+makes this possible — the first half of the run tests one build and the second
+half another, and the report describes neither.
+
+The rule this leaves behind is narrow and worth keeping: while a suite is
+running, nothing it loads may be touched. Documentation, notes and scratch
+files are fine. `main.js`, `styles.css` and the suite's own source are not.
+A failure produced that way costs more than the wait, because it looks like a
+regression and gets investigated as one.
