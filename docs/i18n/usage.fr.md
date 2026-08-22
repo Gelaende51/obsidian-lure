@@ -10,6 +10,8 @@
 
 [← retour au README](README.fr.md)
 
+> **Ce guide décrit Lure 1.0.** Huit sections ajoutées depuis — dont la complétion par <kbd>Tab</kbd>, le compte des clics droits, le glissement d'une note sur un dossier de la barre et ce qui se passe quand le chemin dépasse la largeur du volet — ne figurent pour l'instant que dans le [guide anglais](../usage.md).
+
 ## Le fil d'Ariane
 
 Le chemin complet de la note dans le coffre remplace le simple nom de fichier dans l'en-tête de la vue — la barre située sous la rangée d'onglets, qui porte aussi les boutons précédent/suivant.

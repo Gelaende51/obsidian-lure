@@ -10,6 +10,8 @@
 
 [← powrót do README](README.pl.md)
 
+> **Ten przewodnik opisuje Lure 1.0.** Osiem dodanych od tego czasu sekcji — w tym uzupełnianie klawiszem <kbd>Tab</kbd>, liczenie kliknięć prawym przyciskiem, przeciąganie notatki na folder na pasku oraz to, co się dzieje, gdy ścieżka jest dłuższa niż panel — są na razie tylko w [przewodniku angielskim](../usage.md).
+
 ## Ścieżka
 
 Pełna ścieżka notatki w skarbcu zastępuje samą nazwę pliku w nagłówku widoku — pasku pod rzędem kart, tym samym, na którym są przyciski wstecz i dalej.

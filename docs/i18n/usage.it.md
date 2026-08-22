@@ -10,6 +10,8 @@
 
 [← torna al README](README.it.md)
 
+> **Questa guida descrive Lure 1.0.** Otto sezioni aggiunte da allora — tra cui il completamento con <kbd>Tab</kbd>, il conteggio dei clic destri, il trascinamento di una nota su una cartella della barra e cosa accade quando il percorso è più lungo del riquadro — per ora si trovano solo nella [guida in inglese](../usage.md).
+
 ## Il percorso
 
 Il percorso completo della nota dentro il vault sostituisce il nome del file da solo nell'intestazione della vista — la barra sotto la fila delle schede, quella che porta anche i pulsanti avanti e indietro.

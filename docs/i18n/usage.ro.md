@@ -10,6 +10,8 @@
 
 [← înapoi la README](README.ro.md)
 
+> **Acest ghid descrie Lure 1.0.** Opt secțiuni adăugate între timp — printre ele completarea cu <kbd>Tab</kbd>, numărarea clicurilor dreapta, tragerea unei notițe pe un dosar din rând și ce se întâmplă când calea e mai lungă decât panoul — se găsesc deocamdată doar în [ghidul în engleză](../usage.md).
+
 ## Bara de cale
 
 Calea completă a notiței în seif înlocuiește numele gol al fișierului din bara de titlu a vizualizării — bara de sub rândul filelor, care găzduiește și butoanele înainte/înapoi.

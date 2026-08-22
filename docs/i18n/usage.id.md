@@ -10,6 +10,8 @@
 
 [← kembali ke README](README.id.md)
 
+> **Panduan ini menjelaskan Lure 1.0.** Delapan bagian yang ditambahkan sejak itu — di antaranya pelengkapan dengan <kbd>Tab</kbd>, penghitungan klik kanan, menyeret catatan ke folder di baris, dan apa yang terjadi ketika jalur lebih panjang daripada panel — untuk sementara hanya ada di [panduan bahasa Inggris](../usage.md).
+
 ## Jalur di bilah judul
 
 Jalur lengkap catatan di dalam vault menggantikan nama berkas polos di bilah judul tampilan — baris di bawah deretan tab, yang juga memuat tombol maju/mundur.

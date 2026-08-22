@@ -10,6 +10,8 @@
 
 [← späť na README](README.sk.md)
 
+> **Tento sprievodca opisuje Lure 1.0.** Osem odvtedy pridaných častí — okrem iného dopĺňanie klávesom <kbd>Tab</kbd>, počítanie kliknutí pravým tlačidlom, potiahnutie poznámky na priečinok v riadku a čo sa stane, keď je cesta dlhšia než panel — je zatiaľ len v [anglickom sprievodcovi](../usage.md).
+
 ## Panel cesty
 
 Úplná cesta poznámky v trezore nahrádza holý názov súboru v hlavičke zobrazenia — v lište pod radom kariet, na ktorej sú aj tlačidlá dozadu a dopredu.

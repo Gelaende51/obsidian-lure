@@ -10,6 +10,8 @@
 
 [← atpakaļ uz README](README.lv.md)
 
+> **Šī rokasgrāmata apraksta Lure 1.0.** Astoņas kopš tā laika pievienotās sadaļas — to vidū papildināšana ar <kbd>Tab</kbd>, labo klikšķu skaitīšana, piezīmes vilkšana uz mapi rindā un tas, kas notiek, kad ceļš ir garāks par rūti — pagaidām ir tikai [angļu rokasgrāmatā](../usage.md).
+
 ## Ceļa josla
 
 Piezīmes pilnais ceļš glabātavā aizstāj kailo faila nosaukumu skata galvenē — joslā zem ciļņu rindas, kurā ir arī atpakaļ/uz priekšu pogas.

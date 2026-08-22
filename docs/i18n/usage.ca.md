@@ -11,6 +11,8 @@
 
 [← torna al README](README.ca.md)
 
+> **Aquesta guia descriu el Lure 1.0.** Vuit seccions afegides des d'aleshores — entre elles la compleció amb <kbd>Tab</kbd>, el recompte de clics drets, arrossegar una nota sobre una carpeta de la barra i què passa quan el camí és més llarg que el plafó — de moment només són a la [guia en anglès](../usage.md).
+
 ## La barra de camí
 
 El camí complet de la nota dins el cofre substitueix el nom de fitxer pelat a la capçalera de la vista — la barra sota la fila de pestanyes que també allotja els botons d'endavant i enrere.

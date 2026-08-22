@@ -10,6 +10,8 @@
 
 [← volver al README](README.es.md)
 
+> **Esta guía describe Lure 1.0.** Ocho secciones añadidas desde entonces — entre ellas el autocompletado con <kbd>Tab</kbd>, el recuento de clics derechos, arrastrar una nota sobre una carpeta de la barra y qué ocurre cuando la ruta es más larga que el panel — solo están por ahora en la [guía en inglés](../usage.md).
+
 ## La ruta
 
 La ruta completa de la nota dentro de la bóveda sustituye al nombre de archivo a secas en el encabezado de la vista — la barra bajo la fila de pestañas, la que también lleva los botones de atrás y adelante.

@@ -11,6 +11,8 @@
 
 [← terug naar de README](README.nl.md)
 
+> **Deze handleiding beschrijft Lure 1.0.** Acht sindsdien toegevoegde onderdelen — waaronder aanvullen met <kbd>Tab</kbd>, het tellen van rechtsklikken, een notitie op een map in de rij slepen en wat er gebeurt als het pad langer is dan het deelvenster — staan voorlopig alleen in de [Engelse handleiding](../usage.md).
+
 ## Het pad
 
 Het volledige pad van de notitie binnen de kluis vervangt de kale bestandsnaam in de kopbalk van de weergave — de balk onder de tabbladenrij, die ook de knoppen voor terug en vooruit draagt.

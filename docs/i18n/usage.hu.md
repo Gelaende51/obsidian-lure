@@ -10,6 +10,8 @@
 
 [← vissza a READMÉ-hez](README.hu.md)
 
+> **Ez az útmutató a Lure 1.0-t írja le.** Az azóta hozzáadott nyolc szakasz — köztük a <kbd>Tab</kbd> kiegészítés, a jobb kattintások számolása, egy jegyzet ráhúzása a sor egyik mappájára, és hogy mi történik, ha az útvonal hosszabb a panelnél — egyelőre csak az [angol útmutatóban](../usage.md) szerepel.
+
 ## Az útvonalsáv
 
 A jegyzet teljes széfen belüli útvonala váltja fel a puszta fájlnevet a nézet fejlécében — abban a sávban, amely a lapok sora alatt van, és amelyen az előre/vissza gombok is helyet kapnak.

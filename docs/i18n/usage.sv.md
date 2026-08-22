@@ -10,6 +10,8 @@
 
 [← tillbaka till README](README.sv.md)
 
+> **Den här guiden beskriver Lure 1.0.** Åtta avsnitt som tillkommit sedan dess — bland annat komplettering med <kbd>Tabb</kbd>, räkningen av högerklick, att dra en anteckning till en mapp i raden och vad som händer när sökvägen är längre än rutan — finns tills vidare bara i den [engelska guiden](../usage.md).
+
 ## Sökvägen
 
 Anteckningens fullständiga sökväg i valvet ersätter det nakna filnamnet i vyns rubrikrad — raden under flikraden som också rymmer bakåt-/framåtknapparna.

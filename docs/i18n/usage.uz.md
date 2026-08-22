@@ -10,6 +10,8 @@
 
 [← README ga qaytish](README.uz.md)
 
+> **Bu qo'llanma Lure 1.0 ni tasvirlaydi.** O'shandan beri qo'shilgan sakkiz bo'lim — jumladan <kbd>Tab</kbd> bilan to'ldirish, o'ng bosishlarni sanash, qaydni qatordagi papka ustiga tortish va yo'l panel'dan uzun bo'lganda nima bo'lishi — hozircha faqat [inglizcha qo'llanmada](../usage.md).
+
 ## Sarlavhadagi yo‘l
 
 Eslatmaning ombor ichidagi to‘liq yo‘li ko‘rinish sarlavhasidagi yalang‘och fayl nomini almashtiradi — bu tab qatoridan pastdagi, orqaga/oldinga tugmalarini ham saqlaydigan qator.

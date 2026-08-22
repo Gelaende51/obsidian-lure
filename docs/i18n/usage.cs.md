@@ -10,6 +10,8 @@
 
 [← zpět na README](README.cs.md)
 
+> **Tento průvodce popisuje Lure 1.0.** Osm od té doby přidaných oddílů — mimo jiné doplňování klávesou <kbd>Tab</kbd>, počítání kliknutí pravým tlačítkem, přetažení poznámky na složku v řádku a co se stane, když je cesta delší než panel — je zatím jen v [anglickém průvodci](../usage.md).
+
 ## Řádek cesty
 
 Úplná cesta poznámky uvnitř trezoru nahrazuje holý název souboru v záhlaví pohledu — v pruhu pod řadou karet, tom samém, kde jsou tlačítka zpět a vpřed.

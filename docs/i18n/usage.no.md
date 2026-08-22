@@ -10,6 +10,8 @@
 
 [← tilbake til README](README.no.md)
 
+> **Denne veiledningen beskriver Lure 1.0.** Åtte avsnitt som er kommet til siden — blant annet fullføring med <kbd>Tab</kbd>, opptellingen av høyreklikk, å dra et notat til en mappe i raden og hva som skjer når stien er lengre enn ruten — finnes foreløpig bare i den [engelske veiledningen](../usage.md).
+
 ## Stien
 
 Notatets fulle sti i hvelvet erstatter det nakne filnavnet i visningens overskriftslinje — linjen under faneraden som også rommer fram- og tilbakeknappene.

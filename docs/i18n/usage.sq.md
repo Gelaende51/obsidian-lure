@@ -10,6 +10,8 @@
 
 [← kthehu te README](README.sq.md)
 
+> **Ky udhëzues përshkruan Lure 1.0.** Tetë seksione të shtuara që atëherë — mes tyre plotësimi me <kbd>Tab</kbd>, numërimi i klikimeve të djathta, zvarritja e një shënimi mbi një dosje të rreshtit dhe çfarë ndodh kur shtegu është më i gjatë se paneli — janë për momentin vetëm në [udhëzuesin anglisht](../usage.md).
+
 ## Shtegu në kokë
 
 Shtegu i plotë i shënimit brenda kasafortës zëvendëson emrin e thjeshtë të skedarit në shiritin e kokës — rreshti nën radhën e skedave, ai që mban edhe butonat mbrapa/përpara.

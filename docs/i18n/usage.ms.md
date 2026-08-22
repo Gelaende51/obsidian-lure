@@ -10,6 +10,8 @@
 
 [← kembali ke README](README.ms.md)
 
+> **Panduan ini menerangkan Lure 1.0.** Lapan bahagian yang ditambah sejak itu — antaranya pelengkapan dengan <kbd>Tab</kbd>, pengiraan klik kanan, menyeret nota ke folder pada baris, dan apa yang berlaku apabila laluan lebih panjang daripada anak tetingkap — buat masa ini hanya ada dalam [panduan bahasa Inggeris](../usage.md).
+
 ## Laluan pada bar tajuk
 
 Laluan penuh nota di dalam bilik kebal menggantikan nama fail kosong pada bar tajuk paparan — baris di bawah deretan tab, yang turut memuatkan butang undur/maju.

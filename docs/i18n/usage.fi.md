@@ -11,6 +11,8 @@
 
 [← takaisin README-tiedostoon](README.fi.md)
 
+> **Tämä opas kuvaa Luren version 1.0.** Kahdeksan sen jälkeen lisättyä osiota — muun muassa täydennys <kbd>Sarkaimella</kbd>, oikean napsautuksen laskenta, muistiinpanon vetäminen rivin kansion päälle ja se, mitä tapahtuu kun polku on ruutua pidempi — ovat toistaiseksi vain [englanninkielisessä oppaassa](../usage.md).
+
 ## Polku
 
 Muistiinpanon täysi polku holvissa korvaa paljaan tiedostonimen näkymän otsikkorivillä — rivillä, joka on välilehtirivin alapuolella ja jolla ovat myös edellinen/seuraava-painikkeet.

@@ -11,6 +11,8 @@
 
 [← ar ais go dtí an README](README.ga.md)
 
+> **Cuireann an treoir seo síos ar Lure 1.0.** Ocht rannán a cuireadh leis ó shin — ina measc comhlánú le <kbd>Tab</kbd>, comhaireamh na ndeaschliceanna, nóta a tharraingt ar fhillteán sa ró, agus a tharlaíonn nuair a bhíonn an chonair níos faide ná an phána — níl siad ach sa [treoir Bhéarla](../usage.md) go fóill.
+
 ## An chonair sa cheanntásc
 
 Cuireann conair iomlán an nóta laistigh den taisceadán ainm lom an chomhaid in ionad sa bharra ceanntáisc — an líne faoin ród cluaisíní, an ceann a iompraíonn na cnaipí ar ais/ar aghaidh freisin.

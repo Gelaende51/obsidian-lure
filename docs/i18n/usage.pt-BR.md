@@ -10,6 +10,8 @@
 
 [← voltar ao README](README.pt-BR.md)
 
+> **Este guia descreve o Lure 1.0.** Oito seções acrescentadas desde então — entre elas o completamento com <kbd>Tab</kbd>, a contagem de cliques com o botão direito, arrastar uma nota para uma pasta da barra e o que acontece quando o caminho é mais longo que o painel — só existem por enquanto no [guia em inglês](../usage.md).
+
 ## O caminho
 
 O caminho completo da nota dentro do cofre substitui o nome do arquivo sozinho no cabeçalho da visualização — a barra abaixo da fileira de abas, aquela que também tem os botões de voltar e avançar.

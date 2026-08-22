@@ -10,6 +10,8 @@
 
 [← README'ye dön](README.tr.md)
 
+> **Bu kılavuz Lure 1.0'ı anlatır.** O günden beri eklenen sekiz bölüm — aralarında <kbd>Tab</kbd> ile tamamlama, sağ tık sayımı, bir notu satırdaki bir klasörün üzerine sürükleme ve yol bölmeden uzun olduğunda ne olduğu — şimdilik yalnızca [İngilizce kılavuzda](../usage.md) yer alıyor.
+
 ## Yol çubuğu
 
 Notun kasa içindeki tam yolu, görünüm başlık çubuğundaki çıplak dosya adının yerini alır — sekme sırasının altındaki, ileri/geri düğmelerini de barındıran çubuk.

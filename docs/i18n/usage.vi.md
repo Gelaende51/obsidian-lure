@@ -10,6 +10,8 @@
 
 [← quay lại README](README.vi.md)
 
+> **Hướng dẫn này mô tả Lure 1.0.** Tám mục thêm vào từ đó — trong đó có hoàn thành bằng <kbd>Tab</kbd>, cách đếm các lần bấm chuột phải, kéo một ghi chú lên thư mục trên thanh, và điều xảy ra khi đường dẫn dài hơn khung — hiện chỉ có trong [hướng dẫn tiếng Anh](../usage.md).
+
 ## Đường dẫn trên thanh tiêu đề
 
 Đường dẫn đầy đủ của ghi chú trong kho thay thế cho tên tệp trơ trọi trên thanh tiêu đề khung xem — dòng ngay dưới hàng thẻ, dòng cũng chứa các nút lùi/tiến.

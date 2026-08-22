@@ -10,6 +10,8 @@
 
 [← zurück zum README](README.de.md)
 
+> **Diese Anleitung beschreibt Lure 1.0.** Acht seither hinzugekommene Abschnitte — darunter die <kbd>Tab</kbd>-Vervollständigung, die Rechtsklick-Zählung, das Ziehen einer Notiz auf einen Ordner der Leiste und was geschieht, wenn der Pfad länger ist als das Fenster — stehen bislang nur in der [englischen Anleitung](../usage.md).
+
 ## Die Pfadleiste
 
 Der vollständige Vault-Pfad der Notiz ersetzt den bloßen Dateinamen in der Kopfzeile der Ansicht — der Leiste unterhalb der Tab-Zeile, in der auch die Vor-/Zurück-Schaltflächen sitzen.
