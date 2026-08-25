@@ -1673,3 +1673,93 @@ codes, spelling and all — `kh` for Khmer where BCP 47 says `km`, `no` for
 Norwegian. Verified set-equal against the language list in 1.13.7. Matching the
 host's spelling exactly is what makes the lookup a plain index instead of a
 mapping table nobody maintains.
+
+## The check meant to catch unreachable locales was asserting they were fine
+
+`check-translations.mjs` errored on any locale code "Obsidian doesn't ship",
+against a hand-written set whose comment said it came from
+obsidianmd/obsidian-translations. That repository is not the app. It carries
+languages the app has no code for, and two of them — `el` and `sa` — were
+therefore recorded here as supported, shipped as strings, and unreachable:
+`localStorage.getItem("language")` can only ever return something from the
+app's own menu, so those translations could never be read by anybody.
+
+The failure is worth naming because of its shape rather than its size. The
+guard was pointed at a plausible source instead of the authoritative one, and a
+guard reading the wrong list does not go quiet — it actively certifies the
+thing it exists to prevent. Nothing else in the build could contradict it,
+because it *was* the check.
+
+The list now comes from the app's own language menu, snapshotted in
+`scripts/obsidian-languages.json` with the Obsidian version it was read from
+and the command to re-read it:
+
+    npx @electron/asar extract /usr/lib/obsidian/obsidian.asar /tmp/ob
+    grep -ao '{[^{}]*"en-GB"[^{}]*}' /tmp/ob/app.js | head -1
+
+Two rules came out of it. A snapshot of someone else's data records *where and
+when* it was taken, or the next person cannot tell a stale copy from a wrong
+one. And drift is reported in both directions — a language Obsidian gained
+that this plugin has no strings for, and a code declared ahead of the host that
+the host has caught up on — because only the first is a gap and only the second
+is now a lie in the config.
+
+Checks like this are worth testing by simulation. Adding Icelandic to the
+snapshot and marking Greek shipped produced exactly the two expected warnings,
+and deleting one entry from LOCALE_NAMES failed the build. A drift check that
+has never seen drift is an untested branch that runs once, years later, on the
+day it matters.
+
+## The setting that must not be translated
+
+Lure's Language setting is the one string in the plugin deliberately left in
+English — its name, its description, and the "Obsidian default" option — and it
+sits first in the list.
+
+The argument is that a language control is the exit from a language you cannot
+read. A row labelled "Sprache" helps nobody who opened the page *because* the
+plugin is speaking German at them, and burying it sixth means reading five
+unfamiliar rows to reach it. Obsidian's own language setting is English for the
+same reason; this is not an exception to the localisation policy but the shape
+of it.
+
+It also turned out to be the only way to use a third of the translation work.
+Greek and Sanskrit are translated here and cannot be selected from Obsidian at
+all, so before this dropdown existed those strings were unreachable by exactly
+the readers they were written for.
+
+## A suite that writes settings without saving them leaves them for someone else to save
+
+The gesture suites set `settings.showFileExtension` directly and never persist
+it — correct on its own, since the value is meant to last one case. But nothing
+puts it back on the way out either, so the *in-memory* settings object stays
+dirty after a run.
+
+That is harmless until anything else calls `saveSettings()`, which writes the
+whole object. Changing an unrelated setting through the settings tab after a
+suite run persisted the suite's leftover `showFileExtension: true` into the test
+vault's `data.json` — a hand-run of the tests silently rewriting a real setting,
+with the write happening in a completely unrelated action minutes later.
+
+The general shape: mutating shared state without saving is only half a
+decision. The other half is who owns putting it back, and "nobody, it isn't
+persisted" stops being true the moment something else persists the object it
+lives in.
+
+## Obsidian 1.13.7 opens Settings as its own CDP target, with no `app` in it
+
+`app.setting.open()` creates a second page target. `.dev/cdp.mjs` takes the
+first page target it finds, so from the moment Settings is open every `eval`
+can land in a window where `app` is undefined — which reads exactly like the
+plugin having failed to load, and sends you looking at the plugin.
+
+`OBSIDIAN_VAULT` does not disambiguate them: both windows carry the vault name
+in the title, as `"Settings - use_this_testvault - Obsidian 1.13.7"` and
+`"note I - use_this_testvault - Obsidian 1.13.7"`.
+
+Two useful halves. `typeof app` is the cheap probe that tells a wrong-target
+error apart from a broken plugin — it costs one round trip and rules out the
+expensive hypothesis first. And the settings *DOM* is genuinely there in that
+target, so driving the controls works fine; it is only the app object that is
+missing. Which is the right split anyway: assert on what the user can see, not
+on the object behind it.
