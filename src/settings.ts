@@ -1,6 +1,20 @@
+import { FOLLOW_OBSIDIAN } from "./lang/locales";
+
 export type BreadcrumbAlignment = "left" | "center" | "right";
 
 export interface BreadcrumbPathSettings {
+	/**
+	 * Language for this plugin's own text, or "" to follow Obsidian's.
+	 *
+	 * Following the app is the default and the right answer for almost
+	 * everyone. The override exists for the case the app's own setting cannot
+	 * serve: a vault whose interface language is not the one its owner reads
+	 * most comfortably, and — more practically — a language Obsidian does not
+	 * offer at all, which is how Greek and Sanskrit are reachable here.
+	 *
+	 * A code from LOCALE_NAMES, which is Obsidian's own spelling of it.
+	 */
+	language: string;
 	alignment: BreadcrumbAlignment;
 	delimiter: string;
 	showVaultName: boolean;
@@ -37,6 +51,7 @@ export interface BreadcrumbPathSettings {
 }
 
 export const DEFAULT_SETTINGS: BreadcrumbPathSettings = {
+	language: FOLLOW_OBSIDIAN,
 	alignment: "left",
 	delimiter: "/",
 	showVaultName: true,

@@ -8,7 +8,8 @@ import {
 } from "obsidian";
 import type BreadcrumbPathPlugin from "./main";
 import type { BreadcrumbPathSettings } from "./settings";
-import { t } from "./lang";
+import { setLanguageOverride, t } from "./lang";
+import { FOLLOW_OBSIDIAN, LOCALE_NAMES } from "./lang/locales";
 
 const DELIMITER_PRESETS = ["/", ">", "▸", "›", "\\", "•"];
 
@@ -55,6 +56,30 @@ export class BreadcrumbSettingTab extends PluginSettingTab {
 	 */
 	getSettingDefinitions(): Definition[] {
 		return [
+			{
+				// Deliberately the one setting here that is never translated.
+				// It is the way out of a language you cannot read, so it has
+				// to stay legible *in* that language — a "Sprache" row is no
+				// help to someone who opened this because the plugin is
+				// speaking German at them. Obsidian's own language setting is
+				// English for the same reason.
+				//
+				// First in the list for the same argument: someone looking for
+				// it is looking for it, and should not have to read six
+				// unfamiliar rows to find it.
+				name: "Language",
+				desc:
+					"Language for this plugin's own text. " +
+					"Obsidian default follows the language set in Appearance settings.",
+				control: {
+					type: "dropdown",
+					key: "language",
+					options: {
+						[FOLLOW_OBSIDIAN]: "Obsidian default",
+						...LOCALE_NAMES,
+					},
+				},
+			},
 			{
 				name: t("settingAlignmentName"),
 				desc: t("settingAlignmentDesc"),
@@ -136,6 +161,15 @@ export class BreadcrumbSettingTab extends PluginSettingTab {
 	 */
 	async setControlValue(key: string, value: unknown): Promise<void> {
 		(this.plugin.settings as unknown as Record<string, unknown>)[key] = value;
+		// The language is the one setting that changes what every *other* row
+		// on this page says, so it repaints the page as well as the rows the
+		// plugin draws. Pushed into the string table first: `saveSettings`
+		// refreshes the headers, and they would otherwise redraw themselves in
+		// the language that was just replaced.
+		if (key === "language") {
+			setLanguageOverride(typeof value === "string" ? value : FOLLOW_OBSIDIAN);
+			this.redraw();
+		}
 		await this.plugin.saveSettings();
 	}
 

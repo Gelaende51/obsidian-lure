@@ -28,8 +28,33 @@ const LANGUAGE_STORAGE_KEY = "language";
 let resolved: PartialStrings | null = null;
 
 /**
- * Resolves the active locale once per session. Obsidian requires a
- * restart to change language, so there's nothing to invalidate.
+ * The language the plugin's own setting asks for, or "" to follow Obsidian.
+ *
+ * Held here rather than read from the settings object because `t()` is called
+ * from module scope in places and has no plugin to ask. `main` pushes the
+ * value in on load and the settings tab pushes it again on every change.
+ */
+let override = "";
+
+/**
+ * Points the strings at a language, or back at Obsidian's own.
+ *
+ * Clears the cache as well as setting the code: the resolution below is
+ * memoised for the session, so a setting that changed the code without
+ * dropping the memo would take effect on the next reload and not on the row
+ * in front of you.
+ */
+export function setLanguageOverride(code: string): void {
+	override = code;
+	resolved = null;
+}
+
+/**
+ * Resolves the active locale, memoised until the setting changes it.
+ *
+ * The plugin's own setting wins where it is set; otherwise this follows
+ * Obsidian, which requires a restart to change language, so there is nothing
+ * else to invalidate.
  *
  * Falls back from a regional locale to its base language ("pt-BR" →
  * "pt") before giving up on English, so a regional variant we don't
@@ -46,12 +71,14 @@ let resolved: PartialStrings | null = null;
 function activeStrings(): PartialStrings {
 	if (resolved) return resolved;
 
-	let language = "";
-	try {
-		language = window.localStorage.getItem(LANGUAGE_STORAGE_KEY) ?? "";
-	} catch {
-		// Storage can be unavailable in restricted contexts; English is fine.
-		language = "";
+	let language = override;
+	if (!language) {
+		try {
+			language = window.localStorage.getItem(LANGUAGE_STORAGE_KEY) ?? "";
+		} catch {
+			// Storage can be unavailable in restricted contexts; English is fine.
+			language = "";
+		}
 	}
 
 	const base = language.split("-")[0];

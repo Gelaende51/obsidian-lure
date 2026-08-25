@@ -14,7 +14,7 @@ import { BreadcrumbManager } from "./breadcrumbManager";
 import { EXTERNAL_VIEW_TYPE, ExternalFileView } from "./externalFileView";
 import { BreadcrumbSettingTab } from "./settingsTab";
 import { BreadcrumbPathSettings, DEFAULT_SETTINGS } from "./settings";
-import { t } from "./lang";
+import { setLanguageOverride, t } from "./lang";
 
 /** Obsidian's built-in "Rename file" command, bound to F2 by default. */
 const RENAME_COMMAND_ID = "workspace:edit-file-title";
@@ -82,6 +82,9 @@ export default class BreadcrumbPathPlugin extends Plugin {
 			([key, value]) => key in DEFAULT_SETTINGS && value !== undefined,
 		);
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, Object.fromEntries(known));
+		// Before anything reads a string. `onload` builds the settings tab and
+		// the manager straight after this, and both call `t()`.
+		setLanguageOverride(this.settings.language);
 	}
 
 	/**
