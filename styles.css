@@ -1,3 +1,24 @@
+/* `[data-lure-on]` marks a header row this plugin has taken over. It says
+   exactly what `:has(.lure-filename)` used to say, and every rule below that
+   used to ask that question now reads the attribute instead.
+
+   The reason is cost, not taste. `:has()` on a container makes every mutation
+   inside that container a candidate for re-evaluating the container's own
+   style, and a note header mutates constantly — every fitting pass rewrites
+   the names in it. The attribute is set once, beside `data-lure-align` and
+   `data-lure-swap`, from the same place and torn down with them.
+
+   Specificity is deliberately unchanged: `:has()` takes the weight of its
+   most specific argument, so `.view-header-title-container:has(.lure-filename)`
+   and `.view-header-title-container[data-lure-on]` are both (0,2,0) and the
+   cascade between these rules is exactly what it was. The one thing an
+   attribute cannot do that `:has()` could is apply itself — so it is set
+   *before* `.lure-filename` is inserted and removed *after* it is taken out,
+   or the row would render one frame unstyled. See `pathBreadcrumb.ts`.
+
+   `.lure-editing-row` and `.lure-name-host` below are the same trade for the
+   two other states the row used to ask about. */
+
 /* Obsidian's native title element: hidden entirely so none of its own
    listeners (contenteditable rename, etc.) can ever be triggered. */
 .view-header-title.lure-native-title-hidden {
@@ -10,9 +31,15 @@
 	display: none !important;
 }
 
-.view-header-title-container:has(.lure-editing) {
-	mask-image: none !important;
-	-webkit-mask-image: none !important;
+/* A theme that fades the end of the header row would fade the end of the
+   path being typed into it, which is the one place the last characters are
+   the ones being looked at. Nothing in Obsidian's own stylesheet masks this
+   container, so there is no core rule to outrank — the extra
+   `.workspace-leaf` carries this past any theme rule written at the
+   container's own weight, which `!important` used to do more bluntly. */
+.workspace-leaf .view-header-title-container.lure-editing-row {
+	mask-image: none;
+	-webkit-mask-image: none;
 }
 
 /* No default focus ring on the row itself — it's script-focusable
@@ -26,11 +53,11 @@
 
 /* Text cursor across the whole row, since clicking any empty space
    also opens edit mode; breadcrumb segments override back to pointer. */
-.view-header-title-container:has(.lure-filename) {
+.view-header-title-container[data-lure-on] {
 	cursor: text;
 }
 
-.view-header-title-container:has(.lure-filename) .view-header-breadcrumb {
+.view-header-title-container[data-lure-on] .view-header-breadcrumb {
 	cursor: pointer;
 }
 
@@ -38,7 +65,7 @@
    (stretch), which floats the separator glyphs to the top of their
    boxes — a few px above the ones we render in .lure-vault-wrapper.
    Centering puts both sets on the same line. */
-.view-header-title-container:has(.lure-filename) {
+.view-header-title-container[data-lure-on] {
 	align-items: center;
 	/* Every gap on the row, in one place. Obsidian's own header sets a
 	   `column-gap` here, and that — not any padding — is what sat between a
@@ -54,7 +81,7 @@
    glyphs share a baseline, and colour/weight are pinned here because
    Obsidian only tints the native ones (--text-faint), which made them
    read as smaller and washed out next to ours. */
-.view-header-title-container:has(.lure-filename) .view-header-breadcrumb-separator {
+.view-header-title-container[data-lure-on] .view-header-breadcrumb-separator {
 	cursor: default;
 	border-radius: var(--radius-s);
 	/* The air around a delimiter is the cheapest thing on the row: losing it
@@ -76,7 +103,7 @@
 	font-weight: var(--font-bold);
 }
 
-.view-header-title-container:has(.lure-filename) .view-header-breadcrumb-separator:hover {
+.view-header-title-container[data-lure-on] .view-header-breadcrumb-separator:hover {
 	background-color: var(--background-modifier-hover);
 }
 
@@ -86,12 +113,12 @@
    with no note is still revealed in the File Explorer. Scoped to
    [data-lure-swap="true"], which rename/move mode clears — the swap is
    suspended there, and so is this. */
-.view-header-title-container[data-lure-swap="true"]:has(.lure-filename)
+.view-header-title-container[data-lure-swap="true"][data-lure-on]
 	.view-header-breadcrumb-separator {
 	cursor: pointer;
 }
 
-.view-header-title-container[data-lure-swap="true"]:has(.lure-filename)
+.view-header-title-container[data-lure-swap="true"][data-lure-on]
 	.view-header-breadcrumb {
 	cursor: pointer;
 }
@@ -107,7 +134,7 @@
    The class only ever lands on Obsidian's native segments, so browse
    chips and the vault root stay plain — which is correct: neither can
    reach a folder note (see docs/compatibility.md). */
-.view-header-title-container[data-lure-swap="true"]:has(.lure-filename)
+.view-header-title-container[data-lure-swap="true"][data-lure-on]
 	.view-header-breadcrumb.has-folder-note
 	+ .view-header-breadcrumb-separator {
 	text-decoration-line: underline;
@@ -119,17 +146,37 @@
    is the point of the swap: underlining both would say the name opens
    the note, which is exactly what it no longer does. Longhand and above
    the Folder notes rule's specificity, so it wins cleanly. */
-.view-header-title-container[data-lure-swap="true"]:has(.lure-filename)
+.view-header-title-container[data-lure-swap="true"][data-lure-on]
 	.view-header-breadcrumb.has-folder-note {
 	text-decoration-line: none;
 }
 
+/* Alignment is set as Obsidian's own variable rather than as the property.
+   `--file-header-justify` has exactly one consumer in app.css —
+   `.view-header-title-container { justify-content: var(--file-header-justify) }`
+   — so writing the variable says the same thing as writing the property, and
+   says it the way the host asks for it. That is what removed four
+   `!important`s: they were never settling a fight between the four rules
+   below (those are all the same weight and decided by source order, as they
+   were before), only outranking the host's own declaration.
+
+   The rule that consumes it is re-asserted here a step more specific than the
+   container's own weight, so a theme writing `justify-content` on the
+   container directly — instead of through the variable Obsidian provides —
+   still does not take the alignment setting away from the user. */
+.workspace-leaf .view-header-title-container[data-lure-on] {
+	justify-content: var(--file-header-justify);
+}
+
+/* Left is deliberately absent: the name's box takes `flex: 1 1 auto` there
+   and fills the row, so there is no free space for justification to place
+   and the host's default is already right. */
 .view-header-title-container[data-lure-align="center"] {
-	justify-content: center !important;
+	--file-header-justify: center;
 }
 
 .view-header-title-container[data-lure-align="right"] {
-	justify-content: flex-end !important;
+	--file-header-justify: flex-end;
 }
 
 .lure-vault-wrapper {
@@ -169,7 +216,7 @@
    the locations dropdown, so it keeps the pointer even when the swap
    setting takes it away from the folder names beside it. Qualified up to
    (0,4,0) to outrank those swap-state cursor rules. */
-.view-header-title-container:has(.lure-filename) .view-header-breadcrumb.lure-vault-segment {
+.view-header-title-container[data-lure-on] .view-header-breadcrumb.lure-vault-segment {
 	cursor: pointer;
 }
 
@@ -613,7 +660,7 @@
    order decides) and after .lure-rename-active, whose `padding` shorthand
    this longhand has to override on the inline-start side. */
 .view-header-title-container.lure-pin-start {
-	justify-content: flex-start !important;
+	--file-header-justify: flex-start;
 	padding-inline-start: var(--lure-pin-offset, 0px);
 }
 
@@ -679,18 +726,18 @@
    breaking it across two makes it read as two — and a wrapped name has no
    clipped edge for the browser to put an ellipsis at.
 
-   `:has(.lure-filename)` keeps this to rows this plugin has taken over — an
+   `[data-lure-on]` keeps this to rows this plugin has taken over — an
    unpatched header is Obsidian's business. */
-.view-header-title-container:has(.lure-filename) .view-header-breadcrumb,
-.view-header-title-container:has(.lure-filename) .lure-filename-text,
-.view-header-title-container:has(.lure-filename) .lure-filename {
+.view-header-title-container[data-lure-on] .view-header-breadcrumb,
+.view-header-title-container[data-lure-on] .lure-filename-text,
+.view-header-title-container[data-lure-on] .lure-filename {
 	white-space: nowrap;
 }
 
 /* The box around the file's name keeps its stretch — it is what makes the
    empty space beside the name clickable — and now takes a share of the
    shrinking too, last of the three. */
-.view-header-title-container[data-lure-align="left"]:has(.lure-filename) .lure-filename {
+.view-header-title-container[data-lure-align="left"][data-lure-on] .lure-filename {
 	flex: 1 1 auto;
 }
 
@@ -722,7 +769,7 @@
 	   path in a narrow pane that put the vault name and the first folders
 	   two hundred pixels off the left edge with no way to get to them. The
 	   setting is honoured again the moment the row fits. */
-	justify-content: flex-start !important;
+	--file-header-justify: flex-start;
 }
 
 .view-header-title-container.lure-row-scrolls::-webkit-scrollbar {
@@ -868,11 +915,11 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
    however small its names were willing to go. `display: contents` dissolves
    the box and makes every name a flex item of the row itself, which is the
    only level where the sharing out can see them all. */
-.view-header-title-container:has(.lure-filename) > .view-header-title-parent {
+.view-header-title-container[data-lure-on] > .view-header-title-parent {
 	display: contents;
 }
 
-.view-header-title-container:has(.lure-filename) > .lure-vault-wrapper {
+.view-header-title-container[data-lure-on] > .lure-vault-wrapper {
 	flex-shrink: 1000000;
 	/* Its own flex container, so the row's gap does not reach inside it. The
 	   air between the opening segment and the delimiter after it is spent
@@ -880,13 +927,13 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 	column-gap: var(--lure-gap, 4px);
 }
 
-.view-header-title-container:has(.lure-filename) > .lure-filename {
+.view-header-title-container[data-lure-on] > .lure-filename {
 	flex-shrink: 1;
 }
 
-.view-header-title-container:has(.lure-filename) .view-header-breadcrumb,
-.view-header-title-container:has(.lure-filename) .lure-root-name,
-.view-header-title-container:has(.lure-filename) .lure-filename-text {
+.view-header-title-container[data-lure-on] .view-header-breadcrumb,
+.view-header-title-container[data-lure-on] .lure-root-name,
+.view-header-title-container[data-lure-on] .lure-filename-text {
 	display: flex;
 	align-items: center;
 	flex: 0 1000 auto;
@@ -902,13 +949,13 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
    and the drop target something to be. That is a box-shadow now: it paints
    the same few pixels around the name without occupying them, so the
    highlight looks the way it did and costs the row nothing. */
-.view-header-title-container:has(.lure-filename) .view-header-breadcrumb,
-.view-header-title-container:has(.lure-filename) .lure-filename-text {
+.view-header-title-container[data-lure-on] .view-header-breadcrumb,
+.view-header-title-container[data-lure-on] .lure-filename-text {
 	padding-inline: 0;
 }
 
-.view-header-title-container:has(.lure-filename) .view-header-breadcrumb:hover,
-.view-header-title-container:has(.lure-filename) .lure-filename-text:hover {
+.view-header-title-container[data-lure-on] .view-header-breadcrumb:hover,
+.view-header-title-container[data-lure-on] .lure-filename-text:hover {
 	box-shadow: 0 0 0 3px var(--background-modifier-hover);
 }
 
@@ -971,11 +1018,11 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 	inherits: false;
 }
 
-.view-header-title-container:has(.lure-filename) .view-header-breadcrumb,
-.view-header-title-container:has(.lure-filename) .lure-root-name,
-.view-header-title-container:has(.lure-filename) .lure-filename-text,
-.view-header-title-container:has(.lure-filename) > .lure-vault-wrapper,
-.view-header-title-container:has(.lure-filename) > .lure-filename,
+.view-header-title-container[data-lure-on] .view-header-breadcrumb,
+.view-header-title-container[data-lure-on] .lure-root-name,
+.view-header-title-container[data-lure-on] .lure-filename-text,
+.view-header-title-container[data-lure-on] > .lure-vault-wrapper,
+.view-header-title-container[data-lure-on] > .lure-filename,
 .lure-name-lead,
 .lure-name-trail {
 	min-width: var(--lure-open, var(--lure-floor, 0px));
@@ -987,15 +1034,17 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 }
 
 /* Hovered, or held open by its dropdown: a shortened name comes back in full
-   for as long as you are pointing at it, and so does the box around it. The
-   row is made scrollable while that lasts, and the script scrolls the
-   restored name to the left edge so what came back is what you can see. */
+   for as long as you are pointing at it, and so does the box around it —
+   `.lure-name-host`, put on whichever of the two boxes holds the open name,
+   since only one ever does. The row is made scrollable while that lasts, and
+   the script scrolls the restored name to the left edge so what came back is
+   what you can see. */
 .lure-name-open,
 .lure-name-open .lure-name-lead,
 .lure-name-open .lure-name-trail,
 .lure-name-open .lure-root-name,
-.lure-filename:has(.lure-name-open),
-.lure-vault-wrapper:has(.lure-name-open) {
+.lure-filename.lure-name-host,
+.lure-vault-wrapper.lure-name-host {
 	--lure-open: max-content;
 	/* The cap on a clipped part is a cap on the clipped drawing of it, and
 	   there is nothing to cap once the whole name is back. */
@@ -1021,13 +1070,13 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
    has nothing to give back — and pointing at the icon gives it back exactly
    the way pointing at a shortened name does. `max-width` rather than
    `display: none`, so there is a box for the hover to widen. */
-.view-header-title-container:has(.lure-filename) .lure-name-folded,
-.view-header-title-container:has(.lure-filename) .lure-name-spent {
+.view-header-title-container[data-lure-on] .lure-name-folded,
+.view-header-title-container[data-lure-on] .lure-name-spent {
 	max-width: 0;
 }
 
-.view-header-title-container:has(.lure-filename) .lure-name-open .lure-name-folded,
-.view-header-title-container:has(.lure-filename) .lure-name-open .lure-name-spent {
+.view-header-title-container[data-lure-on] .lure-name-open .lure-name-folded,
+.view-header-title-container[data-lure-on] .lure-name-open .lure-name-spent {
 	max-width: none;
 }
 
@@ -1040,7 +1089,7 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
    Down here rather than beside the rest of the editing styles because the
    alignment rules set `flex` as a shorthand, which resets the shrink factor;
    this has to be read after them. */
-.view-header-title-container:has(.lure-filename) > .lure-filename.lure-editing {
+.view-header-title-container[data-lure-on] > .lure-filename.lure-editing {
 	flex-shrink: 0;
 	--lure-open: auto;
 	/* Still stretches: the field is only as wide as its own text now, and

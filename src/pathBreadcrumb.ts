@@ -83,6 +83,26 @@ const EXPAND_BACKOFF_MS = [16, 32, 64, 128, 256, 512];
 
 
 const EDITING_CLASS = "lure-editing";
+/**
+ * The row-level mirrors of three states the stylesheet used to ask about with
+ * `:has()`.
+ *
+ * `:has()` on the header container is re-evaluated whenever anything inside it
+ * changes, and the fitting pass rewrites the names in it constantly — so the
+ * one selector that read "this row is ours" was the most expensive thing in
+ * the stylesheet, and the least necessary: this class knows the answer already.
+ *
+ * The order matters and is the whole risk of the trade. `:has()` applies itself
+ * the instant the child exists; a marker has to be put on first and taken off
+ * last, or there is a frame where the row is ours and does not look it.
+ */
+const ROW_ON_ATTR = "lureOn";
+/** Row-level mirror of EDITING_CLASS on the filename box. */
+const EDITING_ROW_CLASS = "lure-editing-row";
+/** On whichever box holds the name currently shown in full — see NAME_OPEN_CLASS. */
+const NAME_HOST_CLASS = "lure-name-host";
+/** The two boxes that can hold an opened name; only one ever does at a time. */
+const NAME_HOST_SELECTOR = ".lure-filename, .lure-vault-wrapper";
 const HIDE_NATIVE_CLASS = "lure-hide-native";
 const NATIVE_TITLE_HIDDEN_CLASS = "lure-native-title-hidden";
 const NATIVE_BREADCRUMB_SELECTOR = ".view-header-title-parent";
@@ -507,6 +527,8 @@ export class PathBreadcrumb {
 	private resizeObserver: ResizeObserver | null = null;
 	/** The name currently being shown in full because the pointer is on it. */
 	private openedName: HTMLElement | null = null;
+	/** The box holding that name, marked so it can widen with it. */
+	private nameHostEl: HTMLElement | null = null;
 	/** When the row was last scrolled by hand, so names stay put while it is. */
 	private scrolledAt = 0;
 	/**
@@ -699,6 +721,10 @@ export class PathBreadcrumb {
 
 		this.filenameEl = createDiv();
 		this.filenameEl.addClass("lure-filename");
+		// Before the insert, not after: every rule that dresses this row keys
+		// off the attribute, so a row that gained its filename first would
+		// paint one frame with Obsidian's own layout and then jump.
+		if (this.titleEl.parentElement) this.titleEl.parentElement.dataset[ROW_ON_ATTR] = "";
 		this.titleEl.insertAdjacentElement("afterend", this.filenameEl);
 
 		// Uses Obsidian's own .view-action/.clickable-icon classes (the
@@ -1948,6 +1974,11 @@ export class PathBreadcrumb {
 		this.showNativeBreadcrumb();
 		delete this.titleEl.parentElement?.dataset.lureAlign;
 		delete this.titleEl.parentElement?.dataset.lureSwap;
+		// Last, and after `filenameEl.remove()` above: taking the marker off
+		// first would hand the row back to Obsidian's layout while our
+		// elements were still in it.
+		delete this.titleEl.parentElement?.dataset[ROW_ON_ATTR];
+		this.titleEl.parentElement?.removeClass(EDITING_ROW_CLASS);
 	}
 
 	private applyAlignment(): void {
@@ -2471,8 +2502,11 @@ export class PathBreadcrumb {
 		if (!segments.length) return;
 
 		// The trail is rebuilt from scratch here, so whatever was open is
-		// either gone or about to be laid out again from its full name.
+		// either gone or about to be laid out again from its full name. The
+		// box that was holding it survives the rebuild, so its mark has to be
+		// taken off by hand — nothing is open any more.
 		this.openedName = null;
+		this.clearNameHost();
 		for (const segment of segments) this.layOutName(segment);
 		// Air first, then the floors — in that order, because a floor is the
 		// sum of what is inside a box *including the air around it*, and
@@ -2765,6 +2799,19 @@ export class PathBreadcrumb {
 	}
 
 	/**
+	 * Takes the mark off the box that was holding an opened name.
+	 *
+	 * Tracked in a field rather than searched for: the name it belonged to may
+	 * already have been emptied or replaced by a fitting pass, and a mark left
+	 * on a box that no longer holds anything open is a box that never gives
+	 * its width back.
+	 */
+	private clearNameHost(): void {
+		this.nameHostEl?.removeClass(NAME_HOST_CLASS);
+		this.nameHostEl = null;
+	}
+
+	/**
 	 * Shows one shortened name in full, and puts the last one back.
 	 *
 	 * The row is left scrollable whenever anything on it is clipped, so a
@@ -2778,6 +2825,7 @@ export class PathBreadcrumb {
 	private openName(name: HTMLElement | null): void {
 		if (this.openedName === name) return;
 		this.openedName?.removeClass(NAME_OPEN_CLASS);
+		this.clearNameHost();
 		this.openedName = name;
 		const container = this.titleEl.parentElement;
 		if (!name) {
@@ -2793,6 +2841,11 @@ export class PathBreadcrumb {
 		// makes the empty space clickable, and the opening segment inside the
 		// wrapper that keeps it pinned while the row scrolls.
 		name.addClass(NAME_OPEN_CLASS);
+		// That outer box used to find itself with `:has(.lure-name-open)`.
+		// Marked directly instead — `closest` answers the same question once,
+		// here, rather than on every mutation of the row.
+		this.nameHostEl = name.closest<HTMLElement>(NAME_HOST_SELECTOR);
+		this.nameHostEl?.addClass(NAME_HOST_CLASS);
 
 		if (!container) return;
 		// A row whose names all clip fits by construction, so it is not
@@ -3145,6 +3198,7 @@ export class PathBreadcrumb {
 			el.removeClass(NAME_OPEN_CLASS);
 			setTooltip(el, "");
 		}
+		this.clearNameHost();
 	}
 
 	private chipElements(): HTMLElement[] {
@@ -3479,6 +3533,7 @@ export class PathBreadcrumb {
 
 	private renderFilename(): void {
 		this.filenameEl.removeClass(EDITING_CLASS);
+		this.titleEl.parentElement?.removeClass(EDITING_ROW_CLASS);
 		this.filenameEl.empty();
 
 		// The locations menu shows only the segment it hangs off, so there
@@ -5661,6 +5716,7 @@ export class PathBreadcrumb {
 		// the locations menu) owns its own contents and must keep them.
 		if (host === this.filenameEl) {
 			this.filenameEl.addClass(EDITING_CLASS);
+			this.titleEl.parentElement?.addClass(EDITING_ROW_CLASS);
 			this.filenameEl.empty();
 		}
 

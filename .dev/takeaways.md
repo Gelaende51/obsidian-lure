@@ -1584,3 +1584,92 @@ The rule: before believing a measurement about layout or focus, check the
 window is focused and unobscured — and when it is not, refuse to measure rather
 than measuring badly. A suite that reports a number it cannot stand behind is
 worse than one that declines to run.
+
+## `:has()` was the only expensive thing in the stylesheet, and the cheapest to remove
+
+The community scorecard rates a plugin by *counting* scan findings, and Lure's
+first one came back "Caution — 59 issues". Reading them, 49 of the 56 warnings
+were two CSS rules: `:has()` 37 times and `!important` 12. Nothing about what
+the plugin does was flagged at all.
+
+Better still, 34 of the 37 `:has()` were the same selector —
+`:has(.lure-filename)`, meaning "this header is ours". A container-scoped
+`:has()` puts every mutation inside that container up for re-evaluating the
+container's own style, and a note header mutates constantly: the fitting pass
+rewrites every name in it on each pass. So the most expensive selector in the
+file was asking a question the plugin already knew the answer to, in the same
+place it was already writing `data-lure-align` and `data-lure-swap`.
+
+Two things made the swap safe rather than merely smaller:
+
+**Specificity is preserved by construction.** `:has()` takes the weight of its
+most specific argument, so `.view-header-title-container:has(.lure-filename)`
+and `.view-header-title-container[data-lure-on]` are both (0,2,0). Every rule
+kept its place in the cascade, which is why nothing needed re-ordering.
+
+**Order is the whole risk.** `:has()` applies itself the instant the child
+exists; an attribute has to be written by hand, so it goes on *before*
+`.lure-filename` is inserted and comes off *after* it is removed. Reversed, the
+row paints one frame with the host's own layout and jumps.
+
+The `!important`s went the same way, by finding out what they were actually
+fighting instead of assuming. Extracting `obsidian.asar` and reading `app.css`
+showed `.view-header-title-container { justify-content: var(--file-header-justify) }`
+— one rule, one consumer, and a variable provided for exactly this. Four
+`!important`s were not settling anything between Lure's own rules (all the same
+weight, decided by source order, before and after); they were only outranking
+that one declaration. Writing the variable instead says the same thing the way
+the host asks for it. Two more, on `mask-image`, turned out to have *nothing* to
+fight: neither Obsidian nor Lure sets a mask on that container, so the rule only
+ever mattered against a theme — worth keeping, not worth `!important`.
+
+Six remain and should: two `display: none` that guarantee the native
+contenteditable rename can never fire, and four answering Obsidian's own
+`!important` on `.is-flashing`, which cannot be outranked any other way.
+
+56 warnings → 7. The lesson is that a count-based score rewards reading the
+findings in bulk before fixing any of them: the ranking told us to spend the
+whole effort in one file, on two rules, and to leave everything the scanner
+said about behaviour alone.
+
+## The scanner's browser floor is a version the plugin does not support
+
+Three more warnings — `multicolumn`, `text-decoration`, `css-display-contents`
+"only partially supported by Obsidian 1.7.4" — are measured against 1.7.4 while
+`minAppVersion` is 1.8.7. They are caniuse partial-support flags that do not
+apply to the use here anyway: the `column-gap`s are on flex containers, not
+multicol. Not worth dodging in CSS; worth telling Obsidian about, since it will
+mis-rate every plugin whose floor is above 1.7.4.
+
+Worth knowing for reading any of these numbers: the scanner parses the CSS
+rather than grepping it. The first review counted 12 `!important` where the file
+contained 13 occurrences, the thirteenth being inside a comment — so prose about
+a rule is free.
+
+## `moment.locale()` cannot tell you what language Obsidian is in
+
+Reading `localStorage.getItem("language")` gets flagged by the scorecard as
+persisting plugin data in local storage. It is neither persisting nor plugin
+data — it is one read of the host's own key — but the obvious fix, the
+documented `moment` export, is actively wrong. Measured in a live 1.13.7:
+
+    moment.locale('kh') -> 'fr'      moment.locale('am') -> 'uz'
+    moment.locale('zh') -> 'el'      moment.locale('no') -> 'zh-tw'
+
+Two things are happening. Obsidian applies its own private fix-ups before
+calling moment — `{zh: "zh-cn", cz: "cs", no: "nb"}` — so the raw code is not
+what moment ever sees. And when moment does not have a locale it **keeps the
+one loaded before** instead of reporting the miss, so the call returns a
+plausible wrong answer. Khmer and Amharic have no moment locale at all. A
+plugin trusting this would serve some previous reader's language, which is
+worse than serving English.
+
+`window.i18next.language` is exact and is what Obsidian itself sets, but it is
+undocumented and, in 1.13.7, not defined as a global. So the localStorage read
+stays, and the scorecard item stays with it.
+
+The check worth keeping: Lure's translation keys are Obsidian's own language
+codes, spelling and all — `kh` for Khmer where BCP 47 says `km`, `no` for
+Norwegian. Verified set-equal against the language list in 1.13.7. Matching the
+host's spelling exactly is what makes the lookup a plain index instead of a
+mapping table nobody maintains.
