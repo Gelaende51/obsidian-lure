@@ -1826,3 +1826,36 @@ seen from the other end: one suite writes a setting it does not restore,
 another reads a setting it does not set, and between them the vault's state
 becomes an undeclared input to the run. Fixtures belong in `reset` — and so do
 the settings a case depends on, which are fixtures that happen not to be files.
+
+## Measure what was painted, not what a canvas predicts
+
+The fitter works out how wide a name will be by asking a memoised 2D context
+to measure a string. That is a *prediction*, and it is the leading suspect for
+the intermittent "atlas" gap: a context that has gone stale — a lost GPU
+context, or a font that finished loading after the first measurement — answers
+confidently and wrongly, which is exactly the shape of a fault that appears
+after some time and cannot be reproduced on demand.
+
+A `Range` over the element's contents asks the layout engine what it actually
+painted:
+
+    const range = part.ownerDocument.createRange();
+    range.selectNodeContents(part);
+    const drawn = range.getBoundingClientRect().width;
+
+That cannot disagree with the screen, which makes it the right instrument for
+deciding whether the fitter's own arithmetic is at fault. `.dev/audit-floors.mjs`
+does that across every row and reports any box wider than its own text.
+
+Two things kept it out of the plugin itself. The measurement forces a reflow
+per part, on a path that runs on every resize. And a change to the fitting
+model justified by a bug nobody has reproduced is precisely the mistake this
+file already records about `spendAir` — where a plausible fix was made, changed
+none of the failing numbers, and was reverted on that evidence. A detector
+costs nothing and settles the question; a fix would have been a guess wearing a
+commit message.
+
+Worth noting how it was validated, since a detector that never fires is
+indistinguishable from a clean system: the fault was injected by hand — 14px of
+surplus floor on a live row — and the audit named the part, the surplus and the
+floor. Same discipline as testing the locale drift check by simulating drift.

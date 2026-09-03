@@ -206,6 +206,22 @@ node .dev/test-compat.mjs            # against installed peer plugins
 node .dev/test-compat.mjs Quick      # one peer
 ```
 
+One tool that is not a suite:
+
+```bash
+node .dev/audit-floors.mjs           # every name on every row, once
+node .dev/audit-floors.mjs --watch   # every second, until Ctrl-C
+```
+
+It looks for the "atlas" fault — a name's box held open wider than the text
+drawn in it, which is what puts a gap in the middle of `atl as`. Where the
+fitter predicts widths from a canvas, this measures what the layout engine
+actually painted with a `Range`, so a stale measuring context cannot hide the
+fault from it. Run it **while the gap is on screen**: a clean report at that
+moment is itself a finding, because it rules the floors out and leaves the
+row's own `column-gap` as the next suspect. Exits 1 when it finds something,
+so `--watch` can be left running beside a real session.
+
 Every suite takes the same flags:
 
 ```bash
