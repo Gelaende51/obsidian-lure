@@ -16,7 +16,7 @@
  * Requires --remote-debugging-port=9222 and OBSIDIAN_VAULT set.
  */
 
-import { connect, PAUSE, pressKey, quiesce, reloadPlugin } from "./cdpSession.mjs";
+import { canFocusEditable, connect, PAUSE, pressKey, quiesce, reloadPlugin } from "./cdpSession.mjs";
 import { createSuite } from "./harness.mjs";
 import { mkdirSync, rmSync, writeFileSync } from "fs";
 import { join } from "path";
@@ -346,36 +346,78 @@ test("empty space: middle presses paste, and make nothing", async () => {
 	expect("and nothing was created on the way", out.doubled, false);
 });
 
-test("vault name: a held modifier opens a tab standing at the root", async () => {
+const closeOpenedTab = `
+	document.querySelector(".lure-path-input")?.blur();
+	document.body.click();
+	${PAUSE(200)}
+	app.workspace.getLeavesOfType("empty").forEach((l) => l.detach());
+	${PAUSE(300)}
+	return true;
+`;
+
+test("vault name: Ctrl opens a tab behind this one, and arms it on arrival", async () => {
+	await page.evaluate(openVaultNote);
+	const held = await page.evaluate(`
+		const here = app.workspace.getMostRecentLeaf();
+		const c = here.view.containerEl.querySelector(".view-header-title-container");
+		c.querySelector(".lure-vault-segment").dispatchEvent(new MouseEvent("click", {
+			bubbles: true, cancelable: true, detail: 1, ctrlKey: true, button: 0,
+		}));
+		${PAUSE(900)}
+		const opened = app.workspace.getLeavesOfType("empty")[0] ?? null;
+		return {
+			viewType: opened?.view?.getViewType?.() ?? null,
+			stayedHere: app.workspace.getMostRecentLeaf() === here,
+			// A tab nobody is looking at has no laid-out header, and a row
+			// fitted against one measures every width as zero — so the
+			// session waits rather than being built against nothing.
+			fieldYet: opened ? !!opened.view.containerEl.querySelector(".lure-path-input") : null,
+		};
+	`);
+	expect("the tab holds nothing yet", held.viewType, "empty");
+	expect("and the focus stayed where it was", held.stayedHere, true);
+	expect("with nothing fitted in it while it is unseen", held.fieldYet, false);
+
+	const arrived = await page.evaluate(`
+		const opened = app.workspace.getLeavesOfType("empty")[0];
+		app.workspace.setActiveLeaf(opened, { focus: true });
+		${PAUSE(900)}
+		const bc = app.plugins.plugins.lure.manager.instances.get(opened);
+		return {
+			browse: bc ? bc.browsePath : null,
+			fieldOpen: !!opened.view.containerEl.querySelector(".lure-path-input"),
+			rows: document.querySelectorAll(".suggestion-item").length,
+		};
+	`);
+	await page.evaluate(closeOpenedTab);
+	expect("looking at it stands it at the vault root", arrived.browse, "");
+	expect("with the field open", arrived.fieldOpen, true);
+	expect("and the root already listed", arrived.rows, (v) => v > 0);
+});
+
+test("vault name: the middle button goes to the tab it opens", async () => {
 	await page.evaluate(openVaultNote);
 	const out = await page.evaluate(`
-		const c = app.workspace.getMostRecentLeaf().view.containerEl
-			.querySelector(".view-header-title-container");
-		c.querySelector(".lure-vault-segment").dispatchEvent(new MouseEvent("click", {
-			bubbles: true, cancelable: true, detail: 1, ctrlKey: true,
+		const here = app.workspace.getMostRecentLeaf();
+		const c = here.view.containerEl.querySelector(".view-header-title-container");
+		c.querySelector(".lure-vault-segment").dispatchEvent(new MouseEvent("auxclick", {
+			bubbles: true, cancelable: true, button: 1,
 		}));
 		${PAUSE(900)}
 		const leaf = app.workspace.getMostRecentLeaf();
 		const bc = app.plugins.plugins.lure.manager.instances.get(leaf);
 		return {
 			viewType: leaf.view?.getViewType?.() ?? null,
+			wentThere: leaf !== here,
 			browse: bc ? bc.browsePath : null,
 			fieldOpen: !!leaf.view.containerEl.querySelector(".lure-path-input"),
-			rows: document.querySelectorAll(".suggestion-item").length,
 		};
 	`);
-	await page.evaluate(`
-		document.querySelector(".lure-path-input")?.blur();
-		document.body.click();
-		${PAUSE(200)}
-		app.workspace.getLeavesOfType("empty").forEach((l) => l.detach());
-		${PAUSE(300)}
-		return true;
-	`);
+	await page.evaluate(closeOpenedTab);
 	expect("the tab holds nothing yet", out.viewType, "empty");
-	expect("and stands at the vault root", out.browse, "");
-	expect("with the field open", out.fieldOpen, true);
-	expect("and the root already listed", out.rows, (v) => v > 0);
+	expect("and it is the one you are now in", out.wentThere, true);
+	expect("standing at the vault root", out.browse, "");
+	expect("with the field already open", out.fieldOpen, true);
 });
 
 test("file name: two presses copy the name, three the name with extension", async () => {
@@ -2440,5 +2482,35 @@ const app = {
 	vaultName: await page.evaluate("return app.vault.getName();"),
 	vaultPath: await page.evaluate("return app.vault.adapter.getBasePath();"),
 };
+
+/*
+ * The same gate test-rename has had since an occluded window cost an
+ * afternoon, and this suite needed it more than that one does.
+ *
+ * Four of the `long paths` cases measure a row under pressure — how much of
+ * its air it has spent, whether a name is clipped, where a box ends. An
+ * Obsidian window that is not really on screen answers every one of those
+ * with a degenerate number while still reporting `document.hasFocus()` true
+ * and painting at full speed, so the cases fail with detailed, plausible,
+ * entirely fictional diffs. Twice now that has been diagnosed from scratch,
+ * once by running the same four against an unmodified build to prove they
+ * were nothing to do with the change in front of us.
+ *
+ * Refusing to run is the honest answer: a suite that reports a number it
+ * cannot stand behind is worse than one that declines. Exit 2, distinct from
+ * a real failure's 1, so a CI run can tell "the environment was wrong" from
+ * "the code was wrong".
+ */
+await page.evaluate(buildVaultFixture);
+if (!(await canFocusEditable(page, `${ROOT}/inner/leaf.md`))) {
+	console.log(
+		"\nThis window cannot put the caret in an editable element, so the row\n" +
+			"cannot be measured: widths come back degenerate while everything else\n" +
+			"looks healthy. Obsidian behaves this way while it is obscured by a\n" +
+			"fullscreen application — bring its window to the front and run again.",
+	);
+	page.close();
+	process.exit(2);
+}
 
 await run();

@@ -849,8 +849,9 @@ export class PathBreadcrumb {
 				// a link or a File Explorer row follows, so Ctrl, Ctrl+Alt
 				// and middle-click land where the user already expects.
 				const paneType = this.paneTypeFor(evt);
-				if (paneType && this.file) this.navigateToFile(this.file, paneType);
-				else {
+				if (paneType && this.file) {
+					this.navigateToFile(this.file, paneType, this.focusesNewTab(evt));
+				} else {
 					this.handleFilenameClick();
 					this.climbFromClick = true;
 				}
@@ -1021,7 +1022,7 @@ export class PathBreadcrumb {
 			if (folderPath === null) return;
 			evt.preventDefault();
 			evt.stopPropagation();
-			this.openFolderInPane(folderPath, paneType);
+			this.openFolderInPane(folderPath, paneType, this.focusesNewTab(evt));
 		}, { capture: true, signal: this.domListeners.signal });
 
 		// Middle-click never fires `click`, so the modifier rule above would
@@ -1034,7 +1035,7 @@ export class PathBreadcrumb {
 			if (el.closest(".lure-filename-text")) {
 				if (!this.file) return;
 				evt.preventDefault();
-				this.navigateToFile(this.file, this.paneTypeFor(evt) || "tab");
+				this.navigateToFile(this.file, this.paneTypeFor(evt) || "tab", this.focusesNewTab(evt));
 				return;
 			}
 			// A delimiter names the folder before it, and a middle press on
@@ -1050,8 +1051,8 @@ export class PathBreadcrumb {
 				evt.preventDefault();
 				const folder = this.plugin.app.vault.getAbstractFileByPath(folderPath);
 				const note = folder instanceof TFolder ? this.folderNoteFor(folder) : null;
-				if (note) this.navigateToFile(note, this.paneTypeFor(evt) || "tab");
-				else this.browseInNewTab(folderPath);
+				if (note) this.navigateToFile(note, this.paneTypeFor(evt) || "tab", this.focusesNewTab(evt));
+				else this.browseInNewTab(folderPath, this.focusesNewTab(evt));
 				return;
 			}
 			const segment = el.closest<HTMLElement>(".view-header-breadcrumb");
@@ -1059,7 +1060,7 @@ export class PathBreadcrumb {
 			const folderPath = this.nativeSegmentPath(segment);
 			if (folderPath === null) return;
 			evt.preventDefault();
-			this.openFolderInPane(folderPath, this.paneTypeFor(evt) || "tab");
+			this.openFolderInPane(folderPath, this.paneTypeFor(evt) || "tab", this.focusesNewTab(evt));
 		}, { capture: true, signal: this.domListeners.signal });
 
 		// Swapped mode has to pre-empt Obsidian's own click handler on the
@@ -1412,21 +1413,71 @@ export class PathBreadcrumb {
 	 * its path bar already standing in that folder, so the only thing left
 	 * to supply is the name.
 	 */
-	private openFolderInPane(folderPath: string, paneType: PaneType): void {
+	private openFolderInPane(folderPath: string, paneType: PaneType, focus = true): void {
 		const app = this.plugin.app;
 		const folder = app.vault.getAbstractFileByPath(folderPath);
 		if (!(folder instanceof TFolder)) return;
 
 		const note = this.folderNoteFor(folder);
-		const leaf = app.workspace.getLeaf(paneType);
+		const leaf = this.newPane(paneType, focus);
 		if (note) {
-			void leaf.openFile(note);
+			void leaf.openFile(note, { active: focus });
 			return;
 		}
 		// The new leaf is empty and has had no active-leaf-change yet, so its
 		// bar has to be asked for rather than assumed to exist.
+		if (!focus) {
+			this.browseWhenRevealed(leaf, folderPath);
+			return;
+		}
 		void app.workspace.revealLeaf(leaf);
 		window.setTimeout(() => this.manager.breadcrumbFor(leaf)?.startBrowsingAt(folderPath), 0);
+	}
+
+	/**
+	 * A new pane, with the focus handed back when it should not follow.
+	 *
+	 * `getLeaf` activates whatever it creates. That is right for the gesture
+	 * meaning "take me there" and wrong for the one meaning "have it ready",
+	 * and `openFile` can be told `active: false` — but a leaf opened empty,
+	 * to browse in, has no open to pass that to. So the focus is put back by
+	 * hand, which is the only way an empty background tab exists at all.
+	 */
+	private newPane(paneType: PaneType, focus: boolean): WorkspaceLeaf {
+		const workspace = this.plugin.app.workspace;
+		const previous = workspace.getMostRecentLeaf();
+		const leaf = workspace.getLeaf(paneType);
+		if (!focus && previous && previous !== leaf) {
+			workspace.setActiveLeaf(previous, { focus: true });
+		}
+		return leaf;
+	}
+
+	/**
+	 * Starts a browsing session in a tab the moment it is actually looked at.
+	 *
+	 * A tab opened behind the one you are in has no laid-out header: its
+	 * content is in the document but not displayed, so every width the fitter
+	 * asks for comes back zero and the row it builds from those is wrong in a
+	 * way that outlives the measurement. Waiting costs nothing — nobody is
+	 * reading a background tab — and it is the difference between a row fitted
+	 * against a real pane and one fitted against nothing.
+	 *
+	 * Registered on the plugin so it cannot outlive an unload, and taken off
+	 * the moment it fires: this is one session in one tab, not a standing
+	 * subscription.
+	 */
+	private browseWhenRevealed(leaf: WorkspaceLeaf, folderPath: string): void {
+		const workspace = this.plugin.app.workspace;
+		const ref = workspace.on("active-leaf-change", (active) => {
+			if (active !== leaf) return;
+			workspace.offref(ref);
+			window.setTimeout(() => {
+				this.manager.patchLeaf(leaf);
+				this.manager.breadcrumbFor(leaf)?.startBrowsingAt(folderPath);
+			}, 0);
+		});
+		this.plugin.registerEvent(ref);
 	}
 
 	/** The whole path as the row is showing it: vault-relative inside, absolute outside. */
@@ -3520,7 +3571,7 @@ export class PathBreadcrumb {
 	 */
 	private openRootInNewTab(evt: MouseEvent): boolean {
 		if (!this.paneTypeFor(evt)) return false;
-		this.browseInNewTab("");
+		this.browseInNewTab("", this.focusesNewTab(evt));
 		return true;
 	}
 
@@ -3532,8 +3583,14 @@ export class PathBreadcrumb {
 	 * it existed; a delimiter's means the same thing one folder down, so
 	 * both spend the same code rather than two that could drift.
 	 */
-	private browseInNewTab(folderPath: string): void {
-		const leaf = this.plugin.app.workspace.getLeaf("tab");
+	private browseInNewTab(folderPath: string, focus = true): void {
+		const leaf = this.newPane("tab", focus);
+		// Behind the current tab, the session waits until the tab is looked at
+		// — see browseWhenRevealed for why a hidden header must not be fitted.
+		if (!focus) {
+			this.browseWhenRevealed(leaf, folderPath);
+			return;
+		}
 		// The new leaf holds no file, and its row is built on the frame after
 		// this one — so the browsing is started once it exists, the same way
 		// sending a folder to another pane waits for that pane.
@@ -3950,7 +4007,24 @@ export class PathBreadcrumb {
 		return pane === true ? "tab" : pane;
 	}
 
-	private navigateToFile(file: TFile, paneType: PaneType | false = false): void {
+	/**
+	 * Whether a tab this gesture opens should be the one you end up looking at.
+	 *
+	 * Middle-click goes there, Ctrl+click stays put. That is the split every
+	 * browser makes, and it is the only thing that made the two gestures worth
+	 * having separately — until now they were synonyms, so half of what a user
+	 * already knows about them was simply unavailable here.
+	 *
+	 * Read off the button rather than the modifier, because that is the actual
+	 * difference: a middle press arrives as `auxclick` with button 1, and a
+	 * Ctrl+click as `click` with button 0. Ctrl held during a middle press
+	 * changes nothing — the button wins, which matches the browsers.
+	 */
+	private focusesNewTab(evt: UserEvent | null | undefined): boolean {
+		return !!evt && "button" in evt && evt.button === 1;
+	}
+
+	private navigateToFile(file: TFile, paneType: PaneType | false = false, focus = true): void {
 		// Obsidian's own openFile hands a file with no registered view
 		// straight to the desktop's default application. For a text file
 		// that's the wrong answer to "open this in Obsidian", so those go
@@ -3969,7 +4043,7 @@ export class PathBreadcrumb {
 			// to the newly opened one would describe the wrong tab.
 			void this.plugin.app.workspace
 				.getLeaf(paneType)
-				.openFile(file)
+				.openFile(file, { active: focus })
 				.then(() => this.cancelNavigation());
 			return;
 		}
@@ -7018,7 +7092,11 @@ export class PathBreadcrumb {
 		const file = this.file;
 		void this.plugin.app.workspace
 			.getLeaf(paneType)
-			.openFile(file)
+			// Ctrl is the only way here — the middle button over the empty
+			// space is a paste, not a duplicate — so this tab always opens
+			// behind the one you are in, which is what Ctrl means everywhere
+			// else on the row.
+			.openFile(file, { active: this.focusesNewTab(evt) })
 			.then(() => this.revealInExplorer(file));
 		return true;
 	}

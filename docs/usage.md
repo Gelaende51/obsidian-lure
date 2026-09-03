@@ -125,19 +125,20 @@ The input is chrome-free — no box, no border — so it reads as the path text 
 
 ## Every part of the row, button by button
 
-The whole row at a glance. Right-click has [a table of its own](#right-click-one-press-two-presses-three)
-below, because it counts presses rather than reading them one at a time. This
-one assumes **Folder name opens the dropdown** is on, which is the default — with
-it off, the folder name and the delimiter swap the first column, as
-[the table at the top](#the-breadcrumb) says.
+The whole row at a glance. The right-click column is what **one** press gives
+you; that button also counts presses, and [its own
+table](#right-click-one-press-two-presses-three) below has the second, third and
+fourth. This one assumes **Folder name opens the dropdown** is on, which is the
+default — with it off, the folder name and the delimiter swap the first column,
+as [the table at the top](#the-breadcrumb) says.
 
-| Where you press | Click | Double-click | <kbd>Ctrl</kbd>+click, or middle-click | Drop a file on it |
-| --- | --- | --- | --- | --- |
-| The **vault name** | Opens the locations dropdown — other vaults, home, the filesystem root, mounted drives. Off by default; with it off, reveals the vault in the File Explorer instead | | A tab holding nothing, standing at the vault root with the list already showing — somewhere to type a path from scratch | Moves it to the vault root |
-| A **folder name** | Selects that folder for editing, its parent's contents listed below | Retypes that folder and everything below it | Opens that folder in a new tab | Moves it into that folder |
-| A **delimiter** | Opens the folder before it — its folder note where a folder-note plugin is running and one exists, otherwise reveals and expands it in the File Explorer | | | |
-| The **note's name** | Opens the path for editing with the name selected, extension left out | Adds the extension to the selection | Opens the note in a new tab | |
-| The **empty space** | Opens the path for editing, with the name selected | | <kbd>Ctrl</kbd> opens this note again in a tab of its own, flashed in the File Explorer so the copy is not mistaken for the first. Middle-click is *not* that gesture: it pastes over the path | |
+| Where you press | Click | Double-click | <kbd>Ctrl</kbd>+click, or middle-click | Right-click | Drop a file on it |
+| --- | --- | --- | --- | --- | --- |
+| The **vault name** | Opens the locations dropdown — other vaults, home, the filesystem root, mounted drives. Off by default; with it off, reveals the vault in the File Explorer instead | | A tab holding nothing, standing at the vault root with the list already showing — somewhere to type a path from scratch | The vault's own context menu: what can be done to the vault that segment names | Moves it to the vault root |
+| A **folder name** | Selects that folder for editing, its parent's contents listed below | Retypes that folder and everything below it | Opens that folder in a new tab | That folder's context menu — the File Explorer's own | Moves it into that folder |
+| A **delimiter** | Opens the folder before it — its folder note where a folder-note plugin is running and one exists, otherwise reveals and expands it in the File Explorer | | The folder note in a new tab where one exists; otherwise a tab standing at that folder with the list showing | The same folder's context menu the name gives — its folder note's, where it has one | |
+| The **note's name** | Opens the name for editing — the folders stay as chips beside it — with everything but the extension marked | Takes the extension into the mark too | Opens the note in a new tab | The file's context menu — the same one the File Explorer's row gives | |
+| The **empty space** | Opens the **whole path** for editing, marked as far as the extension. The folders come into the field with it, which is what makes this the gesture for retyping a path rather than a name | Takes the extension into the mark too | <kbd>Ctrl</kbd> opens this note again in a tab of its own, flashed in the File Explorer so the copy is not mistaken for the first. Middle-click is *not* that gesture: it pastes over the path | Marks the whole path and offers what can be done to marked text | |
 
 **Clicks on the name keep going.** The four rungs are the same four the rename
 key walks, in the same order: the name, the name with its extension, the path
@@ -156,7 +157,7 @@ Every target on the row answers a right-click, and how many presses you give it 
 
 | Where you press | Once | Twice | Three times |
 | --- | --- | --- | --- |
-| The **vault name** | What can be done to the vault it names — including *Open this vault*, where that vault is not the one you are in | Copies the vault's name | Copies where the vault is — and a fourth press, where the open file is |
+| The **vault name** | The vault's context menu: what can be done to the vault that segment names — including *Open this vault*, where that vault is not the one you are in | Copies the vault's name | Copies where the vault is — and a fourth press, where the open file is |
 | A **delimiter** | That folder's menu — its folder note's, where a folder-note plugin is running and the folder has one | | |
 | A **folder name** | That folder's menu | Copies the folder's name | Copies it and everything to the right of it |
 | The **note's name** | The file's menu — the same one the File Explorer's row gives | Copies the name | Copies it with its extension |

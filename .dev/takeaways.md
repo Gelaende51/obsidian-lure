@@ -1763,3 +1763,66 @@ expensive hypothesis first. And the settings *DOM* is genuinely there in that
 target, so driving the controls works fine; it is only the app object that is
 missing. Which is the right split anyway: assert on what the user can see, not
 on the object behind it.
+
+## `getLeaf("tab")` activates what it creates, and an unseen tab cannot be measured
+
+Ctrl+click and middle-click were synonyms on this row: both opened a new tab
+and both went to it. Splitting them — Ctrl stays, the middle button goes, which
+is what every browser does — turned out to have two distinct halves, and only
+the first is obvious.
+
+For a **file**, `openFile(file, { active: false })` is the whole of it. For a
+tab opened *empty*, to browse in, there is no open to pass that to, and
+`getLeaf` has already made its new leaf the active one by the time you get
+control back. The focus has to be handed back explicitly:
+
+    const previous = workspace.getMostRecentLeaf();
+    const leaf = workspace.getLeaf(paneType);
+    if (!focus && previous !== leaf) workspace.setActiveLeaf(previous, { focus: true });
+
+The second half is worse, and is the same hazard the occluded-window entry
+describes from a different direction. A tab behind the one you are in has its
+content in the document but not displayed, so **every width read from it is
+zero** — and the fitter's whole job is reading widths. Starting a browsing
+session in a background tab produced a row fitted against nothing, and the
+floors it wrote from those measurements outlived the moment. The fix is to not
+measure until there is something to measure: the session is armed on
+`active-leaf-change` for that leaf and starts when it is actually looked at.
+
+The general rule, which now has three instances in this project: **do not
+measure a leaf you did not reveal.** An occluded window, a background tab and a
+detached element all answer geometry questions confidently and wrongly.
+
+## A suite that lies is worse than a suite that refuses
+
+The gesture suite's four `long paths` cases have now been diagnosed from
+scratch twice as real defects, and were environmental both times. They measure
+a row under pressure — air spent, names clipped, where a box ends — and an
+Obsidian window that is not really on screen answers all of that with
+degenerate numbers while `document.hasFocus()` stays true and the renderer
+paints at full speed. The failures are detailed, plausible and fictional, which
+is the expensive kind.
+
+The second diagnosis cost a full baseline run against an unmodified build to
+establish that the four failures predated the change under test. That evidence
+was worth gathering, but it should not have been necessary: `canFocusEditable`
+had existed since the first diagnosis and was wired into `test-rename` alone.
+
+It now gates `test-gestures` too, exiting 2 rather than 1 so "the environment
+was wrong" is distinguishable from "the code was wrong". The lesson is not
+about focus at all — it is that a guard written after one painful diagnosis
+belongs on every suite that can suffer the same failure, not only on the one
+that happened to hurt first.
+
+## Ambient settings make a suite pass on a dirty vault and fail on a clean one
+
+`test-urls.mjs` has two cases that open a file outside the vault, and it never
+sets `accessExternalFiles`. It had been passing on the setting left switched on
+by whatever ran before it. Tidying the vault after another investigation turned
+both red, which reads exactly like a regression in the code just written.
+
+That is the same shape as the `showFileExtension` leak already recorded here,
+seen from the other end: one suite writes a setting it does not restore,
+another reads a setting it does not set, and between them the vault's state
+becomes an undeclared input to the run. Fixtures belong in `reset` — and so do
+the settings a case depends on, which are fixtures that happen not to be files.
