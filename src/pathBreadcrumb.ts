@@ -48,6 +48,8 @@ import {
 	createExternalFile,
 	externalExists,
 	moveExternalFile,
+	readExternalFile,
+	trashExternalEntry,
 } from "./externalFileOps";
 import { ExternalFileView, extensionOf, openExternalFile } from "./externalFileView";
 import { showExternalMenu, showInFolder } from "./externalMenu";
@@ -6223,9 +6225,7 @@ export class PathBreadcrumb {
 					// Held modifier turns the move into a copy under the same
 					// name, so "put a duplicate over there" is the same gesture
 					// as "move it over there".
-					if (value.external) void this.commitExternalRename(value.path, paneType);
-					else if (paneType) void this.copyFileTo(value.path, paneType);
-					else void this.moveFileTo(value.path);
+					void this.commitRenameTo(value.path, !!value.external, paneType);
 					return;
 				}
 				if (value.external) {
@@ -6479,10 +6479,9 @@ export class PathBreadcrumb {
 		}
 
 		if (this.renameMode) {
-			// Both refuse to clobber an existing file, so typing a taken
-			// name reports the conflict rather than overwriting.
-			if (paneType) await this.copyFileTo(normalized, paneType);
-			else await this.moveFileTo(normalized);
+			// Inside the vault by construction: an external row was routed to
+			// submitExternal above.
+			await this.commitRenameTo(normalized, false, paneType);
 			return;
 		}
 
@@ -6681,6 +6680,129 @@ export class PathBreadcrumb {
 	 * pointing at it would break silently. Copying it out has none of that
 	 * problem, so that is what's offered instead.
 	 */
+	/**
+	 * Commits the pending move or copy to `target`, whichever side of the
+	 * vault boundary the file is coming from and going to.
+	 *
+	 * There are four directions across that boundary and they were spelled
+	 * out in two places — once for a path typed into the field, once for a
+	 * keep-name row picked out of the list. Which is exactly how the same
+	 * corner came to be missing from both: bringing a file *in* fell through
+	 * to `moveFileTo`, whose first line returns when there is no TFile, so
+	 * the gesture did nothing and said nothing. One decision, one place.
+	 *
+	 * `external` is where the *target* is, which is the caller's to know:
+	 * the typed path has already been resolved against the vault by the time
+	 * it gets here, and a picked row carries it.
+	 */
+	private async commitRenameTo(
+		target: string,
+		external: boolean,
+		paneType: PaneType | false,
+	): Promise<void> {
+		if (external) {
+			await this.commitExternalRename(target, paneType);
+			return;
+		}
+		if (this.externalRenameSource()?.fromVault === false) {
+			await this.importIntoVault(target, paneType);
+			return;
+		}
+		// Both refuse to clobber an existing file, so a taken name reports
+		// the conflict rather than overwriting.
+		if (paneType) await this.copyFileTo(target, paneType);
+		else await this.moveFileTo(target);
+	}
+
+	/**
+	 * Brings a file in from outside, to a path inside the vault.
+	 *
+	 * The fourth direction across the boundary, and the last one to be
+	 * built: vault-to-vault is `moveFileTo`, and vault-to-outside and
+	 * outside-to-outside are both `commitExternalRename`. This is its
+	 * mirror, and it follows the same order of operations for the same
+	 * reason — write the copy first, remove the original only once that has
+	 * succeeded, so a failure at either step leaves the file where it was
+	 * rather than nowhere.
+	 *
+	 * **Not a native move**, though `moveExternalFile` is right there and
+	 * would even handle the cross-filesystem case. Going the other way this
+	 * code already refuses a bare rename across the boundary, because it
+	 * takes the file out from under the index; coming this way the same
+	 * rename would put a file *into* the vault directory that the index does
+	 * not know about, and this method has to hand that file to
+	 * `navigateToFile` on the next line. Creating through the vault means
+	 * the TFile exists the moment the write returns.
+	 *
+	 * The padlock is asked for only when moving. Copying in writes nothing
+	 * outside the vault, so there is nothing out there for the gate to
+	 * protect; a move also deletes the original, which is an outside write
+	 * like any other and goes to the desktop's trash.
+	 */
+	private async importIntoVault(target: string, paneType: PaneType | false): Promise<void> {
+		const source = this.externalRenameSource();
+		if (!source || source.fromVault) return;
+
+		const copying = paneType !== false;
+		if (this.plugin.app.vault.getAbstractFileByPath(target)) {
+			new Notice(t("noticeAlreadyExists", { path: target }));
+			this.inputEl?.focus();
+			return;
+		}
+		// Only the move needs it: it is the half of this that reaches back out
+		// and removes something.
+		//
+		// Asked directly rather than through `requireExternalUnlock`, which
+		// gates on where the *row* is pointing — and by this point the row has
+		// been pointed inside the vault to choose the destination, so that
+		// gate would let every move through. What needs the padlock here is
+		// the source, which is still outside.
+		if (!copying && !this.externalWritesUnlocked) {
+			new Notice(t("noticeExternalWriteLocked"));
+			this.inputEl?.focus();
+			return;
+		}
+
+		let created: TFile;
+		try {
+			const bytes = await readExternalFile(source.path);
+			const parentPath = target.substring(0, target.lastIndexOf("/"));
+			await this.ensureFolderExists(parentPath);
+			created = await this.plugin.app.vault.createBinary(target, bytes);
+		} catch (err) {
+			new Notice(
+				t(copying ? "noticeCopyFailed" : "noticeRenameFailed", {
+					error: (err as Error).message,
+				}),
+			);
+			this.inputEl?.focus();
+			return;
+		}
+
+		// The file is in, and that half is not undone by what follows. Removing
+		// the original can fail on its own — a filesystem with no trash to move
+		// it to is the ordinary case, and /tmp is one — and a move that half
+		// happened is worth saying out loud, because the file is now in two
+		// places and only one of them was asked for.
+		if (!copying) {
+			try {
+				await trashExternalEntry(source.path);
+			} catch (err) {
+				new Notice(t("noticeExternalWriteFailed", { error: (err as Error).message }));
+			}
+		}
+
+		this.finishRename();
+		// No notice, for the reason the vault's own move gives none: the file
+		// is where you sent it and the tree is where you look for it, so it is
+		// shown there instead of announced.
+		this.revealInExplorer(created);
+		// The leaf is showing the outside file, which for a move no longer
+		// exists — so it follows the copy in, exactly as moving out makes the
+		// leaf follow the file out.
+		this.navigateToFile(created, paneType);
+	}
+
 	private async commitExternalRename(
 		target: string,
 		paneType: PaneType | false,

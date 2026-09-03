@@ -1,5 +1,5 @@
 import { constants } from "fs";
-import { access, copyFile, mkdir, readdir, rename, unlink, writeFile } from "fs/promises";
+import { access, copyFile, mkdir, readFile, readdir, rename, unlink, writeFile } from "fs/promises";
 import { dirname, join } from "path";
 import { shell } from "electron";
 
@@ -47,6 +47,26 @@ export async function createExternalFile(path: string): Promise<void> {
 export async function copyExternalFile(from: string, to: string): Promise<void> {
 	await ensureParent(to);
 	await copyFile(from, to, constants.COPYFILE_EXCL);
+}
+
+/**
+ * The bytes of an outside file, for handing to the vault.
+ *
+ * Bytes rather than text because what comes in is not always a note — an
+ * image or a PDF read as UTF-8 and written back out is a corrupted file
+ * that looks like it worked. `createBinary` takes exactly this, and takes
+ * it for a Markdown file just as happily.
+ *
+ * The one read in a module otherwise entirely about writing, and it is here
+ * rather than beside the browsing reads because its whole purpose is the
+ * write on the other side of it.
+ */
+export async function readExternalFile(path: string): Promise<ArrayBuffer> {
+	const buffer = await readFile(path);
+	return buffer.buffer.slice(
+		buffer.byteOffset,
+		buffer.byteOffset + buffer.byteLength,
+	) as ArrayBuffer;
 }
 
 /**
