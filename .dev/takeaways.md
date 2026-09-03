@@ -1814,6 +1814,21 @@ about focus at all — it is that a guard written after one painful diagnosis
 belongs on every suite that can suffer the same failure, not only on the one
 that happened to hurt first.
 
+**The guard is necessary and not sufficient, which was established the same
+day by it failing to help.** With it fitted, the four cases still came back red
+on a freshly restarted app that passed `canFocusEditable` — and the code under
+test was byte-identical to the run that had scored 219/219 an hour earlier, so
+the difference was entirely the environment. Being able to put a caret in a
+field and being able to measure a laid-out row are two different capabilities,
+and only the first is tested. The precondition these four actually need is
+geometric: the pane must be squeezable far enough to spend the row's air, and
+`squeezeTight` already reports when it could not get there — it returns
+`landed: null`, which the case then asserts against as though it were a result.
+That is the wrong shape. A precondition the environment failed to meet should
+be reported as a skip with its own exit code, the way the focus gate is, rather
+than as the feature misbehaving. Until that is done, `landed: null` in a
+failure should be read as "this machine could not run the test", not as a bug.
+
 ## Ambient settings make a suite pass on a dirty vault and fail on a clean one
 
 `test-urls.mjs` has two cases that open a file outside the vault, and it never

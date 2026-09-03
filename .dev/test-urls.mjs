@@ -211,6 +211,19 @@ async function reset() {
 	await quiesce(page);
 	buildBed();
 	await page.evaluate(buildFixture);
+	// Two cases here open a file outside the vault, which the plugin refuses
+	// to do at all unless this is on — and it is off by default. The suite
+	// had been reading it rather than setting it, so it passed against a
+	// vault some earlier run had left switched on and failed against a clean
+	// one, which is backwards: tidying up broke the tests. A setting a case
+	// depends on is a fixture that happens not to be a file, and belongs
+	// here with the rest of them.
+	await page.evaluate(`
+		const plugin = app.plugins.plugins.lure;
+		plugin.settings.accessExternalFiles = true;
+		await plugin.saveSettings();
+		return true;
+	`);
 }
 
 async function teardown() {
@@ -219,6 +232,11 @@ async function teardown() {
 		app.workspace.detachLeavesOfType("lure-external-file");
 		app.workspace.getLeavesOfType("empty").forEach((l) => l.detach());
 		document.querySelectorAll(".notice").forEach((n) => n.remove());
+		// Put the opt-in back where it was found. Leaving it on is how the
+		// next suite comes to depend on it without saying so.
+		const plugin = app.plugins.plugins.lure;
+		plugin.settings.accessExternalFiles = false;
+		await plugin.saveSettings();
 		return true;
 	`);
 	rmSync(BED, { recursive: true, force: true });
