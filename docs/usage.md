@@ -657,6 +657,7 @@ appear in a real name, where an apostrophe very much can.
 
 | Setting | Options | Default | What it does |
 | --- | --- | --- | --- |
+| **Language** | Obsidian default, or any of 46 | Obsidian default | Which language this plugin's own text is in. *Obsidian default* follows the language set in Appearance settings, which is what almost everyone wants. The row itself — its name, its description and *Obsidian default* — stays in English whatever is picked, because it is the way back out of a language you cannot read. Greek and Sanskrit are translated here and absent from Obsidian's own list, so this setting is the only way to reach them. |
 | **Alignment** | Left / Center / Right | Left | Where the breadcrumb sits in the header row. *Center* matches Obsidian's classic look. |
 | **Delimiter** | Any character | `/` | The separator drawn between segments. Six one-click presets (`/ > ▸ › \ •`) sit in front of the text field. |
 | **Show vault name** | On / Off | On | Whether the vault itself is the first breadcrumb segment. Turned off, that segment becomes a 🏠 icon rather than disappearing, so the path still starts somewhere clickable. |

@@ -11,7 +11,7 @@ Obsidian 1.8.7+ · desktop only · AGPL-3.0
 ## AI disclosure
 
 - **Agent** — **Claude Opus 5** and **Claude Sonnet 5** (Anthropic, via Claude Code): wrote the TypeScript, the CSS, all 45 translation sets and the documentation. Translations are machine-generated and unreviewed by native speakers.
-- **Usage** — 3–22 Aug 2026, 22 sessions, \~11,820 responses: \~15.4 M tokens generated, \~55.5 M sent, \~3644.2 M cached re-reads (\~3715.0 M total).
+- **Usage** — 3 Aug – 3 Sep 2026, 24 sessions, \~12,715 responses: \~16.1 M tokens generated, \~60.9 M sent, \~3954.4 M cached re-reads (\~4031.3 M total).
 - **Upstream** — the model learned from open source code, documentation and community writing published by others. Most of the credit goes there.
 - **Author** — Vault51: specified every feature, tested each iteration in a live vault, directed the fixes, reviewed all output.
 
@@ -33,8 +33,8 @@ Obsidian 1.8.7+ · desktop only · AGPL-3.0
 - **<kbd>F2</kbd>** alternates between the inline title and the path bar, opening on the name without its extension and walking out to the full paths on further presses. It passes cleanly through Obsidian's rename dialog when the title is scrolled out of view. A *Focus the path bar* command is there to bind if you want the address-bar gesture.
 - **Click the vault name** to browse your other vaults, home, the filesystem root and mounted drives without switching vaults. Read-only until you open a padlock, and framed in the error colour throughout. Off by default — see [outside the vault](#outside-the-vault).
 - **Two warning tiers** — red outside the vault, orange for text files Obsidian has no editor for. See [the warning colours](docs/usage.md#the-two-warning-colours).
-- **Themeable icons**, swapped from a CSS snippet — and **45 locales**, every language Obsidian ships.
-- **Settings:** alignment, delimiter presets, which click opens the dropdown, vault name, dot files, file extensions.
+- **Themeable icons**, swapped from a CSS snippet — and **46 languages**: every one Obsidian ships, plus Greek and Sanskrit, which it has no setting for. Pick one for the plugin alone, or follow Obsidian's own.
+- **Settings:** language, alignment, delimiter presets, which click opens the dropdown, vault name, dot files, file extensions.
 
 ![The same dropdown in move/rename mode: the current filename pinned at the top, sibling folders below it, and existing notes greyed out](docs/images/dropdown.png)
 
