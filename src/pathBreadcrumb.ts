@@ -1035,6 +1035,23 @@ export class PathBreadcrumb {
 				this.navigateToFile(this.file, this.paneTypeFor(evt) || "tab");
 				return;
 			}
+			// A delimiter names the folder before it, and a middle press on
+			// one means what the vault name's already means: that folder,
+			// somewhere else. Where a folder note exists it is the thing the
+			// folder *is*, so that is what opens; where none does there is
+			// nothing to open, and the tab stands at the folder with the list
+			// showing instead — which is the same answer one step down from
+			// the vault name's own middle press, and never nothing.
+			if (el.closest(".view-header-breadcrumb-separator")) {
+				const folderPath = this.folderPathForEvent(evt, "delimiter");
+				if (folderPath === null) return;
+				evt.preventDefault();
+				const folder = this.plugin.app.vault.getAbstractFileByPath(folderPath);
+				const note = folder instanceof TFolder ? this.folderNoteFor(folder) : null;
+				if (note) this.navigateToFile(note, this.paneTypeFor(evt) || "tab");
+				else this.browseInNewTab(folderPath);
+				return;
+			}
 			const segment = el.closest<HTMLElement>(".view-header-breadcrumb");
 			if (!segment || segment.closest(".lure-vault-wrapper")) return;
 			const folderPath = this.nativeSegmentPath(segment);
@@ -1169,7 +1186,7 @@ export class PathBreadcrumb {
 				if (count === 1) this.showDelimiterMenu(this.gestureFolderPath, at);
 				return;
 			case "file":
-				this.runFileGesture(count);
+				this.runFileGesture(count, at);
 				return;
 			case "folder":
 				this.runFolderGesture(count, at);
@@ -1323,10 +1340,16 @@ export class PathBreadcrumb {
 		return listVaults(this.vaultBasePath() ?? "").find((one) => samePath(one.path, path)) ?? null;
 	}
 
-	private runFileGesture(count: number): void {
+	private runFileGesture(count: number, at: { clientX: number; clientY: number }): void {
 		const name = this.externalFileName ?? this.file?.name ?? null;
+		// The plain press answers with the file's own menu, the same one the
+		// File Explorer's row gives — which is what every other part of this
+		// row already does with one press, and what a right-click on a file
+		// means everywhere else in the app. It used to open the outline,
+		// which is a *view* of the file rather than something you can do to
+		// it, and which Obsidian's own command still opens.
 		if (count === 1) {
-			void this.plugin.app.commands.executeCommandById("outline:open");
+			this.showFileMenu(at);
 			return;
 		}
 		if (name === null) return;
@@ -1434,6 +1457,36 @@ export class PathBreadcrumb {
 		const note = this.folderNoteFor(folder);
 		const evt = new MouseEvent("contextmenu", { clientX: at.clientX, clientY: at.clientY });
 		showContextMenu(app, evt, note ?? folder);
+	}
+
+	/**
+	 * The open file's own menu — the one the File Explorer gives its row.
+	 *
+	 * The same argument the folder segments already make: a file should
+	 * offer one menu, not a different one depending on which representation
+	 * of it was clicked. This is built by the same function the dropdown
+	 * rows and the external view use, so the entries agree by construction
+	 * and a plugin contributing to `file-menu` reaches all of them at once.
+	 *
+	 * Outside the vault there is no TFile for those handlers to act on, so
+	 * it is the path-built menu instead, exactly as `showFolderMenu` falls
+	 * back — with `isFolder` false, which is the only difference.
+	 */
+	private showFileMenu(at: { clientX: number; clientY: number }): void {
+		const evt = new MouseEvent("contextmenu", { clientX: at.clientX, clientY: at.clientY });
+		if (this.externalFileName !== null && this.externalPath !== null) {
+			showExternalMenu(
+				this.plugin,
+				evt,
+				externalJoin(this.externalPath, this.externalFileName),
+				false,
+				this.leaf,
+				() => this.externalWritesUnlocked,
+				() => this.refresh(),
+			);
+			return;
+		}
+		if (this.file) showContextMenu(this.plugin.app, evt, this.file);
 	}
 
 	/**
@@ -1839,6 +1892,26 @@ export class PathBreadcrumb {
 		this.insertRenameButton();
 		this.applyAlignment();
 		this.applySwapState();
+
+		// An open field belongs to the file it was opened on. The guard below
+		// exists so a routine refresh cannot overwrite what someone is
+		// typing — but a leaf that has gone to a *different* file underneath
+		// it is not a routine refresh: the path in the field describes
+		// somewhere this pane no longer is.
+		//
+		// Left to the guard, that field survived every later refresh, so the
+		// row went on naming the old file for the rest of the session. The
+		// quick switcher is the easy way to see it — open the bar, change
+		// your mind, press Ctrl+O — but a link, the back button and a click
+		// in the File Explorer all do the same thing.
+		//
+		// A rename keeps the same TFile, so moving the open note from this
+		// very field is not a file change and the session survives it, which
+		// is what rename/move mode needs.
+		if (this.mode === "typing" && this.getFileForLeaf() !== this.file) {
+			this.cancelNavigation();
+			return;
+		}
 
 		if (this.mode !== "typing") {
 			const previousFile = this.file;
@@ -3445,15 +3518,27 @@ export class PathBreadcrumb {
 	 */
 	private openRootInNewTab(evt: MouseEvent): boolean {
 		if (!this.paneTypeFor(evt)) return false;
+		this.browseInNewTab("");
+		return true;
+	}
+
+	/**
+	 * A fresh tab holding nothing, standing at `folderPath` with the list
+	 * already showing.
+	 *
+	 * The vault name's middle press has meant this at the vault root since
+	 * it existed; a delimiter's means the same thing one folder down, so
+	 * both spend the same code rather than two that could drift.
+	 */
+	private browseInNewTab(folderPath: string): void {
 		const leaf = this.plugin.app.workspace.getLeaf("tab");
 		// The new leaf holds no file, and its row is built on the frame after
 		// this one — so the browsing is started once it exists, the same way
 		// sending a folder to another pane waits for that pane.
 		window.setTimeout(() => {
 			this.manager.patchLeaf(leaf);
-			this.manager.breadcrumbFor(leaf)?.startBrowsingAt("");
+			this.manager.breadcrumbFor(leaf)?.startBrowsingAt(folderPath);
 		}, 0);
-		return true;
 	}
 
 	/**

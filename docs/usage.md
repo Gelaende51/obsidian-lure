@@ -123,6 +123,33 @@ Menu wording comes from Obsidian's own translations, so it matches the rest of t
 
 The input is chrome-free — no box, no border — so it reads as the path text itself, and it auto-grows as you type.
 
+## Every part of the row, button by button
+
+The whole row at a glance. Right-click has [a table of its own](#right-click-one-press-two-presses-three)
+below, because it counts presses rather than reading them one at a time. This
+one assumes **Folder name opens the dropdown** is on, which is the default — with
+it off, the folder name and the delimiter swap the first column, as
+[the table at the top](#the-breadcrumb) says.
+
+| Where you press | Click | Double-click | <kbd>Ctrl</kbd>+click, or middle-click | Drop a file on it |
+| --- | --- | --- | --- | --- |
+| The **vault name** | Opens the locations dropdown — other vaults, home, the filesystem root, mounted drives. Off by default; with it off, reveals the vault in the File Explorer instead | | A tab holding nothing, standing at the vault root with the list already showing — somewhere to type a path from scratch | Moves it to the vault root |
+| A **folder name** | Selects that folder for editing, its parent's contents listed below | Retypes that folder and everything below it | Opens that folder in a new tab | Moves it into that folder |
+| A **delimiter** | Opens the folder before it — its folder note where a folder-note plugin is running and one exists, otherwise reveals and expands it in the File Explorer | | | |
+| The **note's name** | Opens the path for editing with the name selected, extension left out | Adds the extension to the selection | Opens the note in a new tab | |
+| The **empty space** | Opens the path for editing, with the name selected | | <kbd>Ctrl</kbd> opens this note again in a tab of its own, flashed in the File Explorer so the copy is not mistaken for the first. Middle-click is *not* that gesture: it pastes over the path | |
+
+**Clicks on the name keep going.** The four rungs are the same four the rename
+key walks, in the same order: the name, the name with its extension, the path
+from the vault, the path from the system root. So a third click reaches the
+vault path and a fourth the machine's — the same four things
+<kbd>Tab</kbd> past the end of the field gives you, and the same four the right
+button *copies* instead of selecting.
+
+**Hovering** is its own answer and never changes anything: a shortened name
+comes back in full for as long as you point at it, and the icon at the start of
+the row says where the vault lives.
+
 ## Right-click: one press, two presses, three
 
 Every target on the row answers a right-click, and how many presses you give it decides what you get. Because a second press might still be coming, the first one waits about a third of a second before acting — the cost of putting three gestures on one button.
@@ -132,7 +159,7 @@ Every target on the row answers a right-click, and how many presses you give it 
 | The **vault name** | What can be done to the vault it names — including *Open this vault*, where that vault is not the one you are in | Copies the vault's name | Copies where the vault is — and a fourth press, where the open file is |
 | A **delimiter** | That folder's menu — its folder note's, where a folder-note plugin is running and the folder has one | | |
 | A **folder name** | That folder's menu | Copies the folder's name | Copies it and everything to the right of it |
-| The **note's name** | Opens the outline sidebar | Copies the name | Copies it with its extension |
+| The **note's name** | The file's menu — the same one the File Explorer's row gives | Copies the name | Copies it with its extension |
 | The **empty space** | | Copies the path from your vault folder, without the extension | The same, with it |
 
 A single press on the **vault name** opens what can be done to whatever that
