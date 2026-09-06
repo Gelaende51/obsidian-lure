@@ -24,6 +24,30 @@
  */
 
 /**
+ * Thrown by a case that cannot ask its question in this environment.
+ *
+ * Not a failure and not a pass. Some cases here need a *geometric*
+ * precondition that no gate in front of the suite can test — the pane must
+ * squeeze far enough that the row runs out of air, or narrow enough that
+ * the extension has to be given up — and whether it holds depends on the
+ * host's font metrics and on how much room the window has. Byte-identical
+ * code scored 219/219 and 211/219 an hour apart on the same machine for
+ * exactly this reason.
+ *
+ * Asserting on it made the suite report four detailed, plausible failures
+ * about a feature that was working. Skipping says the true thing: the
+ * question was not asked. The run's exit code says so too — 2, the same
+ * code the gates in front of the writing suites use — so nothing can read
+ * a run with unasked questions as a clean one.
+ */
+export class Skipped extends Error {}
+
+/** Ends the running case as "not askable here", with the reason. */
+export function skipCase(why) {
+	throw new Skipped(why);
+}
+
+/**
  * A small seeded generator, so a shuffled order can be replayed.
  *
  * mulberry32: thirty-two bits of state, no dependencies, and the same
@@ -117,6 +141,7 @@ export function createSuite({ reset, teardown, skip, argv = process.argv.slice(2
 			console.log(`order: shuffled — replay with --shuffle=${seed}\n`);
 		}
 
+		const skipped = [];
 		for (const { name, fn } of chosen) {
 			const at = results.length;
 			try {
@@ -124,12 +149,26 @@ export function createSuite({ reset, teardown, skip, argv = process.argv.slice(2
 			} catch (err) {
 				results.push({ ok: false, label: `${name} — reset threw`, actual: err.message });
 			}
+			let why = null;
 			if (results.length === at) {
 				try {
 					await fn();
 				} catch (err) {
-					results.push({ ok: false, label: `${name} — threw`, actual: err.message });
+					// A case that could not be asked here is dropped whole,
+					// including whatever it had already asserted on the way to
+					// finding out — half a case is not a result either.
+					if (err instanceof Skipped) {
+						why = err.message;
+						results.length = at;
+					} else {
+						results.push({ ok: false, label: `${name} — threw`, actual: err.message });
+					}
 				}
+			}
+			if (why !== null) {
+				skipped.push({ name, why });
+				console.log(`– ${name}\n    SKIP  ${why}`);
+				continue;
 			}
 			const mine = results.slice(at);
 			const failed = mine.filter((r) => !r.ok);
@@ -149,11 +188,18 @@ export function createSuite({ reset, teardown, skip, argv = process.argv.slice(2
 
 		const failed = results.filter((r) => !r.ok).length;
 		console.log(`\n${results.length - failed}/${results.length} assertions passed`);
+		if (skipped.length) {
+			console.log(`${skipped.length} case${skipped.length === 1 ? "" : "s"} not askable here:`);
+			for (const { name, why } of skipped) console.log(`  – ${name} — ${why}`);
+		}
 		// Repeated at the end on purpose: by the time a long suite has
 		// finished, the line at the top has scrolled away, and the seed is
 		// the only thing that makes a shuffled failure reproducible.
 		if (shuffled) console.log(`order seed: ${seed}`);
-		process.exit(failed ? 1 : 0);
+		// 1 for a real failure, 2 for a run that could not ask everything —
+		// the same code the environment gates in front of the writing suites
+		// exit with, and for the same reason: neither is a green run.
+		process.exit(failed ? 1 : skipped.length ? 2 : 0);
 	}
 
 	return { test, expect, run, results };
