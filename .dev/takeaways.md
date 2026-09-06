@@ -2068,3 +2068,40 @@ Two smaller things worth keeping:
 The general shape: when a host gives you a way to show untrusted content, the
 question is not "does it render" but "what origin is it in". Everything above
 followed from answering that one first.
+
+## A suite can be green, red, or a different red, from the same build
+
+The `long paths` cases in `test-gestures.mjs` all pass when run alone. Run
+together, which of them fail changes between runs — one run failed two, the
+next five, from the same build, in the same 1920×1036 unoccluded window,
+against the same vault. That is not a flaky feature; it is a suite whose
+cases are not independent of each other, and it had been read as
+"environmental" for several sessions because the failures moved around.
+
+What has been ruled out, each by measuring it rather than by reasoning about
+it:
+
+- **The window.** Size and `visibilityState` read identical across runs.
+- **A setting left on.** `showFileExtension` read `false` at the start of a
+  failing case, which is correct.
+- **Leftover panes.** One leaf, full width, at the start of a failing case.
+- **Split dimensions.** Evening every split in `reset` — which is where pane
+  geometry belongs, by this harness's own argument — changed the failures not
+  at all. The change was reverted rather than kept: code whose only
+  justification is a hypothesis you have just disproved is worse than no
+  code, however plausible its comment reads.
+
+Still open, and the best remaining candidate: the **sidebar**.
+`revealInExplorer` opens the File Explorer and nothing closes it, and the
+main area's width is what every `squeeze(px)` is measured against.
+
+Two lessons worth more than the bug:
+
+1. **"Passes alone, fails together" is a complete diagnosis of the *class*,**
+   even before the carrier is found. It rules out the code under test
+   entirely, which is exactly what had been suspected for three sessions.
+2. **Skipping is for a precondition you can name.** Two of these four could
+   state theirs — the row must scroll, the pane must squeeze until the air is
+   spent — and now do. The rest are left failing, because a family that fails
+   differently every run should not be taught to keep quiet before it is
+   understood: that turns an unsolved problem into a silent one.
