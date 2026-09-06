@@ -16,7 +16,7 @@
  * Requires --remote-debugging-port=9222 and OBSIDIAN_VAULT set.
  */
 
-import { canFocusEditable, connect, PAUSE, pressKey, quiesce, reloadPlugin } from "./cdpSession.mjs";
+import { canFocusEditable, canRenameFiles, connect, PAUSE, pressKey, quiesce, reloadPlugin, setSettings, setVaultConfig } from "./cdpSession.mjs";
 import { createSuite } from "./harness.mjs";
 import { mkdirSync, rmSync, writeFileSync } from "fs";
 import { join } from "path";
@@ -44,10 +44,24 @@ const page = await connect();
  * and it means the half that forgets to declare anything still starts
  * somewhere known rather than wherever the previous case finished.
  */
+/**
+ * Answered in advance rather than left to a dialog. Renaming anything another
+ * note links to raises Obsidian's "Update links" question unless this is on,
+ * and it is off by default; an unanswered question stops every later rename
+ * in the window from ever settling. See `setVaultConfig`.
+ */
+const LINKS_AT_START = await setVaultConfig(page, { alwaysUpdateLinks: true });
+
 const { test, expect, run } = createSuite({
 	reset: async () => {
 		await reloadPlugin(page);
 		await quiesce(page);
+		// The vault name only opens the locations dropdown when this is on,
+		// and it is off by default — so every case about that segment, and
+		// every case that browses outside the vault, was passing only against
+		// a vault an earlier run had left switched on. Setting it here rather
+		// than reading it; see `setSettings`.
+		await setSettings(page, { accessExternalFiles: true });
 		await page.evaluate(buildVaultFixture);
 		buildExternalFixture();
 		await page.evaluate(openVaultNote);
@@ -58,6 +72,9 @@ const { test, expect, run } = createSuite({
 			if (existing) await app.vault.adapter.rmdir("${ROOT}", true);
 			return true;
 		`);
+		// Back to the default, so the next suite has to declare it too.
+		await setSettings(page, { accessExternalFiles: false });
+		await setVaultConfig(page, LINKS_AT_START);
 		rmSync(EXT, { recursive: true, force: true });
 		page.close();
 	},
@@ -1249,6 +1266,61 @@ test("the vault name opens the path in full, with the place selected", async () 
 	// The prefill must not double as the query, or the list the click just
 	// opened would filter itself down to nothing.
 	expect("and the places still listed", out.rows, (v) => v > 0);
+	await pressKey(page, "Escape");
+});
+
+test("vault name: a second press widens the mark to the whole absolute path", async () => {
+	// The one gesture on the row that hands over the machine's own path in a
+	// single motion. Real presses, not a synthetic MouseEvent: the second
+	// press is answered by the `dblclick` the browser synthesises from a run
+	// of two, which a dispatched click never produces — the same road the
+	// middle-button case above had to take for the same reason.
+	await page.evaluate(buildVaultFixture);
+	const spot = JSON.parse(await page.evaluate(`
+		for (const type of ["markdown", "lure-external-file", "empty"]) {
+			app.workspace.getLeavesOfType(type).forEach((l) => l.detach());
+		}
+		${PAUSE(300)}
+		await app.workspace.getLeaf(false)
+			.openFile(app.vault.getAbstractFileByPath("${ROOT}/inner/leaf.md"));
+		${PAUSE(400)}
+		const c = app.workspace.getLeavesOfType("markdown")[0].view.containerEl
+			.querySelector(".view-header-title-container");
+		const b = c.querySelector(".lure-vault-segment").getBoundingClientRect();
+		return JSON.stringify({ x: Math.round(b.left + b.width / 2), y: Math.round(b.top + b.height / 2) });
+	`));
+	const press = async (clickCount) => {
+		for (const type of ["mousePressed", "mouseReleased"]) {
+			await page.send("Input.dispatchMouseEvent", {
+				type,
+				x: spot.x,
+				y: spot.y,
+				button: "left",
+				buttons: type === "mousePressed" ? 1 : 0,
+				clickCount,
+			});
+		}
+	};
+	const marked = `
+		const input = document.querySelector(".view-header-title-container input");
+		return JSON.stringify({
+			value: input?.value ?? null,
+			selected: input ? input.value.slice(input.selectionStart, input.selectionEnd) : null,
+		});
+	`;
+
+	await press(1);
+	await page.evaluate(PAUSE(400) + "return true;");
+	const first = JSON.parse(await page.evaluate(marked));
+	expect("one press marks the place the path starts at", first.selected, app.vaultPath);
+
+	await press(2);
+	await page.evaluate(PAUSE(400) + "return true;");
+	const second = JSON.parse(await page.evaluate(marked));
+	// The field must not be rebuilt by the second press: what widens is the
+	// selection, over the very text the first press put there.
+	expect("the path is untouched", second.value, first.value);
+	expect("and all of it is marked", second.selected, `${app.vaultPath}/${ROOT}/inner/leaf.md`);
 	await pressKey(page, "Escape");
 });
 
@@ -2508,6 +2580,17 @@ if (!(await canFocusEditable(page, `${ROOT}/inner/leaf.md`))) {
 			"cannot be measured: widths come back degenerate while everything else\n" +
 			"looks healthy. Obsidian behaves this way while it is obscured by a\n" +
 			"fullscreen application — bring its window to the front and run again.",
+	);
+	page.close();
+	process.exit(2);
+}
+// The other way this window can be wrong: the caret goes in, the row is
+// measurable, and every case that writes then hangs. See `canRenameFiles`.
+if (!(await canRenameFiles(page))) {
+	console.log(
+		"\nThis window's file renames never settle — fileManager.renameFile\n" +
+			"neither resolves nor rejects and nothing reaches the disk, while every\n" +
+			"other API keeps answering. Restart Obsidian and run again.",
 	);
 	page.close();
 	process.exit(2);

@@ -18,7 +18,7 @@
 import { mkdirSync, rmSync, writeFileSync, readFileSync, existsSync, chmodSync } from "fs";
 import { join } from "path";
 import { homedir, userInfo } from "os";
-import { connect, PAUSE, pressKey, quiesce, reloadPlugin } from "./cdpSession.mjs";
+import { canRenameFiles, connect, PAUSE, pressKey, quiesce, reloadPlugin, setSettings, setVaultConfig } from "./cdpSession.mjs";
 import { createSuite } from "./harness.mjs";
 import { build } from "esbuild";
 import { fileURLToPath } from "node:url";
@@ -1510,6 +1510,14 @@ for (let i = 0; ; i++) {
  * from, where a stray "show all file types" changes what a dropdown contains.
  * Snapshot here, put it back in the unconditional teardown at the bottom.
  */
+/**
+ * Answered in advance rather than left to a dialog. Renaming anything another
+ * note links to raises Obsidian's "Update links" question unless this is on,
+ * and it is off by default; an unanswered question stops every later rename
+ * in the window from ever settling. See `setVaultConfig`.
+ */
+const LINKS_AT_START = await setVaultConfig(page, { alwaysUpdateLinks: true });
+
 const SETTINGS_AT_START = JSON.parse(
 	await page.evaluate(`
 		return JSON.stringify({
@@ -1540,6 +1548,13 @@ async function reset() {
 		return true;
 	`);
 	await quiesce(page);
+	// Nearly every case here is about a path outside the vault, which the
+	// plugin refuses to look at unless this is on — and it is off by default.
+	// The suite had been taking it from whatever the vault happened to be
+	// left in; see `setSettings`. It goes in before the fixtures because the
+	// case that turns it off deliberately restores what it found, and what it
+	// should find is the suite's own fixture value rather than the vault's.
+	await setSettings(page, { accessExternalFiles: true });
 	buildFixtures();
 }
 
@@ -1556,11 +1571,29 @@ async function teardown() {
 		const at = ${JSON.stringify(SETTINGS_AT_START)};
 		app.vault.setConfig("showUnsupportedFiles", at.showUnsupportedFiles);
 		Object.assign(app.plugins.plugins.lure.settings, at.lure);
+		// Saved, not only restored in memory: the opt-in the reset writes
+		// goes to disk, so putting it back anywhere but disk leaves the next
+		// suite reading a value this one wrote.
+		await app.plugins.plugins.lure.saveSettings();
 		return true;
 	`);
+	await setVaultConfig(page, LINKS_AT_START);
 	rmSync(BED, { recursive: true, force: true });
 	page.close();
 }
 
-await run();
+// A window whose renames never settle fails every case below on a timeout,
+// and each failure reads as a broken feature rather than a broken window.
+// See `canRenameFiles`; exit 2, as the focus gate does, so a run that
+// declined is distinguishable from a run that found something.
+if (!(await canRenameFiles(page))) {
+	console.log(
+		"\nThis window's file renames never settle — fileManager.renameFile\n" +
+			"neither resolves nor rejects and nothing reaches the disk, while every\n" +
+			"other API keeps answering. Restart Obsidian and run again.",
+	);
+	page.close();
+	process.exit(2);
+}
 
+await run();

@@ -216,6 +216,32 @@ export async function reloadPlugin(page, id = "lure") {
 }
 
 /**
+ * Writes the plugin settings a suite's cases depend on, and saves them.
+ *
+ * A setting a case needs is a fixture that happens not to be a file, and it
+ * belongs in `reset` with the rest of them. Read rather than set, it passes
+ * against a vault some earlier run left switched on and fails against a clean
+ * one — so tidying up breaks the tests, which is backwards, and the failure
+ * reads as the feature being broken rather than the fixture being absent.
+ *
+ * Found twice: `test-urls.mjs` borrowed `accessExternalFiles`, and putting it
+ * back in that suite's teardown is what exposed `test-gestures.mjs` borrowing
+ * the same one. Hence one helper rather than the block copied per suite —
+ * the next suite to need a setting should not have to rediscover why.
+ *
+ * Call it after `reloadPlugin`, never before: a disable/enable cycle reloads
+ * the settings from disk and would throw the patch away.
+ */
+export async function setSettings(page, patch, id = "lure") {
+	await page.evaluate(`
+		const plugin = app.plugins.plugins[${JSON.stringify(id)}];
+		Object.assign(plugin.settings, ${JSON.stringify(patch)});
+		await plugin.saveSettings();
+		return true;
+	`);
+}
+
+/**
  * Puts the window back into a state a case can start from.
  *
  * Everything here is something a previous case was seen to leave behind: an
@@ -281,6 +307,80 @@ export async function quiesce(page, { leaveTypes = ["markdown", "lure-external-f
  * `notePath` must be a note this vault holds; it is opened, tried on, and
  * left open.
  */
+/**
+ * Writes Obsidian's own vault config, and hands back what was there before.
+ *
+ * The sibling of `setSettings`, one level down: these are the app's settings
+ * rather than the plugin's, and a case can depend on them just as silently.
+ *
+ * `alwaysUpdateLinks` is the one that matters here. With it off — which is
+ * the default — renaming anything another note links to raises Obsidian's
+ * "Update links" dialog, and `fileManager.renameFile` does not settle until
+ * somebody answers it. A suite that renames a linked file and does not await
+ * the result leaves that dialog standing; every later rename in the window
+ * queues behind it and none of them ever finish. That is the whole mechanism
+ * behind runs that decay the longer a window has been up, and it survives a
+ * plugin reload, so it looked like the plugin rotting rather than a question
+ * nobody answered.
+ *
+ * Restore what you were given, in teardown, the way `setSettings` is put back.
+ */
+export async function setVaultConfig(page, patch) {
+	return JSON.parse(
+		await page.evaluate(`
+			const patch = ${JSON.stringify(patch)};
+			const before = {};
+			for (const [key, value] of Object.entries(patch)) {
+				before[key] = app.vault.getConfig(key);
+				app.vault.setConfig(key, value);
+			}
+			return JSON.stringify(before);
+		`),
+	);
+}
+
+/**
+ * Whether `fileManager.renameFile` still settles in this window.
+ *
+ * It can stop settling altogether. The promise neither resolves nor rejects,
+ * nothing reaches the disk, and every other API keeps working — the metadata
+ * cache reports itself initialised, the vault lists its files, the row draws.
+ * Seen after an instance had been signalled shut and restarted twice in a
+ * session; a clean restart cured it, and nothing in the plugin was involved.
+ *
+ * What it costs to leave undetected: every suite that writes then fails on a
+ * timeout, and the failures read as a broken feature. One case hung for
+ * fifteen seconds and the next reported the rename simply not happening,
+ * which is a very convincing bug report about code that is fine.
+ *
+ * Unlike the geometric precondition the `long paths` cases need, this one is
+ * cheap and decisive — one rename, in a folder of its own, put straight back
+ * — so it belongs in front of the suites rather than in a note about them.
+ */
+export async function canRenameFiles(page, at = "LureRenameProbe") {
+	return await page.evaluate(`
+		const root = ${JSON.stringify(at)};
+		const existing = app.vault.getAbstractFileByPath(root);
+		if (existing) await app.vault.adapter.rmdir(root, true);
+		await new Promise((r) => setTimeout(r, 200));
+		await app.vault.createFolder(root);
+		await app.vault.create(root + "/before.md", "# probe");
+		await new Promise((r) => setTimeout(r, 300));
+		const file = app.vault.getAbstractFileByPath(root + "/before.md");
+		// Raced against a deadline rather than awaited: the failure being
+		// looked for is a promise that never settles, so awaiting it here
+		// would hang the very check meant to report it.
+		const settled = await Promise.race([
+			app.fileManager.renameFile(file, root + "/after.md").then(() => true, () => false),
+			new Promise((r) => setTimeout(() => r(false), 4000)),
+		]);
+		const moved = !!app.vault.getAbstractFileByPath(root + "/after.md");
+		const back = app.vault.getAbstractFileByPath(root);
+		if (back) await app.vault.adapter.rmdir(root, true);
+		return settled && moved;
+	`);
+}
+
 export async function canFocusEditable(page, notePath) {
 	return await page.evaluate(`
 		const file = app.vault.getAbstractFileByPath(${JSON.stringify(notePath)});

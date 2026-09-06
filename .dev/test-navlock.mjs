@@ -19,7 +19,7 @@
  * Requires OBSIDIAN_VAULT set to a vault with this plugin installed.
  */
 
-import { connect, PAUSE, quiesce, reloadPlugin } from "./cdpSession.mjs";
+import { canRenameFiles, connect, PAUSE, quiesce, reloadPlugin, setVaultConfig } from "./cdpSession.mjs";
 import { createSuite } from "./harness.mjs";
 import { mkdirSync, rmSync, writeFileSync } from "fs";
 import { join } from "path";
@@ -215,7 +215,14 @@ test("rename: links to every renamed pane's notes still resolve", async () => {
 		const bar = [...mgr.instances.values()]
 			.find((b) => b.participates() && b.file?.path.startsWith("${ROOT}/alpha"));
 		bar.renameMode = true;
-		bar.moveFileTo("${ROOT}/alpha/renamed/leaf.md");
+		// Awaited. Left to run on its own, the rename was still in flight
+		// when the case returned, and the next reset tore the fixture tree
+		// out from under it with rmdir — which left Obsidian holding a
+		// rename that could never finish. Every fileManager.renameFile in
+		// the window then queued behind it and none ever settled again, so
+		// the suites that ran afterwards failed on timeouts that had nothing
+		// to do with them. A case must not outlive its own writes.
+		await bar.moveFileTo("${ROOT}/alpha/renamed/leaf.md");
 		${PAUSE(1800)}
 		const src = app.vault.getAbstractFileByPath("${ROOT}/pointer.md");
 		const cache = app.metadataCache;
@@ -437,6 +444,14 @@ test("mixed: a shared rename asks rather than half-renaming", async () => {
 	expect("and the lock is still on", s.stillLocked, true);
 });
 
+/**
+ * Answered in advance rather than left to a dialog. Several cases here rename
+ * a folder that another note links into, which Obsidian asks about unless
+ * this is on — and it is off by default. See `setVaultConfig` for what an
+ * unanswered question costs the rest of the run.
+ */
+const LINKS_AT_START = await setVaultConfig(page, { alwaysUpdateLinks: true });
+
 async function reset() {
 	await reloadPlugin(page);
 	await quiesce(page);
@@ -457,8 +472,23 @@ async function teardown() {
 		if (folder) await app.vault.adapter.rmdir("${ROOT}", true);
 		return true;
 	`);
+	await setVaultConfig(page, LINKS_AT_START);
 	rmSync(EXT, { recursive: true, force: true });
 	page.close();
+}
+
+// A window whose renames never settle fails every case below on a timeout,
+// and each failure reads as a broken feature rather than a broken window.
+// See `canRenameFiles`; exit 2, as the focus gate does, so a run that
+// declined is distinguishable from a run that found something.
+if (!(await canRenameFiles(page))) {
+	console.log(
+		"\nThis window's file renames never settle — fileManager.renameFile\n" +
+			"neither resolves nor rejects and nothing reaches the disk, while every\n" +
+			"other API keeps answering. Restart Obsidian and run again.",
+	);
+	page.close();
+	process.exit(2);
 }
 
 await run();

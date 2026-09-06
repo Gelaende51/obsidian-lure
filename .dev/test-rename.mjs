@@ -23,7 +23,7 @@
  * Requires --remote-debugging-port=9222 (see .dev/cdp.mjs) and a vault open.
  */
 
-import { canFocusEditable, connect, PAUSE, pressKey, quiesce, reloadPlugin } from "./cdpSession.mjs";
+import { canFocusEditable, canRenameFiles, connect, PAUSE, pressKey, quiesce, reloadPlugin, setVaultConfig } from "./cdpSession.mjs";
 import { createSuite } from "./harness.mjs";
 
 const FIXTURE = "LureRename";
@@ -37,6 +37,14 @@ const page = await connect();
  * function declarations hoist, so the suite can still be built here,
  * above the cases that register into it.
  */
+/**
+ * Answered in advance rather than left to a dialog. Renaming anything another
+ * note links to raises Obsidian's "Update links" question unless this is on,
+ * and it is off by default; an unanswered question stops every later rename
+ * in the window from ever settling. See `setVaultConfig`.
+ */
+const LINKS_AT_START = await setVaultConfig(page, { alwaysUpdateLinks: true });
+
 const { test, expect, run } = createSuite({ reset, teardown });
 
 /**
@@ -199,6 +207,7 @@ async function teardown() {
 		if (folder) await app.vault.adapter.rmdir(folder.path, true);
 		return true;
 	`);
+	await setVaultConfig(page, LINKS_AT_START);
 	page.close();
 }
 
@@ -228,6 +237,18 @@ if (!(await canFocusEditable(page, NOTE))) {
 		"\nThis window cannot put the caret in an editable element, so nothing\n" +
 			"here can be measured. Obsidian behaves this way while it is obscured by\n" +
 			"a fullscreen application — bring its window to the front and run again.",
+	);
+	await teardown();
+	process.exit(2);
+}
+// The other way this window can be wrong: the caret goes in, the row is
+// measurable, and every rename the suite commits then hangs. See
+// `canRenameFiles`.
+if (!(await canRenameFiles(page))) {
+	console.log(
+		"\nThis window's file renames never settle — fileManager.renameFile\n" +
+			"neither resolves nor rejects and nothing reaches the disk, while every\n" +
+			"other API keeps answering. Restart Obsidian and run again.",
 	);
 	await teardown();
 	process.exit(2);

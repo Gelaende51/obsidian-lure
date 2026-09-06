@@ -1874,3 +1874,50 @@ Worth noting how it was validated, since a detector that never fires is
 indistinguishable from a clean system: the fault was injected by hand — 14px of
 surplus floor on a live row — and the audit named the part, the surplus and the
 floor. Same discipline as testing the locale drift check by simulating drift.
+
+## A dialog nobody answered, and a whole run's worth of fictional failures
+
+Obsidian's `fileManager.renameFile` returns a promise that does not settle
+while a modal is waiting on the user. With `alwaysUpdateLinks` off — which is
+the default — renaming anything another note links to raises *Update links*
+("Always update / Just once / Do not update"), and the rename hangs there.
+
+That alone is ordinary. What made it expensive is what happens next. A test
+fired a rename **without awaiting it**, so the case returned while the rename
+was still in flight, and the next reset tore the fixture tree out with
+`rmdir`. The dialog was left standing over a tree that no longer existed, and
+from that moment *every* `renameFile` in the window queued behind it and none
+ever settled again. A plugin reload does not clear it. A restart does.
+
+The damage is not local to the suite that did it:
+
+- The suite that caused it scored 39/41 and looked nearly fine.
+- Every suite run afterwards in that window failed its write cases on
+  fifteen-second timeouts — `test-external` went 172/172 → 158/164 — and each
+  failure read as a broken feature in code that had not changed.
+- Because it needs a long-lived window to show up, it presented as *runs
+  decaying the longer Obsidian had been up*, which is a very convincing and
+  entirely wrong diagnosis. It was carried across several sessions as
+  "long-session degradation" before the mechanism was found.
+
+Three things came out of it, and the order matters:
+
+1. **The setting is a fixture.** `alwaysUpdateLinks` goes on in `reset` and
+   back in `teardown`, via `setVaultConfig`. Same class as the
+   `accessExternalFiles` leak already recorded here — a setting a case depends
+   on is a fixture that happens not to be a file — except one level down, in
+   Obsidian's own config rather than the plugin's.
+2. **A case must not outlive its own writes.** The un-awaited call was the
+   actual defect. Awaiting it turned a silent corruption of the window into a
+   plain, local failure of the case that caused it, which is what a test is
+   for.
+3. **Guard what you cannot see.** `canRenameFiles` renames one unlinked file
+   in a folder of its own and races it against a deadline — awaiting it would
+   hang the very check meant to report the hang. The suites that write now
+   refuse with exit 2 rather than reporting twenty plausible failures.
+
+The general lesson is the one `canFocusEditable` taught in a different key: a
+suite that can be quietly poisoned by its environment needs a cheap, decisive
+check in front of it. Cheap and decisive is the test for whether a guard
+belongs there — this one is a single rename, which is why it ships, and the
+`long paths` geometric precondition still is not, which is why it does not.
