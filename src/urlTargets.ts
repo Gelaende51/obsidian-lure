@@ -90,6 +90,21 @@ function safeDecode(text: string): string {
 }
 
 /**
+ * Whether text names a place on this machine rather than something inside
+ * the vault: a POSIX path from the root, or a Windows drive letter.
+ *
+ * Vault-relative paths never begin with a separator — Obsidian's own
+ * `normalizePath` strips one — so a leading "/" cannot be a vault path that
+ * meant something else. It used to be quietly folded into whatever folder
+ * the row was standing in, which is how the locations dropdown, whose field
+ * *opens* holding an absolute path, could be made to build the whole of it
+ * again as folders inside the vault.
+ */
+export function isAbsolutePath(text: string): boolean {
+	return /^([a-zA-Z]:[\\/]|[\\/])/.test(text);
+}
+
+/**
  * Whether "/" typed here belongs to a scheme rather than to a path.
  *
  * The path bar treats "/" as "commit this segment and descend", which is

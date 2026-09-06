@@ -341,6 +341,25 @@
 	flex: 0 0 auto;
 }
 
+/* Nothing answers to what is in the field yet, so Enter will make it rather
+   than open it. Colour rather than a border or a ring: the field has no
+   chrome at all (see above), and giving it some only while the path is
+   unfinished would make the row twitch at every completed folder.
+
+   The whole of the field goes red, not the missing tail alone — an <input>
+   cannot colour part of its own text, and the alternative is a mirrored copy
+   of the path underneath transparent text, which buys per-segment precision
+   at the price of keeping two elements agreeing about scrolling, fonts and
+   bidi on the row's hottest path.
+
+   Ordered after the .lure-path-input rule above rather than made stronger
+   than it: both are (0,2,1), so this wins only by coming later, and moving
+   it back up the file would silently turn it off. */
+.lure-filename input.lure-will-create,
+.lure-vault-wrapper input.lure-will-create {
+	color: var(--text-error);
+}
+
 /* Rename mode greys already-taken names. They stay selectable — the
    live validation tooltip is what blocks committing over them. */
 .lure-suggest-disabled {
@@ -408,6 +427,23 @@
    the red ring (applyExternalState suppresses it there). */
 .view-header-title-container.lure-warn-active {
 	box-shadow: inset 0 0 0 2px var(--text-warning);
+	border-radius: var(--radius-s);
+	padding: 0 4px;
+}
+
+/* A drag carrying *content* is over something that would take it, or the
+   field is holding what such a drop carried and waiting to be told which
+   note it goes into. Blue rather than the accent Obsidian's own drop
+   highlight uses: a file dragged onto a folder segment still means "move it
+   there", and the two answers to what looks like the same gesture have to be
+   told apart before the mouse button comes up.
+
+   Last of the three rings on purpose. All are the same specificity, so this
+   wins over the red and the orange by coming after them — which is right
+   while it is up, because it is about what the next second does rather than
+   about where the row points. */
+.view-header-title-container.lure-drop-content {
+	box-shadow: inset 0 0 0 2px var(--color-blue);
 	border-radius: var(--radius-s);
 	padding: 0 4px;
 }
@@ -643,6 +679,15 @@
 	height: 100%;
 	min-height: 240px;
 	border: none;
+}
+
+/* A local page renders on its own ground, not the theme's: the document
+   carries its own colours, and a transparent frame over a dark Obsidian
+   would leave black text on black for every page that assumed a browser's
+   white default. This is the page's paper. */
+.lure-external-page {
+	background: #fff;
+	color-scheme: light;
 }
 
 .lure-external-error {

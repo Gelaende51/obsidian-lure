@@ -22,6 +22,10 @@ Nothing. No plugin, core or community, has to be enabled.
 
   The underline follows the same principle. Rather than work out where folder notes live, Lure keys it off the `has-folder-note` class that **Folder notes** (LostPaul) puts on the native path segment, so only delimiters that really lead to a note are underlined and the marking tracks that plugin's own configuration. Folder-notes plugins that don't set that class will simply leave every delimiter un-underlined; the clicks still work.
 
+  **Making** one is the one thing that cannot be delegated, and a double-click on that same delimiter does it. There is no click to re-dispatch: Folder notes offers creating a folder note from the File Explorer's context menu and from its own commands, all of which want a folder this row has no way to hand them, and none of it is exported. So the file is made here — but the *convention* is still borrowed rather than assumed. Lure reads that plugin's own `folderNoteName`, `folderNoteType` and `storageLocation`, so a vault that keeps its folder notes beside the folder, or calls them `_index`, gets one of those and not a stray `Folder/Folder.md`.
+
+  Two deliberate limits on that. It is offered only while a folder-note plugin is actually running — the convention is checkable on its own, but acting on it regardless would make the row behave differently in two vaults that look identical. And the file made is always Markdown, whatever `folderNoteType` says: it is the type that plugin's own default create command makes, it is the only one an empty file is valid for, and its own lookup finds a `.md` note whatever the vault's primary type is.
+
   Two gaps, both from the same cause — no native element exists to delegate to:
 
   - While you're *browsing* (after a dropdown has put chips on the row) the trail is this plugin's own, which no folder-notes plugin knows about. Those clicks reveal the folder in the sidebar instead of opening its note.
@@ -52,7 +56,7 @@ native breadcrumb, and whoever has claimed it responds.
 
 | Plugin | Id | Result |
 | --- | --- | --- |
-| [Folder notes](obsidian://show-plugin?id=folder-notes) | `folder-notes` | Opens the folder note on the delimiter click; with the swap off the delimiter opens the dropdown instead |
+| [Folder notes](obsidian://show-plugin?id=folder-notes) | `folder-notes` | Opens the folder note on the delimiter click, and makes one on a double-click, at the location its own settings name; with the swap off both move to the folder name and the delimiter opens the dropdown |
 | [Folder Note](obsidian://show-plugin?id=folder-note-plugin) | `folder-note-plugin` | Does not claim the header path — the click reveals and expands the folder |
 | [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) | `create-folder-notes-with-dropdown` | Does not claim the header path — same fallback |
 

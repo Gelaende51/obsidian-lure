@@ -1,4 +1,4 @@
-import { AbstractInputSuggest, App, TAbstractFile, TFile, TFolder, setIcon } from "obsidian";
+import { AbstractInputSuggest, App, TAbstractFile, TFile, TFolder, UserEvent, setIcon } from "obsidian";
 import { wireNativeFileItem } from "./nativeFileItem";
 import { SystemLocation, applyIcon, iconFor } from "./systemLocations";
 import { ExternalChild, externalJoin, listExternalChildren } from "./externalFs";
@@ -110,6 +110,8 @@ interface SuggestionList {
 	containerEl?: HTMLElement;
 	setSelectedItem(index: number, evt: unknown): void;
 	forceSetSelectedItem(index: number, evt: unknown): void;
+	/** What Obsidian's own Enter handler calls. Wrapped, not called — see wrapList. */
+	useSelectedItem(evt: unknown): void;
 }
 
 /**
@@ -175,6 +177,12 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		 * The path bar owns the input and the query, so it does the writing.
 		 */
 		private onPreview?: (value: PathSuggestion | null) => void,
+		/**
+		 * <kbd>Enter</kbd> pressed while the list is showing but standing on
+		 * nothing. The popover owns the key by then and the field will never
+		 * see it, so the press has to be handed back — see `wrapList`.
+		 */
+		private onCommitTyped?: (evt: UserEvent | null) => void,
 	) {
 		super(app, inputEl);
 		this.dragKeepFocusEl = inputEl;
@@ -285,6 +293,31 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			}
 			original(index, evt);
 			remember(evt);
+		};
+
+		// Enter with the list up but standing on nothing used to do nothing
+		// at all — the single worst thing found on the way to the red field,
+		// because it is the ordinary shape of committing: type a note's whole
+		// name, the folder still has rows to show for it, press Enter,
+		// silence. The row could only be committed by first arrowing onto a
+		// suggestion, or by typing something so unlike the folder's contents
+		// that the popover closed.
+		//
+		// Obsidian claims the key in the suggester's own scope, registered
+		// before this plugin exists, and a scope stops at the first handler
+		// that takes a key — so a later `register` for Enter is never
+		// reached, and the input's own keydown never fires either. What that
+		// handler does is call `useSelectedItem` unconditionally, and this
+		// list rests at *no* selection on purpose (see `onSelectedChange`,
+		// where a highlight nobody asked for is refused). Wrapping the one
+		// call it makes is the only place left to put the fall-through back.
+		const useSelected = list.useSelectedItem.bind(list);
+		list.useSelectedItem = (evt: unknown) => {
+			if (list.selectedItem < 0) {
+				this.onCommitTyped?.((evt ?? null) as UserEvent | null);
+				return;
+			}
+			useSelected(evt);
 		};
 
 		// Hovering a row previews it, so taking the pointer off the list has

@@ -115,6 +115,7 @@ Menu wording comes from Obsidian's own translations, so it matches the rest of t
 - In the field the offered part is simply **selected**. The list is where it is spelled out: each row shows the part of it that **matched what you typed in bold**, wherever in the name it matched — `kick` finds `Weekly kickoff` and says so — and, on the rows the offer is about, the part **taking it would add is underlined**.
 - **Typing lets go of the highlighted row.** The list opens on the entry you are standing in, but the moment you type it is about somewhere else, and a highlight nobody put there reads as a choice already made.
 - The offer is only ever text in front of you: the letters you typed stay spelled the way you typed them while you type, and taking the offer rewrites the name the way the folder spells it, because a path has to match the disk. `sk` + <kbd>Tab</kbd> reaches `Skyline`, not `skyline`.
+- **The field goes red while what is in it names nothing yet.** That is precisely the state in which <kbd>Enter</kbd> stops meaning *open that* and starts meaning *make that*, so the colour answers "is this already there?" before you commit rather than after. It comes off the moment the path names something real — whether you finished typing it, took what was offered, or pressed <kbd>Tab</kbd> — and it never appears for a web address, which is not a place on this machine to go looking for. The **whole** field is coloured rather than only the part that is missing: a text field cannot colour half of its own contents. In move/rename mode the field keeps its own red instead, for a name that is illegal or already taken — there, a name nothing answers to is the point.
 - `/` commits the segment you are typing and descends into it, keeping whatever is behind it — the same thing <kbd>Tab</kbd> does when it steps in.
 - <kbd>Backspace</kbd> in an empty input steps back out to the parent folder, reopening its name with the cursor at the end.
 - **The list follows the caret.** Pick out a different part of the path — drag over it, or arrow along — and the dropdown lists *that* folder's children, not the one the field was opened on. Pointing at a row writes it into the segment the caret is in, and taking the pointer off the list gives you your text and your selection back, exactly as they were.
@@ -132,13 +133,26 @@ fourth. This one assumes **Folder name opens the dropdown** is on, which is the
 default — with it off, the folder name and the delimiter swap the first column,
 as [the table at the top](#the-breadcrumb) says.
 
-| Where you press | Click | Double-click | <kbd>Ctrl</kbd>+click, or middle-click | Right-click | Drop a file on it |
+| Where you press | Click | Double-click | <kbd>Ctrl</kbd>+click, or middle-click | Right-click | Drop something on it |
 | --- | --- | --- | --- | --- | --- |
-| The **vault name** | Opens the locations dropdown — other vaults, home, the filesystem root, mounted drives. Off by default; with it off, reveals the vault in the File Explorer instead | Marks the **whole absolute path**. That dropdown opens with the path already in the field and only the vault's own part marked; a second press widens over the rest. Nothing to widen with the dropdown off | A tab holding nothing, standing at the vault root with the list already showing — somewhere to type a path from scratch | The vault's own context menu: what can be done to the vault that segment names | Moves it to the vault root |
-| A **folder name** | Selects that folder for editing, its parent's contents listed below | Retypes that folder and everything below it | Opens that folder in a new tab | That folder's context menu — the File Explorer's own | Moves it into that folder |
-| A **delimiter** | Opens the folder before it — its folder note where a folder-note plugin is running and one exists, otherwise reveals and expands it in the File Explorer | | The folder note in a new tab where one exists; otherwise a tab standing at that folder with the list showing | The same folder's context menu the name gives — its folder note's, where it has one | |
-| The **note's name** | Opens the name for editing — the folders stay as chips beside it — with everything but the extension marked | Takes the extension into the mark too | Opens the note in a new tab | The file's context menu — the same one the File Explorer's row gives | |
+| The **vault name** | Opens the locations dropdown — other vaults, home, the filesystem root, mounted drives. Off by default; with it off, reveals the vault in the File Explorer instead | Marks the **whole absolute path**. That dropdown opens with the path already in the field and only the vault's own part marked; a second press widens over the rest. Nothing to widen with the dropdown off | A tab holding nothing, standing at the vault root with the list already showing — somewhere to type a path from scratch | The vault's own context menu: what can be done to the vault that segment names | A **file** moves to the vault root. **Text** opens the field at the root, to name the note it should become |
+| A **folder name** | Selects that folder for editing, its parent's contents listed below | Retypes that folder and everything below it | Opens that folder in a new tab | That folder's context menu — the File Explorer's own | A **file** moves into that folder. **Text** opens the field there, to name the note it should become |
+| A **delimiter** | Opens the folder before it — its folder note where a folder-note plugin is running and one exists, otherwise reveals and expands it in the File Explorer | **Makes that folder's note** and goes to it, where a folder-note plugin is running and the folder has none yet. Where it already has one, this is just the single press again | The folder note in a new tab where one exists; otherwise a tab standing at that folder with the list showing | The same folder's context menu the name gives — its folder note's, where it has one | Onto the end of that folder's note, where it has one, once you confirm |
+| The **note's name** | Opens the name for editing — the folders stay as chips beside it — with everything but the extension marked | Takes the extension into the mark too | Opens the note in a new tab | The file's context menu — the same one the File Explorer's row gives | Onto the end of this note, once you confirm |
 | The **empty space** | Opens the **whole path** for editing, marked as far as the extension. The folders come into the field with it, which is what makes this the gesture for retyping a path rather than a name | Takes the extension into the mark too | <kbd>Ctrl</kbd> opens this note again in a tab of its own, flashed in the File Explorer so the copy is not mistaken for the first. Middle-click is *not* that gesture: it pastes over the path | Marks the whole path and offers what can be done to marked text | |
+
+**The second press follows the first.** Making a folder's note sits on
+whichever part of the row *opens* that folder, which is the delimiter by
+default and the folder name with the swap off — the same target the underline
+marks, and the same one a single press already asks for the folder note. It is
+offered only while a folder-note plugin is running, because a folder note is a
+convention rather than a fact about the filesystem, and only where the folder
+has none yet. Where it lives and what it is called are read from **Folder
+notes**' own settings, so a vault that keeps its folder notes beside the folder,
+or calls them `_index`, gets one of those; the file itself is always Markdown,
+which is what that plugin's own default create command makes and what it finds
+whatever type the vault is set to. Rename/move mode is out of it entirely —
+nothing on the row opens a folder while a move is pending.
 
 **Clicks on the name keep going.** The four rungs are the same four the rename
 key walks, in the same order: the name, the name with its extension, the path
@@ -400,6 +414,7 @@ Obsidian's editor only works on files inside the vault, so an external file **ca
 | Type | Shown as |
 | --- | --- |
 | `.md`, `.markdown` | Rendered Markdown |
+| `.html`, `.htm`, `.xhtml` | The rendered page |
 | Images, audio, video, PDF | Native player/viewer |
 | Any other **text** file (`.json`, `.css`, `.log`, `.txt`, …) | Verbatim plain text |
 | Binary formats with no viewer (`.zip`, `.exe`, …) | Handed to *Open in default app* |
@@ -409,6 +424,7 @@ The viewer has two readings of a file, and since they exclude each other only th
 | | What it does | Default for |
 | --- | --- | --- |
 | **View as Markdown** | Renders the file as a note, read-only | `.md`, `.markdown` |
+| **View as page** | Renders the file as the page it is, read-only | `.html`, `.htm`, `.xhtml` |
 | **Edit as text** | The source, editable | everything else |
 
 Outside the vault, **Edit as text** is also the press that lifts read-only — the mode and the permission are one gesture rather than two buttons to reason about. It's tinted red **whenever pressing it would lift read-only**, whether you're arming editing in place or coming straight from the rendered view; inside the vault there's nothing to unlock, so it stays plain. **View as Markdown** takes a light accent wash — the same tint Obsidian gives selected text — marking it as the way back rather than a call to action.
@@ -416,6 +432,28 @@ Outside the vault, **Edit as text** is also the press that lifts read-only — t
 Because the button tracks *editing* rather than the raw mode, a file sitting read-only in the text view still offers **Edit as text**: that's the press that arms it. A file that can never be typed into — truncated, or unreadable — says **View as text** instead, since that is all the press can deliver.
 
 The defaults are the useful way round rather than the literal one: a `#` in a shell script is a comment, not a heading, so rendering a `.log` as Markdown would quietly swallow it. Either default can be overridden per file, and the choice goes into the leaf's history, so back/forward and a reopened workspace keep it — plenty of notes live in `.txt` files, and plenty of `.md` files are easier to read as source.
+
+#### What an HTML page is allowed to do
+
+Nothing. The page is shown in a frame with **every permission withheld** — no
+scripts, no forms, no navigation, no origin of its own — and a content policy
+that allows it no network at all. That is not caution for its own sake: a local
+page loaded the ordinary way would share this window's origin, and this window
+is Obsidian, so a script in a downloaded HTML file would be running inside your
+app with your app's reach.
+
+What that costs is anything the page *does*; what it keeps is everything the
+page *is*. The stylesheets and images sitting beside the file are read in and
+carried into the frame, so a saved page still looks like itself. References
+that point out of the page's own folder, and references to somewhere on the
+web, are left exactly as written and simply do not load — a local file cannot
+quietly tell a server that you opened it.
+
+Scripts are **removed** rather than merely blocked, so that the page you see and
+the source you can switch to differ in one stated way rather than in whatever
+the frame silently declined to run. Links inside the page do nothing. When you
+want the real thing — scripts, network and all — *Open in default app* hands it
+to your browser, which is the right tool for that.
 
 **Files in your vault are editable straight away**, with no unlock: *Edit as text* is a real editor and writes back as you type.
 
@@ -438,7 +476,7 @@ The preview opens **in the tab you were in**, so back/forward return you to the 
 A quiet line above the content offers the ways out:
 
 - **Open in *(vault)*** — shown when the file belongs to one of your other vaults. Hands it to Obsidian's own URI handler, which opens that vault's window with the note in it, as a real editable note. This window is left exactly as it was; nothing switches under you.
-- **View as Markdown** / **Edit as text** — the two readings; the second also lifts read-only outside the vault.
+- **View as Markdown** / **View as page** / **Edit as text** — the two readings this file has; the last also lifts read-only outside the vault.
 - **Open in default app** — hands the file to your desktop's default application, including the binary formats this viewer can't show. Worded exactly as Obsidian's own entry for the same action, because it is the same action.
 
 The viewer also answers a **right-click**: inside the text editor with *Cut* / *Copy* / *Paste* / *Select all*, and anywhere else with the file's own menu. Obsidian's three-dot menu in the header carries that menu too — outside the vault it would otherwise offer nothing but *Split right* and *Split down*.
@@ -479,6 +517,32 @@ outside the vault its segments decline, because taking a note out of the vault
 breaks every link to it — a decision worth a question rather than a gesture.
 The way to do it deliberately is still to type the path, which asks first and
 tells you how many notes would be affected.
+
+## Dropping text or a file to write it down
+
+The same targets take **content** as well as files, and the two are told apart
+by what you are dragging rather than by where you let go.
+
+**Onto a note the row already names** — the note's own name, or a delimiter
+whose folder has a folder note — what you dropped goes on the end of it, after
+a blank line. It asks first, because this writes into a file that is already
+there and a drag is a gesture an unsteady hand can make by accident. Text out
+of an editor, a file off your desktop and a note dragged out of this vault all
+work; a file is read as text, and a binary one is refused rather than pasted in
+as a screenful of nonsense.
+
+**Onto a place — the vault name or a folder** — nothing is written yet, because
+nothing has been named. The field opens there holding what you dropped, and the
+name you type is what commits it: a new note is *made* holding the text, and an
+existing one is asked about exactly as above. <kbd>Esc</kbd>, or a click
+elsewhere, lets go of the whole thing.
+
+**The row rings blue** while a drag that would land as content is over it, and
+stays blue while the field is holding one — the same blue, saying the same
+thing: what happens next is about the text you are carrying. A file dragged out
+of your own vault onto a folder still means *move it there*, keeps Obsidian's
+own highlight, and never rings blue; that gesture was there first and content
+stands back from it.
 
 ## When the path is longer than the pane
 
@@ -575,14 +639,15 @@ under it, as `…/name/folder/note.md`, so one hover answers both "what is this"
 and "what is under it". The vault icon names its vault the same way, when the
 name is turned off or has been squeezed away.
 
-## The two warning colours
+## The warning colours
 
 | | When | What it means |
 | --- | --- | --- |
 | **Red** ring on the path bar | The row points outside your vault | Obsidian cannot open what's there as a note, and nothing out there is written until you open the padlock. |
 | **Orange** ring on the path bar, orange entries in the dropdown | The file is a text type Obsidian has no view for | A caution. Obsidian would hand it to your desktop's default application; the plugin shows it instead. |
+| **Red** text in the open field | Nothing is at that path yet | <kbd>Enter</kbd> will make it rather than open it. Not a warning so much as a statement of what the next keystroke does — see [Typing a path](#typing-a-path). |
 
-The **two are independent, and both can hold at once** — an external `.json` is outside your vault *and* a type Obsidian has no editor for. In the viewer they appear as separate lines, each stating only its own fact. On the path bar, red wins where both apply, since two rings would only be noise.
+The **two rings are independent, and both can hold at once** — an external `.json` is outside your vault *and* a type Obsidian has no editor for. In the viewer they appear as separate lines, each stating only its own fact. On the path bar, red wins where both apply, since two rings would only be noise. The red *text* is a third thing entirely: it is about what is being typed, not about where the row points, so it can appear inside either ring or neither.
 
 The orange tier is deliberately narrow. Registered types (Markdown, canvas, images, PDF, audio, video) are handled properly and get nothing. Binary files get nothing either — you are not going to edit a `.zip` into a mess by accident. What is left is exactly the hazard: a `.json`, `.css` or `.log` that **Show all file types** has made visible.
 
@@ -622,7 +687,7 @@ This works by wrapping the `workspace:edit-file-title` command rather than grabb
 | Colour | Means |
 | --- | --- |
 | **Purple** | A note (`.md`, `.markdown`) — what Obsidian will open as a note, picked out of a folder of mixed contents |
-| **Orange** | A text type Obsidian has no view for; see [the warning colours](#the-two-warning-colours) |
+| **Orange** | A text type Obsidian has no view for; see [the warning colours](#the-warning-colours) |
 | **Muted** | Outside your vault, so the vault's own handling doesn't apply |
 | **Blue** | The note you're on. Browsing, that's its own entry; in rename/move mode the *keep this name* entry stands in its place — the same note either way |
 | **Blue** | Where you already are: this bar's own note, and the folder the path bar is standing on |
@@ -646,6 +711,7 @@ appear in a real name, where an apostrophe very much can.
 | You want to… | Do this |
 | --- | --- |
 | Open a folder (its note, or reveal it) | Click the delimiter **after** that folder |
+| Give a folder a folder note it doesn't have | **Double-click** that same delimiter (needs a folder-note plugin) |
 | Swap a folder for a sibling | Click that folder's name, then type or pick |
 | Rename or retarget the note | Click the note's name — extension included |
 | Browse a folder's contents | Click that folder's name; the dropdown lists its parent, so click the folder **below** the one you want |
@@ -654,7 +720,8 @@ appear in a real name, where an apostrophe very much can.
 | Jump to a file by typing its path | Click the filename or the empty space, type, <kbd>Enter</kbd> |
 | Open a file in a new tab instead | <kbd>Ctrl</kbd> while picking it, or <kbd>Ctrl</kbd>+<kbd>Enter</kbd> |
 | Copy the note somewhere instead of moving it | Pencil, then <kbd>Ctrl</kbd> while picking or committing the target |
-| Create a note at a path that doesn't exist | Type the path, <kbd>Enter</kbd>, confirm the prompt |
+| Create a note at a path that doesn't exist | Type the path — the field goes **red** to say so — then <kbd>Enter</kbd>. Inside the vault it is made straight away; outside it asks first |
+| Tell whether a path you typed is already there | Look at the colour: red means <kbd>Enter</kbd> would make it |
 | Descend one level while typing | Type `/` |
 | Go back up one level while typing | <kbd>Backspace</kbd> in the empty input |
 | Move or rename the open note | Click the pencil, then browse or type as above |
@@ -677,6 +744,8 @@ appear in a real name, where an apostrophe very much can.
 | Cancel anything | <kbd>Esc</kbd>, or click outside the header bar |
 | Try entries on for size before committing | Arrow or hover through the dropdown; <kbd>↑</kbd> past the top gives your text back |
 | Move a note into a folder above it | Drag it onto that folder in the row |
+| Keep a scrap of text as a new note | Drag the text onto a folder, type a name, <kbd>Enter</kbd> |
+| Add a scrap of text to the note you are reading | Drag it onto the note's name, confirm |
 | See a shortened folder name in full | Hover it, or widen the pane |
 | Find out where the vault itself lives | Hover the icon at the start of the row |
 | Take a note out of the vault | Pencil → browse outside → confirm the dialog (links will break) |

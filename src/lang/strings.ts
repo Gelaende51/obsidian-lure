@@ -74,6 +74,13 @@ export const EN = {
 	 * for both, since the path already says which it was.
 	 */
 	noticeCreated: 'Created "{path}"',
+	// Dropping text or a file onto a note named on the row. Asked before it
+	// happens, because this writes into a file that is already there and a
+	// drag is a gesture an unsteady hand can make by accident. The button
+	// takes Obsidian's own word for it (see obsidianLabels).
+	dropAppendTitle: "Add to this note?",
+	dropAppendBody: 'What you dropped will be added to the end of "{name}".',
+	dropAppended: 'Added to "{name}"',
 	/** Command palette entry; Obsidian shows it prefixed with the plugin name. */
 	commandFocusPathBar: "Focus the path bar",
 	noticeAutocompleteUnavailable: "Autocomplete unavailable: {error}",
@@ -91,13 +98,15 @@ export const EN = {
 	// for notes, text for everything else — and outside the vault the text
 	// option doubles as the press that lifts read-only.
 	externalRenderMarkdown: "View as Markdown",
+	/** The same offer for an HTML file, whose rendered reading is a page rather than a note. */
+	externalRenderPage: "View as page",
 	externalRenderText: "Edit as text",
 	/** Same view, for a file that can be read but never written — truncated or unreadable. */
 	externalViewText: "View as text",
 	externalEditTooltip: "Also lifts read-only: edits are saved straight to disk, outside your vault.",
 	externalOpenInVault: "Open in {vault}",
 	warnUnregisteredType: "No editor for this file type",
-	warnUnregisteredTooltip: "Obsidian has no view for this type and would hand it to your desktop; Lure shows it here as plain text.",
+	warnUnregisteredTooltip: "Obsidian has no view for this type and would hand it to your desktop; Lure shows it here instead.",
 	externalTruncated: "Truncated — file too large",
 	externalTruncatedTooltip: "Only the beginning of the file is shown, and editing stays off so the rest isn't lost.",
 	noticeExternalOpenFailed: 'Could not open "{path}" in the default app.',

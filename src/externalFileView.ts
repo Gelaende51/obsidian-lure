@@ -23,6 +23,7 @@ import type LurePlugin from "./main";
 import { t } from "./lang";
 import { LABELS, obsidianLabel } from "./obsidianLabels";
 import { buildExternalMenu, showExternalMenu } from "./externalMenu";
+import { isPageExtension, renderablePage } from "./htmlPage";
 import { showContextMenu } from "./nativeFileItem";
 
 export const EXTERNAL_VIEW_TYPE = "lure-external-file";
@@ -185,7 +186,15 @@ export function openInDefaultApp(absolutePath: string): void {
 	}
 }
 
-type RenderMode = "text" | "markdown";
+/**
+ * How the body is drawn.
+ *
+ * `markdown` and `page` are the two *rendered* readings — one per format
+ * that has one — and `text` is the source, which every textual file has.
+ * A file has at most one rendered mode, so the toggle is always between
+ * two things (see `renderedMode`).
+ */
+type RenderMode = "text" | "markdown" | "page";
 
 interface ExternalViewState {
 	path?: string;
@@ -279,7 +288,9 @@ export class ExternalFileView extends ItemView {
 			this.filePath = next;
 		}
 		this.renderMode =
-			incoming?.render === "text" || incoming?.render === "markdown" ? incoming.render : null;
+			incoming?.render === "text" || incoming?.render === "markdown" || incoming?.render === "page"
+				? incoming.render
+				: null;
 		await super.setState(state, result);
 		await this.reload();
 	}
@@ -518,6 +529,12 @@ export class ExternalFileView extends ItemView {
 		// Truncated and unreadable files can never be typed into, so for
 		// those the text view is a destination like any other rather than a
 		// promise of editing — canUnlock already rules them out.
+		// Which reading the button goes *to*. A file with no rendered reading
+		// of its own can still be read as Markdown — plenty of notes live in
+		// a `.txt`, which is why that is the offer rather than nothing — so
+		// the fallback here is Markdown, while the fallback for what a file
+		// *opens* as (`effectiveRenderMode`) is its source.
+		const rendered = this.renderedMode() ?? "markdown";
 		const offersEditing = !inText || (!editing && this.canUnlock());
 		// Keyed on what the press *does*, not on where it starts from: going
 		// straight from the rendered view to editing lifts read-only just as
@@ -528,7 +545,9 @@ export class ExternalFileView extends ItemView {
 		// into, so the label promises only what it can deliver.
 		const editable = !this.truncated && !this.readFailed;
 		const label = !offersEditing
-			? t("externalRenderMarkdown")
+			? rendered === "page"
+				? t("externalRenderPage")
+				: t("externalRenderMarkdown")
 			: editable
 				? t("externalRenderText")
 				: t("externalViewText");
@@ -551,7 +570,7 @@ export class ExternalFileView extends ItemView {
 			// repaint in place rather than push an identical state onto the
 			// leaf's history.
 			if (offersEditing && inText) void this.reload();
-			else this.setRenderMode(offersEditing ? "text" : "markdown");
+			else this.setRenderMode(offersEditing ? "text" : rendered);
 		});
 	}
 
@@ -659,7 +678,23 @@ export class ExternalFileView extends ItemView {
 	 */
 	private effectiveRenderMode(): RenderMode {
 		if (this.renderMode) return this.renderMode;
-		return isMarkdownExtension(extensionOf(this.filePath)) ? "markdown" : "text";
+		return this.renderedMode() ?? "text";
+	}
+
+	/**
+	 * The rendered reading this file has, or null where it has none.
+	 *
+	 * Markdown renders as a note and HTML renders as a page; everything else
+	 * textual has only its source, which is why a `.json` shows no toggle at
+	 * all. Written as one question so the default mode, the toggle's target
+	 * and the button's wording cannot disagree about which reading a file
+	 * has — they used to say "markdown" three separate times.
+	 */
+	private renderedMode(): RenderMode | null {
+		const ext = extensionOf(this.filePath);
+		if (isMarkdownExtension(ext)) return "markdown";
+		if (isPageExtension(ext)) return "page";
+		return null;
 	}
 
 	/** Whether the render toggle applies at all — media and PDFs have nothing to switch between. */
@@ -836,6 +871,10 @@ export class ExternalFileView extends ItemView {
 			await this.renderMarkdown(body, source);
 			return;
 		}
+		if (this.effectiveRenderMode() === "page") {
+			await this.renderPage(body, source);
+			return;
+		}
 
 		const editor = body.createEl("textarea", { cls: "lure-external-editor" });
 		editor.value = source;
@@ -849,6 +888,45 @@ export class ExternalFileView extends ItemView {
 		const save = debounce(() => void this.writeTo(target, editor.value), SAVE_DELAY_MS, true);
 		editor.addEventListener("input", save);
 		this.pendingSave = save;
+	}
+
+	/**
+	 * A local HTML file, shown as the page it is.
+	 *
+	 * Sandboxed with no tokens at all, which is the whole security argument.
+	 * A blob or `file://` URL for a local page inherits the origin of the
+	 * window that made it, and that window is Obsidian's renderer — so a
+	 * page with a script in it would be running *inside the app*, with the
+	 * app's own reach. An empty `sandbox` gives the document a unique opaque
+	 * origin and denies scripts, forms, popups and navigation, which leaves
+	 * exactly what a viewer is for: how the document looks.
+	 *
+	 * `srcdoc` rather than a URL because of the same rule from the other
+	 * side: a document with an opaque origin cannot fetch a `blob:` belonging
+	 * to somebody else's, so the frame would come up empty. Handing it the
+	 * markup avoids the question entirely — and the markup is rewritten
+	 * first, so the stylesheets and images beside the file are in it (see
+	 * `renderablePage`).
+	 *
+	 * The source is one press away, and the button says so: the page is a
+	 * reading of the file, exactly as the rendered note is a reading of a
+	 * Markdown one.
+	 */
+	private async renderPage(body: HTMLElement, source: string): Promise<void> {
+		const frame = body.createEl("iframe", { cls: "lure-external-frame lure-external-page" });
+		frame.setAttribute("sandbox", "");
+		frame.setAttribute("referrerpolicy", "no-referrer");
+		try {
+			frame.srcdoc = await renderablePage(source, this.filePath);
+		} catch (err) {
+			// A document too broken to parse is still a file with text in it,
+			// and the source view is the honest place to look at it.
+			frame.remove();
+			body.createDiv({
+				cls: "lure-external-error",
+				text: t("noticeExternalReadFailed", { error: (err as Error).message }),
+			});
+		}
 	}
 
 	/**

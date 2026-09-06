@@ -1921,3 +1921,150 @@ suite that can be quietly poisoned by its environment needs a cheap, decisive
 check in front of it. Cheap and decisive is the test for whether a guard
 belongs there — this one is a single rename, which is why it ships, and the
 `long paths` geometric precondition still is not, which is why it does not.
+
+## Obsidian's suggester takes Enter and never gives it back
+
+`AbstractInputSuggest` registers `Enter` in its own `Scope`, and its handler is
+one line: hand the press to `suggestions.useSelectedItem(evt)` and return
+false. Two facts about that turn out to matter.
+
+- A `Scope` **stops at the first handler that takes a key**. Registering
+  another `Enter` on the same scope afterwards does nothing at all — the
+  handler is never reached. Verified by registering one and watching it not
+  run.
+- Returning false means `preventDefault`, so the input's own `keydown`
+  listener never fires either. From the field's point of view the press did not
+  happen.
+
+That is fine as long as something is always highlighted. This plugin
+deliberately rests the list at **no** selection once you type, because a
+highlight nobody put there reads as a choice already made. The two together
+meant: type a note's whole name, the folder still has rows to show for it,
+press Enter — and nothing happens. No notice, no navigation, no error. The
+only ways to commit were to arrow onto a row first, or to type something so
+unlike the folder's contents that the popover closed. It had been there since
+the preselection was added.
+
+It surfaced sideways: a new case for the red field asserted that a path the
+field said existed *opened* when committed. It did not, and the field was not
+the problem.
+
+The fix is the one hook left. The list object is already wrapped for the
+"arrow up off the top" gesture, so `useSelectedItem` is wrapped in the same
+place: with `selectedItem < 0`, hand the press back to the field instead of
+dropping it. Wrapping the call the handler makes, rather than trying to
+out-register the handler, is the general shape for anything a scope has
+claimed.
+
+## `enabledPlugins` is the saved list, not the running one
+
+`app.plugins.enabledPlugins` is what Obsidian will load at the *next* start —
+it is written by `enablePluginAndSave`, which is what the settings pane calls.
+`enablePlugin` loads a plugin without touching it. So "is this peer running?"
+answered through `enabledPlugins` is right for a plugin switched on by hand and
+wrong for one switched on any other way.
+
+Which is exactly what a suite does. A folder-note case enabled the peer, and
+the row went on behaving as though no folder-note plugin existed. Worse, the
+mirror image was in the suite's own teardown: `if (enabledPlugins.has(id))
+await disablePlugin(id)` disabled *nothing*, and the case that checks the row
+stays quiet without a peer passed or failed depending on which suite had run
+before it.
+
+The question is always "which plugins are running now", and the answer is
+`app.plugins.plugins[id]` — a loaded instance is what running means, and
+`disablePlugin` removes it.
+
+## Borrowing a peer's convention instead of assuming it
+
+Lure's rule for folder notes is that it never reimplements *opening* one: it
+re-dispatches the click onto Obsidian's own breadcrumb element and lets
+whatever owns it respond. Creating one has no click to re-dispatch — Folder
+notes offers it from the File Explorer's context menu and from commands that
+act on the active file or the explorer's selected folder, none of which a
+breadcrumb can hand a folder to, and its `createFolderNote` is module-internal.
+
+So the file is made here, but the convention is still the peer's: its own
+`folderNoteName` (a template whose one placeholder is the folder's name),
+`folderNoteType` and `storageLocation` are read off
+`app.plugins.plugins["folder-notes"].settings`, and the path is built the way
+its own `getFolderNote` builds it — the placeholder replaced *once* rather than
+globally, `parentFolder` the only storage that moves the note. This also fixed
+a hard-coded `Folder/Folder.md` that had been quietly wrong in every vault
+that had configured the feature at all.
+
+Reading another plugin's settings is reaching into private state, so it is
+typed as an unknown bag and every field is checked where it is used, with the
+shipped default behind each one. The line worth holding is the direction: read
+what a peer has decided, never write it, and never decide it for them.
+
+## Text dragged onto the row is not an Obsidian drag at all
+
+The row's folder segments have taken drops since early on, through
+`app.dragManager.handleDrop`. That API only ever sees Obsidian's *own*
+payload — a `TFile`, a `TFolder`, or a selection of them — so text dragged out
+of an editor, or a file dragged in off the desktop, never reaches it. A handler
+registered there is not merely wrong about those drags; it is never called for
+them.
+
+So content drops are plain DOM listeners, and the two coexist on the same
+elements. Three things that took working out:
+
+- **`dragover` is where a target says yes.** Without `preventDefault()` there,
+  no `drop` event fires at all. Which also makes it the only place to decide,
+  and the contents of a drag are deliberately unreadable until the drop — so
+  the decision has to be made from `dataTransfer.types`, which is the one part
+  the browser exposes early for exactly this.
+- **`dragleave` fires on every internal boundary.** Moving along the path from
+  one segment to the next fires leave-then-enter, so a ring toggled on those
+  blinks. Counted instead, with `dragend` on the window as the reset — a drag
+  that ends elsewhere sends this row nothing at all.
+- **One spot, one meaning.** A note dragged out of this vault onto a folder
+  segment already means *move it there*. Obsidian's handler answers it, so the
+  content path stands back whenever `dragManager.draggable` is set — but only
+  on the targets where a move is on offer. On the *note's name* no move was
+  ever possible, so the same drag there means "add what this note says", and
+  the payload has to be read from the `TFile` rather than from the
+  `text/plain` the same drag carries, which is the `[[link]]`.
+
+The test suites drive this the way `test-external.mjs` drives the move drags —
+by building the payload in the page and dispatching the events — one level
+down: a `DataTransfer` and real `DragEvent`s, since there is no Obsidian
+payload to construct.
+
+## A local HTML file cannot simply be pointed at
+
+Showing a local page in a frame looks like a two-line feature and is not,
+because of one fact about origins: **a `blob:` URL inherits the origin of the
+window that created it**, and in Obsidian that window is the renderer. Point a
+frame at a blob of a downloaded HTML file and any script in it is running
+inside the app, same-origin with `window.top`, which is to say with `app`,
+`require` and the vault. A `file://` src is no better in principle and is
+blocked in practice.
+
+`sandbox` with no tokens is the answer — unique opaque origin, no scripts, no
+forms, no navigation — but it closes the obvious road at the same time: **a
+document with an opaque origin cannot fetch a `blob:` belonging to another
+one**, so the frame comes up empty. The way through is `srcdoc`, which hands
+the markup over directly and never asks the origin question at all.
+
+Which then costs everything the page refers to. Relative stylesheets and
+images resolve against a document that has no URL, so a saved page renders as
+unstyled text with broken images — most of what makes it a page. So the markup
+is rewritten before it is handed over: stylesheets read in as `<style>`, images
+as `data:` URLs, both capped, and both refused if the reference climbs out of
+the page's own folder.
+
+Two smaller things worth keeping:
+
+- **`sandbox` does not deny the network.** A sandboxed document still loads
+  remote images and fonts, which is a local file telling a server you opened
+  it. A `Content-Security-Policy` meta of `default-src 'none'` with `img-src
+  data:` closes it, and costs nothing once everything local is inline.
+- **Remote references are left as written rather than stripped.** The policy
+  already stops them loading, and rewriting them would make the rendered page
+  disagree with the source the other mode shows.
+
+The general shape: when a host gives you a way to show untrusted content, the
+question is not "does it render" but "what origin is it in". Everything above
+followed from answering that one first.

@@ -98,6 +98,14 @@ declare module "path" {
 		name: string;
 	}
 	export function join(...paths: string[]): string;
+	/**
+	 * Like `join`, but the result is absolute and `..` is resolved rather
+	 * than left in the string. Used once, to work out where a reference
+	 * inside a local HTML page actually points — which is a question `join`
+	 * cannot answer, since `a/../../b` and `b` are the same place and only
+	 * one of them is inside `a`'s parent.
+	 */
+	export function resolve(...paths: string[]): string;
 	export function basename(path: string, suffix?: string): string;
 	export function parse(path: string): ParsedPath;
 	export function dirname(path: string): string;

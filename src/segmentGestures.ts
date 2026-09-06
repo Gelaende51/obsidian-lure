@@ -72,6 +72,19 @@ export const FOLDER_NOTE_PLUGIN_IDS = [
 	"create-folder-notes-with-dropdown",
 ] as const;
 
+/**
+ * The one of them whose settings say where a folder's note goes.
+ *
+ * Named separately because it is read as a *plugin instance* rather than
+ * merely counted as present — see `folderNoteConvention`. The other two
+ * keep no equivalent, so with only those running the default convention is
+ * all there is to go on.
+ */
+export const FOLDER_NOTES_PLUGIN_ID = "folder-notes";
+
+/** Folder notes' one template placeholder, replaced once as its own code replaces it. */
+export const FOLDER_NAME_TOKEN = "{{folder_name}}";
+
 /** What a right-click landed on. Decides which column of the gesture table applies. */
 export type GestureTarget = "vault" | "folder" | "delimiter" | "file" | "empty";
 

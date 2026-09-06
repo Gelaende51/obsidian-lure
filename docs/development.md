@@ -202,9 +202,19 @@ node .dev/test-navlock.mjs           # panes coupled by the navigation lock (she
 node .dev/test-fit.mjs               # the fitting maths alone — no Obsidian, no vault, no port
 node .dev/test-complete.mjs          # what a Tab press completes to, likewise
 node .dev/test-gestures.mjs          # right-click runs, Escape, the keyboard entry points, long paths
+node .dev/test-create.mjs            # the red field, and what Enter then does
+node .dev/test-drop.mjs              # text and files dropped onto the row as content
+node .dev/test-foldernote.mjs        # making a folder's note from the row (needs Folder notes installed)
+node .dev/test-html.mjs              # an HTML file shown as a page, and what the frame is denied
 node .dev/test-compat.mjs            # against installed peer plugins
 node .dev/test-compat.mjs Quick      # one peer
 ```
+
+`test-foldernote.mjs` exits **2** when the Folder notes plugin is not installed
+in the vault, the way the writing suites exit 2 when renames have stopped
+settling: an environment that cannot answer the question is not a failure to
+report. It enables and disables the peer itself, so nothing has to be arranged
+by hand beyond installing it.
 
 One tool that is not a suite:
 

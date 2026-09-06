@@ -168,10 +168,6 @@ declare module "obsidian" {
 	}
 
 	/**
-	 * The community-plugin registry. Only `enabledPlugins` is used, and only
-	 * to ask whether a named peer is running — never to reach into one.
-	 */
-	/**
 	 * A leaf's own back/forward stack. Undocumented, and the only way to ask
 	 * whether a pane has anywhere to go — which is what makes a locked move
 	 * legal or not.
@@ -187,8 +183,32 @@ declare module "obsidian" {
 		history?: LeafHistory;
 	}
 
+	/**
+	 * The community-plugin registry.
+	 *
+	 * Used to ask which peers are running, and — in one place — to read one
+	 * peer's own settings, so a convention this plugin has to agree with is
+	 * taken from whoever owns it. Never written to.
+	 */
 	interface PluginRegistry {
+		/**
+		 * The *saved* list: what will be loaded at the next start. Not the
+		 * same as what is running now — `enablePlugin` loads a plugin
+		 * without adding to this, and only `enablePluginAndSave` does both.
+		 */
 		enabledPlugins: Set<string>;
+		/**
+		 * The live plugin instances, by id. Only ever read here, and only
+		 * ever for another plugin's *settings* — see `folderNoteConvention`,
+		 * which asks the Folder notes plugin where it keeps a folder's note
+		 * rather than assuming the convention it happens to ship with.
+		 *
+		 * Typed as an unknown bag on purpose: this is one plugin reading
+		 * another's private state, so nothing about its shape is a promise
+		 * anybody made, and every field has to be checked at the point of
+		 * use rather than declared here and believed.
+		 */
+		plugins: Record<string, { settings?: unknown } | undefined>;
 	}
 
 	interface App {

@@ -53,9 +53,18 @@ import {
 } from "./externalFileOps";
 import { ExternalFileView, extensionOf, openExternalFile } from "./externalFileView";
 import { showExternalMenu, showInFolder } from "./externalMenu";
-import { UrlTarget, classifyTypedTarget, slashBelongsToScheme, unquotePath } from "./urlTargets";
+import { UrlTarget, classifyTypedTarget, isAbsolutePath, slashBelongsToScheme, unquotePath } from "./urlTargets";
+import {
+	DroppedContent,
+	appendToNote,
+	carriesContent,
+	isVaultDrag,
+	readDroppedContent,
+} from "./dropPayload";
 import { NavMove } from "./navLock";
 import {
+	FOLDER_NAME_TOKEN,
+	FOLDER_NOTES_PLUGIN_ID,
 	FOLDER_NOTE_PLUGIN_IDS,
 	GestureTarget,
 	RightClickCounter,
@@ -117,6 +126,28 @@ const EXTERNAL_MODE_CLASS = "lure-external-active";
 const WARN_MODE_CLASS = "lure-warn-active";
 /** Freezes the row's content at the offset it had when a session started. */
 const PIN_CLASS = "lure-pin-start";
+/**
+ * Reddens the open field while what is in it names nothing yet — the state
+ * in which Enter stops meaning "open that" and starts meaning "make that".
+ *
+ * The whole field rather than only the parts that are missing: an `<input>`
+ * has no way to colour part of its own text, and the alternative — a
+ * mirrored copy of the path underneath transparent text — buys per-segment
+ * precision at the price of keeping two elements in agreement about
+ * scrolling, fonts and bidi on the row's hottest path.
+ */
+const WILL_CREATE_CLASS = "lure-will-create";
+/**
+ * Blue ring on the row while a drag is over something that would take it as
+ * *content*, and again while the field is holding what such a drop carried.
+ *
+ * One class for both because it is one statement: what happens next is
+ * about the text you are carrying. Blue rather than the accent, which is
+ * what Obsidian's own drop highlight uses — a drag onto a folder segment
+ * still means *move it there*, and the two answers to the same gesture have
+ * to be told apart at a glance.
+ */
+const DROP_CONTENT_CLASS = "lure-drop-content";
 /**
  * The marking put on a row this plugin has just written to.
  *
@@ -572,6 +603,18 @@ export class PathBreadcrumb {
 	private browsePath: string | null = null;
 	/** Message currently shown in the red validation tooltip, "" when the name is fine. */
 	private validationError = "";
+	/**
+	 * What a drop onto the vault name or a folder was carrying, held until
+	 * the field it opened is committed to a note.
+	 *
+	 * The field is the naming half of that gesture — drop the text, then say
+	 * where it goes — so this outlives the drop and dies with the field:
+	 * cancelling the row cancels the paste, which is the only way out that
+	 * does not need a second gesture of its own.
+	 */
+	private pendingDrop: DroppedContent | null = null;
+	/** Depth of dragenter/dragleave pairs over the row, so leaving a child is not leaving the row. */
+	private dropDepth = 0;
 	/** Suppresses the input's text as an autocomplete query while a prefilled selection is still untouched (see enterTypingMode). */
 	private suggestQueryOverride: string | null = null;
 	/**
@@ -1084,6 +1127,85 @@ export class PathBreadcrumb {
 			this.climbFromClick = true;
 		}, { capture: true, signal: this.domListeners.signal });
 
+		// A second press on whichever part of the row *opens* the folder
+		// makes the note that folder does not have yet, and goes to it. One
+		// press has always meant "the thing this folder is"; where there is
+		// no such thing yet, two presses say so.
+		//
+		// Which part that is moves with the swap setting, exactly as the
+		// underline does — the delimiter carries folder-note duty while
+		// names open the dropdown, the name carries it when they are
+		// swapped — so the gesture is always on the target that was already
+		// about folder notes, and never on one whose second press is spoken
+		// for. Rename mode is out: nothing on the row opens a folder while a
+		// move is pending, and making a file is not picking a destination.
+		//
+		// The single press still happens first, and is left to. Suppressing
+		// it would mean holding *every* press behind a double-click timer,
+		// which is the cost the right-click run pays and is not worth paying
+		// on the row's most-used click.
+		// Dropping *content* onto the row, which is a different gesture from
+		// dropping a file onto it. A file dragged out of this vault still
+		// means "move it into that folder", and Obsidian's own drag manager
+		// answers it on the folder segments; these listeners take what that
+		// one does not — text from anywhere, a file from the desktop, and a
+		// vault file dropped somewhere a move was never on offer.
+		//
+		// Plain DOM listeners rather than `dragManager.handleDrop`: that API
+		// only ever sees Obsidian's own payload, and text dragged out of an
+		// editor or in off the desktop is not one.
+		container?.addEventListener("dragover", (evt) => {
+			if (!this.contentDropTarget(evt)) return;
+			// Without this the browser refuses the drop, and `drop` never
+			// fires at all — this is what "accepting" a drag means.
+			evt.preventDefault();
+			if (evt.dataTransfer) evt.dataTransfer.dropEffect = "copy";
+			this.showDropRing(true);
+		}, { signal: this.domListeners.signal });
+
+		// Counted rather than toggled: `dragleave` fires every time the
+		// pointer crosses from one child of the row to the next, and clearing
+		// on each of those would blink the ring off as the drag moves along
+		// the path.
+		container?.addEventListener("dragenter", (evt) => {
+			if (this.contentDropTarget(evt)) this.dropDepth++;
+		}, { signal: this.domListeners.signal });
+		container?.addEventListener("dragleave", () => {
+			this.dropDepth = Math.max(0, this.dropDepth - 1);
+			if (this.dropDepth === 0) this.showDropRing(false);
+		}, { signal: this.domListeners.signal });
+
+		container?.addEventListener("drop", (evt) => {
+			const target = this.contentDropTarget(evt);
+			this.dropDepth = 0;
+			if (!target) {
+				this.showDropRing(false);
+				return;
+			}
+			evt.preventDefault();
+			evt.stopPropagation();
+			void this.handleContentDrop(target, evt);
+		}, { signal: this.domListeners.signal });
+
+		// A drag that ends anywhere — dropped elsewhere, or cancelled with
+		// Escape — leaves no event on this row at all, so the ring would
+		// stay up until the next drag came past.
+		window.addEventListener("dragend", () => {
+			this.dropDepth = 0;
+			this.showDropRing(false);
+		}, { signal: this.domListeners.signal });
+
+		container?.addEventListener("dblclick", (evt) => {
+			if (this.inputEl || this.renameMode) return;
+			const opener: GestureTarget = this.swapActions ? "delimiter" : "folder";
+			if (classifyTarget(evt.target as HTMLElement) !== opener) return;
+			const folderPath = this.folderPathForEvent(evt, opener);
+			if (folderPath === null) return;
+			evt.preventDefault();
+			evt.stopPropagation();
+			void this.createFolderNoteFor(folderPath);
+		}, { capture: true, signal: this.domListeners.signal });
+
 		// Right-click on the row. Every press is counted rather than acted
 		// on, because two and three presses mean different things — see
 		// segmentGestures for what that costs. Obsidian has no handler of
@@ -1582,12 +1704,109 @@ export class PathBreadcrumb {
 	 * is the behaviour its plugins say it has.
 	 */
 	private folderNoteFor(folder: TFolder): TFile | null {
-		const enabled = this.plugin.app.plugins?.enabledPlugins;
-		if (!enabled || !FOLDER_NOTE_PLUGIN_IDS.some((id) => enabled.has(id))) return null;
-		const candidate = this.plugin.app.vault.getAbstractFileByPath(
-			`${folder.path}/${folder.name}.md`,
-		);
-		return candidate instanceof TFile ? candidate : null;
+		const where = this.folderNoteConvention(folder);
+		if (!where) return null;
+		// The configured type first and Markdown after it, which is the order
+		// Folder notes itself looks in: its own `findFolderNoteFile` tries the
+		// primary type and then every other type it supports, so a `.md` note
+		// is still that folder's note in a vault set to `.canvas`.
+		for (const extension of [where.extension, ".md"]) {
+			const candidate = this.plugin.app.vault.getAbstractFileByPath(`${where.base}${extension}`);
+			if (candidate instanceof TFile) return candidate;
+		}
+		return null;
+	}
+
+	/**
+	 * Where a folder's note goes, asked of the plugin that decides it.
+	 *
+	 * `Folder/Folder.md` is only the default. Folder notes lets a vault
+	 * rename the note (`folderNoteName`, a template whose one placeholder is
+	 * the folder's name), change its type (`folderNoteType`) and keep it
+	 * beside the folder rather than inside it (`storageLocation`) — so
+	 * hard-coding the default made the delimiter underline claim a note that
+	 * was not there, in exactly the vaults that had configured the feature
+	 * most deliberately.
+	 *
+	 * Read from the running plugin, defensively, and mirroring its own
+	 * `getFolderNote`: the one placeholder is replaced once rather than
+	 * globally, and `parentFolder` is the only storage that moves the note,
+	 * because those are the two things that plugin actually does. Null where
+	 * no folder-note plugin is running at all — the convention is checkable
+	 * on its own, but acting on it regardless would make the row behave
+	 * differently in two vaults that look identical to the user.
+	 */
+	private folderNoteConvention(folder: TFolder): { base: string; extension: string } | null {
+		// The *loaded* plugins, not `enabledPlugins`. That set is the saved
+		// list — what Obsidian will turn on at the next start — and
+		// `enablePlugin` does not add to it, only `enablePluginAndSave`
+		// does. The two agree for a plugin switched on from the settings
+		// pane and disagree for one loaded any other way, and the question
+		// here is which plugins are *running now*, which is exactly what
+		// having an instance means.
+		const running = this.plugin.app.plugins?.plugins;
+		if (!running || !FOLDER_NOTE_PLUGIN_IDS.some((id) => running[id])) return null;
+
+		const settings = running[FOLDER_NOTES_PLUGIN_ID]?.settings;
+		const read = (key: string, fallback: string): string => {
+			const value = (settings as Record<string, unknown> | undefined)?.[key];
+			return typeof value === "string" && value ? value : fallback;
+		};
+
+		const name = read("folderNoteName", "{{folder_name}}").replace(FOLDER_NAME_TOKEN, folder.name);
+		const raw = read("folderNoteType", ".md");
+		const extension = raw.startsWith(".") ? raw : `.${raw}`;
+		const parent = folder.parent?.path ?? "";
+		const at =
+			read("storageLocation", "insideFolder") === "parentFolder"
+				? parent === "/"
+					? ""
+					: parent
+				: folder.path;
+		return { base: at ? `${at}/${name}` : name, extension };
+	}
+
+	/**
+	 * Makes the note a folder does not have yet, and opens it.
+	 *
+	 * Deliberately not a second implementation of "open the folder note":
+	 * where one already exists this hands straight to the same path a single
+	 * press takes, so the two presses never disagree about which file that
+	 * folder *is*. What is new here is only the making, which no click can
+	 * be re-dispatched to — the plugin that owns the convention offers
+	 * creating a folder note from the File Explorer's menu and from its own
+	 * commands, both of which want a folder this row has no way to hand
+	 * them. So the convention is borrowed (see `folderNoteConvention`) and
+	 * the file is made here.
+	 *
+	 * Always Markdown, whatever type the vault is set to. It is the type
+	 * that plugin's own default create command makes, it is the only one an
+	 * empty file is valid for — an empty `.canvas` is a broken canvas — and
+	 * it is found as the folder's note either way.
+	 */
+	private async createFolderNoteFor(folderPath: string): Promise<void> {
+		const folder = this.plugin.app.vault.getAbstractFileByPath(folderPath);
+		if (!(folder instanceof TFolder)) return;
+
+		const existing = this.folderNoteFor(folder);
+		if (existing) {
+			this.navigateToFile(existing);
+			return;
+		}
+		const where = this.folderNoteConvention(folder);
+		if (!where) return;
+
+		const target = `${where.base}.md`;
+		try {
+			const cut = target.lastIndexOf("/");
+			if (cut > 0) await this.ensureFolderExists(target.slice(0, cut));
+			const note = await this.plugin.app.vault.create(target, "");
+			new Notice(t("noticeCreated", { path: note.path }));
+			this.revealInExplorer(note);
+			this.navigateToFile(note);
+		} catch (err) {
+			new Notice(t("noticeCreateFailed", { error: (err as Error).message }));
+		}
 	}
 
 	/**
@@ -1600,6 +1819,141 @@ export class PathBreadcrumb {
 	 * success and the failure already, so the wording matches everything
 	 * else that touches the clipboard.
 	 */
+	/**
+	 * Where a drag carrying content would land, or null where it would land
+	 * nowhere.
+	 *
+	 * Two answers, and which one you get is which part of the row is under
+	 * the pointer:
+	 *
+	 * - **`name`** — the note's own name, or a delimiter whose folder has a
+	 *   folder note. Both name a note that already exists, so the content
+	 *   goes on the end of it.
+	 * - **`place`** — the vault name or a folder. Neither names a note, so
+	 *   what the drop opens is the field, to say which note it should be.
+	 *
+	 * A drag out of this vault is refused on the `place` targets, and only
+	 * there: Obsidian's own drag manager already answers it on a folder
+	 * segment, and it means *move the file there*. One gesture at one spot
+	 * cannot mean two things, and the move is the one that was there first.
+	 * On a note's name it was never on offer, so there is nothing to clash
+	 * with and dropping a note there appends what it says.
+	 */
+	private contentDropTarget(
+		evt: DragEvent,
+	): { kind: "name"; file: TFile } | { kind: "place"; folderPath: string } | null {
+		// Nothing lands on a row in the middle of being edited: the field
+		// owns the keyboard and the text in it, and dropping into it is the
+		// browser's own business.
+		if (this.inputEl || this.renameMode || !carriesContent(evt)) return null;
+
+		const el = evt.target as HTMLElement;
+		if (el.closest(".lure-filename-text")) {
+			return this.file ? { kind: "name", file: this.file } : null;
+		}
+		if (el.closest(".view-header-breadcrumb-separator")) {
+			const folderPath = this.folderPathForEvent(evt, "delimiter");
+			const folder = folderPath === null ? null : this.plugin.app.vault.getAbstractFileByPath(folderPath);
+			const note = folder instanceof TFolder ? this.folderNoteFor(folder) : null;
+			return note ? { kind: "name", file: note } : null;
+		}
+		if (isVaultDrag(this.plugin.app)) return null;
+		if (el.closest(".lure-vault-segment")) {
+			// The vault's own root, which is the one folder the path does not
+			// spell out.
+			return this.externalPath === null ? { kind: "place", folderPath: "" } : null;
+		}
+		if (el.closest(".view-header-breadcrumb")) {
+			const folderPath = this.folderPathForEvent(evt, "folder");
+			return folderPath === null ? null : { kind: "place", folderPath };
+		}
+		return null;
+	}
+
+	/** The blue ring, up while a drop would land as content and while one is waiting to be named. */
+	private showDropRing(on: boolean): void {
+		this.titleEl.parentElement?.toggleClass(DROP_CONTENT_CLASS, on || this.pendingDrop !== null);
+	}
+
+	/**
+	 * A drop that carried content, answered where it landed.
+	 *
+	 * Onto a note, the content goes on the end of it — after a confirmation,
+	 * because this writes into a file that is already there and the gesture
+	 * that asked for it is one an unsteady hand can make by accident.
+	 *
+	 * Onto a place, nothing is written yet: the field opens on that folder
+	 * with the content held, and naming a note is what commits it. Creating
+	 * a note *is* the confirmation there, so none is asked for — except when
+	 * the name turns out to be one that already exists, which is the same
+	 * write as the first case and is confirmed the same way (see
+	 * `commitPendingDrop`).
+	 */
+	private async handleContentDrop(
+		target: { kind: "name"; file: TFile } | { kind: "place"; folderPath: string },
+		evt: DragEvent,
+	): Promise<void> {
+		// Read before anything else can await: `dataTransfer` is emptied the
+		// moment the drop handler returns, so a payload fetched after an
+		// await is a payload that is no longer there.
+		const content = await readDroppedContent(this.plugin.app, evt);
+		if (!content) {
+			this.showDropRing(false);
+			return;
+		}
+
+		if (target.kind === "name") {
+			this.showDropRing(false);
+			await this.appendDroppedContent(target.file, content);
+			return;
+		}
+
+		this.pendingDrop = content;
+		this.showDropRing(true);
+		this.extendBrowsePath(target.folderPath);
+		this.enterTypingMode("");
+	}
+
+	/** Asks, then writes, then says where it went. */
+	private async appendDroppedContent(file: TFile, content: DroppedContent): Promise<void> {
+		const confirmed = await confirmAction(this.plugin.app, {
+			title: t("dropAppendTitle"),
+			body: t("dropAppendBody", { name: file.name }),
+			// The source named on its own line where the drop had one — a
+			// file has a name worth quoting back, loose text does not.
+			detail: content.from || undefined,
+			cta: obsidianLabel(LABELS.paste, "Paste"),
+		});
+		if (!confirmed) return;
+		try {
+			await appendToNote(this.plugin.app, file, content.text);
+			new Notice(t("dropAppended", { name: file.name }));
+		} catch (err) {
+			new Notice(t("noticeCreateFailed", { error: (err as Error).message }));
+		}
+	}
+
+	/**
+	 * Puts a held drop into the note the field settled on, once there is one.
+	 *
+	 * `created` is what tells the two cases apart. A note this gesture has
+	 * just made cannot be damaged by what is written into it — it is empty,
+	 * and making it was the decision — so the content simply goes in. An
+	 * existing note is the same write as a drop onto the name and asks the
+	 * same question first.
+	 */
+	private async commitPendingDrop(file: TFile, created: boolean): Promise<void> {
+		const content = this.pendingDrop;
+		this.pendingDrop = null;
+		this.showDropRing(false);
+		if (!content) return;
+		if (created) {
+			await appendToNote(this.plugin.app, file, content.text);
+			return;
+		}
+		await this.appendDroppedContent(file, content);
+	}
+
 	/**
 	 * What can be done to the text now marked in the field.
 	 *
@@ -2080,6 +2434,11 @@ export class PathBreadcrumb {
 		// would otherwise leave blue segments behind with nothing to explain
 		// them.
 		this.markLegalMoves(NO_MOVES);
+		// Same reason: the ring is a class on Obsidian's own header, which
+		// outlives this instance, so a drag that was over the row when the
+		// plugin was disabled would leave a blue box behind for good.
+		this.pendingDrop = null;
+		this.showDropRing(false);
 		this.resizeObserver?.disconnect();
 		this.resizeObserver = null;
 		this.restoreFittedText();
@@ -2220,13 +2579,15 @@ export class PathBreadcrumb {
 	 * Brings an already-open input up to date after rename mode is toggled
 	 * from the button, without disturbing what's in it.
 	 *
-	 * Only two things actually depend on the mode. The suggest reads
+	 * Three things actually depend on the mode. The suggest reads
 	 * `renameMode` through a callback, so re-running its query is enough to
-	 * pick up the pinned current filename and the greying of taken names.
-	 * The validation tooltip is rename-only, so leaving the mode has to
-	 * take it down by hand — `onInput` skips validation entirely once
-	 * `renameMode` is false, and would otherwise leave a stale red warning
-	 * hanging under a field that is no longer being validated.
+	 * pick up the pinned current filename and the greying of taken names —
+	 * and the same dispatched event carries the create hint, which is off in
+	 * rename mode, along with it. The validation tooltip is rename-only, so
+	 * leaving the mode has to take it down by hand — `onInput` skips
+	 * validation entirely once `renameMode` is false, and would otherwise
+	 * leave a stale red warning hanging under a field that is no longer
+	 * being validated.
 	 */
 	private syncOpenInputToRenameMode(): void {
 		const inputEl = this.inputEl;
@@ -4489,6 +4850,64 @@ export class PathBreadcrumb {
 	}
 
 	/**
+	 * Whether Enter on what is in the field would make something that is not
+	 * there yet, rather than open something that is.
+	 *
+	 * Deliberately a re-reading of `handleTypedSubmit` and `submitExternal`
+	 * rather than a second opinion about them — same unquoting, same folder
+	 * to be relative to, same `.md` on a bare name, same order of questions.
+	 * If the two ever drift apart the row is lying about what the next
+	 * keystroke does, which is worse than the row saying nothing at all;
+	 * `test-create.mjs` pins them together by colouring the field and then
+	 * actually pressing the key.
+	 *
+	 * False for everything that is not a question about this machine: an
+	 * empty field names nothing yet, and a web address is not a place here
+	 * to go looking for.
+	 */
+	private typedCreatesNew(rawText: string): boolean {
+		const trimmed = unquotePath(rawText);
+		if (!trimmed) return false;
+		// Rename mode is the one place where a name nothing answers to is
+		// the *expected* case — that is what renaming is — and it has its
+		// own red for the two things that are actually wrong there, an
+		// illegal name and a taken one. Two reds on one field, meaning
+		// opposite things, would leave neither readable.
+		if (this.renameMode) return false;
+
+		const target = classifyTypedTarget(trimmed);
+		// An absolute path resolves against the real filesystem — inside the
+		// vault first, exactly as openTypedTarget does — and never creates:
+		// not found there is a notice, not a new file.
+		if (target) return false;
+		if (this.externalPath === null && isAbsolutePath(trimmed)) return false;
+
+		if (this.externalPath !== null) {
+			const typedPath = isAbsolutePath(trimmed) ? trimmed : externalJoin(this.externalPath, trimmed);
+			if (isExternalFolder(typedPath)) return false;
+			return !isExternalFile(this.withNoteExtension(typedPath));
+		}
+
+		const folderPath = this.currentFolderPath();
+		const candidate = normalizePath(folderPath ? `${folderPath}/${trimmed}` : trimmed);
+		if (this.entryExists(candidate, false)) return false;
+		return !this.entryExists(normalizePath(this.withNoteExtension(candidate)), false);
+	}
+
+	/**
+	 * Paints the field for what Enter would do with it.
+	 *
+	 * Hung off `autoSize` rather than off the `input` event, because
+	 * `autoSize` is already this file's "the value changed" hook: the
+	 * suggestion preview, the tab walk and the selection ladder all write
+	 * into the field without dispatching a trusted keystroke, and all of
+	 * them resize it afterwards. One hook, and none of them can forget.
+	 */
+	private paintCreateHint(inputEl: HTMLInputElement): void {
+		inputEl.toggleClass(WILL_CREATE_CLASS, this.typedCreatesNew(inputEl.value));
+	}
+
+	/**
 	 * Display filter for autocomplete entries. Deliberately affects
 	 * listing only: anything hidden here still occupies its name in the
 	 * vault, so it still blocks a rename onto it via the duplicate check
@@ -5932,6 +6351,9 @@ export class PathBreadcrumb {
 			// so the row is simply made scrollable, which is what the fitter
 			// does when it runs out of room for the same reason.
 			this.letRowScroll(true);
+			// Same hook, because it answers the same question: the value
+			// changed, so what the row is saying about it has to change too.
+			this.paintCreateHint(inputEl);
 		};
 		autoSize();
 
@@ -6277,6 +6699,10 @@ export class PathBreadcrumb {
 					() => this.inputEl?.dispatchEvent(new Event("input")),
 				),
 			(value) => this.previewSuggestion(value),
+			// The same thing the field's own Enter does, because it is the
+			// same press: the popover took it before the field could, and
+			// standing on no row it had nothing of its own to do with it.
+			(evt) => void this.handleTypedSubmit(inputEl.value, this.paneTypeFor(evt)),
 			);
 			this.suggest.onSelect((value, evt) => {
 				evt.preventDefault();
@@ -6479,6 +6905,13 @@ export class PathBreadcrumb {
 		this.editCleanup?.();
 		this.editCleanup = null;
 		this.inputEl = null;
+		// A held drop belongs to the field it opened. Cancelling the row is
+		// the way out of that gesture — there is no second one to undo it
+		// with — and content that outlived its own field would be written
+		// into whatever the *next* commit happened to name.
+		this.pendingDrop = null;
+		this.dropDepth = 0;
+		this.showDropRing(false);
 		this.removeDocumentClickAway();
 		this.browsePath = null;
 		this.mode = "breadcrumb";
@@ -6533,6 +6966,18 @@ export class PathBreadcrumb {
 			return;
 		}
 
+		// And a plain absolute path is the same kind of thing as an encoded
+		// one, which `classifyTypedTarget` already sends there — it just
+		// arrives without the percent signs that gave the game away. Outside
+		// the vault the trail is already absolute and `submitExternal` does
+		// this itself; inside, the leading separator was folded into the
+		// current folder, so committing the locations field as it opens
+		// rebuilt the machine's whole path as folders in the vault.
+		if (this.externalPath === null && isAbsolutePath(trimmed)) {
+			await this.openTypedTarget({ kind: "path", path: trimmed }, paneType);
+			return;
+		}
+
 		if (this.externalPath !== null) {
 			await this.submitExternal(trimmed, paneType);
 			return;
@@ -6562,6 +7007,10 @@ export class PathBreadcrumb {
 		const existing = this.plugin.app.vault.getAbstractFileByPath(normalized);
 
 		if (existing instanceof TFile) {
+			// Held content goes in before the note is opened, so what appears
+			// is the note as the drop left it rather than the note as it was,
+			// redrawn a moment later.
+			if (this.pendingDrop) await this.commitPendingDrop(existing, false);
 			this.navigateToFile(existing, paneType);
 			return;
 		}
@@ -6581,6 +7030,10 @@ export class PathBreadcrumb {
 			const parentPath = normalized.substring(0, normalized.lastIndexOf("/"));
 			await this.ensureFolderExists(parentPath);
 			const newFile = await this.plugin.app.vault.create(normalized, "");
+			// A note made to hold a drop is made holding it, rather than made
+			// empty and written to afterwards — there is no moment where the
+			// gesture half-happened.
+			if (this.pendingDrop) await this.commitPendingDrop(newFile, true);
 			new Notice(t("noticeCreated", { path: newFile.path }));
 			this.revealInExplorer(newFile);
 			this.navigateToFile(newFile, paneType);
@@ -6699,7 +7152,7 @@ export class PathBreadcrumb {
 		const base = this.externalPath ?? "";
 		// An absolute path typed outright replaces the trail; anything else
 		// is relative to where the chips currently point.
-		const typedPath = /^([a-zA-Z]:[\\/]|[\\/])/.test(typed) ? typed : externalJoin(base, typed);
+		const typedPath = isAbsolutePath(typed) ? typed : externalJoin(base, typed);
 
 		if (isExternalFolder(typedPath)) {
 			this.extendExternalPath(typedPath);
