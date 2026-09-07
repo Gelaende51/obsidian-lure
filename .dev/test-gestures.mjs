@@ -1387,13 +1387,31 @@ const squeeze = (px) => `
 		split.children.forEach((child, i) => { child.dimension = i === mine ? share : rest; });
 		split.recomputeChildrenDimensions();
 	};
+	// The refit runs from a ResizeObserver, so what settles it is frames, not
+	// milliseconds — and a fixed pause is a statement about how fast the
+	// machine happens to be at that moment. Run alone this row had always
+	// refitted inside 200ms; run two hundred cases into a suite it had not,
+	// and every assertion then read the *previous* width's answer: the vault
+	// name still at its full 109px on a 330px row, unspent and unclipped,
+	// which reads exactly like the fitter refusing to spend it. That is what
+	// the "long paths" family's passes-alone-fails-together was.
+	// squeezeTight already waited for two agreeing readings; this did not.
+	const settle = async () => {
+		let last = null;
+		for (let i = 0; i < 40; i++) {
+			await new Promise((r) => setTimeout(r, 60));
+			const now = row.style.getPropertyValue("--lure-gap") + ":" + row.clientWidth + ":" + row.scrollWidth;
+			if (now === last) return;
+			last = now;
+		}
+	};
 	// First pass to learn what the rest of the header takes, second to land
 	// on the width the caller asked the *row* for.
 	setTo(${px});
-	${PAUSE(160)}
+	await settle();
 	const overhead = pane.containerEl.getBoundingClientRect().width - row.clientWidth;
 	setTo(${px} + overhead);
-	${PAUSE(200)}
+	await settle();
 	return true;
 `;
 
@@ -1681,10 +1699,18 @@ test("long paths: nothing re-opens under an open field or a moving row", async (
 	// same width still fits, the wheel event scrolls nothing, and the
 	// suppression this case is about is never armed — reported, before now,
 	// as the feature being broken.
+	//
+	// Read the way the handler reads it: the wheel is only answered while the
+	// row carries the scrolling class, and the class is put on by the fitter
+	// rather than derived from the box. Measuring `scrollWidth > clientWidth`
+	// instead asked a question the code never asks, and answered yes in the
+	// window between the row overflowing and the fitter saying so — where the
+	// wheel does nothing, the quiet period is never armed, and the case fails
+	// as though the suppression were broken.
 	const scrolls = await page.evaluate(`
 		const c = app.workspace.getLeavesOfType("markdown")[0].view.containerEl
 			.querySelector(".view-header-title-container");
-		return c.scrollWidth > c.clientWidth + 1;
+		return c.classList.contains("lure-row-scrolls");
 	`);
 	if (!scrolls) skipCase("the row still fits at its narrowest here, so there is nothing to scroll");
 	const out = await page.evaluate(`

@@ -288,6 +288,15 @@ not enabled. Please turn it on in Settings > General > Advanced."* — which rea
 like a missing setting rather than like "it is already open", and sends you
 looking in the wrong place entirely.
 
+**In a suite driving a live renderer, never wait a number — wait for the
+reading to stop changing.** The refit runs from a `ResizeObserver`, so what
+settles it is frames, not milliseconds, and a fixed pause is a statement about
+how fast the machine happens to be at that moment. A helper that waited 200ms
+after moving a divider was right run alone and wrong two hundred cases into a
+run, and the assertions then measured the previous width's answer — which
+reads as a plausible product failure, not as a stale one. Both squeeze helpers
+in `test-gestures.mjs` now poll until two consecutive readings agree.
+
 **Focus in one process, press in the next, and the key misses.** The editor takes
 focus back in the gap between two `cdp.mjs` invocations, so anything that focuses a
 field and then presses a key has to happen on one connection — which is what the

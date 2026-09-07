@@ -3150,7 +3150,14 @@ export class PathBreadcrumb {
 		// still a name that could give way, giving way is the better answer.
 		// It is also what makes a restored name reachable, so the row is left
 		// scrollable whenever any name on it is being clipped at all.
-		this.letRowScroll(clipped.some(Boolean));
+		// Not "was anything shortened" but "does it still not fit". A row can
+		// run out of things it is *allowed* to shorten while still holding
+		// more than the pane — every name has a floor, and below the width
+		// where they all stand on theirs nothing is clipped and everything
+		// overflows. Asking about clipping left exactly that row unable to
+		// scroll: its end unreachable, and the wheel inert over it, at the
+		// only widths where either would have mattered.
+		this.letRowScroll(container.scrollWidth > container.clientWidth);
 	}
 
 	/**

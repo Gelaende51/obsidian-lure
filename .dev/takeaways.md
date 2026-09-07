@@ -2177,3 +2177,56 @@ The whole external suite beds its fixtures in `/tmp` and is right to: nothing
 else in it trashes. The one case that does has to live under `$HOME`, and
 says so. Worth knowing before diagnosing a delete that "does not work": try
 it somewhere with a trash first.
+
+## "Passes alone, fails together" was a fixed pause, not a carried-over state
+
+The `long paths` family had been read as environmental for three sessions and
+then as non-independent for one: every case passed run alone, and which of
+them failed when run together changed between runs of byte-identical code.
+Window size, `showFileExtension`, leftover panes, split dimensions and the
+sidebar were each measured and ruled out — the last two by writing the fix,
+watching it change nothing, and reverting it.
+
+The carrier was in the suite's own helper. `squeeze(px)` moved the divider and
+waited `PAUSE(200)`. The refit runs from a `ResizeObserver`, so what settles it
+is frames, not milliseconds, and 200ms is a statement about how fast the
+machine is at that moment — which two hundred cases into a run it is not. The
+assertions then measured the *previous* width's answer.
+
+What made it hard to see is that the stale answer is a plausible failure. On a
+330px row the vault name read 109px wide, unspent and unclipped: exactly what
+"the fitter refuses to give up the opening segment" would look like. Nothing
+in the reading said *stale*.
+
+Two things had already pointed at it and were not followed:
+
+- `squeezeTight`, written later for the same family, waits for two agreeing
+  readings and says why in its own comment. The older helper beside it was
+  never brought along. **When you fix a timing assumption, grep for its
+  siblings.**
+- The geometry probe that finally settled it printed *identical* state solo
+  and in-suite — window, sidebars, splits, leaf count, settings all equal.
+  That is the shape of a race, and it should have ended the search for a
+  carried-over value there rather than one hypothesis later.
+
+The general lesson is the one the harness already knew in one place and not
+the other: **in a suite driving a live renderer, never wait a number. Wait for
+the reading to stop changing.**
+
+## A row can overflow with nothing clipped, and then refuse to scroll
+
+Found by making a test's precondition ask the question the code asks. The case
+checked `scrollWidth > clientWidth`; the wheel handler checks for the
+`lure-row-scrolls` class. They disagreed — the row was 120px holding 151px,
+and the class was off.
+
+`fitRow` ended with `letRowScroll(clipped.some(Boolean))`: let the row scroll
+if the fitter had to cut something. But shortening runs out of *permission*
+before it runs out of need — every name has a floor, and below the width where
+they all stand on theirs, nothing is clipped and everything overflows. At
+exactly those widths the row could not be scrolled and the end of the path was
+unreachable.
+
+The condition is the overflow itself, which `letRowScroll` was already
+re-checking on the way in. A predicate derived from what the code *did* is
+worth suspecting whenever the thing you want to know can be measured directly.
