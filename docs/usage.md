@@ -384,13 +384,25 @@ Browsing otherwise works as it does inside: chips, delimiters, typing, autocompl
 
 **Right-click works out there too**, though it is a different menu: the File Explorer's own handlers need a file the vault knows about, so entries outside are built from the path instead. They offer opening (here, to the right, in a new window, or in your desktop's default application), *Copy path*, *Show in system explorer*, and — once the padlock is open — *New note*, *New folder*, *Make a copy*, *Rename…* and *Delete*. **Dragging** still needs a vault file and stays unavailable.
 
+The same menu is on the open file in the viewer, by right-click or from the pane's own three dots, and it asks the padlock in that view's header. It asks nothing else: whether the file is being rendered or shown as source has no bearing on whether it can be deleted, and an image or a PDF — which has no source view at all — is as deletable as a note. *Delete* means the desktop's trash, so it can be undone from there; a system with no trash reports that rather than destroying the file.
+
 Deleting outside the vault moves the file to your **system trash** — the Recycle Bin on Windows, Trash on macOS — never an unlink. Out here there is no Obsidian trash to recover from, so a delete that could not be undone is not offered at all: where a platform has no trash, the attempt reports the failure instead.
 
 ### Writing outside the vault
 
-Everything that writes is **locked by default**. A **padlock** appears next to the rename toggle in the header for as long as the row points outside your vault; pressing it opens the lock and turns red, matching the ring around the row.
+Everything that writes is **locked by default**. For as long as the row points outside your vault, the rename toggle's place in the header is taken by a **red padlock** — the same colour as the ring around the row, and for the same reason: it marks a refusal. The two are one control in one slot, so there is never a question of which of them gates what.
 
-The permission is granted **to a location, not to a moment**: it survives everything you'd do while working in one place — finishing a move, clicking away from the input, opening a file — and ends when you pick a different vault, drive or root from the dropdown, when the row returns to a vault file, or when you press the padlock again. So a run of moves inside one folder takes one press, not one per file.
+Three presses, in a cycle:
+
+| Press | What you get |
+| --- | --- |
+| The red padlock | Writing here is allowed. The padlock is replaced by the rename/move toggle |
+| The toggle | Rename/move mode, exactly as inside the vault |
+| The toggle again | The mode ends and the padlock shuts again — the permission does not outlive the thing it was opened for |
+
+Inside your vault there is no padlock: there is nothing to unlock, and the toggle simply has the slot.
+
+The permission is granted **to a location, not to a moment**: it survives everything you'd do while working in one place — finishing a move, clicking away from the input, opening a file — and ends when you pick a different vault, drive or root from the dropdown, when the row returns to a vault file, or on that third press. So a run of moves inside one folder takes one press, not one per file.
 
 With the padlock open, the path bar behaves out there the way it does inside:
 
@@ -646,6 +658,7 @@ name is turned off or has been squeezed away.
 | **Red** ring on the path bar | The row points outside your vault | Obsidian cannot open what's there as a note, and nothing out there is written until you open the padlock. |
 | **Orange** ring on the path bar, orange entries in the dropdown | The file is a text type Obsidian has no view for | A caution. Obsidian would hand it to your desktop's default application; the plugin shows it instead. |
 | **Red** text in the open field | Nothing is at that path yet | <kbd>Enter</kbd> will make it rather than open it. Not a warning so much as a statement of what the next keystroke does — see [Typing a path](#typing-a-path). |
+| **Red** padlock in place of the rename toggle | The row points outside your vault and writing there is still locked | The same red as the ring, for the same reason: it marks a refusal. Pressing it allows writing here and hands the slot back to the toggle — see [Writing outside the vault](#writing-outside-the-vault). |
 
 The **two rings are independent, and both can hold at once** — an external `.json` is outside your vault *and* a type Obsidian has no editor for. In the viewer they appear as separate lines, each stating only its own fact. On the path bar, red wins where both apply, since two rings would only be noise. The red *text* is a third thing entirely: it is about what is being typed, not about where the row points, so it can appear inside either ring or neither.
 
@@ -655,7 +668,7 @@ Red wins where both would apply; two rings at once would only be noise.
 
 ## Move/rename mode
 
-The pencil button at the far right of the header — next to the view-mode button, same size as the native buttons — toggles move/rename mode. The header row is then framed in the accent colour, exactly like renaming in the File Explorer. The same clicks and keystrokes now commit a move or rename via Obsidian's `fileManager.renameFile`, so all links to the note follow along.
+The pencil button at the far right of the header — next to the view-mode button, same size as the native buttons — toggles move/rename mode. Outside your vault a red padlock stands in its place until you press it; see [Writing outside the vault](#writing-outside-the-vault). The header row is then framed in the accent colour, exactly like renaming in the File Explorer. The same clicks and keystrokes now commit a move or rename via Obsidian's `fileManager.renameFile`, so all links to the note follow along.
 
 While renaming:
 
@@ -749,6 +762,9 @@ appear in a real name, where an apostrophe very much can.
 | See a shortened folder name in full | Hover it, or widen the pane |
 | Find out where the vault itself lives | Hover the icon at the start of the row |
 | Take a note out of the vault | Pencil → browse outside → confirm the dialog (links will break) |
+| Allow writing outside your vault | Click the **red padlock** in the header; the rename toggle takes its place |
+| Lock it again | Click the toggle until the padlock is back — one press in, one press out |
+| Delete a file outside the vault | Open the padlock, then right-click the file: *Delete* moves it to your system's trash |
 
 ## Settings
 
@@ -765,7 +781,7 @@ appear in a real name, where an apostrophe very much can.
 
 ## Replacing the icons
 
-Lure renders three icons: the vault-root icon (when **Show vault name** is off), the rename/move toggle, and the padlock that gates writing outside the vault. All can be swapped from a theme or a CSS snippet — set the replacement glyph and hide the bundled one in a single rule:
+Lure renders three icons: the vault-root icon (when **Show vault name** is off), the rename/move toggle, and the padlock that stands in its place while writing outside the vault is locked. All can be swapped from a theme or a CSS snippet — set the replacement glyph and hide the bundled one in a single rule:
 
 ```css
 .lure-vault-icon {
@@ -778,14 +794,10 @@ Lure renders three icons: the vault-root icon (when **Show vault name** is off),
 	--lure-icon-svg: none;
 }
 
-/* The padlock has two states; `.is-active` is the open one. */
+/* Only ever shown shut: opening it hands the slot to the rename toggle. */
 .lure-unlock-btn {
 	--lure-icon-glyph: "🔒";
 	--lure-icon-svg: none;
-}
-
-.lure-unlock-btn.is-active {
-	--lure-icon-glyph: "🔓";
 }
 ```
 

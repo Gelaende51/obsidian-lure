@@ -2105,3 +2105,75 @@ Two lessons worth more than the bug:
    spent — and now do. The rest are left failing, because a family that fails
    differently every run should not be taught to keep quiet before it is
    understood: that turns an unsolved problem into a silent one.
+
+## One permission, two flags, and the menu asked the other one
+
+Writing outside the vault is gated twice, by design: the padlock on the path
+bar grants it for a *location*, and the viewer's **Edit as text** lifts
+read-only for *this file in this tab*. Both are honest on their own. The
+mistake was the external file menu reading the second when the user had
+pressed the first — and reading it through `editingActive()`, which adds two
+more conditions that have nothing to do with permission:
+
+```ts
+this.unlocked && this.canUnlock() && this.effectiveRenderMode() === "text"
+```
+
+`canUnlock()` requires the file to be textual; the render check requires its
+*source* to be on screen. So Delete, Rename and Make a copy were refused for
+a Markdown note being rendered — the default — and for every image, PDF and
+page, which have no text reading to switch to and therefore no press that
+could ever open the gate. The padlock beside them stood open the whole time.
+
+The tell is in the names. `editingActive` answers *is this buffer editable
+right now*; a menu entry asks *is this path writable at all*. Two questions
+that agree in the simple case and diverge everywhere else, and the second
+one had no function of its own — so it borrowed the first.
+
+The fix is a predicate per question, and the permission living where its
+button lives: the row owns it, the viewer asks the row (`plugin
+.externalWritesUnlocked(leaf)`), and either press still counts.
+
+## A `destroy()` that renders on its way out will rebuild what it just tore down
+
+Placing the header button moved onto the render path, which is what a
+merged control needs — the padlock and the rename toggle share one slot, so
+whatever decides which of them is in it has to run whenever that can change.
+The cost showed up somewhere else entirely: disabling the plugin left a dead
+toggle in the header of every leaf it had ever patched.
+
+`destroy()` removes the buttons, and then, thirteen lines later, calls
+`showNativeBreadcrumb()` — which renders. The render placed the button back.
+The last thing every unload did was undo itself.
+
+What made it expensive to find is that the symptom appeared in the
+*compatibility* suite, against Quick Explorer and Front Matter Title, both of
+which rebuild the header — so it read as a peer-interaction bug for several
+rounds, and the first fix attempted (refusing to place from an instance that
+no longer owns its row) was plausible, was written, and changed nothing. It
+was reverted. The stack trace of the actual insertion named the caller in one
+line and ended the search: `insertRenameButton ← updateUnlockButton ←
+applyExternalState ← showNativeBreadcrumb`.
+
+Two general lessons:
+
+1. **Teardown is a state, not a moment.** Anything that can run from the
+   render path needs to know it is being dismantled — a `destroyed` flag set
+   as the first statement of `destroy()`, checked wherever the render path
+   builds DOM.
+2. **Instrument the mutation, not the symptom.** Counting the leftovers said
+   only that they existed. Logging a stack at the point of insertion named
+   the cause immediately, after four rounds of measuring the DOM.
+
+## `shell.trashItem` fails in `/tmp`, and that is the mount's answer, not the code's
+
+Deleting outside the vault means the desktop's trash, never an unlink. On
+Linux that is the XDG trash, which needs a `.Trash-<uid>` on the *same*
+filesystem as the file. `/tmp` is a tmpfs with none, so trashing anything
+there rejects — while the identical call against a file under `$HOME`
+succeeds.
+
+The whole external suite beds its fixtures in `/tmp` and is right to: nothing
+else in it trashes. The one case that does has to live under `$HOME`, and
+says so. Worth knowing before diagnosing a delete that "does not work": try
+it somewhere with a trash first.

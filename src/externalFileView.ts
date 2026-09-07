@@ -320,7 +320,7 @@ export class ExternalFileView extends ItemView {
 			this.filePath,
 			false,
 			this.leaf,
-			() => this.editingActive(),
+			() => this.writesAllowed(),
 			() => void this.reload(),
 		);
 		// The pane-wide entries the vault branch above gets from Obsidian's
@@ -790,10 +790,11 @@ export class ExternalFileView extends ItemView {
 				this.filePath,
 				false,
 				this.leaf,
-				// The viewer's own unlock, which is the press that armed
-				// editing for this file — the same gate, read from where it
-				// actually lives rather than assumed from the path bar's.
-				() => this.editingActive(),
+				// The padlock on this view's own row, or the press that
+				// armed editing for this file. Either one is permission to
+				// write out here; neither says anything about which reading
+				// of the file happens to be on screen.
+				() => this.writesAllowed(),
 				() => void this.reload(),
 			);
 		}
@@ -956,6 +957,26 @@ export class ExternalFileView extends ItemView {
 	 */
 	private editingActive(): boolean {
 		return this.unlocked && this.canUnlock() && this.effectiveRenderMode() === "text";
+	}
+
+	/**
+	 * Whether writing to this path has been allowed — the question the menu
+	 * asks, which is not the question above.
+	 *
+	 * `editingActive` is about the buffer: it additionally requires the file
+	 * to be *showing its source*, which a rendered note, an HTML page and
+	 * every image never are, and requires the file to be textual at all.
+	 * Reading it here meant Delete, Rename and Make a copy answered "writing
+	 * outside your vault is locked" while the padlock in this view's own
+	 * header stood open — and for an image there was no way to open it.
+	 *
+	 * Two presses say the same thing and either is enough: the padlock,
+	 * which is the permission itself, and "Edit as text", which is
+	 * documented as lifting read-only for this file.
+	 */
+	private writesAllowed(): boolean {
+		if (this.unlocked && this.canUnlock()) return true;
+		return this.plugin.externalWritesUnlocked(this.leaf);
 	}
 
 	private async writeTo(target: TFile | "external", text: string): Promise<void> {

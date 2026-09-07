@@ -739,6 +739,8 @@ export class PathBreadcrumb {
 	 * that far from a note should be writable just because you looked at it.
 	 */
 	private externalWritesUnlocked = false;
+	/** Set the moment teardown begins, so the render path stops rebuilding what it is dismantling. */
+	private destroyed = false;
 	/**
 	 * The location the unlock was granted for. Held so the permission can
 	 * outlive the repaints that punctuate working in one place — a move
@@ -799,6 +801,19 @@ export class PathBreadcrumb {
 		setIcon(this.renameButtonEl, "folder-pen");
 		this.renameButtonEl.addEventListener("click", (evt) => {
 			evt.stopPropagation();
+			// Outside the vault this button is the far half of the padlock,
+			// so the press that leaves rename mode is the press that shuts
+			// the padlock again: the permission never outlives the thing it
+			// was opened for, and there is one control to learn instead of
+			// two with an order between them.
+			if (this.renameMode && this.pointsOutsideVault()) {
+				this.renameMode = false;
+				this.lockExternalWrites();
+				this.updateRenameModeStyling();
+				this.syncOpenInputToRenameMode();
+				this.insertRenameButton();
+				return;
+			}
 			this.renameMode = !this.renameMode;
 			this.updateRenameModeStyling();
 			// Deliberately keeps any open input/chip trail alive: the toggle
@@ -808,21 +823,27 @@ export class PathBreadcrumb {
 			this.syncOpenInputToRenameMode();
 		});
 
-		// Sits beside the rename toggle because it gates exactly what that
-		// toggle does once the row has left the vault. Hidden entirely while
-		// inside it — there is nothing to unlock in your own vault, and a
+		// The same slot as the rename toggle, because it gates exactly what
+		// that toggle does once the row has left the vault: outside, a shut
+		// padlock is what shows, and opening it is what puts the toggle
+		// there. Two icons side by side, one gating the other, made the
+		// reader learn an order; one slot states it. Hidden entirely inside
+		// the vault — there is nothing to unlock in your own vault, and a
 		// permanently inert padlock in the header would only raise the
 		// question of what it is for.
 		this.unlockButtonEl = createSpan();
 		this.unlockButtonEl.addClass("clickable-icon", "view-action", "lure-unlock-btn");
+		// One state, so drawn once here rather than on every render: the open
+		// padlock does not exist any more — opening it is what replaces it.
+		setIcon(this.unlockButtonEl, "lock");
+		this.unlockButtonEl.setAttribute("aria-label", t("externalUnlockLabel"));
 		this.unlockButtonEl.addEventListener("click", (evt) => {
 			evt.stopPropagation();
-			if (this.externalWritesUnlocked) this.lockExternalWrites();
-			else {
-				this.externalWritesUnlocked = true;
-				// Granted for this location, not for this moment.
-				this.unlockedBase = this.externalBase?.path ?? this.externalPath;
-			}
+			// Only ever opens: once open it hands the slot to the rename
+			// toggle, and shutting it again is that button's third press.
+			this.externalWritesUnlocked = true;
+			// Granted for this location, not for this moment.
+			this.unlockedBase = this.externalBase?.path ?? this.externalPath;
 			this.updateUnlockButton();
 		});
 
@@ -2418,6 +2439,7 @@ export class PathBreadcrumb {
 
 	/** Restores the leaf's native title DOM. Called on leaf close / plugin unload. */
 	destroy(): void {
+		this.destroyed = true;
 		for (const timer of this.timers) window.clearTimeout(timer);
 		this.timers.clear();
 		this.editCleanup?.();
@@ -2565,6 +2587,7 @@ export class PathBreadcrumb {
 	private updateRenameModeStyling(): void {
 		this.titleEl.parentElement?.toggleClass(RENAME_MODE_CLASS, this.renameMode);
 		this.renameButtonEl.toggleClass("is-active", this.renameMode);
+		this.labelSlotButton();
 		// Rename mode suspends the swap, so the underline has to go with it.
 		this.applySwapState();
 
@@ -2786,20 +2809,64 @@ export class PathBreadcrumb {
 	}
 
 	/**
-	 * The rename toggle lives among Obsidian's own view-action icons
-	 * (bookmark / reading-mode / more-options) at the far right of the
-	 * header, not inside our breadcrumb — inserted first so it sits
-	 * right next to the reading/editing mode toggle. Re-checked on
-	 * every refresh in case Obsidian recreates .view-actions.
+	 * Fills the one slot among Obsidian's own view-action icons (bookmark /
+	 * reading-mode / more-options) at the far right of the header, not
+	 * inside our breadcrumb — inserted first so it sits right next to the
+	 * reading/editing mode toggle. Re-checked on every refresh in case
+	 * Obsidian recreates .view-actions.
+	 *
+	 * Which control that is depends on where the row points. Inside the
+	 * vault there is nothing to unlock, so it is the rename toggle. Outside,
+	 * a shut padlock holds the slot until it is opened, and then the toggle
+	 * takes it — one control in one place, rather than two whose order the
+	 * reader has to learn.
 	 */
 	private insertRenameButton(): void {
+		// Nothing is placed once teardown has started. Placing the slot runs
+		// on the render path now, and `destroy` renders once on its way out —
+		// `showNativeBreadcrumb` does — several lines *after* it has taken
+		// these buttons off the header. Without this the last act of every
+		// unload was to put one back, and disabling the plugin left a dead
+		// toggle in the header of every leaf it had ever patched.
+		if (this.destroyed) return;
 		const viewActions = this.titleEl.parentElement?.parentElement?.querySelector<HTMLElement>(
 			".view-actions",
 		);
-		if (!this.renameButtonEl.isConnected) {
-			viewActions?.insertAdjacentElement("afterbegin", this.renameButtonEl);
-		}
+		// Rename mode keeps the toggle on screen whatever the padlock says.
+		// The merge governs the button, not the mode: the rename command has
+		// a hotkey of its own, and a mode entered that way must stay visible
+		// and leavable rather than being cancelled by the next repaint. What
+		// it may not do is write — that gate is at the commit, where it was.
+		const locked = this.pointsOutsideVault() && !this.externalWritesUnlocked && !this.renameMode;
+		const slot = locked ? this.unlockButtonEl : this.renameButtonEl;
+		(locked ? this.renameButtonEl : this.unlockButtonEl).remove();
+		if (!slot.isConnected) viewActions?.insertAdjacentElement("afterbegin", slot);
+		if (!locked) this.labelSlotButton();
 		this.updateNavLockButton();
+	}
+
+	/**
+	 * What the next press on the rename toggle will do.
+	 *
+	 * Three states share one slot and each has to say which it is: shut,
+	 * open, and open with the mode already on — where the next press is the
+	 * one that shuts it again. Set both where the button is placed and where
+	 * the mode is toggled, since either can be what changed.
+	 */
+	private labelSlotButton(): void {
+		this.renameButtonEl.setAttribute(
+			"aria-label",
+			this.renameMode && this.pointsOutsideVault()
+				? t("externalLockLabel")
+				: t("renameToggleLabel"),
+		);
+	}
+
+	/** Whichever of the pair currently holds the header slot, for the chain to sit beside. */
+	private slotButtonEl(): HTMLElement | null {
+		if (this.renameButtonEl.isConnected) return this.renameButtonEl;
+		if (this.unlockButtonEl.isConnected) return this.unlockButtonEl;
+		return null;
 	}
 
 	/**
@@ -2818,9 +2885,11 @@ export class PathBreadcrumb {
 		}
 		this.navLockButtonEl.setAttribute("aria-label", t("navLockRelease"));
 		if (this.navLockButtonEl.isConnected) return;
-		if (this.renameButtonEl.isConnected) {
-			this.renameButtonEl.insertAdjacentElement("beforebegin", this.navLockButtonEl);
-		}
+		// Beside whichever of the pair is in the slot: outside the vault and
+		// still locked that is the padlock, and keying off the rename toggle
+		// alone would drop the chain — the one way out of the lock — exactly
+		// where the toggle is not the button on screen.
+		this.slotButtonEl()?.insertAdjacentElement("beforebegin", this.navLockButtonEl);
 	}
 
 	/**
@@ -2835,11 +2904,6 @@ export class PathBreadcrumb {
 		// briefly null. Revoking here relocked the padlock after every single
 		// move. The permission ends at the transitions instead — see
 		// lockExternalWrites.
-		if (!this.pointsOutsideVault()) {
-			this.unlockButtonEl.remove();
-			return;
-		}
-
 		// Typing an absolute path can leave the location the unlock was for
 		// without ever passing through one of those transitions.
 		if (
@@ -2851,27 +2915,11 @@ export class PathBreadcrumb {
 			this.lockExternalWrites();
 		}
 
-		if (!this.unlockButtonEl.isConnected) {
-			// Normally right after the rename toggle. If that one never found
-			// a home — Obsidian recreating .view-actions, a view without one —
-			// the padlock isn't dropped along with it, or the feature would be
-			// unreachable precisely when the row says it's needed.
-			if (this.renameButtonEl.isConnected) {
-				this.renameButtonEl.insertAdjacentElement("afterend", this.unlockButtonEl);
-			} else {
-				this.titleEl.parentElement?.parentElement
-					?.querySelector<HTMLElement>(".view-actions")
-					?.insertAdjacentElement("afterbegin", this.unlockButtonEl);
-			}
-		}
-
-		const unlocked = this.externalWritesUnlocked;
-		setIcon(this.unlockButtonEl, unlocked ? "lock-open" : "lock");
-		this.unlockButtonEl.toggleClass("is-active", unlocked);
-		this.unlockButtonEl.setAttribute(
-			"aria-label",
-			unlocked ? t("externalLockLabel") : t("externalUnlockLabel"),
-		);
+		// Deliberately after that check and not before: the relock decides
+		// which of the pair the slot holds, so placing them first would show
+		// the rename toggle for one frame in a location that has just been
+		// locked again.
+		this.insertRenameButton();
 	}
 
 	private hideNativeBreadcrumb(): void {
@@ -3754,6 +3802,19 @@ export class PathBreadcrumb {
 	private lockExternalWrites(): void {
 		this.externalWritesUnlocked = false;
 		this.unlockedBase = null;
+	}
+
+	/**
+	 * Whether the padlock stands open, for code outside this class.
+	 *
+	 * The permission lives here because the button does. The external
+	 * viewer used to answer this question from its own read-only lift,
+	 * which is a different one — that flag is about the buffer being
+	 * editable, and is false for a note being rendered, a page and every
+	 * image — so its menu refused a delete the padlock beside it allowed.
+	 */
+	allowsExternalWrites(): boolean {
+		return this.externalWritesUnlocked;
 	}
 
 	/**

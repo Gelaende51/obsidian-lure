@@ -34,7 +34,7 @@ Obsidian 1.8.7+ · desktop only · AGPL-3.0
 - **Type a URL** — `https://`, `obsidian://`, or a `file://` or percent-encoded path — and it is opened rather than treated as a note name. Web addresses go to a tab of Obsidian's own Web viewer where you have it on.
 - **Long paths shorten where the letters are redundant** — never past what tells a folder from the one beside it, smoothly rather than a letter at a time — and scroll only when there is nothing left to compress. Point at a shortened name to get it back in full.
 - **<kbd>F2</kbd>** alternates between the inline title and the path bar, opening on the name without its extension and walking out to the full paths on further presses. It passes cleanly through Obsidian's rename dialog when the title is scrolled out of view. A *Focus the path bar* command is there to bind if you want the address-bar gesture.
-- **Click the vault name** to browse your other vaults, home, the filesystem root and mounted drives without switching vaults. Read-only until you open a padlock, and framed in the error colour throughout. Off by default — see [outside the vault](#outside-the-vault).
+- **Click the vault name** to browse your other vaults, home, the filesystem root and mounted drives without switching vaults. Read-only until you open the red padlock that takes the rename toggle's place out there, and framed in the error colour throughout. Off by default — see [outside the vault](#outside-the-vault).
 - **Two warning tiers** — red outside the vault, orange for text files Obsidian has no editor for. See [the warning colours](docs/usage.md#the-warning-colours).
 - **Themeable icons**, swapped from a CSS snippet — and **46 languages**: every one Obsidian ships, plus Greek and Sanskrit, which it has no setting for. Pick one for the plugin alone, or follow Obsidian's own.
 - **Settings:** language, alignment, delimiter presets, which click opens the dropdown, vault name, dot files, file extensions.
@@ -56,7 +56,7 @@ Obsidian's developer policies require plugins to explain any access to files out
 **What it writes.** Nothing, until you press a button that says so. There are two such buttons, each covering only its own surface:
 
 - The viewer's **Edit as text** button unlocks the file in front of you, for that one file in that one tab. Your edits are then saved back to it as you type.
-- The header's **padlock**, shown only while the path bar points outside your vault, unlocks creating, renaming and moving at external paths. It re-locks when you come back inside, so permission never outlives the folder you granted it for.
+- The header's **red padlock**, which stands in the rename toggle's place while the path bar points outside your vault, unlocks creating, renaming, moving and deleting at external paths — and hands the slot back to the toggle once open. It re-locks when you come back inside, and on the press that leaves rename mode, so permission never outlives the folder you granted it for.
 
 Neither unlock is stored in the workspace or in settings, so writing is never armed on a file you don't remember opening. Nothing is ever overwritten in either state — an existing target is refused, using the filesystem's own exclusive-create rather than a check that could lose a race.
 

@@ -585,7 +585,15 @@ test("path bar: pressing the padlock mid-rename keeps what was typed", async () 
 		${PAUSE(300)}
 		const survived = {
 			value: bc.inputEl?.value ?? null,
-			unlocked: container.querySelector(".lure-unlock-btn").classList.contains("is-active"),
+			unlocked: bc.allowsExternalWrites(),
+			// The padlock and the rename toggle share one slot: opening the
+			// first is what puts the second there, so the handover is the
+			// visible half of the permission being granted.
+			slot: container.querySelector(".lure-unlock-btn")
+				? "padlock"
+				: container.querySelector(".lure-rename-btn")
+					? "rename"
+					: null,
 		};
 		if (bc.inputEl) await bc.handleTypedSubmit(bc.inputEl.value, false);
 		${PAUSE(500)}
@@ -593,6 +601,7 @@ test("path bar: pressing the padlock mid-rename keeps what was typed", async () 
 	`);
 	expect("the field survived the press", r.value, "padlock-renamed.txt");
 	expect("and the padlock opened", r.unlocked, true);
+	expect("handing its slot to the rename toggle", r.slot, "rename");
 	expect("old name gone", existsSync(from), false);
 	expect("new name present", existsSync(to), true);
 });
@@ -850,6 +859,135 @@ test("dropdown: a short listing has no overflow row", async () => {
 });
 
 
+/**
+ * Opens the viewer's own file menu the way a right-click does, finds the
+ * delete entry by its icon rather than by an English word, presses it, and
+ * reports what came back — the refusal notice, or the confirmation.
+ */
+const deleteFromViewer = (confirm) => `
+	const view = app.workspace.getLeavesOfType("lure-external-file")[0].view;
+	view.contentEl.dispatchEvent(new MouseEvent("contextmenu", { bubbles: true, clientX: 120, clientY: 120 }));
+	${PAUSE(350)}
+	const entry = [...document.querySelectorAll(".menu-item")].find((i) => i.querySelector(".lucide-trash-2"));
+	if (!entry) {
+		document.querySelectorAll(".menu").forEach((m) => m.remove());
+		return { offered: false };
+	}
+	entry.click();
+	${PAUSE(500)}
+	const out = {
+		offered: true,
+		refused: [...document.querySelectorAll(".notice")].map((n) => n.textContent),
+		asked: document.querySelector(".modal-container") ? (document.querySelector(".modal-title")?.textContent ?? "") : null,
+	};
+	${confirm ? `document.querySelector(".modal-container button.mod-warning")?.click(); ${PAUSE(1500)}` : ""}
+	document.querySelectorAll(".notice").forEach((n) => n.remove());
+	document.querySelectorAll(".modal-container").forEach((m) => m.remove());
+	document.querySelectorAll(".menu").forEach((m) => m.remove());
+	return out;
+`;
+
+test("viewer menu: the padlock is what it asks, not which reading is on screen", async () => {
+	// The viewer read its own read-only lift instead, and that one also
+	// requires the file to be *showing its source* — which a rendered note
+	// never is. So Delete, Rename and Make a copy answered "writing outside
+	// your vault is locked" with the padlock beside them standing open.
+	const shut = await page.evaluate(`
+		${open(join(BED, "note.md"))}
+		${deleteFromViewer(false)}
+	`);
+	expect("the entry is there while locked", shut.offered, true);
+	expect("and says so rather than acting", shut.refused, (v) => v.length === 1);
+	expect("nothing was asked", shut.asked, null);
+	expect("the file is untouched", existsSync(join(BED, "note.md")), true);
+
+	const open2 = await page.evaluate(`
+		${open(join(BED, "note.md"))}
+		document.querySelector(".lure-unlock-btn").click();
+		${PAUSE(300)}
+		${deleteFromViewer(false)}
+	`);
+	expect("with the padlock open it does not refuse", open2.refused, (v) => v.length === 0);
+	expect("it asks first", open2.asked, (v) => typeof v === "string" && v.length > 0);
+	expect("and nothing is gone until that is answered", existsSync(join(BED, "note.md")), true);
+});
+
+test("viewer menu: a file with no reading to edit can still be deleted", async () => {
+	// The old gate required the file to be textual at all, so an image, a
+	// PDF or anything else the viewer only renders could never be deleted
+	// from out here — there was no press that would open the gate for it.
+	// Under the home folder rather than in BED: deleting means the desktop's
+	// trash, and /tmp is a tmpfs with no `.Trash-<uid>` on it, so trashing
+	// anything there rejects for the mount rather than for the code. Every
+	// other case here is happy in /tmp precisely because none of them trash.
+	const bed = join(HOME, "lure-trash-target");
+	rmSync(bed, { recursive: true, force: true });
+	mkdirSync(bed, { recursive: true });
+	const pic = join(bed, "shot.gif");
+	writeFileSync(pic, Buffer.from("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", "base64"));
+	const r = await page.evaluate(`
+		${open(pic)}
+		document.querySelector(".lure-unlock-btn").click();
+		${PAUSE(300)}
+		${deleteFromViewer(true)}
+	`);
+	expect("it asked rather than refusing", r.asked, (v) => typeof v === "string" && v.length > 0);
+	expect("and the file is gone", existsSync(pic), false);
+	rmSync(bed, { recursive: true, force: true });
+});
+
+test("header: the padlock and the rename toggle are one control in one slot", async () => {
+	const r = await page.evaluate(`
+		${open(join(BED, "note.md"))}
+		const header = () => app.workspace.getLeavesOfType("lure-external-file")[0].view.containerEl.querySelector(".view-header");
+		const slot = () => {
+			const el = header().querySelector(".lure-unlock-btn, .lure-rename-btn");
+			if (!el) return null;
+			return {
+				which: el.classList.contains("lure-unlock-btn") ? "padlock" : "rename",
+				active: el.classList.contains("is-active"),
+				label: el.getAttribute("aria-label"),
+				colour: getComputedStyle(el).color,
+			};
+		};
+		const press = async () => {
+			header().querySelector(".lure-unlock-btn, .lure-rename-btn").click();
+			${PAUSE(350)}
+		};
+		const states = [slot()];
+		await press(); states.push(slot());
+		await press(); states.push(slot());
+		await press(); states.push(slot());
+		const both = header().querySelectorAll(".lure-unlock-btn, .lure-rename-btn").length;
+		return { states, both, error: getComputedStyle(document.body).getPropertyValue("--text-error").trim() };
+	`);
+	expect("shut to begin with", r.states[0].which, "padlock");
+	expect("and it reads as a refusal, not a mode", r.states[0].colour, (v) => v.startsWith("rgb"));
+	expect("one press reveals the rename toggle", r.states[1].which, "rename");
+	expect("which is not yet on", r.states[1].active, false);
+	expect("the next press turns the mode on", r.states[2].active, true);
+	expect("and says the one after shuts it again", r.states[2].label, T("externalLockLabel"));
+	expect("which it does", r.states[3].which, "padlock");
+	expect("never two of them at once", r.both, 1);
+});
+
+test("header: inside the vault the slot is the rename toggle and nothing else", async () => {
+	// A padlock in your own vault would gate nothing, and an inert one would
+	// only raise the question of what it is for.
+	const r = await page.evaluate(`
+		const md = app.vault.getMarkdownFiles()[0];
+		await app.workspace.getLeaf(false).openFile(md);
+		${PAUSE(500)}
+		const header = app.workspace.getMostRecentLeaf().view.containerEl.querySelector(".view-header");
+		return {
+			rename: !!header.querySelector(".lure-rename-btn"),
+			padlock: !!header.querySelector(".lure-unlock-btn"),
+		};
+	`);
+	expect("the toggle is there", r.rename, true);
+	expect("the padlock is not", r.padlock, false);
+});
+
 test("padlock: the unlock survives the work, and ends on leaving the place", async () => {
 	writeFileSync(join(BED, "m1.txt"), "a\n");
 	const r = await page.evaluate(`
@@ -871,7 +1009,9 @@ test("padlock: the unlock survives the work, and ends on leaving the place", asy
 		await after.submitExternal("m1-moved.txt", false);
 		${PAUSE(800)}
 		out.afterMove = bcOf().externalWritesUnlocked;
-		out.padlockStillThere = !!document.querySelector(".lure-unlock-btn");
+		// Not the padlock: once open it hands the slot to the rename toggle,
+		// and the toggle standing there is what says the permission holds.
+		out.padlockStillThere = !!document.querySelector(".lure-rename-btn");
 
 		// Picking somewhere else does end it.
 		bcOf().goToLocation(${JSON.stringify(HOME)});
@@ -883,7 +1023,7 @@ test("padlock: the unlock survives the work, and ends on leaving the place", asy
 	expect("granted on click", r.granted, true);
 	expect("survives a click-away", r.afterClickAway, true);
 	expect("survives a completed move", r.afterMove, true);
-	expect("padlock still shown", r.padlockStillThere, true);
+	expect("the slot is still the unlocked one", r.padlockStillThere, true);
 	expect("ends on a new location", r.afterNewLocation, false);
 	expect("the move happened", existsSync(join(BED, "m1-moved.txt")), true);
 });

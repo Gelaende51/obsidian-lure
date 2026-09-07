@@ -278,6 +278,16 @@ handler never runs and the feature looks broken. Genuinely textless keys — Esc
 arrows, function keys — are dispatched raw and are fine. `describeKey` carries the
 text per key; add new ones there rather than at the call site.
 
+**`pgrep obsidian` finds nothing while Obsidian is running.** The Arch package's
+`/usr/bin/obsidian` is a shell wrapper that `exec`s `electron43 app.asar`, so the
+process is called `electron`. Match on the argument instead — `pgrep -f
+"obsidian/app.asar"`, which is what `.dev/restart-obsidian.sh` does. Believing it
+was not running is worse than it sounds: launching a second copy makes Electron
+hand its command line to the first and exit, printing *"Command line interface is
+not enabled. Please turn it on in Settings > General > Advanced."* — which reads
+like a missing setting rather than like "it is already open", and sends you
+looking in the wrong place entirely.
+
 **Focus in one process, press in the next, and the key misses.** The editor takes
 focus back in the gap between two `cdp.mjs` invocations, so anything that focuses a
 field and then presses a key has to happen on one connection — which is what the
@@ -339,7 +349,7 @@ One vault serving both roles means each use has to leave it fit for the other. T
 | --- | --- |
 | `.dev/cdp.mjs` | One-shot probes into the running app: `eval`, `html`, `style`, `shot`. `eval` runs in the renderer's main world, so Obsidian's own `app` object is in scope. |
 | `.dev/cdpSession.mjs` | One long-lived connection for the suites. Picks the window by vault name (`OBSIDIAN_VAULT`), since target order isn't stable with several vaults open — and which vault is open at all is not stable across a restart. |
-| `.dev/restart-obsidian.sh` | Restarts Obsidian and waits for the port to answer — a bad render can kill the renderer outright. |
+| `.dev/restart-obsidian.sh` | Restarts Obsidian and waits for the port to answer — a bad render can kill the renderer outright. Use it rather than `obsidian &`: it matches the process the right way (see below) and does not return until a page target exists. |
 | `.dev/takeaways.md` | Everything learned the hard way about Obsidian's internals. Read it before debugging something that "should" work. |
 
 Two things about this environment that will otherwise cost you an afternoon. A CDP-driven window **paints no frames**: `requestAnimationFrame` never fires and CSS transitions never advance, so anything in the plugin that retries on an animation frame does nothing here — which is how the reveal-expand bug was found. And the suites read the real locale tables rather than hardcoding English, because the plugin speaks whatever language Obsidian is set to and a hardcoded suite turns every locale switch into a wall of fake product bugs.

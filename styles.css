@@ -250,7 +250,6 @@
      }
 
      .lure-unlock-btn { --lure-icon-glyph: "🔒"; --lure-icon-svg: none; }
-     .lure-unlock-btn.is-active { --lure-icon-glyph: "🔓"; }
 
    `revert` is the default so that, untouched, the SVG keeps whatever
    display value Obsidian's own .clickable-icon/.svg-icon rules give it
@@ -386,13 +385,15 @@
 	opacity: 1;
 }
 
-/* The padlock, present only while the row points outside the vault. Open,
-   it takes the error colour rather than the accent its sibling uses: it is
-   armed, not selected, and it should read as the same condition the red
-   ring around the row is already stating. Qualified with .view-action so it
-   outranks Obsidian's own .clickable-icon.is-active regardless of the order
-   the stylesheets happen to load in. */
-.view-action.lure-unlock-btn.is-active {
+/* The padlock, present only while the row points outside the vault and
+   writing there is still shut. It takes the error colour rather than the
+   accent its sibling uses, and takes it while *closed*: what it marks is a
+   refusal, and it should read as the same condition the red ring around the
+   row is already stating. Opening it hands the slot to the rename toggle,
+   so there is no open state of this button left to colour. Qualified with
+   .view-action so it outranks Obsidian's own .clickable-icon rules
+   regardless of the order the stylesheets happen to load in. */
+.view-action.lure-unlock-btn {
 	color: var(--text-error);
 	opacity: 1;
 }

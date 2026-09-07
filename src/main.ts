@@ -9,7 +9,7 @@
  * see the LICENSE file or <https://www.gnu.org/licenses/> for details.
  */
 
-import { Command, Hotkey, Menu, Platform, Plugin } from "obsidian";
+import { Command, Hotkey, Menu, Platform, Plugin, WorkspaceLeaf } from "obsidian";
 import { BreadcrumbManager } from "./breadcrumbManager";
 import { EXTERNAL_VIEW_TYPE, ExternalFileView } from "./externalFileView";
 import { BreadcrumbSettingTab } from "./settingsTab";
@@ -149,6 +149,19 @@ export default class BreadcrumbPathPlugin extends Plugin {
 				.setIcon(lock.isLocked() ? "unlink" : "link")
 				.onClick(() => lock.toggle()),
 		);
+	}
+
+	/**
+	 * Whether the padlock on this leaf's path bar stands open.
+	 *
+	 * The permission to write outside the vault belongs to the row, and the
+	 * row is the only place it can be granted or taken back. Anything else
+	 * that is about to write out there asks here rather than keeping a
+	 * second flag of its own — the external viewer did, and its menu then
+	 * refused a delete the padlock beside it had already allowed.
+	 */
+	externalWritesUnlocked(leaf: WorkspaceLeaf): boolean {
+		return this.manager.breadcrumbFor(leaf)?.allowsExternalWrites() ?? false;
 	}
 
 	async saveSettings(): Promise<void> {
