@@ -381,6 +381,34 @@ export async function canRenameFiles(page, at = "LureRenameProbe") {
 	`);
 }
 
+/**
+ * Whether this window is actually compositing frames.
+ *
+ * Every geometry assertion in the suites rests on the row having refitted,
+ * and the refit runs from a `ResizeObserver` — which, like
+ * `requestAnimationFrame`, is delivered in the rendering steps. A window that
+ * Chromium has stopped painting delivers neither, so the divider moves, the
+ * box really does get narrower, and the row keeps the previous width's
+ * layout. Every measurement then describes a row that was never fitted, and
+ * the failures it produces are detailed, plausible and entirely fictional.
+ *
+ * The existing gates cannot see this. `document.visibilityState` reads
+ * "visible", `document.hidden` is false and `document.hasFocus()` is true in
+ * exactly this state — measured. Counting frames is the only question that
+ * answers it: no frames in half a second means nothing measured here is worth
+ * reporting.
+ */
+export async function isPainting(page) {
+	const frames = await page.evaluate(`
+		let frames = 0;
+		const tick = () => { frames++; requestAnimationFrame(tick); };
+		requestAnimationFrame(tick);
+		await new Promise((r) => setTimeout(r, 500));
+		return frames;
+	`);
+	return Number(frames) > 0;
+}
+
 export async function canFocusEditable(page, notePath) {
 	return await page.evaluate(`
 		const file = app.vault.getAbstractFileByPath(${JSON.stringify(notePath)});

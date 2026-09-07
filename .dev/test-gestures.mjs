@@ -16,7 +16,7 @@
  * Requires --remote-debugging-port=9222 and OBSIDIAN_VAULT set.
  */
 
-import { canFocusEditable, canRenameFiles, connect, PAUSE, pressKey, quiesce, reloadPlugin, setSettings, setVaultConfig } from "./cdpSession.mjs";
+import { canFocusEditable, canRenameFiles, connect, isPainting, PAUSE, pressKey, quiesce, reloadPlugin, setSettings, setVaultConfig } from "./cdpSession.mjs";
 import { createSuite, skipCase } from "./harness.mjs";
 import { mkdirSync, rmSync, writeFileSync } from "fs";
 import { join } from "path";
@@ -1387,33 +1387,58 @@ const squeeze = (px) => `
 		split.children.forEach((child, i) => { child.dimension = i === mine ? share : rest; });
 		split.recomputeChildrenDimensions();
 	};
-	// The refit runs from a ResizeObserver, so what settles it is frames, not
-	// milliseconds — and a fixed pause is a statement about how fast the
-	// machine happens to be at that moment. Run alone this row had always
-	// refitted inside 200ms; run two hundred cases into a suite it had not,
-	// and every assertion then read the *previous* width's answer: the vault
-	// name still at its full 109px on a 330px row, unspent and unclipped,
-	// which reads exactly like the fitter refusing to spend it. That is what
-	// the "long paths" family's passes-alone-fails-together was.
-	// squeezeTight already waited for two agreeing readings; this did not.
+	// The refit runs from a ResizeObserver, which is delivered in the
+	// rendering steps — so what settles this row is *frames*, and a fixed
+	// pause is two assumptions at once: that the machine is fast enough, and
+	// that the window is painting at all. The second is the one that had this
+	// suite's "long paths" family read as environmental for four sessions.
+	// The window stops compositing partway through a run — while still
+	// reporting itself visible, focused and 1920x1036 — and from there the
+	// divider moves, the box really does narrow, and the row keeps the
+	// previous width's layout. Flexbox alone then does roughly what the
+	// fitter would have done, so some cases still pass and others fail, and
+	// which ones changes run to run.
+	//
+	// So a frame is waited for rather than assumed, and its absence is
+	// reported rather than measured around: this returns false, and the
+	// caller turns that into a skip with a name.
+	const frame = () => new Promise((resolve) => {
+		let came = false;
+		requestAnimationFrame(() => { came = true; resolve(true); });
+		setTimeout(() => { if (!came) resolve(false); }, 500);
+	});
 	const settle = async () => {
 		let last = null;
 		for (let i = 0; i < 40; i++) {
-			await new Promise((r) => setTimeout(r, 60));
+			if (!(await frame())) return false;
+			await new Promise((r) => setTimeout(r, 40));
 			const now = row.style.getPropertyValue("--lure-gap") + ":" + row.clientWidth + ":" + row.scrollWidth;
-			if (now === last) return;
+			if (now === last) return true;
 			last = now;
 		}
+		return true;
 	};
 	// First pass to learn what the rest of the header takes, second to land
 	// on the width the caller asked the *row* for.
 	setTo(${px});
-	await settle();
+	if (!(await settle())) return false;
 	const overhead = pane.containerEl.getBoundingClientRect().width - row.clientWidth;
 	setTo(${px} + overhead);
-	await settle();
-	return true;
+	return await settle();
 `;
+
+/**
+ * Squeezes, and says so when the window stopped painting instead of
+ * pretending the row is at a width it never refitted to.
+ *
+ * Every geometry case goes through here rather than through `squeeze`
+ * directly, so none of them can report a measurement the window never made.
+ */
+const squeezeTo = async (px) => {
+	if (!(await page.evaluate(squeeze(px)))) {
+		skipCase("this window stopped compositing frames, so the row never refitted to this width");
+	}
+};
 
 /**
  * Squeezes until the row has actually run out of air, and waits for it to
@@ -1523,7 +1548,7 @@ test("long paths: the vault name gives way before any folder", async () => {
 	// before anything has to be cut at all, so a wider pane leaves the row
 	// fitting and there is nothing to watch give way.
 	await page.evaluate(narrowPane("leaf.md", 1));
-	await page.evaluate(squeeze(330));
+	await squeezeTo(330);
 	const row = await page.evaluate(rowState);
 	expect("something had to give", row.width < row.content || isCut(row.root), true);
 	// Whatever the window happens to be, the order holds: no folder is
@@ -1566,7 +1591,7 @@ test("long paths: a name is cut only to where it stays distinguishable", async (
 test("long paths: the file's name is the last thing cut, and keeps six letters", async () => {
 	await page.evaluate(buildVaultFixture);
 	await page.evaluate(narrowPane("a very long note name indeed.md", 1));
-	await page.evaluate(squeeze(300));
+	await squeezeTo(300);
 	const row = await page.evaluate(rowState);
 	expect("it was cut", isCut(row.file), true);
 	// The floor is written to the box as the width of this name, in this
@@ -1637,7 +1662,7 @@ test("long paths: the opening segment always says where the path is", async () =
 	await page.evaluate(narrowPane("leaf.md", 0));
 	// Deliberately roomy: the point is that the tooltip is there when the
 	// row had nothing to shorten.
-	await page.evaluate(squeeze(900));
+	await squeezeTo(900);
 	const out = await page.evaluate(`
 		const c = app.workspace.getLeavesOfType("markdown")[0].view.containerEl
 			.querySelector(".view-header-title-container");
@@ -1659,7 +1684,7 @@ test("long paths: the opening segment always says where the path is", async () =
 test("long paths: a name hidden by the setting opens like one hidden by the room", async () => {
 	await page.evaluate(buildVaultFixture);
 	await page.evaluate(narrowPane("leaf.md", 0));
-	await page.evaluate(squeeze(900));
+	await squeezeTo(900);
 	const out = await page.evaluate(`
 		const p = app.plugins.plugins.lure;
 		p.settings.showVaultName = false;
@@ -1693,7 +1718,7 @@ test("long paths: nothing re-opens under an open field or a moving row", async (
 	await page.evaluate(narrowPane("leaf.md", 1));
 	// Small enough that the row has run out of shortening and scrolls: a row
 	// that fits has nothing to scroll and nothing to suppress.
-	await page.evaluate(squeeze(150));
+	await squeezeTo(150);
 	// Which is exactly the precondition, so it is checked rather than
 	// assumed. On a host whose header font is narrower the same path at the
 	// same width still fits, the wheel event scrolls nothing, and the
@@ -1761,7 +1786,7 @@ test("long paths: nothing on the row is drawn over anything else", async () => {
 	await page.evaluate(narrowPane("leaf.md", 0));
 	const found = [];
 	for (const width of [520, 430, 360, 300, 250, 200]) {
-		await page.evaluate(squeeze(width));
+		await squeezeTo(width);
 		const out = await page.evaluate(`
 			const c = app.workspace.getLeavesOfType("markdown")[0].view.containerEl
 				.querySelector(".view-header-title-container");
@@ -1846,7 +1871,7 @@ test("long paths: a shortened name ends where the delimiter begins", async () =>
 test("long paths: the field takes what it holds, not what is left", async () => {
 	await page.evaluate(buildVaultFixture);
 	await page.evaluate(narrowPane("leaf.md", 0));
-	await page.evaluate(squeeze(360));
+	await squeezeTo(360);
 	const out = await page.evaluate(`
 		const c = app.workspace.getLeavesOfType("markdown")[0].view.containerEl
 			.querySelector(".view-header-title-container");
@@ -1941,7 +1966,7 @@ test("three presses on the file name reach the path, not the machine's", async (
 test("the file's extension can be put on the row", async () => {
 	await page.evaluate(buildVaultFixture);
 	await page.evaluate(narrowPane("leaf.md", 0));
-	await page.evaluate(squeeze(900));
+	await squeezeTo(900);
 	const out = await page.evaluate(`
 		const p = app.plugins.plugins.lure;
 		// Forced off first: the setting is persisted, so whatever the vault
@@ -2016,7 +2041,7 @@ test("long paths: the extension goes second, straight after the vault name", asy
 	`);
 	const seen = [];
 	for (const width of [900, 620, 470, 400, 330, 280]) {
-		await page.evaluate(squeeze(width));
+		await squeezeTo(width);
 		seen.push(JSON.parse(await page.evaluate(`
 			const c = app.workspace.getLeavesOfType("markdown")[0].view.containerEl
 				.querySelector(".view-header-title-container");
@@ -2200,7 +2225,7 @@ test("long paths: the extension goes once, not in and out", async () => {
 	`;
 	const shown = [];
 	for (let w = 470; w >= 170; w -= 6) {
-		await page.evaluate(squeeze(w));
+		await squeezeTo(w);
 		shown.push(JSON.parse(await page.evaluate(read)));
 	}
 	await page.evaluate(`
@@ -2250,7 +2275,7 @@ test("long paths: a name keeps a readable width, not a letter count", async () =
 		${PAUSE(500)}
 		return true;
 	`);
-	await page.evaluate(squeeze(150));
+	await squeezeTo(150);
 	const out = await page.evaluate(`
 		const c = app.workspace.getLeavesOfType("markdown")[0].view.containerEl
 			.querySelector(".view-header-title-container");
@@ -2633,6 +2658,22 @@ if (!(await canFocusEditable(page, `${ROOT}/inner/leaf.md`))) {
 			"cannot be measured: widths come back degenerate while everything else\n" +
 			"looks healthy. Obsidian behaves this way while it is obscured by a\n" +
 			"fullscreen application — bring its window to the front and run again.",
+	);
+	page.close();
+	process.exit(2);
+}
+// The third way, and the one the two gates around it cannot see: the window
+// reports itself visible and focused, and is not painting. `ResizeObserver`
+// is delivered in the rendering steps, so the refit never runs — the divider
+// moves, the box narrows, and the row keeps the previous width's layout.
+// Every geometry assertion then describes a row that was never fitted.
+if (!(await isPainting(page))) {
+	console.log(
+		"\nThis window is not compositing frames, so the row never refits when\n" +
+			"the pane is resized and every width measured here is the previous\n" +
+			"layout's. It reports itself visible and focused all the same — bring\n" +
+			"the window to the front, off a virtual desktop that is not on screen,\n" +
+			"and run again.",
 	);
 	page.close();
 	process.exit(2);

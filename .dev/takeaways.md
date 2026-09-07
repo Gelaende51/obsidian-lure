@@ -2178,40 +2178,42 @@ else in it trashes. The one case that does has to live under `$HOME`, and
 says so. Worth knowing before diagnosing a delete that "does not work": try
 it somewhere with a trash first.
 
-## "Passes alone, fails together" was a fixed pause, not a carried-over state
+## Two ways a live-renderer suite measures a row that was never laid out
 
-The `long paths` family had been read as environmental for three sessions and
-then as non-independent for one: every case passed run alone, and which of
-them failed when run together changed between runs of byte-identical code.
-Window size, `showFileExtension`, leftover panes, split dimensions and the
-sidebar were each measured and ruled out — the last two by writing the fix,
-watching it change nothing, and reverting it.
+The `long paths` family — passes alone, fails together, fails differently each
+run — is still open. What this round produced is not the answer but two real
+carriers ruled *in*, either of which is enough to invent a failure, and a
+correction to a conclusion that was nearly shipped.
 
-The carrier was in the suite's own helper. `squeeze(px)` moved the divider and
-waited `PAUSE(200)`. The refit runs from a `ResizeObserver`, so what settles it
-is frames, not milliseconds, and 200ms is a statement about how fast the
-machine is at that moment — which two hundred cases into a run it is not. The
-assertions then measured the *previous* width's answer.
+**The window stops compositing, and says nothing.** Measured: zero
+`requestAnimationFrame` callbacks in a full second while
+`document.visibilityState` reads "visible", `document.hidden` is false and
+`document.hasFocus()` is true. `ResizeObserver` is delivered in the same
+rendering steps, so in that state the divider moves, the box really does
+narrow, and the row keeps the previous width's layout. Flexbox alone then does
+roughly what the fitter would have done — which is why some cases still pass
+— and the ones that fail look like the fitter refusing to spend a name.
+`isPainting()` counts frames and is now a gate, alongside `canFocusEditable`
+and `canRenameFiles`; the two older gates cannot see this state, because focus
+and visibility are both fine in it.
 
-What made it hard to see is that the stale answer is a plausible failure. On a
-330px row the vault name read 109px wide, unspent and unclipped: exactly what
-"the fitter refuses to give up the opening segment" would look like. Nothing
-in the reading said *stale*.
+**A fixed pause after moving a divider.** `squeeze(px)` waited 200ms. The
+refit is frames, not milliseconds. It now waits for a frame and then for two
+agreeing readings, and reports rather than measures when no frame comes: the
+case skips with a name instead of asserting on a row that never refitted.
 
-Two things had already pointed at it and were not followed:
+And the correction, which is the part worth keeping. With the pause replaced,
+the suite went green — 203/203, twice more under `--shuffle` — and that was
+written up as the answer. It was not. Those runs were made in a window that
+had stopped painting, where a skipped precondition suppressed two cases and
+flexbox carried the rest. Re-run in a window confirmed to be painting, the
+family fails together and passes alone exactly as before.
 
-- `squeezeTight`, written later for the same family, waits for two agreeing
-  readings and says why in its own comment. The older helper beside it was
-  never brought along. **When you fix a timing assumption, grep for its
-  siblings.**
-- The geometry probe that finally settled it printed *identical* state solo
-  and in-suite — window, sidebars, splits, leaf count, settings all equal.
-  That is the shape of a race, and it should have ended the search for a
-  carried-over value there rather than one hypothesis later.
-
-The general lesson is the one the harness already knew in one place and not
-the other: **in a suite driving a live renderer, never wait a number. Wait for
-the reading to stop changing.**
+**A green run is evidence only if you know the environment it was green in.**
+The gate that would have caught it was written in the same session, an hour
+earlier, and not yet run in front of the result it invalidated. Measure the
+environment *and then* the code, in that order, or the second measurement is
+about nothing.
 
 ## A row can overflow with nothing clipped, and then refuse to scroll
 

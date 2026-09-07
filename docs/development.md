@@ -288,14 +288,23 @@ not enabled. Please turn it on in Settings > General > Advanced."* — which rea
 like a missing setting rather than like "it is already open", and sends you
 looking in the wrong place entirely.
 
-**In a suite driving a live renderer, never wait a number — wait for the
-reading to stop changing.** The refit runs from a `ResizeObserver`, so what
-settles it is frames, not milliseconds, and a fixed pause is a statement about
-how fast the machine happens to be at that moment. A helper that waited 200ms
-after moving a divider was right run alone and wrong two hundred cases into a
-run, and the assertions then measured the previous width's answer — which
-reads as a plausible product failure, not as a stale one. Both squeeze helpers
-in `test-gestures.mjs` now poll until two consecutive readings agree.
+**In a suite driving a live renderer, never wait a number — wait for a frame,
+then for the reading to stop changing.** The refit runs from a
+`ResizeObserver`, which is delivered in the rendering steps, so what settles a
+row is frames rather than milliseconds. A fixed pause after moving a divider
+is right run alone and wrong two hundred cases in, and the assertions then
+measure the previous width's answer — which reads as a plausible product
+failure, not as a stale one.
+
+**And the window stops compositing without saying so.** Measured: zero
+`requestAnimationFrame` callbacks in a full second while `visibilityState`
+reads "visible", `document.hidden` is false and `document.hasFocus()` is true.
+In that state nothing refits at all, and flexbox alone does roughly what the
+fitter would have done — so some cases pass, some fail, and which is which
+moves between runs. `isPainting()` in `cdpSession.mjs` counts frames; the
+gestures suite gates on it and exits 2, and `squeeze` turns a missing frame
+into a named skip rather than a measurement. A green run measured before that
+gate existed is not evidence: check the environment first, then the code.
 
 **Focus in one process, press in the next, and the key misses.** The editor takes
 focus back in the gap between two `cdp.mjs` invocations, so anything that focuses a
