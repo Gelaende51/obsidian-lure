@@ -47,6 +47,11 @@ The list opens on the entry you are standing in — the note this bar belongs to
 or, when a folder click has listed its parent, that folder — rather than on the
 first row. In a folder of two hundred notes the first row is nowhere near you.
 
+The list is **as tall as the window lets it be**. Obsidian caps its suggestion
+lists at 300 pixels whatever lies below them; this one runs to the bottom of the
+window, stopping a few pixels short of the edge, and scrolls only once the folder
+holds more than that.
+
 Moving through the list **puts what you are pointing at into the field**, by
 arrow key or by hovering — in place of the segment you were editing, with the
 rest of the path left standing — so the row you are on is also the path you
@@ -115,9 +120,11 @@ Menu wording comes from Obsidian's own translations, so it matches the rest of t
 - In the field the offered part is simply **selected**. The list is where it is spelled out: each row shows the part of it that **matched what you typed in bold**, wherever in the name it matched — `kick` finds `Weekly kickoff` and says so — and, on the rows the offer is about, the part **taking it would add is underlined**.
 - **Typing lets go of the highlighted row.** The list opens on the entry you are standing in, but the moment you type it is about somewhere else, and a highlight nobody put there reads as a choice already made.
 - The offer is only ever text in front of you: the letters you typed stay spelled the way you typed them while you type, and taking the offer rewrites the name the way the folder spells it, because a path has to match the disk. `sk` + <kbd>Tab</kbd> reaches `Skyline`, not `skyline`.
-- **The field goes red while what is in it names nothing yet.** That is precisely the state in which <kbd>Enter</kbd> stops meaning *open that* and starts meaning *make that*, so the colour answers "is this already there?" before you commit rather than after. It comes off the moment the path names something real — whether you finished typing it, took what was offered, or pressed <kbd>Tab</kbd> — and it never appears for a web address, which is not a place on this machine to go looking for. The **whole** field is coloured rather than only the part that is missing: a text field cannot colour half of its own contents. In move/rename mode the field keeps its own red instead, for a name that is illegal or already taken — there, a name nothing answers to is the point.
+- **The field wears the colour of what it names**, the same colour as its row in the dropdown: purple for a note, grey for a folder's note, orange for a file Obsidian has no view for, blue for the note you are on. The row it takes the colour from is the one named exactly what you typed, or failing that the highlighted one, or failing that the first your typing still leads to.
+- **The field goes red once nothing answers to what is in it** — no file, no folder, and no row of the dropdown still leading to it. From there <kbd>Enter</kbd> makes what is in the field rather than opening it, and the red says so before you commit. It never appears for a web address, which is not a place on this machine to go looking for. The **whole** field is coloured rather than only the part that is missing: a text field cannot colour half of its own contents. In move/rename mode the field keeps its own red instead, for a name that is illegal or already taken — there, a name nothing answers to is the point.
 - `/` commits the segment you are typing and descends into it, keeping whatever is behind it — the same thing <kbd>Tab</kbd> does when it steps in.
 - <kbd>Backspace</kbd> in an empty input steps back out to the parent folder, reopening its name with the cursor at the end.
+- **Arrowing off the front of the field brings the folder before it in**, as though the whole path were one line of text. With the caret at the very start, <kbd>←</kbd> takes that folder into the field and lands at the end of its name, <kbd>Ctrl</kbd>+<kbd>←</kbd> lands at the start of it, and <kbd>Home</kbd> takes in every folder up to the vault root — or up to the place you picked, outside the vault — at once. Hold <kbd>Shift</kbd> and the selection stretches over what came in. On macOS the word jump is <kbd>Option</kbd>+<kbd>←</kbd> and <kbd>Cmd</kbd>+<kbd>←</kbd> is <kbd>Home</kbd>. Anywhere but the front these are ordinary text keys, and <kbd>Home</kbd> and <kbd>End</kbd> stay text keys while the dropdown is up; <kbd>PgUp</kbd> and <kbd>PgDn</kbd> move through the list.
 - **The list follows the caret.** Pick out a different part of the path — drag over it, or arrow along — and the dropdown lists *that* folder's children, not the one the field was opened on. Pointing at a row writes it into the segment the caret is in, and taking the pointer off the list gives you your text and your selection back, exactly as they were.
 - **Sweeping a selection out of the field** and letting go somewhere else does not close it. A press that begins in the field belongs to the edit however far it travels; only a press that *begins* outside is a click away.
 - <kbd>Enter</kbd> commits — and when the field names nothing at all, as in an empty folder where there was never anything to complete, it says *No file selected* and stays open rather than closing as though something had been chosen. <kbd>Esc</kbd> or a click elsewhere cancels back to the file's real path. One press of <kbd>Esc</kbd> is enough: it closes the dropdown, leaves the field and hands focus back to the note, rather than taking one press per layer.
@@ -219,9 +226,9 @@ The note's name and the folder segments behave like their rows in the File Explo
 | Plain click | Edit the name | Browse that folder |
 | <kbd>Ctrl</kbd> / middle-click | Open the note in a new tab | Send the folder to a new tab |
 | <kbd>Ctrl</kbd>+<kbd>Alt</kbd> | A split | A split |
-| Drag | The note, anywhere Obsidian takes a file | The folder, likewise |
+| Drag | The note, anywhere Obsidian takes a file | The folder, likewise — the tab bar included |
 
-A folder is not something Obsidian can open, so sending one to a tab does one of two things: opens its folder note, where a folder-note plugin is running and there is one, or opens an empty tab whose path bar already stands in that folder — leaving you only the name to type.
+A folder is not something Obsidian can open, so sending one to a tab does one of two things: opens its folder note, where a folder-note plugin is running and there is one, or opens an empty tab whose path bar already stands in that folder — leaving you only the name to type. Dropping a folder segment on the **tab bar** does the same, in a new tab where you let go — Obsidian's tab bar takes only files on its own, so a folder dragged out of the File Explorer is still turned away there.
 
 ## Tab: complete the name, then the path, then widen the selection
 
@@ -348,7 +355,9 @@ Holding <kbd>Ctrl</kbd> (<kbd>Cmd</kbd> on macOS) while picking a file from the 
 
 The modifier is read with Obsidian's own rule, so it behaves exactly as it does on a link or a File Explorer row — middle-click also means "new tab", <kbd>Ctrl</kbd>+<kbd>Alt</kbd> means a split, and <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd> a new window.
 
-Copying refuses to overwrite, exactly as moving does — including onto the note's own path, where there is nothing sensible to copy.
+Copying refuses to overwrite, exactly as moving does — including onto the note's own path, where there is nothing sensible to copy. Outside the vault that refusal is said out loud too.
+
+All of it works **with the dropdown up** as well as without it: on a highlighted row the modifier applies to that row, and standing on nothing it applies to what you typed.
 
 ## Browsing outside the vault
 
@@ -700,11 +709,14 @@ This works by wrapping the `workspace:edit-file-title` command rather than grabb
 | Colour | Means |
 | --- | --- |
 | **Purple** | A note (`.md`, `.markdown`) — what Obsidian will open as a note, picked out of a folder of mixed contents |
+| **Grey** | A folder's own note, where a folder-note plugin is running — it stands for its folder more than for itself |
 | **Orange** | A text type Obsidian has no view for; see [the warning colours](#the-warning-colours) |
 | **Muted** | Outside your vault, so the vault's own handling doesn't apply |
 | **Blue** | The note you're on. Browsing, that's its own entry; in rename/move mode the *keep this name* entry stands in its place — the same note either way |
 | **Blue** | Where you already are: this bar's own note, and the folder the path bar is standing on |
 | **Greyed** | Rename/move mode only: the name is taken. Still selectable — picking one fills the input, where validation flags the conflict |
+
+The field takes the same colours for what it names — see [Typing a path](#typing-a-path).
 
 ## Visibility rules
 
@@ -733,10 +745,11 @@ appear in a real name, where an apostrophe very much can.
 | Jump to a file by typing its path | Click the filename or the empty space, type, <kbd>Enter</kbd> |
 | Open a file in a new tab instead | <kbd>Ctrl</kbd> while picking it, or <kbd>Ctrl</kbd>+<kbd>Enter</kbd> |
 | Copy the note somewhere instead of moving it | Pencil, then <kbd>Ctrl</kbd> while picking or committing the target |
-| Create a note at a path that doesn't exist | Type the path — the field goes **red** to say so — then <kbd>Enter</kbd>. Inside the vault it is made straight away; outside it asks first |
-| Tell whether a path you typed is already there | Look at the colour: red means <kbd>Enter</kbd> would make it |
+| Create a note at a path that doesn't exist | Type the path — the field goes **red** once nothing in the dropdown matches it either — then <kbd>Enter</kbd>. Inside the vault it is made straight away; outside it asks first |
+| Tell whether a path you typed is already there | Look at the colour: it takes the colour of the row it names, and red means <kbd>Enter</kbd> would make it |
 | Descend one level while typing | Type `/` |
 | Go back up one level while typing | <kbd>Backspace</kbd> in the empty input |
+| Bring the folders before the field into it | <kbd>←</kbd> at its start for one, <kbd>Home</kbd> for all of them |
 | Move or rename the open note | Click the pencil, then browse or type as above |
 | Move without renaming | Pencil → click into the target folder → pick the pinned current filename |
 | Rename in place | <kbd>F2</kbd> twice (first press goes to the inline title, second to the header) |
@@ -751,7 +764,7 @@ appear in a real name, where an apostrophe very much can.
 | Copy the vault's ID | Right-click the icon at the start of the row |
 | Open another vault you were browsing | Right-click its name at the start of the row |
 | See the file's extension on the row | Turn on **Show file extensions** in the settings |
-| Open a folder segment in a new tab | <kbd>Ctrl</kbd> or middle-click it |
+| Open a folder segment in a new tab | <kbd>Ctrl</kbd> or middle-click it, or drag it onto the tab bar |
 | Reach the path bar from the keyboard | Bind *Focus the path bar* in Hotkeys |
 | Open a web address or an `obsidian://` link | Type it into the bar and press <kbd>Enter</kbd> |
 | Cancel anything | <kbd>Esc</kbd>, or click outside the header bar |

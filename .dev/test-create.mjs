@@ -295,13 +295,17 @@ test("a completion written into the field repaints it, with no keystroke to hang
 	const offered = JSON.parse(await page.evaluate(fieldState));
 	expect("the rest of the name is standing in the field", offered.value, "Trumpet.md");
 	expect("and what is standing there is a note that exists", offered.marked, false);
-	// Backspace takes the offer back without taking a letter with it, which
-	// puts the field back to a name nothing answers to.
+	// Backspace takes the offer back without taking a letter with it. What is
+	// left names nothing — but the list still leads to the note, and the field
+	// goes red only once no row does. An offer only ever stands where a row
+	// starts with what was typed, so taking one back can never leave the field
+	// red: it goes back to wearing the colour of the note it is heading for.
 	await pressKey(page, "Backspace");
 	await page.evaluate(PAUSE(400) + "return true;");
 	const taken = JSON.parse(await page.evaluate(fieldState));
 	expect("back to what was typed", taken.value, "Trum");
-	expect("and red again, without a keystroke either way", taken.marked, true);
+	expect("not red, with the note still in the list", taken.marked, false);
+	expect("but wearing that note's colour", await page.evaluate(`return document.querySelector(".lure-path-input")?.dataset.lureTint ?? null;`), "md");
 	await pressKey(page, "Escape");
 });
 

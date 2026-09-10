@@ -5,6 +5,7 @@ import {
 	Menu,
 	Notice,
 	PaneType,
+	Platform,
 	Scope,
 	TAbstractFile,
 	TFile,
@@ -30,7 +31,7 @@ import {
 	readableMinimum,
 } from "./pathFit";
 import { commonPrefix, planSuggestion, planTab } from "./tabComplete";
-import { FolderChildSuggest, PathSuggestion } from "./folderChildSuggest";
+import { FolderChildSuggest, MODIFIED_ENTER, PathSuggestion } from "./folderChildSuggest";
 import { ExternalChild, PATH_SEP, externalJoin, externalParent, externalSegments, isExternalFile, isExternalFolder, listExternalChildren } from "./externalFs";
 import {
 	CURRENT_VAULT_ICON,
@@ -1557,12 +1558,19 @@ export class PathBreadcrumb {
 	 * to supply is the name.
 	 */
 	private openFolderInPane(folderPath: string, paneType: PaneType, focus = true): void {
-		const app = this.plugin.app;
-		const folder = app.vault.getAbstractFileByPath(folderPath);
+		const folder = this.plugin.app.vault.getAbstractFileByPath(folderPath);
 		if (!(folder instanceof TFolder)) return;
+		this.showFolderIn(this.newPane(paneType, focus), folder, focus);
+	}
 
+	/**
+	 * Shows a folder in a leaf that has just been made for it — by a modifier
+	 * on a segment, or by a segment dropped on a tab bar (see
+	 * `BreadcrumbManager.wireTabBars`). One answer for both, so the two
+	 * gestures that mean "this folder, over there" cannot come to disagree.
+	 */
+	showFolderIn(leaf: WorkspaceLeaf, folder: TFolder, focus = true): void {
 		const note = this.folderNoteFor(folder);
-		const leaf = this.newPane(paneType, focus);
 		if (note) {
 			void leaf.openFile(note, { active: focus });
 			return;
@@ -1570,11 +1578,11 @@ export class PathBreadcrumb {
 		// The new leaf is empty and has had no active-leaf-change yet, so its
 		// bar has to be asked for rather than assumed to exist.
 		if (!focus) {
-			this.browseWhenRevealed(leaf, folderPath);
+			this.browseWhenRevealed(leaf, folder.path);
 			return;
 		}
-		void app.workspace.revealLeaf(leaf);
-		window.setTimeout(() => this.manager.breadcrumbFor(leaf)?.startBrowsingAt(folderPath), 0);
+		void this.plugin.app.workspace.revealLeaf(leaf);
+		window.setTimeout(() => this.manager.breadcrumbFor(leaf)?.startBrowsingAt(folder.path), 0);
 	}
 
 	/**
@@ -1736,6 +1744,25 @@ export class PathBreadcrumb {
 			if (candidate instanceof TFile) return candidate;
 		}
 		return null;
+	}
+
+	/**
+	 * Whether a vault file is some folder's note.
+	 *
+	 * Asked through `folderNoteFor` rather than beside it, so the two can never
+	 * disagree about which file a folder *is*. The folders a note can belong to
+	 * are the one it sits in and the folders beside it — the two places Folder
+	 * notes can be told to keep one — and the vault root is never one of them.
+	 */
+	private isFolderNote(path: string): boolean {
+		const file = this.plugin.app.vault.getAbstractFileByPath(path);
+		const parent = file instanceof TFile ? file.parent : null;
+		if (!parent) return false;
+		const candidates = parent.isRoot() ? [] : [parent];
+		for (const sibling of parent.children) {
+			if (sibling instanceof TFolder) candidates.push(sibling);
+		}
+		return candidates.some((folder) => this.folderNoteFor(folder) === file);
 	}
 
 	/**
@@ -4972,7 +4999,18 @@ export class PathBreadcrumb {
 	 * them resize it afterwards. One hook, and none of them can forget.
 	 */
 	private paintCreateHint(inputEl: HTMLInputElement): void {
-		inputEl.toggleClass(WILL_CREATE_CLASS, this.typedCreatesNew(inputEl.value));
+		// The field wears the colour of the row it stands for, so a note, a
+		// folder's note and a file Obsidian has no view for read the same typed
+		// as listed. Red is kept for what the list cannot answer at all: a name
+		// no row in the folder even leads to, which Enter would make.
+		const { listed, tint } = this.suggest?.fieldTint(queryAtCaret(inputEl)) ?? {
+			listed: false,
+			tint: null,
+		};
+		const creates = !listed && this.typedCreatesNew(inputEl.value);
+		inputEl.toggleClass(WILL_CREATE_CLASS, creates);
+		if (tint && !creates) inputEl.dataset.lureTint = tint;
+		else delete inputEl.dataset.lureTint;
 	}
 
 	/**
@@ -5054,6 +5092,91 @@ export class PathBreadcrumb {
 		} catch {
 			return true;
 		}
+	}
+
+	/**
+	 * Arrowing off the front of the field brings the folder before it in.
+	 *
+	 * The field holds the part of the path being edited and the chips hold the
+	 * rest, so the caret stopped dead at the first character with the folder it
+	 * was heading for right there beside it. Each key that moves toward the
+	 * front now carries on into that folder, as it would if the whole path were
+	 * one line of text: Left lands at the end of its name, a word jump at the
+	 * start of it, and Home takes in every folder up to where the row begins.
+	 * Shift keeps what was selected and stretches it over what came in.
+	 *
+	 * Only from the very front — anywhere else these are ordinary presses in a
+	 * text field, Home included once there is nothing left to bring in — and
+	 * never past where the row stops: the vault root, or the place that was
+	 * picked outside it.
+	 */
+	private revealFolderOnKey(evt: KeyboardEvent, inputEl: HTMLInputElement): boolean {
+		if (this.showingLocations || evt.isComposing) return false;
+		const mac = Platform.isMacOS;
+		const home = evt.key === "Home" || (mac && evt.metaKey && evt.key === "ArrowLeft");
+		if (!home && evt.key !== "ArrowLeft") return false;
+		// Alt+Left is Obsidian's "go back" off macOS, not a caret key.
+		if (!mac && evt.altKey) return false;
+		const byWord = !home && (mac ? evt.altKey : evt.ctrlKey);
+		const start = inputEl.selectionStart ?? 0;
+		const end = inputEl.selectionEnd ?? 0;
+		const backward = inputEl.selectionDirection === "backward";
+		if (!home && start !== 0) return false;
+		// Without Shift a selection collapses to its front first, as it would in
+		// any field; with it, only a selection whose moving end is at the front
+		// is stretched further that way.
+		if (!home && start !== end && !(evt.shiftKey && backward)) return false;
+
+		const revealed = this.foldersBeforeField(home ? Infinity : 1);
+		if (!revealed) return false;
+		const separator = this.externalPath !== null ? PATH_SEP : "/";
+		const prefix = revealed.names.map((name) => name + separator).join("");
+		const nearest = revealed.names[revealed.names.length - 1] ?? "";
+		const caret = home ? 0 : prefix.length - separator.length - (byWord ? nearest.length : 0);
+		// The end of the selection that stays where it was.
+		const anchor = (backward ? end : start) + prefix.length;
+
+		if (this.externalPath !== null) this.extendExternalPath(revealed.folder);
+		else this.extendBrowsePath(revealed.folder);
+		this.enterTypingMode(prefix + inputEl.value, "none");
+		const input = this.inputEl;
+		if (!input) return true;
+		if (evt.shiftKey && caret !== anchor) {
+			input.setSelectionRange(Math.min(caret, anchor), Math.max(caret, anchor), caret < anchor ? "backward" : "forward");
+		} else {
+			input.setSelectionRange(caret, caret);
+		}
+		// The list follows the caret, and the caret is now in a folder the list
+		// was not about.
+		this.suggestQueryOverride = queryAtCaret(input);
+		input.dispatchEvent(new Event("input"));
+		return true;
+	}
+
+	/**
+	 * Up to `levels` folders before the field, outermost first, and the folder
+	 * the chips stop at once they are taken in. Null when there is none to take.
+	 */
+	private foldersBeforeField(levels: number): { folder: string; names: string[] } | null {
+		const names: string[] = [];
+		if (this.externalPath !== null) {
+			let folder = this.externalPath;
+			while (names.length < levels) {
+				if (this.externalBase && samePath(folder, this.externalBase.path)) break;
+				const parent = externalParent(folder);
+				if (!parent) break;
+				names.unshift(folder.slice(parent.length).replace(/^[\\/]+/, ""));
+				folder = parent;
+			}
+			return names.length ? { folder, names } : null;
+		}
+		let folder = this.currentFolderPath();
+		while (names.length < levels && folder) {
+			const cut = folder.lastIndexOf("/");
+			names.unshift(cut === -1 ? folder : folder.slice(cut + 1));
+			folder = cut === -1 ? "" : folder.slice(0, cut);
+		}
+		return names.length ? { folder, names } : null;
 	}
 
 	/**
@@ -6486,6 +6609,11 @@ export class PathBreadcrumb {
 				// happening by itself, one letter at a time.
 			}
 
+			if (this.revealFolderOnKey(evt, inputEl)) {
+				evt.preventDefault();
+				return;
+			}
+
 			if (evt.key === "Enter") {
 				evt.preventDefault();
 				void this.handleTypedSubmit(inputEl.value, this.paneTypeFor(evt));
@@ -6675,11 +6803,13 @@ export class PathBreadcrumb {
 		// suggester's own scope is on top and its selection handler already
 		// reads the modifier.
 		const scope = new Scope(this.plugin.app.scope);
-		scope.register(["Mod"], "Enter", (evt) => {
-			evt.preventDefault();
-			void this.handleTypedSubmit(inputEl.value, this.paneTypeFor(evt));
-			return false;
-		});
+		for (const modifiers of MODIFIED_ENTER) {
+			scope.register(modifiers, "Enter", (evt) => {
+				evt.preventDefault();
+				void this.handleTypedSubmit(inputEl.value, this.paneTypeFor(evt));
+				return false;
+			});
+		}
 		this.plugin.app.keymap.pushScope(scope);
 
 		this.autoSizeInput = autoSize;
@@ -6743,6 +6873,7 @@ export class PathBreadcrumb {
 				shouldList: (child) => this.shouldListChild(child),
 				shouldListExternal: (child) => this.shouldListExternalChild(child),
 				warnsOnOpen: (extension) => this.warnsOnOpen(extension),
+				isFolderNote: (path) => this.isFolderNote(path),
 				queryOverride: this.suggestQueryOverride,
 				offered: this.suggested
 					? {
@@ -6771,6 +6902,10 @@ export class PathBreadcrumb {
 			// same press: the popover took it before the field could, and
 			// standing on no row it had nothing of its own to do with it.
 			(evt) => void this.handleTypedSubmit(inputEl.value, this.paneTypeFor(evt)),
+			// The field's colour is read off the list, which has just changed.
+			() => {
+				if (this.inputEl === inputEl) this.paintCreateHint(inputEl);
+			},
 			);
 			this.suggest.onSelect((value, evt) => {
 				evt.preventDefault();
@@ -7405,13 +7540,19 @@ export class PathBreadcrumb {
 		const source = this.externalRenameSource();
 		if (!source) return;
 
-		// Committing the path unchanged is a no-op, exactly as inside.
+		const copying = paneType !== false;
+		// Committing the path unchanged is a no-op, exactly as inside. A copy
+		// onto the file itself is not: it is refused, and said so, as inside —
+		// ending the rename without a word read as the press doing nothing.
 		if (samePath(source.path, target)) {
+			if (copying) {
+				new Notice(t("noticeAlreadyExists", { path: target }));
+				this.inputEl?.focus();
+				return;
+			}
 			this.finishRename();
 			return;
 		}
-
-		const copying = paneType !== false;
 		// Taking a note out of the vault. `fileManager` cannot follow it
 		// across that boundary, so this is the one move that costs something
 		// the plugin cannot give back: every link pointing at the note stops

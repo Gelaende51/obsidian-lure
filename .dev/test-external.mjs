@@ -1601,6 +1601,53 @@ test("writes: Ctrl copies a note out instead of moving it", async () => {
 	expect("original still in the vault", r.still, true);
 });
 
+test("writes: Ctrl+Enter copies with the list still up", async () => {
+	const from = join(BED, "list-up.txt");
+	writeFileSync(from, "copy me\n");
+	// Matched by what is typed below, so the list stays up over it.
+	writeFileSync(join(BED, "list-up-copy-old.txt"), "in the list\n");
+	await page.evaluate(`
+		${open(from)}
+		${breadcrumb}
+		bc.externalWritesUnlocked = true;
+		bc.startHeaderRename();
+		${PAUSE(400)}
+		bc.inputEl?.focus();
+		// Over the name without its extension, as clicking the name leaves it,
+		// so the extension stays and the list filters by the name alone.
+		bc.inputEl?.setSelectionRange(0, "list-up".length);
+		return true;
+	`);
+	await page.send("Input.insertText", { text: "list-up-copy" });
+	await page.evaluate(PAUSE(500) + "return true;");
+	expect("precondition: the list is still up", await page.evaluate(`return !!document.querySelector(".suggestion-container");`), true);
+	await pressKey(page, "ctrl+Enter");
+	await page.evaluate(PAUSE(1000) + "return true;");
+	const copy = join(BED, "list-up-copy.txt");
+	expect("the copy landed", existsSync(copy) && readFileSync(copy, "utf8"), "copy me\n");
+	expect("and the original stayed", existsSync(from), true);
+});
+
+test("writes: Ctrl+Enter onto the file's own name says the name is taken", async () => {
+	const from = join(BED, "own-name.txt");
+	writeFileSync(from, "stay\n");
+	await page.evaluate(`
+		${open(from)}
+		${breadcrumb}
+		bc.externalWritesUnlocked = true;
+		${CLEAR_NOTICES}
+		bc.startHeaderRename();
+		${PAUSE(400)}
+		bc.inputEl?.focus();
+		return true;
+	`);
+	await pressKey(page, "ctrl+Enter");
+	const notice = await page.evaluate(`${PAUSE(600)} return ${LAST_NOTICE};`);
+	// Inside the vault the same press has always said so; out here it ended
+	// the rename without a word, which reads as the key doing nothing.
+	expect("it says so", notice, (v) => typeof v === "string" && v.includes(from));
+});
+
 // ------------------------------------------------------------------ run
 
 page = await connect();

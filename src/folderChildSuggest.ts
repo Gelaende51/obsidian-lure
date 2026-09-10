@@ -1,4 +1,4 @@
-import { AbstractInputSuggest, App, TAbstractFile, TFile, TFolder, UserEvent, setIcon } from "obsidian";
+import { AbstractInputSuggest, App, KeymapEventHandler, Modifier, Scope, TAbstractFile, TFile, TFolder, UserEvent, setIcon } from "obsidian";
 import { wireNativeFileItem } from "./nativeFileItem";
 import { SystemLocation, applyIcon, iconFor } from "./systemLocations";
 import { ExternalChild, externalJoin, listExternalChildren } from "./externalFs";
@@ -23,6 +23,8 @@ export interface PathSuggestion {
 	markdown?: boolean;
 	/** Where you already are — this bar's own note, or the folder it is standing in — tinted to say so. */
 	current?: boolean;
+	/** Some folder's own note, as the running folder-note plugin defines one — greyed, since it stands for its folder. */
+	folderNote?: boolean;
 }
 
 export interface SuggestContext {
@@ -71,6 +73,8 @@ export interface SuggestContext {
 	shouldListExternal: (child: ExternalChild) => boolean;
 	/** Whether an extension is a text type Obsidian has no view for — tinted as a caution. */
 	warnsOnOpen: (extension: string) => boolean;
+	/** Whether a vault file is some folder's note — tinted so it reads as the folder's, not as one more note. */
+	isFolderNote: (path: string) => boolean;
 	/**
 	 * Filters the listing in place of the input's own text when set.
 	 * A delimiter click prefills the input with the rest of the path and
@@ -130,6 +134,34 @@ type NameMatcher = (name: string) => boolean;
  */
 const DEFAULT_SUGGESTION_LIMIT = 100;
 
+/** The Enter presses that mean "somewhere else": a new tab, a split, a window. */
+export const MODIFIED_ENTER: Modifier[][] = [["Mod"], ["Mod", "Alt"], ["Mod", "Alt", "Shift"]];
+
+/** Marks this plugin's popover, so the stylesheet can lift the height cap on it alone. */
+const POPOVER_CLASS = "lure-suggest-popover";
+
+/** The tints a row can carry, named the way the stylesheet names them. */
+export type SuggestTint = "current" | "keep-name" | "warn" | "folder-note" | "md" | "external";
+
+/**
+ * The one tint a row shows.
+ *
+ * A row can qualify for several — a folder's note is also Markdown, and the
+ * note this bar belongs to is usually both — and among the rows the
+ * stylesheet settles that by source order. The field takes a row's colour
+ * with no cascade to lean on, so the order is written out here once,
+ * strongest first, and `styles.css` lists its row rules in the reverse of it.
+ */
+export function tintOf(value: PathSuggestion): SuggestTint | null {
+	if (value.current) return "current";
+	if (value.kind === "keep-name") return "keep-name";
+	if (value.warn) return "warn";
+	if (value.folderNote) return "folder-note";
+	if (value.markdown) return "md";
+	if (value.external) return "external";
+	return null;
+}
+
 /**
  * Type-ahead suggestions for the direct children of a folder that's
  * resolved fresh on every query, so the same suggester keeps working
@@ -183,9 +215,71 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		 * see it, so the press has to be handed back — see `wrapList`.
 		 */
 		private onCommitTyped?: (evt: UserEvent | null) => void,
+		/**
+		 * The list opened, changed or closed. The field's colour is read off
+		 * the list, and the list is rebuilt *after* the field's own input
+		 * handler has run, so it has to be told rather than left to guess.
+		 */
+		private onListed?: () => void,
 	) {
 		super(app, inputEl);
 		this.dragKeepFocusEl = inputEl;
+		// As tall as the window lets it be — see `.lure-suggest-popover`.
+		(this as unknown as { suggestEl?: HTMLElement }).suggestEl?.addClass(POPOVER_CLASS);
+		this.giveHomeAndEndToTheField();
+		this.takeModifiedEnter();
+	}
+
+	/**
+	 * Lets Enter with a modifier commit while the list is up.
+	 *
+	 * The list binds Enter in the popover's scope with no modifier, and a scope
+	 * matches modifiers exactly — so Ctrl+Enter found nothing there and went on
+	 * up to the app's hotkeys, where Obsidian's own "open link in new tab" took
+	 * it. The path bar's scope for the same press was never asked: the
+	 * popover's scope hands what it does not match straight to the app's, past
+	 * everything pushed beneath it. A field opens with its list up, so
+	 * "somewhere else" did nothing in the ordinary case — copying in rename
+	 * mode, and opening in a new tab, alike. Routed through the list's own
+	 * choice, so a row standing still wins and standing on nothing still falls
+	 * through to what was typed.
+	 */
+	private takeModifiedEnter(): void {
+		const choose = (evt: KeyboardEvent): false => {
+			if (!evt.isComposing) this.list()?.useSelectedItem(evt);
+			return false;
+		};
+		for (const modifiers of MODIFIED_ENTER) this.scope.register(modifiers, "Enter", choose);
+	}
+
+	/**
+	 * Takes Home and End back from the list.
+	 *
+	 * The suggestion list binds both in the popover's scope, to its first and
+	 * last row, and a scope is consulted before any listener on the field — so
+	 * while the list was up neither press ever reached the text. End is one of
+	 * the two keys that take an offered completion, and Home is how the field
+	 * reaches back to the start of the path; in a field a path is typed into,
+	 * both are text keys first. PageUp and PageDown still move through the list.
+	 */
+	private giveHomeAndEndToTheField(): void {
+		const scope = this.scope as Scope & { keys?: KeymapEventHandler[] };
+		for (const handler of [...(scope.keys ?? [])]) {
+			if ((handler.key === "Home" || handler.key === "End") && !handler.modifiers) {
+				scope.unregister(handler);
+			}
+		}
+	}
+
+	/** Showing a list, changed or not, goes through here; the field's colour is read off it. */
+	open(): void {
+		super.open();
+		this.onListed?.();
+	}
+
+	close(): void {
+		super.close();
+		this.onListed?.();
 	}
 
 	/**
@@ -391,6 +485,30 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		return values[index] ?? null;
 	}
 
+	/**
+	 * What the field should be coloured, read off the list as it stands.
+	 *
+	 * The field takes the colour of the row it stands for, so a name reads the
+	 * same typed as listed: the row named exactly what the caret is in, or
+	 * failing that the highlighted one, or failing that the first the typing
+	 * still leads to. `listed` is false only when the list has nothing to offer
+	 * at all — the one case the field is allowed to go red for.
+	 */
+	fieldTint(typed: string): { listed: boolean; tint: SuggestTint | null } {
+		const open = (this as unknown as { isOpen?: boolean }).isOpen !== false;
+		const values = open ? this.list()?.values : null;
+		const rows = Array.isArray(values) ? values.filter((row) => row.kind !== "more") : [];
+		if (rows.length === 0) return { listed: false, tint: null };
+		const lower = typed.trim().toLowerCase();
+		const highlighted = this.highlighted();
+		const row =
+			rows.find((candidate) => candidate.label.toLowerCase() === lower) ??
+			(highlighted && highlighted.kind !== "more" ? highlighted : undefined) ??
+			rows.find((candidate) => candidate.label.toLowerCase().startsWith(lower)) ??
+			rows[0];
+		return { listed: true, tint: row ? tintOf(row) : null };
+	}
+
 	protected getSuggestions(query: string): PathSuggestion[] {
 		const context = this.getContext();
 		this.preselectIndex = -1;
@@ -513,6 +631,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 					disabled: renameMode,
 					warn: context.warnsOnOpen(child.extension),
 					markdown: isMarkdownExtension(child.extension),
+					folderNote: context.isFolderNote(child.path),
 					current: child.path === context.currentPath,
 				});
 			}
@@ -673,6 +792,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		if (value.disabled) el.addClass("lure-suggest-disabled");
 		if (value.external) el.addClass("lure-suggest-external");
 		if (value.markdown) el.addClass("lure-suggest-md");
+		if (value.folderNote) el.addClass("lure-suggest-folder-note");
 		if (value.warn) el.addClass("lure-suggest-warn");
 		if (value.current) el.addClass("lure-suggest-current");
 

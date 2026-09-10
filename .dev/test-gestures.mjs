@@ -2520,6 +2520,49 @@ test("a note dropped on a folder segment moves there", async () => {
 	expect("and not where it came from", after.tree, (v) => !v.includes(`${ROOT}/inner/leaf.md`));
 });
 
+/** A folder dragged over the tab bar and let go there, from whichever source `start` is. */
+const dropOnTabBar = (start) => `
+	const leaf = app.workspace.getMostRecentLeaf();
+	const bar = leaf.parent.tabHeaderContainerEl;
+	const tabsBefore = leaf.parent.children.length;
+	${start}
+	${PAUSE(150)}
+	const box = bar.getBoundingClientRect();
+	const at = { bubbles: true, cancelable: true, clientX: box.right - 40, clientY: box.top + box.height / 2, dataTransfer: new DataTransfer() };
+	const over = new DragEvent("dragover", at);
+	bar.dispatchEvent(over);
+	const offered = over.defaultPrevented;
+	bar.dispatchEvent(new DragEvent("drop", at));
+	${PAUSE(900)}
+	const now = app.workspace.getMostRecentLeaf();
+	const seen = {
+		offered,
+		added: now.parent.children.length - tabsBefore,
+		browse: app.plugins.plugins.lure.manager.breadcrumbFor(now)?.browsePath ?? null,
+	};
+	${endDrag}
+	return JSON.stringify(seen);
+`;
+
+test("a folder dragged off the row onto the tab bar opens there", async () => {
+	// Started on the segment itself, so the drag carries exactly what the row
+	// puts on it. Obsidian's tab bar takes files and turns folders away; this
+	// is the one folder it is asked to take.
+	const r = JSON.parse(await page.evaluate(dropOnTabBar(`
+		${findSegment(`${ROOT}`)}
+		el.dispatchEvent(new DragEvent("dragstart", { bubbles: true, cancelable: true, dataTransfer: new DataTransfer() }));
+	`)));
+	expect("the tab bar offers to take it", r.offered, true);
+	expect("a tab is added for it", r.added, 1);
+	expect("standing in that folder", r.browse, ROOT);
+});
+
+test("a folder dragged out of the File Explorer is still refused by the tab bar", async () => {
+	const r = JSON.parse(await page.evaluate(dropOnTabBar(startDrag([`${ROOT}`]))));
+	expect("the tab bar offers nothing", r.offered, false);
+	expect("and no tab is added", r.added, 0);
+});
+
 test("a folder segment declines what it cannot take", async () => {
 	// Its own parent: it is already there, so there is nothing to offer.
 	const parent = JSON.parse(await page.evaluate(dragOver("inner", `${ROOT}/inner/leaf.md`)));

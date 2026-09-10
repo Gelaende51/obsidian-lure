@@ -2232,3 +2232,59 @@ unreachable.
 The condition is the overflow itself, which `letRowScroll` was already
 re-checking on the way in. A predicate derived from what the code *did* is
 worth suspecting whenever the thing you want to know can be measured directly.
+
+## Obsidian's tab bar turns a folder away
+
+`WorkspaceTabs` registers its header with `dragManager.handleDrop` and answers
+for four payload types — `file`, `files`, `link`, `bookmarks` — and nothing else.
+A folder carries `type: "folder"`, so a folder row from the File Explorer, and
+anything built with `dragManager.dragFolder`, is silently refused there; the
+guide had promised the path bar's segments would open on the tab bar since the
+day they became draggable, and they never had. A second `handleDrop` on the same
+`tabHeaderContainerEl` coexists with Obsidian's (each answers for what it
+recognises), and the pieces to behave like the native drop are all on the group:
+`getTabInsertLocation(clientX)` for the index and the marker rect,
+`dragManager.showOverlay(doc, rect)` for the marker, and the public
+`workspace.createLeafInParent(group, index)` for the tab. Lure tags its own
+payloads (`lure: true`) so a folder dragged out of the File Explorer still does
+what Obsidian does with it.
+
+And `handleDrop` has no way back. Each call adds `dragover`/`dragenter`/`drop`
+listeners to the element, and on a drop the first handler that accepts calls
+`preventDefault`, which every later one reads as "taken". So a handler left on a
+bar by an earlier load of the same plugin — every disable and enable, which is
+every test case here — sits first in line and wins, running the old load's code.
+It has to be told the plugin unloaded and decline. Worth a feature request: a folder dropped on the tab
+bar has an obvious meaning.
+
+## The suggestion popover's 300px is a stylesheet cap, and its placement clears an inline one
+
+`.suggestion-container { max-height: 300px }` caps every `PopoverSuggest`, so an
+`AbstractInputSuggest` over a folder of any size scrolls inside a sliver of an
+empty screen. Setting `style.maxHeight` before or after `open()` does nothing:
+`reposition` runs the shared placement helper with `preventOverlap`, which first
+*clears* `style.maxHeight`, measures, and sets one only where the popover fits
+neither above nor below the anchor — to the room on the roomier side less its
+gap, inside a 10px window margin. So the window-sized list is one CSS rule away:
+`max-height: none` on the popover, and Obsidian's own arithmetic fits it.
+
+## The suggestion list binds Home and End in the popover's scope
+
+Obsidian's suggestion list registers `Home` and `End` on its owner's scope, as
+"first row" and "last row". A scope is consulted from the window's capture-phase
+keymap before any listener on the text field, so for every `AbstractInputSuggest`
+the two most basic caret keys stop reaching the input while its list is showing.
+The handlers live in the scope's undocumented `keys` array and can be removed
+with the public `scope.unregister`. `PageUp`/`PageDown` are registered the same
+way and are a better fit for moving through a list.
+
+## A popover's scope hands unmatched keys to the app, not to the scope beneath it
+
+`PopoverSuggest` builds its scope as `new Scope(app.scope)`, and `Scope.handleKey`
+matches modifiers exactly, then defers to its *parent* — not to whatever scope
+was on the keymap stack below it. The list binds a bare `Enter` only. So a scope
+pushed for a field to claim `Mod+Enter` (the documented way to take a key from a
+global hotkey) is dead the moment the field's own suggester opens: `Ctrl+Enter`
+misses the popover scope, goes to `app.scope`, and Obsidian's "open link in new
+tab" takes it. Every modified key a field needs has to be registered on
+`suggest.scope` as well.

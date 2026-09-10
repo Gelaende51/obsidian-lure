@@ -107,7 +107,12 @@ export function makeDraggable(
 					: target instanceof TFile
 						? dragManager.dragFile(evt, target)
 						: null;
-			if (data) dragManager.onDragStart(evt, data);
+			if (!data) return;
+			// Marked as this plugin's, so a tab bar can take a folder off the row
+			// without changing what a folder dragged out of the File Explorer
+			// does there — see `BreadcrumbManager.wireTabBars`.
+			(data as unknown as { lure?: boolean }).lure = true;
+			dragManager.onDragStart(evt, data);
 		} catch {
 			// Internal API moved: no drag payload, so the drag is simply inert.
 		}

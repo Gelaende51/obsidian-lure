@@ -55,6 +55,7 @@ export const LABELS = {
 	// `Move into “{{folder}}”` — curly quotes and all — so the breadcrumb's
 	// drop target says what the File Explorer's rows say, word for word.
 	moveInto: ["interface.drag-and-drop.move-into-folder", "interface.dragAndDrop.moveIntoFolder"],
+	openAsTab: ["interface.drag-and-drop.open-as-tab", "interface.dragAndDrop.openAsTab"],
 	showInSystemExplorer: [
 		"plugins.open-with-default-app.action-show-in-folder",
 		"plugins.openWithDefaultApp.actionShowInFolder",

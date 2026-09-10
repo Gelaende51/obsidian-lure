@@ -1,10 +1,17 @@
-import { Notice, WorkspaceLeaf } from "obsidian";
+import { Notice, TFolder, WorkspaceLeaf, WorkspaceSplit } from "obsidian";
 import type BreadcrumbPathPlugin from "./main";
 import { PathBreadcrumb } from "./pathBreadcrumb";
 import { NavLock } from "./navLock";
 import { t } from "./lang";
+import { LABELS, obsidianLabel } from "./obsidianLabels";
 
 const PATCHED_CLASS = "lure-patched";
+
+/** The two members of a tab group a drop on its bar needs. Neither is public API. */
+interface TabGroupInternals {
+	tabHeaderContainerEl?: HTMLElement;
+	getTabInsertLocation?(clientX: number): { rect: DOMRect; index: number } | null;
+}
 
 /**
  * Tracks one PathBreadcrumb per open leaf, keeps them in sync with
@@ -13,6 +20,15 @@ const PATCHED_CLASS = "lure-patched";
  */
 export class BreadcrumbManager {
 	private instances = new Map<WorkspaceLeaf, PathBreadcrumb>();
+	/** Tab bars already taking folders, so a sweep never wires one twice. */
+	private readonly wiredBars = new WeakSet<HTMLElement>();
+	/**
+	 * Set once the plugin unloads. A drop handler cannot be taken back off a
+	 * tab bar, so the one a previous load registered stays on it — and after a
+	 * reload it would open the folder a second time, through a manager nothing
+	 * else is using. It stands down instead.
+	 */
+	private retired = false;
 	/**
 	 * Owned here because "legal on every bar" is not a question any single
 	 * bar can answer about itself, and picking one to arbitrate would make it
@@ -91,6 +107,58 @@ export class BreadcrumbManager {
 				this.instances.delete(leaf);
 			}
 		}
+		this.wireTabBars();
+	}
+
+	/**
+	 * Lets a folder dragged off a row be dropped on a tab bar.
+	 *
+	 * Obsidian's tab bar takes files, links and bookmarks and turns a folder
+	 * away, so a segment — which carries the File Explorer's own folder
+	 * payload — was accepted everywhere a folder is except the one place the
+	 * guide promised. Each bar is wired once, and answers only for a folder
+	 * this plugin's rows put in flight: a folder dragged out of the File
+	 * Explorer is Obsidian's gesture, and still does what Obsidian does.
+	 *
+	 * The sidebars' tab groups are left alone. A folder there would open its
+	 * note, or an empty bar standing in it, in a pane a few hundred pixels wide
+	 * that nobody reads notes in.
+	 */
+	private wireTabBars(): void {
+		const { workspace, dragManager } = this.plugin.app;
+		if (!dragManager?.handleDrop) return;
+		workspace.iterateAllLeaves((leaf) => {
+			const root = leaf.getRoot();
+			if (root === workspace.leftSplit || root === workspace.rightSplit) return;
+			const group = leaf.parent as unknown as TabGroupInternals | null;
+			const bar = group?.tabHeaderContainerEl;
+			if (!group || !bar || this.wiredBars.has(bar)) return;
+			this.wiredBars.add(bar);
+			try {
+				dragManager.handleDrop(bar, (evt, draggable, isOver) => {
+					if (this.retired) return null;
+					const folder = draggable?.lure ? draggable.file : null;
+					if (!(folder instanceof TFolder)) return null;
+					const at = group.getTabInsertLocation?.(evt.clientX);
+					if (!at) return null;
+					if (isOver) {
+						try {
+							dragManager.showOverlay?.(evt.doc, at.rect);
+						} catch {
+							// Only the marker of where it lands; the drop still works.
+						}
+					} else {
+						const opened = workspace.createLeafInParent(group as unknown as WorkspaceSplit, at.index);
+						workspace.setActiveLeaf(opened, { focus: true });
+						const row = this.breadcrumbFor(opened) ?? this.instances.values().next().value ?? null;
+						row?.showFolderIn(opened, folder);
+					}
+					return { action: obsidianLabel(LABELS.openAsTab, "Open as tab"), dropEffect: "copy" };
+				});
+			} catch {
+				// Internal API moved: the bar goes on refusing folders, as Obsidian's does.
+			}
+		});
 	}
 
 	/** The breadcrumb for the leaf the user is currently in, patching it first if needed. */
@@ -120,6 +188,7 @@ export class BreadcrumbManager {
 
 	/** Restores every tracked leaf's native title DOM. Call from onunload. */
 	unpatchAll(): void {
+		this.retired = true;
 		for (const instance of this.instances.values()) {
 			instance.destroy();
 		}

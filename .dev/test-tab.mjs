@@ -992,6 +992,113 @@ test("what the names agree on is offered after the caret as you type", async () 
 	expect("nothing marked", whole.selected, "");
 });
 
+/** The field's text, where its caret is, and which folder the chips stop at. */
+const caret = async () => JSON.parse(await page.evaluate(`
+	const input = document.querySelector(".lure-path-input");
+	const bar = app.plugins.plugins.lure.manager.breadcrumbFor(app.workspace.getMostRecentLeaf());
+	return JSON.stringify(input ? {
+		value: input.value, start: input.selectionStart, end: input.selectionEnd,
+		direction: input.selectionDirection, browse: bar?.browsePath ?? null,
+	} : null);
+`));
+
+const settle = (ms) => page.evaluate(PAUSE(ms) + "return true;");
+
+test("arrowing off the front of the field brings the folder before it in", async () => {
+	await armed();
+	// The name opens selected, and the first press collapses that to its
+	// front — as it would in any field, and as it did before.
+	await pressKey(page, "ArrowLeft");
+	await settle(200);
+	expect("the first press only collapses the selection", await caret(), (v) =>
+		v?.value === "Cake catapult.md" && v.start === 0 && v.end === 0);
+
+	await pressKey(page, "ArrowLeft");
+	await settle(500);
+	const one = await caret();
+	expect("the next brings the folder in", one?.value, "2026/Cake catapult.md");
+	expect("with the caret at the end of its name", [one?.start, one?.end], [4, 4]);
+	expect("and the chips stopping one folder sooner", one?.browse, "Schemes");
+
+	// A word jump runs to the front of `2026` on its own, and the one after
+	// it carries on into the folder before that, landing on its first letter.
+	await pressKey(page, "ctrl+ArrowLeft");
+	await settle(200);
+	await pressKey(page, "ctrl+ArrowLeft");
+	await settle(500);
+	const two = await caret();
+	expect("a word jump off the front takes the next folder in", two?.value, "Schemes/2026/Cake catapult.md");
+	expect("at the start of its name", [two?.start, two?.end], [0, 0]);
+	expect("with nothing left before it", two?.browse, "");
+});
+
+test("Home takes in every folder at once, and End and Home belong to the field with the list up", async () => {
+	await armed();
+	expect("precondition: the list is up", await page.evaluate(`return !!document.querySelector(".suggestion-container");`), true);
+	// The suggestion list binds End to its last row; in the field it has to
+	// move the caret, or an offered completion cannot be taken with it.
+	await pressKey(page, "End");
+	await settle(200);
+	const end = await caret();
+	expect("End moves the caret, not the list", [end?.start, end?.end], [end?.value.length, end?.value.length]);
+
+	await pressKey(page, "shift+Home");
+	await settle(500);
+	const all = await caret();
+	expect("the whole path from the vault is in the field", all?.value, "Schemes/2026/Cake catapult.md");
+	expect("selected back from where the caret was", [all?.start, all?.end, all?.direction], [0, all?.value.length, "backward"]);
+
+	// Nothing left to bring in, so Home is an ordinary press again.
+	await pressKey(page, "Home");
+	await settle(300);
+	const home = await caret();
+	expect("with the vault reached, Home only moves the caret", [home?.value, home?.start, home?.end], ["Schemes/2026/Cake catapult.md", 0, 0]);
+});
+
+test("the field wears the colour of the row it stands for, and goes red only past every row", async () => {
+	const paint = async () => JSON.parse(await page.evaluate(`
+		const input = document.querySelector(".lure-path-input");
+		return JSON.stringify({ tint: input?.dataset.lureTint ?? null, red: input?.classList.contains("lure-will-create") ?? null });
+	`));
+	await armAtRoot();
+	// Nothing called this exists, but three folders still start this way: the
+	// typing is heading for one of them, and that is not a name to make.
+	await type(`${PREFIX}al`);
+	expect("a name the list still leads to is not red", await paint(), { tint: null, red: false });
+
+	await pressKey(page, "ctrl+a");
+	await type(`${PREFIX}noted.md`);
+	expect("a note named whole wears its row's purple", await paint(), { tint: "md", red: false });
+
+	await type("zz");
+	expect("past every row, red", await paint(), { tint: null, red: true });
+});
+
+test("the list is as tall as the window lets it be, not a 300px sliver", async () => {
+	await armAtRoot();
+	const box = JSON.parse(await page.evaluate(`
+		const pop = document.querySelector(".suggestion-container");
+		if (!pop) return JSON.stringify(null);
+		const r = pop.getBoundingClientRect();
+		return JSON.stringify({ height: r.height, bottom: r.bottom, window: window.innerHeight, rows: pop.querySelectorAll(".suggestion-item").length });
+	`));
+	// The fixture alone puts more at the vault root than 300px can show.
+	expect("precondition: more rows than 300px holds", box?.rows, (v) => v > 12);
+	expect("taller than Obsidian's cap", box?.height, (v) => v > 300);
+	expect("and still inside the window", box?.bottom, (v) => v <= box.window);
+});
+
+test("Ctrl+Enter still means a new tab while the list is up", async () => {
+	await armed();
+	// The field opens with its list up. Ctrl+Enter used to fall through the
+	// popover's scope to the app's hotkeys and do nothing here at all.
+	expect("precondition: the list is up", await page.evaluate(`return !!document.querySelector(".suggestion-container");`), true);
+	const before = await page.evaluate(`return app.workspace.getLeavesOfType("markdown").length;`);
+	await pressKey(page, "ctrl+Enter");
+	await settle(900);
+	expect("the note opened in a tab of its own", await page.evaluate(`return app.workspace.getLeavesOfType("markdown").length;`), before + 1);
+});
+
 test("an offer disappears the moment the typing leaves it", async () => {
 	await armAtRoot();
 	await type(`${PREFIX}a`);

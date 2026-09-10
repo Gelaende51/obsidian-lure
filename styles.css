@@ -340,8 +340,41 @@
 	flex: 0 0 auto;
 }
 
+/* The field wears the colour of the row it stands for, so a name reads the
+   same typed as listed — `fieldTint` in folderChildSuggest says which row
+   that is, and `tintOf` which tint wins where a row qualifies for several.
+   Colour only: the medium weight some rows carry would change the width of
+   text the field sizes itself from glyph by glyph.
+
+   After the .lure-path-input rule, which they tie with at (0,2,1). */
+.lure-filename input[data-lure-tint="external"],
+.lure-vault-wrapper input[data-lure-tint="external"],
+.lure-filename input[data-lure-tint="folder-note"],
+.lure-vault-wrapper input[data-lure-tint="folder-note"] {
+	color: var(--text-muted);
+}
+
+.lure-filename input[data-lure-tint="md"],
+.lure-vault-wrapper input[data-lure-tint="md"] {
+	color: var(--color-purple);
+}
+
+.lure-filename input[data-lure-tint="warn"],
+.lure-vault-wrapper input[data-lure-tint="warn"] {
+	color: var(--text-warning);
+}
+
+.lure-filename input[data-lure-tint="keep-name"],
+.lure-vault-wrapper input[data-lure-tint="keep-name"],
+.lure-filename input[data-lure-tint="current"],
+.lure-vault-wrapper input[data-lure-tint="current"] {
+	color: var(--color-blue);
+}
+
 /* Nothing answers to what is in the field yet, so Enter will make it rather
-   than open it. Colour rather than a border or a ring: the field has no
+   than open it — and nothing in the dropdown leads to it either. A name the
+   folder's rows still match is being typed toward one of them, and wears
+   that row's colour instead (above). Colour rather than a border or a ring: the field has no
    chrome at all (see above), and giving it some only while the path is
    unfinished would make the row twitch at every completed folder.
 
@@ -471,6 +504,20 @@
 	stroke-width: var(--icon-s-stroke-width, 2);
 }
 
+/* The dropdown as tall as the window lets it be. Obsidian caps every
+   suggestion popover at 300px whatever lies below it, so a folder of any size
+   was a list scrolled inside a sliver of an otherwise empty screen.
+
+   Lifting the cap is all it takes, and setting a height of our own is what
+   does not work: the placement Obsidian runs on every rebuild clears an
+   inline max-height before it measures, then — where the popover fits
+   neither above nor below the field — sets one itself, to the room on the
+   roomier side less its own margin. So the window-sized list is Obsidian's
+   arithmetic, and follows the window without anything here tracking it. */
+.suggestion-container.lure-suggest-popover {
+	max-height: none;
+}
+
 /* Dropdown rows: an icon column for locations, and a muted tint for
    anything outside the vault so the boundary is visible in the list
    itself, not only once you've picked something. */
@@ -498,6 +545,14 @@
    than being muted along with everything else out there. */
 .suggestion-item.lure-suggest-md .lure-suggest-label {
 	color: var(--color-purple);
+}
+
+/* A folder's own note, in grey: it stands for the folder more than for
+   itself, and a folder's contents read more clearly with it stepped back
+   from the notes that are only notes. After the Markdown rule, which every
+   folder note also matches. */
+.suggestion-item.lure-suggest-folder-note .lure-suggest-label {
+	color: var(--text-muted);
 }
 
 /* "Move here, keep this name" — pinned to the top of every dropdown while a

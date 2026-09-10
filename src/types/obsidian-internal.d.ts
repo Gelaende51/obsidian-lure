@@ -99,7 +99,7 @@ declare module "obsidian" {
 		 * payload, and the useful question is only ever "is it a file this
 		 * vault knows".
 		 */
-		draggable?: { type?: string; file?: TAbstractFile } | null;
+		draggable?: { type?: string; file?: TAbstractFile; lure?: boolean } | null;
 		/**
 		 * Registers the element as a drop target, the way the File Explorer
 		 * registers its folder rows.
@@ -110,6 +110,8 @@ declare module "obsidian" {
 		 * Returning a descriptor accepts the drop and draws Obsidian's own
 		 * feedback for it; returning null declines it silently.
 		 */
+		/** Draws the bar Obsidian shows where a dragged tab would land. */
+		showOverlay?(doc: Document, rect: DOMRect): void;
 		handleDrop(
 			el: HTMLElement,
 			handler: (

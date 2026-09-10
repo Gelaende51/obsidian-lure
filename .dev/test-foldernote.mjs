@@ -193,6 +193,28 @@ test("with the swap off the delimiter no longer answers for it", async () => {
 	expect("nothing was made", after.made, before.made);
 });
 
+test("a folder's note is grey in the list, and so is the field naming it", async () => {
+	await withPeer();
+	await page.evaluate(`await app.vault.create("${ROOT}/child/child.md", ""); ${PAUSE(300)} return true;`);
+	await page.evaluate(openLeaf);
+	const listed = JSON.parse(await page.evaluate(`
+		const root = app.workspace.getMostRecentLeaf().view.containerEl.querySelector(".view-header-title-container");
+		root.querySelector(".lure-filename-text").click();
+		${PAUSE(500)}
+		const rows = [...document.querySelectorAll(".suggestion-item")];
+		const row = (name) => rows.find((r) => r.querySelector(".lure-suggest-label")?.textContent === name)?.className ?? null;
+		return JSON.stringify({ note: row("child.md"), other: row("leaf.md") });
+	`));
+	expect("the folder's note is marked as one", listed.note, (v) => typeof v === "string" && v.includes("lure-suggest-folder-note"));
+	expect("the note beside it is not", listed.other, (v) => typeof v === "string" && !v.includes("lure-suggest-folder-note"));
+
+	await page.evaluate(`document.querySelector(".lure-path-input")?.select(); return true;`);
+	await page.send("Input.insertText", { text: "child" });
+	await page.evaluate(PAUSE(400) + "return true;");
+	expect("and the field heading for it wears the same grey",
+		await page.evaluate(`return document.querySelector(".lure-path-input")?.dataset.lureTint ?? null;`), "folder-note");
+});
+
 test("with no folder-note plugin running, nothing is made", async () => {
 	// Folder notes are a convention, not a fact about the filesystem. A vault
 	// with no plugin managing them has no such thing, and inventing one here
