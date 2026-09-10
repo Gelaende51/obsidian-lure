@@ -1032,27 +1032,50 @@ test("arrowing off the front of the field brings the folder before it in", async
 	expect("with nothing left before it", two?.browse, "");
 });
 
-test("Home takes in every folder at once, and End and Home belong to the field with the list up", async () => {
+test("Home, End and the page keys move through the list while it is up, and the text once it is not", async () => {
+	const row = async () => JSON.parse(await page.evaluate(`
+		const rows = [...document.querySelectorAll(".suggestion-container .suggestion-item")];
+		return JSON.stringify({ count: rows.length, at: rows.findIndex((r) => r.classList.contains("is-selected")) });
+	`));
+	await armed();
+	expect("precondition: the list is up with more than one row", (await row()).count, (v) => v > 1);
+	await pressKey(page, "End");
+	await settle(250);
+	const last = await row();
+	expect("End goes to the list's last row", last.at, last.count - 1);
+	await pressKey(page, "Home");
+	await settle(250);
+	expect("Home to its first", (await row()).at, 0);
+	await pressKey(page, "PageDown");
+	await settle(250);
+	expect("and a page key moves down it", (await row()).at, (v) => v > 0);
+
+	// With nothing listed, the same keys belong to the text.
+	await armed();
+	await type("zzq");
+	expect("precondition: nothing is listed", await page.evaluate(`return !document.querySelector(".suggestion-container");`), true);
+	await pressKey(page, "End");
+	await settle(250);
+	const end = await caret();
+	expect("End moves the caret to the end", [end?.start, end?.end], [end?.value.length, end?.value.length]);
+	await pressKey(page, "Home");
+	await settle(500);
+	const all = await caret();
+	expect("Home takes in every folder before the field", all?.value, "Schemes/2026/zzq.md");
+	expect("with the caret at the front", [all?.start, all?.end], [0, 0]);
+});
+
+test("Shift+Home takes in every folder with the list up, selecting across them", async () => {
 	await armed();
 	expect("precondition: the list is up", await page.evaluate(`return !!document.querySelector(".suggestion-container");`), true);
-	// The suggestion list binds End to its last row; in the field it has to
-	// move the caret, or an offered completion cannot be taken with it.
-	await pressKey(page, "End");
+	// The list binds Home, not Shift+Home, so this one is the field's either way.
+	await pressKey(page, "ArrowRight");
 	await settle(200);
-	const end = await caret();
-	expect("End moves the caret, not the list", [end?.start, end?.end], [end?.value.length, end?.value.length]);
-
 	await pressKey(page, "shift+Home");
 	await settle(500);
 	const all = await caret();
 	expect("the whole path from the vault is in the field", all?.value, "Schemes/2026/Cake catapult.md");
-	expect("selected back from where the caret was", [all?.start, all?.end, all?.direction], [0, all?.value.length, "backward"]);
-
-	// Nothing left to bring in, so Home is an ordinary press again.
-	await pressKey(page, "Home");
-	await settle(300);
-	const home = await caret();
-	expect("with the vault reached, Home only moves the caret", [home?.value, home?.start, home?.end], ["Schemes/2026/Cake catapult.md", 0, 0]);
+	expect("selected back from where the caret was", [all?.start, all?.end, all?.direction], [0, "Schemes/2026/Cake catapult".length, "backward"]);
 });
 
 test("the field wears the colour of the row it stands for, and goes red only past every row", async () => {

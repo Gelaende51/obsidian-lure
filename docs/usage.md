@@ -29,13 +29,13 @@ The **vault root** is the one segment that isn't a path segment. It has no paren
 
 Clicking a folder name selects **that folder's name** in a text input and opens a dropdown of the folder **one layer up** — its parent. Typing or picking an entry swaps this folder for a sibling and leaves everything below it untouched, so `Projects/2026/Kickoff.md` → click `2026` → pick `2025` gets you `Projects/2025/Kickoff.md`.
 
-Clicking the **note's name** works the same way against its own folder, and selects the name **without its extension** — renaming is the common edit, and typing straight over a selection that included `.md` used to change the file type by accident. The extension stays visible one keystroke away: <kbd>End</kbd> or <kbd>→</kbd> reaches it, and the double-click that widens to the whole row takes the lot.
+Clicking the **note's name** works the same way against its own folder, and selects the name **without its extension** — renaming is the common edit, and typing straight over a selection that included `.md` used to change the file type by accident. The extension stays visible one keystroke away: <kbd>→</kbd> reaches it, and the double-click that widens to the whole row takes the lot.
 
 Clicking the folder has already selected one segment, so **one further click** widens the selection to the whole line — that folder *and* everything below it — and typing then replaces the rest of the path in one go. Works the same in navigation and rename/move mode.
 
 That only applies as a continuation of the click that opened the field. Once you've used the field, it behaves like any other text input: click places the caret, double-click takes a word, triple-click takes the line.
 
-Either way the rest of the path stays visible around the input, as chips before it and as unselected text after it, so the full path never disappears from the header. Type to replace the selection, or press <kbd>End</kbd> / <kbd>→</kbd> to keep it and edit from there. The dropdown lists the whole folder regardless of what's prefilled; it only starts filtering once you actually type.
+Either way the rest of the path stays visible around the input, as chips before it and as unselected text after it, so the full path never disappears from the header. Type to replace the selection, or press <kbd>→</kbd> to keep it and edit from there. The dropdown lists the whole folder regardless of what's prefilled; it only starts filtering once you actually type.
 
 ## Descending by delimiter
 
@@ -124,7 +124,7 @@ Menu wording comes from Obsidian's own translations, so it matches the rest of t
 - **The field goes red once nothing answers to what is in it** — no file, no folder, and no row of the dropdown still leading to it. From there <kbd>Enter</kbd> makes what is in the field rather than opening it, and the red says so before you commit. It never appears for a web address, which is not a place on this machine to go looking for. The **whole** field is coloured rather than only the part that is missing: a text field cannot colour half of its own contents. In move/rename mode the field keeps its own red instead, for a name that is illegal or already taken — there, a name nothing answers to is the point.
 - `/` commits the segment you are typing and descends into it, keeping whatever is behind it — the same thing <kbd>Tab</kbd> does when it steps in.
 - <kbd>Backspace</kbd> in an empty input steps back out to the parent folder, reopening its name with the cursor at the end.
-- **Arrowing off the front of the field brings the folder before it in**, as though the whole path were one line of text. With the caret at the very start, <kbd>←</kbd> takes that folder into the field and lands at the end of its name, <kbd>Ctrl</kbd>+<kbd>←</kbd> lands at the start of it, and <kbd>Home</kbd> takes in every folder up to the vault root — or up to the place you picked, outside the vault — at once. Hold <kbd>Shift</kbd> and the selection stretches over what came in. On macOS the word jump is <kbd>Option</kbd>+<kbd>←</kbd> and <kbd>Cmd</kbd>+<kbd>←</kbd> is <kbd>Home</kbd>. Anywhere but the front these are ordinary text keys, and <kbd>Home</kbd> and <kbd>End</kbd> stay text keys while the dropdown is up; <kbd>PgUp</kbd> and <kbd>PgDn</kbd> move through the list.
+- **Arrowing off the front of the field brings the folder before it in**, as though the whole path were one line of text. With the caret at the very start, <kbd>←</kbd> takes that folder into the field and lands at the end of its name, <kbd>Ctrl</kbd>+<kbd>←</kbd> lands at the start of it, and <kbd>Home</kbd> takes in every folder up to the vault root — or up to the place you picked, outside the vault — at once. Hold <kbd>Shift</kbd> and the selection stretches over what came in. On macOS the word jump is <kbd>Option</kbd>+<kbd>←</kbd> and <kbd>Cmd</kbd>+<kbd>←</kbd> is <kbd>Home</kbd>. Anywhere but the front these are ordinary text keys. **While the dropdown is showing, <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>PgUp</kbd> and <kbd>PgDn</kbd> belong to it** — first row, last row, a page up, a page down — and reach the text only once it has closed; <kbd>Shift</kbd>+<kbd>Home</kbd> takes in every folder with the list open as well.
 - **The list follows the caret.** Pick out a different part of the path — drag over it, or arrow along — and the dropdown lists *that* folder's children, not the one the field was opened on. Pointing at a row writes it into the segment the caret is in, and taking the pointer off the list gives you your text and your selection back, exactly as they were.
 - **Sweeping a selection out of the field** and letting go somewhere else does not close it. A press that begins in the field belongs to the edit however far it travels; only a press that *begins* outside is a click away.
 - <kbd>Enter</kbd> commits — and when the field names nothing at all, as in an empty folder where there was never anything to complete, it says *No file selected* and stays open rather than closing as though something had been chosen. <kbd>Esc</kbd> or a click elsewhere cancels back to the file's real path. One press of <kbd>Esc</kbd> is enough: it closes the dropdown, leaves the field and hands focus back to the note, rather than taking one press per layer.
@@ -741,7 +741,7 @@ appear in a real name, where an apostrophe very much can.
 | Rename or retarget the note | Click the note's name — extension included |
 | Browse a folder's contents | Click that folder's name; the dropdown lists its parent, so click the folder **below** the one you want |
 | Retype a folder and everything below it | **Double-click** that folder's name, then type |
-| Edit the path from a folder down | Click that folder's name, then <kbd>End</kbd> or <kbd>→</kbd> to deselect |
+| Edit the path from a folder down | Click that folder's name, then <kbd>→</kbd> to deselect |
 | Jump to a file by typing its path | Click the filename or the empty space, type, <kbd>Enter</kbd> |
 | Open a file in a new tab instead | <kbd>Ctrl</kbd> while picking it, or <kbd>Ctrl</kbd>+<kbd>Enter</kbd> |
 | Copy the note somewhere instead of moving it | Pencil, then <kbd>Ctrl</kbd> while picking or committing the target |
@@ -749,7 +749,7 @@ appear in a real name, where an apostrophe very much can.
 | Tell whether a path you typed is already there | Look at the colour: it takes the colour of the row it names, and red means <kbd>Enter</kbd> would make it |
 | Descend one level while typing | Type `/` |
 | Go back up one level while typing | <kbd>Backspace</kbd> in the empty input |
-| Bring the folders before the field into it | <kbd>←</kbd> at its start for one, <kbd>Home</kbd> for all of them |
+| Bring the folders before the field into it | <kbd>←</kbd> at its start for one; <kbd>Shift</kbd>+<kbd>Home</kbd>, or <kbd>Home</kbd> with the dropdown closed, for all of them |
 | Move or rename the open note | Click the pencil, then browse or type as above |
 | Move without renaming | Pencil → click into the target folder → pick the pinned current filename |
 | Rename in place | <kbd>F2</kbd> twice (first press goes to the inline title, second to the header) |

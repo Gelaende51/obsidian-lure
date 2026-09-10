@@ -5109,6 +5109,11 @@ export class PathBreadcrumb {
 	 * text field, Home included once there is nothing left to bring in — and
 	 * never past where the row stops: the vault root, or the place that was
 	 * picked outside it.
+	 *
+	 * Home only reaches this with no dropdown showing. While a list is up its
+	 * navigation keys are the list's — Home and End for its first and last
+	 * row, as Obsidian binds them — and Shift+Home, which the list leaves
+	 * alone, is the way to take every folder in with it open.
 	 */
 	private revealFolderOnKey(evt: KeyboardEvent, inputEl: HTMLInputElement): boolean {
 		if (this.showingLocations || evt.isComposing) return false;

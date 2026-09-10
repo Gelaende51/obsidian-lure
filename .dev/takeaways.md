@@ -2276,7 +2276,10 @@ keymap before any listener on the text field, so for every `AbstractInputSuggest
 the two most basic caret keys stop reaching the input while its list is showing.
 The handlers live in the scope's undocumented `keys` array and can be removed
 with the public `scope.unregister`. `PageUp`/`PageDown` are registered the same
-way and are a better fit for moving through a list.
+way. Lure leaves all four with the list: while a list is showing its navigation
+keys are the list's, and the text gets them once it closes — so a field that
+wants Home for itself (Lure's reveal) has to take it through `Shift+Home`, which
+the list does not bind, or wait for the list to close.
 
 ## A popover's scope hands unmatched keys to the app, not to the scope beneath it
 

@@ -142,6 +142,7 @@ const KEY_CODES = {
 	ArrowUp: [38, "ArrowUp", ""], ArrowDown: [40, "ArrowDown", ""],
 	ArrowLeft: [37, "ArrowLeft", ""], ArrowRight: [39, "ArrowRight", ""],
 	Home: [36, "Home", ""], End: [35, "End", ""],
+	PageUp: [33, "PageUp", ""], PageDown: [34, "PageDown", ""],
 };
 
 const MODIFIER_BITS = { alt: 1, ctrl: 2, control: 2, meta: 4, cmd: 4, shift: 8 };

@@ -1,4 +1,4 @@
-import { AbstractInputSuggest, App, KeymapEventHandler, Modifier, Scope, TAbstractFile, TFile, TFolder, UserEvent, setIcon } from "obsidian";
+import { AbstractInputSuggest, App, Modifier, TAbstractFile, TFile, TFolder, UserEvent, setIcon } from "obsidian";
 import { wireNativeFileItem } from "./nativeFileItem";
 import { SystemLocation, applyIcon, iconFor } from "./systemLocations";
 import { ExternalChild, externalJoin, listExternalChildren } from "./externalFs";
@@ -226,7 +226,6 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		this.dragKeepFocusEl = inputEl;
 		// As tall as the window lets it be — see `.lure-suggest-popover`.
 		(this as unknown as { suggestEl?: HTMLElement }).suggestEl?.addClass(POPOVER_CLASS);
-		this.giveHomeAndEndToTheField();
 		this.takeModifiedEnter();
 	}
 
@@ -250,25 +249,6 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			return false;
 		};
 		for (const modifiers of MODIFIED_ENTER) this.scope.register(modifiers, "Enter", choose);
-	}
-
-	/**
-	 * Takes Home and End back from the list.
-	 *
-	 * The suggestion list binds both in the popover's scope, to its first and
-	 * last row, and a scope is consulted before any listener on the field — so
-	 * while the list was up neither press ever reached the text. End is one of
-	 * the two keys that take an offered completion, and Home is how the field
-	 * reaches back to the start of the path; in a field a path is typed into,
-	 * both are text keys first. PageUp and PageDown still move through the list.
-	 */
-	private giveHomeAndEndToTheField(): void {
-		const scope = this.scope as Scope & { keys?: KeymapEventHandler[] };
-		for (const handler of [...(scope.keys ?? [])]) {
-			if ((handler.key === "Home" || handler.key === "End") && !handler.modifiers) {
-				scope.unregister(handler);
-			}
-		}
 	}
 
 	/** Showing a list, changed or not, goes through here; the field's colour is read off it. */
