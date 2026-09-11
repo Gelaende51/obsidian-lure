@@ -136,6 +136,9 @@
    reach a folder note (see docs/compatibility.md). */
 .view-header-title-container[data-lure-swap="true"][data-lure-on]
 	.view-header-breadcrumb.has-folder-note
+	+ .view-header-breadcrumb-separator,
+.view-header-title-container[data-lure-swap="true"][data-lure-on]
+	.view-header-breadcrumb.lure-has-folder-note
 	+ .view-header-breadcrumb-separator {
 	text-decoration-line: underline;
 	text-decoration-color: var(--text-faint);
@@ -147,7 +150,9 @@
    the note, which is exactly what it no longer does. Longhand and above
    the Folder notes rule's specificity, so it wins cleanly. */
 .view-header-title-container[data-lure-swap="true"][data-lure-on]
-	.view-header-breadcrumb.has-folder-note {
+	.view-header-breadcrumb.has-folder-note,
+.view-header-title-container[data-lure-swap="true"][data-lure-on]
+	.view-header-breadcrumb.lure-has-folder-note {
 	text-decoration-line: none;
 }
 
@@ -429,6 +434,27 @@
 .view-action.lure-unlock-btn {
 	color: var(--text-error);
 	opacity: 1;
+}
+
+/* The padlock's answer to the rename key outside the vault: it opens for a
+   quarter of a second and shuts again, saying what is in the way in the one
+   place that can grant it. Pressing it opens it for real, and so does asking
+   again within half a second. Kept to a pulse rather than a colour change —
+   the button is already the error red, and a second red would say nothing. */
+@keyframes lure-padlock-flash {
+	from {
+		transform: scale(1);
+	}
+	40% {
+		transform: scale(1.25);
+	}
+	to {
+		transform: scale(1);
+	}
+}
+
+.view-action.lure-unlock-btn.lure-padlock-flash {
+	animation: lure-padlock-flash 250ms ease-out;
 }
 
 /* Same rounded, accent-colored framing Obsidian shows around a file's

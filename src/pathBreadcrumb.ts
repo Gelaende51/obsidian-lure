@@ -248,6 +248,32 @@ const NAME_SPENT_CLASS = "lure-name-spent";
  * counts as one gesture rather than as a series of pauses to read in.
  */
 const SCROLL_QUIET_MS = 400;
+
+/**
+ * How much wheel travel a row of the dropdown costs, and how long a run of
+ * turns stays one gesture. A trackpad sends many small deltas where a mouse
+ * sends one notch, so the travel is banked rather than counted in events;
+ * the run is forgotten once the wheel has been still, or a stray flick later
+ * would land on a row it had already walked past.
+ */
+const WHEEL_STEP_PX = 40;
+const WHEEL_RUN_MS = 600;
+/** A line-mode wheel reports rows, not pixels; this is what a row is worth. */
+const WHEEL_LINE_PX = 16;
+
+/**
+ * The rung the rename key's cycle ends on. Past it the key goes back to the
+ * heading rather than round the ladder again: Tab's lap is a way of looking
+ * at the path, while this key alternates between two places to rename in.
+ */
+const LAST_RENAME_RUNG = 3;
+/** The padlock opens and shuts again well inside half a second. */
+const PADLOCK_FLASH_MS = 250;
+/** How soon a second rename press counts as having pressed the padlock. */
+const PADLOCK_DOUBLE_MS = 500;
+const PADLOCK_FLASH_CLASS = "lure-padlock-flash";
+/** Put on a segment whose folder has a note, so the delimiter after it can say so. */
+const FOLDER_NOTE_CLASS = "lure-has-folder-note";
 /** The custom property each box's floor is written to; the stylesheet reads it. */
 const FLOOR_VAR = "--lure-floor";
 /** And the one a clipped part's exact drawn width is written to, so no empty strip is left. */
@@ -740,6 +766,11 @@ export class PathBreadcrumb {
 	 * that far from a note should be writable just because you looked at it.
 	 */
 	private externalWritesUnlocked = false;
+	/** Wheel travel not yet spent on a row, and when it last turned. */
+	private wheelDelta = 0;
+	private wheelAt = 0;
+	/** When the rename key last asked the padlock, so a second press can answer it. */
+	private padlockAskedAt = 0;
 	/** Set the moment teardown begins, so the render path stops rebuilding what it is dismantling. */
 	private destroyed = false;
 	/**
@@ -956,7 +987,13 @@ export class PathBreadcrumb {
 		// to redirect — which is why it comes and goes depending on where you
 		// are pointing. Taking the event means the whole row answers it.
 		container?.addEventListener("wheel", (evt) => {
-			if (!container.hasClass(SCROLL_CLASS)) return;
+			if (!container.hasClass(SCROLL_CLASS)) {
+				// Nothing to scroll sideways, so the wheel is free to mean the
+				// other thing a wheel means over a list of names: walk it.
+				if (evt.shiftKey || evt.deltaX !== 0 || evt.deltaY === 0) return;
+				if (this.wheelThroughEntries(evt)) evt.preventDefault();
+				return;
+			}
 			// A sideways wheel, or a shifted one, is already asking for this
 			// and the browser does it correctly.
 			if (evt.shiftKey || evt.deltaX !== 0 || evt.deltaY === 0) return;
@@ -1732,6 +1769,20 @@ export class PathBreadcrumb {
 	 * user. Gated on a running plugin instead, so the behaviour a vault has
 	 * is the behaviour its plugins say it has.
 	 */
+	/**
+	 * Whether the plugin whose convention this row reads is the one running.
+	 *
+	 * `folderNoteConvention` answers for any of the three folder-note plugins,
+	 * falling back to the default layout for the two that keep no settings of
+	 * their own — right for listing and for making a note, and wrong for
+	 * *opening* one from the row: those two deliberately never claim the
+	 * header path, so a press there is Obsidian's to answer and must stay a
+	 * reveal. Only Folder notes' own convention is specific enough to act on.
+	 */
+	private folderNotesRunning(): boolean {
+		return !!this.plugin.app.plugins?.plugins?.[FOLDER_NOTES_PLUGIN_ID];
+	}
+
 	private folderNoteFor(folder: TFolder): TFile | null {
 		const where = this.folderNoteConvention(folder);
 		if (!where) return null;
@@ -2441,6 +2492,10 @@ export class PathBreadcrumb {
 		// the other. The padlock still gates the commit, which is where the
 		// permission belongs.
 		if (!this.file && this.externalPath === null) return;
+		// Outside the vault the padlock is asked first, and says so in its own
+		// icon rather than by letting a mode open that every commit would
+		// refuse.
+		if (this.askForPadlockFirst()) return;
 		this.renameMode = true;
 		this.updateRenameModeStyling();
 		// The name without its extension, which is what a rename almost
@@ -2460,8 +2515,57 @@ export class PathBreadcrumb {
 	 */
 	advanceRenameSelection(): boolean {
 		if (!this.inputEl || !this.renameMode) return false;
+		// The last rung hands the key back instead of wrapping, so the cycle
+		// is heading, name, name with extension, the path from the vault, the
+		// path from the system root, and round to the heading again. Tab still
+		// laps the same rungs: that key is reading the path, this one is
+		// choosing where to rename.
+		if (this.tabStage !== null && this.tabStage >= LAST_RENAME_RUNG) {
+			this.finishRename();
+			return false;
+		}
 		this.advanceLadder();
 		return true;
+	}
+
+	/**
+	 * The rename key's answer to a shut padlock, outside the vault.
+	 *
+	 * Rename mode used to open regardless, with the commit left to refuse it —
+	 * true, but silent until the work was done. The padlock flashes open and
+	 * shuts again instead, which says what is in the way in the one place the
+	 * answer lives; pressing it opens it, and so does asking again inside half
+	 * a second, which is the same permission granted without reaching for the
+	 * pointer. Returns whether the press was spent on the asking.
+	 */
+	private askForPadlockFirst(): boolean {
+		if (!this.pointsOutsideVault() || this.externalWritesUnlocked) return false;
+		if (Date.now() - this.padlockAskedAt < PADLOCK_DOUBLE_MS) {
+			this.padlockAskedAt = 0;
+			// Exactly what the button's own press does, granted for the
+			// location rather than for the moment.
+			this.externalWritesUnlocked = true;
+			this.unlockedBase = this.externalBase?.path ?? this.externalPath;
+			this.updateUnlockButton();
+			return false;
+		}
+		this.padlockAskedAt = Date.now();
+		this.flashPadlock();
+		return true;
+	}
+
+	/** Opens the padlock for a moment and shuts it again. */
+	private flashPadlock(): void {
+		const el = this.unlockButtonEl;
+		if (!el.isConnected) return;
+		el.addClass(PADLOCK_FLASH_CLASS);
+		setIcon(el, "lock-open");
+		this.timers.add(
+			window.setTimeout(() => {
+				setIcon(el, "lock");
+				el.removeClass(PADLOCK_FLASH_CLASS);
+			}, PADLOCK_FLASH_MS),
+		);
 	}
 
 	/** Restores the leaf's native title DOM. Called on leaf close / plugin unload. */
@@ -2588,6 +2692,24 @@ export class PathBreadcrumb {
 	 * without needing to know which folder-note convention is in use.
 	 */
 	private openNativeSegment(index: number, folderPath: string): void {
+		// The folder note first, where this row can find one. Delegating to
+		// the native segment asks whichever folder-note plugin is running to
+		// answer the click, and Folder notes answers only for segments it has
+		// marked — which, on a path more than one folder deep, is none of
+		// them: the same press that opens `testfolder2`'s note does nothing at
+		// all on `…/childa/unnname`, whose note is right there. The convention
+		// is already read from that plugin's own settings (see
+		// folderNoteConvention), so the row can open the note itself and the
+		// press means the same thing at every depth.
+		const folder = this.folderNotesRunning()
+			? this.plugin.app.vault.getAbstractFileByPath(folderPath)
+			: null;
+		const note = folder instanceof TFolder ? this.folderNoteFor(folder) : null;
+		if (note) {
+			void this.plugin.app.workspace.getLeaf(false).openFile(note);
+			return;
+		}
+
 		const segment = this.nativeSegments()[index];
 		if (!segment) return;
 		// Otherwise our capture listener swallows this synthetic click and
@@ -2760,13 +2882,21 @@ export class PathBreadcrumb {
 	 * had been disabled and re-enabled.
 	 */
 	private unwireNativeBreadcrumb(): void {
-		this.titleEl.parentElement
-			?.querySelector<HTMLElement>(NATIVE_BREADCRUMB_SELECTOR)
+		const nativeParent = this.titleEl.parentElement?.querySelector<HTMLElement>(
+			NATIVE_BREADCRUMB_SELECTOR,
+		);
+		nativeParent
 			?.querySelectorAll<HTMLElement>(".view-header-breadcrumb-separator")
 			.forEach((el) => {
 				el.onclick = null;
 				el.textContent = NATIVE_DELIMITER;
 			});
+		// The marking lives on Obsidian's own segments, which outlive this
+		// instance: left behind, it would underline delimiters for a plugin
+		// that is no longer running.
+		nativeParent
+			?.querySelectorAll<HTMLElement>(".view-header-breadcrumb")
+			.forEach((el) => el.removeClass(FOLDER_NOTE_CLASS));
 	}
 
 	private wireNativeBreadcrumb(): void {
@@ -2799,6 +2929,14 @@ export class PathBreadcrumb {
 			if (!(folder instanceof TFolder)) return;
 			makeDraggable(this.plugin.app, el, folder);
 			this.acceptDropsInto(el, folderPath);
+			// The underline is a promise that there is something to open, and
+			// it used to be made only where Folder notes had marked the
+			// segment — which is nowhere on a path more than one folder deep,
+			// exactly where the press was inert too. The note is resolved here
+			// now, so the marking is made here as well; that plugin's own
+			// class is still honoured, so a peer that marks differently is
+			// none the worse for it.
+			el.toggleClass(FOLDER_NOTE_CLASS, this.folderNotesRunning() && !!this.folderNoteFor(folder));
 		});
 
 		// Separator i sits directly after segment i, so both refer to the
@@ -3833,6 +3971,52 @@ export class PathBreadcrumb {
 	 * rather than from the render path, so that working inside one location
 	 * doesn't keep re-locking under you.
 	 */
+	/**
+	 * A wheel over a name opens that name's dropdown and walks it.
+	 *
+	 * The row answers a wheel with a sideways scroll once it holds more path
+	 * than pane, and that reading wins while it applies — see the handler this
+	 * is called from. Below that width the row has nothing to scroll, and the
+	 * wheel does what it does over any list of names: the first turn opens the
+	 * one under the pointer, and every turn after moves the highlight a row,
+	 * previewing into the field exactly as arrowing does.
+	 *
+	 * The dropdown is opened by clicking the name rather than by calling the
+	 * gesture, so the wheel cannot drift from what a press does — the swap
+	 * setting decides which press opens a list, and this way it decides for
+	 * the wheel too. Delimiters are left out: with the swap on a press there
+	 * opens a folder note, and a wheel is not a press.
+	 */
+	private wheelThroughEntries(evt: WheelEvent): boolean {
+		// A line-mode wheel reports its delta in rows, not pixels.
+		const delta = evt.deltaMode === 1 ? evt.deltaY * WHEEL_LINE_PX : evt.deltaY;
+		if (Date.now() - this.wheelAt > WHEEL_RUN_MS) this.wheelDelta = 0;
+		this.wheelAt = Date.now();
+
+		if (!this.inputEl) {
+			const name = (evt.target as HTMLElement | null)?.closest<HTMLElement>(
+				".view-header-breadcrumb, .lure-filename-text",
+			);
+			if (!name) return false;
+			this.wheelDelta = 0;
+			name.click();
+			return true;
+		}
+
+		this.wheelDelta += delta;
+		let steps = 0;
+		while (this.wheelDelta >= WHEEL_STEP_PX) {
+			steps += 1;
+			this.wheelDelta -= WHEEL_STEP_PX;
+		}
+		while (this.wheelDelta <= -WHEEL_STEP_PX) {
+			steps -= 1;
+			this.wheelDelta += WHEEL_STEP_PX;
+		}
+		if (!steps) return true;
+		return this.suggest?.stepHighlight(steps, evt) ?? false;
+	}
+
 	private lockExternalWrites(): void {
 		this.externalWritesUnlocked = false;
 		this.unlockedBase = null;
@@ -4366,10 +4550,23 @@ export class PathBreadcrumb {
 	 */
 	private rowDisplayPath(): string {
 		if (this.externalPath !== null) return this.rowPath();
-		if (!this.file) return this.browsePath ?? "";
-		const folder = this.browsePath ?? this.file.parent?.path ?? "";
+		const folder = this.browsePath ?? this.file?.parent?.path ?? "";
 		const base = folder === "/" ? "" : folder;
-		return base ? `${base}/${this.file.name}` : this.file.name;
+		// With a field open the tail of the row is whatever is in it, not the
+		// open file's name. Clicking a chip further up has to keep everything
+		// the field is holding — reading the file's name instead handed back
+		// the path the row had before the session started, which is the whole
+		// of what the click was meant to widen over.
+		// The locations field opens on the machine's own path, which is not a
+		// tail of this row at all: joining it to the chips made a path naming
+		// nothing (`Schemes/2026//home/you/vault/...`).
+		const typed = this.inputEl?.value ?? null;
+		const tail =
+			typed !== null && !this.showingLocations && !isAbsolutePath(typed)
+				? typed
+				: (this.file?.name ?? "");
+		if (!tail) return base;
+		return base ? `${base}/${tail}` : tail;
 	}
 
 	/**
@@ -6261,6 +6458,38 @@ export class PathBreadcrumb {
 		return this.file?.parent?.path ?? "";
 	}
 
+	/**
+	 * The folder the dropdown is about: where the chips stand, plus whatever
+	 * of the field lies in front of the segment the caret is in.
+	 *
+	 * The chips alone were the answer before, which is right only while the
+	 * caret is in the first segment of the field. Click into `Notes.md` in a
+	 * field holding `2026/Notes.md` and the list went on offering the chips'
+	 * own children — the right names for a folder the caret had left.
+	 *
+	 * Listing only: what a commit resolves against is still the chips plus
+	 * the whole of the field, which is the path that was typed.
+	 */
+	private folderAtCaret(): string {
+		const input = this.inputEl;
+		const base = this.currentFolderPath();
+		if (!input) return base;
+		const bounds = segmentBoundsAtCaret(input.value, input.selectionEnd ?? input.value.length);
+		const before = input.value.slice(0, bounds.start).replace(/[\\/]+$/, "");
+		if (!before) return base;
+		return base ? `${base}/${before}` : before;
+	}
+
+	/** The same question outside the vault, where the trail is absolute. */
+	private externalFolderAtCaret(): string | null {
+		if (this.externalPath === null) return null;
+		const input = this.inputEl;
+		if (!input) return this.externalPath;
+		const bounds = segmentBoundsAtCaret(input.value, input.selectionEnd ?? input.value.length);
+		const before = input.value.slice(0, bounds.start).replace(/[\\/]+$/, "");
+		return before ? externalJoin(this.externalPath, before) : this.externalPath;
+	}
+
 	/** Where the row's own file is on disk, whichever side of the vault boundary it is. */
 	private currentAbsolutePath(): string | null {
 		if (this.externalPath !== null) {
@@ -6721,9 +6950,21 @@ export class PathBreadcrumb {
 		// Three events rather than `selectionchange` on the document, so they
 		// go when the field does: dragging over the text fires `select`, the
 		// sideways arrows `keyup`, and a click placing the caret `mouseup`.
-		for (const moved of ["select", "keyup", "mouseup"]) {
+		for (const moved of ["select", "keyup"]) {
 			inputEl.addEventListener(moved, onCaretMoved);
 		}
+		// The pointer is read a tick late, because a press moves the caret
+		// *after* the event that announces it: asked during `mouseup`, the
+		// field still reports where the caret was, the segment looks unchanged
+		// and the list is left describing the folder the caret has just left.
+		// Clicking into another part of the path did nothing at all for that
+		// one reason, while arrowing into it — `keyup`, which comes after the
+		// caret has moved — worked.
+		inputEl.addEventListener("mouseup", (evt) => {
+			window.setTimeout(() => {
+				if (inputEl.isConnected) onCaretMoved(evt);
+			}, 0);
+		});
 
 		const onInput = (evt: Event) => {
 			// Only a genuine keystroke or paste retires the prefill. The
@@ -6858,9 +7099,9 @@ export class PathBreadcrumb {
 
 		try {
 			this.suggest = new FolderChildSuggest(this.plugin.app, inputEl, () => ({
-				folderPath: this.currentFolderPath(),
+				folderPath: this.folderAtCaret(),
 				locations: this.showingLocations ? this.locationEntries() : null,
-				externalFolder: this.externalPath,
+				externalFolder: this.externalFolderAtCaret(),
 				renameMode: this.renameMode,
 				// Outside the vault the name to keep is the external file's,
 				// not the open note's — that note isn't what a move out there

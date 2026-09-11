@@ -215,6 +215,22 @@ test("a folder's note is grey in the list, and so is the field naming it", async
 		await page.evaluate(`return document.querySelector(".lure-path-input")?.dataset.lureTint ?? null;`), "folder-note");
 });
 
+test("a folder note opens from the delimiter however deep its folder is", async () => {
+	await withPeer();
+	await page.evaluate(`await app.vault.create("${ROOT}/child/child.md", ""); ${PAUSE(300)} return true;`);
+	await page.evaluate(openLeaf);
+	// Folder notes answers a breadcrumb press only for the segments it has
+	// marked, and on a path more than one folder deep it marks none of them:
+	// the press that opens a top-level folder's note did nothing at all here,
+	// with the note sitting right there. The row resolves it itself now, from
+	// that plugin's own convention.
+	const spot = JSON.parse(await page.evaluate(spotOf("delimiter")));
+	expect("the delimiter is on screen", spot, (v) => v && typeof v.x === "number");
+	await press(spot, 1);
+	await page.evaluate(PAUSE(900) + "return true;");
+	expect("the folder's own note is what opened", JSON.parse(await page.evaluate(state)).active, `${ROOT}/child/child.md`);
+});
+
 test("with no folder-note plugin running, nothing is made", async () => {
 	// Folder notes are a convention, not a fact about the filesystem. A vault
 	// with no plugin managing them has no such thing, and inventing one here

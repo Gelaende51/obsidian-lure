@@ -1122,6 +1122,103 @@ test("Ctrl+Enter still means a new tab while the list is up", async () => {
 	expect("the note opened in a tab of its own", await page.evaluate(`return app.workspace.getLeavesOfType("markdown").length;`), before + 1);
 });
 
+test("clicking a folder further up keeps everything the field is holding", async () => {
+	await armed();
+	// The row is `Schemes / 2026 / Cake catapult.md` with the name being
+	// edited, so the two folders in front of it are chips. Clicking the outer
+	// one has to hand back the whole path after it — it used to read the open
+	// file's name instead, which threw away every folder the session had
+	// walked into.
+	const after = await page.evaluate(`
+		const c = app.workspace.getMostRecentLeaf().view.containerEl.querySelector(".view-header-title-container");
+		// By name, not by index: the vault's own segment carries the same
+		// class as a folder's, and clicking it opens the locations field with
+		// the machine's path — which is its job, and not this gesture.
+		const seg = [...c.querySelectorAll(".view-header-breadcrumb")].find((e) => e.textContent === "Schemes");
+		if (!seg) return "no Schemes segment";
+		seg.click();
+		${PAUSE(600)}
+		return document.querySelector(".lure-path-input")?.value ?? null;
+	`);
+	expect("the whole path after that folder is in the field", after, NOTE);
+});
+
+test("the dropdown follows the caret into the folder it stands in", async () => {
+	await armed();
+	// The whole path in one field. Shift+Home is the way there while the list
+	// is up: Home itself belongs to the list.
+	await pressKey(page, "shift+Home");
+	await settle(500);
+	// Clicked, not arrowed: clicking into a segment is the gesture this is
+	// about, and it is the one that used to leave the list describing the
+	// folder the caret had just left.
+	const clickAt = async (fraction) => {
+		const box = JSON.parse(await page.evaluate(`
+			const input = document.querySelector(".lure-path-input");
+			const r = input.getBoundingClientRect();
+			return JSON.stringify({ x: r.left, y: r.top + r.height / 2, w: r.width });
+		`));
+		for (const type of ["mousePressed", "mouseReleased"]) {
+			await page.send("Input.dispatchMouseEvent", {
+				type, x: box.x + box.w * fraction, y: box.y, button: "left", clickCount: 1,
+				buttons: type === "mousePressed" ? 1 : 0,
+			});
+		}
+		await settle(600);
+		return JSON.parse(await page.evaluate(`
+			const bar = app.plugins.plugins.lure.manager.breadcrumbFor(app.workspace.getMostRecentLeaf());
+			const input = document.querySelector(".lure-path-input");
+			return JSON.stringify({
+				caret: input?.selectionEnd ?? null,
+				folder: bar?.folderAtCaret?.() ?? null,
+				rows: [...document.querySelectorAll(".suggestion-item .lure-suggest-label")].map((e) => e.textContent),
+			});
+		`));
+	};
+
+	const front = await clickAt(0.05);
+	expect("the caret landed in the first folder", front.caret, (v) => v !== null && v <= "Schemes".length);
+	expect("so the list is about the vault root", front.folder, "");
+	expect("and lists what stands there", front.rows, (v) => v.includes("Schemes"));
+
+	// The chips alone were the answer before, so a caret two folders along
+	// still listed the root's children.
+	const end = await clickAt(0.95);
+	expect("the caret landed in the name", end.caret, (v) => v !== null && v > "Schemes/2026/".length);
+	expect("so the list is about the folder the path names", end.folder, "Schemes/2026");
+	expect("and lists what is in it", end.rows, (v) => v.includes(NOTE.split("/").pop()));
+});
+
+test("a wheel over a name opens its list and walks it", async () => {
+	const r = JSON.parse(await page.evaluate(`
+		document.querySelector(".lure-path-input")?.blur(); document.body.click();
+		${PAUSE(300)}
+		await app.workspace.getLeaf(false).openFile(app.vault.getAbstractFileByPath(${JSON.stringify(NOTE)}));
+		${PAUSE(800)}
+		const c = app.workspace.getMostRecentLeaf().view.containerEl.querySelector(".view-header-title-container");
+		const seg = [...c.querySelectorAll(".view-header-breadcrumb")].pop();
+		const box = seg.getBoundingClientRect();
+		const wheel = (dy) => seg.dispatchEvent(new WheelEvent("wheel", { bubbles: true, cancelable: true, deltaY: dy, clientX: box.left + 4, clientY: box.top + 4 }));
+		// A row with room to spare: the sideways scroll is the wheel's other
+		// reading, and it wins while it applies.
+		const scrolls = c.classList.contains("lure-row-scrolls");
+		wheel(50);
+		${PAUSE(700)}
+		const opened = { field: document.querySelector(".lure-path-input")?.value ?? null, rows: document.querySelectorAll(".suggestion-item").length };
+		const at = () => [...document.querySelectorAll(".suggestion-item")].findIndex((e) => e.classList.contains("is-selected"));
+		const first = at();
+		wheel(50); ${PAUSE(350)}
+		const down = at();
+		wheel(-50); ${PAUSE(350)}
+		return JSON.stringify({ scrolls, opened, first, down, up: at() });
+	`));
+	expect("precondition: the row has room, so nothing is scrolling", r.scrolls, false);
+	expect("the first turn opens the list", r.opened.rows, (v) => v > 1);
+	expect("on that folder", r.opened.field, (v) => typeof v === "string" && v.length > 0);
+	expect("a turn walks it down", r.down, r.first + 1);
+	expect("and back up again", r.up, r.first);
+});
+
 test("an offer disappears the moment the typing leaves it", async () => {
 	await armAtRoot();
 	await type(`${PREFIX}a`);

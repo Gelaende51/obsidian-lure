@@ -17,9 +17,9 @@ Two things on the row are clickable, and **Folder name opens the dropdown** deci
 
 "Opens the folder" means whatever clicking that segment does in stock Obsidian. Without a plugin listening there, the folder is revealed in the File Explorer sidebar — highlighted, and expanded to show its contents.
 
-With [Folder notes](obsidian://show-plugin?id=folder-notes) installed the same click opens that folder's note instead. It is the one folder-note plugin found to claim the header path; [Folder Note](obsidian://show-plugin?id=folder-note-plugin) and [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) manage folder notes but don't listen for a click on the breadcrumb, so with those the delimiter reveals the folder as usual. See [compatibility](compatibility.md#verified-against).
+With [Folder notes](obsidian://show-plugin?id=folder-notes) installed the same click opens that folder's note instead, **at any depth**: the note is resolved here from that plugin's own convention rather than left to it to answer. That plugin recognises only the folders it has marked, which on a path more than one folder deep is none of them, so the press that opened a top-level folder's note used to do nothing further in. The other two folder-note plugins publish no convention to read and never claim the row, so with those the delimiter reveals the folder as it always did. It is the one folder-note plugin found to claim the header path; [Folder Note](obsidian://show-plugin?id=folder-note-plugin) and [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) manage folder notes but don't listen for a click on the breadcrumb, so with those the delimiter reveals the folder as usual. See [compatibility](compatibility.md#verified-against).
 
-A delimiter is **underlined only when the folder before it actually has a folder note**, so the underline is a promise that something is there to open. Every delimiter stays clickable either way — one without an underline reveals and expands its folder in the sidebar, which the pointer cursor still signals. The underline moves off the folder name at the same time: with the swap on, the name opens the dropdown, so marking it as the link to the note would be a lie.
+A delimiter is **underlined only when the folder before it actually has a folder note**, so the underline is a promise that something is there to open — at every depth with [Folder notes](obsidian://show-plugin?id=folder-notes) running, since the note is resolved here rather than left to that plugin to mark. Where it is not the plugin running, nothing is underlined and nothing opens: the delimiter reveals, as it does with no folder-note plugin at all. Every delimiter stays clickable either way — one without an underline reveals and expands its folder in the sidebar, which the pointer cursor still signals. The underline moves off the folder name at the same time: with the swap on, the name opens the dropdown, so marking it as the link to the note would be a lie.
 
 **Rename/move mode overrides both**, whatever the setting says: nothing on the row opens a folder while a move is pending, because opening one would abandon the move. Folder names select for editing and delimiters descend — both are ways of picking the destination — and the underline disappears to show that opening is suspended.
 
@@ -46,6 +46,13 @@ Clicking a delimiter (with **Folder name opens the dropdown** off) descends into
 The list opens on the entry you are standing in — the note this bar belongs to,
 or, when a folder click has listed its parent, that folder — rather than on the
 first row. In a folder of two hundred notes the first row is nowhere near you.
+
+**A wheel over a name opens its list and walks it.** The first turn opens the
+same list that pressing the name opens, and every turn after moves the highlight
+a row, putting what you are pointing at into the field exactly as arrowing does —
+so a sibling can be found and taken without the keyboard. Turning off either end
+gives your text back. A row with more path than pane answers the wheel by
+scrolling sideways instead, which is the reading that wins while it applies.
 
 The list is **as tall as the window lets it be**. Obsidian caps its suggestion
 lists at 300 pixels whatever lies below them; this one runs to the bottom of the
@@ -124,8 +131,9 @@ Menu wording comes from Obsidian's own translations, so it matches the rest of t
 - **The field goes red once nothing answers to what is in it** — no file, no folder, and no row of the dropdown still leading to it. From there <kbd>Enter</kbd> makes what is in the field rather than opening it, and the red says so before you commit. It never appears for a web address, which is not a place on this machine to go looking for. The **whole** field is coloured rather than only the part that is missing: a text field cannot colour half of its own contents. In move/rename mode the field keeps its own red instead, for a name that is illegal or already taken — there, a name nothing answers to is the point.
 - `/` commits the segment you are typing and descends into it, keeping whatever is behind it — the same thing <kbd>Tab</kbd> does when it steps in.
 - <kbd>Backspace</kbd> in an empty input steps back out to the parent folder, reopening its name with the cursor at the end.
+- **Clicking a folder while a field is open widens it to the whole path after that folder**, with the folder's own name selected — the same thing clicking it would have done from the row, and everything the field was holding is kept. What is in the field is the row's tail while it is open, so a folder clicked further up hands back the path the session has walked rather than the one the note started at.
 - **Arrowing off the front of the field brings the folder before it in**, as though the whole path were one line of text. With the caret at the very start, <kbd>←</kbd> takes that folder into the field and lands at the end of its name, <kbd>Ctrl</kbd>+<kbd>←</kbd> lands at the start of it, and <kbd>Home</kbd> takes in every folder up to the vault root — or up to the place you picked, outside the vault — at once. Hold <kbd>Shift</kbd> and the selection stretches over what came in. On macOS the word jump is <kbd>Option</kbd>+<kbd>←</kbd> and <kbd>Cmd</kbd>+<kbd>←</kbd> is <kbd>Home</kbd>. Anywhere but the front these are ordinary text keys. **While the dropdown is showing, <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>PgUp</kbd> and <kbd>PgDn</kbd> belong to it** — first row, last row, a page up, a page down — and reach the text only once it has closed; <kbd>Shift</kbd>+<kbd>Home</kbd> takes in every folder with the list open as well.
-- **The list follows the caret.** Pick out a different part of the path — drag over it, or arrow along — and the dropdown lists *that* folder's children, not the one the field was opened on. Pointing at a row writes it into the segment the caret is in, and taking the pointer off the list gives you your text and your selection back, exactly as they were.
+- **The list follows the caret.** Pick out a different part of the path — drag over it, click into it, or arrow along — and the dropdown lists *that* folder's children, not the one the field was opened on. The folder is counted from the chips plus whatever of the field lies in front of the caret, so clicking into `Notes.md` in a field holding `2026/Notes.md` lists what is in `2026`. Pointing at a row writes it into the segment the caret is in, and taking the pointer off the list gives you your text and your selection back, exactly as they were.
 - **Sweeping a selection out of the field** and letting go somewhere else does not close it. A press that begins in the field belongs to the edit however far it travels; only a press that *begins* outside is a click away.
 - <kbd>Enter</kbd> commits — and when the field names nothing at all, as in an empty folder where there was never anything to complete, it says *No file selected* and stays open rather than closing as though something had been chosen. <kbd>Esc</kbd> or a click elsewhere cancels back to the file's real path. One press of <kbd>Esc</kbd> is enough: it closes the dropdown, leaves the field and hands focus back to the note, rather than taking one press per layer.
 
@@ -408,6 +416,12 @@ Three presses, in a cycle:
 | The red padlock | Writing here is allowed. The padlock is replaced by the rename/move toggle |
 | The toggle | Rename/move mode, exactly as inside the vault |
 | The toggle again | The mode ends and the padlock shuts again — the permission does not outlive the thing it was opened for |
+
+**The rename key asks the padlock too.** Outside your vault a press of it flashes
+the padlock open and shut rather than opening a mode every commit would refuse:
+the refusal arrives before the work rather than after it. Press the padlock, or
+press the rename key again within half a second — the second press grants exactly
+what the button grants, for this location, and opens rename mode with it.
 
 Inside your vault there is no padlock: there is nothing to unlock, and the toggle simply has the slot.
 
@@ -695,6 +709,12 @@ almost always is, and the same thing clicking the name selects. Press it again a
 it walks the same rungs <kbd>Tab</kbd> does: the name with its extension, the path
 from your vault folder, the path from the system root. Typing hands the key back to
 renaming, so the ladder never gets in the way of the edit you came for.
+
+**The cycle closes at the heading.** Five presses take you round it — the inline
+title, the name, the name with its extension, the path from your vault, the path
+from the system root — and the sixth is the inline title again. <kbd>Tab</kbd>
+still laps the same rungs inside the field, because that key is reading the path
+rather than choosing where to rename it.
 
 The **Focus the path bar** command walks the same rungs, starting where an address
 bar starts: the whole path selected.

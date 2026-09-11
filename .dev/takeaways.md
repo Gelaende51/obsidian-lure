@@ -2291,3 +2291,55 @@ global hotkey) is dead the moment the field's own suggester opens: `Ctrl+Enter`
 misses the popover scope, goes to `app.scope`, and Obsidian's "open link in new
 tab" takes it. Every modified key a field needs has to be registered on
 `suggest.scope` as well.
+
+## Folder notes answers a breadcrumb press only for the segments it marked
+
+The delimiter's folder-note press is delegated: the row re-dispatches the click
+on Obsidian's own segment and lets whichever folder-note plugin is running
+answer it. Folder notes (LostPaul) answers only for segments carrying its own
+`data-path`, and it marks them by walking the title parent and accumulating
+`innerText` — which in practice lands only on top-level folders. So the same
+press that opens `testfolder2`'s note does nothing at all on
+`parallel structures/parent1/childa/unnname`, whose note is sitting right there,
+and no underline appears either. Proven not to be this plugin's doing: with Lure
+disabled the segments are plain text and the press is still inert.
+
+The convention is already read from that plugin's own settings here (for making
+a folder note, which cannot be delegated), so the resolution is free: the row
+looks the note up itself and opens it, and delegation stays as the fallback for
+folders that have none. Worth a bug report upstream.
+
+Gated on *that* plugin running, though, and not on "some folder-note plugin is
+loaded" — which is what the convention reader answers, falling back to the
+default layout for the two peers that keep no settings of their own. Right for
+listing a note and for making one; wrong for opening one from the row, because
+those two deliberately never claim the header path, and a press there is
+Obsidian's to answer. Resolving for them turned a documented reveal into an
+opened note, and the compatibility suite caught it on both.
+
+## The dropdown's folder was the chips, not the caret
+
+The suggester was handed `currentFolderPath()` — where the chip trail stands —
+while the field can hold several segments of path after it. Click into
+`Notes.md` in a field holding `2026/Notes.md` and the list went on offering the
+chips' own children: the right names for a folder the caret had left. The
+listing now counts the folder as the chips plus whatever of the field lies in
+front of the caret's segment. Only the listing: what a commit resolves is still
+the chips plus the whole field, which is the path that was typed.
+
+## A press moves the caret after the event that announces it
+
+The field re-queries its dropdown whenever the caret moves into another
+segment of the path, and it read the caret from `select`, `keyup` and
+`mouseup` on the input. Arrowing worked; clicking into another part of the
+path did nothing at all. The input really does receive `mousedown`,
+`mouseup` and `click` from the press — recording them on the live element
+proves it — and the caret really does end up where the press put it. It is
+the order: during `mouseup` the selection is still where it *was*, so the
+segment looks unchanged and the handler bails. Dispatching a synthetic
+`mouseup` after setting the selection by hand re-queries correctly, which is
+what separates "the event never arrived" from "the event arrived too early".
+
+Reading the pointer one tick later fixes it. Worth remembering for anything
+that answers a click by asking where the caret is: key events are safe to
+read synchronously, pointer events are not.

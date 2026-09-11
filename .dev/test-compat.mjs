@@ -265,7 +265,14 @@ function folderNoteTests(peer) {
 		// Only some folder-note plugins hook the header path. When one has
 		// claimed the segment the click must open its note; when none has,
 		// the correct behaviour is Obsidian's own — reveal the folder.
-		if (r.claimed) {
+		// Folder notes is the one whose convention this plugin reads, so the
+		// note is resolved here and opens whether or not that plugin marked the
+		// segment — it marks only the shallow ones, and the press used to die
+		// on every folder further in. The other two keep no convention of their
+		// own and never claim the header, so there the press stays Obsidian's.
+		if (peer.id === "folder-notes") {
+			expect("the folder note opened, marked or not", r.after, `${FIXTURE}/${FIXTURE}.md`);
+		} else if (r.claimed) {
 			expect("the claimed segment opened its folder note", r.after, `${FIXTURE}/${FIXTURE}.md`);
 		} else {
 			expect("unclaimed, so the folder was revealed instead", r.revealed, true);

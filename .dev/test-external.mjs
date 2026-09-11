@@ -564,20 +564,23 @@ test("path bar: rename moves the file and follows it", async () => {
 	expect("view followed the move", r.viewPath, to);
 });
 
-test("path bar: pressing the padlock mid-rename keeps what was typed", async () => {
+test("path bar: pressing the padlock mid-edit keeps what was typed", async () => {
 	const from = join(BED, "padlock-rename.txt");
 	const to = join(BED, "padlock-renamed.txt");
 	writeFileSync(from, "rename me\n");
-	// The order the interface actually asks for: arm the rename, type, and
-	// only then press the padlock, because the refusal is what tells you to
-	// press it. The padlock lives outside the breadcrumb container, so it
-	// used to count as a click *away* from the row — which threw the typed
-	// name away and left Enter doing nothing. Every other rename test sets
-	// the unlock flag directly and so could never see it.
+	// The padlock lives outside the breadcrumb container, so it used to count
+	// as a click *away* from the row — which threw the typed name away and
+	// left Enter doing nothing. Every other test here sets the unlock flag
+	// directly and so could never see it.
+	//
+	// Typed into the navigating field rather than a rename one: out here the
+	// rename key now asks the padlock before it opens any mode, so "typing in
+	// rename mode with the padlock shut" is a state that no longer exists.
+	// What is under test is the press, and the press is the same.
 	const r = await page.evaluate(`
 		${open(from)}
 		${breadcrumb}
-		bc.startHeaderRename();
+		bc.enterTypingMode("");
 		${PAUSE(300)}
 		bc.inputEl.value = "padlock-renamed.txt";
 		const container = app.workspace.activeLeaf.view.containerEl;
@@ -595,6 +598,9 @@ test("path bar: pressing the padlock mid-rename keeps what was typed", async () 
 					? "rename"
 					: null,
 		};
+		// Renaming is what the typed name was for, so the mode is armed once
+		// the padlock has granted it — which is the press the user makes next.
+		bc.renameMode = true;
 		if (bc.inputEl) await bc.handleTypedSubmit(bc.inputEl.value, false);
 		${PAUSE(500)}
 		return survived;
@@ -1646,6 +1652,52 @@ test("writes: Ctrl+Enter onto the file's own name says the name is taken", async
 	// Inside the vault the same press has always said so; out here it ended
 	// the rename without a word, which reads as the key doing nothing.
 	expect("it says so", notice, (v) => typeof v === "string" && v.includes(from));
+});
+
+test("writes: the rename key asks the padlock, and shows it asking", async () => {
+	const at = join(BED, "padlock-key.txt");
+	writeFileSync(at, "hello\n");
+	await page.evaluate(`${open(at)} return true;`);
+	await pressKey(page, "F2");
+	const asked = await page.evaluate(`
+		${PAUSE(150)}
+		${breadcrumb}
+		const el = app.workspace.activeLeaf.view.containerEl.querySelector(".lure-unlock-btn");
+		return JSON.stringify({
+			rename: bc.renameMode,
+			unlocked: bc.allowsExternalWrites(),
+			flashing: !!el?.classList.contains("lure-padlock-flash"),
+			icon: el?.querySelector("svg")?.getAttribute("class") ?? null,
+		});
+	`).then(JSON.parse);
+	// It used to open rename mode out here with the padlock shut, leaving the
+	// refusal to the commit — true, and silent until the work was done.
+	expect("one press opens no mode", asked.rename, false);
+	expect("and grants nothing", asked.unlocked, false);
+	expect("the padlock flashes instead", asked.flashing, true);
+	expect("showing itself open while it does", asked.icon, (v) => typeof v === "string" && v.includes("lock-open"));
+});
+
+test("writes: two rename presses in a breath are the padlock pressed", async () => {
+	const at = join(BED, "padlock-double.txt");
+	writeFileSync(at, "hello\n");
+	await page.evaluate(`${open(at)} return true;`);
+	// Back to back, with nothing read in between: the second press has half a
+	// second to arrive, and a round trip to the page would spend it.
+	await pressKey(page, "F2");
+	await pressKey(page, "F2");
+	const twice = await page.evaluate(`
+		${PAUSE(500)}
+		${breadcrumb}
+		return JSON.stringify({
+			rename: bc.renameMode,
+			unlocked: bc.allowsExternalWrites(),
+			field: document.querySelector(".lure-path-input")?.value ?? null,
+		});
+	`).then(JSON.parse);
+	expect("the second press grants what the button grants", twice.unlocked, true);
+	expect("and rename mode opens with it", twice.rename, true);
+	expect("on the file's own name", twice.field, "padlock-double.txt");
 });
 
 // ------------------------------------------------------------------ run

@@ -139,6 +139,35 @@ test("scrolled: only the rename key closes the dialog", async () => {
 	expect("and still type into it", await page.evaluate(`return document.querySelector(".rename-textarea")?.value ?? null;`), "q");
 });
 
+test("the rename key walks the heading, the name, the extension and both paths, then round", async () => {
+	await page.evaluate(arrange(0));
+	const rung = async () => JSON.parse(await page.evaluate(`
+		const input = document.querySelector(".lure-path-input");
+		return JSON.stringify({
+			active: document.activeElement?.className ?? null,
+			value: input?.value ?? null,
+			selected: input ? input.value.slice(input.selectionStart, input.selectionEnd) : null,
+		});
+	`));
+	const seen = [];
+	for (let i = 0; i < 6; i++) {
+		await pressKey(page, "F2");
+		await page.evaluate(PAUSE(650) + "return true;");
+		seen.push(await rung());
+	}
+	const name = NOTE.split("/").pop();
+	const stem = name.replace(/\.md$/, "");
+	expect("the heading takes the first press", seen[0].active, "inline-title");
+	expect("then the name without its extension", [seen[1].value, seen[1].selected], [name, stem]);
+	expect("then the name with it", seen[2].selected, name);
+	expect("then the path from the vault", seen[3].selected, NOTE);
+	expect("then the path from the system root", seen[4].selected, (v) => typeof v === "string" && v.endsWith(NOTE) && v.startsWith("/"));
+	// The last rung hands the key back rather than lapping the ladder: the
+	// cycle is a way of choosing where to rename, and a loop with no way out
+	// but Escape is not one.
+	expect("and the press after that is the heading again", seen[5].active, "inline-title");
+});
+
 test("the rename key leaves other dialogs alone", async () => {
 	await page.evaluate(arrange(4000));
 	// Obsidian's delete confirmation, opened without the rename command being

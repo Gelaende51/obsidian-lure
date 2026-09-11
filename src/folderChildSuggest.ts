@@ -466,6 +466,23 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 	}
 
 	/**
+	 * Moves the highlight by whole rows, the way an arrow key does.
+	 *
+	 * Handed the wheel event that asked for it, because that is what tells
+	 * `onSelectedChange` a person moved the highlight rather than the list
+	 * settling itself — which is what makes the row preview into the field.
+	 * Stepping off either end rests at nothing, exactly as arrowing does:
+	 * the wrapping lives in `wrapList`, and this goes through it.
+	 */
+	stepHighlight(rows: number, evt: UserEvent): boolean {
+		const list = this.list();
+		const values = list?.values;
+		if (!list || !Array.isArray(values) || values.length === 0) return false;
+		list.setSelectedItem(list.selectedItem + rows, evt);
+		return true;
+	}
+
+	/**
 	 * What the field should be coloured, read off the list as it stands.
 	 *
 	 * The field takes the colour of the row it stands for, so a name reads the
