@@ -2343,3 +2343,64 @@ what separates "the event never arrived" from "the event arrived too early".
 Reading the pointer one tick later fixes it. Worth remembering for anything
 that answers a click by asking where the caret is: key events are safe to
 read synchronously, pointer events are not.
+
+## A list filtered by the name you are standing on is a list of one
+
+The dropdown follows the caret: move into another segment of the path and it
+lists that folder. It was also being filtered by the text of the segment the
+caret had landed in — so the one row that matched was the folder itself, and
+the gesture whose whole purpose is finding a sibling offered none. The field's
+own opening gesture already had the rule right: a folder click passes an empty
+query until the first real keystroke, because what is prefilled is about to be
+typed over. The caret move and the reveal that brings a folder into the field
+needed the same treatment.
+
+Worth noticing that the regression test written the same night did not catch
+it. "The list holds the folder the caret stands in" is true of a list narrowed
+to that folder alone; asserting a sibling is present is what separates the two.
+
+The guide had it right the whole time — "the dropdown lists the whole folder
+regardless of what's prefilled; it only starts filtering once you actually
+type" — so the drift was the code's, not the documentation's. Reading the page
+that describes a feature before extending it would have caught this before the
+user did.
+
+## Restore what you found, not what you assume the default is
+
+Five suites ended by writing `accessExternalFiles: false`, reasoning that off
+is where a vault starts — one of them with a comment saying "put the opt-in
+back where it was found" directly above the constant. In a vault where the
+setting is on, every run turned it off and left it off. The symptom surfaces
+far from the cause: the vault name stops opening its dropdown, because with
+that setting off the segment reveals the root instead, which reads as the
+plugin having broken. Capture the value before the first case and put *that*
+back; the external suite already did this, and copying its shape would have
+cost nothing.
+
+## Identity by character bounds breaks the moment the text changes length
+
+"Has the caret moved into another segment of the path?" was answered by the
+segment's start and end offsets. Those move whenever the text around them
+changes length, so typing a shorter name over a longer one read as the caret
+walking into another folder — and the folder listing that answers that threw
+away the filter the very keystroke had just set. The list reopened whole on
+every keystroke that shortened a name, which then let `Home` reach the list
+instead of the field, and left the field's colour reading off a preselected
+row. Three suite failures, one cause.
+
+What is stable is the separator count: the third segment stays the third
+segment however its name is edited. Position-derived identities are worth
+distrusting wherever the thing they index into is editable.
+
+## Mark what is in flight, not the payload you built
+
+The tab bar takes a folder dragged off this row and refuses one dragged out of
+the File Explorer, which needs a mark saying where the drag began. Setting it
+on the payload this plugin builds looked right and worked when tested by hand.
+It failed in the suite because Obsidian's own breadcrumb answers the same
+press with a payload of its own, and `dragManager.draggable` ends up holding
+whichever started last — so the mark sat on an object nobody was carrying.
+Marking `dragManager.draggable` itself, and again on the next tick once every
+handler for that press has run, is order-proof. Worth remembering wherever a
+host and a plugin both answer one gesture: the shared slot is the truth, not
+the object you handed it.

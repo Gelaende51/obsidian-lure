@@ -1179,7 +1179,11 @@ test("the dropdown follows the caret into the folder it stands in", async () => 
 	const front = await clickAt(0.05);
 	expect("the caret landed in the first folder", front.caret, (v) => v !== null && v <= "Schemes".length);
 	expect("so the list is about the vault root", front.folder, "");
+	// The folder's whole contents, not the one name the caret is sitting on:
+	// a list filtered by that name holds a single row, which is itself, and
+	// looking for a sibling is what moving the caret there was for.
 	expect("and lists what stands there", front.rows, (v) => v.includes("Schemes"));
+	expect("its siblings included", front.rows, (v) => v.includes("atlas") && v.length > 1);
 
 	// The chips alone were the answer before, so a caret two folders along
 	// still listed the root's children.
@@ -1187,6 +1191,7 @@ test("the dropdown follows the caret into the folder it stands in", async () => 
 	expect("the caret landed in the name", end.caret, (v) => v !== null && v > "Schemes/2026/".length);
 	expect("so the list is about the folder the path names", end.folder, "Schemes/2026");
 	expect("and lists what is in it", end.rows, (v) => v.includes(NOTE.split("/").pop()));
+	expect("all of it, not the name alone", end.rows, (v) => v.includes("Abacus.md") && v.length > 1);
 });
 
 test("a wheel over a name opens its list and walks it", async () => {

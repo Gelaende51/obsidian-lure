@@ -31,6 +31,27 @@ const BED = join(homedir(), "lure-url-fixtures");
 const page = await connect();
 
 /**
+ * The opt-in as this vault has it, captured before any case changes it.
+ *
+ * The teardown used to put back a constant `false`, on the assumption that off
+ * is where every vault starts. In a vault where it is on, running this suite
+ * turned it off and left it off — and the vault name then stops opening its
+ * dropdown, which reads as the plugin having broken rather than as the suite
+ * having tidied up after itself wrongly.
+ */
+const EXTERNAL_AT_START = await (async () => {
+	for (let i = 0; i < 25; i++) {
+		const seen = await page.evaluate(
+			`const s = app.plugins?.plugins?.lure?.settings;
+			 return s ? JSON.stringify(!!s.accessExternalFiles) : null;`,
+		);
+		if (seen !== null) return JSON.parse(seen);
+		await new Promise((r) => setTimeout(r, 200));
+	}
+	return false;
+})();
+
+/**
  * The state every case here starts from. `reset` and `teardown` are
  * declared at the foot of the file, beside the fixtures they act on;
  * function declarations hoist, so the suite can still be built here,
@@ -230,7 +251,7 @@ async function teardown() {
 	// Put the opt-in back where it was found. Leaving it on is how the next
 	// suite comes to depend on it without saying so — which is exactly what
 	// the gestures suite had done.
-	await setSettings(page, { accessExternalFiles: false });
+	await setSettings(page, { accessExternalFiles: EXTERNAL_AT_START });
 	rmSync(BED, { recursive: true, force: true });
 	page.close();
 }

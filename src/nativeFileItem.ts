@@ -108,11 +108,24 @@ export function makeDraggable(
 						? dragManager.dragFile(evt, target)
 						: null;
 			if (!data) return;
+			dragManager.onDragStart(evt, data);
 			// Marked as this plugin's, so a tab bar can take a folder off the row
 			// without changing what a folder dragged out of the File Explorer
 			// does there — see `BreadcrumbManager.wireTabBars`.
-			(data as unknown as { lure?: boolean }).lure = true;
-			dragManager.onDragStart(evt, data);
+			//
+			// Marked on whatever is actually in flight rather than on the object
+			// built here: Obsidian's own breadcrumb answers the same press with
+			// a payload of its own, and the one that starts last is the one the
+			// drop will see. Marking our own object left the mark on a payload
+			// nobody was carrying, and the tab bar turned the folder away.
+			// Again on the next tick, once every handler for this press has run,
+			// because which of the two goes last is theirs to decide.
+			const mark = (): void => {
+				const flight = dragManager.draggable as { file?: TAbstractFile; lure?: boolean } | null;
+				if (flight && flight.file === target) flight.lure = true;
+			};
+			mark();
+			window.setTimeout(mark, 0);
 		} catch {
 			// Internal API moved: no drag payload, so the drag is simply inert.
 		}

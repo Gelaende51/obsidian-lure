@@ -28,6 +28,27 @@ const EXT = `${process.env.HOME}/lure-gesture-fixtures`;
 const page = await connect();
 
 /**
+ * The opt-in as this vault has it, captured before any case changes it.
+ *
+ * The teardown used to put back a constant `false`, on the assumption that off
+ * is where every vault starts. In a vault where it is on, running this suite
+ * turned it off and left it off — and the vault name then stops opening its
+ * dropdown, which reads as the plugin having broken rather than as the suite
+ * having tidied up after itself wrongly.
+ */
+const EXTERNAL_AT_START = await (async () => {
+	for (let i = 0; i < 25; i++) {
+		const seen = await page.evaluate(
+			`const s = app.plugins?.plugins?.lure?.settings;
+			 return s ? JSON.stringify(!!s.accessExternalFiles) : null;`,
+		);
+		if (seen !== null) return JSON.parse(seen);
+		await new Promise((r) => setTimeout(r, 200));
+	}
+	return false;
+})();
+
+/**
  * The state every case here starts from: this session's build, nothing left
  * open, the fixtures as they were declared, and the vault note on screen.
  *
@@ -72,8 +93,9 @@ const { test, expect, run } = createSuite({
 			if (existing) await app.vault.adapter.rmdir("${ROOT}", true);
 			return true;
 		`);
-		// Back to the default, so the next suite has to declare it too.
-		await setSettings(page, { accessExternalFiles: false });
+		// Back to where this vault had it, so the next suite has to declare
+		// what it needs — without this one deciding it for the vault.
+		await setSettings(page, { accessExternalFiles: EXTERNAL_AT_START });
 		await setVaultConfig(page, LINKS_AT_START);
 		rmSync(EXT, { recursive: true, force: true });
 		page.close();

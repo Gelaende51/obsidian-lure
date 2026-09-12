@@ -5349,8 +5349,10 @@ export class PathBreadcrumb {
 			input.setSelectionRange(caret, caret);
 		}
 		// The list follows the caret, and the caret is now in a folder the list
-		// was not about.
-		this.suggestQueryOverride = queryAtCaret(input);
+		// was not about. Unfiltered, for the reason the caret move gives: what
+		// the folder that has just come in is *for* is its siblings, and
+		// filtering by the name standing there leaves that one row.
+		this.suggestQueryOverride = "";
 		input.dispatchEvent(new Event("input"));
 		return true;
 	}
@@ -6916,11 +6918,22 @@ export class PathBreadcrumb {
 		// field can report a selection without one having been made, and
 		// re-querying from that is a rebuild of the list nobody asked for —
 		// which is enough to lose the row the walk was standing on.
-		const segmentKey = (): string => {
-			const bounds = segmentBoundsAtCaret(inputEl.value, inputEl.selectionEnd ?? 0);
-			return `${bounds.start}:${bounds.end}`;
+		// Which segment of the path the caret is in, counted in separators
+		// rather than in characters. A segment's bounds shift whenever the text
+		// around it changes length, so keying on them made *typing* look like
+		// the caret walking into another folder — and the fresh folder listing
+		// that answers that threw away the filter the typing had just set,
+		// reopening the whole folder on every keystroke that shortened a name.
+		const segmentIndex = (): number => {
+			const caret = inputEl.selectionEnd ?? 0;
+			let index = 0;
+			for (let i = 0; i < caret && i < inputEl.value.length; i++) {
+				const ch = inputEl.value[i];
+				if (ch === "/" || ch === "\\") index += 1;
+			}
+			return index;
 		};
-		let standingIn = segmentKey();
+		let standingIn = segmentIndex();
 
 		const onCaretMoved = (evt: Event) => {
 			// Not for the keys the field answers itself. Tab walks the path,
@@ -6939,12 +6952,15 @@ export class PathBreadcrumb {
 			// A different segment, not merely a different caret. Moving
 			// within one changes nothing about which folder is being listed
 			// or what it is being filtered by.
-			const key = segmentKey();
-			if (key === standingIn) return;
-			standingIn = key;
-			const query = queryAtCaret(inputEl);
-			if (query === this.suggestQueryOverride) return;
-			this.suggestQueryOverride = query;
+			const index = segmentIndex();
+			if (index === standingIn) return;
+			standingIn = index;
+			// The whole folder, not the name the caret has just landed on.
+			// Moving into a segment is how its siblings are looked for, and
+			// filtering by the name already sitting there leaves exactly one
+			// row: itself. Typing narrows it from there — the same rule a
+			// folder click follows, which passes "" until the first keystroke.
+			this.suggestQueryOverride = "";
 			inputEl.dispatchEvent(new Event("input"));
 		};
 		// Three events rather than `selectionchange` on the document, so they
