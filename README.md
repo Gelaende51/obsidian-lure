@@ -108,6 +108,7 @@ Contributors will be listed here as contributions land.
 
 
 - **Documentation:** [docs/](docs/)
+- **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 - **Plugin page:** https://community.obsidian.md/plugins/lure
 - **Web presence / source:** https://github.com/Gelaende51/obsidian-lure
 - **Donations:** [Ko-fi](https://ko-fi.com/vault51) — see [contributing](#contributing).

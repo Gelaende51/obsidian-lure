@@ -8,6 +8,7 @@
  *
  *   node scripts/i18n-selector.mjs README de
  *   node scripts/i18n-selector.mjs usage en
+ *   node scripts/i18n-selector.mjs CHANGELOG en
  *
  * Every locale the plugin ships gets an entry, named in its own language, so
  * a reader who cannot read the page they landed on can still find their own.
@@ -65,24 +66,33 @@ export const LANGUAGES = [
 ];
 
 
+/** English documents that live at the repository root rather than in docs/. */
+const AT_ROOT = new Set(["README", "CHANGELOG"]);
+
 /**
- * `doc` is "README" or "usage"; `lang` the language the page itself is in.
+ * `doc` is "README", "usage" or "CHANGELOG"; `lang` the language the page
+ * itself is in.
  *
  * The English pages sit at the repository root and in docs/, the translated
  * ones together in docs/i18n/, so the relative paths differ per document and
  * per side of that boundary.
+ *
+ * `available`, when given, is the locales that actually have this document,
+ * and only those are offered. A document translated into fewer languages than
+ * the plugin ships must not link to pages that do not exist.
  */
-export function selector(doc, lang) {
+export function selector(doc, lang, available) {
 	const href = (code) => {
 		if (code === lang) return null;
-		// The English README sits at the repository root, the English usage
-		// guide one level down in docs/ — so they reach docs/i18n/ by
-		// different paths.
-		if (lang === "en") return `${doc === "README" ? "docs/i18n" : "i18n"}/${doc}.${code}.md`;
-		if (code === "en") return doc === "README" ? "../../README.md" : "../usage.md";
+		// The English README and changelog sit at the repository root, the
+		// English usage guide one level down in docs/ — so they reach
+		// docs/i18n/ by different paths.
+		if (lang === "en") return `${AT_ROOT.has(doc) ? "docs/i18n" : "i18n"}/${doc}.${code}.md`;
+		if (code === "en") return AT_ROOT.has(doc) ? `../../${doc}.md` : `../${doc}.md`;
 		return `${doc}.${code}.md`;
 	};
-	const parts = LANGUAGES.map(([code, name]) => {
+	const offered = available ? new Set(["en", lang, ...available]) : null;
+	const parts = LANGUAGES.filter(([code]) => !offered || offered.has(code)).map(([code, name]) => {
 		const target = href(code);
 		return target ? `[${name}](${target})` : `**${name}**`;
 	});

@@ -8,9 +8,11 @@
  * written with the placeholder; this stamps them, and re-stamps every file
  * whenever a language is added or removed.
  *
- * With no translations present the line is removed entirely rather than left
- * as a selector offering one language — which is the state a fresh template is
- * in, and it should look finished rather than pending.
+ * Availability is per document: the README may be translated into every
+ * language while the changelog is translated into none. A document with no
+ * translations gets an invisible placeholder rather than a selector offering
+ * one language, so it looks finished rather than pending — and the placeholder
+ * is still where the selector goes once its first translation lands.
  */
 import { readdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
 import { execFileSync } from "node:child_process";
@@ -22,14 +24,21 @@ import { selector } from "./i18n-selector.mjs";
 const root = fileURLToPath(new URL("..", import.meta.url));
 const i18n = root + "docs/i18n/";
 
-/** Locales with at least one translated document. */
-const available = existsSync(i18n)
-	? [...new Set(
-			readdirSync(i18n)
-				.map((f) => /^(?:README|usage)\.(.+)\.md$/.exec(f)?.[1])
-				.filter(Boolean),
-		)]
-	: [];
+/** The documents that can be translated, by the name their files carry. */
+const DOCS = ["README", "usage", "CHANGELOG"];
+const TRANSLATED = new RegExp(String.raw`^(${DOCS.join("|")})\.(.+)\.md$`);
+
+/** For each document, the locales it has been translated into. */
+const available = Object.fromEntries(DOCS.map((doc) => [doc, []]));
+if (existsSync(i18n)) {
+	for (const f of readdirSync(i18n)) {
+		const m = TRANSLATED.exec(f);
+		if (m) available[m[1]].push(m[2]);
+	}
+}
+
+/** What stands in for the selector while a document has no translations: invisible when rendered. */
+const PLACEHOLDER = "<!-- {{SELECTOR}} -->";
 
 // Either the placeholder or an already-stamped line, so a language added later
 // updates every file rather than only the fresh ones.
@@ -39,18 +48,19 @@ const available = existsSync(i18n)
 // label was dropped is re-stamped rather than silently skipped.
 const ITEM = String.raw`(?:\[[^\]]*\]\([^)]*\)|\*\*[^*\n]+\*\*)`;
 const PATTERN = new RegExp(
-	String.raw`^(?:\{\{SELECTOR\}\}|\*\*[^*\n]+\*\* ${ITEM}(?: · ${ITEM})*|${ITEM}(?: · ${ITEM})+)\n\n`,
+	String.raw`^(?:<!-- \{\{SELECTOR\}\} -->|\{\{SELECTOR\}\}|\*\*[^*\n]+\*\* ${ITEM}(?: · ${ITEM})*|${ITEM}(?: · ${ITEM})+)\n\n`,
 	"m",
 );
 
 const targets = [
 	["README.md", "README", "en"],
 	["docs/usage.md", "usage", "en"],
+	["CHANGELOG.md", "CHANGELOG", "en"],
 	...(existsSync(i18n)
 		? readdirSync(i18n)
 				.filter((f) => f.endsWith(".md"))
 				.map((f) => {
-					const m = /^(README|usage)\.(.+)\.md$/.exec(f);
+					const m = TRANSLATED.exec(f);
 					return m ? [`docs/i18n/${f}`, m[1], m[2]] : null;
 				})
 				.filter(Boolean)
@@ -63,7 +73,7 @@ for (const [file, doc, lang] of targets) {
 	const path = root + file;
 	if (!existsSync(path)) continue;
 	const text = readFileSync(path, "utf8");
-	const line = available.length ? `${selector(doc, lang, available)}\n\n` : "{{SELECTOR}}\n\n";
+	const line = available[doc].length ? `${selector(doc, lang, available[doc])}\n\n` : `${PLACEHOLDER}\n\n`;
 	let next;
 	if (PATTERN.test(text)) {
 		next = text.replace(PATTERN, () => line);
@@ -77,11 +87,11 @@ for (const [file, doc, lang] of targets) {
 		continue;
 	}
 	if (next !== text) writeFileSync(path, next);
-	available.length ? stamped++ : cleared++;
+	available[doc].length ? stamped++ : cleared++;
 }
 
-if (available.length) console.log(`stamped ${stamped} documents across ${available.length + 1} languages`);
-else console.log(`no translations present — ${cleared} documents reset to {{SELECTOR}}`);
+console.log(`stamped ${stamped} documents with a language row`);
+if (cleared) console.log(`${cleared} document${cleared === 1 ? "" : "s"} with no translations left on the placeholder`);
 
 // --- freshness -------------------------------------------------------------
 //
@@ -101,7 +111,7 @@ if (process.argv.includes("--freshness")) {
 	const dryRun = process.argv.includes("--check");
 	const headOf = (file) =>
 		execFileSync("git", ["log", "-1", "--format=%h", "--", file], { cwd: root, encoding: "utf8" }).trim();
-	const source = { README: "README.md", usage: "docs/usage.md" };
+	const source = { README: "README.md", usage: "docs/usage.md", CHANGELOG: "CHANGELOG.md" };
 	const wanted = Object.fromEntries(Object.entries(source).map(([k, v]) => [k, headOf(v)]));
 	let stale = 0;
 	for (const [file, doc, lang] of targets) {

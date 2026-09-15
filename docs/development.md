@@ -418,6 +418,8 @@ git push
 git tag -a 1.0.2 -m "Lure 1.0.2" && git push origin 1.0.2
 ```
 
+Move the *Unreleased* entries in `CHANGELOG.md` under a heading for the new version, with its date and a footnote holding its compare link (`## 1.3.0 — 2026-09-20[^1.3.0]`, and `[^1.3.0]: Changes since 1.2.0: <…/compare/1.2.0...1.3.0>` at the bottom, with the *Unreleased* footnote moved on to compare from the new tag), before tagging — the tag should point at a commit whose changelog already names it. Entries describe what a user notices, not how it was built; the commit messages carry the rest.
+
 Bump `manifest.json` and add the matching `versions.json` entry (`"<plugin version>": "<minimum Obsidian version>"`) before tagging — Obsidian uses that map to decide which release an older app may install. Keep every past entry: the map is how an app too old for the current release finds the newest one it can still run, so deleting a line strands those users rather than tidying anything.
 
 The workflow rebuilds from the tag rather than uploading the local `main.js`, which is what lets the review verify the bundle byte-for-byte against the source. It follows that the tag must point at a commit whose `npm run build` succeeds — cutting one from a tree that only builds locally fails in the open.
@@ -439,6 +441,8 @@ npm run stamp                          # rewrite the language row in every docum
 npm run stamp -- --freshness --check   # which translations name an old commit, and how far behind
 npm run stamp -- --freshness           # claim they are current
 ```
+
+`CHANGELOG.md` takes part the same way once it is translated: its translations go in `docs/i18n/CHANGELOG.<code>.md`, and each document's language row offers only the languages that document actually exists in. Until the first one lands it carries an invisible `<!-- {{SELECTOR}} -->`, which is where the row will go.
 
 Bumping a hash is a claim that the translation reflects that commit, so it is never a side effect of stamping the language row — read what `--check` lists first. The hash can only be bumped after the English change is committed, which is why this is a second commit rather than part of the first.
 
