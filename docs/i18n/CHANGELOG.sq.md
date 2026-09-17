@@ -37,7 +37,7 @@
 ### Të ndrequra
 
 - **Një fushë e hapur i mbijetonte skedarit të vet.** Kalimi te një shënim tjetër me shiritin e shtegut të hapur e linte rreshtin duke emërtuar skedarin e vjetër për pjesën e mbetur të sesionit.
-- **Fshij, Riemërto dhe Bëj një kopje refuzoheshin jashtë kasafortës** edhe me dryjen të hapur, dhe nuk arriheshin kurrë për figurat, PDF-të dhe faqet.
+- **Fshij, Riemërto dhe Krijo një kopje refuzoheshin jashtë kasafortës** edhe me dryjen të hapur, dhe nuk arriheshin kurrë për figurat, PDF-të dhe faqet.
 - **<kbd>Ctrl</kbd>+<kbd>Enter</kbd> nuk bënte asgjë ndërsa lista ishte e hapur** — pikërisht ashtu si hapet çdo fushë.
 - **<kbd>Enter</kbd> me listën të hapur por pa asgjë të theksuar** nuk bënte asgjë; tani e kryen atë që ke shkruar.
 - **Një rresht që dilte jashtë kufijve me të gjithë emrat tashmë në formën më të shkurtër nuk mund të rrëshqitej**, duke e lënë fundin e shtegut të paarritshëm.
@@ -66,7 +66,7 @@
 ### Të shtuara
 
 - **Fjalor i klikimit të djathtë.** Një shtypje hap një meny; dy e tri shtypje kopjojnë gjithnjë e më shumë — emrin, emrin me prapashtesën e tij, shtegun. Menytë e rreshtit tani përputhen zë për zë me ato të Eksploruesit të dokumenteve.
-- **Meny jashtë kasafortës.** Rreshtat e listës dhe parësi i jashtëm ofrojnë hapjen, *Kopjo shtegun* dhe *Shfaqe te eksploruesi i sistemit*; me dryjen të hapur, edhe *Shënim i ri*, *Dosje e re*, *Bëj një kopje*, *Riemërto…* dhe *Fshij*. Fshirja e çon në koshin e sistemit dhe nuk është kurrë e përhershme.
+- **Meny jashtë kasafortës.** Rreshtat e listës dhe parësi i jashtëm ofrojnë hapjen, *Kopjo shtegun* dhe *Shfaq në dosje*; me dryjen të hapur, edhe *Dokument i ri*, *Dosje e re*, *Krijo një kopje*, *Riemërto…* dhe *Fshij*. Fshirja e çon në koshin e sistemit dhe nuk është kurrë e përhershme.
 - **Hape diku tjetër.** <kbd>Ctrl</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd> dhe klikimi me butonin e mesëm mbi emrin e shënimit ose mbi një dosje e hapin atë në një skedë të re, në një ndarje ose në një dritare. Të dyja janë të zvarritshme, si rreshtat e tyre në Eksploruesin e dokumenteve.
 - **Zvarrit shënime mbi rresht për t'i zhvendosur.** Lësho një shënim, disa shënime ose një dosje mbi një segment dosjeje ose mbi emrin e kasafortës.
 - **Komandë: Fokuso shiritin e shtegut**, me të gjithë shtegun të përzgjedhur — pa tast të parazgjedhur, lidhe vetë.
@@ -130,7 +130,7 @@
 ### Dokumentacion
 
 - README-ja dhe udhëzuesi i përdorimit janë të disponueshëm në të 44 gjuhët që vijnë me shtojcën.
-- Udhëzuesi përmendte cilësimin *Detect all file extensions* të Obsidian-it, i cili tani quhet *Show all file types*.
+- Udhëzuesi përmendte cilësimin *Detect all file extensions* të Obsidian-it, i cili tani quhet *Zbulo të gjithë llojet e materialeve*.
 
 ## 1.0.0 — 2026-08-10[^1.0.0]
 

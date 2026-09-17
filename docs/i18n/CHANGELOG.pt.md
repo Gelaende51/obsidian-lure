@@ -65,7 +65,7 @@ Todas as versões do Lure, da mais recente para a mais antiga. O que chegou desd
 ### Adicionado
 
 - **Vocabulário do botão direito.** Uma pressão abre um menu; duas e três pressões copiam progressivamente mais — o nome, o nome com a extensão, o caminho. Os menus da barra passam a corresponder aos do Explorador de ficheiros, entrada a entrada.
-- **Menus fora do cofre.** As linhas da lista e o visualizador externo oferecem abrir, *Copiar caminho* e *Mostrar no explorador do sistema*; com o cadeado aberto, também *Nova nota*, *Nova pasta*, *Fazer uma cópia*, *Renomear…* e *Eliminar*. Eliminar envia para a reciclagem do sistema e nunca é permanente.
+- **Menus fora do cofre.** As linhas da lista e o visualizador externo oferecem abrir, *Copiar caminho* e *Mostrar na pasta*; com o cadeado aberto, também *Nova nota*, *Nova pasta*, *Fazer uma cópia*, *Renomear…* e *Eliminar*. Eliminar envia para a reciclagem do sistema e nunca é permanente.
 - **Abrir noutro sítio.** <kbd>Ctrl</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd> e o clique com o botão do meio sobre o nome da nota ou sobre uma pasta abrem-na numa nova aba, numa divisão ou numa janela. Ambos são arrastáveis, tal como as suas linhas no Explorador de ficheiros.
 - **Arraste notas para a barra para as mover.** Largue uma nota, várias notas ou uma pasta sobre um segmento de pasta ou sobre o nome do cofre.
 - **Comando: Focar a barra de caminho**, com o caminho todo selecionado — sem atalho predefinido, associe o seu.
@@ -129,7 +129,7 @@ Todas as versões do Lure, da mais recente para a mais antiga. O que chegou desd
 ### Documentação
 
 - O README e o guia de utilização passam a estar disponíveis nos 44 idiomas que o plugin traz.
-- O guia mencionava a definição *Detetar todas as extensões de ficheiro* do Obsidian, que agora se chama *Mostrar todos os tipos de ficheiro*.
+- O guia mencionava a definição *Detetar todas as extensões de ficheiro* (*Detect all file extensions*) do Obsidian, que agora se chama *Detetar todas as extensões de ficheiros* (*Show all file types*).
 
 ## 1.0.0 — 2026-08-10[^1.0.0]
 

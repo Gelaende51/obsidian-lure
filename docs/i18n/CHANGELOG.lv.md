@@ -65,7 +65,7 @@ Katrs Lure laidiens, jaunākais pirmais. Tas, kas ienācis kopš pēdējā laidi
 ### Pievienots
 
 - **Labā klikšķa vārdnīca.** Viens spiediens atver izvēlni; divi un trīs spiedieni kopē arvien vairāk — nosaukumu, nosaukumu ar paplašinājumu, ceļu. Rindas izvēlnes tagad sakrīt ar Failu pārlūka izvēlnēm ieraksts pēc ieraksta.
-- **Izvēlnes ārpus glabātavas.** Saraksta rindas un ārējais skatītājs piedāvā atvēršanu, *Kopēt ceļu* un *Parādīt sistēmas pārlūkā*; ar atvērtu piekaramo atslēgu arī *Jauna piezīme*, *Jauna mape*, *Izveidot kopiju*, *Pārdēvēt…* un *Dzēst*. Dzēšana pārvieto uz sistēmas atkritni un nekad nav galīga.
+- **Izvēlnes ārpus glabātavas.** Saraksta rindas un ārējais skatītājs piedāvā atvēršanu, *Kopēt ceļu* un *Parādīt mapē*; ar atvērtu piekaramo atslēgu arī *Jauna piezīme*, *Jauna mape*, *Izveidot kopiju*, *Pārdēvēt…* un *Dzēst*. Dzēšana pārvieto uz sistēmas atkritni un nekad nav galīga.
 - **Atvērt citur.** <kbd>Ctrl</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd> un vidējais klikšķis uz piezīmes nosaukuma vai mapes atver to jaunā cilnē, dalījumā vai logā. Abi ir velkami, tāpat kā to rindas Failu pārlūkā.
 - **Velc piezīmes uz rindas, lai tās pārvietotu.** Nomet piezīmi, vairākas piezīmes vai mapi uz mapes posma vai glabātavas nosaukuma.
 - **Komanda: Fokusēt ceļa joslu**, ar iezīmētu visu ceļu — bez noklusējuma karstā taustiņa, piesaisti savu.
@@ -129,7 +129,7 @@ Katrs Lure laidiens, jaunākais pirmais. Tas, kas ienācis kopš pēdējā laidi
 ### Dokumentācija
 
 - README un lietošanas pamācība ir pieejamas visās 44 valodās, ko spraudnis piegādā.
-- Pamācība sauca Obsidian iestatījumu *Detect all file extensions*, kas tagad saucas *Rādīt visus failu tipus*.
+- Pamācība sauca Obsidian iestatījumu *Detect all file extensions*, kas tagad saucas *Atpazīt visus failu paplašinājumus*.
 
 ## 1.0.0 — 2026-08-10[^1.0.0]
 

@@ -23,7 +23,7 @@ Obsidian 1.8.7+ · komputer meja sahaja · AGPL-3.0
 
 - **Klik sebuah folder** untuk senarai kandungan folder *induknya* — tukar satu folder dengan jirannya tanpa menyentuh baki laluan. Nama nota berfungsi sama, dengan memilih namanya tanpa sambungan.
 - **Klik pemisah** selepas sebuah folder untuk menunjukkan dan mengembangkannya dalam Peneroka fail. Satu tetapan menukar kedua-dua peranan itu.
-- **Klik kanan atau seret mana-mana entri** — menu konteks Peneroka fail itu sendiri, entri demi entri, berserta kelakuan seretnya. Laluan di luar bilik kebal mendapat menu setara yang dibina khas untuknya, hinggalah *Padam* melalui tong sampah sistem.
+- **Klik kanan atau seret mana-mana entri** — menu konteks Peneroka fail itu sendiri, entri demi entri, berserta kelakuan seretnya. Laluan di luar bilik kebal mendapat menu setara yang dibina khas untuknya, hinggalah *Hapus* melalui tong sampah sistem.
 - **Klik nama fail atau ruang kosong** untuk menaip laluan, dengan pelengkapan automatik. `/` turun ke dalam, <kbd>Backspace</kbd> naik satu tingkat, <kbd>Enter</kbd> mengesahkan — dan laluan yang belum wujud terus dicipta, dengan pemberitahuan yang menyatakan ke mana ia pergi.
 - **Senarai terbuka pada entri tempat anda berada**, dan menyusurinya dengan anak panah atau penuding mengisi medan dengan apa yang anda tuding. Melepasi mana-mana hujung senarai, ia memulangkan apa yang anda taip, dan mengalihkan penuding daripadanya memulangkan sorotan ke tempat anda tadi.
 - **Butang pensel pada folder** menukar interaksi yang sama kepada mod alih/tukar nama, dengan pemeriksaan yang sama seperti dilakukan Obsidian.

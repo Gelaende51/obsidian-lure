@@ -66,7 +66,7 @@ Hver utgivelse av Lure, den nyeste først. Det som har kommet inn siden forrige 
 ### Lagt til
 
 - **Høyreklikkets ordforråd.** Ett trykk åpner en meny; to og tre trykk kopierer gradvis mer — navnet, navnet med filendelsen, stien. Menyene i raden svarer nå til Filutforskerens, oppføring for oppføring.
-- **Menyer utenfor hvelvet.** Radene i listen og den eksterne viseren tilbyr å åpne, *Kopier sti* og *Vis i systemutforsker*; med hengelåsen åpen også *Nytt notat*, *Ny mappe*, *Lag en kopi*, *Gi nytt navn…* og *Slett*. Slett flytter til systemets papirkurv og er aldri endelig.
+- **Menyer utenfor hvelvet.** Radene i listen og den eksterne viseren tilbyr å åpne, *Kopier sti* og *Vis i mappe*; med hengelåsen åpen også *Nytt notat*, *Ny mappe*, *Lag en kopi*, *Gi nytt navn…* og *Slett*. Slett flytter til systemets papirkurv og er aldri endelig.
 - **Åpne et annet sted.** <kbd>Ctrl</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Skift</kbd> og midtklikk på navnet til notatet eller på en mappe åpner det i en ny fane, en deling eller et vindu. Begge kan dras, slik radene deres i Filutforskeren kan.
 - **Dra notater til raden for å flytte dem.** Slipp et notat, flere notater eller en mappe på et mappeledd eller på hvelvets navn.
 - **Kommando: Fokuser på stilinjen**, med hele stien merket — ingen forhåndsvalgt hurtigtast, bind din egen.

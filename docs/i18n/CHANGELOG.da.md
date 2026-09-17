@@ -36,7 +36,7 @@ Hver udgivelse af Lure, nyeste først. Det, der er kommet til siden seneste udgi
 ### Rettet
 
 - **Et åbent felt overlevede sin fil.** Skiftede man til en anden note med stilinjen åben, blev rækken ved med at nævne den gamle fil resten af sessionen.
-- **Slet, Omdøb og Lav en kopi blev afvist uden for boksen**, selvom hængelåsen var åben, og kunne aldrig nås for billeder, PDF'er og sider.
+- **Slet, Omdøb og Opret en kopi blev afvist uden for boksen**, selvom hængelåsen var åben, og kunne aldrig nås for billeder, PDF'er og sider.
 - **<kbd>Ctrl</kbd>+<kbd>Enter</kbd> gjorde intet, mens listen var åben** — og det er sådan, ethvert felt åbner.
 - **<kbd>Enter</kbd> med listen åben, men intet fremhævet**, gjorde intet; nu bekræfter den det, du skrev.
 - **En række, der løb over, selvom alle navne allerede var så korte som muligt, kunne ikke rulles**, så enden af stien var uden for rækkevidde.
@@ -65,7 +65,7 @@ Hver udgivelse af Lure, nyeste først. Det, der er kommet til siden seneste udgi
 ### Tilføjet
 
 - **Højreklikkets ordforråd.** Ét tryk åbner en menu; to og tre tryk kopierer gradvist mere — navnet, navnet med endelse, stien. Rækkens menuer svarer nu til Filers, punkt for punkt.
-- **Menuer uden for boksen.** Listens rækker og den eksterne fremviser tilbyder at åbne, *Kopiér sti* og *Vis i systemets filhåndtering*; med hængelåsen åben også *Ny note*, *Ny mappe*, *Lav en kopi*, *Omdøb…* og *Slet*. Slet flytter til systemets papirkurv og er aldrig permanent.
+- **Menuer uden for boksen.** Listens rækker og den eksterne fremviser tilbyder at åbne, *Kopiér sti* og *Vis i systemets stifinder*; med hængelåsen åben også *Ny note*, *Ny mappe*, *Opret en kopi*, *Omdøb…* og *Slet*. Slet flytter til systemets papirkurv og er aldrig permanent.
 - **Åbn andre steder.** <kbd>Ctrl</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Skift</kbd> og midterklik på notens navn eller en mappe åbner den i en ny fane, en opdeling eller et vindue. Begge kan trækkes, ligesom deres rækker i Filer.
 - **Træk noter hen på rækken for at flytte dem.** Slip en note, flere noter eller en mappe på et mappesegment eller boksens navn.
 - **Kommando: Fokusér stilinjen**, med hele stien markeret — ingen standardgenvejstast, tildel din egen.

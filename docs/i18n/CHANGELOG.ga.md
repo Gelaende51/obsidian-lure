@@ -65,7 +65,7 @@ Gach eisiúint de Lure, an ceann is nuaí ar dtús. Tá a bhfuil tagtha isteach 
 ### Curtha leis
 
 - **Stór focal na deaschliceála.** Osclaíonn brú amháin roghchlár; cóipeálann dhá bhrú agus trí bhrú níos mó agus níos mó — an t-ainm, an t-ainm lena iarmhír, an chonair. Tá roghchláir an ró ag teacht le cinn Comhad anois iontráil ar iontráil.
-- **Roghchláir lasmuigh den taisceadán.** Tairgeann rónna an liosta agus an t-amharcán seachtrach oscailt, *Cóipeáil an chonair* agus *Taispeáin i dtaiscéalaí an chórais*; agus an glas ar oscailt, *Nóta nua*, *Fillteán nua*, *Déan cóip*, *Athainmnigh…* agus *Scrios* chomh maith. Bogann Scrios chuig bruscar an chórais agus ní bhíonn sé buan riamh.
+- **Roghchláir lasmuigh den taisceadán.** Tairgeann rónna an liosta agus an t-amharcán seachtrach oscailt, *Cóipeáil an cosán* agus *Taispeáin i taiscéalaí córais*; agus an glas ar oscailt, *Nóta nua*, *Fillteán nua*, *Déan cóip*, *Athainmnigh…* agus *Scrios* chomh maith. Bogann Scrios chuig bruscar an chórais agus ní bhíonn sé buan riamh.
 - **Oscail in áit eile.** Osclaíonn <kbd>Ctrl</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd> agus meánchliceáil ar ainm an nóta nó ar fhillteán i gcluaisín nua, i scoilt nó i bhfuinneog é. Is féidir an bheirt acu a tharraingt, díreach mar a rónna i gComhaid.
 - **Tarraing nótaí ar an ró chun iad a bhogadh.** Scaoil nóta, roinnt nótaí nó fillteán ar mhír fhillteáin nó ar ainm an taisceadáin.
 - **Ordú: Fócas ar an mbarra conaire**, agus an chonair iomlán roghnaithe — níl aon aicearra réamhshocraithe ann, ceangail do cheann féin.
@@ -129,7 +129,7 @@ Gach eisiúint de Lure, an ceann is nuaí ar dtús. Tá a bhfuil tagtha isteach 
 ### Doiciméadú
 
 - Tá an README agus an treoir úsáide ar fáil sna 44 teanga ar fad a thagann leis an mbreiseán.
-- Luaigh an treoir socrú *Detect all file extensions* (Braith gach iarmhír chomhaid) Obsidian, ar a dtugtar *Show all file types* (Taispeáin gach cineál comhaid) anois.
+- Luaigh an treoir socrú *Detect all file extensions* (Braith gach iarmhír chomhaid) Obsidian, ar a dtugtar *Gach síneadh comhaid a bhrath* (Show all file types) anois.
 
 ## 1.0.0 — 2026-08-10[^1.0.0]
 

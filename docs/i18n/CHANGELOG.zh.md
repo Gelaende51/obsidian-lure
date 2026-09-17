@@ -129,7 +129,7 @@ Lure 的每一个版本，最新的在前。自上次发布以来已合入的内
 ### 文档
 
 - README 和使用指南已提供插件所含全部 44 种语言的版本。
-- 指南中提到的 Obsidian 设置 *Detect all file extensions*（检测所有文件扩展名）现已更名为 *Show all file types*（显示所有文件类型）。
+- 指南中提到的 Obsidian 设置 *Detect all file extensions*（检测所有文件扩展名）现已更名为 *检测所有类型文件*。
 
 ## 1.0.0 — 2026-08-10[^1.0.0]
 

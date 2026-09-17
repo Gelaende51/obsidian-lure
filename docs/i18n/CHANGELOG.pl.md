@@ -37,7 +37,7 @@ Każde wydanie Lure, od najnowszego. To, co pojawiło się od ostatniego wydania
 ### Naprawiono
 
 - **Otwarte pole przeżywało swój plik.** Przejście do innej notatki przy otwartym pasku ścieżki zostawiało pasek nazywający stary plik do końca sesji.
-- **Usuwanie, zmiana nazwy i Utwórz kopię były odrzucane poza skarbcem** przy otwartej kłódce i w ogóle nie dawały się wywołać dla obrazów, plików PDF i stron.
+- **Usuwanie, zmiana nazwy i Stwórz kopię były odrzucane poza skarbcem** przy otwartej kłódce i w ogóle nie dawały się wywołać dla obrazów, plików PDF i stron.
 - **<kbd>Ctrl</kbd>+<kbd>Enter</kbd> nic nie robiło przy otwartej liście** — a tak otwiera się każde pole.
 - **<kbd>Enter</kbd> przy otwartej liście, gdy nic nie było podświetlone**, nic nie robił; teraz zatwierdza to, co wpisałeś.
 - **Wiersza, który się nie mieścił, choć każda nazwa była już najkrótsza, nie dało się przewinąć**, przez co koniec ścieżki pozostawał nieosiągalny.
@@ -66,7 +66,7 @@ Każde wydanie Lure, od najnowszego. To, co pojawiło się od ostatniego wydania
 ### Dodano
 
 - **Słownik prawego przycisku.** Jedno naciśnięcie otwiera menu; dwa i trzy naciśnięcia kopiują coraz więcej — nazwę, nazwę z rozszerzeniem, ścieżkę. Menu paska odpowiadają teraz menu Eksploratora plików pozycja po pozycji.
-- **Menu poza skarbcem.** Wiersze listy i zewnętrzny podgląd oferują otwieranie, *Kopiuj ścieżkę* i *Pokaż w eksploratorze systemowym*; przy otwartej kłódce również *Nowa notatka*, *Nowy folder*, *Utwórz kopię*, *Zmień nazwę…* i *Usuń*. Usuwanie przenosi do kosza systemowego i nigdy nie jest trwałe.
+- **Menu poza skarbcem.** Wiersze listy i zewnętrzny podgląd oferują otwieranie, *Skopiuj ścieżkę* i *Pokaż w folderze*; przy otwartej kłódce również *Nowa notatka*, *Nowy folder*, *Stwórz kopię*, *Zmień nazwę…* i *Usuń*. Usuwanie przenosi do kosza systemowego i nigdy nie jest trwałe.
 - **Otwieranie gdzie indziej.** <kbd>Ctrl</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd> i kliknięcie środkowym przyciskiem na nazwie notatki lub na folderze otwierają go w nowej karcie, w podziale albo w oknie. Oba da się przeciągać, jak ich wiersze w Eksploratorze plików.
 - **Przeciągaj notatki na pasek, aby je przenieść.** Upuść notatkę, kilka notatek albo folder na segment folderu lub na nazwę skarbca.
 - **Polecenie: Ustaw fokus na pasku ścieżki**, z zaznaczoną całą ścieżką — bez domyślnego skrótu, przypisz własny.
@@ -130,7 +130,7 @@ Każde wydanie Lure, od najnowszego. To, co pojawiło się od ostatniego wydania
 ### Dokumentacja
 
 - README i przewodnik użytkowania są dostępne we wszystkich 44 językach, które dostarcza wtyczka.
-- Przewodnik wymieniał ustawienie Obsidiana *Detect all file extensions*, które nazywa się teraz *Show all file types*.
+- Przewodnik wymieniał ustawienie Obsidiana *Detect all file extensions*, które nazywa się teraz *Wykrywaj wszystkie rozszerzenia plików*.
 
 ## 1.0.0 — 2026-08-10[^1.0.0]
 

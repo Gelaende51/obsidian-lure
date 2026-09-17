@@ -37,7 +37,7 @@ Lure'ning har bir relizi, eng yangisi birinchi. Oxirgi relizdan beri qo‘shilga
 ### Tuzatildi
 
 - **Ochiq maydon o‘z faylidan uzoq yashardi.** Yo‘l paneli ochiq holda boshqa qaydga o‘tish qatorni seans oxirigacha eski fayl nomi bilan qoldirardi.
-- **Ombordan tashqarida qulf ochiq bo‘lsa ham Delete (o‘chirish), Rename (nom o‘zgartirish) va Make a copy (nusxa yaratish) rad etilardi**, rasmlar, PDF'lar va sahifalar uchun esa ularga umuman yetib bo‘lmasdi.
+- **Ombordan tashqarida qulf ochiq bo‘lsa ham O‘chirish, Nomini o‘zgartirish va Nusxasini yaratish rad etilardi**, rasmlar, PDF'lar va sahifalar uchun esa ularga umuman yetib bo‘lmasdi.
 - **Ro‘yxat ochiq bo‘lganda <kbd>Ctrl</kbd>+<kbd>Enter</kbd> hech narsa qilmasdi** — har bir maydon esa aynan shu holatda ochiladi.
 - **Ro‘yxat ochiq, lekin hech narsa belgilanmagan holda <kbd>Enter</kbd>** hech narsa qilmasdi; endi u yozganingizni tasdiqlaydi.
 - **Barcha nomlar allaqachon eng qisqa holatida bo‘lib, baribir sig‘magan qatorni aylantirib bo‘lmasdi**, natijada yo‘lning oxiriga yetib bo‘lmasdi.
@@ -66,7 +66,7 @@ Lure'ning har bir relizi, eng yangisi birinchi. Oxirgi relizdan beri qo‘shilga
 ### Qo‘shildi
 
 - **O‘ng tugma lug‘ati.** Bir bosish menyu ochadi; ikki va uch bosish tobora ko‘proq narsani nusxalaydi — nom, kengaytmali nom, yo‘l. Qatordagi menyular endi Fayl menejerinikiga bandma-band mos keladi.
-- **Ombordan tashqaridagi menyular.** Ro‘yxat qatorlari va tashqi ko‘ruvchi ochish, *Copy path* (yo‘lni nusxalash) va *Show in system explorer* (tizim fayl menejerida ko‘rsatish) bandlarini taklif qiladi; qulf ochiq bo‘lsa, shuningdek *New note* (yangi qayd), *New folder* (yangi papka), *Make a copy* (nusxa yaratish), *Rename…* (nom o‘zgartirish) va *Delete* (o‘chirish) bandlarini ham. O‘chirish faylni tizim savatiga ko‘chiradi va hech qachon butunlay yo‘q qilmaydi.
+- **Ombordan tashqaridagi menyular.** Ro‘yxat qatorlari va tashqi ko‘ruvchi ochish, *Yo‘lni nusxa olish* va *Papkada ko‘rsatish* bandlarini taklif qiladi; qulf ochiq bo‘lsa, shuningdek *Yangi eslatma*, *Yangi papka*, *Nusxasini yaratish*, *Nomini o‘zgartirish…* va *O‘chirish* bandlarini ham. O‘chirish faylni tizim savatiga ko‘chiradi va hech qachon butunlay yo‘q qilmaydi.
 - **Boshqa joyda ochish.** Qayd nomi yoki papka ustida <kbd>Ctrl</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd> bilan yoki o‘rta tugma bilan bosish uni yangi tabda, bo‘lingan panelda yoki oynada ochadi. Ikkalasini ham Fayl menejeridagi qatorlari kabi sudrash mumkin.
 - **Qaydlarni ko‘chirish uchun qatorga torting.** Qaydni, bir nechta qaydni yoki papkani papka bo‘lagi yoki ombor nomi ustiga tashlang.
 - **Buyruq: Yo‘l paneliga fokus** — butun yo‘l belgilangan holda; sukut bo‘yicha tezkor klavish yo‘q, o‘zingiznikini biriktiring.
@@ -130,7 +130,7 @@ Lure'ning har bir relizi, eng yangisi birinchi. Oxirgi relizdan beri qo‘shilga
 ### Hujjatlar
 
 - README va foydalanish qo‘llanmasi plagin taqdim etadigan barcha 44 tilda mavjud.
-- Qo‘llanmada Obsidian'ning *Detect all file extensions* sozlamasi tilga olingan edi, u endi *Show all file types* (barcha fayl turlarini ko‘rsatish) deb ataladi.
+- Qo‘llanmada Obsidian'ning *Detect all file extensions* sozlamasi tilga olingan edi, u endi *Barcha kengaytmalarni aniqlash* deb ataladi.
 
 ## 1.0.0 — 2026-08-10[^1.0.0]
 

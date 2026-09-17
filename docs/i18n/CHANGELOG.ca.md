@@ -37,7 +37,7 @@ Cada versió de Lure, de la més nova a la més antiga. El que ha arribat des de
 ### Corregit
 
 - **Un camp obert sobrevivia al seu fitxer.** Canviar a una altra nota amb la barra de camí oberta deixava la barra amb el nom del fitxer antic durant la resta de la sessió.
-- **Delete (Suprimeix), Rename (Reanomena) i Make a copy (Fes una còpia) es rebutjaven fora del cofre** amb el cadenat obert, i no s'hi podia arribar mai per a imatges, PDF i pàgines.
+- **Suprimeix, Canvia el nom i Fes una còpia es rebutjaven fora del cofre** amb el cadenat obert, i no s'hi podia arribar mai per a imatges, PDF i pàgines.
 - **<kbd>Ctrl</kbd>+<kbd>Retorn</kbd> no feia res amb el desplegable obert** — que és com s'obre qualsevol camp.
 - **<kbd>Retorn</kbd> amb el desplegable obert però sense res ressaltat** no feia res; ara confirma el que has escrit.
 - **Una barra que desbordava amb tots els noms ja escurçats al màxim no es podia desplaçar**, i el final del camí quedava inaccessible.
@@ -66,7 +66,7 @@ Cada versió de Lure, de la més nova a la més antiga. El que ha arribat des de
 ### Afegit
 
 - **Vocabulari del clic dret.** Una pulsació obre un menú; dues i tres pulsacions copien progressivament més — el nom, el nom amb l'extensió, el camí. Els menús de la barra ara coincideixen entrada per entrada amb els de l'Explorador de fitxers.
-- **Menús fora del cofre.** Les files del desplegable i el visor extern ofereixen obrir, *Copy path* (Copia el camí) i *Show in system explorer* (Mostra a l'explorador del sistema); amb el cadenat obert, també *New note* (Nota nova), *New folder* (Carpeta nova), *Make a copy* (Fes una còpia), *Rename…* (Reanomena…) i *Delete* (Suprimeix). Suprimir envia a la paperera del sistema i mai no és permanent.
+- **Menús fora del cofre.** Les files del desplegable i el visor extern ofereixen obrir, *Copia el camí* i *Mostra a la carpeta*; amb el cadenat obert, també *Nota nova*, *Carpeta nova*, *Fes una còpia*, *Canvia el nom…* i *Suprimeix*. Suprimir envia a la paperera del sistema i mai no és permanent.
 - **Obre en un altre lloc.** <kbd>Ctrl</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Maj</kbd> i el clic del mig sobre el nom de la nota o una carpeta l'obren en una pestanya nova, una divisió o una finestra. Tots dos es poden arrossegar, com les seves files a l'Explorador de fitxers.
 - **Arrossega notes sobre la barra per moure-les.** Deixa anar una nota, diverses notes o una carpeta sobre un segment de carpeta o el nom del cofre.
 - **Ordre: Enfoca la barra de camí**, amb tot el camí seleccionat — sense drecera per defecte, assigna-n'hi una de pròpia.
@@ -130,7 +130,7 @@ Cada versió de Lure, de la més nova a la més antiga. El que ha arribat des de
 ### Documentació
 
 - El README i la guia d'ús estan disponibles en els 44 idiomes que inclou el connector.
-- La guia esmentava l'opció *Detect all file extensions* (Detecta totes les extensions de fitxer) d'Obsidian, que ara es diu *Show all file types* (Mostra tots els tipus de fitxer).
+- La guia esmentava l'opció *Detectar totes les extensions de fitxers* (Detect all file extensions) d'Obsidian, que ara es diu *Detectar totes les extensions de fitxers* (Show all file types).
 
 ## 1.0.0 — 2026-08-10[^1.0.0]
 

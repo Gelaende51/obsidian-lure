@@ -37,7 +37,7 @@ Lure'un her sürümü, en yenisi en üstte. Son sürümden bu yana gelenler *Yay
 ### Düzeltilenler
 
 - **Açık bir alan dosyasından uzun yaşıyordu.** Yol çubuğu açıkken başka bir nota geçmek, oturumun geri kalanında satırın eski dosyayı göstermesine yol açıyordu.
-- **Sil, Yeniden adlandır ve Make a copy (kopya oluştur) kasanın dışında reddediliyordu**, asma kilit açıkken bile; görseller, PDF'ler ve sayfalar için bunlara hiç ulaşılamıyordu.
+- **Sil, Yeniden adlandır ve Kopyasını oluştur kasanın dışında reddediliyordu**, asma kilit açıkken bile; görseller, PDF'ler ve sayfalar için bunlara hiç ulaşılamıyordu.
 - **Açılır liste açıkken <kbd>Ctrl</kbd>+<kbd>Enter</kbd> hiçbir şey yapmıyordu** — oysa her alan bu şekilde açılır.
 - **Açılır liste açık ama hiçbir şey vurgulanmamışken <kbd>Enter</kbd>** hiçbir şey yapmıyordu; artık yazdığınızı onaylar.
 - **Her ad zaten en kısa halindeyken taşan bir satır kaydırılamıyordu**; bu da yolun sonunu erişilemez bırakıyordu.
@@ -66,7 +66,7 @@ Lure'un her sürümü, en yenisi en üstte. Son sürümden bu yana gelenler *Yay
 ### Eklenenler
 
 - **Sağ tık dağarcığı.** Bir basış menü açar; iki ve üç basış giderek daha fazlasını kopyalar — ad, uzantılı ad, yol. Satırın menüleri artık Dosya Gezgini'ninkilerle girdisi girdisine aynıdır.
-- **Kasanın dışında menüler.** Açılır liste satırları ve harici görüntüleyici; açmayı, *Copy path* (yolu kopyala) ve *Show in system explorer* (sistem gezgininde göster) komutlarını sunar; asma kilit açıkken ayrıca *Yeni not*, *Yeni klasör*, *Make a copy* (kopya oluştur), *Yeniden adlandır…* ve *Sil*. Silme, dosyayı sistem çöp kutusuna taşır ve asla kalıcı değildir.
+- **Kasanın dışında menüler.** Açılır liste satırları ve harici görüntüleyici; açmayı, *Yolu kopyala* ve *Klasörde göster* komutlarını sunar; asma kilit açıkken ayrıca *Yeni not*, *Yeni klasör*, *Kopyasını oluştur*, *Yeniden adlandır…* ve *Sil*. Silme, dosyayı sistem çöp kutusuna taşır ve asla kalıcı değildir.
 - **Başka yerde açma.** Notun adına veya bir klasöre <kbd>Ctrl</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd> ile ya da orta tıklamayla tıklamak, onu yeni bir sekmede, bölünmüş görünümde veya pencerede açar. İkisi de Dosya Gezgini satırları gibi sürüklenebilir.
 - **Notları taşımak için satıra sürükleyin.** Bir notu, birkaç notu ya da bir klasörü bir klasör parçasının veya kasa adının üzerine bırakın.
 - **Komut: Yol çubuğuna odaklan**, yolun tamamı seçili olarak — öntanımlı kısayol tuşu yoktur, kendinizinkini atayın.
@@ -130,7 +130,7 @@ Lure'un her sürümü, en yenisi en üstte. Son sürümden bu yana gelenler *Yay
 ### Belgeler
 
 - README ve kullanım kılavuzu, eklentinin sunduğu 44 dilin tamamında mevcuttur.
-- Kılavuz, Obsidian'ın artık *Show all file types* (tüm dosya türlerini göster) adını taşıyan ayarını eski adıyla, *Detect all file extensions* (tüm dosya uzantılarını algıla) olarak anıyordu.
+- Kılavuz, Obsidian'ın artık *Tüm dosya uzantılarını bul* (Show all file types) adını taşıyan ayarını eski adıyla, *Tüm dosya uzantılarını bul* (Detect all file extensions) olarak anıyordu.
 
 ## 1.0.0 — 2026-08-10[^1.0.0]
 

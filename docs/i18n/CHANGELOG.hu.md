@@ -66,7 +66,7 @@ A Lure minden kiadása, a legújabbal kezdve. Ami a legutóbbi kiadás óta ker�
 ### Hozzáadva
 
 - **Jobbgombos szótár.** Egy lenyomás menüt nyit; a második és a harmadik egyre többet másol — a nevet, a nevet kiterjesztéssel, az útvonalat. A sor menüi mostantól tételről tételre megegyeznek a Fájlkezelőével.
-- **Menük a széfen kívül.** A lista sorai és a külső megjelenítő felkínálja a megnyitást, az *Útvonal másolása* és a *Megjelenítés a rendszer fájlkezelőjében* tételt; nyitott lakat mellett az *Új jegyzet*, *Új mappa*, *Másolat készítése*, *Átnevezés…* és *Törlés* tételt is. A törlés a rendszer kukájába helyez, és sosem végleges.
+- **Menük a széfen kívül.** A lista sorai és a külső megjelenítő felkínálja a megnyitást, az *Útvonal másolása* és a *Megjelenítés mappában* tételt; nyitott lakat mellett az *Új jegyzet*, *Új mappa*, *Másolat készítése*, *Átnevezés…* és *Törlés* tételt is. A törlés a rendszer kukájába helyez, és sosem végleges.
 - **Megnyitás máshol.** A <kbd>Ctrl</kbd>, a <kbd>Ctrl</kbd>+<kbd>Alt</kbd>, a <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd> és a középső gombos kattintás a jegyzet nevén vagy egy mappán új lapon, osztott nézetben vagy új ablakban nyitja meg. Mindkettő húzható, akárcsak a Fájlkezelőben lévő soruk.
 - **Húzz jegyzeteket a sorra, hogy áthelyezd őket.** Ejts egy jegyzetet, több jegyzetet vagy egy mappát egy mappaszakaszra vagy a széf nevére.
 - **Parancs: Fókusz az útvonalsávra**, a teljes útvonal kijelölésével — alapértelmezett gyorsbillentyű nélkül, rendelj hozzá sajátot.
@@ -130,7 +130,7 @@ A Lure minden kiadása, a legújabbal kezdve. Ami a legutóbbi kiadás óta ker�
 ### Dokumentáció
 
 - A README és a használati útmutató mind a 44 nyelven elérhető, amelyet a bővítmény hoz.
-- Az útmutató az Obsidian *Detect all file extensions* (minden fájlkiterjesztés felismerése) beállítását nevezte meg, amelynek új neve *Show all file types* (minden fájltípus megjelenítése).
+- Az útmutató az Obsidian *Detect all file extensions* beállítását nevezte meg, amelynek új neve *Minden fájlkiterjesztés észlelése* (Show all file types).
 
 ## 1.0.0 — 2026-08-10[^1.0.0]
 

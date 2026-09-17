@@ -65,7 +65,7 @@ Todas as versões do Lure, da mais recente para a mais antiga. O que entrou desd
 ### Adicionado
 
 - **Vocabulário do botão direito.** Um toque abre um menu; dois e três toques copiam progressivamente mais — o nome, o nome com a extensão, o caminho. Os menus da barra agora correspondem aos do Explorador de arquivos, item por item.
-- **Menus fora do cofre.** As linhas da lista e o visualizador externo oferecem abrir, *Copiar caminho* e *Mostrar no explorador do sistema*; com o cadeado aberto, também *Nova nota*, *Nova pasta*, *Fazer uma cópia*, *Renomear…* e *Excluir*. Excluir move para a lixeira do sistema e nunca é permanente.
+- **Menus fora do cofre.** As linhas da lista e o visualizador externo oferecem abrir, *Copiar caminho* e *Mostrar na pasta*; com o cadeado aberto, também *Nova nota*, *Nova pasta*, *Fazer uma cópia*, *Renomear…* e *Excluir*. Excluir move para a lixeira do sistema e nunca é permanente.
 - **Abrir em outro lugar.** <kbd>Ctrl</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd> e clique com o botão do meio no nome da nota ou em uma pasta abrem-nos em uma nova aba, em uma divisão ou em uma janela. Ambos podem ser arrastados, como as linhas correspondentes do Explorador de arquivos.
 - **Arraste notas para a barra para movê-las.** Solte uma nota, várias notas ou uma pasta sobre um segmento de pasta ou sobre o nome do cofre.
 - **Comando: Focar a barra de caminho**, com o caminho inteiro selecionado — sem atalho padrão, defina o seu.
@@ -129,7 +129,7 @@ Todas as versões do Lure, da mais recente para a mais antiga. O que entrou desd
 ### Documentação
 
 - O README e o guia de uso estão disponíveis em todos os 44 idiomas que o plugin oferece.
-- O guia citava a configuração *Detectar todas as extensões de arquivo* do Obsidian, que agora se chama *Mostrar todos os tipos de arquivo*.
+- O guia citava a configuração *Detectar todas as extensões de arquivo* (*Detect all file extensions*) do Obsidian, que agora se chama *Detectar todas as extensões dos arquivos* (*Show all file types*).
 
 ## 1.0.0 — 2026-08-10[^1.0.0]
 

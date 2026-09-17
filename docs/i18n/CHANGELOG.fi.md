@@ -37,7 +37,7 @@ Kaikki Luren julkaisut, uusin ensin. Se, mikä on valmistunut viimeisimmän julk
 ### Korjattu
 
 - **Avoin kenttä eli tiedostoaan pidempään.** Toiseen muistiinpanoon siirtyminen polkupalkin ollessa auki jätti rivin nimeämään vanhan tiedoston koko istunnon loppuajaksi.
-- **Delete (Poista), Rename (Nimeä uudelleen) ja Make a copy (Tee kopio) evättiin holvin ulkopuolella** riippulukon ollessa auki, eikä niihin päässyt lainkaan kuvissa, PDF-tiedostoissa eikä sivuissa.
+- **Poista, Muuta nimeä ja Tee kopio evättiin holvin ulkopuolella** riippulukon ollessa auki, eikä niihin päässyt lainkaan kuvissa, PDF-tiedostoissa eikä sivuissa.
 - **<kbd>Ctrl</kbd>+<kbd>Enter</kbd> ei tehnyt mitään luettelon ollessa auki** — ja juuri niin jokainen kenttä avautuu.
 - **<kbd>Enter</kbd> luettelon ollessa auki mutta mitään korostamatta** ei tehnyt mitään; nyt se vahvistaa kirjoittamasi.
 - **Riviä, joka vuoti yli jokaisen nimen ollessa jo lyhimmillään, ei voinut vierittää**, jolloin polun loppu jäi tavoittamattomiin.
@@ -66,7 +66,7 @@ Kaikki Luren julkaisut, uusin ensin. Se, mikä on valmistunut viimeisimmän julk
 ### Lisätty
 
 - **Oikean painikkeen sanasto.** Yksi painallus avaa valikon; kaksi ja kolme painallusta kopioivat yhä enemmän — nimen, nimen päätteineen, polun. Rivin valikot vastaavat nyt Tiedostot-paneelin valikoita kohta kohdalta.
-- **Valikot holvin ulkopuolella.** Luettelon rivit ja ulkoinen katselin tarjoavat avaamisen sekä kohdat *Copy path* (Kopioi polku) ja *Show in system explorer* (Näytä järjestelmän tiedostoselaimessa); riippulukon ollessa auki myös *New note* (Uusi muistiinpano), *New folder* (Uusi kansio), *Make a copy* (Tee kopio), *Rename…* (Nimeä uudelleen…) ja *Delete* (Poista). Poisto siirtää järjestelmän roskakoriin eikä ole koskaan lopullinen.
+- **Valikot holvin ulkopuolella.** Luettelon rivit ja ulkoinen katselin tarjoavat avaamisen sekä kohdat *Kopioi polku* ja *Näytä järjestelmän tiedostonhallinnassa*; riippulukon ollessa auki myös *Uusi muistiinpano*, *Uusi kansio*, *Tee kopio*, *Muuta nimeä…* ja *Poista*. Poisto siirtää järjestelmän roskakoriin eikä ole koskaan lopullinen.
 - **Avaa muualle.** <kbd>Ctrl</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Vaihto</kbd> ja keskipainikkeen napsautus muistiinpanon nimen tai kansion päällä avaavat sen uuteen välilehteen, jaettuun ruutuun tai ikkunaan. Molempia voi raahata, kuten niiden rivejä Tiedostot-paneelissa.
 - **Vedä muistiinpanoja riville siirtääksesi ne.** Pudota muistiinpano, useita muistiinpanoja tai kansio kansio-osan tai holvin nimen päälle.
 - **Komento: Kohdista polkupalkkiin**, koko polku valittuna — ei oletuspikanäppäintä, sido omasi.
@@ -130,7 +130,7 @@ Kaikki Luren julkaisut, uusin ensin. Se, mikä on valmistunut viimeisimmän julk
 ### Dokumentaatio
 
 - README ja käyttöohje ovat saatavilla kaikilla 44 kielellä, joita lisäosa toimittaa.
-- Ohje mainitsi Obsidianin asetuksen *Detect all file extensions*, jonka nimi on nyt *Show all file types* (Näytä kaikki tiedostotyypit).
+- Ohje mainitsi Obsidianin asetuksen *Detect all file extensions*, jonka nimi on nyt *Tunnista kaikki tiedostopäätteet* (Show all file types).
 
 ## 1.0.0 — 2026-08-10[^1.0.0]
 

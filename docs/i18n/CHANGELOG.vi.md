@@ -66,7 +66,7 @@ Mọi bản phát hành của Lure, mới nhất ở trên cùng. Những gì đ
 ### Đã thêm
 
 - **Quy ước bấm chuột phải.** Nhấn một lần mở menu; hai và ba lần chép lần lượt nhiều hơn — tên, tên kèm phần mở rộng, đường dẫn. Các menu trên hàng giờ khớp từng mục với menu của Trình duyệt tệp.
-- **Menu ngoài kho.** Các hàng trong danh sách và trình xem tệp bên ngoài cung cấp mở tệp, *Sao chép đường dẫn* và *Show in system explorer* (hiện trong trình quản lý tệp của hệ thống); khi ổ khóa đã mở thì có thêm *Ghi chú mới*, *Thư mục mới*, *Tạo bản sao*, *Đổi tên…* và *Xóa*. Xóa sẽ chuyển vào thùng rác hệ thống và không bao giờ xóa vĩnh viễn.
+- **Menu ngoài kho.** Các hàng trong danh sách và trình xem tệp bên ngoài cung cấp mở tệp, *Sao chép đường dẫn* và *Hiển thị trong thư mục*; khi ổ khóa đã mở thì có thêm *Ghi chú mới*, *Thư mục mới*, *Tạo bản sao*, *Đổi tên…* và *Xóa*. Xóa sẽ chuyển vào thùng rác hệ thống và không bao giờ xóa vĩnh viễn.
 - **Mở ở nơi khác.** <kbd>Ctrl</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd> và bấm chuột giữa trên tên ghi chú hoặc một thư mục sẽ mở nó trong tab mới, khung chia hoặc cửa sổ mới. Cả hai đều kéo được, như các hàng tương ứng trong Trình duyệt tệp.
 - **Kéo ghi chú thả lên thanh để di chuyển chúng.** Thả một ghi chú, nhiều ghi chú hoặc một thư mục lên một đoạn thư mục hoặc tên kho.
 - **Lệnh: Tập trung vào thanh đường dẫn**, với toàn bộ đường dẫn được chọn — không có phím tắt mặc định, hãy tự gán.
@@ -130,7 +130,7 @@ Mọi bản phát hành của Lure, mới nhất ở trên cùng. Những gì đ
 ### Tài liệu
 
 - README và hướng dẫn sử dụng có sẵn bằng cả 44 ngôn ngữ mà plugin hỗ trợ.
-- Hướng dẫn nhắc tới thiết lập *Detect all file extensions* (phát hiện mọi phần mở rộng tệp) của Obsidian, nay đã đổi tên thành *Show all file types* (hiện mọi loại tệp).
+- Hướng dẫn nhắc tới thiết lập *Detect all file extensions* của Obsidian, nay đã đổi tên thành *Phát hiện tất cả các phần mở rộng tệp* (Show all file types).
 
 ## 1.0.0 — 2026-08-10[^1.0.0]
 

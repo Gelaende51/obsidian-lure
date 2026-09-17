@@ -36,7 +36,7 @@ Každé vydání pluginu Lure, od nejnovějšího. Co přibylo od posledního vy
 ### Opraveno
 
 - **Otevřené pole přežilo svůj soubor.** Přepnutí na jinou poznámku s otevřenou lištou cesty nechalo řádek pojmenovávat starý soubor po zbytek sezení.
-- ***Delete* (smazat), *Rename* (přejmenovat) a *Make a copy* (vytvořit kopii) byly mimo trezor odmítnuty** i s otevřeným zámkem a u obrázků, PDF a stránek se k nim nedalo vůbec dostat.
+- ***Smazat*, *Přejmenovat* a *Vytvořit kopii* byly mimo trezor odmítnuty** i s otevřeným zámkem a u obrázků, PDF a stránek se k nim nedalo vůbec dostat.
 - **<kbd>Ctrl</kbd>+<kbd>Enter</kbd> nedělal nic, když byl seznam otevřený** — a tak se otevírá každé pole.
 - **<kbd>Enter</kbd> při otevřeném seznamu bez zvýrazněné položky** nedělal nic; nyní potvrdí, co jste napsali.
 - **Řádek, který přetékal, i když byly všechny názvy už co nejkratší, nešlo posouvat**, takže konec cesty zůstal nedosažitelný.
@@ -65,7 +65,7 @@ Každé vydání pluginu Lure, od nejnovějšího. Co přibylo od posledního vy
 ### Přidáno
 
 - **Slovník pravého kliknutí.** Jedno stisknutí otevře nabídku; dvě a tři zkopírují postupně víc — název, název s příponou, cestu. Nabídky řádku teď odpovídají Průzkumníku souborů položku po položce.
-- **Nabídky mimo trezor.** Řádky seznamu a externí prohlížeč nabízejí otevření, *Copy path* (kopírovat cestu) a *Show in system explorer* (zobrazit v systémovém průzkumníku); s otevřeným zámkem také *New note* (nová poznámka), *New folder* (nová složka), *Make a copy* (vytvořit kopii), *Rename…* (přejmenovat) a *Delete* (smazat). Mazání přesouvá do systémového koše a nikdy není trvalé.
+- **Nabídky mimo trezor.** Řádky seznamu a externí prohlížeč nabízejí otevření, *Kopírovat cestu* a *Zobrazit ve složce*; s otevřeným zámkem také *Nová poznámka*, *Nová složka*, *Vytvořit kopii*, *Přejmenovat…* a *Smazat*. Mazání přesouvá do systémového koše a nikdy není trvalé.
 - **Otevření jinde.** <kbd>Ctrl</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd> a kliknutí prostředním tlačítkem na název poznámky nebo na složku ji otevřou na nové kartě, v rozdělení nebo v okně. Obojí lze přetahovat, stejně jako jejich řádky v Průzkumníku souborů.
 - **Přetažením poznámek na řádek je přesunete.** Pusťte poznámku, několik poznámek nebo složku na segment složky nebo na název trezoru.
 - **Příkaz: Zaměřit lištu cesty**, s označenou celou cestou — bez výchozí klávesové zkratky, přiřaďte si vlastní.
@@ -129,7 +129,7 @@ Každé vydání pluginu Lure, od nejnovějšího. Co přibylo od posledního vy
 ### Dokumentace
 
 - README a návod k použití jsou k dispozici ve všech 44 jazycích, které plugin obsahuje.
-- Návod uváděl nastavení Obsidianu *Detect all file extensions* (rozpoznávat všechny přípony souborů), které se nyní jmenuje *Show all file types* (zobrazit všechny typy souborů).
+- Návod uváděl nastavení Obsidianu *Detekovat všechny přípony souborů* (Detect all file extensions), které se nyní jmenuje *Detekovat všechny přípony souborů* (Show all file types).
 
 ## 1.0.0 — 2026-08-10[^1.0.0]
 

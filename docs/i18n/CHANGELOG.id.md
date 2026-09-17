@@ -65,7 +65,7 @@ Setiap rilis Lure, yang terbaru lebih dulu. Apa yang sudah mendarat sejak rilis 
 ### Ditambahkan
 
 - **Kosakata klik kanan.** Satu tekanan membuka menu; dua dan tiga tekanan menyalin semakin banyak — nama, nama dengan ekstensinya, jalurnya. Menu pada baris itu kini sepadan dengan milik Penjelajah berkas, entri demi entri.
-- **Menu di luar vault.** Baris daftar dan penampil eksternal menawarkan pembukaan, *Salin jalur*, dan *Tampilkan di penjelajah sistem*; dengan gembok terbuka, juga *Catatan baru*, *Folder baru*, *Buat salinan*, *Ganti nama…*, dan *Hapus*. Hapus memindahkan ke tong sampah sistem dan tak pernah permanen.
+- **Menu di luar vault.** Baris daftar dan penampil eksternal menawarkan pembukaan, *Salin path*, dan *Tampilkan dalam folder*; dengan gembok terbuka, juga *Catatan baru*, *Folder baru*, *Buat salinan*, *Ganti nama…*, dan *Hapus*. Hapus memindahkan ke tong sampah sistem dan tak pernah permanen.
 - **Buka di tempat lain.** <kbd>Ctrl</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd>, dan klik tengah pada nama catatan atau sebuah folder membukanya di tab baru, panel terbelah, atau jendela. Keduanya bisa diseret, seperti barisnya di Penjelajah berkas.
 - **Seret catatan ke baris itu untuk memindahkannya.** Jatuhkan satu catatan, beberapa catatan, atau sebuah folder ke segmen folder atau ke nama vault.
 - **Perintah: Fokus ke bilah jalur**, dengan seluruh jalur terpilih — tanpa pintasan bawaan, tetapkan sendiri.
@@ -129,7 +129,7 @@ Setiap rilis Lure, yang terbaru lebih dulu. Apa yang sudah mendarat sejak rilis 
 ### Dokumentasi
 
 - README dan panduan penggunaan tersedia dalam seluruh 44 bahasa yang dibawa plugin ini.
-- Panduan menyebut pengaturan Obsidian *Detect all file extensions*, yang kini bernama *Show all file types*.
+- Panduan menyebut pengaturan Obsidian *Detect all file extensions*, yang kini bernama *Deteksi semua ekstensi berkas* (Show all file types).
 
 ## 1.0.0 — 2026-08-10[^1.0.0]
 

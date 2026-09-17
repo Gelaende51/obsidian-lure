@@ -66,7 +66,7 @@ Jede Veröffentlichung von Lure, die neueste zuerst. Was seit der letzten Veröf
 ### Hinzugefügt
 
 - **Rechtsklick-Vokabular.** Ein Druck öffnet ein Menü; zwei und drei Drücke kopieren immer mehr — den Namen, den Namen mit seiner Endung, den Pfad. Die Menüs der Zeile entsprechen jetzt denen des Dateiexplorers, Eintrag für Eintrag.
-- **Menüs außerhalb des Vaults.** Dropdown-Zeilen und der externe Betrachter bieten das Öffnen, *Pfad kopieren* und *Im Systemexplorer anzeigen* an; bei offenem Schloss außerdem *Neue Notiz*, *Neuer Ordner*, *Kopie erstellen*, *Umbenennen…* und *Löschen*. Löschen verschiebt in den Papierkorb des Systems und ist nie endgültig.
+- **Menüs außerhalb des Vaults.** Dropdown-Zeilen und der externe Betrachter bieten das Öffnen, *Pfad kopieren* und *Im Ordner anzeigen* an; bei offenem Schloss außerdem *Neue Notiz*, *Neuer Ordner*, *Kopie erstellen*, *Umbenennen…* und *Löschen*. Löschen verschiebt in den Papierkorb des Systems und ist nie endgültig.
 - **Anderswo öffnen.** <kbd>Strg</kbd>, <kbd>Strg</kbd>+<kbd>Alt</kbd>, <kbd>Strg</kbd>+<kbd>Alt</kbd>+<kbd>Umschalt</kbd> und Mittelklick auf den Namen der Notiz oder einen Ordner öffnen ihn in einem neuen Tab, einem geteilten Bereich oder einem Fenster. Beide lassen sich ziehen, wie ihre Zeilen im Dateiexplorer.
 - **Zieh Notizen auf die Zeile, um sie zu verschieben.** Lass eine Notiz, mehrere Notizen oder einen Ordner auf ein Ordnersegment oder den Vault-Namen fallen.
 - **Befehl: Pfadleiste fokussieren**, mit dem ganzen Pfad markiert — kein voreingestelltes Tastenkürzel, belege dein eigenes.
@@ -130,7 +130,7 @@ Jede Veröffentlichung von Lure, die neueste zuerst. Was seit der letzten Veröf
 ### Dokumentation
 
 - Das README und die Anleitung liegen in allen 44 Sprachen vor, die das Plugin mitbringt.
-- Die Anleitung nannte Obsidians Einstellung *Alle Dateierweiterungen erkennen*, die jetzt *Alle Dateitypen anzeigen* heißt.
+- Die Anleitung nannte Obsidians Einstellung *Alle Dateierweiterungen erkennen* (*Detect all file extensions*), die jetzt *Alle Datei-Endungen erkennen* (*Show all file types*) heißt.
 
 ## 1.0.0 — 2026-08-10[^1.0.0]
 

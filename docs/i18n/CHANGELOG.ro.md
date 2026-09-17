@@ -37,7 +37,7 @@ Fiecare versiune a Lure, cea mai nouă prima. Ce a apărut de la ultima versiune
 ### Corectat
 
 - **Un câmp deschis supraviețuia fișierului său.** Trecerea la altă notiță cu bara de cale deschisă lăsa rândul să numească fișierul vechi pentru tot restul sesiunii.
-- **Șterge, Redenumește și Fă o copie erau refuzate în afara seifului** cu lacătul deschis și nu puteau fi accesate niciodată pentru imagini, PDF-uri și pagini.
+- **Șterge, Redenumiți și Creează o copie erau refuzate în afara seifului** cu lacătul deschis și nu puteau fi accesate niciodată pentru imagini, PDF-uri și pagini.
 - **<kbd>Ctrl</kbd>+<kbd>Enter</kbd> nu făcea nimic cât timp lista era deschisă** — adică exact felul în care se deschide orice câmp.
 - **<kbd>Enter</kbd> cu lista deschisă, dar fără nimic evidențiat** nu făcea nimic; acum confirmă ce ai scris.
 - **Un rând care depășea lățimea cu toate numele deja la forma cea mai scurtă nu putea fi defilat**, lăsând capătul căii inaccesibil.
@@ -66,7 +66,7 @@ Fiecare versiune a Lure, cea mai nouă prima. Ce a apărut de la ultima versiune
 ### Adăugat
 
 - **Vocabularul clicului dreapta.** O apăsare deschide un meniu; două și trei apăsări copiază progresiv mai mult — numele, numele cu extensie, calea. Meniurile rândului se potrivesc acum, intrare cu intrare, cu cele ale Exploratorului de fișiere.
-- **Meniuri în afara seifului.** Rândurile din listă și vizualizatorul extern oferă deschiderea, *Copiază calea* și *Arată în exploratorul de sistem*; cu lacătul deschis, și *Notiță nouă*, *Dosar nou*, *Fă o copie*, *Redenumește…* și *Șterge*. Ștergerea mută în coșul de gunoi al sistemului și nu este niciodată definitivă.
+- **Meniuri în afara seifului.** Rândurile din listă și vizualizatorul extern oferă deschiderea, *Copiază calea* și *Arată în director*; cu lacătul deschis, și *Notă nouă*, *Director nou*, *Creează o copie*, *Redenumiți…* și *Șterge*. Ștergerea mută în coșul de gunoi al sistemului și nu este niciodată definitivă.
 - **Deschiderea în altă parte.** <kbd>Ctrl</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd> și clicul cu rotița pe numele notiței sau pe un dosar îl deschid într-o filă nouă, într-un panou divizat sau într-o fereastră. Ambele pot fi trase, ca rândurile lor din Exploratorul de fișiere.
 - **Trage notițe pe rând ca să le muți.** Lasă o notiță, mai multe notițe sau un dosar pe un segment de dosar sau pe numele seifului.
 - **Comandă: Focalizează bara de cale**, cu întreaga cale selectată — fără scurtătură implicită, asociază-ți una.
@@ -130,7 +130,7 @@ Fiecare versiune a Lure, cea mai nouă prima. Ce a apărut de la ultima versiune
 ### Documentație
 
 - README-ul și ghidul de utilizare sunt disponibile în toate cele 44 de limbi pe care le livrează pluginul.
-- Ghidul numea setarea *Detect all file extensions* din Obsidian, care acum se numește *Show all file types* (Afișează toate tipurile de fișiere).
+- Ghidul numea setarea *Detect all file extensions* din Obsidian, care acum se numește *Permiteți afișarea fișierelor indiferent de extensia acestora*.
 
 ## 1.0.0 — 2026-08-10[^1.0.0]
 

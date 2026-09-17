@@ -36,7 +36,7 @@ Toutes les versions de Lure, de la plus récente à la plus ancienne. Ce qui a �
 ### Corrigé
 
 - **Un champ ouvert survivait à son fichier.** Passer à une autre note avec la barre de chemin ouverte laissait la barre désigner l'ancien fichier pour le reste de la session.
-- **Supprimer, Renommer et Faire une copie étaient refusés hors du coffre** alors même que le cadenas était ouvert, et restaient inaccessibles pour les images, les PDF et les pages.
+- **Supprimer, Renommer et Dupliquer étaient refusés hors du coffre** alors même que le cadenas était ouvert, et restaient inaccessibles pour les images, les PDF et les pages.
 - **<kbd>Ctrl</kbd>+<kbd>Entrée</kbd> ne faisait rien tant que le menu était ouvert** — c'est-à-dire dans l'état où s'ouvre chaque champ.
 - **<kbd>Entrée</kbd>, menu ouvert mais aucune ligne en surbrillance,** ne faisait rien ; elle valide désormais ce que vous avez tapé.
 - **Une barre qui débordait alors que tous les noms étaient déjà au plus court ne pouvait pas défiler**, rendant la fin du chemin inaccessible.
@@ -65,7 +65,7 @@ Toutes les versions de Lure, de la plus récente à la plus ancienne. Ce qui a �
 ### Ajouté
 
 - **Vocabulaire du clic droit.** Une pression ouvre un menu ; deux et trois pressions copient toujours plus — le nom, le nom avec son extension, le chemin. Les menus de la barre correspondent désormais à ceux de l'Explorateur de fichiers, entrée pour entrée.
-- **Menus hors du coffre.** Les lignes du menu déroulant et le lecteur externe proposent l'ouverture, *Copier le chemin* et *Afficher dans l'explorateur système* ; avec le cadenas ouvert, également *Nouvelle note*, *Nouveau dossier*, *Faire une copie*, *Renommer…* et *Supprimer*. La suppression passe par la corbeille du système et n'est jamais définitive.
+- **Menus hors du coffre.** Les lignes du menu déroulant et le lecteur externe proposent l'ouverture, *Copier le chemin* et *Afficher dans le dossier* ; avec le cadenas ouvert, également *Nouvelle note*, *Nouveau dossier*, *Dupliquer*, *Renommer…* et *Supprimer*. La suppression passe par la corbeille du système et n'est jamais définitive.
 - **Ouvrir ailleurs.** <kbd>Ctrl</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Maj</kbd> et le clic du milieu sur le nom de la note ou sur un dossier l'ouvrent dans un nouvel onglet, un volet divisé ou une fenêtre. Les deux se laissent glisser, comme leurs lignes dans l'Explorateur de fichiers.
 - **Faites glisser des notes sur la barre pour les déplacer.** Déposez une note, plusieurs notes ou un dossier sur un segment de dossier ou sur le nom du coffre.
 - **Commande : Placer le focus sur la barre de chemin**, avec tout le chemin sélectionné — aucun raccourci par défaut, attribuez le vôtre.
@@ -129,7 +129,7 @@ Toutes les versions de Lure, de la plus récente à la plus ancienne. Ce qui a �
 ### Documentation
 
 - Le README et le guide d'utilisation sont disponibles dans les 44 langues fournies avec le plugin.
-- Le guide nommait le paramètre *Détecter toutes les extensions de fichier* d'Obsidian, qui s'appelle désormais *Afficher tous les types de fichiers*.
+- Le guide nommait le paramètre *Détecter toutes les extensions de fichier* (Detect all file extensions) d'Obsidian, qui s'appelle désormais *Détecter toutes les extensions de fichiers* (Show all file types).
 
 ## 1.0.0 — 2026-08-10[^1.0.0]
 

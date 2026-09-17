@@ -66,7 +66,7 @@ Varje utgåva av Lure, nyast först. Det som har landat sedan den senaste utgåv
 ### Tillagt
 
 - **Högerklicksvokabulär.** Ett tryck öppnar en meny; två och tre tryck kopierar successivt mer — namnet, namnet med sin filändelse, sökvägen. Radens menyer motsvarar nu Filutforskarens, post för post.
-- **Menyer utanför valvet.** Listans rader och den externa visaren erbjuder att öppna, *Kopiera sökväg* och *Visa i systemets filhanterare*; med hänglåset öppet också *Ny anteckning*, *Ny mapp*, *Gör en kopia*, *Byt namn…* och *Ta bort*. Ta bort flyttar till systemets papperskorg och är aldrig permanent.
+- **Menyer utanför valvet.** Listans rader och den externa visaren erbjuder att öppna, *Kopiera sökväg* och *Visa i mapp*; med hänglåset öppet också *Ny anteckning*, *Ny mapp*, *Gör en kopia*, *Byt namn…* och *Ta bort*. Ta bort flyttar till systemets papperskorg och är aldrig permanent.
 - **Öppna någon annanstans.** <kbd>Ctrl</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Skift</kbd> och mittenklick på anteckningens namn eller en mapp öppnar den i en ny flik, en delning eller ett fönster. Båda går att dra, som sina rader i Filutforskaren.
 - **Dra anteckningar till raden för att flytta dem.** Släpp en anteckning, flera anteckningar eller en mapp på ett mappsegment eller på valvets namn.
 - **Kommando: Fokusera sökvägsfältet**, med hela sökvägen markerad — inget snabbkommando som standard, bind ditt eget.
@@ -130,7 +130,7 @@ Varje utgåva av Lure, nyast först. Det som har landat sedan den senaste utgåv
 ### Dokumentation
 
 - README-filen och användarguiden finns på alla 44 språk som tillägget levererar.
-- Guiden nämnde Obsidians inställning *Detect all file extensions*, som nu heter *Visa alla filtyper*.
+- Guiden nämnde Obsidians inställning *Detect all file extensions*, som nu heter *Titta på alla filändelser*.
 
 ## 1.0.0 — 2026-08-10[^1.0.0]
 

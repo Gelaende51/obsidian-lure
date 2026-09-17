@@ -65,7 +65,7 @@ Každé vydanie pluginu Lure, od najnovšieho. Čo pribudlo od posledného vydan
 ### Pridané
 
 - **Slovník pravého kliknutia.** Jedno stlačenie otvorí ponuku; dve a tri stlačenia skopírujú postupne viac — názov, názov s príponou, cestu. Ponuky riadku sa teraz zhodujú s ponukami Prieskumníka súborov, položka za položkou.
-- **Ponuky mimo trezora.** Riadky zoznamu a externý prehliadač ponúkajú otvorenie, *Kopírovať cestu* a *Zobraziť v systémovom prehliadači*; pri otvorenom zámku aj *Nová poznámka*, *Nový priečinok*, *Vytvoriť kópiu*, *Premenovať…* a *Odstrániť*. Odstránenie presunie súbor do systémového koša a nikdy nie je trvalé.
+- **Ponuky mimo trezora.** Riadky zoznamu a externý prehliadač ponúkajú otvorenie, *Kopírovať cestu* a *Zobraziť v priečinku*; pri otvorenom zámku aj *Nová poznámka*, *Nový priečinok*, *Vytvoriť kópiu*, *Premenovať…* a *Odstrániť*. Odstránenie presunie súbor do systémového koša a nikdy nie je trvalé.
 - **Otvorenie inde.** <kbd>Ctrl</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd> a kliknutie stredným tlačidlom na názov poznámky alebo na priečinok ho otvoria na novej karte, v rozdelení alebo v okne. Oboje sa dá ťahať, rovnako ako ich riadky v Prieskumníkovi súborov.
 - **Potiahni poznámky na riadok a presuň ich.** Pusť poznámku, viacero poznámok alebo priečinok na segment priečinka alebo na názov trezora.
 - **Príkaz: Zamerať lištu cesty**, s označenou celou cestou — bez predvolenej klávesovej skratky, prirad si vlastnú.
@@ -129,7 +129,7 @@ Každé vydanie pluginu Lure, od najnovšieho. Čo pribudlo od posledného vydan
 ### Dokumentácia
 
 - README a návod na použitie sú dostupné vo všetkých 44 jazykoch, ktoré plugin prináša.
-- Návod uvádzal nastavenie Obsidianu *Detect all file extensions*, ktoré sa teraz volá *Zobraziť všetky typy súborov*.
+- Návod uvádzal nastavenie Obsidianu *Detect all file extensions*, ktoré sa teraz volá *Rozpoznávať všetky typy súborov*.
 
 ## 1.0.0 — 2026-08-10[^1.0.0]
 

@@ -66,7 +66,7 @@ Todas las versiones de Lure, de la más reciente a la más antigua. Lo que ha en
 ### Añadido
 
 - **Vocabulario del clic derecho.** Una pulsación abre un menú; dos y tres pulsaciones copian cada vez más — el nombre, el nombre con su extensión, la ruta. Los menús de la fila coinciden ahora con los del Explorador de archivos, entrada por entrada.
-- **Menús fuera de la bóveda.** Las filas del desplegable y el visor externo ofrecen abrir, *Copiar ruta* y *Mostrar en el explorador del sistema*; con el candado abierto, también *Nota nueva*, *Carpeta nueva*, *Hacer una copia*, *Cambiar nombre…* y *Eliminar*. Eliminar manda a la papelera del sistema y nunca es permanente.
+- **Menús fuera de la bóveda.** Las filas del desplegable y el visor externo ofrecen abrir, *Copiar ruta* y *Mostrar en carpeta*; con el candado abierto, también *Nueva nota*, *Nueva carpeta*, *Hacer una copia*, *Cambiar nombre…* y *Eliminar*. Eliminar manda a la papelera del sistema y nunca es permanente.
 - **Abrir en otro sitio.** <kbd>Ctrl</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Mayús</kbd> y el clic central sobre el nombre de la nota o una carpeta la abren en una pestaña nueva, en una división o en una ventana. Ambos se pueden arrastrar, igual que sus filas del Explorador de archivos.
 - **Arrastra notas sobre la fila para moverlas.** Suelta una nota, varias notas o una carpeta sobre un segmento de carpeta o el nombre de la bóveda.
 - **Comando: Enfocar la barra de ruta**, con toda la ruta seleccionada — sin atajo predeterminado, asigna el tuyo.

@@ -37,7 +37,7 @@ Elke release van Lure, de nieuwste eerst. Wat er sinds de laatste release is gel
 ### Opgelost
 
 - **Een open veld overleefde zijn bestand.** Overschakelen naar een andere notitie met de padbalk open liet de rij de rest van de sessie het oude bestand benoemen.
-- **Verwijderen, Hernoemen en Een kopie maken werden buiten de kluis geweigerd** terwijl het slot open was, en waren voor afbeeldingen, PDF's en pagina's nooit bereikbaar.
+- **Verwijderen, Hernoemen en Dupliceren werden buiten de kluis geweigerd** terwijl het slot open was, en waren voor afbeeldingen, PDF's en pagina's nooit bereikbaar.
 - **<kbd>Ctrl</kbd>+<kbd>Enter</kbd> deed niets zolang de lijst open was** — en zo opent elk veld nu eenmaal.
 - **<kbd>Enter</kbd> met de lijst open maar zonder gemarkeerde rij** deed niets; het bevestigt nu wat je typte.
 - **Een rij die overliep terwijl elke naam al zo kort mogelijk was, kon niet worden geschoven**, waardoor het eind van het pad onbereikbaar bleef.
@@ -66,7 +66,7 @@ Elke release van Lure, de nieuwste eerst. Wat er sinds de laatste release is gel
 ### Toegevoegd
 
 - **Rechtsklikwoordenschat.** Eén druk opent een menu; twee en drie drukken kopiëren steeds meer — de naam, de naam met extensie, het pad. De menu's van de rij komen nu item voor item overeen met die van de bestandsverkenner.
-- **Menu's buiten de kluis.** Rijen in de lijst en de externe weergave bieden openen, *Pad kopiëren* en *Weergeven in systeemverkenner*; met het slot open ook *Nieuwe notitie*, *Nieuwe map*, *Een kopie maken*, *Hernoemen…* en *Verwijderen*. Verwijderen gaat naar de systeemprullenbak en is nooit definitief.
+- **Menu's buiten de kluis.** Rijen in de lijst en de externe weergave bieden openen, *Pad kopiëren* en *Toon in map*; met het slot open ook *Nieuwe notitie*, *Nieuwe map*, *Dupliceren*, *Hernoemen…* en *Verwijderen*. Verwijderen gaat naar de systeemprullenbak en is nooit definitief.
 - **Elders openen.** <kbd>Ctrl</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd> en middelklik op de naam van de notitie of op een map openen die in een nieuw tabblad, een splitsing of een venster. Beide zijn versleepbaar, net als hun rijen in de bestandsverkenner.
 - **Sleep notities op de rij om ze te verplaatsen.** Zet een notitie, meerdere notities of een map neer op een mapsegment of op de kluisnaam.
 - **Opdracht: Focus op de padbalk**, met het hele pad geselecteerd — geen standaardsneltoets, bind je eigen.
@@ -130,7 +130,7 @@ Elke release van Lure, de nieuwste eerst. Wat er sinds de laatste release is gel
 ### Documentatie
 
 - De README en de handleiding zijn beschikbaar in alle 44 talen die de plugin meelevert.
-- De handleiding noemde Obsidians instelling *Detect all file extensions*, die nu *Alle bestandstypen weergeven* heet.
+- De handleiding noemde Obsidians instelling *Detect all file extensions*, die nu *Toon alle bestandsextenties* heet.
 
 ## 1.0.0 — 2026-08-10[^1.0.0]
 

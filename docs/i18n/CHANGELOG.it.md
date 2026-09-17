@@ -66,7 +66,7 @@ Ogni release di Lure, dalla più recente. Ciò che è arrivato dopo l'ultima rel
 ### Aggiunto
 
 - **Vocabolario del clic destro.** Una pressione apre un menu; due e tre pressioni copiano via via di più — il nome, il nome con la sua estensione, il percorso. I menu della riga ora corrispondono a quelli di Esplora file, voce per voce.
-- **Menu fuori dal vault.** Le righe del menu a discesa e il visualizzatore esterno offrono l'apertura, *Copia percorso* e *Mostra in Esplora risorse*; con il lucchetto aperto, anche *Nuova nota*, *Nuova cartella*, *Crea una copia*, *Rinomina…* ed *Elimina*. L'eliminazione sposta nel cestino di sistema e non è mai definitiva.
+- **Menu fuori dal vault.** Le righe del menu a discesa e il visualizzatore esterno offrono l'apertura, *Copia percorso* e *Mostra in Esplora file*; con il lucchetto aperto, anche *Nuova nota*, *Nuova cartella*, *Crea una copia*, *Rinomina…* ed *Elimina*. L'eliminazione sposta nel cestino di sistema e non è mai definitiva.
 - **Apri altrove.** <kbd>Ctrl</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Maiusc</kbd> e il clic centrale sul nome della nota o su una cartella la aprono in una nuova scheda, in un riquadro affiancato o in una finestra. Entrambi sono trascinabili, come le righe corrispondenti in Esplora file.
 - **Trascina le note sulla riga per spostarle.** Rilascia una nota, più note o una cartella su un segmento di cartella o sul nome del vault.
 - **Comando: Attiva la barra del percorso**, con l'intero percorso selezionato — nessuna scorciatoia predefinita, assegnane una tua.

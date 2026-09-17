@@ -36,7 +36,7 @@ Setiap keluaran Lure, yang terbaharu dahulu. Apa yang telah mendarat sejak kelua
 ### Dibaiki
 
 - **Medan yang terbuka hidup lebih lama daripada failnya.** Bertukar ke nota lain dengan bar laluan terbuka menyebabkan baris itu terus menamakan fail lama sepanjang baki sesi.
-- **Padam, Tukar nama dan Buat salinan ditolak di luar bilik kebal** walaupun mangga terbuka, dan tidak pernah boleh dicapai untuk imej, PDF dan halaman.
+- **Hapus, Namakan semula dan Buat satu salinan ditolak di luar bilik kebal** walaupun mangga terbuka, dan tidak pernah boleh dicapai untuk imej, PDF dan halaman.
 - **<kbd>Ctrl</kbd>+<kbd>Enter</kbd> tidak melakukan apa-apa sementara senarai terbuka** — sedangkan itulah cara setiap medan terbuka.
 - **<kbd>Enter</kbd> dengan senarai terbuka tetapi tiada apa-apa tersorot** tidak melakukan apa-apa; kini ia mengesahkan apa yang anda taip.
 - **Baris yang melimpah sedangkan setiap nama sudah sependek mungkin tidak dapat ditatal**, menyebabkan hujung laluan itu tidak dapat dicapai.
@@ -65,7 +65,7 @@ Setiap keluaran Lure, yang terbaharu dahulu. Apa yang telah mendarat sejak kelua
 ### Ditambah
 
 - **Perbendaharaan klik kanan.** Satu tekanan membuka menu; dua dan tiga tekanan menyalin lebih banyak secara berperingkat — nama, nama dengan sambungannya, laluannya. Menu baris itu kini sepadan dengan menu Peneroka fail entri demi entri.
-- **Menu di luar bilik kebal.** Baris senarai dan pemapar luaran menawarkan pembukaan, *Salin laluan* dan *Tunjukkan dalam peneroka sistem*; dengan mangga terbuka, juga *Nota baharu*, *Folder baharu*, *Buat salinan*, *Tukar nama…* dan *Padam*. Padam mengalihkannya ke tong sampah sistem dan tidak pernah kekal.
+- **Menu di luar bilik kebal.** Baris senarai dan pemapar luaran menawarkan pembukaan, *Salin laluan* dan *Tunjuk dalam folder*; dengan mangga terbuka, juga *Nota baharu*, *Folder baharu*, *Buat satu salinan*, *Namakan semula…* dan *Hapus*. Hapus mengalihkannya ke tong sampah sistem dan tidak pernah kekal.
 - **Buka di tempat lain.** <kbd>Ctrl</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd> dan klik tengah pada nama nota atau sesebuah folder membukanya dalam tab baharu, belahan atau tetingkap. Kedua-duanya boleh diseret, seperti barisnya dalam Peneroka fail.
 - **Seret nota ke baris itu untuk memindahkannya.** Lepaskan satu nota, beberapa nota atau sebuah folder pada ruas folder atau pada nama bilik kebal.
 - **Perintah: Fokus pada bar laluan**, dengan seluruh laluan terpilih — tiada kekunci pintas lalai, ikatlah sendiri.
@@ -129,7 +129,7 @@ Setiap keluaran Lure, yang terbaharu dahulu. Apa yang telah mendarat sejak kelua
 ### Dokumentasi
 
 - README dan panduan penggunaan tersedia dalam kesemua 44 bahasa yang dibawa plugin ini.
-- Panduan itu menamakan tetapan Obsidian *Detect all file extensions*, yang kini dipanggil *Show all file types*.
+- Panduan itu menamakan tetapan Obsidian *Detect all file extensions*, yang kini dipanggil *Tunjuk semua jenis fail*.
 
 ## 1.0.0 — 2026-08-10[^1.0.0]
 
