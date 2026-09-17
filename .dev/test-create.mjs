@@ -220,6 +220,41 @@ test("a slash completes a rung that is merely not there yet, and keeps it red", 
 	await pressKey(page, "Escape");
 });
 
+test("a slash in front of an empty field opens a path on the machine", async () => {
+	// The row's own slash means "take this rung and descend", which counts
+	// what was typed from the folder the row stands in. A path from the
+	// filesystem root is counted from nothing of the kind, and the press used
+	// to be a no-op in front of an empty field — so "/home/me" arrived as
+	// "home" and was rebuilt as folders inside the vault, under the vault's
+	// own name and icon.
+	await type("");
+	await pressKey(page, "/");
+	await page.evaluate(PAUSE(350) + "return true;");
+	const opened = JSON.parse(await page.evaluate(fieldState));
+	expect("the slash is in the field", opened.value, "/");
+	await page.send("Input.insertText", { text: "home" });
+	await pressKey(page, "/");
+	await page.evaluate(PAUSE(350) + "return true;");
+	const walked = JSON.parse(await page.evaluate(fieldState));
+	expect("and so is every slash after it", walked.value, "/home/");
+	const row = JSON.parse(await page.evaluate(`
+		const root = app.workspace.getMostRecentLeaf().view.containerEl
+			.querySelector(".view-header-title-container");
+		return JSON.stringify({
+			chips: [...root.querySelectorAll(".lure-browse-chip")].map((c) => c.textContent),
+			vaultName: !!root.querySelector(".lure-root-name"),
+			vaultIcon: !!root.querySelector(".lure-vault-icon"),
+		});
+	`));
+	expect("no rung was built inside the vault", row.chips, (v) => v.length === 0);
+	// The other half of the same claim: a path that is not in this vault is
+	// not shown standing in it. The opening segment says nothing at all,
+	// because the field begins at the root and says it already.
+	expect("the vault's name is gone", row.vaultName, false);
+	expect("and its icon with it", row.vaultIcon, false);
+	await pressKey(page, "Escape");
+});
+
 test("a bare name is read as the note it would open, not as a new one", async () => {
 	// Enter appends `.md` before it looks, so "Trumpet" opens "Trumpet.md".
 	// Reading the typed text literally instead would have called an existing

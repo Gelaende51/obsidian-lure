@@ -71,6 +71,16 @@ export interface SuggestContext {
 	shouldList: (child: TAbstractFile) => boolean;
 	/** Same display filter for entries outside the vault, which have no TAbstractFile. */
 	shouldListExternal: (child: ExternalChild) => boolean;
+	/**
+	 * Whether anything outside the vault may be listed at all.
+	 *
+	 * False only while the setting is off and an absolute path has been
+	 * typed into a vault row: the path is refused on Enter, so offering the
+	 * machine's names for it would promise a journey that cannot be made.
+	 * The list stands empty instead, and the field goes red as it does for
+	 * anything else nothing answers to.
+	 */
+	mayListExternal: boolean;
 	/** Whether an extension is a text type Obsidian has no view for — tinted as a caution. */
 	warnsOnOpen: (extension: string) => boolean;
 	/** Whether a vault file is some folder's note — tinted so it reads as the folder's, not as one more note. */
@@ -753,6 +763,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		context: SuggestContext,
 		matches: (name: string) => boolean,
 	): PathSuggestion[] {
+		if (!context.mayListExternal) return [];
 		const children = listExternalChildren(folderPath);
 
 		const suggestions: PathSuggestion[] = [];

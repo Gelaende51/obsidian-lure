@@ -494,6 +494,55 @@ test("a fourth click reaches the system path too", async () => {
 		typeof v === "string" && v.endsWith(`/${NOTE}`) && v.startsWith("/"));
 });
 
+test("the rung that reaches the system root leaves the row to the field", async () => {
+	// The fitter stands down while a field is open, so the trail this rung
+	// used to draw from the filesystem root arrived without floors under its
+	// names — flexbox took each of them to nothing and painted what they held
+	// over their neighbours. It was also the same path twice: a field holding
+	// `/home/me/notes` beside a trail reading `/ home / me` says nothing the
+	// field has not said, so the opening segment now stands empty.
+	await armed();
+	let top = null;
+	for (let i = 0; i < 8 && !top; i++) {
+		await tab();
+		const rung = await look();
+		if (typeof rung.value === "string" && rung.value.startsWith("/")) top = rung;
+	}
+	expect("a rung holds the path from the system root", top && top.value, (v) =>
+		typeof v === "string" && v.endsWith(`/${NOTE}`));
+
+	const row = JSON.parse(await page.evaluate(`
+		const root = app.workspace.getMostRecentLeaf().view.containerEl
+			.querySelector(".view-header-title-container");
+		const boxes = [...root.querySelectorAll("span, input")]
+			.filter((el) => el.offsetParent !== null && !el.querySelector("span") && el.textContent !== "")
+			.map((el) => {
+				const r = el.getBoundingClientRect();
+				return { text: el.value ?? el.textContent, left: r.left, right: r.right };
+			});
+		let over = null;
+		for (let i = 0; i < boxes.length; i++) {
+			for (let j = i + 1; j < boxes.length; j++) {
+				// A pixel of slack: neighbouring parts of one name sit flush,
+				// and rounding can put them a fraction inside each other.
+				if (boxes[i].left < boxes[j].right - 1 && boxes[j].left < boxes[i].right - 1) {
+					over = [boxes[i].text, boxes[j].text];
+				}
+			}
+		}
+		return JSON.stringify({
+			over,
+			vaultName: !!root.querySelector(".lure-root-name"),
+			vaultIcon: !!root.querySelector(".lure-vault-icon"),
+			chips: [...root.querySelectorAll(".lure-browse-chip")].map((c) => c.textContent),
+		});
+	`));
+	expect("nothing on the row is painted over anything else", row.over, null);
+	expect("the vault's name has gone", row.vaultName, false);
+	expect("and its icon with it", row.vaultIcon, false);
+	expect("and no folder of the path is drawn twice", row.chips, (v) => v.length === 0);
+});
+
 test("the ladder does not survive into the next session", async () => {
 	await armed();
 	await tab();

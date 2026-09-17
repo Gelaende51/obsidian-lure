@@ -242,6 +242,36 @@ test("a path written with a tilde is read from the home folder", async () => {
 	expect("and no note was made out of the tilde", s.tildeNotes, 0);
 });
 
+test("a path from the root is offered the machine's names, not the vault's", async () => {
+	// The dropdown asked the vault whatever was typed, so an absolute path
+	// was completed out of the folder the row happened to stand in: in a
+	// vault holding `home.md`, typing `/home` wrote `/home.md` into the
+	// field. What lies in front of the caret there is a folder on the
+	// machine, and the machine is what the list has to be about.
+	expect("field armed and focused", await page.evaluate(armInput), true);
+	await pressKey(page, "/");
+	await page.evaluate(PAUSE(500) + "return true;");
+	const s = JSON.parse(await page.evaluate(`
+		const input = document.querySelector(".lure-path-input");
+		return JSON.stringify({
+			value: input ? input.value : null,
+			rows: [...document.querySelectorAll(".suggestion-item .lure-suggest-label")].map((e) => e.textContent),
+			vaultRoots: app.vault.getRoot().children.map((f) => f.name),
+		});
+	`));
+	expect("the slash stays in the field", s.value, "/");
+	// Read from the machine rather than written down: the root of a Linux
+	// box holds these, and a suite that asserted a list would be asserting
+	// this machine.
+	expect("the filesystem root is listed", s.rows, (v) => v.includes("home") || v.includes("etc"));
+	// Named rather than compared against the whole vault root: a folder in
+	// the vault may happen to be called `opt` or `tmp`, and the case would
+	// then be asserting which names this machine's root holds.
+	expect("and the vault's own notes are not", s.rows, (v) => !v.includes("Trumpet.md"));
+	expect("nor its folders", s.rows, (v) => !v.includes("Schemes"));
+	await page.evaluate(`document.querySelector(".lure-path-input")?.blur(); ${PAUSE(200)} return true;`);
+});
+
 test("a lone tilde browses the home folder", async () => {
 	const s = await typeAndEnter("~");
 	expect("the row went home", s.rowPath, (v) => typeof v === "string" && v.startsWith(homedir()));

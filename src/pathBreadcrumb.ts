@@ -4111,13 +4111,17 @@ export class PathBreadcrumb {
 		}
 
 		// A typed absolute path is not in this vault, so the vault's name and
-		// its home icon have nothing to do with it: the row shows where the
-		// path really starts instead, and reads as one path rather than as a
-		// vault trail with somewhere else typed on the end of it.
-		if (this.typedAbsolute !== null) {
-			this.renderAbsoluteTrail(this.typedAbsolute);
-			return;
-		}
+		// its home icon have nothing to do with it and the opening segment
+		// stands empty: the field begins at the filesystem root, and the row
+		// reads as that one path rather than as a vault trail with somewhere
+		// else typed on the end of it.
+		//
+		// The folders above it were drawn here for a while, from the root.
+		// They said nothing the field was not already saying — a field
+		// holding `/home/me/notes` beside a trail reading `/ home / me` is
+		// the same path twice — and on a path long enough to matter the two
+		// copies fought over the row and were painted over each other.
+		if (this.typedAbsolute !== null) return;
 
 		this.renderRootSegment();
 
@@ -4304,48 +4308,25 @@ export class PathBreadcrumb {
 		// Only the opening segment is redrawn. The field is hosted in the
 		// filename slot, so it keeps its value, its caret and its focus.
 		this.renderVaultSegment();
+		this.layOutTrailNames();
 	}
 
 	/**
-	 * The folders above a typed absolute path, drawn from the filesystem root.
+	 * Gives the trail's names their parts and their floors, without fitting.
 	 *
-	 * Deliberately not `renderExternalSegments`: that one draws from the place
-	 * the row was browsing from, and a path typed into a vault row was
-	 * browsing from nowhere. The root is the only honest start for it.
+	 * The fitter stands down while a field is open (see `fitRow`), so a trail
+	 * redrawn mid-keystroke arrived as bare names — and a flex item that has
+	 * been told nothing about its floor is taken all the way down to nothing,
+	 * where it paints the name it is holding straight over the one beside it.
+	 * A deep absolute path came out as overlapping word salad for exactly
+	 * that reason.
+	 *
+	 * Laying the names out is what puts a floor under each of them. What to
+	 * clip, and how much of the row's air to spend, is still the fit's
+	 * business and still waits for the field to close.
 	 */
-	private renderAbsoluteTrail(folderPath: string): void {
-		const { root, segments } = externalSegments(folderPath);
-		const rootEl = this.vaultSegmentEl.createSpan({
-			cls: "view-header-breadcrumb lure-vault-segment lure-external-segment",
-			text: root,
-		});
-		rootEl.addEventListener("click", (evt) => {
-			evt.stopPropagation();
-			this.openLocationMenu();
-		});
-		this.vaultSegmentEl.createSpan({
-			cls: "view-header-breadcrumb-separator",
-			text: this.plugin.settings.delimiter,
-		});
-
-		let acc = root;
-		for (const segment of segments) {
-			acc = acc.endsWith(PATH_SEP) ? acc + segment : acc + PATH_SEP + segment;
-			const chipPath = acc;
-			const chip = this.vaultSegmentEl.createSpan({
-				cls: "view-header-breadcrumb lure-browse-chip lure-external-segment",
-				text: segment,
-			});
-			chip.dataset.lurePath = chipPath;
-			chip.addEventListener("click", (evt) => {
-				evt.stopPropagation();
-				this.handleExternalSegmentClick(chipPath);
-			});
-			this.vaultSegmentEl.createSpan({
-				cls: "view-header-breadcrumb-separator",
-				text: this.plugin.settings.delimiter,
-			});
-		}
+	private layOutTrailNames(): void {
+		for (const segment of this.fittableSegments()) this.layOutName(segment);
 	}
 
 	private renderExternalSegments(absolutePath: string): void {
@@ -6480,6 +6461,28 @@ export class PathBreadcrumb {
 		this.enterTypingMode(text, selection);
 	}
 
+	/**
+	 * Whether "/" pressed here is a character of a path on this machine.
+	 *
+	 * The row's own "/" means "take this rung and descend", and descending
+	 * counts what was typed from the folder the row is standing in — which a
+	 * path from the filesystem root has nothing to do with. In front of an
+	 * empty field the press *opens* such a path, and that is the only way to
+	 * type one by hand: it was a no-op there, so `/home/me` arrived as `home`
+	 * and was built again as folders inside the vault, under the vault's own
+	 * name and icon. Once the text is absolute — or a `~` that expands to one
+	 * — every later slash in it belongs to it too.
+	 */
+	private slashTypesSystemPath(inputEl: HTMLInputElement): boolean {
+		// From the start of the selection, not its end: text that opens
+		// marked is about to be typed over, and a slash replacing the whole
+		// path is the first character of a new one rather than a rung of the
+		// old.
+		const caret = inputEl.selectionStart ?? inputEl.value.length;
+		if (!inputEl.value.slice(0, caret).trim()) return true;
+		return isAbsolutePath(expandHome(inputEl.value.trim()));
+	}
+
 	private descendIntoTypedSegment(rawText: string): void {
 		// Up to the end of the segment the caret is in — not the end of the
 		// field. A field holding a path has more to the right of what is
@@ -6711,12 +6714,33 @@ export class PathBreadcrumb {
 
 	/** The same question outside the vault, where the trail is absolute. */
 	private externalFolderAtCaret(): string | null {
-		if (this.externalPath === null) return null;
+		if (this.externalPath === null) return this.typedSystemFolderAtCaret();
 		const input = this.inputEl;
 		if (!input) return this.externalPath;
 		const bounds = segmentBoundsAtCaret(input.value, input.selectionEnd ?? input.value.length);
 		const before = input.value.slice(0, bounds.start).replace(/[\\/]+$/, "");
 		return before ? externalJoin(this.externalPath, before) : this.externalPath;
+	}
+
+	/**
+	 * The folder on the machine an absolute path typed into a vault row is
+	 * standing in, or null while the field holds a path of this vault's.
+	 *
+	 * The names in front of the caret are then folders on the machine, so
+	 * what the list is about is the machine — the vault's own names had no
+	 * business being offered there, and taking one wrote it into the path:
+	 * in a vault holding `home.md`, typing `/home` completed itself to
+	 * `/home.md`.
+	 */
+	private typedSystemFolderAtCaret(): string | null {
+		const input = this.inputEl;
+		if (!input) return null;
+		const bounds = segmentBoundsAtCaret(input.value, input.selectionEnd ?? input.value.length);
+		const before = expandHome(input.value.slice(0, bounds.start).trim());
+		if (!isAbsolutePath(before)) return null;
+		// The root keeps its separator: it *is* one, and stripped of it there
+		// is no path left to list.
+		return before.replace(/(?<=.)[\\/]+$/, "");
 	}
 
 	/** Where the row's own file is on disk, whichever side of the vault boundary it is. */
@@ -7095,6 +7119,9 @@ export class PathBreadcrumb {
 				// Except where the slash is part of a scheme: "https:/" +
 				// "/" is a URL being typed, not a folder called "https:".
 				if (slashBelongsToScheme(inputEl.value)) return;
+				// Or where it belongs to a path on the machine rather than to
+				// a rung of this row.
+				if (this.slashTypesSystemPath(inputEl)) return;
 				evt.preventDefault();
 				this.descendIntoTypedSegment(inputEl.value);
 			}
@@ -7370,6 +7397,7 @@ export class PathBreadcrumb {
 				currentFolder: this.activeFolderPath(),
 				shouldList: (child) => this.shouldListChild(child),
 				shouldListExternal: (child) => this.shouldListExternalChild(child),
+				mayListExternal: this.plugin.settings.accessExternalFiles,
 				warnsOnOpen: (extension) => this.warnsOnOpen(extension),
 				isFolderNote: (path) => this.isFolderNote(path),
 				queryOverride: this.suggestQueryOverride,
