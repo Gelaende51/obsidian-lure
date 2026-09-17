@@ -68,7 +68,7 @@ Moving a note *out* of your vault is the one write that costs something nothing 
 
 ## Installation
 
-Listed at [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), but not yet approved for the in-app browser — so install it one of these ways:
+**In Obsidian:** open **Settings → Community plugins → Browse**, search for *Lure*, then *Install* and *Enable* — or press *Add to Obsidian* on [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure).
 
 **Manual:** download `main.js`, `manifest.json` and `styles.css` from the [latest release](https://github.com/Gelaende51/obsidian-lure/releases) into `<vault>/.obsidian/plugins/lure/`, then enable it under **Settings → Community plugins**.
 
