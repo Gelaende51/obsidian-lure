@@ -1,4 +1,4 @@
-<!-- Vertaling van README.md — stand: commit f133f41.
+<!-- Vertaling van README.md — stand: commit 973105b.
      Machinaal vertaald (Claude Opus 5) en niet nagekeken door
      moedertaalsprekers. Correcties zijn welkom; de Engelse README is de
      maatgevende versie. -->
@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · alleen desktop · AGPL-3.0
 ## AI-verantwoording
 
 - **Agent** — **Claude Opus 5** en **Claude Sonnet 5** (Anthropic, via Claude Code): schreef de TypeScript, de CSS, alle 45 vertaalsets en de documentatie. De vertalingen zijn machinaal gemaakt en niet nagekeken door moedertaalsprekers.
-- **Verbruik** — 3 augustus – 6 september 2026, 22 sessies, \~13.378 antwoorden: \~16,3 mln. tokens gegenereerd, \~62,3 mln. verzonden, \~4245,1 mln. herlezingen uit de cache (\~4323,6 mln. in totaal).
+- **Verbruik** — 3 augustus – 17 september 2026, 23 sessies, \~14.844 antwoorden: \~19,2 mln. tokens gegenereerd, \~85,2 mln. verzonden, \~4800,6 mln. herlezingen uit de cache (\~4905,0 mln. in totaal).
 - **Herkomst** — het model heeft geleerd van opensourcecode, documentatie en teksten van de gemeenschap die anderen hebben gepubliceerd. De meeste eer komt hun toe.
 - **Auteur** — Vault51: bepaalde elke functie, testte elke versie in een echte kluis, stuurde de correcties aan en las alle resultaten na.
 

@@ -1,4 +1,4 @@
-<!-- Översättning av CHANGELOG.md — status: commit f133f41.
+<!-- Översättning av CHANGELOG.md — status: commit 973105b.
      Maskinöversatt (Claude Opus 5) och inte granskad av modersmålstalare.
      Rättelser är välkomna; den engelska CHANGELOG-filen är den gällande
      versionen. -->
@@ -9,7 +9,7 @@
 
 Varje utgåva av Lure, nyast först. Det som har landat sedan den senaste utgåvan ligger under *Ej släppt*. Versionerna bär inget `v`-prefix, i linje med utgåvetaggarna.
 
-## Ej släppt[^unreleased]
+## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### Tillagt
 
@@ -147,7 +147,7 @@ Första utgåvan. Ersätter filnamnet i en anteckningens rubrikrad med en klickb
 - **Utanför valvet** (avstängt som standard): valvets namn öppnar dina andra valv, hemmappen, filsystemets rot och monterade enheter. Ingenting där ute skrivs förrän du låser upp det, och en anteckning kan bara kopieras ut ur valvet, aldrig flyttas.
 - **45 språk.**
 
-[^unreleased]: Ändringar sedan 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...HEAD>
+[^1.3.0]: Ändringar sedan 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Ändringar sedan 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Ändringar sedan 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>
 [^1.1.1]: Ändringar sedan 1.1.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.0...1.1.1>

@@ -1,4 +1,4 @@
-<!-- README.md çevirisi — durum: commit f133f41.
+<!-- README.md çevirisi — durum: commit 973105b.
      Makine çevirisi (Claude Opus 5), ana dili konuşanlarca gözden
      geçirilmedi. Düzeltmeler memnuniyetle karşılanır; belirleyici sürüm
      İngilizce README'dir. -->
@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · yalnızca masaüstü · AGPL-3.0
 ## Yapay zekâ bildirimi
 
 - **Aracı** — **Claude Opus 5** ve **Claude Sonnet 5** (Anthropic, Claude Code üzerinden): TypeScript kodunu, CSS'i, 45 çeviri setinin tamamını ve belgeleri yazdı. Çeviriler makine tarafından üretilmiştir ve ana dili konuşanlarca gözden geçirilmemiştir.
-- **Tüketim** — 3 Ağustos – 6 Eylül 2026, 22 oturum, \~13.378 yanıt: \~16,3 M token üretildi, \~62,3 M gönderildi, \~4.245,1 M önbellekten yeniden okundu (toplam \~4.323,6 M).
+- **Tüketim** — 3 Ağustos – 17 Eylül 2026, 23 oturum, \~14.844 yanıt: \~19,2 M token üretildi, \~85,2 M gönderildi, \~4.800,6 M önbellekten yeniden okundu (toplam \~4.905,0 M).
 - **Kaynak** — model, başkalarının yayımladığı açık kaynak kodlardan, belgelerden ve topluluk yazılarından öğrendi. Emeğin büyük kısmı onlara aittir.
 - **Yazar** — Vault51: her özelliği tanımladı, her yinelemeyi gerçek bir kasada test etti, düzeltmeleri yönlendirdi, tüm çıktıyı gözden geçirdi.
 

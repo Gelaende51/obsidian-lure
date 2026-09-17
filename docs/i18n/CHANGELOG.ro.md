@@ -1,4 +1,4 @@
-<!-- Traducere a CHANGELOG.md — stare: commit f133f41.
+<!-- Traducere a CHANGELOG.md — stare: commit 973105b.
      Traducere automată (Claude Opus 5), nerevizuită de vorbitori nativi.
      Corecturile sunt binevenite; versiunea de referință este jurnalul de
      modificări în engleză. -->
@@ -9,7 +9,7 @@
 
 Fiecare versiune a Lure, cea mai nouă prima. Ce a apărut de la ultima versiune se află sub *Nelansate*. Versiunile nu poartă prefixul `v`, la fel ca etichetele de lansare.
 
-## Nelansate[^unreleased]
+## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### Adăugat
 
@@ -147,7 +147,7 @@ Prima lansare. Înlocuiește numele fișierului din antetul unei notițe cu un t
 - **În afara seifului** (dezactivat implicit): numele seifului deschide celelalte seifuri, dosarul personal, rădăcina sistemului de fișiere și unitățile montate. Nimic de acolo nu este scris până nu deblochezi, iar o notiță poate fi doar copiată în afara seifului, niciodată mutată.
 - **45 de limbi.**
 
-[^unreleased]: Modificări de la 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...HEAD>
+[^1.3.0]: Modificări de la 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Modificări de la 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Modificări de la 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>
 [^1.1.1]: Modificări de la 1.1.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.0...1.1.1>

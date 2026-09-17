@@ -1,4 +1,4 @@
-<!-- A README.md fordítása — állapot: f133f41 commit.
+<!-- A README.md fordítása — állapot: 973105b commit.
      Gépi fordítás (Claude Opus 5), anyanyelvi lektorálás nélkül.
      A javításokat szívesen fogadjuk; az irányadó változat az angol
      README. -->
@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · csak asztali gépen · AGPL-3.0
 ## MI-nyilatkozat
 
 - **Ügynök** — **Claude Opus 5** és **Claude Sonnet 5** (Anthropic, a Claude Code-on keresztül): megírta a TypeScript kódot, a CSS-t, mind a 45 fordításkészletet és a dokumentációt. A fordítások gépiek, anyanyelvi lektorálás nélkül.
-- **Fogyasztás** — 2026. augusztus 3. – szeptember 6., 22 munkamenet, \~13378 válasz: \~16,3 M előállított token, \~62,3 M elküldött, \~4245,1 M újraolvasás a gyorsítótárból (összesen \~4323,6 M).
+- **Fogyasztás** — 2026. augusztus 3. – szeptember 17., 23 munkamenet, \~14844 válasz: \~19,2 M előállított token, \~85,2 M elküldött, \~4800,6 M újraolvasás a gyorsítótárból (összesen \~4905,0 M).
 - **Forrás** — a modell nyílt forráskódú kódból, dokumentációból és mások által közzétett közösségi írásokból tanult. Az érdem nagyobb része őket illeti.
 - **Szerző** — Vault51: meghatározott minden funkciót, valódi széfben próbálta ki az egyes változatokat, irányította a javításokat, átnézte az összes eredményt.
 

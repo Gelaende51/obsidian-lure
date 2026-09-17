@@ -1,4 +1,4 @@
-<!-- Oversettelse av README.md — status: commit f133f41.
+<!-- Oversettelse av README.md — status: commit 973105b.
      Maskinoversatt (Claude Opus 5) og ikke gjennomlest av morsmålsbrukere.
      Rettelser er velkomne; den engelske README-filen er den gjeldende
      utgaven.
@@ -20,7 +20,7 @@ Obsidian 1.8.7+ · kun datamaskin · AGPL-3.0
 ## AI-erklæring
 
 - **Agent** — **Claude Opus 5** og **Claude Sonnet 5** (Anthropic, via Claude Code): skrev TypeScript-koden, CSS-en, alle 45 oversettelsessettene og dokumentasjonen. Oversettelsene er laget maskinelt og ikke gjennomlest av morsmålsbrukere.
-- **Forbruk** — 3. august – 6. september 2026, 22 økter, \~13 378 svar: \~16,3 mill. genererte tokens, \~62,3 mill. sendte, \~4245,1 mill. gjenlesinger fra hurtiglageret (\~4323,6 mill. totalt).
+- **Forbruk** — 3. august – 17. september 2026, 23 økter, \~14 844 svar: \~19,2 mill. genererte tokens, \~85,2 mill. sendte, \~4800,6 mill. gjenlesinger fra hurtiglageret (\~4905,0 mill. totalt).
 - **Opphav** — modellen har lært av åpen kildekode, dokumentasjon og fellesskapstekster utgitt av andre. Mesteparten av æren tilfaller dem.
 - **Forfatter** — Vault51: fastsatte hver funksjon, prøvde hver utgave i et ekte hvelv, styrte rettelsene og leste gjennom alle resultater.
 

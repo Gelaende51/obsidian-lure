@@ -1,4 +1,4 @@
-<!-- Përkthim i CHANGELOG.md — gjendja: commit f133f41.
+<!-- Përkthim i CHANGELOG.md — gjendja: commit 973105b.
      Përkthim me makinë (Claude Opus 5), i pashqyrtuar nga folës amtarë.
      Ndreqjet janë të mirëpritura; versioni përcaktues është CHANGELOG-u
      në anglisht. -->
@@ -9,7 +9,7 @@
 
 Çdo publikim i Lure, më i riu i pari. Ajo që ka ardhur që nga publikimi i fundit ndodhet nën *Të papublikuara*. Versionet nuk kanë prapashtesën `v`, njësoj si etiketat e publikimeve.
 
-## Të papublikuara[^unreleased]
+## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### Të shtuara
 
@@ -147,7 +147,7 @@ Publikimi i parë. E zëvendëson emrin e skedarit në kokën e një shënimi me
 - **Jashtë kasafortës** (e fikur si parazgjedhje): emri i kasafortës hap kasafortat e tua të tjera, dosjen e shtëpisë, rrënjën e sistemit të skedarëve dhe disqet e montuara. Atje jashtë nuk shkruhet asgjë derisa ta shkyçësh, dhe një shënim mund vetëm të kopjohet jashtë kasafortës, kurrë të zhvendoset.
 - **45 gjuhë.**
 
-[^unreleased]: Ndryshimet që nga 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...HEAD>
+[^1.3.0]: Ndryshimet që nga 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Ndryshimet që nga 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Ndryshimet që nga 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>
 [^1.1.1]: Ndryshimet që nga 1.1.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.0...1.1.1>

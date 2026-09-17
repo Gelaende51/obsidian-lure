@@ -1,4 +1,4 @@
-<!-- Traducere a README.md — stare: commit f133f41.
+<!-- Traducere a README.md — stare: commit 973105b.
      Traducere automată (Claude Opus 5), nerevizuită de vorbitori nativi.
      Corecturile sunt binevenite; versiunea de referință este README-ul
      în engleză. -->
@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · doar desktop · AGPL-3.0
 ## Divulgare privind IA
 
 - **Agent** — **Claude Opus 5** și **Claude Sonnet 5** (Anthropic, prin Claude Code): au scris codul TypeScript, CSS-ul, toate cele 45 de seturi de traduceri și documentația. Traducerile sunt generate automat și nerevizuite de vorbitori nativi.
-- **Consum** — 3 aug. – 6 sept. 2026, 22 de sesiuni, ~13.378 de răspunsuri: ~16,3 M de jetoane generate, ~62,3 M trimise, ~4245,1 M recitiri din cache (~4323,6 M în total).
+- **Consum** — 3 aug. – 17 sept. 2026, 23 de sesiuni, ~14.844 de răspunsuri: ~19,2 M de jetoane generate, ~85,2 M trimise, ~4800,6 M recitiri din cache (~4905,0 M în total).
 - **Amonte** — modelul a învățat din cod open source, documentație și scrieri ale comunității publicate de alții. Cea mai mare parte a meritului le revine lor.
 - **Autor** — Vault51: a specificat fiecare funcție, a testat fiecare iterație într-un seif real, a coordonat corecturile, a revizuit tot ce a rezultat.
 

@@ -1,4 +1,4 @@
-<!-- README.md tulkojums — stāvoklis: revīzija f133f41.
+<!-- README.md tulkojums — stāvoklis: revīzija 973105b.
      Mašīntulkojums (Claude Opus 5), ko nav pārlasījuši dzimtās valodas
      runātāji. Labojumi ir gaidīti; noteicošā ir README angļu valodā. -->
 
@@ -15,7 +15,7 @@ Obsidian 1.8.7+ · tikai datoram · AGPL-3.0
 ## Paziņojums par MI
 
 - **Aģents** — **Claude Opus 5** un **Claude Sonnet 5** (Anthropic, caur Claude Code): uzrakstīja TypeScript kodu, CSS, visus 45 tulkojumu komplektus un dokumentāciju. Tulkojumi ir mašīnas veidoti, un dzimtās valodas runātāji tos nav pārlasījuši.
-- **Patēriņš** — 2026. gada 3. augusts – 6. septembris, 22 sesijas, \~13 378 atbildes: \~16,3 milj. ģenerētu marķieru, \~62,3 milj. nosūtītu, \~4245,1 milj. atkārtotu nolasījumu no kešatmiņas (\~4323,6 milj. kopā).
+- **Patēriņš** — 2026. gada 3. augusts – 17. septembris, 23 sesijas, \~14 844 atbildes: \~19,2 milj. ģenerētu marķieru, \~85,2 milj. nosūtītu, \~4800,6 milj. atkārtotu nolasījumu no kešatmiņas (\~4905,0 milj. kopā).
 - **Pirmavots** — modelis mācījās no atvērtā pirmkoda, dokumentācijas un kopienas rakstiem, ko publicējuši citi. Lielākā daļa nopelnu pieder tiem.
 - **Autors** — Vault51: noteica katru funkciju, izmēģināja katru versiju īstā glabātavā, vadīja labojumus, pārskatīja visus rezultātus.
 

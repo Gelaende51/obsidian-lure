@@ -1,4 +1,4 @@
-<!-- A CHANGELOG.md fordítása — állapot: f133f41 commit.
+<!-- A CHANGELOG.md fordítása — állapot: 973105b commit.
      Gépi fordítás (Claude Opus 5), anyanyelvi lektorálás nélkül.
      A javításokat szívesen fogadjuk; az irányadó változat az angol
      CHANGELOG. -->
@@ -9,7 +9,7 @@
 
 A Lure minden kiadása, a legújabbal kezdve. Ami a legutóbbi kiadás óta került be, a *Kiadatlan* szakaszban található. A verziószámok elé nem kerül `v` előtag, így megegyeznek a kiadási címkékkel.
 
-## Kiadatlan[^unreleased]
+## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### Hozzáadva
 
@@ -147,7 +147,7 @@ Első kiadás. A jegyzet fejlécében lévő fájlnevet a széfbeli útvonalát 
 - **A széfen kívül** (alapból kikapcsolva): a széf neve megnyitja a többi széfedet, a saját mappádat, a fájlrendszer gyökerét és a csatolt meghajtókat. Odakint semmi sem íródik, amíg fel nem oldod, egy jegyzetet pedig csak kimásolni lehet a széfből, áthelyezni sosem.
 - **45 nyelv.**
 
-[^unreleased]: Változások az 1.2.0 óta: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...HEAD>
+[^1.3.0]: Változások az 1.2.0 óta: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Változások az 1.1.2 óta: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Változások az 1.1.1 óta: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>
 [^1.1.1]: Változások az 1.1.0 óta: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.0...1.1.1>

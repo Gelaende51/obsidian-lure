@@ -1,4 +1,4 @@
-<!-- CHANGELOG.md 번역 — 기준 커밋: f133f41.
+<!-- CHANGELOG.md 번역 — 기준 커밋: 973105b.
      기계 번역(Claude Opus 5)이며 원어민 검수를 거치지 않았습니다.
      수정 제안을 환영합니다. 기준이 되는 것은 영어판 CHANGELOG입니다. -->
 
@@ -8,7 +8,7 @@
 
 Lure의 모든 릴리스를 최신 순으로 정리했습니다. 마지막 릴리스 이후에 들어온 것은 *미출시* 아래에 있습니다. 버전에는 릴리스 태그와 마찬가지로 `v` 접두사가 붙지 않습니다.
 
-## 미출시[^unreleased]
+## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### 추가
 
@@ -146,7 +146,7 @@ Lure의 모든 릴리스를 최신 순으로 정리했습니다. 마지막 릴�
 - **보관함 외부**(기본값 꺼짐): 보관함 이름으로 다른 보관함, 홈 폴더, 파일 시스템 루트, 마운트된 드라이브를 엽니다. 잠금을 풀기 전에는 그곳에 아무것도 쓰지 않으며, 노트는 보관함 밖으로 복사만 될 뿐 결코 옮겨지지 않습니다.
 - **45개 언어.**
 
-[^unreleased]: 1.2.0 이후의 변경: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...HEAD>
+[^1.3.0]: 1.2.0 이후의 변경: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: 1.1.2 이후의 변경: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: 1.1.1 이후의 변경: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>
 [^1.1.1]: 1.1.0 이후의 변경: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.0...1.1.1>

@@ -1,4 +1,4 @@
-<!-- Käännös tiedostosta CHANGELOG.md — tilanne: commit f133f41.
+<!-- Käännös tiedostosta CHANGELOG.md — tilanne: commit 973105b.
      Konekäännös (Claude Opus 5), jota äidinkieliset puhujat eivät ole
      tarkastaneet. Korjaukset ovat tervetulleita; englanninkielinen
      CHANGELOG on ratkaiseva versio. -->
@@ -9,7 +9,7 @@
 
 Kaikki Luren julkaisut, uusin ensin. Se, mikä on valmistunut viimeisimmän julkaisun jälkeen, on kohdassa *Julkaisematon*. Versionumeroissa ei ole `v`-etuliitettä, samoin kuin julkaisutunnisteissa.
 
-## Julkaisematon[^unreleased]
+## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### Lisätty
 
@@ -147,7 +147,7 @@ Ensimmäinen julkaisu. Korvaa muistiinpanon otsikkorivillä olevan tiedostonimen
 - **Holvin ulkopuolella** (oletuksena pois päältä): holvin nimi avaa muut holvisi, kotikansion, tiedostojärjestelmän juuren ja liitetyt asemat. Mitään siellä ei kirjoiteta, ennen kuin avaat lukituksen, ja muistiinpanon voi vain kopioida holvista ulos, ei koskaan siirtää.
 - **45 kieltä.**
 
-[^unreleased]: Muutokset version 1.2.0 jälkeen: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...HEAD>
+[^1.3.0]: Muutokset version 1.2.0 jälkeen: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Muutokset version 1.1.2 jälkeen: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Muutokset version 1.1.1 jälkeen: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>
 [^1.1.1]: Muutokset version 1.1.0 jälkeen: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.0...1.1.1>

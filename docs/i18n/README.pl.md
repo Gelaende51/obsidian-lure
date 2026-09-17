@@ -1,4 +1,4 @@
-<!-- Tłumaczenie README.md — stan: commit f133f41.
+<!-- Tłumaczenie README.md — stan: commit 973105b.
      Tłumaczenie maszynowe (Claude Opus 5), nieskorygowane przez native
      speakerów. Poprawki mile widziane; wersją rozstrzygającą jest
      angielskie README. -->
@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · tylko komputer · AGPL-3.0
 ## Ujawnienie użycia SI
 
 - **Agent** — **Claude Opus 5** i **Claude Sonnet 5** (Anthropic, przez Claude Code): napisał TypeScript, CSS, wszystkie 45 zestawów tłumaczeń i dokumentację. Tłumaczenia powstały maszynowo i nie były sprawdzane przez native speakerów.
-- **Zużycie** — 3 sierpnia – 6 września 2026, 22 sesje, \~13 378 odpowiedzi: \~16,3 mln wygenerowanych tokenów, \~62,3 mln wysłanych, \~4245,1 mln odczytów z pamięci podręcznej (\~4323,6 mln łącznie).
+- **Zużycie** — 3 sierpnia – 17 września 2026, 23 sesje, \~14 844 odpowiedzi: \~19,2 mln wygenerowanych tokenów, \~85,2 mln wysłanych, \~4800,6 mln odczytów z pamięci podręcznej (\~4905,0 mln łącznie).
 - **Źródło** — model nauczył się z otwartego kodu, dokumentacji i tekstów społeczności opublikowanych przez innych. Większość zasługi należy do nich.
 - **Autor** — Vault51: określił każdą funkcję, przetestował każdą wersję w prawdziwym skarbcu, pokierował poprawkami, przejrzał wszystkie wyniki.
 

@@ -1,4 +1,4 @@
-<!-- Oversettelse av CHANGELOG.md — status: commit f133f41.
+<!-- Oversettelse av CHANGELOG.md — status: commit 973105b.
      Maskinoversatt (Claude Opus 5) og ikke gjennomlest av morsmålsbrukere.
      Rettelser er velkomne; den engelske CHANGELOG-filen er den gjeldende
      utgaven. -->
@@ -9,7 +9,7 @@
 
 Hver utgivelse av Lure, den nyeste først. Det som har kommet inn siden forrige utgivelse, står under *Ikke utgitt*. Versjonene har ingen `v` foran seg, slik som utgivelsesmerkene.
 
-## Ikke utgitt[^unreleased]
+## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### Lagt til
 
@@ -147,7 +147,7 @@ Første utgivelse. Erstatter filnavnet i overskriftslinjen til et notat med en k
 - **Utenfor hvelvet** (av som standard): hvelvnavnet åpner de andre hvelvene dine, hjemmemappen, roten av filsystemet og monterte stasjoner. Ingenting der ute skrives før du låser det opp, og et notat kan bare kopieres ut av hvelvet, aldri flyttes.
 - **45 språk.**
 
-[^unreleased]: Endringer siden 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...HEAD>
+[^1.3.0]: Endringer siden 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Endringer siden 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Endringer siden 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>
 [^1.1.1]: Endringer siden 1.1.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.0...1.1.1>

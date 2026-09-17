@@ -1,4 +1,4 @@
-<!-- CHANGELOG.md 的翻譯 — 對應提交：f133f41。
+<!-- CHANGELOG.md 的翻譯 — 對應提交：973105b。
      機器翻譯（Claude Opus 5），未經母語者校訂。歡迎指正；以英文 CHANGELOG
      為準。 -->
 
@@ -8,7 +8,7 @@
 
 Lure 的每一個版本，由新到舊排列。上次發布以來已合併的變更列於*尚未發布*之下。版本號不帶 `v` 前綴，與發布標籤一致。
 
-## 尚未發布[^unreleased]
+## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### 新增
 
@@ -146,7 +146,7 @@ Lure 的每一個版本，由新到舊排列。上次發布以來已合併的變
 - **儲存庫之外**（預設關閉）：儲存庫名稱會開啟你的其他儲存庫、家目錄、檔案系統根目錄與已掛載的磁碟。在你解鎖之前，外面的任何東西都不會被寫入，而且筆記只能從儲存庫複製出去，永遠無法移出。
 - **45 種語言。**
 
-[^unreleased]: 自 1.2.0 以來的變更：<https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...HEAD>
+[^1.3.0]: 自 1.2.0 以來的變更：<https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: 自 1.1.2 以來的變更：<https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: 自 1.1.1 以來的變更：<https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>
 [^1.1.1]: 自 1.1.0 以來的變更：<https://github.com/Gelaende51/obsidian-lure/compare/1.1.0...1.1.1>

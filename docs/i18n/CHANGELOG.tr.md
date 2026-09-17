@@ -1,4 +1,4 @@
-<!-- CHANGELOG.md çevirisi — durum: commit f133f41.
+<!-- CHANGELOG.md çevirisi — durum: commit 973105b.
      Makine çevirisi (Claude Opus 5), ana dili konuşanlarca gözden
      geçirilmedi. Düzeltmeler memnuniyetle karşılanır; belirleyici sürüm
      İngilizce CHANGELOG'dur. -->
@@ -9,7 +9,7 @@
 
 Lure'un her sürümü, en yenisi en üstte. Son sürümden bu yana gelenler *Yayımlanmamış* başlığı altındadır. Sürüm numaraları, sürüm etiketleriyle uyumlu olarak `v` öneki taşımaz.
 
-## Yayımlanmamış[^unreleased]
+## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### Eklenenler
 
@@ -147,7 +147,7 @@ Lure'un her sürümü, en yenisi en üstte. Son sürümden bu yana gelenler *Yay
 - **Kasanın dışında** (öntanımlı olarak kapalı): kasa adı diğer kasalarınızı, ev klasörünüzü, dosya sistemi kökünü ve bağlı sürücüleri açar. Siz kilidini açana kadar orada hiçbir şey yazılmaz ve bir not kasanın dışına yalnızca kopyalanabilir, asla taşınamaz.
 - **45 dil.**
 
-[^unreleased]: 1.2.0'dan bu yana değişiklikler: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...HEAD>
+[^1.3.0]: 1.2.0'dan bu yana değişiklikler: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: 1.1.2'den bu yana değişiklikler: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: 1.1.1'den bu yana değişiklikler: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>
 [^1.1.1]: 1.1.0'dan bu yana değişiklikler: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.0...1.1.1>

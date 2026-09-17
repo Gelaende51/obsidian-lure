@@ -1,4 +1,4 @@
-<!-- Traducció de CHANGELOG.md — estat: commit f133f41.
+<!-- Traducció de CHANGELOG.md — estat: commit 973105b.
      Traducció automàtica (Claude Opus 5), no revisada per parlants nadius.
      Les correccions són benvingudes; el CHANGELOG en anglès és la versió
      de referència. -->
@@ -9,7 +9,7 @@
 
 Cada versió de Lure, de la més nova a la més antiga. El que ha arribat des de la darrera versió és a *Sense publicar*. Les versions no porten el prefix `v`, igual que les etiquetes de les versions.
 
-## Sense publicar[^unreleased]
+## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### Afegit
 
@@ -147,7 +147,7 @@ Primera versió. Substitueix el nom del fitxer a la capçalera d'una nota per un
 - **Fora del cofre** (desactivat per defecte): el nom del cofre obre els teus altres cofres, la carpeta personal, l'arrel del sistema de fitxers i les unitats muntades. No s'hi escriu res fins que ho desbloquegis, i una nota només es pot copiar fora del cofre, mai moure.
 - **45 idiomes.**
 
-[^unreleased]: Canvis des de la 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...HEAD>
+[^1.3.0]: Canvis des de la 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Canvis des de la 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Canvis des de la 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>
 [^1.1.1]: Canvis des de la 1.1.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.0...1.1.1>

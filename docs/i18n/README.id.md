@@ -1,4 +1,4 @@
-<!-- Terjemahan README.md — status: commit f133f41.
+<!-- Terjemahan README.md — status: commit 973105b.
      Terjemahan mesin (Claude Opus 5), belum ditinjau penutur asli.
      Koreksi sangat diterima; README bahasa Inggris adalah versi acuan. -->
 
@@ -15,7 +15,7 @@ Obsidian 1.8.7+ · hanya desktop · AGPL-3.0
 ## Pengungkapan AI
 
 - **Agen** — **Claude Opus 5** dan **Claude Sonnet 5** (Anthropic, lewat Claude Code): menulis TypeScript, CSS, seluruh 45 set terjemahan, dan dokumentasinya. Terjemahan dibuat mesin dan belum ditinjau penutur asli.
-- **Pemakaian** — 3 Agustus – 6 September 2026, 22 sesi, \~13.378 balasan: \~16,3 juta token dihasilkan, \~62,3 juta dikirim, \~4245,1 juta pembacaan ulang dari singgahan (\~4323,6 juta total).
+- **Pemakaian** — 3 Agustus – 17 September 2026, 23 sesi, \~14.844 balasan: \~19,2 juta token dihasilkan, \~85,2 juta dikirim, \~4800,6 juta pembacaan ulang dari singgahan (\~4905,0 juta total).
 - **Hulu** — model belajar dari kode sumber terbuka, dokumentasi, dan tulisan komunitas yang diterbitkan orang lain. Sebagian besar kreditnya milik mereka.
 - **Penulis** — Vault51: menentukan setiap fitur, mencoba tiap versi di vault sungguhan, mengarahkan perbaikan, meninjau seluruh hasilnya.
 

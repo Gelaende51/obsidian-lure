@@ -1,4 +1,4 @@
-<!-- Bản dịch của CHANGELOG.md — trạng thái: commit f133f41.
+<!-- Bản dịch của CHANGELOG.md — trạng thái: commit 973105b.
      Dịch máy (Claude Opus 5), chưa được người bản ngữ hiệu đính.
      Rất hoan nghênh mọi đính chính; bản tiếng Anh của CHANGELOG là bản
      chuẩn. -->
@@ -9,7 +9,7 @@
 
 Mọi bản phát hành của Lure, mới nhất ở trên cùng. Những gì đã được đưa vào kể từ bản phát hành gần nhất nằm dưới mục *Chưa phát hành*. Số phiên bản không có tiền tố `v`, khớp với các thẻ phát hành.
 
-## Chưa phát hành[^unreleased]
+## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### Đã thêm
 
@@ -147,7 +147,7 @@ Bản phát hành đầu tiên. Thay tên tệp trên thanh tiêu đề của gh
 - **Ngoài kho** (mặc định tắt): tên kho mở ra các kho khác của bạn, thư mục home, gốc hệ thống tệp và các ổ đĩa đã gắn. Không gì ở ngoài đó được ghi cho tới khi bạn mở khóa, và một ghi chú chỉ có thể được sao chép ra khỏi kho, không bao giờ bị di chuyển.
 - **45 ngôn ngữ.**
 
-[^unreleased]: Thay đổi kể từ 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...HEAD>
+[^1.3.0]: Thay đổi kể từ 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Thay đổi kể từ 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Thay đổi kể từ 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>
 [^1.1.1]: Thay đổi kể từ 1.1.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.0...1.1.1>

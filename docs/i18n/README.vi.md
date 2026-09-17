@@ -1,4 +1,4 @@
-<!-- Bản dịch của README.md — trạng thái: commit f133f41.
+<!-- Bản dịch của README.md — trạng thái: commit 973105b.
      Dịch máy (Claude Opus 5), chưa được người bản ngữ hiệu đính.
      Rất hoan nghênh mọi đính chính; bản tiếng Anh của README là bản
      chuẩn. -->
@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · chỉ trên máy tính · AGPL-3.0
 ## Công bố về AI
 
 - **Tác nhân** — **Claude Opus 5** và **Claude Sonnet 5** (Anthropic, qua Claude Code): viết mã TypeScript, CSS, toàn bộ 45 bộ bản dịch và tài liệu. Các bản dịch do máy tạo ra và chưa được người bản ngữ hiệu đính.
-- **Mức dùng** — 3/8 – 6/9/2026, 22 phiên, \~13.378 phản hồi: \~16,3 triệu token được sinh ra, \~62,3 triệu token được gửi đi, \~4.245,1 triệu token đọc lại từ bộ nhớ đệm (tổng cộng \~4.323,6 triệu).
+- **Mức dùng** — 3/8 – 17/9/2026, 23 phiên, \~14.844 phản hồi: \~19,2 triệu token được sinh ra, \~85,2 triệu token được gửi đi, \~4.800,6 triệu token đọc lại từ bộ nhớ đệm (tổng cộng \~4.905,0 triệu).
 - **Nguồn cội** — mô hình đã học từ mã nguồn mở, tài liệu và bài viết cộng đồng do người khác công bố. Phần lớn công lao thuộc về họ.
 - **Tác giả** — Vault51: đặt ra mọi tính năng, thử nghiệm từng phiên bản trong một kho thật, chỉ đạo các bản sửa, duyệt toàn bộ đầu ra.
 

@@ -1,4 +1,4 @@
-<!-- Übersetzung von CHANGELOG.md — Stand: Commit f133f41.
+<!-- Übersetzung von CHANGELOG.md — Stand: Commit 973105b.
      Maschinell übersetzt (Claude Opus 5) und nicht von Muttersprachlern
      geprüft. Korrekturen sind willkommen; das englische CHANGELOG ist die
      maßgebliche Fassung. -->
@@ -9,7 +9,7 @@
 
 Jede Veröffentlichung von Lure, die neueste zuerst. Was seit der letzten Veröffentlichung dazugekommen ist, steht unter *Unveröffentlicht*. Versionen tragen kein `v` davor, passend zu den Release-Tags.
 
-## Unveröffentlicht[^unreleased]
+## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### Hinzugefügt
 
@@ -147,7 +147,7 @@ Erste Veröffentlichung. Ersetzt den Dateinamen in der Kopfzeile einer Notiz dur
 - **Außerhalb des Vaults** (standardmäßig aus): Der Vault-Name öffnet deine anderen Vaults, den Persönlichen Ordner, das Wurzelverzeichnis und eingehängte Laufwerke. Dort draußen wird nichts geschrieben, bevor du es freigibst, und eine Notiz kann nur aus dem Vault hinauskopiert, nie hinausverschoben werden.
 - **45 Sprachen.**
 
-[^unreleased]: Änderungen seit 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...HEAD>
+[^1.3.0]: Änderungen seit 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Änderungen seit 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Änderungen seit 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>
 [^1.1.1]: Änderungen seit 1.1.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.0...1.1.1>

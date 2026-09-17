@@ -1,4 +1,4 @@
-<!-- Tłumaczenie CHANGELOG.md — stan: commit f133f41.
+<!-- Tłumaczenie CHANGELOG.md — stan: commit 973105b.
      Tłumaczenie maszynowe (Claude Opus 5), nieskorygowane przez native
      speakerów. Poprawki mile widziane; wersją rozstrzygającą jest
      angielski CHANGELOG. -->
@@ -9,7 +9,7 @@
 
 Każde wydanie Lure, od najnowszego. To, co pojawiło się od ostatniego wydania, znajduje się pod nagłówkiem *Niewydane*. Wersje nie mają przedrostka `v`, zgodnie ze znacznikami wydań.
 
-## Niewydane[^unreleased]
+## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### Dodano
 
@@ -147,7 +147,7 @@ Pierwsze wydanie. Zastępuje nazwę pliku w nagłówku notatki klikalną, edytow
 - **Poza skarbcem** (domyślnie wyłączone): nazwa skarbca otwiera inne skarbce, katalog domowy, katalog główny systemu plików i zamontowane napędy. Nic tam na zewnątrz nie jest zapisywane, dopóki tego nie odblokujesz, a notatkę można poza skarbiec tylko skopiować, nigdy przenieść.
 - **45 języków.**
 
-[^unreleased]: Zmiany od 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...HEAD>
+[^1.3.0]: Zmiany od 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Zmiany od 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Zmiany od 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>
 [^1.1.1]: Zmiany od 1.1.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.0...1.1.1>

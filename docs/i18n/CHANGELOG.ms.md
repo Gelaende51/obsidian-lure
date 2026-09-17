@@ -1,4 +1,4 @@
-<!-- Terjemahan CHANGELOG.md — status: commit f133f41.
+<!-- Terjemahan CHANGELOG.md — status: commit 973105b.
      Terjemahan mesin (Claude Opus 5), belum disemak penutur jati.
      Pembetulan dialu-alukan; CHANGELOG bahasa Inggeris ialah versi rujukan. -->
 
@@ -8,7 +8,7 @@
 
 Setiap keluaran Lure, yang terbaharu dahulu. Apa yang telah mendarat sejak keluaran terakhir ada di bawah *Belum dikeluarkan*. Versi tidak membawa awalan `v`, sepadan dengan tag keluarannya.
 
-## Belum dikeluarkan[^unreleased]
+## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### Ditambah
 
@@ -146,7 +146,7 @@ Keluaran pertama. Menggantikan nama fail pada bar tajuk sesuatu nota dengan lalu
 - **Di luar bilik kebal** (dimatikan secara lalai): nama bilik kebal membuka bilik kebal anda yang lain, folder rumah, akar sistem fail dan pemacu yang dilekapkan. Tiada apa-apa di luar sana ditulis sehingga anda membuka kuncinya, dan sesuatu nota hanya boleh disalin keluar dari bilik kebal, tidak pernah dialihkan.
 - **45 bahasa.**
 
-[^unreleased]: Perubahan sejak 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...HEAD>
+[^1.3.0]: Perubahan sejak 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Perubahan sejak 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Perubahan sejak 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>
 [^1.1.1]: Perubahan sejak 1.1.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.0...1.1.1>

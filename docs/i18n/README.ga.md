@@ -1,4 +1,4 @@
-<!-- Aistriúchán ar README.md — staid: tiomantas f133f41.
+<!-- Aistriúchán ar README.md — staid: tiomantas 973105b.
      Aistriúchán meaisín (Claude Opus 5) nár léigh cainteoirí dúchais é.
      Fáilte roimh cheartúcháin; is é an README Béarla an leagan údarásach. -->
 
@@ -15,7 +15,7 @@ Obsidian 1.8.7+ · deasc amháin · AGPL-3.0
 ## Nochtadh faoin IS
 
 - **Gníomhaire** — **Claude Opus 5** agus **Claude Sonnet 5** (Anthropic, trí Claude Code): scríobh sé an TypeScript, an CSS, na 45 sraith aistriúcháin ar fad agus an doiciméadú. Is aistriúcháin mheaisín iad agus níor léigh cainteoirí dúchais iad.
-- **Úsáid** — 3 Lúnasa – 6 Meán Fómhair 2026, 22 seisiún, \~13,378 freagra: \~16.3 milliún ceadchomhartha ginte, \~62.3 milliún seolta, \~4245.1 milliún athléamh ón taisce (\~4323.6 milliún san iomlán).
+- **Úsáid** — 3 Lúnasa – 17 Meán Fómhair 2026, 23 seisiún, \~14,844 freagra: \~19.2 milliún ceadchomhartha ginte, \~85.2 milliún seolta, \~4800.6 milliún athléamh ón taisce (\~4905.0 milliún san iomlán).
 - **Foinse** — d'fhoghlaim an múnla ó chód foinse oscailte, ó dhoiciméadú agus ó scríbhinní pobail a d'fhoilsigh daoine eile. Is leo formhór an chreidiúna.
 - **Údar** — Vault51: shocraigh sé gach gné, thriail sé gach leagan i dtaisceadán fíor, stiúir sé na ceartúcháin, léigh sé gach toradh.
 

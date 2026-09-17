@@ -1,4 +1,4 @@
-<!-- Përkthim i README.md — gjendja: commit f133f41.
+<!-- Përkthim i README.md — gjendja: commit 973105b.
      Përkthim me makinë (Claude Opus 5), i pashqyrtuar nga folës amtarë.
      Ndreqjet janë të mirëpritura; versioni përcaktues është README-ja
      në anglisht. -->
@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · vetëm për desktop · AGPL-3.0
 ## Deklarim për IA-në
 
 - **Agjenti** — **Claude Opus 5** dhe **Claude Sonnet 5** (Anthropic, përmes Claude Code): shkroi TypeScript-in, CSS-në, të 45 grupet e përkthimeve dhe dokumentacionin. Përkthimet janë të krijuara nga makina dhe të pashqyrtuara nga folës amtarë.
-- **Konsumi** — 3 gusht – 6 shtator 2026, 22 sesione, \~13.378 përgjigje: \~16,3 mln token të gjeneruar, \~62,3 mln të dërguar, \~4245,1 mln rilexime nga kesh-i (\~4323,6 mln gjithsej).
+- **Konsumi** — 3 gusht – 17 shtator 2026, 23 sesione, \~14.844 përgjigje: \~19,2 mln token të gjeneruar, \~85,2 mln të dërguar, \~4800,6 mln rilexime nga kesh-i (\~4905,0 mln gjithsej).
 - **Burimi** — modeli mësoi nga kodi me burim të hapur, dokumentacioni dhe shkrimet e komunitetit të botuara nga të tjerë. Pjesa më e madhe e meritës u takon atyre.
 - **Autori** — Vault51: përcaktoi çdo veçori, provoi çdo përsëritje në një kasafortë të gjallë, drejtoi ndreqjet, shqyrtoi çdo rezultat.
 

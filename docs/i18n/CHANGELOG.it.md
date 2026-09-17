@@ -1,4 +1,4 @@
-<!-- Traduzione di CHANGELOG.md — stato: commit f133f41.
+<!-- Traduzione di CHANGELOG.md — stato: commit 973105b.
      Traduzione automatica (Claude Opus 5), non rivista da madrelingua.
      Le correzioni sono benvenute; il CHANGELOG inglese è la versione
      di riferimento. -->
@@ -9,7 +9,7 @@
 
 Ogni release di Lure, dalla più recente. Ciò che è arrivato dopo l'ultima release sta sotto *Non rilasciato*. Le versioni non hanno il prefisso `v`, come i tag delle release.
 
-## Non rilasciato[^unreleased]
+## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### Aggiunto
 
@@ -147,7 +147,7 @@ Prima release. Sostituisce il nome del file nell'intestazione di una nota con un
 - **Fuori dal vault** (disattivato di default): il nome del vault apre gli altri vault, la cartella home, la radice del file system e le unità montate. Nulla là fuori viene scritto finché non lo sblocchi, e una nota può solo essere copiata fuori dal vault, mai spostata.
 - **45 lingue.**
 
-[^unreleased]: Modifiche dopo la 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...HEAD>
+[^1.3.0]: Modifiche dopo la 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Modifiche dopo la 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Modifiche dopo la 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>
 [^1.1.1]: Modifiche dopo la 1.1.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.0...1.1.1>

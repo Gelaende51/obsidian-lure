@@ -1,4 +1,4 @@
-<!-- Käännös tiedostosta README.md — tilanne: commit f133f41.
+<!-- Käännös tiedostosta README.md — tilanne: commit 973105b.
      Konekäännös (Claude Opus 5), jota äidinkieliset puhujat eivät ole
      tarkastaneet. Korjaukset ovat tervetulleita; englanninkielinen README
      on ratkaiseva versio. -->
@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · vain työpöytä · AGPL-3.0
 ## Tekoälyilmoitus
 
 - **Agentti** — **Claude Opus 5** ja **Claude Sonnet 5** (Anthropic, Claude Coden kautta): kirjoitti TypeScriptin, CSS:n, kaikki 45 käännösjoukkoa ja dokumentaation. Käännökset ovat koneellisia, eivätkä äidinkieliset puhujat ole niitä tarkastaneet.
-- **Kulutus** — 3. elokuuta – 6. syyskuuta 2026, 22 istuntoa, \~13 378 vastausta: \~16,3 milj. tuotettua tokenia, \~62,3 milj. lähetettyä, \~4245,1 milj. uudelleenlukua välimuistista (\~4323,6 milj. yhteensä).
+- **Kulutus** — 3. elokuuta – 17. syyskuuta 2026, 23 istuntoa, \~14 844 vastausta: \~19,2 milj. tuotettua tokenia, \~85,2 milj. lähetettyä, \~4800,6 milj. uudelleenlukua välimuistista (\~4905,0 milj. yhteensä).
 - **Lähde** — malli oppi avoimesta lähdekoodista, dokumentaatiosta ja yhteisön kirjoituksista, jotka muut ovat julkaisseet. Suurin osa ansiosta kuuluu sinne.
 - **Tekijä** — Vault51: määritteli jokaisen ominaisuuden, kokeili jokaista versiota oikeassa holvissa, ohjasi korjaukset ja luki kaikki tulokset läpi.
 

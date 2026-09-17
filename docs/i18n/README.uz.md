@@ -1,4 +1,4 @@
-<!-- README.md tarjimasi — holat: commit f133f41.
+<!-- README.md tarjimasi — holat: commit 973105b.
      Mashina tarjimasi (Claude Opus 5), ona tili egalari tomonidan
      tekshirilmagan. Tuzatishlar mamnuniyat bilan qabul qilinadi;
      hal qiluvchi nusxa — inglizcha README. -->
@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · faqat kompyuter versiyasi · AGPL-3.0
 ## Sun'iy intellekt haqida ma'lumot
 
 - **Agent** — **Claude Opus 5** va **Claude Sonnet 5** (Anthropic, Claude Code orqali): TypeScript kodini, CSS'ni, barcha 45 ta tarjima to‘plamini va hujjatlarni yozgan. Tarjimalar mashina tomonidan yaratilgan va ona tili egalari tomonidan tekshirilmagan.
-- **Sarf** — 2026-yil 3-avgust – 6-sentabr, 22 ta seans, \~13 378 ta javob: \~16,3 mln token yaratilgan, \~62,3 mln yuborilgan, \~4 245,1 mln keshdan qayta o‘qilgan (jami \~4 323,6 mln).
+- **Sarf** — 2026-yil 3-avgust – 17-sentabr, 23 ta seans, \~14 844 ta javob: \~19,2 mln token yaratilgan, \~85,2 mln yuborilgan, \~4 800,6 mln keshdan qayta o‘qilgan (jami \~4 905,0 mln).
 - **Manba** — model boshqalar e'lon qilgan ochiq manbali kod, hujjatlar va hamjamiyat yozuvlaridan o‘rgangan. Asosiy xizmat o‘shalarga tegishli.
 - **Muallif** — Vault51: har bir imkoniyatni belgilagan, har bir iteratsiyani jonli omborda sinab ko‘rgan, tuzatishlarni yo‘naltirgan va barcha natijani ko‘rib chiqqan.
 

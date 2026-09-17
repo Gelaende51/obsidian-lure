@@ -1,4 +1,4 @@
-<!-- Překlad README.md — stav: commit f133f41.
+<!-- Překlad README.md — stav: commit 973105b.
      Strojový překlad (Claude Opus 5), nezkontrolovaný rodilými mluvčími.
      Opravy vítány; rozhodující verzí je anglické README. -->
 
@@ -15,7 +15,7 @@ Obsidian 1.8.7+ · pouze počítač · AGPL-3.0
 ## Prohlášení o AI
 
 - **Agent** — **Claude Opus 5** a **Claude Sonnet 5** (Anthropic, přes Claude Code): napsal TypeScript, CSS, všech 45 sad překladů a dokumentaci. Překlady vznikly strojově a rodilí mluvčí je nekontrolovali.
-- **Spotřeba** — 3. srpna – 6. září 2026, 22 sezení, \~13 378 odpovědí: \~16,3 mil. vygenerovaných tokenů, \~62,3 mil. odeslaných, \~4245,1 mil. opětovných čtení z mezipaměti (\~4323,6 mil. celkem).
+- **Spotřeba** — 3. srpna – 17. září 2026, 23 sezení, \~14 844 odpovědí: \~19,2 mil. vygenerovaných tokenů, \~85,2 mil. odeslaných, \~4800,6 mil. opětovných čtení z mezipaměti (\~4905,0 mil. celkem).
 - **Zdroj** — model se učil z otevřeného kódu, dokumentace a textů komunity, které zveřejnili jiní. Většina zásluh patří tam.
 - **Autor** — Vault51: určil každou funkci, každou verzi vyzkoušel ve skutečném trezoru, řídil opravy, prošel všechny výstupy.
 

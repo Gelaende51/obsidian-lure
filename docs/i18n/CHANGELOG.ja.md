@@ -1,4 +1,4 @@
-<!-- CHANGELOG.md の翻訳 — 対象コミット: f133f41。
+<!-- CHANGELOG.md の翻訳 — 対象コミット: 973105b。
      機械翻訳（Claude Opus 5）であり、母語話者による校正は受けていません。
      修正の指摘は歓迎します。正となるのは英語版 CHANGELOG です。 -->
 
@@ -8,7 +8,7 @@
 
 Lure の全リリースを、新しいものから順に並べています。最後のリリース以降に入ったものは *未リリース* の下にあります。バージョンにはリリースタグと同じく `v` を付けません。
 
-## 未リリース[^unreleased]
+## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### 追加
 
@@ -146,7 +146,7 @@ Lure の全リリースを、新しいものから順に並べています。最
 - **保管庫の外**（既定ではオフ）: 保管庫の名前から、他の保管庫・ホーム・ファイルシステムのルート・マウント済みのドライブを開けます。そこにあるものは解除するまで一切書き込まれず、ノートは保管庫の外へコピーできるだけで、移動はできません。
 - **45 言語。**
 
-[^unreleased]: 1.2.0 以降の変更: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...HEAD>
+[^1.3.0]: 1.2.0 以降の変更: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: 1.1.2 以降の変更: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: 1.1.1 以降の変更: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>
 [^1.1.1]: 1.1.0 以降の変更: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.0...1.1.1>

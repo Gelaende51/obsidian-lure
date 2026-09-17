@@ -1,4 +1,4 @@
-<!-- CHANGELOG.md tulkojums — stāvoklis: revīzija f133f41.
+<!-- CHANGELOG.md tulkojums — stāvoklis: revīzija 973105b.
      Mašīntulkojums (Claude Opus 5), ko nav pārlasījuši dzimtās valodas
      runātāji. Labojumi ir gaidīti; noteicošais ir CHANGELOG angļu valodā. -->
 
@@ -8,7 +8,7 @@
 
 Katrs Lure laidiens, jaunākais pirmais. Tas, kas ienācis kopš pēdējā laidiena, ir sadaļā *Neizdots*. Versijām nav `v` priedēkļa, tāpat kā laidienu tagiem.
 
-## Neizdots[^unreleased]
+## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### Pievienots
 
@@ -146,7 +146,7 @@ Pirmais laidiens. Aizstāj faila nosaukumu piezīmes galvenē ar uzklikšķinām
 - **Ārpus glabātavas** (pēc noklusējuma izslēgts): glabātavas nosaukums atver tavas pārējās glabātavas, mājas mapi, failu sistēmas sakni un pievienotos diskus. Tur ārā nekas netiek rakstīts, kamēr to neatslēdz, un piezīmi no glabātavas var tikai izkopēt, nekad pārvietot.
 - **45 valodas.**
 
-[^unreleased]: Izmaiņas kopš 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...HEAD>
+[^1.3.0]: Izmaiņas kopš 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Izmaiņas kopš 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Izmaiņas kopš 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>
 [^1.1.1]: Izmaiņas kopš 1.1.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.0...1.1.1>

@@ -1,4 +1,4 @@
-<!-- Tradução de README.md — estado: commit f133f41.
+<!-- Tradução de README.md — estado: commit 973105b.
      Tradução automática (Claude Opus 5), não revista por falantes nativos.
      Correções são bem-vindas; o README em inglês é a versão de referência. -->
 
@@ -15,7 +15,7 @@ Obsidian 1.8.7+ · apenas em computador · AGPL-3.0
 ## Divulgação sobre IA
 
 - **Agente** — **Claude Opus 5** e **Claude Sonnet 5** (Anthropic, através do Claude Code): escreveram o TypeScript, o CSS, todos os 45 conjuntos de tradução e a documentação. As traduções são geradas por máquina e não foram revistas por falantes nativos.
-- **Consumo** — 3 de agosto – 6 de setembro de 2026, 22 sessões, \~13 378 respostas: \~16,3 M tokens gerados, \~62,3 M enviados, \~4245,1 M releituras em cache (\~4323,6 M no total).
+- **Consumo** — 3 de agosto – 17 de setembro de 2026, 23 sessões, \~14 844 respostas: \~19,2 M tokens gerados, \~85,2 M enviados, \~4800,6 M releituras em cache (\~4905,0 M no total).
 - **Origem** — o modelo aprendeu com código aberto, documentação e escrita comunitária publicados por outras pessoas. É aí que está a maior parte do mérito.
 - **Autor** — Vault51: especificou todas as funcionalidades, testou cada iteração num cofre real, orientou as correções e reviu todos os resultados.
 

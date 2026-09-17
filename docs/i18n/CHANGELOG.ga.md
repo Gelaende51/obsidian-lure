@@ -1,4 +1,4 @@
-<!-- Aistriúchán ar CHANGELOG.md — staid: tiomantas f133f41.
+<!-- Aistriúchán ar CHANGELOG.md — staid: tiomantas 973105b.
      Aistriúchán meaisín (Claude Opus 5) nár léigh cainteoirí dúchais é.
      Fáilte roimh cheartúcháin; is é an CHANGELOG Béarla an leagan údarásach. -->
 
@@ -8,7 +8,7 @@
 
 Gach eisiúint de Lure, an ceann is nuaí ar dtús. Tá a bhfuil tagtha isteach ó bhí an eisiúint dheireanach ann faoi *Gan eisiúint*. Níl réimír `v` ar na leaganacha, ar aon dul leis na clibeanna eisiúna.
 
-## Gan eisiúint[^unreleased]
+## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### Curtha leis
 
@@ -146,7 +146,7 @@ An chéad eisiúint. Cuireann sé conair an taisceadáin ar féidir cliceáil ui
 - **Lasmuigh den taisceadán** (múchta de réir réamhshocraithe): osclaíonn ainm an taisceadáin do thaisceadáin eile, an fillteán baile, fréamh an chórais comhad agus na tiomántáin fheistithe. Ní scríobhtar aon rud amuigh ansin go dtí go ndíghlasálann tú é, agus ní féidir nóta a chóipeáil amach as an taisceadán ach amháin, riamh a bhogadh.
 - **45 teanga.**
 
-[^unreleased]: Athruithe ó 1.2.0 i leith: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...HEAD>
+[^1.3.0]: Athruithe ó 1.2.0 i leith: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Athruithe ó 1.1.2 i leith: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Athruithe ó 1.1.1 i leith: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>
 [^1.1.1]: Athruithe ó 1.1.0 i leith: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.0...1.1.1>

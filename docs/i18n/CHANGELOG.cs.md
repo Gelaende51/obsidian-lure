@@ -1,4 +1,4 @@
-<!-- Překlad CHANGELOG.md — stav: commit f133f41.
+<!-- Překlad CHANGELOG.md — stav: commit 973105b.
      Strojový překlad (Claude Opus 5), nezkontrolovaný rodilými mluvčími.
      Opravy vítány; rozhodující verzí je anglický CHANGELOG. -->
 
@@ -8,7 +8,7 @@
 
 Každé vydání pluginu Lure, od nejnovějšího. Co přibylo od posledního vydání, najdete pod *Nevydáno*. Verze nemají předponu `v`, stejně jako značky vydání.
 
-## Nevydáno[^unreleased]
+## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### Přidáno
 
@@ -146,7 +146,7 @@ První vydání. Nahrazuje název souboru v záhlaví poznámky klikatelnou, upr
 - **Mimo trezor** (ve výchozím stavu vypnuto): název trezoru otevírá vaše další trezory, domovskou složku, kořen souborového systému a připojené jednotky. Nic se tam nezapíše, dokud to neodemknete, a poznámku lze z trezoru jen zkopírovat, nikdy přesunout.
 - **45 jazyků.**
 
-[^unreleased]: Změny od 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...HEAD>
+[^1.3.0]: Změny od 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Změny od 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Změny od 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>
 [^1.1.1]: Změny od 1.1.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.0...1.1.1>
