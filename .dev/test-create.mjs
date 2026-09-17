@@ -186,6 +186,40 @@ test("the red comes on and off as the name is edited", async () => {
 	await pressKey(page, "Escape");
 });
 
+test("a slash does not complete a rung Obsidian could never make", async () => {
+	// "?" is one of the characters a vault name cannot hold. Descending on it
+	// anyway left the row standing in a folder that could not be created, and
+	// every press after that was measured from there.
+	await type("bad?name");
+	await pressKey(page, "/");
+	await page.evaluate(PAUSE(400) + "return true;");
+	const after = JSON.parse(await page.evaluate(fieldState));
+	expect("the name is still there to be fixed", after.value, "bad?name");
+	expect("and still red", after.marked, true);
+	const chips = JSON.parse(await page.evaluate(
+		`return JSON.stringify([...document.querySelectorAll(".view-header-title-container .lure-browse-chip")].map((c) => c.textContent));`,
+	));
+	expect("no rung was added", chips, (v) => !v.includes("bad?name"));
+	await pressKey(page, "Escape");
+});
+
+test("a slash completes a rung that is merely not there yet, and keeps it red", async () => {
+	// The other half of the same rule: typing a path ahead of itself is how a
+	// path gets made, so the walk goes on — and the red goes with it, because
+	// what the row is standing in does not exist until Enter makes it.
+	await type("NotThereYet");
+	await pressKey(page, "/");
+	await page.evaluate(PAUSE(400) + "return true;");
+	const after = JSON.parse(await page.evaluate(fieldState));
+	expect("the field is ready for the next name", after.value, "");
+	expect("the row is standing somewhere that has still to be made", after.marked, true);
+	const chips = JSON.parse(await page.evaluate(
+		`return JSON.stringify([...document.querySelectorAll(".view-header-title-container .lure-browse-chip")].map((c) => c.textContent));`,
+	));
+	expect("and the rung is on the row", chips, (v) => v.includes("NotThereYet"));
+	await pressKey(page, "Escape");
+});
+
 test("a bare name is read as the note it would open, not as a new one", async () => {
 	// Enter appends `.md` before it looks, so "Trumpet" opens "Trumpet.md".
 	// Reading the typed text literally instead would have called an existing

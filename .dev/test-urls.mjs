@@ -124,6 +124,11 @@ const state = `
 		externalLeaves: app.workspace.getLeavesOfType("lure-external-file").length,
 		externalPath: app.workspace.getLeavesOfType("lure-external-file")[0]?.view?.filePath ?? null,
 		notices: [...document.querySelectorAll(".notice")].map((n) => n.textContent),
+		// Where the row itself is pointing, which is the answer when a path
+		// names a folder: nothing opens, the trail simply goes there.
+		rowPath: app.plugins?.plugins?.lure?.manager?.getActiveBreadcrumb?.()?.externalPath ?? null,
+		// A tilde read as a name would leave one of these behind.
+		tildeNotes: app.vault.getFiles().filter((f) => f.name.startsWith("~")).length,
 	});
 `;
 
@@ -225,6 +230,22 @@ test("a quoted path outside the vault is unwrapped before it is read", async () 
 	// makes it look like an ordinary name to be created in the vault.
 	const s = await typeAndEnter(`"${BED}/a%20b.md"`);
 	expect("decoded and opened outside", s.externalPath, `${BED}/a b.md`);
+});
+
+test("a path written with a tilde is read from the home folder", async () => {
+	// What a shell, a terminal-minded user, or anything copying out of one
+	// writes for the home folder. Nothing below the commit expands it, so the
+	// bar used to read `~/…` as a note name: Enter offered to create a note
+	// called `~` in the current folder instead of going out there.
+	const s = await typeAndEnter(`~/${BED.split("/").pop()}/a b.md`);
+	expect("opened out there, not created in the vault", s.externalPath, `${BED}/a b.md`);
+	expect("and no note was made out of the tilde", s.tildeNotes, 0);
+});
+
+test("a lone tilde browses the home folder", async () => {
+	const s = await typeAndEnter("~");
+	expect("the row went home", s.rowPath, (v) => typeof v === "string" && v.startsWith(homedir()));
+	expect("nothing was created for it", s.tildeNotes, 0);
 });
 
 async function reset() {

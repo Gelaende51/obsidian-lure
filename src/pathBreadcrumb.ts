@@ -31,13 +31,14 @@ import {
 	readableMinimum,
 } from "./pathFit";
 import { commonPrefix, planSuggestion, planTab } from "./tabComplete";
-import { FolderChildSuggest, MODIFIED_ENTER, PathSuggestion } from "./folderChildSuggest";
+import { FolderChildSuggest, MODIFIED_ENTER, guardFieldKeys, PathSuggestion } from "./folderChildSuggest";
 import { ExternalChild, PATH_SEP, externalJoin, externalParent, externalSegments, isExternalFile, isExternalFolder, listExternalChildren } from "./externalFs";
 import {
 	CURRENT_VAULT_ICON,
 	LOCATION_ICONS,
 	SystemLocation,
 	applyIcon,
+	expandHome,
 	iconFor,
 	isInside,
 	listSystemLocations,
@@ -198,6 +199,7 @@ const charList = (chars: string) => chars.split("").join(" ");
  * deliberate later click is never caught by it.
  */
 const SEGMENT_DOUBLE_CLICK_MS = 500;
+
 
 /** On the header row while navigation is locked; suppresses typing, tints the marking. */
 const NAV_LOCKED_CLASS = "lure-nav-locked";
@@ -782,6 +784,12 @@ export class PathBreadcrumb {
 	private unlockedBase: string | null = null;
 	/** True while the vault-root dropdown is listing places to jump to rather than a folder's contents. */
 	private showingLocations = false;
+	/**
+	 * The folder of an absolute path standing in the field while the row is
+	 * otherwise inside the vault, or null. It is what the opening segment is
+	 * drawn from, so the row never claims a vault a typed path has left.
+	 */
+	private typedAbsolute: string | null = null;
 	/** Name of the external file this leaf is showing, when it holds one instead of a note. */
 	private externalFileName: string | null = null;
 
@@ -960,6 +968,10 @@ export class PathBreadcrumb {
 			// is not mistaken for the first. The middle button is *not* this
 			// gesture — it has its own, on its own event.
 			if (this.duplicateTab(evt)) return;
+			// The space keeps opening the field, and says where you are while
+			// it does: the note you are editing gets its row in the File
+			// Explorer, so the tree follows the pane without a second gesture.
+			this.revealCurrentFile();
 			this.startFullPathEdit("stem");
 			this.climbFromClick = true;
 		}, { signal: this.domListeners.signal });
@@ -2691,7 +2703,14 @@ export class PathBreadcrumb {
 	 * the click keeps both behaviours without reimplementing either, and
 	 * without needing to know which folder-note convention is in use.
 	 */
-	private openNativeSegment(index: number, folderPath: string): void {
+	private openNativeSegment(index: number, folderPath: string, presses = 1): void {
+		// A second press means the folder itself. With a folder note there,
+		// the first press opens the note and the folder is otherwise
+		// unreachable from this delimiter — so double-clicking asks past the
+		// note, the way a second press elsewhere on the row asks for more
+		// than the first did. Without a note both presses do the same thing,
+		// which is the reveal that was already happening.
+		const wantsFolder = presses > 1;
 		// The folder note first, where this row can find one. Delegating to
 		// the native segment asks whichever folder-note plugin is running to
 		// answer the click, and Folder notes answers only for segments it has
@@ -2705,8 +2724,15 @@ export class PathBreadcrumb {
 			? this.plugin.app.vault.getAbstractFileByPath(folderPath)
 			: null;
 		const note = folder instanceof TFolder ? this.folderNoteFor(folder) : null;
-		if (note) {
+		if (note && !wantsFolder) {
 			void this.plugin.app.workspace.getLeaf(false).openFile(note);
+			return;
+		}
+		if (note) {
+			// Straight to the explorer, not through the native segment: with a
+			// folder-note plugin running, that click is exactly the one that
+			// opens the note, so delegating it would undo the press.
+			this.revealFolderInExplorer(folderPath);
 			return;
 		}
 
@@ -2948,7 +2974,7 @@ export class PathBreadcrumb {
 			el.onclick = (evt) => {
 				evt.stopPropagation();
 				if (this.swapActions) {
-					this.openNativeSegment(index, folderPath);
+					this.openNativeSegment(index, folderPath, evt.detail);
 				} else {
 					this.handleDelimiterClick(folderPath);
 				}
@@ -4084,6 +4110,15 @@ export class PathBreadcrumb {
 			return;
 		}
 
+		// A typed absolute path is not in this vault, so the vault's name and
+		// its home icon have nothing to do with it: the row shows where the
+		// path really starts instead, and reads as one path rather than as a
+		// vault trail with somewhere else typed on the end of it.
+		if (this.typedAbsolute !== null) {
+			this.renderAbsoluteTrail(this.typedAbsolute);
+			return;
+		}
+
 		this.renderRootSegment();
 
 		const separator = this.vaultSegmentEl.createSpan({
@@ -4093,7 +4128,7 @@ export class PathBreadcrumb {
 		separator.addEventListener("click", (evt) => {
 			evt.stopPropagation();
 			if (this.swapActions) {
-				this.revealRoot();
+				this.toggleExplorerTree();
 				this.titleEl.parentElement?.focus({ preventScroll: true });
 			} else {
 				this.handleDelimiterClick("");
@@ -4247,6 +4282,72 @@ export class PathBreadcrumb {
 	 * actions (reveal in explorer, folder notes) apply, so a chip click
 	 * simply browses there.
 	 */
+	/**
+	 * Keeps the opening segment agreeing with what is in the field: a path
+	 * typed or pasted from the filesystem root takes the row out of the vault
+	 * for as long as it stands there, and deleting it back to a relative name
+	 * brings the vault name back.
+	 *
+	 * Only inside the vault. Out there the row already draws from a place, and
+	 * that place is what the chips are counted from.
+	 */
+	private syncAbsoluteTrail(value: string): void {
+		// The locations field lives *in* the opening segment, and it opens
+		// holding an absolute path — redrawing the segment under it would take
+		// the field away mid-keystroke, which is what it did until this guard.
+		if (this.showingLocations) return;
+		const trimmed = expandHome(value.trim());
+		const absolute =
+			this.externalPath === null && isAbsolutePath(trimmed) ? externalParent(trimmed) : null;
+		if (absolute === this.typedAbsolute) return;
+		this.typedAbsolute = absolute;
+		// Only the opening segment is redrawn. The field is hosted in the
+		// filename slot, so it keeps its value, its caret and its focus.
+		this.renderVaultSegment();
+	}
+
+	/**
+	 * The folders above a typed absolute path, drawn from the filesystem root.
+	 *
+	 * Deliberately not `renderExternalSegments`: that one draws from the place
+	 * the row was browsing from, and a path typed into a vault row was
+	 * browsing from nowhere. The root is the only honest start for it.
+	 */
+	private renderAbsoluteTrail(folderPath: string): void {
+		const { root, segments } = externalSegments(folderPath);
+		const rootEl = this.vaultSegmentEl.createSpan({
+			cls: "view-header-breadcrumb lure-vault-segment lure-external-segment",
+			text: root,
+		});
+		rootEl.addEventListener("click", (evt) => {
+			evt.stopPropagation();
+			this.openLocationMenu();
+		});
+		this.vaultSegmentEl.createSpan({
+			cls: "view-header-breadcrumb-separator",
+			text: this.plugin.settings.delimiter,
+		});
+
+		let acc = root;
+		for (const segment of segments) {
+			acc = acc.endsWith(PATH_SEP) ? acc + segment : acc + PATH_SEP + segment;
+			const chipPath = acc;
+			const chip = this.vaultSegmentEl.createSpan({
+				cls: "view-header-breadcrumb lure-browse-chip lure-external-segment",
+				text: segment,
+			});
+			chip.dataset.lurePath = chipPath;
+			chip.addEventListener("click", (evt) => {
+				evt.stopPropagation();
+				this.handleExternalSegmentClick(chipPath);
+			});
+			this.vaultSegmentEl.createSpan({
+				cls: "view-header-breadcrumb-separator",
+				text: this.plugin.settings.delimiter,
+			});
+		}
+	}
+
 	private renderExternalSegments(absolutePath: string): void {
 		// Draw from the location that was picked, not from the filesystem
 		// root: someone who chose "Archive" wants the row to start there,
@@ -4373,6 +4474,61 @@ export class PathBreadcrumb {
 	 * asking revealInFolder to highlight it just picks an unrelated
 	 * top-level folder instead. Just surface the explorer itself.
 	 */
+	/**
+	 * The first delimiter stands for the vault itself, and what a whole vault
+	 * can be asked for is the shape of its tree: one press folds every open
+	 * folder away, the next puts back exactly the ones that were open.
+	 *
+	 * Revealing was the old meaning and was nearly nothing — the root has no
+	 * row of its own, so it only surfaced the explorer leaf, which clicking
+	 * the sidebar already does. Collapse-all is the thing that segment is
+	 * about, and the way back is what makes it safe to press: the explorer's
+	 * own button forgets what was open.
+	 *
+	 * Folders opened or closed by hand in between are left alone on the way
+	 * back: only what this collapsed is restored, and anything since is the
+	 * user's arrangement, not ours to undo.
+	 */
+	private toggleExplorerTree(): void {
+		const fileExplorer = this.plugin.app.internalPlugins.getPluginById("file-explorer");
+		if (!fileExplorer) {
+			new Notice(t("noticeExplorerDisabled"));
+			return;
+		}
+		const leaf = this.plugin.app.workspace.getLeavesOfType("file-explorer")[0];
+		// Nothing to fold in a tree nobody can see: surface it and let the
+		// press after this one do the folding.
+		if (!leaf) {
+			this.revealRoot();
+			return;
+		}
+		void this.plugin.app.workspace.revealLeaf(leaf);
+		const view = leaf.view as FileExplorerView | undefined;
+		const items = view?.fileItems;
+		if (!items) return;
+
+		const remembered = this.manager.explorerFolds;
+		if (remembered) {
+			for (const path of remembered) {
+				const item = items[path];
+				if (item?.collapsible && item.collapsed) item.toggleCollapsed(false);
+			}
+			this.manager.explorerFolds = null;
+			return;
+		}
+
+		const open: string[] = [];
+		for (const [path, item] of Object.entries(items)) {
+			if (!item?.collapsible || item.collapsed) continue;
+			open.push(path);
+			item.toggleCollapsed(false);
+		}
+		// Nothing was open, so this press was the "put it back" half of a
+		// gesture whose first half happened in the explorer itself. Leave the
+		// memory empty rather than claiming the tree is folded by us.
+		this.manager.explorerFolds = open.length ? open : null;
+	}
+
 	private revealRoot(): void {
 		const fileExplorer = this.plugin.app.internalPlugins.getPluginById("file-explorer");
 		if (!fileExplorer) {
@@ -4817,6 +4973,28 @@ export class PathBreadcrumb {
 		}
 	}
 
+	/**
+	 * Shows the open note's own row in the File Explorer, without a word if it
+	 * cannot.
+	 *
+	 * This rides along with gestures that are about something else — the empty
+	 * space opens the field to type in, and also points at where you are — so
+	 * it must never interrupt: a notice about the explorer being off would
+	 * arrive on a click that was not asking about the explorer at all. The
+	 * delimiter's reveal, which *is* the whole gesture, still says so.
+	 */
+	private revealCurrentFile(): void {
+		const file = this.file;
+		if (!file) return;
+		const fileExplorer = this.plugin.app.internalPlugins.getPluginById("file-explorer");
+		if (!fileExplorer) return;
+		try {
+			fileExplorer.instance.revealInFolder(file);
+		} catch {
+			/* The row stays where it is; the click's real work is done. */
+		}
+	}
+
 	private revealFolderInExplorer(path: string): void {
 		const target = path
 			? this.plugin.app.vault.getAbstractFileByPath(path)
@@ -5158,7 +5336,9 @@ export class PathBreadcrumb {
 	 * to go looking for.
 	 */
 	private typedCreatesNew(rawText: string): boolean {
-		const trimmed = unquotePath(rawText);
+		// Same expansion the commit does, so the field's colour and Enter can
+		// never disagree about what a tilde means.
+		const trimmed = expandHome(unquotePath(rawText));
 		if (!trimmed) return false;
 		// Rename mode is the one place where a name nothing answers to is
 		// the *expected* case — that is what renaming is — and it has its
@@ -5204,7 +5384,17 @@ export class PathBreadcrumb {
 			listed: false,
 			tint: null,
 		};
-		const creates = !listed && this.typedCreatesNew(inputEl.value);
+		// A folder the row has walked into that is not there yet keeps the
+		// field red even while it is empty: the path being built does not
+		// exist, and pressing Enter is what would make it. Without this the
+		// red vanished at the very press that took the path somewhere it
+		// could only be created.
+		const standingSomewhereNew =
+			this.externalPath === null &&
+			this.browsePath !== null &&
+			this.browsePath !== "" &&
+			!this.entryExists(this.browsePath, false);
+		const creates = (!listed && this.typedCreatesNew(inputEl.value)) || standingSomewhereNew;
 		inputEl.toggleClass(WILL_CREATE_CLASS, creates);
 		if (tint && !creates) inputEl.dataset.lureTint = tint;
 		else delete inputEl.dataset.lureTint;
@@ -5590,6 +5780,29 @@ export class PathBreadcrumb {
 	 * to complete, and jumped the ladder straight to the file's own folder:
 	 * every folder in between swallowed by one press.
 	 */
+	/**
+	 * Walking into a folder while renaming is a move, and a move keeps the
+	 * name it is moving.
+	 *
+	 * Carrying the typed tail instead — which is what every other walk does —
+	 * emptied the field, because the tail is measured against the folder the
+	 * row is standing in and means nothing in the one just picked. The note
+	 * then had to be typed out again to move it, in rename mode, where its
+	 * name is the one thing already known.
+	 *
+	 * It opens on the stem, the rung `startHeaderRename` opens on: Enter as it
+	 * stands moves the note, and typing renames it on the way.
+	 */
+	private descendForMove(folderPath: string): void {
+		const name = this.file?.name ?? "";
+		if (!name) return;
+		const step = this.trailStep(false);
+		if (step) this.tabTrail.push(step);
+		if (this.externalPath !== null) this.extendExternalPath(folderPath);
+		else this.extendBrowsePath(folderPath);
+		this.enterTypingMode(name, pathStem(name).length);
+	}
+
 	private descendCarrying(folderPath: string, rest: string, given = false, record = true): void {
 		// Every gesture that moves the row records where it moved from, so
 		// the way back is the way in run backwards whichever way you came.
@@ -6278,6 +6491,20 @@ export class PathBreadcrumb {
 		if (!typed) return; // a stray "/" with nothing typed is a no-op
 		const rest = rawText.slice(bounds.end).replace(/^[\\/]+/, "");
 
+		// A name Obsidian cannot give a folder is not a rung to stand on. The
+		// press used to descend anyway, so the row committed to a folder that
+		// could never be created and every later press was measured against
+		// it; the field is left exactly as typed instead, red as it already
+		// was, and the caret where the user is still fixing it.
+		//
+		// A name that is merely not there yet is a different thing and still
+		// descends: typing a path ahead of itself is how a path gets made.
+		// Outside the vault the rules are the filesystem's, not Obsidian's.
+		if (this.externalPath === null) {
+			const name = typed.split("/").pop() ?? typed;
+			if (ILLEGAL_CHARS_RE.test(name)) return;
+		}
+
 		// Outside the vault the folder is counted from the place the row is
 		// standing in, as every other way in counts it. Resolving it against
 		// the vault out there named a folder that has nothing to do with
@@ -6781,6 +7008,7 @@ export class PathBreadcrumb {
 			// Same hook, because it answers the same question: the value
 			// changed, so what the row is saying about it has to change too.
 			this.paintCreateHint(inputEl);
+			this.syncAbsoluteTrail(inputEl.value);
 		};
 		autoSize();
 
@@ -7072,6 +7300,14 @@ export class PathBreadcrumb {
 				return false;
 			});
 		}
+		// And the same keymap is how the note underneath went on being edited
+		// while a path was being typed. Obsidian dispatches command hotkeys
+		// from a window listener, above the DOM and regardless of what has
+		// focus, so Ctrl+B pressed at this field bolded whatever the editor's
+		// cursor was sitting on — text changed in a note nobody was looking
+		// at, by a keystroke aimed at a path. Every modified key is claimed
+		// here instead, and the ones the *field* lives on are handed back.
+		guardFieldKeys(scope);
 		this.plugin.app.keymap.pushScope(scope);
 
 		this.autoSizeInput = autoSize;
@@ -7198,6 +7434,10 @@ export class PathBreadcrumb {
 					return;
 				}
 				if (value.kind === "folder") {
+					if (this.renameMode) {
+						this.descendForMove(value.path);
+						return;
+					}
 					this.descendCarrying(value.path, this.restAfterEditedSegment());
 					return;
 				}
@@ -7331,6 +7571,13 @@ export class PathBreadcrumb {
 		this.editCleanup = null;
 		this.inputEl = null;
 		this.mode = this.browsePath !== null ? "browsing" : "breadcrumb";
+		// The absolute path went with the field, so the row belongs to the
+		// vault again. Redrawn rather than left standing: an opening segment
+		// showing `/` with no field under it names nowhere.
+		if (this.typedAbsolute !== null) {
+			this.typedAbsolute = null;
+			this.renderVaultSegment();
+		}
 		this.renderFilename();
 	}
 
@@ -7411,7 +7658,11 @@ export class PathBreadcrumb {
 		// manager arrives wrapped, and every branch below — the URL check,
 		// the folder lookup, the name being created — would otherwise be
 		// asked about a name that begins with a quotation mark.
-		const trimmed = unquotePath(rawText);
+		//
+		// The tilde goes the same way and for the same reason: it is written
+		// by the thing the path was copied from, means the home folder, and is
+		// not something any branch below could make sense of.
+		const trimmed = expandHome(unquotePath(rawText));
 		if (!trimmed) {
 			// Nothing in the field names anything to open — standing in an
 			// empty folder, say, where there was never anything to complete.

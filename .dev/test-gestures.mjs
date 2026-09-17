@@ -2585,6 +2585,59 @@ test("a folder dragged out of the File Explorer is still refused by the tab bar"
 	expect("and no tab is added", r.added, 0);
 });
 
+test("a hotkey meant for the editor does not reach the note while a path is typed", async () => {
+	// The bug this guards: Obsidian dispatches command hotkeys from a window
+	// listener, so Ctrl+B pressed at the path field bolded whatever the
+	// editor's cursor was on — a note edited by a keystroke aimed at a path,
+	// in a pane the user was not looking at.
+	await page.evaluate(`
+		${openVaultNote}
+	`);
+	await page.evaluate(`
+		const view = app.workspace.getMostRecentLeaf().view;
+		view.editor.setValue("# leaf\\nbody text\\n");
+		view.editor.setSelection({ line: 1, ch: 0 }, { line: 1, ch: 4 });
+		const c = view.containerEl.querySelector(".view-header-title-container");
+		c.querySelector(".lure-filename-text").click();
+		${PAUSE(350)}
+		document.querySelector(".lure-path-input")?.focus();
+		${PAUSE(150)}
+		return true;
+	`);
+	const focused = await page.evaluate(
+		`return document.activeElement === document.querySelector(".lure-path-input");`,
+	);
+	expect("the field has the keyboard", focused, true);
+
+	for (const key of ["Ctrl+b", "Ctrl+i", "Ctrl+z"]) await pressKey(page, key);
+	await page.evaluate(PAUSE(400) + "return true;");
+	const body = await page.evaluate(
+		`return app.workspace.getMostRecentLeaf().view.editor.getValue();`,
+	);
+	expect("the note is exactly as it was", body, "# leaf\nbody text\n");
+});
+
+test("the field still keeps the modified keys it lives on", async () => {
+	await page.evaluate(openVaultNote);
+	await page.evaluate(`
+		const c = app.workspace.getMostRecentLeaf().view.containerEl
+			.querySelector(".view-header-title-container");
+		c.querySelector(".lure-filename-text").click();
+		${PAUSE(350)}
+		document.querySelector(".lure-path-input")?.focus();
+		${PAUSE(150)}
+		return true;
+	`);
+	await page.send("Input.insertText", { text: "abc" });
+	// Select-all inside a text field is the field's own, not a command.
+	await pressKey(page, "Ctrl+a");
+	await page.send("Input.insertText", { text: "Z" });
+	await page.evaluate(PAUSE(250) + "return true;");
+	const value = await page.evaluate(`return document.querySelector(".lure-path-input")?.value ?? null;`);
+	expect("Ctrl+A marked the whole field", value, "Z");
+	await pressKey(page, "Escape");
+});
+
 test("a folder segment declines what it cannot take", async () => {
 	// Its own parent: it is already there, so there is nothing to offer.
 	const parent = JSON.parse(await page.evaluate(dragOver("inner", `${ROOT}/inner/leaf.md`)));

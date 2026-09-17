@@ -30,6 +30,14 @@ export class BreadcrumbManager {
 	 */
 	private retired = false;
 	/**
+	 * Which folders the first delimiter collapsed, so the next press can put
+	 * them back. Owned here rather than on a row because the tree is one tree:
+	 * collapsing it from one pane and restoring it from another is the same
+	 * gesture continued, not two rows disagreeing. `null` means the tree was
+	 * not collapsed from the row, so the next press collapses.
+	 */
+	explorerFolds: string[] | null = null;
+	/**
 	 * Owned here because "legal on every bar" is not a question any single
 	 * bar can answer about itself, and picking one to arbitrate would make it
 	 * a master the others have no reason to trust.

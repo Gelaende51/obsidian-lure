@@ -403,3 +403,23 @@ export function listSystemLocations(currentVaultPath: string): SystemLocation[] 
 		...mounts.filter((mount) => !samePath(mount.path, rootPath)),
 	];
 }
+
+/**
+ * `~`, `~/Notes/a.md` → the same path under this machine's home folder.
+ *
+ * The shells everyone types paths into expand it, so a path copied out of a
+ * terminal — or typed by someone used to one — arrives with a tilde on the
+ * front and means the home folder. The bar used to read it as a note name:
+ * `~` is not absolute by any test, so Enter offered to create a note called
+ * `~` inside the current folder, and a pasted `~/notes/a.md` looked like a
+ * whole path that simply refused to open.
+ *
+ * Only a tilde that *is* the path or starts a segment of it. `~backup.md` is
+ * a file whose name begins with a tilde, and `user@host:~/x` is not a path
+ * this bar opens at all.
+ */
+export function expandHome(text: string): string {
+	if (text !== "~" && !/^~[\\/]/.test(text)) return text;
+	const home = homedir();
+	return text === "~" ? home : join(home, text.slice(2));
+}

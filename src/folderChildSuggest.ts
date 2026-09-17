@@ -1,4 +1,4 @@
-import { AbstractInputSuggest, App, Modifier, TAbstractFile, TFile, TFolder, UserEvent, setIcon } from "obsidian";
+import { AbstractInputSuggest, App, Modifier, Scope, TAbstractFile, TFile, TFolder, UserEvent, setIcon } from "obsidian";
 import { wireNativeFileItem } from "./nativeFileItem";
 import { SystemLocation, applyIcon, iconFor } from "./systemLocations";
 import { ExternalChild, externalJoin, listExternalChildren } from "./externalFs";
@@ -137,6 +137,73 @@ const DEFAULT_SUGGESTION_LIMIT = 100;
 /** The Enter presses that mean "somewhere else": a new tab, a split, a window. */
 export const MODIFIED_ENTER: Modifier[][] = [["Mod"], ["Mod", "Alt"], ["Mod", "Alt", "Shift"]];
 
+/**
+ * Modifier combinations that must not reach a command while a path is being
+ * typed. Plain keys are left alone: they are text, and Obsidian does not bind
+ * bare letters to editor commands.
+ */
+export const COMMANDLESS_MODIFIERS: Modifier[][] = [
+	["Mod"],
+	["Mod", "Shift"],
+	["Mod", "Alt"],
+	["Mod", "Alt", "Shift"],
+	["Alt"],
+	["Alt", "Shift"],
+];
+
+/** What a text field does with a modified key itself, and so must keep. */
+const FIELD_EDIT_KEYS = new Set([
+	"a",
+	"c",
+	"v",
+	"x",
+	"z",
+	"y",
+	"insert",
+	"delete",
+	"backspace",
+	"arrowleft",
+	"arrowright",
+	"arrowup",
+	"arrowdown",
+	"home",
+	"end",
+]);
+
+/**
+ * Whether the field itself answers this key, in which case the keymap must let
+ * it through rather than swallowing it.
+ *
+ * The Alt rule is about keyboard layouts, not about commands: AltGr arrives as
+ * Ctrl+Alt on Windows and Linux, and it is how `@`, `{`, `}` and `\\` are typed
+ * on a German keyboard among others. Swallowing those would make paths
+ * containing them impossible to type — a far worse bug than the one this
+ * guard exists for.
+ */
+export function fieldKeepsKey(evt: KeyboardEvent): boolean {
+	if (evt.altKey && evt.key.length === 1) return true;
+	return FIELD_EDIT_KEYS.has(evt.key.toLowerCase());
+}
+
+/**
+ * Claims every modified key for the field on one scope.
+ *
+ * Both scopes over an open field need it: the row's own, and the suggest
+ * popover's, which Obsidian pushes on top while the list is showing and which
+ * is parented to the app rather than to ours — so a guard on the row's scope
+ * alone was skipped exactly while the dropdown was up, which is most of the
+ * time a path is being typed.
+ */
+export function guardFieldKeys(scope: Scope): void {
+	for (const modifiers of COMMANDLESS_MODIFIERS) {
+		scope.register(modifiers, null, (evt) => {
+			if (fieldKeepsKey(evt)) return true;
+			evt.preventDefault();
+			return false;
+		});
+	}
+}
+
 /** Marks this plugin's popover, so the stylesheet can lift the height cap on it alone. */
 const POPOVER_CLASS = "lure-suggest-popover";
 
@@ -249,6 +316,9 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			return false;
 		};
 		for (const modifiers of MODIFIED_ENTER) this.scope.register(modifiers, "Enter", choose);
+		// Registered after those, so the Enter presses that mean "somewhere
+		// else" are matched by their own handler before the guard sees them.
+		guardFieldKeys(this.scope);
 	}
 
 	/** Showing a list, changed or not, goes through here; the field's colour is read off it. */
