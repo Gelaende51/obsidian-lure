@@ -1,6 +1,6 @@
 {
 	"name": "lure",
-	"version": "1.2.0",
+	"version": "1.3.0",
 	"description": "Shows a clickable, editable breadcrumb of the vault path in each note's header.",
 	"main": "main.js",
 	"scripts": {

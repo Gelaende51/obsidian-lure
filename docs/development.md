@@ -418,7 +418,7 @@ git push
 git tag -a 1.0.2 -m "Lure 1.0.2" && git push origin 1.0.2
 ```
 
-Move the *Unreleased* entries in `CHANGELOG.md` under a heading for the new version, with its date and a footnote holding its compare link (`## 1.3.0 — 2026-09-20[^1.3.0]`, and `[^1.3.0]: Changes since 1.2.0: <…/compare/1.2.0...1.3.0>` at the bottom, with the *Unreleased* footnote moved on to compare from the new tag), before tagging — the tag should point at a commit whose changelog already names it. Entries describe what a user notices, not how it was built; the commit messages carry the rest.
+Move the *Unreleased* entries in `CHANGELOG.md` under a heading for the new version, with its date and a footnote holding its compare link (`## 1.3.0 — 2026-09-20[^1.3.0]`, and `[^1.3.0]: Changes since 1.2.0: <…/compare/1.2.0...1.3.0>` at the bottom, while the *Unreleased* heading and its footnote go until something lands again — the translated changelogs take the same two-line change), before tagging — the tag should point at a commit whose changelog already names it. Entries describe what a user notices, not how it was built; the commit messages carry the rest.
 
 Bump `manifest.json` and add the matching `versions.json` entry (`"<plugin version>": "<minimum Obsidian version>"`) before tagging — Obsidian uses that map to decide which release an older app may install. Keep every past entry: the map is how an app too old for the current release finds the newest one it can still run, so deleting a line strands those users rather than tidying anything.
 
@@ -440,6 +440,7 @@ Every translated document opens with a comment naming the commit of the English 
 npm run stamp                          # rewrite the language row in every document
 npm run stamp -- --freshness --check   # which translations name an old commit, and how far behind
 npm run stamp -- --freshness           # claim they are current
+npm run stamp -- --freshness --only README,CHANGELOG   # only for the documents re-read
 ```
 
 `CHANGELOG.md` takes part the same way once it is translated: its translations go in `docs/i18n/CHANGELOG.<code>.md`, and each document's language row offers only the languages that document actually exists in. Until the first one lands it carries an invisible `<!-- {{SELECTOR}} -->`, which is where the row will go.

@@ -109,13 +109,17 @@ const HASH = /\b[0-9a-f]{7}\b/;
 
 if (process.argv.includes("--freshness")) {
 	const dryRun = process.argv.includes("--check");
+	// --only README,CHANGELOG limits the claim to documents actually re-read;
+	// without it every translated document is considered.
+	const onlyAt = process.argv.indexOf("--only");
+	const only = onlyAt === -1 ? null : new Set(process.argv[onlyAt + 1].split(","));
 	const headOf = (file) =>
 		execFileSync("git", ["log", "-1", "--format=%h", "--", file], { cwd: root, encoding: "utf8" }).trim();
 	const source = { README: "README.md", usage: "docs/usage.md", CHANGELOG: "CHANGELOG.md" };
 	const wanted = Object.fromEntries(Object.entries(source).map(([k, v]) => [k, headOf(v)]));
 	let stale = 0;
 	for (const [file, doc, lang] of targets) {
-		if (lang === "en") continue;
+		if (lang === "en" || (only && !only.has(doc))) continue;
 		const path = root + file;
 		if (!existsSync(path)) continue;
 		const text = readFileSync(path, "utf8");
