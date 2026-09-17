@@ -1,4 +1,4 @@
-<!-- Përkthim i README.md — gjendja: commit 973105b.
+<!-- Përkthim i README.md — gjendja: commit e1e2247.
      Përkthim me makinë (Claude Opus 5), i pashqyrtuar nga folës amtarë.
      Ndreqjet janë të mirëpritura; versioni përcaktues është README-ja
      në anglisht. -->
@@ -73,7 +73,7 @@ Zhvendosja e një shënimi *jashtë* kasafortës sate është i vetmi shkrim që
 
 ## Instalimi
 
-E listuar te [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), por ende e paaprovuar për shfletuesin brenda aplikacionit — prandaj instaloje në një nga këto mënyra:
+**Në Obsidian:** hap **Konfigurime → Shtojca të treta → Kërko**, kërko *Lure*, pastaj shtyp *Instalo* dhe *Aktivizo* — ose shtyp *Add to Obsidian* te [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure).
 
 **Me dorë:** shkarko `main.js`, `manifest.json` dhe `styles.css` nga [publikimi i fundit](https://github.com/Gelaende51/obsidian-lure/releases) te `<vault>/.obsidian/plugins/lure/`, pastaj aktivizoje te **Konfigurime → Shtojca të treta**.
 

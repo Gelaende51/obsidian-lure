@@ -1,4 +1,4 @@
-<!-- README.md को अनुवाद — अवस्था: कमिट 973105b।
+<!-- README.md को अनुवाद — अवस्था: कमिट e1e2247।
      मेसिन अनुवाद (Claude Opus 5), मातृभाषीहरूद्वारा जाँचिएको छैन।
      सुधारहरू स्वागतयोग्य छन्; निर्णायक संस्करण अंग्रेजी README हो। -->
 
@@ -72,7 +72,7 @@ Obsidian का विकासकर्ता नीतिहरूले प�
 
 ## स्थापना
 
-[community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) मा सूचीबद्ध छ, तर एपभित्रको ब्राउजरका लागि अझै स्वीकृत भएको छैन — त्यसैले यीमध्ये कुनै एक तरिकाले स्थापना गर्नुहोस्:
+**Obsidian मा:** **सेटिङहरू → तेस्रो-पक्ष प्लगइन → ब्राउज गर्नुहोस्** खोल्नुहोस्, *Lure* खोज्नुहोस्, त्यसपछि *स्थापना गर्नुहोस्* र *सक्षम गर्नुहोस्* थिच्नुहोस् — वा [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) मा *Add to Obsidian* थिच्नुहोस्।
 
 **हातले:** [पछिल्लो रिलिज](https://github.com/Gelaende51/obsidian-lure/releases) बाट `main.js`, `manifest.json` र `styles.css` झिकेर `<vault>/.obsidian/plugins/lure/` मा राख्नुहोस्, अनि **सेटिङहरू → तेस्रो-पक्ष प्लगइन** अन्तर्गत चालु गर्नुहोस्।
 

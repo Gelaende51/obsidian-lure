@@ -1,4 +1,4 @@
-<!-- Aistriúchán ar README.md — staid: tiomantas 973105b.
+<!-- Aistriúchán ar README.md — staid: tiomantas e1e2247.
      Aistriúchán meaisín (Claude Opus 5) nár léigh cainteoirí dúchais é.
      Fáilte roimh cheartúcháin; is é an README Béarla an leagan údarásach. -->
 
@@ -72,7 +72,7 @@ Is é nóta a bhogadh *amach* as do thaisceadán an t-aon scríobh a chosnaíonn
 
 ## Suiteáil
 
-Liostaithe ag [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), ach níl sé faofa fós don bhrabhsálaí san fheidhmchlár — suiteáil ar cheann de na bealaí seo é:
+**In Obsidian:** oscail **Socruithe → Breiseáin pobail → Brabhsáil**, cuardaigh *Lure*, ansin brúigh *Suiteáil* agus *Cumasaigh* — nó brúigh *Add to Obsidian* ag [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure).
 
 **De láimh:** íoslódáil `main.js`, `manifest.json` agus `styles.css` ón [eisiúint is déanaí](https://github.com/Gelaende51/obsidian-lure/releases) go dtí `<vault>/.obsidian/plugins/lure/`, ansin cuir ar siúl é faoi **Socruithe → Breiseáin pobail**.
 

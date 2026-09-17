@@ -1,4 +1,4 @@
-<!-- Oversættelse af README.md — status: commit 973105b.
+<!-- Oversættelse af README.md — status: commit e1e2247.
      Maskinoversat (Claude Opus 5) og ikke gennemlæst af modersmålstalere.
      Rettelser er velkomne; den engelske README er den gældende udgave. -->
 
@@ -72,7 +72,7 @@ At flytte en note *ud* af din boks er den ene skrivehandling, der koster noget, 
 
 ## Installation
 
-Opført på [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), men endnu ikke godkendt til browseren i appen — installer det på en af disse måder:
+**I Obsidian:** åbn **Indstillinger → Fællesskabsplugins → Gennemse**, søg efter *Lure*, og vælg derefter *Installer* og *Aktivér* — eller tryk på *Add to Obsidian* på [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure).
 
 **Manuelt:** hent `main.js`, `manifest.json` og `styles.css` fra [seneste udgivelse](https://github.com/Gelaende51/obsidian-lure/releases) til `<vault>/.obsidian/plugins/lure/`, og slå det derefter til under **Indstillinger → Fællesskabsplugins**.
 

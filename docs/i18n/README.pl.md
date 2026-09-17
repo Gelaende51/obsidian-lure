@@ -1,4 +1,4 @@
-<!-- Tłumaczenie README.md — stan: commit 973105b.
+<!-- Tłumaczenie README.md — stan: commit e1e2247.
      Tłumaczenie maszynowe (Claude Opus 5), nieskorygowane przez native
      speakerów. Poprawki mile widziane; wersją rozstrzygającą jest
      angielskie README. -->
@@ -73,7 +73,7 @@ Przeniesienie notatki *poza* skarbiec to jedyny zapis, który kosztuje coś, cze
 
 ## Instalacja
 
-Widnieje na [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), ale nie została jeszcze zatwierdzona do przeglądarki w aplikacji — zainstaluj ją na jeden z tych sposobów:
+**W Obsidianie:** otwórz **Ustawienia → Wtyczki społeczności → Przeglądaj**, wyszukaj *Lure*, a następnie kliknij *Instaluj* i *Włącz* — albo naciśnij *Add to Obsidian* na [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure).
 
 **Ręcznie:** pobierz `main.js`, `manifest.json` i `styles.css` z [najnowszego wydania](https://github.com/Gelaende51/obsidian-lure/releases) do `<vault>/.obsidian/plugins/lure/`, a potem włącz wtyczkę w **Ustawienia → Wtyczki społeczności**.
 

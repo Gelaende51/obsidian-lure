@@ -1,4 +1,4 @@
-<!-- Oversettelse av README.md — status: commit 973105b.
+<!-- Oversettelse av README.md — status: commit e1e2247.
      Maskinoversatt (Claude Opus 5) og ikke gjennomlest av morsmålsbrukere.
      Rettelser er velkomne; den engelske README-filen er den gjeldende
      utgaven.
@@ -77,7 +77,7 @@ Ingen av opplåsingene lagres i arbeidsflaten eller i innstillingene, så skrivi
 
 ## Installasjon
 
-Oppført på [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), men ennå ikke godkjent for nettleseren i appen — installer det på en av disse måtene:
+**I Obsidian:** åpne **Innstillinger → Third-party plugin → Bla gjennom**, søk etter *Lure*, og trykk deretter på *Installer* og *Aktiver* — eller trykk på *Add to Obsidian* på [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure).
 
 **Manuelt:** last ned `main.js`, `manifest.json` og `styles.css` fra [siste utgivelse](https://github.com/Gelaende51/obsidian-lure/releases) til `<vault>/.obsidian/plugins/lure/`, og slå det så på under **Innstillinger → Third-party plugin**.
 

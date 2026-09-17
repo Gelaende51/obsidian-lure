@@ -1,4 +1,4 @@
-<!-- የREADME.md ትርጉም — ሁኔታ፦ ኮሚት 973105b።
+<!-- የREADME.md ትርጉም — ሁኔታ፦ ኮሚት e1e2247።
      በማሽን የተተረጎመ (Claude Opus 5) ሲሆን በአፍ መፍቻ ተናጋሪዎች አልተመረመረም።
      ማስተካከያዎች እንኳን ደህና መጡ፤ ወሳኙ ቅጂ የእንግሊዝኛው README ነው። -->
 
@@ -72,7 +72,7 @@ Obsidian 1.8.7+ · ለዴስክቶፕ ብቻ · AGPL-3.0
 
 ## መጫን
 
-በ[community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) ተዘርዝሯል፣ ነገር ግን ገና በመተግበሪያው ውስጥ ላለው አሳሽ አልጸደቀም — ስለዚህ ከእነዚህ በአንዱ መንገድ ይጫኑት፦
+**በObsidian ውስጥ፦** **ቅንብሮች → የሶስተኛ ወገን ተሰኪ → አስስ** ይክፈቱ፣ *Lure* ብለው ይፈልጉ፣ ከዚያ *ጫን* እና *አንቃ* ይጫኑ — ወይም በ[community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) ላይ *Add to Obsidian* ይጫኑ።
 
 **በእጅ፦** `main.js`፣ `manifest.json` እና `styles.css`ን ከ[የቅርብ ጊዜው ልቀት](https://github.com/Gelaende51/obsidian-lure/releases) ወደ `<vault>/.obsidian/plugins/lure/` ያውርዱ፣ ከዚያም በ**ቅንብሮች → የሶስተኛ ወገን ተሰኪ** ስር ያብሩት።
 

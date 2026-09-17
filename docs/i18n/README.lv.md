@@ -1,4 +1,4 @@
-<!-- README.md tulkojums — stāvoklis: revīzija 973105b.
+<!-- README.md tulkojums — stāvoklis: revīzija e1e2247.
      Mašīntulkojums (Claude Opus 5), ko nav pārlasījuši dzimtās valodas
      runātāji. Labojumi ir gaidīti; noteicošā ir README angļu valodā. -->
 
@@ -72,7 +72,7 @@ Piezīmes pārvietošana *ārā* no glabātavas ir tā vienīgā rakstīšana, k
 
 ## Uzstādīšana
 
-Iekļauts [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), taču vēl nav apstiprināts lietotnes iekšējam pārlūkam — tāpēc instalē to kādā no šiem veidiem:
+**Obsidian lietotnē:** atver **Iestatījumi → Trešās puses spraudnis → Pārlūkot**, meklē *Lure*, tad nospied *Instalēt* un *Iespējot* — vai nospied *Add to Obsidian* vietnē [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure).
 
 **Ar rokām:** lejupielādē `main.js`, `manifest.json` un `styles.css` no [jaunākā laidiena](https://github.com/Gelaende51/obsidian-lure/releases) mapē `<vault>/.obsidian/plugins/lure/`, tad ieslēdz to sadaļā **Iestatījumi → Trešās puses spraudnis**.
 

@@ -1,4 +1,4 @@
-<!-- Käännös tiedostosta README.md — tilanne: commit 973105b.
+<!-- Käännös tiedostosta README.md — tilanne: commit e1e2247.
      Konekäännös (Claude Opus 5), jota äidinkieliset puhujat eivät ole
      tarkastaneet. Korjaukset ovat tervetulleita; englanninkielinen README
      on ratkaiseva versio. -->
@@ -73,7 +73,7 @@ Muistiinpanon siirtäminen *pois* holvista on ainoa kirjoitus, jonka hintaa mik�
 
 ## Asennus
 
-Listattu osoitteessa [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), mutta sitä ei ole vielä hyväksytty sovelluksen sisäiseen selaimeen — asenna se jollakin näistä tavoista:
+**Obsidianissa:** avaa **Asetukset → Yhteisön lisäosat → Selaa**, hae *Lure* ja valitse sitten *Asenna* ja *Ota käyttöön* — tai paina *Add to Obsidian* osoitteessa [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure).
 
 **Käsin:** lataa `main.js`, `manifest.json` ja `styles.css` [uusimmasta julkaisusta](https://github.com/Gelaende51/obsidian-lure/releases) hakemistoon `<vault>/.obsidian/plugins/lure/`, ja kytke se sitten päälle kohdasta **Asetukset → Yhteisön lisäosat**.
 

@@ -1,4 +1,4 @@
-<!-- Traducció de README.md — estat: commit 973105b.
+<!-- Traducció de README.md — estat: commit e1e2247.
      Traducció automàtica (Claude Opus 5), no revisada per parlants nadius.
      Les correccions són benvingudes; el README en anglès és la versió
      de referència. -->
@@ -73,7 +73,7 @@ Cap dels dos desbloquejos es desa a l'espai de treball ni a les opcions, així q
 
 ## Instal·lació
 
-Apareix a [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), però encara no està aprovat per al navegador dins l'aplicació: instal·la'l d'una d'aquestes maneres:
+**A Obsidian:** obre **Configuració → Connectors de tercers → Navega**, cerca *Lure* i després prem *Instal·lar* i *Habilitar* — o bé prem *Add to Obsidian* a [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure).
 
 **Manual:** baixa `main.js`, `manifest.json` i `styles.css` de la [darrera versió publicada](https://github.com/Gelaende51/obsidian-lure/releases) a `<vault>/.obsidian/plugins/lure/` i activa'l a **Configuració → Connectors de tercers**.
 

@@ -1,4 +1,4 @@
-<!-- Tradução de README.md — estado: commit 973105b.
+<!-- Tradução de README.md — estado: commit e1e2247.
      Tradução automática (Claude Opus 5), não revista por falantes nativos.
      Correções são bem-vindas; o README em inglês é a versão de referência. -->
 
@@ -72,7 +72,7 @@ Mover uma nota para *fora* do cofre é a única escrita que custa algo que nada 
 
 ## Instalação
 
-Está listado em [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), mas ainda não foi aprovado para o navegador dentro da aplicação — por isso instale-o de uma destas maneiras:
+**No Obsidian:** abra **Definições → Plugins não oficiais → Procurar**, pesquise por *Lure* e depois carregue em *Instalar* e *Ativar* — ou carregue em *Add to Obsidian* em [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure).
 
 **Manual:** transfira `main.js`, `manifest.json` e `styles.css` da [versão mais recente](https://github.com/Gelaende51/obsidian-lure/releases) para `<vault>/.obsidian/plugins/lure/` e ative-o em **Definições → Plugins não oficiais**.
 

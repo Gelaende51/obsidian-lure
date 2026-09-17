@@ -1,4 +1,4 @@
-<!-- README.md 的翻译 — 对应提交：973105b。
+<!-- README.md 的翻译 — 对应提交：e1e2247。
      机器翻译（Claude Opus 5），未经母语者校订。欢迎指出错误；以英文
      README 为准。 -->
 
@@ -72,7 +72,7 @@ Obsidian 的开发者政策要求插件说明任何对仓库之外文件的访�
 
 ## 安装
 
-已在 [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) 上架，但尚未获准进入应用内的插件浏览器——所以请用以下方式之一安装：
+**在 Obsidian 中：** 打开 **设置 → 第三方插件 → 浏览**，搜索 *Lure*，然后点击 *安装* 和 *启用*——或在 [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) 上点击 *Add to Obsidian*。
 
 **手动：** 从[最新发布](https://github.com/Gelaende51/obsidian-lure/releases)下载 `main.js`、`manifest.json` 和 `styles.css`，放入 `<vault>/.obsidian/plugins/lure/`，然后在**设置 → 第三方插件**中启用。
 

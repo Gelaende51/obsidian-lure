@@ -1,4 +1,4 @@
-<!-- Översättning av README.md — status: commit 973105b.
+<!-- Översättning av README.md — status: commit e1e2247.
      Maskinöversatt (Claude Opus 5) och inte granskad av modersmålstalare.
      Rättelser är välkomna; den engelska README-filen är den gällande
      versionen. -->
@@ -73,7 +73,7 @@ Att flytta en anteckning *ut* ur ditt valv är den enda skrivning som kostar nå
 
 ## Installation
 
-Listat på [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), men ännu inte godkänt för webbläsaren i appen — så installera det på något av dessa sätt:
+**I Obsidian:** öppna **Inställningar → Gemenskapstillägg → Bläddra**, sök efter *Lure* och tryck sedan på *Installera* och *Aktivera* — eller tryck på *Add to Obsidian* på [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure).
 
 **Manuellt:** ladda ner `main.js`, `manifest.json` och `styles.css` från den [senaste utgåvan](https://github.com/Gelaende51/obsidian-lure/releases) till `<vault>/.obsidian/plugins/lure/`, och aktivera det sedan under **Inställningar → Gemenskapstillägg**.
 

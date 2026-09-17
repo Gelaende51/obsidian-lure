@@ -1,4 +1,4 @@
-<!-- คำแปลของ README.md — สถานะ: คอมมิต 973105b
+<!-- คำแปลของ README.md — สถานะ: คอมมิต e1e2247
      แปลด้วยเครื่อง (Claude Opus 5) ยังไม่ผ่านการตรวจโดยเจ้าของภาษา
      ยินดีรับคำแก้ไข ฉบับที่ถือเป็นหลักคือ README ภาษาอังกฤษ
 
@@ -75,7 +75,7 @@ Obsidian 1.8.7+ · เดสก์ท็อปเท่านั้น · AGPL-3
 
 ## การติดตั้ง
 
-มีรายชื่ออยู่ที่ [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) แต่ยังไม่ได้รับอนุมัติให้เข้าตัวเรียกดูในแอป จึงต้องติดตั้งด้วยวิธีใดวิธีหนึ่งต่อไปนี้:
+**ใน Obsidian:** เปิด **การตั้งค่า → ปลั๊กอินโดยชุมชน → เลือกดู** ค้นหา *Lure* แล้วกด *ติดตั้ง* และ *เปิดใช้งาน* — หรือกด *Add to Obsidian* ที่ [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure)
 
 **ด้วยตนเอง:** ดาวน์โหลด `main.js`, `manifest.json` และ `styles.css` จาก[รีลีสล่าสุด](https://github.com/Gelaende51/obsidian-lure/releases) ไปไว้ใน `<vault>/.obsidian/plugins/lure/` แล้วเปิดใช้งานที่ **การตั้งค่า → ปลั๊กอินโดยชุมชน**
 

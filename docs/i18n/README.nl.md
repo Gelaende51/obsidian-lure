@@ -1,4 +1,4 @@
-<!-- Vertaling van README.md — stand: commit 973105b.
+<!-- Vertaling van README.md — stand: commit e1e2247.
      Machinaal vertaald (Claude Opus 5) en niet nagekeken door
      moedertaalsprekers. Correcties zijn welkom; de Engelse README is de
      maatgevende versie. -->
@@ -73,7 +73,7 @@ Een notitie *uit* je kluis verplaatsen is de ene schrijfactie die iets kost wat 
 
 ## Installatie
 
-Vermeld op [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), maar nog niet goedgekeurd voor de browser in de app — installeer het dus op een van deze manieren:
+**In Obsidian:** open **Instellingen → Externe plug-in → Doorbladeren**, zoek naar *Lure* en klik daarna op *Installeren* en *Activeer* — of druk op *Add to Obsidian* op [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure).
 
 **Handmatig:** download `main.js`, `manifest.json` en `styles.css` uit de [nieuwste release](https://github.com/Gelaende51/obsidian-lure/releases) naar `<vault>/.obsidian/plugins/lure/` en zet de plugin aan bij **Instellingen → Externe plug-ins**.
 

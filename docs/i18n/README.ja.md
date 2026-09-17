@@ -1,4 +1,4 @@
-<!-- README.md の翻訳 — 対象コミット: 973105b。
+<!-- README.md の翻訳 — 対象コミット: e1e2247。
      機械翻訳（Claude Opus 5）であり、母語話者による校正は受けていません。
      修正の指摘は歓迎します。正となるのは英語版 README です。 -->
 
@@ -72,7 +72,7 @@ Obsidian の開発者ポリシーは、保管庫の外にあるファイルへ�
 
 ## インストール
 
-[community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) に掲載されていますが、アプリ内のブラウザにはまだ承認されていません。次のいずれかの方法でインストールしてください:
+**Obsidian 内で:** **設定 → コミュニティプラグイン → 閲覧** を開き、*Lure* を検索して *インストール* と *有効化* を押してください。または [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) で *Add to Obsidian* を押してください。
 
 **手動:** [最新のリリース](https://github.com/Gelaende51/obsidian-lure/releases) から `main.js`、`manifest.json`、`styles.css` を `<vault>/.obsidian/plugins/lure/` にダウンロードし、**設定 → コミュニティプラグイン** で有効にします。
 

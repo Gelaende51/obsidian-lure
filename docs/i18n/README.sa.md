@@ -1,4 +1,4 @@
-<!-- README.md इत्यस्य अनुवादः — स्थितिः — कमिट् 973105b।
+<!-- README.md इत्यस्य अनुवादः — स्थितिः — कमिट् e1e2247।
      यन्त्रानुवादः (Claude Opus 5), मातृभाषिभिः न परीक्षितः। संशोधनानि
      स्वागतार्हाणि; प्रमाणभूता आङ्ग्लभाषिका README एव।
 
@@ -77,7 +77,7 @@ Obsidian इत्यस्य विकासकनीतयः आदिशन
 
 ## संस्थापनम्
 
-[community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) इत्यत्र सूचीकृतम्, किन्तु अनुप्रयोगान्तर्गतस्य अवलोककस्य कृते अद्यापि न अनुमोदितम् — अतः एतेषु केनचित् प्रकारेण संस्थापयतु:
+**Obsidian इत्यस्मिन्:** **Settings → Community plugins → Browse** उद्घाटयतु, *Lure* इति अन्विष्यतु, ततः *Install* इति *Enable* इति च नुदतु — अथवा [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) इत्यत्र *Add to Obsidian* नुदतु।
 
 **हस्तेन:** [नवीनतमप्रकाशनात्](https://github.com/Gelaende51/obsidian-lure/releases) `main.js`, `manifest.json`, `styles.css` इति `<vault>/.obsidian/plugins/lure/` इत्यत्र अवतारयतु, ततः **Settings → Community plugins** इत्यत्र तत् सक्रियं करोतु।
 

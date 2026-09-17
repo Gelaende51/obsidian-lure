@@ -1,4 +1,4 @@
-<!-- README.md 的翻譯 — 對應提交：973105b。
+<!-- README.md 的翻譯 — 對應提交：e1e2247。
      機器翻譯（Claude Opus 5），未經母語者校訂。歡迎指正；以英文 README
      為準。 -->
 
@@ -72,7 +72,7 @@ Obsidian 的開發者政策要求外掛說明任何對儲存庫以外檔案的�
 
 ## 安裝
 
-已列於 [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure)，但尚未通過審核、無法在應用程式內的瀏覽器中找到——因此請用以下任一方式安裝：
+**在 Obsidian 中：** 開啟 **設定 → 第三方外掛程式 → 瀏覽**，搜尋 *Lure*，然後按 *安裝* 與 *啟用*——或在 [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) 上按 *Add to Obsidian*。
 
 **手動：** 從[最新版本](https://github.com/Gelaende51/obsidian-lure/releases)下載 `main.js`、`manifest.json` 與 `styles.css` 到 `<vault>/.obsidian/plugins/lure/`，然後在**設定 → 第三方外掛程式**中啟用。
 

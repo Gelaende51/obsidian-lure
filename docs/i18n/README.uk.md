@@ -1,4 +1,4 @@
-<!-- Переклад README.md — стан: коміт 973105b.
+<!-- Переклад README.md — стан: коміт e1e2247.
      Машинний переклад (Claude Opus 5), не вичитаний носіями мови.
      Виправлення вітаються; визначальною є англійська версія README. -->
 
@@ -72,7 +72,7 @@ Obsidian 1.8.7+ · лише для комп'ютера · AGPL-3.0
 
 ## Встановлення
 
-Є в переліку на [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), але ще не схвалено для вбудованого переглядача — тож установіть його одним із цих способів:
+**У Obsidian:** відкрийте **Налаштування → Сторонні додатки → Огляд**, знайдіть *Lure*, потім натисніть *Встановити* та *Увімкнути* — або натисніть *Add to Obsidian* на [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure).
 
 **Вручну:** завантажте `main.js`, `manifest.json` і `styles.css` з [останнього випуску](https://github.com/Gelaende51/obsidian-lure/releases) до `<vault>/.obsidian/plugins/lure/`, а потім увімкніть його в **Налаштування → Сторонні додатки**.
 

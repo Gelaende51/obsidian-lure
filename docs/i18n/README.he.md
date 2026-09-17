@@ -1,4 +1,4 @@
-<!-- תרגום של README.md — מצב: קומיט 973105b.
+<!-- תרגום של README.md — מצב: קומיט e1e2247.
      תרגום מכונה (Claude Opus 5) שלא נבדק בידי דוברי שפת אם. תיקונים
      יתקבלו בברכה; הגרסה הקובעת היא ה-README באנגלית.
 
@@ -75,7 +75,7 @@ Obsidian 1.8.7+ · למחשב שולחני בלבד · AGPL-3.0
 
 ## התקנה
 
-רשום ב-[community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), אך טרם אושר לדפדפן שבתוך היישום — התקינו אותו באחת מהדרכים האלה:
+**ב-Obsidian:** פתחו את **הגדרות → תוספים קהילתיים → עיון**, חפשו את *Lure*, ואז לחצו על *התקנה* ועל *הפעלה* — או לחצו על *Add to Obsidian* ב-[community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure).
 
 **ידנית:** הורידו את `main.js`, `manifest.json` ו-`styles.css` מ[הגרסה האחרונה](https://github.com/Gelaende51/obsidian-lure/releases) אל `<vault>/.obsidian/plugins/lure/`, ואז הפעילו אותו תחת **הגדרות ← תוספים קהילתיים**.
 

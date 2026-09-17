@@ -1,4 +1,4 @@
-<!-- Terjemahan README.md — status: commit 973105b.
+<!-- Terjemahan README.md — status: commit e1e2247.
      Terjemahan mesin (Claude Opus 5), belum ditinjau penutur asli.
      Koreksi sangat diterima; README bahasa Inggris adalah versi acuan. -->
 
@@ -72,7 +72,7 @@ Memindahkan catatan *keluar* dari vault Anda adalah satu-satunya penulisan yang 
 
 ## Pemasangan
 
-Terdaftar di [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), tetapi belum disetujui untuk penjelajah di dalam aplikasi — jadi pasang dengan salah satu cara ini:
+**Di Obsidian:** buka **Pengaturan → Plugin komunitas → Telusuri**, cari *Lure*, lalu tekan *Pasang* dan *Aktifkan* — atau tekan *Add to Obsidian* di [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure).
 
 **Manual:** unduh `main.js`, `manifest.json`, dan `styles.css` dari [rilis terbaru](https://github.com/Gelaende51/obsidian-lure/releases) ke `<vault>/.obsidian/plugins/lure/`, lalu nyalakan di **Pengaturan → Plugin komunitas**.
 

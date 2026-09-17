@@ -1,4 +1,4 @@
-<!-- README.md çevirisi — durum: commit 973105b.
+<!-- README.md çevirisi — durum: commit e1e2247.
      Makine çevirisi (Claude Opus 5), ana dili konuşanlarca gözden
      geçirilmedi. Düzeltmeler memnuniyetle karşılanır; belirleyici sürüm
      İngilizce README'dir. -->
@@ -73,7 +73,7 @@ Bir notu kasanızın *dışına* taşımak, bedeli hiçbir şeyle geri alınamay
 
 ## Kurulum
 
-[community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) adresinde listelenmiştir, ancak uygulama içi tarayıcı için henüz onaylanmamıştır — bu yüzden şu yollardan biriyle kurun:
+**Obsidian'da:** **Ayarlar → Topluluk Eklentileri → Göz at** bölümünü açın, *Lure* için arama yapın, ardından *İndir* ve *Etkinleştir* düğmelerine basın — ya da [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) adresinde *Add to Obsidian* düğmesine basın.
 
 **Elle:** [son sürümden](https://github.com/Gelaende51/obsidian-lure/releases) `main.js`, `manifest.json` ve `styles.css` dosyalarını `<vault>/.obsidian/plugins/lure/` klasörüne indirin, ardından **Ayarlar → Topluluk Eklentileri** altında etkinleştirin.
 

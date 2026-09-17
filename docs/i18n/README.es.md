@@ -1,4 +1,4 @@
-<!-- Traducción de README.md — estado: commit 973105b.
+<!-- Traducción de README.md — estado: commit e1e2247.
      Traducción automática (Claude Opus 5), no revisada por hablantes nativos.
      Se agradecen las correcciones; el README en inglés es la versión
      de referencia. -->
@@ -73,7 +73,7 @@ Mover una nota *fuera* de tu bóveda es la única escritura que cuesta algo que 
 
 ## Instalación
 
-Aparece en [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), pero todavía no está aprobado para el explorador dentro de la aplicación, así que instálalo de una de estas maneras:
+**En Obsidian:** abre **Preferencias → Complementos comunitarios → Buscar**, busca *Lure* y luego pulsa *Instalar* y *Activar* — o pulsa *Add to Obsidian* en [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure).
 
 **Manual:** descarga `main.js`, `manifest.json` y `styles.css` de la [última versión publicada](https://github.com/Gelaende51/obsidian-lure/releases) en `<vault>/.obsidian/plugins/lure/` y actívalo en **Preferencias → Complementos comunitarios**.
 

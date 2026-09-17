@@ -1,4 +1,4 @@
-<!-- A README.md fordítása — állapot: 973105b commit.
+<!-- A README.md fordítása — állapot: e1e2247 commit.
      Gépi fordítás (Claude Opus 5), anyanyelvi lektorálás nélkül.
      A javításokat szívesen fogadjuk; az irányadó változat az angol
      README. -->
@@ -73,7 +73,7 @@ Egy jegyzet *kihelyezése* a széfből az egyetlen írás, amelynek olyan ára v
 
 ## Telepítés
 
-Szerepel a [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) oldalon, de az alkalmazáson belüli böngészőhöz még nincs jóváhagyva — telepítsd az alábbi módok egyikén:
+**Obsidianban:** nyisd meg a **Beállítások → Közösségi bővítmények → Böngészés** részt, keress rá a *Lure*-ra, majd nyomd meg a *Telepítés* és az *Engedélyezés* gombot — vagy nyomd meg az *Add to Obsidian* gombot a [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) oldalon.
 
 **Kézzel:** töltsd le a `main.js`, `manifest.json` és `styles.css` fájlt a [legutóbbi kiadásból](https://github.com/Gelaende51/obsidian-lure/releases) a `<vault>/.obsidian/plugins/lure/` mappába, majd kapcsold be a **Beállítások → Közösségi bővítmények** alatt.
 

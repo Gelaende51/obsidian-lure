@@ -1,4 +1,4 @@
-<!-- Übersetzung von README.md — Stand: Commit 973105b.
+<!-- Übersetzung von README.md — Stand: Commit e1e2247.
      Maschinell übersetzt (Claude Opus 5) und nicht von Muttersprachlern
      geprüft. Korrekturen sind willkommen; das englische README ist die
      maßgebliche Fassung. -->
@@ -73,7 +73,7 @@ Eine Notiz aus deinem Vault *hinaus* zu verschieben, ist der eine Schreibvorgang
 
 ## Installation
 
-Auf [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) gelistet, aber noch nicht für den Browser in der App freigegeben — daher auf einem dieser Wege installieren:
+**In Obsidian:** **Einstellungen → Externe Erweiterungen → Durchsuchen** öffnen, nach *Lure* suchen, dann *Installieren* und *Aktivieren* — oder auf [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) *Add to Obsidian* drücken.
 
 **Manuell:** `main.js`, `manifest.json` und `styles.css` aus dem [neuesten Release](https://github.com/Gelaende51/obsidian-lure/releases) nach `<vault>/.obsidian/plugins/lure/` herunterladen und das Plugin dann unter **Einstellungen → Externe Erweiterungen** aktivieren.
 

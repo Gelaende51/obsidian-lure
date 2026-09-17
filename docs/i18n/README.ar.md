@@ -1,4 +1,4 @@
-<!-- ترجمة README.md — الحالة: الإيداع 973105b.
+<!-- ترجمة README.md — الحالة: الإيداع e1e2247.
      ترجمة آلية (Claude Opus 5) لم يراجعها متحدثون أصليون. التصحيحات
      مُرحَّب بها؛ النسخة المُعتمَدة هي README الإنجليزية.
 
@@ -76,7 +76,7 @@ Obsidian 1.8.7+ · لسطح المكتب فقط · AGPL-3.0
 
 ## التثبيت
 
-مُدرَجة في [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure)، لكنها لم تُعتمد بعد للمتصفح داخل التطبيق — فثبّتها بإحدى هذه الطرق:
+**في Obsidian:** افتح **الإعدادات → إضافات تابعة لجهات خارجية → تصفّح**، وابحث عن *Lure*، ثم اضغط *تثبيت* ثم *تمكين* — أو اضغط *Add to Obsidian* في [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure).
 
 **يدويًا:** نزِّل `main.js` و`manifest.json` و`styles.css` من [أحدث إصدار](https://github.com/Gelaende51/obsidian-lure/releases) إلى `<vault>/.obsidian/plugins/lure/`، ثم فعِّلها من **الإعدادات ← إضافات تابعة لجهات خارجية**.
 

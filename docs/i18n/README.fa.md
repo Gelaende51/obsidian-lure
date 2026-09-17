@@ -1,4 +1,4 @@
-<!-- ترجمهٔ README.md — وضعیت: کامیت 973105b.
+<!-- ترجمهٔ README.md — وضعیت: کامیت e1e2247.
      ترجمهٔ ماشینی (Claude Opus 5) که گویشوران بومی آن را بازبینی
      نکرده‌اند. اصلاح‌ها با آغوش باز پذیرفته می‌شود؛ نسخهٔ ملاک، README
      انگلیسی است.
@@ -77,7 +77,7 @@ Obsidian 1.8.7+ · فقط رایانهٔ رومیزی · AGPL-3.0
 
 ## نصب
 
-در [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) فهرست شده، اما هنوز برای مرورگر درون‌برنامه تأیید نشده است — پس آن را به یکی از این روش‌ها نصب کنید:
+**در Obsidian:** **تنظیمات → افزونه‌های شخص‌ثالث → مرور** را باز کنید، *Lure* را جستجو کنید، سپس *نصب* و *فعال کردن* را بزنید — یا در [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) روی *Add to Obsidian* بزنید.
 
 **دستی:** `main.js`، `manifest.json` و `styles.css` را از [آخرین انتشار](https://github.com/Gelaende51/obsidian-lure/releases) در `<vault>/.obsidian/plugins/lure/` بارگیری کنید، سپس آن را در **تنظیمات ← افزونه‌های شخص‌ثالث** روشن کنید.
 

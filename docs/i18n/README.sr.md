@@ -1,4 +1,4 @@
-<!-- Превод README.md — стање: комит 973105b.
+<!-- Превод README.md — стање: комит e1e2247.
      Машински превод (Claude Opus 5), без провере изворних говорника.
      Исправке су добродошле; меродавна је енглеска верзија README-а. -->
 
@@ -72,7 +72,7 @@ Obsidian-ове смернице за програмере траже да пл�
 
 ## Инсталација
 
-Наведен је на [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), али још није одобрен за прегледач унутар апликације — па га инсталирајте на један од ових начина:
+**У Obsidian-у:** отворите **Подешавања → Плагин треће стране → Прегледај**, потражите *Lure*, затим притисните *Инсталирај* и *Омогући* — или притисните *Add to Obsidian* на [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure).
 
 **Ручно:** преузмите `main.js`, `manifest.json` и `styles.css` из [последњег издања](https://github.com/Gelaende51/obsidian-lure/releases) у `<vault>/.obsidian/plugins/lure/`, па га укључите под **Подешавања → Плагин треће стране**.
 

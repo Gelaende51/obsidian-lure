@@ -1,4 +1,4 @@
-<!-- Bản dịch của README.md — trạng thái: commit 973105b.
+<!-- Bản dịch của README.md — trạng thái: commit e1e2247.
      Dịch máy (Claude Opus 5), chưa được người bản ngữ hiệu đính.
      Rất hoan nghênh mọi đính chính; bản tiếng Anh của README là bản
      chuẩn. -->
@@ -73,7 +73,7 @@ Di chuyển một ghi chú *ra khỏi* kho là thao tác ghi duy nhất gây ra 
 
 ## Cài đặt
 
-Đã được niêm yết tại [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), nhưng chưa được duyệt cho trình duyệt plugin trong ứng dụng — vì vậy hãy cài theo một trong các cách sau:
+**Trong Obsidian:** mở **Cài đặt → Phần mở rộng của bên thứ ba → Duyệt**, tìm *Lure*, rồi nhấn *Cài đặt* và *Kích hoạt* — hoặc nhấn *Add to Obsidian* trên [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure).
 
 **Thủ công:** tải `main.js`, `manifest.json` và `styles.css` từ [bản phát hành mới nhất](https://github.com/Gelaende51/obsidian-lure/releases) vào `<vault>/.obsidian/plugins/lure/`, rồi bật plugin trong **Cài đặt → Phần mở rộng của bên thứ ba**.
 

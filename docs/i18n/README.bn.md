@@ -1,4 +1,4 @@
-<!-- README.md-এর অনুবাদ — অবস্থা: কমিট 973105b।
+<!-- README.md-এর অনুবাদ — অবস্থা: কমিট e1e2247।
      যন্ত্র-অনুবাদ (Claude Opus 5), মাতৃভাষীদের দ্বারা পরীক্ষিত নয়।
      সংশোধন স্বাগত; নির্ধারক সংস্করণ ইংরেজি README। -->
 
@@ -72,7 +72,7 @@ Obsidian-এর ডেভেলপার নীতিমালা দাবি �
 
 ## ইনস্টলেশন
 
-[community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure)-এ তালিকাভুক্ত, তবে অ্যাপের ভেতরের ব্রাউজারের জন্য এখনও অনুমোদিত নয় — তাই এই উপায়গুলির একটিতে ইনস্টল করুন:
+**Obsidian-এ:** **সেটিংস → কমিউনিটি প্লাগইন → ব্রাউজ** খুলুন, *Lure* খুঁজুন, তারপর *ইনস্টল* ও *চালু করুন* চাপুন — অথবা [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure)-এ *Add to Obsidian* চাপুন।
 
 **হাতে করে:** [সর্বশেষ প্রকাশ](https://github.com/Gelaende51/obsidian-lure/releases) থেকে `main.js`, `manifest.json` ও `styles.css` নামিয়ে `<vault>/.obsidian/plugins/lure/`-এ রাখুন, তারপর **সেটিংস → কমিউনিটি প্লাগইন**-এ গিয়ে চালু করুন।
 

@@ -1,4 +1,4 @@
-<!-- Terjemahan README.md — status: commit 973105b.
+<!-- Terjemahan README.md — status: commit e1e2247.
      Terjemahan mesin (Claude Opus 5), belum disemak penutur jati.
      Pembetulan dialu-alukan; README bahasa Inggeris ialah versi rujukan. -->
 
@@ -72,7 +72,7 @@ Mengalihkan sesuatu nota *keluar* daripada bilik kebal anda ialah satu-satunya p
 
 ## Pemasangan
 
-Tersenarai di [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), tetapi belum diluluskan untuk penyemak imbas dalam aplikasi — jadi pasangkannya dengan salah satu cara ini:
+**Dalam Obsidian:** buka **Tetapan → Plugin pihak ketiga → Gelintar**, cari *Lure*, kemudian tekan *Pasang* dan *Hidupkan* — atau tekan *Add to Obsidian* di [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure).
 
 **Manual:** muat turun `main.js`, `manifest.json` dan `styles.css` daripada [keluaran terkini](https://github.com/Gelaende51/obsidian-lure/releases) ke `<vault>/.obsidian/plugins/lure/`, kemudian hidupkannya di bawah **Tetapan → Plugin pihak ketiga**.
 

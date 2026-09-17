@@ -1,4 +1,4 @@
-<!-- README.md 번역 — 기준 커밋: 973105b.
+<!-- README.md 번역 — 기준 커밋: e1e2247.
      기계 번역(Claude Opus 5)이며 원어민 검수를 거치지 않았습니다.
      수정 제안을 환영합니다. 기준이 되는 것은 영어판 README입니다. -->
 
@@ -72,7 +72,7 @@ Obsidian의 개발자 정책은 보관함 밖 파일에 대한 모든 접근을 
 
 ## 설치
 
-[community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure)에 등재되어 있지만 앱 내 브라우저에는 아직 승인되지 않았습니다 — 다음 방법 중 하나로 설치하세요:
+**Obsidian에서:** **설정 → 커뮤니티 플러그인 → 탐색**을 열고 *Lure*를 검색한 뒤 *설치*와 *활성화*를 누르세요 — 또는 [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure)에서 *Add to Obsidian*을 누르세요.
 
 **수동:** [최신 릴리스](https://github.com/Gelaende51/obsidian-lure/releases)에서 `main.js`, `manifest.json`, `styles.css`를 `<vault>/.obsidian/plugins/lure/`로 내려받은 다음 **설정 → 커뮤니티 플러그인**에서 켭니다.
 

@@ -1,4 +1,4 @@
-<!-- Překlad README.md — stav: commit 973105b.
+<!-- Překlad README.md — stav: commit e1e2247.
      Strojový překlad (Claude Opus 5), nezkontrolovaný rodilými mluvčími.
      Opravy vítány; rozhodující verzí je anglické README. -->
 
@@ -72,7 +72,7 @@ Přesun poznámky *ven* z trezoru je jediný zápis, který stojí něco, co nic
 
 ## Instalace
 
-Uvedeno na [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), ale zatím neschváleno pro prohlížeč v aplikaci — nainstalujte jej proto jedním z těchto způsobů:
+**V Obsidianu:** otevřete **Nastavení → Pluginy třetích stran → Procházet**, vyhledejte *Lure* a pak klikněte na *Nainstalovat* a *Zapnout* — nebo stiskněte *Add to Obsidian* na [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure).
 
 **Ručně:** stáhněte `main.js`, `manifest.json` a `styles.css` z [nejnovějšího vydání](https://github.com/Gelaende51/obsidian-lure/releases) do `<vault>/.obsidian/plugins/lure/` a pak plugin zapněte v **Nastavení → Pluginy třetích stran**.
 

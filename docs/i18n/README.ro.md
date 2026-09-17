@@ -1,4 +1,4 @@
-<!-- Traducere a README.md — stare: commit 973105b.
+<!-- Traducere a README.md — stare: commit e1e2247.
      Traducere automată (Claude Opus 5), nerevizuită de vorbitori nativi.
      Corecturile sunt binevenite; versiunea de referință este README-ul
      în engleză. -->
@@ -73,7 +73,7 @@ Mutarea unei notițe *afară* din seif este singura scriere care costă ceva ce 
 
 ## Instalare
 
-Listat la [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), dar încă neaprobat pentru browserul din aplicație — deci instalează-l într-unul dintre aceste moduri:
+**În Obsidian:** deschide **Setări → Module comunitare → Răsfoiți**, caută *Lure*, apoi apasă *Instalați* și *Activați* — sau apasă *Add to Obsidian* pe [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure).
 
 **Manual:** descarcă `main.js`, `manifest.json` și `styles.css` din [ultima versiune](https://github.com/Gelaende51/obsidian-lure/releases) în `<vault>/.obsidian/plugins/lure/`, apoi activează-l din **Setări → Module comunitare**.
 

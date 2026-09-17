@@ -1,4 +1,4 @@
-<!-- README.md tarjimasi — holat: commit 973105b.
+<!-- README.md tarjimasi — holat: commit e1e2247.
      Mashina tarjimasi (Claude Opus 5), ona tili egalari tomonidan
      tekshirilmagan. Tuzatishlar mamnuniyat bilan qabul qilinadi;
      hal qiluvchi nusxa — inglizcha README. -->
@@ -73,7 +73,7 @@ Qaydni omboringizdan *tashqariga* ko‘chirish — hech narsa qaytarib bera olma
 
 ## O‘rnatish
 
-Plagin [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) sahifasida ro‘yxatga olingan, lekin ilova ichidagi katalog uchun hali tasdiqlanmagan — shuning uchun uni quyidagi usullardan biri bilan o‘rnating:
+**Obsidian ichida:** **Sozlamalar → Tashqi plaginlar → Ko'rish** bo‘limini oching, *Lure* ni qidiring, so‘ng *O'rnatish* va *Yoqish* tugmalarini bosing — yoki [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) sahifasida *Add to Obsidian* tugmasini bosing.
 
 **Qo‘lda:** [so‘nggi relizdan](https://github.com/Gelaende51/obsidian-lure/releases) `main.js`, `manifest.json` va `styles.css` fayllarini `<vault>/.obsidian/plugins/lure/` papkasiga yuklab oling, so‘ng plaginni **Sozlamalar → Tashqi plaginlar** bo‘limida yoqing.
 

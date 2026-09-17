@@ -1,4 +1,4 @@
-<!-- README.md-ის თარგმანი — მდგომარეობა: კომიტი 973105b.
+<!-- README.md-ის თარგმანი — მდგომარეობა: კომიტი e1e2247.
      მანქანური თარგმანი (Claude Opus 5), მშობლიური ენის მცოდნეების
      გადამოწმების გარეშე. შესწორებები მისასალმებელია; გადამწყვეტია
      ინგლისური README. -->
@@ -73,7 +73,7 @@ Obsidian-ის დეველოპერული წესები მო�
 
 ## დაყენება
 
-ჩამოთვლილია [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure)-ზე, მაგრამ ჯერ არ არის დამტკიცებული აპლიკაციის შიდა ბრაუზერისთვის — დააყენეთ ერთ-ერთი გზით:
+**Obsidian-ში:** გახსენით **პარამეტრები → საზოგადოების პლაგინები → დათვალიერება**, მოძებნეთ *Lure*, შემდეგ დააჭირეთ *ინსტალაცია* და *ჩართვა* — ან დააჭირეთ *Add to Obsidian* ღილაკს [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure)-ზე.
 
 **ხელით:** ჩამოტვირთეთ `main.js`, `manifest.json` და `styles.css` [უახლესი გამოშვებიდან](https://github.com/Gelaende51/obsidian-lure/releases) საქაღალდეში `<vault>/.obsidian/plugins/lure/`, შემდეგ ჩართეთ იგი განყოფილებაში **პარამეტრები → საზოგადოების პლაგინები**.
 

@@ -1,4 +1,4 @@
-<!-- ការបកប្រែ README.md — ស្ថានភាព៖ ការប្តេជ្ញា 973105b។
+<!-- ការបកប្រែ README.md — ស្ថានភាព៖ ការប្តេជ្ញា e1e2247។
      បកប្រែដោយម៉ាស៊ីន (Claude Opus 5) មិនទាន់បានពិនិត្យដោយអ្នកនិយាយដើមកំណើតទេ។
      សូមស្វាគមន៍ការកែតម្រូវ; កំណែដែលយកជាគោលគឺ README ជាភាសាអង់គ្លេស។ -->
 
@@ -72,7 +72,7 @@ Obsidian 1.8.7+ · សម្រាប់កុំព្យូទ័រតុប�
 
 ## ការដំឡើង
 
-មានចុះបញ្ជីនៅ [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure) ប៉ុន្តែមិនទាន់ត្រូវបានអនុម័តសម្រាប់កម្មវិធីរុករកក្នុងកម្មវិធីនៅឡើយទេ — ដូច្នេះសូមដំឡើងតាមវិធីណាមួយក្នុងចំណោមនេះ៖
+**នៅក្នុង Obsidian៖** បើក **ការកំណត់ → កម្មវិធីជំនួយរបស់សហគមន៍ → រុករក** ស្វែងរក *Lure* រួចចុច *ដំឡើង* និង *បើកដំណើរការ* — ឬចុច *Add to Obsidian* នៅ [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure)។
 
 **ដោយដៃ៖** ទាញយក `main.js`, `manifest.json` និង `styles.css` ពី[ការចេញផ្សាយចុងក្រោយ](https://github.com/Gelaende51/obsidian-lure/releases) ទៅក្នុង `<vault>/.obsidian/plugins/lure/` រួចបើកវានៅក្រោម **ការកំណត់ → កម្មវិធីជំនួយរបស់សហគមន៍**។
 

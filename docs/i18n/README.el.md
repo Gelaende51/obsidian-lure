@@ -1,4 +1,4 @@
-<!-- Μετάφραση του README.md — κατάσταση: commit 973105b.
+<!-- Μετάφραση του README.md — κατάσταση: commit e1e2247.
      Μηχανική μετάφραση (Claude Opus 5), χωρίς έλεγχο από φυσικούς
      ομιλητές. Οι διορθώσεις είναι ευπρόσδεκτες· το αγγλικό README είναι
      η έγκυρη έκδοση.
@@ -77,7 +77,7 @@ Obsidian 1.8.7+ · μόνο για υπολογιστή · AGPL-3.0
 
 ## Εγκατάσταση
 
-Καταχωρημένο στο [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), αλλά δεν έχει εγκριθεί ακόμη για τον περιηγητή μέσα στην εφαρμογή — εγκαταστήστε το με έναν από αυτούς τους τρόπους:
+**Στο Obsidian:** ανοίξτε **Settings → Community plugins → Browse**, αναζητήστε το *Lure* και πατήστε *Install* και έπειτα *Enable* — ή πατήστε *Add to Obsidian* στο [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure).
 
 **Χειροκίνητα:** κατεβάστε τα `main.js`, `manifest.json` και `styles.css` από την [τελευταία έκδοση](https://github.com/Gelaende51/obsidian-lure/releases) στο `<vault>/.obsidian/plugins/lure/` και μετά ενεργοποιήστε το από **Settings → Community plugins**.
 

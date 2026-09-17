@@ -1,4 +1,4 @@
-<!-- Traduzione di README.md — stato: commit 973105b.
+<!-- Traduzione di README.md — stato: commit e1e2247.
      Traduzione automatica (Claude Opus 5), non rivista da madrelingua.
      Le correzioni sono benvenute; il README inglese è la versione
      di riferimento. -->
@@ -73,7 +73,7 @@ Spostare una nota *fuori* dal vault è l'unica scrittura che costa qualcosa che 
 
 ## Installazione
 
-Elencato su [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), ma non ancora approvato per il catalogo interno all'app: installalo in uno di questi modi:
+**In Obsidian:** apri **Impostazioni → Plugin di terze parti → Sfoglia**, cerca *Lure*, poi premi *Installa* e *Abilita* — oppure premi *Add to Obsidian* su [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure).
 
 **Manuale:** scarica `main.js`, `manifest.json` e `styles.css` dall'[ultima release](https://github.com/Gelaende51/obsidian-lure/releases) in `<vault>/.obsidian/plugins/lure/`, poi attivalo in **Impostazioni → Plugin di terze parti**.
 
