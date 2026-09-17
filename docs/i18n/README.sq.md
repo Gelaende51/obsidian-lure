@@ -1,4 +1,4 @@
-<!-- Përkthim i README.md — gjendja: commit dc475f7.
+<!-- Përkthim i README.md — gjendja: commit f133f41.
      Përkthim me makinë (Claude Opus 5), i pashqyrtuar nga folës amtarë.
      Ndreqjet janë të mirëpritura; versioni përcaktues është README-ja
      në anglisht. -->
@@ -7,107 +7,114 @@
 
 # Lure
 
-Një shtojcë e [Obsidian](https://obsidian.md) që e kthen emrin e skedarit në shiritin e kokës së një shënimi në një shteg të plotë nëpër kasafortë, që mund të klikohet dhe të redaktohet — si shiriti i adresës në menaxherin e skedarëve [Dolphin](https://apps.kde.org/dolphin/).
+Një shtojcë për [Obsidian](https://obsidian.md) që e shndërron emrin e skedarit në shiritin e kokës së një shënimi në një shteg të plotë të kasafortës, të klikueshëm dhe të redaktueshëm — si shiriti i adresës në menaxherin e skedarëve [Dolphin](https://apps.kde.org/dolphin/).
 
-![Klikim mbi ndarësin pas një dosjeje: treguesi qëndron mbi të dhe Eksploruesi i dokumenteve e ka shfaqur dhe zgjeruar atë dosje](../images/breadcrumb.png)
+![Klikimi i ndarësit pas një dosjeje: treguesi qëndron mbi të dhe Eksploruesi i dokumenteve e ka zbuluar dhe zgjeruar atë dosje](../images/breadcrumb.png)
 
-Obsidian 1.8.7+ · vetëm në kompjuter · AGPL-3.0
+Obsidian 1.8.7+ · vetëm për desktop · AGPL-3.0
 
 ## Deklarim për IA-në
 
-- **Agjenti** — **Claude Opus 5** dhe **Claude Sonnet 5** (Anthropic, përmes Claude Code): shkroi TypeScript-in, CSS-në, të 45 grupet e përkthimeve dhe dokumentimin. Përkthimet janë prodhuar me makinë dhe nuk janë shqyrtuar nga folës amtarë.
-- **Konsumi** — 3–22 gusht 2026, 22 seanca, \~11.820 përgjigje: \~15,4 milionë token të prodhuar, \~55,5 milionë të dërguar, \~3644,2 milionë rilexime nga fshehtina (\~3715,0 milionë gjithsej).
-- **Burimi** — modeli mësoi nga kodi me burim të hapur, dokumentimi dhe shkrimet e komunitetit të botuara nga të tjerë. Pjesa më e madhe e meritës u takon atyre.
-- **Autori** — Vault51: përcaktoi çdo veçori, provoi çdo version në një kasafortë të vërtetë, drejtoi ndreqjet, shqyrtoi të gjitha rezultatet.
+- **Agjenti** — **Claude Opus 5** dhe **Claude Sonnet 5** (Anthropic, përmes Claude Code): shkroi TypeScript-in, CSS-në, të 45 grupet e përkthimeve dhe dokumentacionin. Përkthimet janë të krijuara nga makina dhe të pashqyrtuara nga folës amtarë.
+- **Konsumi** — 3 gusht – 6 shtator 2026, 22 sesione, \~13.378 përgjigje: \~16,3 mln token të gjeneruar, \~62,3 mln të dërguar, \~4245,1 mln rilexime nga kesh-i (\~4323,6 mln gjithsej).
+- **Burimi** — modeli mësoi nga kodi me burim të hapur, dokumentacioni dhe shkrimet e komunitetit të botuara nga të tjerë. Pjesa më e madhe e meritës u takon atyre.
+- **Autori** — Vault51: përcaktoi çdo veçori, provoi çdo përsëritje në një kasafortë të gjallë, drejtoi ndreqjet, shqyrtoi çdo rezultat.
 
 ## Veçoritë
 
-- **Kliko një dosje** për të parë përmbajtjen e dosjes *prind* — këmbe një dosje me një fqinje pa e prekur pjesën tjetër të shtegut. Emri i shënimit funksionon njësoj, bashkë me prapashtesën.
-- **Kliko ndarësin** pas një dosjeje që ajo të shfaqet dhe të zgjerohet te Eksploruesi i dokumenteve. Një cilësim i vetëm i ndërron rolet e të dyve.
-- **Kliko me të djathtën ose tërhiq çfarëdo zëri** — menuja e kontekstit dhe sjellja e tërheqjes të vetë Eksploruesit të dokumenteve.
-- **Kliko emrin e skedarit ose hapësirën bosh** për të shkruar një shteg, me plotësim. `/` zbret brenda, <kbd>Backspace</kbd> ngjitet një nivel, <kbd>Enter</kbd> konfirmon.
-- **Butoni me laps mbi dosje** i kalon po ato veprime në mënyrën zhvendos/riemërto, me po ato kontrolle që bën vetë Obsidian.
-- **Mbaj shtypur <kbd>Ctrl</kbd>** për ta hapur në një skedë të re — ose, në mënyrën zhvendos/riemërto, për ta kopjuar shënimin atje në vend që ta zhvendosësh.
-- **Lista hapet te zëri ku ndodhesh**, dhe kalimi nëpër të me shigjetat ose me treguesin e mbush fushën me atë që po tregon. Përtej njërës a tjetrës skaj të kthen atë që kishe shkruar.
-- **Emrat plotësohen ndërsa shkruan** — aty ku emrat e dosjes përputhen, përputhja shfaqet pas kursorit, e përzgjedhur; <kbd>Tab</kbd> ose <kbd>→</kbd> e merr të tërë, <kbd>Backspace</kbd> e kthen.
-- **<kbd>Tab</kbd> plotëson si një guaskë**: e zgjat atë që shkrove aq sa emrat përputhen, dhe hyn në një dosje sapo mbetet vetëm një emër. Përtej fundit të shtegut zgjeron përzgjedhjen: emri, emri me prapashtesë, shtegu nga kasaforta, shtegu nga rrënja e sistemit. <kbd>Shift</kbd>+<kbd>Tab</kbd> e bën të njëjtën rrugë mbrapsht.
-- **Klik i djathtë për kopjim** — dy herë për një emër, tri herë për gjithçka në të djathtë të tij, dhe në hapësirën bosh për shtegun e plotë ose atë të sistemit.
-- **Zvarrit një shënim mbi një dosje të rreshtit** për ta zhvendosur atje, bashkë me lidhjet. Edhe emri i kasafortës e pranon, për rrënjën; një përzgjedhje e tërë zhvendoset si një, dhe një dosje që nuk mund ta pranojë nuk tregon asgjë.
-- **Shkruaj një URL** — `https://`, `obsidian://`, ose një shteg `file://` a të koduar me përqindje — dhe hapet në vend që të merret si emër shënimi.
-- **Shtigjet e gjata shkurtohen aty ku shkronjat janë të tepërta** — kurrë përtej asaj që e dallon një dosje nga fqinja — dhe rrëshqasin vetëm kur nuk mbetet më gjë për t'u ngjeshur. Trego një emër të shkurtuar për ta parë të tërë.
-- **<kbd>F2</kbd>** kalon mes titullit brenda shënimit dhe shiritit të shtegut.
-- **Kliko emrin e kasafortës** për të shfletuar kasafortat e tua të tjera, dosjen shtëpi, rrënjën e sistemit të skedarëve dhe disqet e montuara pa ndërruar kasafortë. Vetëm për lexim derisa të hapësh një dry, dhe i kornizuar me ngjyrën e gabimit gjatë gjithë kohës. I fikur si parazgjedhje — shih [jashtë kasafortës](#jashtë-kasafortës).
-- **Dy shkallë paralajmërimi** — e kuqe jashtë kasafortës, portokalli për skedarët tekst për të cilët Obsidian nuk ka redaktues. Shih [dy ngjyrat e paralajmërimit](usage.sq.md#dy-ngjyrat-e-paralajmërimit).
-- **Ikona që ndjekin temën**, të këmbyeshme nga një copëz CSS — dhe **45 gjuhë**, çdo gjuhë që sjell Obsidian.
-- **Cilësimet:** drejtimi, ndarës të gatshëm, cili klikim hap listën, emri i kasafortës, skedarët e fshehur, prapashtesat e skedarëve.
+- **Kliko një dosje** për një listë me përmbajtjen e dosjes së saj *prind* — ndërro një dosje me një motër të sajën dhe lëre pjesën tjetër të shtegut të paprekur. Emri i shënimit punon njësoj, duke e përzgjedhur emrin pa prapashtesën e tij.
+- **Kliko ndarësin** pas një dosjeje për ta zbuluar dhe zgjeruar atë te Eksploruesi i dokumenteve. Një cilësim i vetëm i ndërron rolet mes tyre.
+- **Kliko me të djathtën ose tërhiq çfarëdo zëri** — menyja e vetë Eksploruesit të dokumenteve, zë për zë, dhe sjellja e tij gjatë zvarritjes. Shtigjeve jashtë kasafortës u ndërtohet një meny e barasvlershme, deri te *Fshij* përmes koshit të sistemit.
+- **Kliko emrin e skedarit ose hapësirën bosh** për të shkruar një shteg, me vetëplotësim. `/` zbret, <kbd>Backspace</kbd> del një hap jashtë, <kbd>Enter</kbd> e kryen — dhe një shteg që nuk ekziston ende thjesht krijohet, me një njoftim që thotë ku shkoi.
+- **Lista hapet te zëri ku ndodhesh**, dhe kalimi nëpër të me shigjeta ose me treguesin e mbush fushën me atë që po tregon. Dalja nga cilido skaj i listës ta kthen atë që kishe shkruar, dhe largimi i treguesit ia dorëzon theksimin vendit ku ishe.
+- **Butoni me laps mbi dosje** i kalon të njëjtat ndërveprime në zhvendosje/riemërtim, të vlerësuara ashtu siç i vlerëson Obsidian.
+- **Mbaj shtypur <kbd>Ctrl</kbd>** për ta hapur në një skedë të re — ose, në modalitetin zhvendos/riemërto, për ta kopjuar shënimin atje. Emri i shënimit dhe segmentet e dosjeve pranojnë të njëjtët modifikues, dhe zvarritjen, si rreshtat e tyre në Eksploruesin e dokumenteve.
+- **Emrat plotësohen ndërsa shkruan** — aty ku emrat e dosjes pajtohen, pjesa e përbashkët shfaqet pas kursorit, e përzgjedhur; shkrimi e gëlltit shkronjë pas shkronje, <kbd>Tab</kbd> ose <kbd>→</kbd> e merr të tërën, <kbd>Backspace</kbd> e kthen prapa. Lista vazhdon të filtrojë sipas asaj që shkrove, jo sipas asaj që t'u ofrua.
+- **<kbd>Tab</kbd> plotëson si një guaskë**: e zgjaton atë që shkrove aq sa pajtohen emrat në atë dosje, ecën drejt njërit prej tyre një hap në kohë kur ata nuk pajtohen, dhe hyn në një dosje vetëm kur mbetet një emër i vetëm. Përtej fundit të shtegut e zgjeron përzgjedhjen: emri, emri me prapashtesë, shtegu nga kasaforta, shtegu nga rrënja e sistemit. <kbd>Shift</kbd>+<kbd>Tab</kbd> e bën të njëjtën rrugë mbrapsht — duke shënuar atë që kthen në vend që ta fshijë — dhe përtej fillimit të saj vazhdon të ngjitet nëpër shteg, pastaj kthehet rrotull te shtegu i sistemit. Sido që t'ia nisësh, një xhiro e plotë të sjell prapë te shtegu që ndërtove.
+- **Klik i djathtë për kopjim** — dy herë për emrin, tri herë për gjithçka në të djathtë të tij, dhe mbi hapësirën bosh për të gjithë shtegun ose për shtegun e sistemit.
+- **Zvarrit një shënim mbi një dosje të rreshtit** për ta zhvendosur atje, bashkë me lidhjet — destinacioni është tashmë në ekran, ndaj mjafton një zvarritje e vetme në vend të një udhëtimi nëpër pemën e skedarëve. Edhe emri i kasafortës punon, për rrënjën. Një përzgjedhje e tërë zhvendoset si një e vetme, dhe një dosje që nuk mund ta pranojë atë që i ofrohet nuk shfaq asgjë, në vend që të dështojë pasi puna të jetë bërë.
+- **Lësho tekst mbi rresht që të shkruhet** — mbi një dosje ose mbi emrin e kasafortës për t'i vënë emrin një shënimi të ri atje, mbi vetë emrin e shënimit për t'ia shtuar në fund të asaj që po lexon. Një skedar nga desktopi yt punon njësoj, dhe rreshti rrethohet me blu aty ku do të binte.
+- **Fusha vishet me ngjyrën e asaj që emërton** — po ajo ngjyrë që ka rreshti i saj në listë, gri për shënimin e një dosjeje — dhe **skuqet** sapo asgjë nuk i përgjigjet, kështu që para se të shtypësh <kbd>Enter</kbd> e sheh nëse do të hapë një shënim apo do të krijojë një të ri.
+- **Skedarët HTML shfaqen si faqe**, brenda një kornize së cilës i është mohuar çdo leje — pa skripte, pa rrjet, pa origjinë të vetën — me fletët e stilit dhe figurat pranë skedarit të sjella brenda, që një faqe e ruajtur të duket ende vetvetja. Burimi është vetëm një shtypje larg.
+- **Shkruaj një URL** — `https://`, `obsidian://`, ose një shteg `file://` a të koduar me përqindje — dhe ai hapet, në vend që të merret si emër shënimi. Adresat e internetit shkojnë te një skedë e Web viewer-it të vetë Obsidian-it, aty ku e ke të ndezur.
+- **Shtigjet e gjata shkurtohen aty ku shkronjat janë të tepërta** — kurrë përtej asaj që e dallon një dosje nga ajo pranë saj, butësisht dhe jo shkronjë pas shkronje — dhe rrëshqasin vetëm kur nuk ka më asgjë për të ngjeshur. Trego me kursor një emër të shkurtuar për ta parë sërish të plotë.
+- **<kbd>F2</kbd>** alternon mes titullit brenda tekstit dhe shiritit të shtegut, duke u hapur te emri pa prapashtesën e tij dhe duke dalë te shtigjet e plota me shtypjet e mëtejshme. Kalon pastër përmes dialogut të riemërtimit të Obsidian-it edhe kur titulli ka dalë jashtë pamjes. Ekziston edhe një komandë *Fokuso shiritin e shtegut* për ta lidhur me një tast, nëse e do gjestin e shiritit të adresës.
+- **Kliko emrin e kasafortës** për të shfletuar kasafortat e tua të tjera, dosjen e shtëpisë, rrënjën e sistemit të skedarëve dhe disqet e montuara pa ndërruar kasafortë. Vetëm për lexim derisa të hapësh dryjen e kuqe që atje jashtë zë vendin e çelësit të riemërtimit, dhe e kornizuar me ngjyrën e gabimit gjatë gjithë kohës. E fikur si parazgjedhje — shih [jashtë kasafortës](#jashtë-kasafortës).
+- **Dy shkallë paralajmërimi** — e kuqe jashtë kasafortës, portokalli për skedarët tekst për të cilët Obsidian nuk ka redaktues. Shih [ngjyrat e paralajmërimit](usage.sq.md#dy-ngjyrat-e-paralajmërimit).
+- **Ikona që ndjekin temën**, të zëvendësueshme nga një copëz CSS — dhe **46 gjuhë**: çdo gjuhë që vjen me Obsidian, plus greqishtja dhe sanskritishtja, për të cilat ai nuk ka cilësim. Zgjidh një vetëm për shtojcën, ose ndiq atë të vetë Obsidian-it.
+- **Cilësimet:** gjuha, rreshtimi, paracaktimet e ndarësit, se cili klikim e hap listën, emri i kasafortës, skedarët me pikë, prapashtesat e skedarëve.
 
-![E njëjta listë në mënyrën zhvendos/riemërto: emri i tanishëm i skedarit i ngjitur në krye, dosjet fqinje poshtë tij, dhe shënimet ekzistuese të zbehta](../images/dropdown.png)
+![E njëjta listë në modalitetin zhvendos/riemërto: emri aktual i skedarit i ngulitur në krye, dosjet motra nën të dhe shënimet ekzistuese të zbehura](../images/dropdown.png)
 
-*Në mënyrën zhvendos/riemërto e njëjta listë ofron diçka tjetër: emri i tanishëm i shënimit i ngjitur në krye, që ai të zhvendoset pa u riemërtuar; poshtë tij dosjet ku mund të çohet; dhe emrat tashmë të zënë të zbehtë, që asgjë të mos mbishkruhet pa dashje.*
+*Në modalitetin zhvendos/riemërto e njëjta listë ndryshon atë që ofron: emri aktual i shënimit i ngulitur në krye, për ta zhvendosur pa e riemërtuar, dosjet ku mund ta zhvendosësh, dhe emrat tashmë të zënë të zbehur, që asgjë të mos mbishkruhet pa dashje.*
 
 → [Udhëzuesi i plotë i përdorimit](usage.sq.md)
 
 ## Jashtë kasafortës
 
-Politikat e Obsidian për zhvilluesit kërkojnë që një shtojcë të shpjegojë çdo qasje te skedarët jashtë kasafortës, prandaj pa dredha:
+Politikat e zhvilluesve të Obsidian-it kërkojnë që shtojcat të shpjegojnë çdo qasje te skedarët jashtë kasafortës, prandaj, hapur:
 
-**A bën fare ndonjë prej këtyre.** Vetëm nëse ndez **Qasje te skedarët e jashtëm**, që është **i fikur si parazgjedhje**. Me cilësimin të fikur nuk ka asnjë rrugë nga shtojca drejt një shtegu të jashtëm, dhe asgjë nga kodi i përshkruar më poshtë nuk ekzekutohet ndonjëherë.
+**A bën fare ndonjë prej këtyre.** Vetëm nëse ndez **Qasje te skedarët e jashtëm**, që është **i fikur si parazgjedhje**. Me të fikur nuk ka asnjë mënyrë për të arritur një shteg të jashtëm nga shtojca, dhe asnjë prej kodeve të përshkruara më poshtë nuk ekzekutohet kurrë.
 
-**Çfarë lexon.** Vetëm kur ia kërkon. Klikimi mbi emrin e kasafortës rendit kasafortat e tua të tjera — të lexuara nga vetë `obsidian.json` i Obsidian — plus dosjen shtëpi, rrënjën e sistemit të skedarëve dhe disqet e montuara (`/proc/mounts` në Linux, `/Volumes` në macOS, shkronjat e disqeve në Windows). Shfletimi më tej prej andej rendit përmbajtjen e direktorive, dhe hapja e një skedari lexon vetëm atë skedar.
+**Çfarë lexon.** Vetëm kur ia kërkon ti. Klikimi i emrit të kasafortës rendit kasafortat e tua të tjera — të lexuara nga vetë `obsidian.json` i Obsidian-it — plus dosjen tënde të shtëpisë, rrënjën e sistemit të skedarëve dhe disqet e montuara (`/proc/mounts` në Linux, `/Volumes` në macOS, shkronjat e disqeve në Windows). Shfletimi prej andej rendit përmbajtjen e drejtorive, dhe hapja e një skedari lexon vetëm atë skedar.
 
-**Çfarë shkruan.** Asgjë, derisa të shtypësh një buton që e thotë këtë. Butona të tillë ka dy, dhe secili mbulon vetëm fushën e vet:
+**Çfarë shkruan.** Asgjë, derisa të shtypësh një buton që e thotë këtë. Butona të tillë janë dy, secili duke mbuluar vetëm sipërfaqen e vet:
 
-- Butoni **Redakto si tekst** i shikuesit shkyç skedarin që ke përpara, vetëm atë skedar në vetëm atë skedë. Që andej e tutje ndryshimet e tua ruhen në të ndërsa shkruan.
-- **Dryja** në shiritin e kokës, e dukshme vetëm sa kohë që shiriti i shtegut tregon jashtë kasafortës sate, shkyç krijimin, riemërtimin dhe zhvendosjen në shtigje të jashtme. Ajo kyçet sërish sapo kthehesh brenda, kështu që leja nuk jeton kurrë më gjatë se dosja për të cilën e dhe.
+- Butoni **Redakto si tekst** i parësit e shkyç skedarin që ke përpara, për atë skedar të vetëm në atë skedë të vetme. Redaktimet e tua pastaj ruhen në të ndërsa shkruan.
+- **Dryja e kuqe** e kokës, që zë vendin e çelësit të riemërtimit ndërsa shiriti i shtegut tregon jashtë kasafortës sate, shkyç krijimin, riemërtimin, zhvendosjen dhe fshirjen në shtigje të jashtme — dhe ia dorëzon vendin çelësit sapo hapet. Kyçet sërish kur kthehesh brenda, si dhe me shtypjen që del nga modaliteti i riemërtimit, kështu që leja nuk i mbijeton kurrë dosjes për të cilën e dhe.
 
-Asnjëra prej shkyçjeve nuk ruhet as në hapësirën e punës, as në cilësime, prandaj shkrimi nuk mbetet kurrë i armatosur mbi një skedar që s'e mban mend ta kesh hapur. Në asnjërën gjendje nuk mbishkruhet asgjë — një cak që tashmë ekziston refuzohet, duke përdorur krijimin ekskluziv të vetë sistemit të skedarëve në vend të një kontrolli që mund ta humbte garën — dhe një shënim nuk mund të *zhvendoset* kurrë jashtë kasafortës sate, sepse lidhjet drejt tij do të këputeshin në heshtje; mbajtja e <kbd>Ctrl</kbd> e kopjon atje në vend të kësaj.
+Asnjëri prej këtyre shkyçjeve nuk ruhet në hapësirën e punës a te cilësimet, kështu që shkrimi nuk është kurrë i armatosur mbi një skedar që nuk e mban mend se e ke hapur. Asgjë nuk mbishkruhet ndonjëherë në asnjërën gjendje — një objektiv ekzistues refuzohet, duke përdorur krijimin ekskluziv të vetë sistemit të skedarëve dhe jo një kontroll që mund ta humbte garën.
 
-**Përse.** Shënimet që kërkon shpesh janë në një kasafortë tjetër, në një dosje sinkronizimi ose në një USB, ndërsa përgjigjja e vetë Obsidian — ndërro kasafortë — mbyll gjithçka që kishe hapur. Kjo të lë të shkosh e të shohësh pa u larguar, dhe të ndreqësh një gabim shtypi meqë je aty.
+Zhvendosja e një shënimi *jashtë* kasafortës sate është i vetmi shkrim që kushton diçka që asgjë nuk ta kthen: Obsidian i përditëson lidhjet vetëm brenda kasafortës, kështu që çdo lidhje që tregon te ai shënim prishet. Ajo ofrohet pas një dialogu që e thotë këtë dhe që numëron shënimet e prekura, dhe kryhet si kopjim-pastaj-fshirje përmes koshit të vetë Obsidian-it, prandaj është po aq e rikuperueshme sa fshirja e një shënimi. Mbajtja e <kbd>Ctrl</kbd> e kopjon jashtë në vend që ta zhvendosë.
 
-**Kufizimi.** Redaktuesi i Obsidian është i lidhur me skedarët brenda kasafortës, prandaj një skedar i jashtëm **nuk mund** të hapet si shënim i vërtetë, me lidhje, prapalidhje e gjithë të tjerat; këtë s'e bën dot asnjë shtojcë. Lure e shfaq atë në shikuesin e vet (Markdown, figura, audio, video, PDF), me *Hap jashtë* për gjithçka tjetër. Shiriti i shtegut mbetet i kornizuar me ngjyrën e gabimit sa herë që tregon jashtë kasafortës sate, dhe gjurma nis nga vendi që zgjodhe — një emër kasaforte, dosja jote shtëpi, një disk — e jo nga rregullimi i direktorive të makinës.
+**Përse.** Shënimet që të duhen janë shpesh në një kasafortë tjetër, në një dosje sinkronizimi ose në një USB, dhe përgjigjja e vetë Obsidian-it — ndërro kasafortë — e mbyll gjithçka që kishe hapur. Kjo të lejon të shkosh e të shohësh pa u larguar, dhe të ndreqësh një gabim shtypi sa je atje.
+
+**Kufizimi.** Redaktuesi i Obsidian-it është i lidhur me skedarët brenda kasafortës, kështu që një skedar i jashtëm **nuk mund** të hapet si shënim i vërtetë me lidhje, prapalidhje e gjithë të tjerat; asnjë shtojcë nuk mund ta bëjë këtë. Lure e shfaq atë në parësin e vet (Markdown, figura, audio, video, PDF), me *Hape jashtë programit* për gjithçka tjetër. Shiriti i shtegut mbetet i kornizuar me ngjyrën e gabimit kurdo që tregon jashtë kasafortës sate, dhe gjurma nis nga vendi që zgjodhe — emri i një kasaforte, dosja jote e shtëpisë, një disk — dhe jo nga struktura e drejtorive të makinës.
 
 ## Instalimi
 
-I listuar te [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), por ende i paaprovuar për shfletuesin brenda aplikacionit — prandaj instalojeni me një nga këto mënyra:
+E listuar te [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), por ende e paaprovuar për shfletuesin brenda aplikacionit — prandaj instaloje në një nga këto mënyra:
 
-**Me dorë:** shkarko `main.js`, `manifest.json` dhe `styles.css` nga [lëshimi i fundit](https://github.com/Gelaende51/obsidian-lure/releases) te `<vault>/.obsidian/plugins/lure/`, pastaj ndize te **Konfigurime → Shtojca të treta**.
+**Me dorë:** shkarko `main.js`, `manifest.json` dhe `styles.css` nga [publikimi i fundit](https://github.com/Gelaende51/obsidian-lure/releases) te `<vault>/.obsidian/plugins/lure/`, pastaj aktivizoje te **Konfigurime → Shtojca të treta**.
 
-**BRAT:** shto `Gelaende51/obsidian-lure` si shtojcë beta.
+**BRAT:** shtoje `Gelaende51/obsidian-lure` si shtojcë beta.
 
-**Nga burimi:** `npm install && npm run build` — shih [zhvillimi](../development.md).
+**Nga burimi:** `npm install && npm run build` — shih [zhvillimin](../development.md).
 
 ## Pajtueshmëria
 
-Nuk kërkohet asnjë shtojcë. **Eksploruesi i dokumenteve** bazë, nëse është i ndezur, është ai që i shfaq dosjet në shiritin anësor; pa të, ato klikime nuk bëjnë asgjë.
+Nuk kërkohet asnjë shtojcë. **Eksploruesi i dokumenteve** bazë, nëse është i aktivizuar, është ai që i zbulon dosjet në anështyllë; pa të, ato klikime nuk bëjnë asgjë.
 
-Provuar përballë shtojcave të komunitetit që ndajnë shiritin e kokës së shënimit ose i përgjigjen klikimit mbi dosje — në të dyja radhët e ngarkimit, secila e ndezur dhe e fikur:
+E provuar me shtojcat e komunitetit që ndajnë kokën e shënimit ose që i përgjigjen klikimit mbi dosje — në të dyja radhët e ngarkimit, secila e ndezur dhe e fikur:
 
-- [Folder notes](obsidian://show-plugin?id=folder-notes) — ndarësi hap shënimin e dosjes në vend që ta shfaqë dosjen, kështu çdo pjesë e shtegut bëhet një vend ku mund të shkosh. Shtojca e vetme e shënimeve të dosjeve që e pretendon shtegun në shiritin e kokës; [Folder Note](obsidian://show-plugin?id=folder-note-plugin) dhe [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) nuk dëgjojnë atje, ndaj ndarësi e shfaq dosjen si zakonisht.
-- [Quick Explorer](obsidian://show-plugin?id=quick-explorer) dhe [Front Matter Title](obsidian://show-plugin?id=obsidian-front-matter-title-plugin) — të dyja vizatojnë në të njëjtin element të shiritit të kokës; Lure e ruan rreshtin e vet cilado qoftë që ngarkohet e para, dhe fikja e njërës e lë tjetrën të paprekur.
-- [Nav Link Header](obsidian://show-plugin?id=nav-link-header), [Running Head](obsidian://show-plugin?id=running-head), [Crumbs](obsidian://show-plugin?id=crumbs-obsidian), [Breadcrumbs](obsidian://show-plugin?id=breadcrumbs) — kanë shiritin e tyre dhe bashkëjetojnë pa telashe.
+- [Folder notes](obsidian://show-plugin?id=folder-notes) — ndarësi hap shënimin e një dosjeje në vend që ta zbulojë dosjen, duke e kthyer çdo segment të shtegut në një vend ku mund të shkosh, sado thellë: shënimi gjendet sipas konventës së vetë asaj shtojce, në vend që t'i lihet asaj të përgjigjet. Ajo është gjithashtu e vetmja që publikon një konventë të tillë; [Folder Note](obsidian://show-plugin?id=folder-note-plugin) dhe [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) nuk publikojnë asnjë dhe nuk e kërkojnë kurrë shtegun te koka, kështu që me to ndarësi e zbulon dosjen si zakonisht.
+- [Quick Explorer](obsidian://show-plugin?id=quick-explorer) dhe [Front Matter Title](obsidian://show-plugin?id=obsidian-front-matter-title-plugin) — të dyja vizatojnë brenda të njëjtit element koke; Lure e ruan rreshtin cilado qoftë që ngarkohet e para, dhe fikja e njërës e lë tjetrën të paprekur.
+- [Nav Link Header](obsidian://show-plugin?id=nav-link-header), [Running Head](obsidian://show-plugin?id=running-head), [Crumbs](obsidian://show-plugin?id=crumbs-obsidian), [Breadcrumbs](obsidian://show-plugin?id=breadcrumbs) — kanë shiritin e tyre dhe bashkëjetojnë.
 
-Vetëm në kompjuter — modeli i ndërveprimit kërkon kalimin e miut sipër, klikime të sakta dhe një tastierë. Rezultatet e plota, çfarë mbetet për t'u provuar, dhe krahasimi me Quick Explorer e Breadcrumbs janë te [pajtueshmëria](../compatibility.md).
+Vetëm për desktop — modeli i ndërveprimit ka nevojë për kalim me kursor, klikime të sakta dhe një tastierë. Rezultatet e plota, pritshmëritë e mbetura dhe krahasimi me Quick Explorer e Breadcrumbs janë te [pajtueshmëria](../compatibility.md).
 
 ## Si të kontribuosh
 
-- Raportimet dhe pull request-et janë të mirëpritura — sidomos **ndreqjet e përkthimeve**, meqë të 45 gjuhët janë përkthyer me makinë dhe të pashqyrtuara nga folës amtarë. Për përgatitjen dhe rregullat bazë shih [zhvillimi](../development.md).
+- Problemet dhe kërkesat për shkrirje janë të mirëpritura — veçanërisht **ndreqjet e përkthimeve**, meqë të 45 lokalizimet janë të përkthyera me makinë dhe të pashqyrtuara nga folës amtarë. Shih [zhvillimin](../development.md) për konfigurimin dhe rregullat bazë.
 - **Gjurmuesi i problemeve:** https://github.com/Gelaende51/obsidian-lure/issues
-- **Dhurimet:** [Ko-fi](https://ko-fi.com/vault51). Shtojca është sidoqoftë falas dhe me licencë AGPL; bakshishi çmohet dhe nuk kërkohet kurrë. Përdorimi i menduar është kompensimi i karbonit — një qëllim, jo një zotim: asgjë nuk kompensohet derisa shuma të ia vlejë mundimin, dhe kjo rresht do ta thotë sapo diçka të jetë kompensuar vërtet.
+- **Dhurimet:** [Ko-fi](https://ko-fi.com/vault51). Shtojca është e lirë dhe e licencuar me AGPL sido që të jetë; bakshishet vlerësohen, por nuk kërkohen kurrë. Përdorimi i synuar është kompensimi i karbonit — një synim, jo një zotim: asgjë nuk kompensohet derisa shuma të jetë aq e madhe sa t'ia vlejë mundimi, dhe kjo rreshtë do ta thotë sapo diçka të jetë kompensuar vërtet.
 
 ## Falënderime
 
-- **Vault51** — autori: koncepti, kërkesat dhe testimi me dorë nga fillimi në fund.
-- **Claude Opus 5** dhe **Claude Sonnet 5** (Anthropic, përmes Claude Code) — zbatimi, përkthimet dhe dokumentimi, nën drejtimin e autorit. Shih [deklarim për IA-në](#deklarim-për-ia-në).
-- **[Obsidian](https://obsidian.md)** — aplikacioni që kjo shtojcë zgjeron, dhe burimi i çdo pjese që shtojca përdor: API-ja e shtojcave, grupi i ikonave Lucide pas `setIcon`, instanca e përfshirë e i18next prej së cilës lexohen etiketat e menusë së kontekstit, si dhe klasat e ndryshoret e veta CSS. Asgjë nga palë të treta nuk paketohet; shtojca **nuk ka varësi gjatë ekzekutimit**.
+- **Vault51** — autori: dizajni, kërkesat dhe provat me dorë gjatë gjithë kohës.
+- **Claude Opus 5** dhe **Claude Sonnet 5** (Anthropic, përmes Claude Code) — zbatimi, përkthimet dhe dokumentet, nën drejtimin e autorit. Shih [deklarimin për IA-në](#deklarim-për-ia-në).
+- **[Obsidian](https://obsidian.md)** — aplikacioni që kjo shtojcë zgjeron, dhe burimi i çdo komponenti që shtojca përdor: API-ja e tij i shtojcave, grupi i ikonave Lucide pas `setIcon`, instanca e paketuar e i18next prej së cilës lexohen etiketat e menysë së klikimit të djathtë, si dhe klasat e variablat e tij CSS. Asgjë e palës së tretë nuk është e paketuar; shtojca **nuk ka asnjë varësi në kohë ekzekutimi**.
 
-> **Ekipi i Obsidian nuk ka marrë pjesë në këtë projekt në asnjë mënyrë** — nuk e ka shkruar, shqyrtuar, miratuar apo mbështetur. Obsidian është markë tregtare e Dynalist Inc.; kjo është një shtojcë e pavarur dhe e palidhur.
+> **Ekipi i Obsidian-it nuk ka marrë pjesë në asnjë mënyrë në këtë projekt** — nuk e shkroi, nuk e shqyrtoi, nuk e miratoi dhe nuk e mbështeti. Obsidian është markë tregtare e Dynalist Inc.; kjo është një shtojcë e pavarur, e palidhur me të.
 
-Kontribuuesit do të renditen këtu sapo të mbërrijnë kontributet.
+Kontribuuesit do të listohen këtu sapo të vijnë kontributet.
 
 ## Lidhje
 
-- **Dokumentimi:** [docs/](../)
+
+- **Dokumentacioni:** [docs/](../)
+- **Regjistri i ndryshimeve:** [CHANGELOG.md](CHANGELOG.sq.md)
 - **Faqja e shtojcës:** https://community.obsidian.md/plugins/lure
-- **Prania në web / burimi:** https://github.com/Gelaende51/obsidian-lure
+- **Prania në internet / burimi:** https://github.com/Gelaende51/obsidian-lure
 - **Dhurimet:** [Ko-fi](https://ko-fi.com/vault51) — shih [si të kontribuosh](#si-të-kontribuosh).
-- **Licenca:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51. Degëzimet dhe ndërtimet e rishpërndara duhet ta nxjerrin burimin e tyre me të njëjtën licencë.
+- **Licenca:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51. Degëzimet dhe ndërtimet e rishpërndara duhet ta shpërndajnë burimin e tyre nën të njëjtën licencë.

@@ -1,4 +1,4 @@
-<!-- Tradução de README.md — estado: commit dc475f7.
+<!-- Tradução de README.md — estado: commit f133f41.
      Tradução automática (Claude Opus 5), não revisada por falantes nativos.
      Correções são bem-vindas; o README em inglês é a versão de referência. -->
 
@@ -6,70 +6,75 @@
 
 # Lure
 
-Um plugin do [Obsidian](https://obsidian.md) que transforma o nome do arquivo na barra de cabeçalho de uma nota em um caminho completo clicável e editável, segmento por segmento — como a barra de endereços do gerenciador de arquivos [Dolphin](https://apps.kde.org/dolphin/).
+Um plugin para o [Obsidian](https://obsidian.md) que transforma o nome do arquivo na barra de cabeçalho de uma nota em uma trilha (breadcrumb) clicável e editável do caminho completo no cofre — como a barra de endereço do gerenciador de arquivos [Dolphin](https://apps.kde.org/dolphin/).
 
-![Clique no separador logo depois de uma pasta: o ponteiro está sobre ele e o Explorador de arquivos revelou e expandiu essa pasta](../images/breadcrumb.png)
+![Clique no separador depois de uma pasta: o ponteiro está sobre ele, e o Explorador de arquivos revelou e expandiu essa pasta](../images/breadcrumb.png)
 
 Obsidian 1.8.7+ · somente desktop · AGPL-3.0
 
 ## Divulgação sobre IA
 
-- **Agente** — **Claude Opus 5** e **Claude Sonnet 5** (Anthropic, via Claude Code): escreveu o TypeScript, o CSS, os 45 conjuntos de traduções e a documentação. As traduções são geradas por máquina e não foram revisadas por falantes nativos.
-- **Consumo** — 3 a 22 de agosto de 2026, 22 sessões, \~11.820 respostas: \~15,4 M de tokens gerados, \~55,5 M enviados, \~3644,2 M de releituras em cache (\~3715,0 M no total).
-- **Origem** — o modelo aprendeu com código aberto, documentação e textos da comunidade publicados por outras pessoas. A maior parte do crédito é deles.
-- **Autor** — Vault51: especificou cada funcionalidade, testou cada versão em um cofre real, orientou as correções e revisou todos os resultados.
+- **Agente** — **Claude Opus 5** e **Claude Sonnet 5** (Anthropic, via Claude Code): escreveram o TypeScript, o CSS, todos os 45 conjuntos de tradução e a documentação. As traduções são geradas automaticamente e não foram revisadas por falantes nativos.
+- **Consumo** — 3 de ago. a 6 de set. de 2026, 22 sessões, \~13.378 respostas: \~16,3 milhões de tokens gerados, \~62,3 milhões enviados, \~4.245,1 milhões de releituras em cache (\~4.323,6 milhões no total).
+- **Origem** — o modelo aprendeu com código aberto, documentação e textos da comunidade publicados por outras pessoas. A maior parte do crédito é delas.
+- **Autor** — Vault51: especificou cada funcionalidade, testou cada iteração em um cofre real, orientou as correções e revisou todo o resultado.
 
 ## Funcionalidades
 
-- **Clique em uma pasta** para abrir uma lista com o conteúdo da pasta *acima dela* — troque uma pasta por outra vizinha sem mexer no resto do caminho. O nome da nota funciona do mesmo jeito, extensão incluída.
-- **Clique no separador** logo depois de uma pasta para revelá-la e expandi-la no Explorador de arquivos. Uma configuração troca os dois papéis.
-- **Clique com o botão direito ou arraste qualquer entrada** — o menu de contexto e o arrasto do próprio Explorador de arquivos.
-- **Clique no nome do arquivo ou no espaço vazio** para digitar um caminho, com autocompletar. `/` desce, <kbd>Backspace</kbd> sobe um nível, <kbd>Enter</kbd> confirma.
-- **O botão de lápis sobre pasta** muda as mesmas interações para mover/renomear, com as mesmas validações que o Obsidian faz.
-- **Segure <kbd>Ctrl</kbd>** para abrir em uma nova aba — ou, no modo mover/renomear, para copiar a nota para lá em vez de movê-la.
-- **A lista abre na entrada onde você está**, e percorrê-la com as setas ou o ponteiro preenche o campo com aquilo que você aponta. Ao passar de qualquer das extremidades, devolve o que você tinha digitado.
-- **Os nomes se completam enquanto você digita** — onde os nomes da pasta concordam, a concordância aparece depois do cursor, selecionada; <kbd>Tab</kbd> ou <kbd>→</kbd> leva ela inteira, <kbd>Backspace</kbd> devolve.
-- **<kbd>Tab</kbd> completa como um shell**: estende o que você digitou até onde os nomes concordam, e entra numa pasta assim que resta apenas uma. Passado o fim do caminho, amplia a seleção: nome, nome com extensão, caminho a partir do cofre, caminho a partir da raiz do sistema. <kbd>Shift</kbd>+<kbd>Tab</kbd> faz o mesmo percurso ao contrário.
-- **Clique com o botão direito para copiar** — duas vezes para um nome, três para tudo o que está à direita dele, e no espaço vazio para o caminho inteiro ou o do sistema.
-- **Arraste uma nota para uma pasta da barra** para movê-la para lá, com os links. O nome do cofre também aceita, para a raiz; uma seleção inteira se move como uma só, e uma pasta que não pode recebê-la não mostra nada.
-- **Digite uma URL** — `https://`, `obsidian://`, ou um caminho `file://` ou codificado em porcentagem — e ela é aberta em vez de tratada como nome de nota.
-- **Caminhos longos encurtam onde as letras são dispensáveis** — nunca além do que distingue uma pasta da vizinha — e só rolam quando não há mais nada a comprimir. Aponte para um nome encurtado para vê-lo por inteiro.
-- **<kbd>F2</kbd>** alterna entre o título embutido e a barra de caminho.
-- **Clique no nome do cofre** para percorrer seus outros cofres, sua pasta pessoal, a raiz do sistema de arquivos e as unidades montadas sem trocar de cofre. Somente leitura até você abrir um cadeado, e emoldurado na cor de erro o tempo todo. Desativado por padrão — veja [fora do cofre](#fora-do-cofre).
-- **Dois níveis de aviso** — vermelho fora do cofre, laranja para arquivos de texto que o Obsidian não sabe editar. Veja [as duas cores de aviso](usage.pt-BR.md#as-duas-cores-de-aviso).
-- **Ícones adaptáveis ao tema**, substituíveis por um trecho de CSS — e **45 idiomas**, todos os que o Obsidian traz.
-- **Configurações:** alinhamento, separadores prontos, qual clique abre a lista, nome do cofre, arquivos ocultos, extensões de arquivo.
+- **Clique em uma pasta** para abrir uma lista com o conteúdo da pasta *pai* — troque uma pasta por outra do mesmo nível e deixe o resto do caminho como está. O nome da nota funciona do mesmo jeito, selecionando o nome sem a extensão.
+- **Clique no separador** depois de uma pasta para revelá-la e expandi-la no Explorador de arquivos. Uma configuração inverte os dois papéis.
+- **Clique com o botão direito ou arraste qualquer entrada** — o próprio menu de contexto do Explorador de arquivos, item por item, e o mesmo comportamento ao arrastar. Caminhos fora do cofre recebem um menu equivalente feito para eles, incluindo *Excluir*, que passa pela lixeira do sistema.
+- **Clique no nome do arquivo ou no espaço vazio** para digitar um caminho, com preenchimento automático. `/` desce, <kbd>Backspace</kbd> sobe um nível, <kbd>Enter</kbd> confirma — e um caminho que ainda não existe é simplesmente criado, com um aviso dizendo onde ele foi parar.
+- **A lista abre na entrada onde você está**, e percorrê-la com as setas ou passando o mouse preenche o campo com aquilo para que você está apontando. Sair por qualquer uma das pontas da lista devolve o que você tinha digitado, e tirar o ponteiro de cima dela devolve o destaque para onde você estava.
+- **O botão de lápis sobre pasta** faz as mesmas interações moverem/renomearem, com a mesma validação que o Obsidian usa.
+- **Segure <kbd>Ctrl</kbd>** para abrir em uma nova aba — ou, no modo mover/renomear, para copiar a nota para lá em vez de movê-la. O nome da nota e os segmentos de pasta aceitam os mesmos modificadores, e o arrastar, que as linhas correspondentes do Explorador de arquivos.
+- **Os nomes se completam enquanto você digita** — onde os nomes da pasta coincidem, a parte em comum aparece depois do cursor, selecionada; digitar vai consumindo-a letra por letra, <kbd>Tab</kbd> ou <kbd>→</kbd> aceita tudo de uma vez, <kbd>Backspace</kbd> a desfaz. A lista continua filtrando pelo que você digitou, não pelo que foi sugerido.
+- **<kbd>Tab</kbd> completa como um shell**: estende o que você digitou até onde os nomes daquela pasta coincidem, avança em direção a um deles um passo por vez quando não coincidem, e só entra em uma pasta quando resta um único nome. Depois do fim do caminho, ele amplia a seleção: nome, nome com extensão, caminho a partir do cofre, caminho a partir da raiz do sistema. <kbd>Shift</kbd>+<kbd>Tab</kbd> faz o mesmo percurso ao contrário — marcando o que devolve em vez de apagar — e, depois do início, continua subindo pelo caminho e então dá a volta até o caminho do sistema. Em qualquer direção, uma volta completa retorna ao caminho que você montou.
+- **Clique com o botão direito para copiar** — duas vezes para um nome, três vezes para tudo à direita dele, e no espaço vazio para o caminho inteiro ou o caminho do sistema.
+- **Arraste uma nota para uma pasta da barra** para movê-la para lá, com links e tudo — o destino já está na tela, então basta um arrasto em vez de uma viagem pela árvore de arquivos. O nome do cofre também funciona, para a raiz. Uma seleção inteira se move de uma vez, e uma pasta que não pode receber o que está sendo oferecido não mostra nada, em vez de falhar depois do fato.
+- **Solte texto na barra para registrá-lo** — sobre uma pasta ou o nome do cofre para dar nome a uma nova nota ali, sobre o próprio nome da nota para acrescentá-lo ao final do que você está lendo. Um arquivo da sua área de trabalho funciona do mesmo jeito, e a barra ganha um contorno azul enquanto o item cairia nela.
+- **O campo assume a cor do que ele nomeia** — a mesma cor que a linha correspondente tem na lista, cinza para a nota de uma pasta — e **fica vermelho** assim que nada corresponde a ele, para você ver, antes de apertar <kbd>Enter</kbd>, se vai abrir uma nota ou criar uma.
+- **Arquivos HTML aparecem como páginas**, em um quadro com todas as permissões negadas — sem scripts, sem rede, sem origem própria — e com as folhas de estilo e imagens que estão ao lado do arquivo incorporadas, para que uma página salva continue com a mesma aparência. O código-fonte está a um clique.
+- **Digite uma URL** — `https://`, `obsidian://`, ou um caminho `file://` ou com codificação percentual — e ela é aberta em vez de ser tratada como nome de nota. Endereços web vão para uma aba do Visualizador web do próprio Obsidian, se você o tiver ativado.
+- **Caminhos longos encurtam onde as letras são dispensáveis** — nunca além do que distingue uma pasta da vizinha, de forma suave em vez de letra por letra — e só rolam quando não sobra nada para comprimir. Aponte para um nome encurtado para vê-lo por completo.
+- **<kbd>F2</kbd>** alterna entre o título embutido e a barra de caminho, abrindo no nome sem a extensão e ampliando até os caminhos completos a cada novo toque. Ele passa sem problemas pela caixa de diálogo de renomear do Obsidian quando o título está fora da área visível. Um comando *Focar a barra de caminho* está disponível para receber um atalho, se você quiser o gesto da barra de endereço.
+- **Clique no nome do cofre** para navegar pelos seus outros cofres, pela pasta pessoal, pela raiz do sistema de arquivos e pelas unidades montadas, sem trocar de cofre. Tudo é somente leitura até você abrir o cadeado vermelho que ocupa ali o lugar do botão de renomear, e a barra fica com moldura na cor de erro o tempo todo. Desativado por padrão — veja [fora do cofre](#fora-do-cofre).
+- **Dois níveis de aviso** — vermelho fora do cofre, laranja para arquivos de texto para os quais o Obsidian não tem editor. Veja [as cores de aviso](usage.pt-BR.md#as-duas-cores-de-aviso).
+- **Ícones adaptáveis ao tema**, trocados por um snippet CSS — e **46 idiomas**: todos os que o Obsidian oferece, mais grego e sânscrito, para os quais ele não tem configuração. Escolha um só para o plugin ou siga o do próprio Obsidian.
+- **Configurações:** idioma, alinhamento, predefinições de separador, qual clique abre a lista, nome do cofre, arquivos ocultos (dot files), extensões de arquivo.
 
-![A mesma lista no modo mover/renomear: o nome atual do arquivo fixado no topo, as pastas vizinhas abaixo e as notas existentes em cinza](../images/dropdown.png)
+![A mesma lista no modo mover/renomear: o nome atual do arquivo fixado no topo, as pastas do mesmo nível abaixo dele e as notas existentes em cinza](../images/dropdown.png)
 
-*No modo mover/renomear a mesma lista oferece outra coisa: o nome atual da nota fixado no topo para movê-la sem renomear, pastas para onde levá-la, e os nomes já ocupados em cinza para que nada seja sobrescrito por acidente.*
+*No modo mover/renomear, a mesma lista muda o que oferece: o nome atual da nota fixado no topo, para movê-la sem renomear, pastas para onde movê-la e nomes já em uso em cinza, para que nada seja sobrescrito por acidente.*
 
 → [Guia de uso completo](usage.pt-BR.md)
 
 ## Fora do cofre
 
-As políticas para desenvolvedores do Obsidian exigem que um plugin explique qualquer acesso a arquivos fora do cofre, então, sem rodeios:
+As políticas para desenvolvedores do Obsidian exigem que os plugins expliquem qualquer acesso a arquivos fora do cofre; então, sem rodeios:
 
-**Se ele faz alguma dessas coisas.** Só se você ativar **Acesso a arquivos externos**, que vem **desativado por padrão**. Com a opção desligada não há como alcançar um caminho externo pelo plugin, e nada do código descrito abaixo chega a rodar.
+**Se ele faz alguma dessas coisas.** Só se você ativar **Acesso a arquivos externos**, que vem **desativado por padrão**. Com essa opção desativada, não há como chegar a um caminho externo pelo plugin, e nenhum dos códigos descritos abaixo chega a ser executado.
 
-**O que ele lê.** Só quando você pede. Clicar no nome do cofre lista seus outros cofres — lidos do próprio `obsidian.json` do Obsidian — mais sua pasta pessoal, a raiz do sistema de arquivos e as unidades montadas (`/proc/mounts` no Linux, `/Volumes` no macOS, letras de unidade no Windows). Navegar a partir daí lista o conteúdo das pastas, e abrir um arquivo lê aquele arquivo apenas.
+**O que ele lê.** Só quando você pede. Clicar no nome do cofre lista seus outros cofres — lidos do próprio `obsidian.json` do Obsidian — além da sua pasta pessoal, da raiz do sistema de arquivos e das unidades montadas (`/proc/mounts` no Linux, `/Volumes` no macOS, letras de unidade no Windows). Navegar a partir daí lista o conteúdo das pastas, e abrir um arquivo lê aquele único arquivo.
 
-**O que ele escreve.** Nada, até você apertar um botão que diga isso. Existem dois botões assim, e cada um cobre apenas o próprio escopo:
+**O que ele escreve.** Nada, até você apertar um botão que diga isso. Há dois botões assim, cada um valendo só para a sua própria área:
 
-- O botão **Editar como texto** do visualizador destrava o arquivo à sua frente, só aquele arquivo e só naquela aba. Daí em diante suas alterações são gravadas nele conforme você digita.
-- O **cadeado** do cabeçalho, visível apenas enquanto a barra de caminho aponta para fora do cofre, destrava criar, renomear e mover em caminhos externos. Ele se tranca de novo assim que você volta para dentro, então a permissão nunca sobrevive à pasta para a qual você a concedeu.
+- O botão **Editar como texto** do visualizador desbloqueia o arquivo que está na sua frente, só para aquele arquivo e naquela aba. A partir daí, suas edições são salvas nele enquanto você digita.
+- O **cadeado vermelho** do cabeçalho, que ocupa o lugar do botão de renomear enquanto a barra de caminho aponta para fora do seu cofre, desbloqueia criar, renomear, mover e excluir em caminhos externos — e, depois de aberto, devolve o lugar ao botão. Ele volta a travar quando você retorna ao cofre e no toque que sai do modo renomear, então a permissão nunca dura mais do que a pasta para a qual você a concedeu.
 
-Nenhum dos destravamentos é guardado na área de trabalho nem nas configurações, então a escrita nunca fica armada sobre um arquivo que você não lembra de ter aberto. Em nenhum dos estados algo é sobrescrito — um destino já existente é recusado, usando a criação exclusiva do próprio sistema de arquivos em vez de uma checagem que poderia perder a corrida — e uma nota nunca pode ser *movida* para fora do cofre, porque os links para ela quebrariam em silêncio; segurar <kbd>Ctrl</kbd> a copia para lá em vez disso.
+Nenhum dos dois desbloqueios é guardado no espaço de trabalho ou nas configurações, então a escrita nunca fica liberada em um arquivo que você não se lembra de ter aberto. Nada é sobrescrito em nenhum dos estados — um destino que já existe é recusado, usando a criação exclusiva do próprio sistema de arquivos em vez de uma verificação que poderia perder uma condição de corrida.
 
-**Por quê.** As notas que você quer estão muitas vezes em outro cofre, numa pasta de sincronização ou num pendrive, e a resposta do Obsidian — trocar de cofre — fecha tudo o que você tinha aberto. Isso deixa você ir olhar sem sair, e corrigir um erro de digitação já que está lá.
+Mover uma nota *para fora* do seu cofre é a única escrita com um custo que nada pode desfazer: o Obsidian só atualiza links dentro do cofre, então todo link que aponta para essa nota quebra. Por isso ela fica atrás de uma caixa de diálogo que avisa isso e conta as notas afetadas, e acontece como uma cópia seguida de exclusão pela própria lixeira do Obsidian, então é tão recuperável quanto excluir uma nota. Segurar <kbd>Ctrl</kbd> copia a nota para fora em vez de movê-la.
 
-**A limitação.** O editor do Obsidian está preso aos arquivos de dentro do cofre, então um arquivo externo **não pode** ser aberto como uma nota de verdade, com links, backlinks e o resto; nenhum plugin consegue fazer isso. O Lure o mostra no seu próprio visualizador (Markdown, imagens, áudio, vídeo, PDF), com *Abrir externamente* para todo o resto. A barra de caminho continua emoldurada na cor de erro sempre que aponta para fora do cofre, e a trilha começa no lugar que você escolheu — o nome de um cofre, sua pasta pessoal, uma unidade — e não na organização de pastas da máquina.
+**Por quê.** As notas que você quer muitas vezes estão em outro cofre, em uma pasta sincronizada ou em um pendrive, e a resposta do próprio Obsidian — trocar de cofre — fecha tudo o que você tinha aberto. Assim você pode ir dar uma olhada sem sair, e corrigir um erro de digitação enquanto está lá.
+
+**A limitação.** O editor do Obsidian está vinculado a arquivos dentro do cofre, então um arquivo externo **não pode** ser aberto como uma nota de verdade, com links, backlinks e todo o resto; nenhum plugin consegue fazer isso. Em vez disso, o Lure o mostra no seu próprio visualizador (Markdown, imagens, áudio, vídeo, PDF), com *Abrir externamente* para todo o resto. A barra de caminho fica com moldura na cor de erro sempre que aponta para fora do seu cofre, e a trilha começa no local que você escolheu — um nome de cofre, sua pasta pessoal, uma unidade — e não na estrutura de diretórios da máquina.
 
 ## Instalação
 
-Listado em [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), mas ainda não aprovado para o navegador dentro do aplicativo — então instale-o de uma destas formas:
+Listado em [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), mas ainda não aprovado para o navegador de plugins dentro do aplicativo — então instale de uma destas formas:
 
-**Manual:** baixe `main.js`, `manifest.json` e `styles.css` da [versão mais recente](https://github.com/Gelaende51/obsidian-lure/releases) para `<vault>/.obsidian/plugins/lure/` e ative em **Configurações → Plugins não oficiais**.
+**Manual:** baixe `main.js`, `manifest.json` e `styles.css` da [versão mais recente](https://github.com/Gelaende51/obsidian-lure/releases) para `<vault>/.obsidian/plugins/lure/` e depois ative o plugin em **Configurações → Plugins não oficiais**.
 
 **BRAT:** adicione `Gelaende51/obsidian-lure` como plugin beta.
 
@@ -77,36 +82,38 @@ Listado em [community.obsidian.md/plugins/lure](https://community.obsidian.md/pl
 
 ## Compatibilidade
 
-Nenhum plugin é necessário. O **Explorador de arquivos** nativo, se estiver ativo, é o que revela as pastas na barra lateral; sem ele esses cliques não fazem nada.
+Nenhum plugin é necessário. O **Explorador de arquivos** nativo, se estiver ativado, é o que revela as pastas na barra lateral; sem ele, esses cliques não fazem nada.
 
-Testado contra os plugins da comunidade que dividem o cabeçalho da nota ou respondem ao clique numa pasta — nas duas ordens de carregamento, cada um ligado e desligado:
+Testado com os plugins da comunidade que compartilham o cabeçalho da nota ou respondem ao clique em pastas — nas duas ordens de carregamento, cada um ativado e desativado:
 
-- [Folder notes](obsidian://show-plugin?id=folder-notes) — o separador abre a nota da pasta em vez de revelar a pasta, o que faz de cada segmento do caminho um lugar para onde ir. É o único plugin de notas de pasta que reivindica o caminho no cabeçalho; [Folder Note](obsidian://show-plugin?id=folder-note-plugin) e [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) não escutam ali, então o separador revela a pasta como sempre.
-- [Quick Explorer](obsidian://show-plugin?id=quick-explorer) e [Front Matter Title](obsidian://show-plugin?id=obsidian-front-matter-title-plugin) — os dois desenham no mesmo elemento do cabeçalho; o Lure mantém sua linha seja qual for a ordem de carregamento, e desligar um deixa o outro intacto.
-- [Nav Link Header](obsidian://show-plugin?id=nav-link-header), [Running Head](obsidian://show-plugin?id=running-head), [Crumbs](obsidian://show-plugin?id=crumbs-obsidian), [Breadcrumbs](obsidian://show-plugin?id=breadcrumbs) — têm a própria faixa, e convivem sem problema.
+- [Folder notes](obsidian://show-plugin?id=folder-notes) — o separador abre a nota da pasta em vez de revelar a pasta, fazendo de cada segmento do caminho um lugar aonde você pode ir, por mais fundo que esteja: a nota é encontrada seguindo a própria convenção daquele plugin, em vez de deixar a resposta por conta dele. Ele também é o único que publica uma convenção assim; [Folder Note](obsidian://show-plugin?id=folder-note-plugin) e [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) não publicam nenhuma e nunca assumem o caminho do cabeçalho, então com eles o separador revela a pasta normalmente.
+- [Quick Explorer](obsidian://show-plugin?id=quick-explorer) e [Front Matter Title](obsidian://show-plugin?id=obsidian-front-matter-title-plugin) — ambos desenham no mesmo elemento do cabeçalho; o Lure mantém a barra independentemente de qual carregue primeiro, e desativar qualquer um deles deixa o outro intacto.
+- [Nav Link Header](obsidian://show-plugin?id=nav-link-header), [Running Head](obsidian://show-plugin?id=running-head), [Crumbs](obsidian://show-plugin?id=crumbs-obsidian), [Breadcrumbs](obsidian://show-plugin?id=breadcrumbs) — cada um tem a sua própria faixa, e eles convivem.
 
-Somente desktop — o modelo de interação precisa de passagem do mouse, cliques precisos e um teclado. Os resultados completos, o que falta verificar e a comparação com o Quick Explorer e o Breadcrumbs estão em [compatibilidade](../compatibility.md).
+Somente desktop — o modelo de interação precisa de passar o mouse, cliques precisos e um teclado. Os resultados completos, as expectativas pendentes e a comparação com o Quick Explorer e o Breadcrumbs estão em [compatibilidade](../compatibility.md).
 
 ## Como contribuir
 
-- Issues e pull requests são bem-vindos — principalmente **correções de tradução**, já que os 45 idiomas são traduzidos por máquina e não revisados por falantes nativos. Veja [desenvolvimento](../development.md) para a preparação e as regras básicas.
+- Issues e pull requests são bem-vindos — especialmente **correções de tradução**, já que todos os 45 idiomas são traduzidos automaticamente e não foram revisados por falantes nativos. Veja [desenvolvimento](../development.md) para a configuração do ambiente e as regras básicas.
 - **Rastreador de problemas:** https://github.com/Gelaende51/obsidian-lure/issues
-- **Doações:** [Ko-fi](https://ko-fi.com/vault51). O plugin é gratuito e licenciado sob a AGPL de qualquer forma; gorjetas são bem-vindas e nunca exigidas. A intenção é compensar as emissões de carbono — uma intenção, não um compromisso: nada é compensado enquanto a soma não valer o esforço, e esta linha vai dizer isso assim que algo tiver sido de fato compensado.
+- **Doações:** [Ko-fi](https://ko-fi.com/vault51). O plugin é gratuito e licenciado sob a AGPL de qualquer forma; contribuições são bem-vindas, mas nunca obrigatórias. O uso pretendido é a compensação de carbono — uma intenção, não um compromisso: nada é compensado até o total ser grande o suficiente para valer o esforço, e esta linha vai dizer isso assim que algo tiver sido de fato compensado.
 
 ## Créditos
 
 - **Vault51** — autor: design, requisitos e testes manuais do começo ao fim.
-- **Claude Opus 5** e **Claude Sonnet 5** (Anthropic, via Claude Code) — implementação, traduções e documentação, sob a direção do autor. Veja [divulgação sobre IA](#divulgação-sobre-ia).
-- **[Obsidian](https://obsidian.md)** — o aplicativo que isto estende, e a origem de todo componente que o plugin usa: sua API de plugins, o conjunto de ícones Lucide por trás do `setIcon`, a instância embutida do i18next de onde as etiquetas do menu de contexto são lidas, e suas próprias classes e variáveis CSS. Nada de terceiros é embutido; o plugin **não tem dependências em tempo de execução**.
+- **Claude Opus 5** e **Claude Sonnet 5** (Anthropic, via Claude Code) — implementação, traduções e documentação, sob a direção do autor. Veja [Divulgação sobre IA](#divulgação-sobre-ia).
+- **[Obsidian](https://obsidian.md)** — o aplicativo que este plugin estende, e a origem de todos os componentes que ele usa: sua API de plugins, o conjunto de ícones Lucide por trás de `setIcon`, a instância embutida do i18next de onde vêm os rótulos do menu de contexto, e suas próprias classes e variáveis CSS. Nada de terceiros é empacotado; o plugin **não tem dependências em tempo de execução**.
 
-> **A equipe do Obsidian não participou deste projeto de nenhuma forma** — não escreveu, revisou, endossou nem apoiou. Obsidian é uma marca registrada da Dynalist Inc.; este é um plugin independente e sem vínculo.
+> **A equipe do Obsidian não participou deste projeto de forma alguma** — não o escreveu, revisou, endossou nem apoiou. Obsidian é uma marca registrada da Dynalist Inc.; este é um plugin independente e sem vínculo com ela.
 
-Os contribuidores serão listados aqui conforme as contribuições chegarem.
+Os colaboradores serão listados aqui à medida que as contribuições chegarem.
 
 ## Links
 
+
 - **Documentação:** [docs/](../)
+- **Registro de alterações:** [CHANGELOG.pt-BR.md](CHANGELOG.pt-BR.md)
 - **Página do plugin:** https://community.obsidian.md/plugins/lure
-- **Presença web / código-fonte:** https://github.com/Gelaende51/obsidian-lure
+- **Presença na web / código-fonte:** https://github.com/Gelaende51/obsidian-lure
 - **Doações:** [Ko-fi](https://ko-fi.com/vault51) — veja [como contribuir](#como-contribuir).
-- **Licença:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51. Forks e builds redistribuídas precisam publicar seu código-fonte sob a mesma licença.
+- **Licença:** [LICENSE](../../LICENSE) — GNU AGPL-3.0-only, © 2026 Vault51. Forks e builds redistribuídos devem disponibilizar o código-fonte sob a mesma licença.

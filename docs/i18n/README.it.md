@@ -1,4 +1,4 @@
-<!-- Traduzione di README.md — stato: commit dc475f7.
+<!-- Traduzione di README.md — stato: commit f133f41.
      Traduzione automatica (Claude Opus 5), non rivista da madrelingua.
      Le correzioni sono benvenute; il README inglese è la versione
      di riferimento. -->
@@ -7,7 +7,7 @@
 
 # Lure
 
-Un plugin per [Obsidian](https://obsidian.md) che trasforma il nome del file nella barra di intestazione di una nota in un percorso completo cliccabile e modificabile, segmento per segmento — come la barra degli indirizzi del gestore di file [Dolphin](https://apps.kde.org/dolphin/).
+Un plugin per [Obsidian](https://obsidian.md) che trasforma il nome del file nella barra di intestazione di una nota in un percorso completo del vault cliccabile e modificabile, segmento per segmento — come la barra degli indirizzi del gestore di file [Dolphin](https://apps.kde.org/dolphin/).
 
 ![Clic sul separatore che segue una cartella: il puntatore vi si appoggia sopra ed Esplora file ha mostrato ed espanso quella cartella](../images/breadcrumb.png)
 
@@ -16,34 +16,37 @@ Obsidian 1.8.7+ · solo desktop · AGPL-3.0
 ## Divulgazione sull'IA
 
 - **Agente** — **Claude Opus 5** e **Claude Sonnet 5** (Anthropic, tramite Claude Code): ha scritto il TypeScript, il CSS, tutti i 45 set di traduzioni e la documentazione. Le traduzioni sono generate automaticamente e non sono state riviste da madrelingua.
-- **Consumo** — 3–22 agosto 2026, 22 sessioni, \~11.820 risposte: \~15,4 M di token generati, \~55,5 M inviati, \~3644,2 M di riletture dalla cache (\~3715,0 M in totale).
+- **Consumo** — 3 agosto – 6 settembre 2026, 22 sessioni, \~13.378 risposte: \~16,3 M di token generati, \~62,3 M inviati, \~4245,1 M di riletture dalla cache (\~4323,6 M in totale).
 - **A monte** — il modello ha imparato da codice open source, documentazione e scritti della comunità pubblicati da altri. Gran parte del merito è loro.
 - **Autore** — Vault51: ha definito ogni funzione, provato ogni versione in un vault reale, indirizzato le correzioni e riletto tutti i risultati.
 
 ## Funzioni
 
-- **Clic su una cartella** per un elenco a discesa del contenuto della cartella *superiore* — sostituisci una cartella con una vicina senza toccare il resto del percorso. Il nome della nota funziona allo stesso modo, estensione compresa.
+- **Clic su una cartella** per un menu a discesa del contenuto della cartella *superiore* — sostituisci una cartella con una vicina e lascia intatto il resto del percorso. Il nome della nota funziona allo stesso modo, selezionando il nome senza la sua estensione.
 - **Clic sul separatore** che segue una cartella per mostrarla ed espanderla in Esplora file. Un'impostazione scambia i due ruoli.
-- **Clic destro o trascinamento su qualsiasi voce** — il menu contestuale e il trascinamento di Esplora file stesso.
-- **Clic sul nome del file o sullo spazio vuoto** per digitare un percorso, con completamento automatico. `/` scende, <kbd>Backspace</kbd> risale di un livello, <kbd>Invio</kbd> conferma.
+- **Clic destro o trascinamento su qualsiasi voce** — il menu contestuale di Esplora file stesso, voce per voce, e il suo comportamento di trascinamento. Per i percorsi fuori dal vault è stato costruito un menu equivalente, fino a *Elimina* passando per il cestino di sistema.
+- **Clic sul nome del file o sullo spazio vuoto** per digitare un percorso, con completamento automatico. `/` scende, <kbd>Backspace</kbd> risale di un livello, <kbd>Invio</kbd> conferma — e un percorso che non esiste ancora viene semplicemente creato, con un avviso che dice dove è finito.
+- **Il menu a discesa si apre sulla voce in cui ti trovi**, e percorrerlo con le frecce o col puntatore riempie il campo con ciò che stai indicando. Uscire dall'una o dall'altra estremità dell'elenco ti restituisce quello che avevi scritto, e togliere il puntatore dall'elenco rimanda l'evidenziazione dov'eri.
 - **Il pulsante matita su cartella** porta le stesse interazioni in modalità sposta/rinomina, con le stesse verifiche che fa Obsidian.
-- **Tieni premuto <kbd>Ctrl</kbd>** per aprire in una nuova scheda — oppure, in modalità sposta/rinomina, per copiarvi la nota anziché spostarla.
-- **L'elenco si apre sulla voce in cui ti trovi**, e percorrerlo con le frecce o col puntatore riempie il campo con ciò che stai indicando. Oltre l'una o l'altra estremità ti restituisce quello che avevi scritto.
-- **I nomi si completano mentre scrivi** — dove i nomi della cartella concordano, la concordanza compare dopo il cursore, selezionata; <kbd>Tab</kbd> o <kbd>→</kbd> la prende intera, <kbd>Backspace</kbd> la restituisce.
-- **<kbd>Tab</kbd> completa come una shell**: estende quanto hai scritto fin dove i nomi concordano, ed entra in una cartella appena ne resta una sola. Oltre la fine del percorso allarga invece la selezione: nome, nome con estensione, percorso dal vault, percorso dalla radice del sistema. <kbd>Maiusc</kbd>+<kbd>Tab</kbd> ripercorre la stessa strada all'indietro.
+- **Tieni premuto <kbd>Ctrl</kbd>** per aprire in una nuova scheda — oppure, in modalità sposta/rinomina, per copiarvi la nota anziché spostarla. Il nome della nota e i segmenti di cartella accettano gli stessi modificatori, e lo stesso trascinamento, delle righe corrispondenti in Esplora file.
+- **I nomi si completano mentre scrivi** — dove i nomi della cartella concordano, la parte comune compare dopo il cursore, selezionata; scrivendo la si consuma lettera per lettera, <kbd>Tab</kbd> o <kbd>→</kbd> la prende intera, <kbd>Backspace</kbd> la restituisce. Il menu a discesa continua a filtrare in base a ciò che hai scritto, non a ciò che ti è stato proposto.
+- **<kbd>Tab</kbd> completa come una shell**: estende quanto hai scritto fin dove i nomi di quella cartella concordano, avanza verso uno di essi un passo alla volta quando non concordano, ed entra in una cartella soltanto quando ne resta un nome solo. Oltre la fine del percorso allarga invece la selezione: nome, nome con estensione, percorso dal vault, percorso dalla radice del sistema. <kbd>Maiusc</kbd>+<kbd>Tab</kbd> ripercorre la stessa strada all'indietro — segnando ciò che restituisce anziché cancellarlo — e oltre l'inizio prosegue risalendo il percorso, per poi tornare in cerchio al percorso di sistema. In entrambi i versi, un giro completo riporta al percorso che avevi costruito.
 - **Clic destro per copiare** — due volte per un nome, tre per tutto ciò che sta alla sua destra, e sullo spazio vuoto per l'intero percorso o per quello di sistema.
-- **Trascina una nota su una cartella della barra** per spostarla lì, collegamenti compresi. Anche il nome del vault la accetta, per la radice; un'intera selezione si sposta come una sola, e una cartella che non può accoglierla non mostra nulla.
-- **Digita un URL** — `https://`, `obsidian://`, oppure un percorso `file://` o codificato in percentuale — e viene aperto anziché trattato come nome di nota.
-- **I percorsi lunghi si accorciano dove le lettere sono ridondanti** — mai oltre ciò che distingue una cartella da quella accanto — e scorrono solo quando non c'è più nulla da comprimere. Punta un nome accorciato per rivederlo per intero.
-- **<kbd>F2</kbd>** alterna fra il titolo in linea e la barra del percorso.
-- **Clic sul nome del vault** per sfogliare gli altri vault, la cartella home, la radice del file system e le unità montate senza cambiare vault. Sola lettura finché non apri un lucchetto, e incorniciato nel colore di errore per tutto il tempo. Disattivato di default — vedi [fuori dal vault](#fuori-dal-vault).
+- **Trascina una nota su una cartella della barra** per spostarla lì, collegamenti compresi — la destinazione è già sullo schermo, quindi basta un trascinamento anziché un viaggio nell'albero dei file. Anche il nome del vault la accetta, per la radice. Un'intera selezione si sposta come una sola, e una cartella che non può accogliere ciò che le viene offerto non mostra nulla invece di fallire a cose fatte.
+- **Rilascia del testo sulla barra per metterlo per iscritto** — su una cartella o sul nome del vault per dare un nome a una nuova nota lì dentro, sul nome della nota stessa per aggiungerlo in fondo a ciò che stai leggendo. Un file trascinato dal desktop funziona allo stesso modo, e la riga si cinge di blu finché il rilascio andrebbe a segno.
+- **Il campo prende il colore di ciò che nomina** — lo stesso colore che la sua riga ha nel menu a discesa, grigio per la nota di una cartella — e **diventa rosso** quando nulla gli risponde, così puoi vedere prima di premere <kbd>Invio</kbd> se aprirà una nota o ne creerà una.
+- **I file HTML vengono mostrati come pagine**, in un riquadro a cui è negato ogni permesso — niente script, niente rete, nessuna origine propria — con i fogli di stile e le immagini che stanno accanto al file portati dentro, così una pagina salvata continua ad apparire com'è. Il sorgente è a un tasto di distanza.
+- **Digita un URL** — `https://`, `obsidian://`, oppure un percorso `file://` o codificato in percentuale — e viene aperto anziché trattato come nome di nota. Gli indirizzi web finiscono in una scheda del visualizzatore Web di Obsidian, se lo hai attivo.
+- **I percorsi lunghi si accorciano dove le lettere sono ridondanti** — mai oltre ciò che distingue una cartella da quella accanto, in modo fluido anziché una lettera alla volta — e scorrono solo quando non c'è più nulla da comprimere. Punta un nome accorciato per rivederlo per intero.
+- **<kbd>F2</kbd>** alterna fra il titolo in linea e la barra del percorso, aprendo sul nome senza la sua estensione e allargandosi ai percorsi completi alle pressioni successive. Passa senza intoppi attraverso la finestra di rinomina di Obsidian quando il titolo è scorso fuori vista. C'è un comando *Attiva la barra del percorso* da associare a un tasto, se vuoi il gesto della barra degli indirizzi.
+- **Clic sul nome del vault** per sfogliare gli altri vault, la cartella home, la radice del file system e le unità montate senza cambiare vault. Sola lettura finché non apri il lucchetto rosso che là fuori prende il posto dell'interruttore di rinomina, e incorniciato nel colore di errore per tutto il tempo. Disattivato di default — vedi [fuori dal vault](#fuori-dal-vault).
 - **Due livelli di avviso** — rosso fuori dal vault, arancione per i file di testo per cui Obsidian non ha un editor. Vedi [i due colori di avviso](usage.it.md#i-due-colori-di-avviso).
-- **Icone adattabili al tema**, sostituibili da uno snippet CSS — e **45 lingue**, tutte quelle che Obsidian include.
-- **Impostazioni:** allineamento, separatori predefiniti, quale clic apre l'elenco, nome del vault, file nascosti, estensioni dei file.
+- **Icone adattabili al tema**, sostituibili da uno snippet CSS — e **46 lingue**: tutte quelle incluse in Obsidian, più il greco e il sanscrito, per cui non ha un'impostazione. Scegline una solo per il plugin, oppure segui quella di Obsidian.
+- **Impostazioni:** lingua, allineamento, separatori predefiniti, quale clic apre il menu a discesa, nome del vault, file nascosti, estensioni dei file.
 
-![Lo stesso elenco in modalità sposta/rinomina: il nome attuale del file fissato in cima, sotto le cartelle vicine, e le note esistenti in grigio](../images/dropdown.png)
+![Lo stesso menu a discesa in modalità sposta/rinomina: il nome attuale del file fissato in cima, sotto le cartelle vicine, e le note esistenti in grigio](../images/dropdown.png)
 
-*In modalità sposta/rinomina lo stesso elenco offre altro: il nome attuale della nota fissato in cima per spostarla senza rinominarla, le cartelle in cui portarla, e i nomi già occupati in grigio perché nulla venga sovrascritto per sbaglio.*
+*In modalità sposta/rinomina lo stesso menu a discesa offre altro: il nome attuale della nota fissato in cima per spostarla senza rinominarla, le cartelle in cui portarla, e i nomi già occupati in grigio perché nulla venga sovrascritto per sbaglio.*
 
 → [Guida all'uso completa](usage.it.md)
 
@@ -58,9 +61,11 @@ Le politiche per sviluppatori di Obsidian impongono che un plugin spieghi ogni a
 **Cosa scrive.** Nulla, finché non premi un pulsante che lo dice. Di pulsanti così ce ne sono due, e ciascuno copre soltanto il proprio ambito:
 
 - Il pulsante **Modifica come testo** del visualizzatore sblocca il file che hai davanti, quel solo file in quella sola scheda. Da lì in poi le tue modifiche vi vengono salvate mentre scrivi.
-- Il **lucchetto** nell'intestazione, visibile solo mentre la barra del percorso punta fuori dal vault, sblocca creazione, rinomina e spostamento su percorsi esterni. Si richiude appena rientri, così il permesso non sopravvive mai alla cartella per cui l'hai concesso.
+- Il **lucchetto rosso** nell'intestazione, che prende il posto dell'interruttore di rinomina mentre la barra del percorso punta fuori dal tuo vault, sblocca creazione, rinomina, spostamento ed eliminazione su percorsi esterni — e, una volta aperto, restituisce il posto all'interruttore. Si richiude quando rientri, e alla pressione che esce dalla modalità rinomina, così il permesso non sopravvive mai alla cartella per cui l'hai concesso.
 
-Nessuno dei due sblocchi viene salvato nell'area di lavoro o nelle impostazioni, quindi la scrittura non resta mai armata su un file che non ricordi di aver aperto. In nessuno dei due stati viene sovrascritto qualcosa — una destinazione già esistente viene rifiutata, usando la creazione esclusiva del file system stesso invece di un controllo che potrebbe perdere la corsa — e una nota non può mai essere *spostata* fuori dal vault, perché i collegamenti a essa si romperebbero in silenzio; tenendo premuto <kbd>Ctrl</kbd> viene invece copiata fuori.
+Nessuno dei due sblocchi viene salvato nell'area di lavoro o nelle impostazioni, quindi la scrittura non resta mai armata su un file che non ricordi di aver aperto. In nessuno dei due stati viene sovrascritto qualcosa — una destinazione già esistente viene rifiutata, usando la creazione esclusiva del file system stesso invece di un controllo che potrebbe perdere la corsa.
+
+Spostare una nota *fuori* dal vault è l'unica scrittura che costa qualcosa che nulla può restituire: Obsidian aggiorna i collegamenti solo dentro il vault, quindi ogni collegamento che punta a quella nota si rompe. Viene offerta dietro una finestra di dialogo che lo dice e conta le note coinvolte, e avviene come copia seguita da eliminazione attraverso il cestino di Obsidian stesso, quindi è recuperabile quanto l'eliminazione di una nota. Tenendo premuto <kbd>Ctrl</kbd> viene invece copiata fuori.
 
 **Perché.** Le note che ti servono stanno spesso in un altro vault, in una cartella sincronizzata o su una chiavetta, e la risposta di Obsidian — cambia vault — chiude tutto quello che avevi aperto. Questo ti lascia andare a guardare senza uscire, e correggere un refuso già che ci sei.
 
@@ -82,7 +87,7 @@ Non serve alcun plugin. **Esplora file**, il plugin di base, se attivo è ciò c
 
 Provato contro i plugin della comunità che condividono l'intestazione della nota o rispondono al clic su una cartella — in entrambi gli ordini di caricamento, ciascuno acceso e spento:
 
-- [Folder notes](obsidian://show-plugin?id=folder-notes) — il separatore apre la nota della cartella invece di mostrare la cartella, così ogni segmento del percorso diventa un posto dove andare. È l'unico plugin di note-cartella che rivendica il percorso nell'intestazione; [Folder Note](obsidian://show-plugin?id=folder-note-plugin) e [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) non ascoltano lì, quindi il separatore mostra la cartella come sempre.
+- [Folder notes](obsidian://show-plugin?id=folder-notes) — il separatore apre la nota della cartella invece di mostrare la cartella, così ogni segmento del percorso diventa un posto dove andare, per quanto in profondità: la nota viene ricavata dalla convenzione di quel plugin, anziché lasciare a lui il compito di rispondere. È anche l'unico a pubblicare una convenzione del genere; [Folder Note](obsidian://show-plugin?id=folder-note-plugin) e [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) non ne pubblicano alcuna e non rivendicano mai il percorso nell'intestazione, quindi con quelli il separatore mostra la cartella come sempre.
 - [Quick Explorer](obsidian://show-plugin?id=quick-explorer) e [Front Matter Title](obsidian://show-plugin?id=obsidian-front-matter-title-plugin) — entrambi disegnano nello stesso elemento dell'intestazione; Lure mantiene la sua riga quale che sia l'ordine di caricamento, e spegnere l'uno lascia intatto l'altro.
 - [Nav Link Header](obsidian://show-plugin?id=nav-link-header), [Running Head](obsidian://show-plugin?id=running-head), [Crumbs](obsidian://show-plugin?id=crumbs-obsidian), [Breadcrumbs](obsidian://show-plugin?id=breadcrumbs) — hanno una propria striscia, e convivono senza problemi.
 
@@ -107,6 +112,7 @@ I contributori verranno elencati qui man mano che arrivano i contributi.
 ## Collegamenti
 
 - **Documentazione:** [docs/](../)
+- **Registro delle modifiche:** [CHANGELOG.md](CHANGELOG.it.md)
 - **Pagina del plugin:** https://community.obsidian.md/plugins/lure
 - **Presenza web / sorgenti:** https://github.com/Gelaende51/obsidian-lure
 - **Donazioni:** [Ko-fi](https://ko-fi.com/vault51) — vedi [come contribuire](#come-contribuire).

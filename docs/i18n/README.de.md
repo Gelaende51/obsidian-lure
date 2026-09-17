@@ -1,4 +1,4 @@
-<!-- Übersetzung von README.md — Stand: Commit dc475f7.
+<!-- Übersetzung von README.md — Stand: Commit f133f41.
      Maschinell übersetzt (Claude Opus 5) und nicht von Muttersprachlern
      geprüft. Korrekturen sind willkommen; das englische README ist die
      maßgebliche Fassung. -->
@@ -16,34 +16,37 @@ Obsidian 1.8.7+ · nur Desktop · AGPL-3.0
 ## KI-Offenlegung
 
 - **Agent** — **Claude Opus 5** und **Claude Sonnet 5** (Anthropic, über Claude Code): schrieb das TypeScript, das CSS, alle 45 Übersetzungssätze und die Dokumentation. Die Übersetzungen sind maschinell erstellt und wurden nicht von Muttersprachlern geprüft.
-- **Verbrauch** — 3.–22. August 2026, 22 Sitzungen, \~11.820 Antworten: \~15,4 Mio. Token erzeugt, \~55,5 Mio. gesendet, \~3644,2 Mio. zwischengespeicherte Wiederholungen (\~3715,0 Mio. gesamt).
+- **Verbrauch** — 3. August – 6. September 2026, 22 Sitzungen, \~13.378 Antworten: \~16,3 Mio. Token erzeugt, \~62,3 Mio. gesendet, \~4245,1 Mio. zwischengespeicherte Wiederholungen (\~4323,6 Mio. gesamt).
 - **Herkunft** — das Modell hat aus quelloffenem Code, Dokumentation und Beiträgen der Gemeinschaft gelernt, die andere veröffentlicht haben. Der größte Teil der Anerkennung gebührt ihnen.
 - **Autor** — Vault51: legte jede Funktion fest, testete jede Fassung in einem echten Vault, gab die Korrekturen vor, prüfte alle Ergebnisse.
 
 ## Funktionen
 
-- **Klick auf einen Ordner** öffnet ein Dropdown mit dem Inhalt seines *übergeordneten* Ordners — tausche einen Ordner gegen einen benachbarten, ohne den Rest des Pfads anzurühren. Der Name der Notiz verhält sich genauso, Dateiendung eingeschlossen.
+- **Klick auf einen Ordner** öffnet ein Dropdown mit dem Inhalt seines *übergeordneten* Ordners — tausche einen Ordner gegen einen benachbarten, ohne den Rest des Pfads anzurühren. Der Name der Notiz verhält sich genauso und wird dabei ohne seine Endung markiert.
 - **Klick auf das Trennzeichen** hinter einem Ordner zeigt ihn im Dateiexplorer und klappt ihn auf. Eine Einstellung tauscht die beiden Rollen.
-- **Rechtsklick oder Ziehen** auf jeden Eintrag — das Kontextmenü und das Ziehverhalten des Dateiexplorers selbst.
-- **Klick auf den Dateinamen oder auf freie Fläche** öffnet ein Eingabefeld für einen Pfad, mit Autovervollständigung. `/` steigt hinab, <kbd>Rücktaste</kbd> geht eine Ebene hinaus, <kbd>Enter</kbd> bestätigt.
+- **Rechtsklick oder Ziehen auf jeden Eintrag** — das Kontextmenü des Dateiexplorers selbst, Eintrag für Eintrag, und sein Ziehverhalten. Pfade außerhalb des Vaults bekommen ein gleichwertiges, eigens für sie gebautes Menü, bis hin zu *Löschen* über den Papierkorb des Systems.
+- **Klick auf den Dateinamen oder auf freie Fläche**, um einen Pfad zu tippen, mit Autovervollständigung. `/` steigt hinab, <kbd>Rücktaste</kbd> geht eine Ebene hinaus, <kbd>Enter</kbd> bestätigt — und ein Pfad, den es noch nicht gibt, wird einfach angelegt, mit einem Hinweis, wo er gelandet ist.
+- **Das Dropdown öffnet auf dem Eintrag, in dem du stehst**, und gehst du mit den Pfeiltasten oder dem Zeiger hindurch, füllt sich das Feld mit dem, worauf du zeigst. Über eines der beiden Enden der Liste hinaus bekommst du zurück, was du getippt hattest, und nimmst du den Zeiger von der Liste, kehrt die Hervorhebung dorthin zurück, wo du warst.
 - **Die Stift-Ordner-Schaltfläche** stellt dieselben Interaktionen auf Umbenennen/Verschieben um, geprüft so, wie Obsidian selbst prüft.
-- **<kbd>Strg</kbd> halten** öffnet in einem neuen Tab — oder kopiert die Notiz im Umbenennen-/Verschieben-Modus dorthin, statt sie zu verschieben.
-- **Das Dropdown öffnet auf dem Eintrag, in dem du stehst**, und mit Pfeiltasten oder Zeiger füllt es das Feld mit dem, worauf du zeigst. Über das Ende hinaus gibt es dir zurück, was du getippt hattest.
-- **Namen vervollständigen sich beim Tippen** — soweit die Namen des Ordners übereinstimmen, erscheint die Übereinstimmung hinter dem Cursor, markiert; <kbd>Tab</kbd> oder <kbd>→</kbd> übernimmt sie ganz, <kbd>Rücktaste</kbd> nimmt sie zurück.
-- **<kbd>Tab</kbd> vervollständigt wie eine Shell**: es verlängert das Getippte so weit, wie die Namen übereinstimmen, und steigt in einen Ordner hinab, sobald nur einer übrig ist. Hinter dem Ende des Pfads erweitert es stattdessen die Auswahl: Name, Name mit Endung, Pfad ab dem Vault, Pfad ab der Systemwurzel. <kbd>Umschalt</kbd>+<kbd>Tab</kbd> geht denselben Weg zurück.
+- **<kbd>Strg</kbd> halten** öffnet in einem neuen Tab — oder kopiert die Notiz im Umbenennen-/Verschieben-Modus stattdessen dorthin. Der Name der Notiz und die Ordnersegmente reagieren auf dieselben Modifikatortasten und lassen sich ziehen, genau wie ihre Zeilen im Dateiexplorer.
+- **Namen vervollständigen sich beim Tippen** — soweit die Namen des Ordners übereinstimmen, erscheint die Übereinstimmung markiert hinter dem Cursor; Weitertippen verschluckt sie Buchstabe für Buchstabe, <kbd>Tab</kbd> oder <kbd>→</kbd> übernimmt sie ganz, <kbd>Rücktaste</kbd> nimmt sie zurück. Das Dropdown filtert weiter nach dem, was du getippt hast, nicht nach dem, was angeboten wurde.
+- **<kbd>Tab</kbd> vervollständigt wie eine Shell**: es verlängert das Getippte so weit, wie die Namen in diesem Ordner übereinstimmen, geht Schritt für Schritt auf einen von ihnen zu, wenn sie das nicht tun, und steigt erst dann in einen Ordner hinab, wenn nur noch ein Name übrig ist. Hinter dem Ende des Pfads erweitert es stattdessen die Auswahl: Name, Name mit Endung, Pfad ab dem Vault, Pfad ab der Systemwurzel. <kbd>Umschalt</kbd>+<kbd>Tab</kbd> geht denselben Weg rückwärts — und markiert, was es zurückgibt, statt es zu löschen —, geht über dessen Anfang hinaus weiter den Pfad hinauf und springt dann herum zum Systempfad. In beiden Richtungen führt eine volle Runde zurück zu dem Pfad, den du aufgebaut hast.
 - **Rechtsklick zum Kopieren** — zweimal für einen Namen, dreimal für alles rechts davon, und auf der freien Fläche für den ganzen Pfad oder den Systempfad.
-- **Zieh eine Notiz auf einen Ordner der Leiste**, um sie dorthin zu verschieben, samt Links. Der Vault-Name nimmt sie auch, für die Wurzel; eine ganze Auswahl wandert als eine, und ein Ordner, der sie nicht nehmen kann, zeigt gar nichts an.
-- **Gib eine URL ein** — `https://`, `obsidian://` oder einen `file://`- bzw. prozentkodierten Pfad — und sie wird geöffnet statt als Notizname gelesen.
-- **Lange Pfade kürzen sich dort, wo Buchstaben entbehrlich sind** — nie über das hinaus, was einen Ordner vom Nachbarn unterscheidet — und scrollen erst, wenn nichts mehr zu stauchen ist. Zeig auf einen gekürzten Namen, um ihn ganz zu sehen.
-- **<kbd>F2</kbd>** wechselt zwischen dem Inline-Titel und der Pfadleiste.
-- **Klick auf den Vault-Namen** öffnet deine anderen Vaults, den Persönlichen Ordner, das Wurzelverzeichnis und eingehängte Laufwerke, ohne den Vault zu wechseln. Nur lesend, bis du ein Schloss öffnest, und durchgehend in der Fehlerfarbe umrandet. Standardmäßig aus — siehe [Außerhalb des Vaults](#außerhalb-des-vaults).
-- **Zwei Warnstufen** — Rot außerhalb des Vaults, Orange für Textdateien, für die Obsidian keinen Editor hat. Siehe [die beiden Warnfarben](usage.de.md#die-beiden-warnfarben).
-- **Themenfähige Symbole**, über ein CSS-Snippet austauschbar — und **45 Sprachen**, jede die Obsidian mitbringt.
-- **Einstellungen:** Ausrichtung, Trennzeichen-Vorlagen, welcher Klick das Dropdown öffnet, Vault-Name, Punktdateien, Dateiendungen.
+- **Zieh eine Notiz auf einen Ordner in der Leiste**, um sie dorthin zu verschieben, samt Links — das Ziel ist ja schon zu sehen, also genügt ein einziges Ziehen statt eines Ausflugs durch den Dateibaum. Der Vault-Name funktioniert auch, für die Wurzel. Eine ganze Auswahl wandert als eine, und ein Ordner, der das Angebotene nicht aufnehmen kann, zeigt gar nichts an, statt erst hinterher zu scheitern.
+- **Lass Text auf die Leiste fallen, um ihn festzuhalten** — auf einen Ordner oder den Vault-Namen, um dafür eine neue Notiz zu benennen, auf den Namen der Notiz selbst, um ihn ans Ende dessen anzufügen, was du gerade liest. Eine Datei von deinem Desktop funktioniert genauso, und die Leiste leuchtet blau umrandet, solange der Abwurf dort landen würde.
+- **Das Feld trägt die Farbe dessen, was es benennt** — dieselbe Farbe, die seine Zeile im Dropdown hat, grau für die Notiz eines Ordners — und **wird rot**, sobald nichts mehr darauf passt; so siehst du schon vor dem Drücken von <kbd>Enter</kbd>, ob es eine Notiz öffnet oder eine anlegt.
+- **HTML-Dateien erscheinen als Seiten**, in einem Rahmen, dem jede Berechtigung entzogen ist — keine Skripte, kein Netzwerk, kein eigener Origin —, wobei Stylesheets und Bilder neben der Datei mit hineingeholt werden, damit eine gespeicherte Seite noch wie sie selbst aussieht. Der Quelltext ist nur einen Klick entfernt.
+- **Gib eine URL ein** — `https://`, `obsidian://` oder einen `file://`- bzw. prozentkodierten Pfad — und sie wird geöffnet, statt als Notizname behandelt zu werden. Webadressen landen in einem Tab von Obsidians eigenem Web viewer (Web-Betrachter), sofern du ihn eingeschaltet hast.
+- **Lange Pfade kürzen sich dort, wo Buchstaben entbehrlich sind** — nie über das hinaus, was einen Ordner vom Nachbarn unterscheidet, und fließend statt Buchstabe für Buchstabe — und scrollen erst, wenn nichts mehr zu stauchen ist. Zeig auf einen gekürzten Namen, um ihn wieder ganz zu sehen.
+- **<kbd>F2</kbd>** wechselt zwischen dem Inline-Titel und der Pfadleiste, öffnet auf dem Namen ohne Endung und weitet sich bei weiteren Drücken bis zu den vollständigen Pfaden aus. Es gleitet sauber durch Obsidians Umbenennen-Dialog, wenn der Titel aus dem sichtbaren Bereich gescrollt ist. Für die Adressleisten-Geste steht der Befehl *Pfadleiste fokussieren* bereit, den du belegen kannst, wenn du möchtest.
+- **Klick auf den Vault-Namen**, um deine anderen Vaults, den Persönlichen Ordner, das Wurzelverzeichnis und eingehängte Laufwerke zu durchstöbern, ohne den Vault zu wechseln. Nur lesend, bis du das rote Schloss öffnest, das dort draußen den Platz des Umbenennen-Schalters einnimmt, und durchgehend in der Fehlerfarbe umrandet. Standardmäßig aus — siehe [Außerhalb des Vaults](#außerhalb-des-vaults).
+- **Zwei Warnstufen** — Rot außerhalb des Vaults, Orange für Textdateien, für die Obsidian keinen Editor hat. Siehe [die Warnfarben](usage.de.md#die-beiden-warnfarben).
+- **Themenfähige Symbole**, über ein CSS-Snippet austauschbar — und **46 Sprachen**: jede, die Obsidian mitbringt, dazu Griechisch und Sanskrit, für die es keine Einstellung hat. Wähle eine nur für das Plugin, oder folge der von Obsidian.
+- **Einstellungen:** Sprache, Ausrichtung, Trennzeichen-Vorlagen, welcher Klick das Dropdown öffnet, Vault-Name, Punktdateien, Dateiendungen.
 
-![Dasselbe Dropdown im Umbenennen-/Verschieben-Modus: der aktuelle Dateiname oben angeheftet, darunter benachbarte Ordner, und bereits vergebene Namen ausgegraut](../images/dropdown.png)
+![Dasselbe Dropdown im Umbenennen-/Verschieben-Modus: der aktuelle Dateiname oben angeheftet, darunter benachbarte Ordner, und bereits vorhandene Notizen ausgegraut](../images/dropdown.png)
 
-*Im Umbenennen-/Verschieben-Modus bietet dasselbe Dropdown anderes an: oben angeheftet der aktuelle Name der Notiz, um sie zu verschieben, ohne sie umzubenennen; darunter Ordner, in die sie verschoben werden kann; und bereits vergebene Namen ausgegraut, damit nichts versehentlich überschrieben wird.*
+*Im Umbenennen-/Verschieben-Modus bietet dasselbe Dropdown anderes an: oben angeheftet der aktuelle Name der Notiz, um sie zu verschieben, ohne sie umzubenennen; Ordner, in die sie verschoben werden kann; und bereits vergebene Namen ausgegraut, damit nichts versehentlich überschrieben wird.*
 
 → [Vollständige Anleitung](usage.de.md)
 
@@ -58,9 +61,11 @@ Obsidians Entwicklerrichtlinien verlangen, dass Plugins jeden Zugriff auf Dateie
 **Was geschrieben wird.** Nichts, bis du eine Schaltfläche drückst, die das ankündigt. Es gibt zwei davon, und jede deckt nur ihren eigenen Bereich ab:
 
 - Die Schaltfläche **Als Text bearbeiten** im Betrachter gibt die Datei vor dir frei, für diese eine Datei in diesem einen Tab. Deine Änderungen werden dann beim Tippen dorthin zurückgeschrieben.
-- Das **Schloss** in der Kopfzeile, nur sichtbar solange die Pfadleiste aus dem Vault hinauszeigt, gibt Anlegen, Umbenennen und Verschieben an externen Pfaden frei. Es schließt sich wieder, sobald du zurück hineingehst, damit eine Erlaubnis nie den Ordner überdauert, für den du sie erteilt hast.
+- Das **rote Schloss** in der Kopfzeile, das den Platz des Umbenennen-Schalters einnimmt, solange die Pfadleiste aus deinem Vault hinauszeigt, gibt Anlegen, Umbenennen, Verschieben und Löschen an externen Pfaden frei — und überlässt den Platz, einmal geöffnet, wieder dem Schalter. Es schließt sich wieder, sobald du zurück hineingehst, und bei dem Druck, der den Umbenennen-Modus verlässt, damit eine Erlaubnis nie den Ordner überdauert, für den du sie erteilt hast.
 
-Keine der beiden Freigaben wird im Arbeitsbereich oder in den Einstellungen gespeichert, also ist das Schreiben nie an einer Datei scharf gestellt, an deren Öffnen du dich nicht erinnerst. In keinem der beiden Zustände wird jemals etwas überschrieben — ein vorhandenes Ziel wird abgelehnt, und zwar über das exklusive Anlegen des Dateisystems selbst statt über eine Prüfung, die ein Wettrennen verlieren könnte — und eine Notiz kann nie aus deinem Vault heraus *verschoben* werden, weil Links darauf still zerbrechen würden; <kbd>Strg</kbd> halten kopiert sie stattdessen hinaus.
+Keine der beiden Freigaben wird im Arbeitsbereich oder in den Einstellungen gespeichert, also ist das Schreiben nie an einer Datei scharf gestellt, an deren Öffnen du dich nicht erinnerst. In keinem der beiden Zustände wird jemals etwas überschrieben — ein vorhandenes Ziel wird abgelehnt, und zwar über das exklusive Anlegen des Dateisystems selbst statt über eine Prüfung, die ein Wettrennen verlieren könnte.
+
+Eine Notiz aus deinem Vault *hinaus* zu verschieben, ist der eine Schreibvorgang, der etwas kostet, das nichts zurückbringen kann: Obsidian aktualisiert Links nur innerhalb des Vaults, also zerbricht jeder Link, der auf diese Notiz zeigt. Angeboten wird es nur hinter einem Dialog, der genau das sagt und die betroffenen Notizen zählt, und es geschieht als Kopieren-dann-Löschen über Obsidians eigenen Papierkorb, sodass es sich genauso wiederherstellen lässt wie eine gelöschte Notiz. <kbd>Strg</kbd> halten kopiert sie stattdessen hinaus.
 
 **Warum.** Notizen, die du brauchst, liegen oft in einem anderen Vault, einem Sync-Ordner oder auf einem USB-Stick, und Obsidians eigene Antwort — den Vault wechseln — schließt alles, was du offen hattest. Hiermit kannst du nachsehen, ohne zu gehen, und gleich einen Tippfehler beheben.
 
@@ -82,7 +87,7 @@ Kein Plugin wird vorausgesetzt. Der Kern-**Dateiexplorer** ist, sofern aktiviert
 
 Getestet gegen die Community-Plugins, die sich die Kopfzeile der Notiz teilen oder auf den Ordnerklick antworten — in beiden Ladereihenfolgen, jeweils ein- und ausgeschaltet:
 
-- [Folder notes](obsidian://show-plugin?id=folder-notes) — das Trennzeichen öffnet die Notiz eines Ordners, statt den Ordner anzuzeigen, wodurch jeder Abschnitt des Pfads zu einem Ort wird, an den du gehen kannst. Das einzige Ordnernotiz-Plugin, das die Kopfzeile für sich beansprucht; [Folder Note](obsidian://show-plugin?id=folder-note-plugin) und [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) hören dort nicht mit, dort zeigt das Trennzeichen also wie gewohnt den Ordner.
+- [Folder notes](obsidian://show-plugin?id=folder-notes) — das Trennzeichen öffnet die Notiz eines Ordners, statt den Ordner anzuzeigen, wodurch jeder Abschnitt des Pfads zu einem Ort wird, an den du gehen kannst, wie tief er auch liegt: die Notiz wird nach der eigenen Konvention dieses Plugins aufgelöst, statt es ihm zu überlassen, zu antworten. Es ist außerdem das einzige, das eine solche Konvention veröffentlicht; [Folder Note](obsidian://show-plugin?id=folder-note-plugin) und [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) veröffentlichen keine und beanspruchen den Pfad in der Kopfzeile nie für sich, dort zeigt das Trennzeichen also wie gewohnt den Ordner.
 - [Quick Explorer](obsidian://show-plugin?id=quick-explorer) und [Front Matter Title](obsidian://show-plugin?id=obsidian-front-matter-title-plugin) — beide zeichnen in dasselbe Kopfzeilenelement; Lure behält die Zeile, gleich welches zuerst lädt, und schaltet man eines ab, bleibt das andere unversehrt.
 - [Nav Link Header](obsidian://show-plugin?id=nav-link-header), [Running Head](obsidian://show-plugin?id=running-head), [Crumbs](obsidian://show-plugin?id=crumbs-obsidian), [Breadcrumbs](obsidian://show-plugin?id=breadcrumbs) — haben ihre eigene Leiste und kommen sich nicht in die Quere.
 
@@ -107,6 +112,7 @@ Mitwirkende werden hier aufgeführt, sobald Beiträge eingehen.
 ## Links
 
 - **Dokumentation:** [docs/](../)
+- **Änderungsprotokoll:** [CHANGELOG.md](CHANGELOG.de.md)
 - **Plugin-Seite:** https://community.obsidian.md/plugins/lure
 - **Webpräsenz / Quelltext:** https://github.com/Gelaende51/obsidian-lure
 - **Spenden:** [Ko-fi](https://ko-fi.com/vault51) — siehe [Mitwirken](#mitwirken).

@@ -1,4 +1,4 @@
-<!-- Terjemahan README.md — status: commit dc475f7.
+<!-- Terjemahan README.md — status: commit f133f41.
      Terjemahan mesin (Claude Opus 5), belum disemak penutur jati.
      Pembetulan dialu-alukan; README bahasa Inggeris ialah versi rujukan. -->
 
@@ -15,30 +15,33 @@ Obsidian 1.8.7+ · komputer meja sahaja · AGPL-3.0
 ## Pendedahan AI
 
 - **Ejen** — **Claude Opus 5** dan **Claude Sonnet 5** (Anthropic, melalui Claude Code): menulis TypeScript, CSS, kesemua 45 set terjemahan dan dokumentasi. Terjemahan dihasilkan mesin dan belum disemak penutur jati.
-- **Penggunaan** — 3–22 Ogos 2026, 22 sesi, \~11,820 balasan: \~15.4 juta token dijana, \~55.5 juta dihantar, \~3644.2 juta bacaan semula daripada cache (\~3715.0 juta kesemuanya).
+- **Penggunaan** — 3 Ogos – 6 September 2026, 22 sesi, \~13,378 balasan: \~16.3 juta token dijana, \~62.3 juta dihantar, \~4245.1 juta bacaan semula daripada cache (\~4323.6 juta kesemuanya).
 - **Hulu** — model belajar daripada kod sumber terbuka, dokumentasi dan tulisan komuniti yang diterbitkan orang lain. Sebahagian besar kreditnya milik mereka.
 - **Penulis** — Vault51: menetapkan setiap ciri, mencuba setiap versi dalam bilik kebal sebenar, mengarahkan pembetulan, menyemak semua hasilnya.
 
 ## Ciri-ciri
 
-- **Klik sebuah folder** untuk senarai kandungan folder *induknya* — tukar satu folder dengan jirannya tanpa menyentuh baki laluan. Nama nota berfungsi sama, termasuk sambungannya.
+- **Klik sebuah folder** untuk senarai kandungan folder *induknya* — tukar satu folder dengan jirannya tanpa menyentuh baki laluan. Nama nota berfungsi sama, dengan memilih namanya tanpa sambungan.
 - **Klik pemisah** selepas sebuah folder untuk menunjukkan dan mengembangkannya dalam Peneroka fail. Satu tetapan menukar kedua-dua peranan itu.
-- **Klik kanan atau seret mana-mana entri** — menu konteks dan kelakuan seret Peneroka fail itu sendiri.
-- **Klik nama fail atau ruang kosong** untuk menaip laluan, dengan pelengkapan automatik. `/` turun ke dalam, <kbd>Backspace</kbd> naik satu tingkat, <kbd>Enter</kbd> mengesahkan.
+- **Klik kanan atau seret mana-mana entri** — menu konteks Peneroka fail itu sendiri, entri demi entri, berserta kelakuan seretnya. Laluan di luar bilik kebal mendapat menu setara yang dibina khas untuknya, hinggalah *Padam* melalui tong sampah sistem.
+- **Klik nama fail atau ruang kosong** untuk menaip laluan, dengan pelengkapan automatik. `/` turun ke dalam, <kbd>Backspace</kbd> naik satu tingkat, <kbd>Enter</kbd> mengesahkan — dan laluan yang belum wujud terus dicipta, dengan pemberitahuan yang menyatakan ke mana ia pergi.
+- **Senarai terbuka pada entri tempat anda berada**, dan menyusurinya dengan anak panah atau penuding mengisi medan dengan apa yang anda tuding. Melepasi mana-mana hujung senarai, ia memulangkan apa yang anda taip, dan mengalihkan penuding daripadanya memulangkan sorotan ke tempat anda tadi.
 - **Butang pensel pada folder** menukar interaksi yang sama kepada mod alih/tukar nama, dengan pemeriksaan yang sama seperti dilakukan Obsidian.
-- **Tahan <kbd>Ctrl</kbd>** untuk membuka dalam tab baharu — atau, dalam mod alih/tukar nama, untuk menyalin nota ke sana dan bukannya mengalihkannya.
-- **Senarai terbuka pada entri tempat anda berada**, dan menyusurinya dengan anak panah atau penuding mengisi medan dengan apa yang anda tuding. Melepasi mana-mana hujungnya, ia memulangkan apa yang anda taip.
-- **Nama melengkapkan dirinya sambil anda menaip** — setakat nama-nama dalam folder itu sama, persamaannya muncul selepas kursor, tersorot; <kbd>Tab</kbd> atau <kbd>→</kbd> mengambilnya sepenuhnya, <kbd>Backspace</kbd> memulangkannya.
-- **<kbd>Tab</kbd> melengkapkan seperti shell**: ia memanjangkan apa yang anda taip sejauh nama-nama itu sama, dan masuk ke sebuah folder sebaik sahaja tinggal satu nama. Melepasi hujung laluan, ia sebaliknya meluaskan pilihan: nama, nama dengan sambungan, laluan dari bilik kebal, laluan dari akar sistem. <kbd>Shift</kbd>+<kbd>Tab</kbd> menyusuri jalan yang sama ke belakang.
+- **Tahan <kbd>Ctrl</kbd>** untuk membuka dalam tab baharu — atau, dalam mod alih/tukar nama, untuk menyalin nota ke sana dan bukannya mengalihkannya. Nama nota dan ruas-ruas folder menerima pengubah suai yang sama, dan seretan, sepertimana barisnya dalam Peneroka fail.
+- **Nama melengkapkan dirinya sambil anda menaip** — setakat nama-nama dalam folder itu sama, persamaannya muncul selepas kursor, tersorot; menaip menelannya huruf demi huruf, <kbd>Tab</kbd> atau <kbd>→</kbd> mengambilnya sepenuhnya, <kbd>Backspace</kbd> memulangkannya. Senarai terus menapis mengikut apa yang anda taip, bukan mengikut apa yang ditawarkan.
+- **<kbd>Tab</kbd> melengkapkan seperti shell**: ia memanjangkan apa yang anda taip sejauh nama-nama dalam folder itu sama, melangkah menuju salah satunya setapak demi setapak apabila nama-nama itu berbeza, dan masuk ke sebuah folder hanya sebaik tinggal satu nama. Melepasi hujung laluan, ia sebaliknya meluaskan pilihan: nama, nama dengan sambungan, laluan dari bilik kebal, laluan dari akar sistem. <kbd>Shift</kbd>+<kbd>Tab</kbd> menyusuri jalan yang sama ke belakang — menandakan apa yang dipulangkannya dan bukan memadamkannya — dan melepasi permulaan laluan ia terus mendaki laluan itu, kemudian berpusing semula ke laluan sistem. Ke mana-mana arah pun, satu pusingan kembali ke laluan yang anda bina.
 - **Klik kanan untuk menyalin** — dua kali untuk sebuah nama, tiga kali untuk segala yang di sebelah kanannya, dan pada ruang kosong untuk seluruh laluan atau laluan sistem.
-- **Seret nota ke sebuah folder pada baris itu** untuk memindahkannya ke sana, berserta pautannya. Nama bilik kebal turut menerimanya, untuk akar; satu pilihan penuh berpindah sebagai satu, dan folder yang tidak dapat menerimanya tidak memaparkan apa-apa.
-- **Taip URL** — `https://`, `obsidian://`, atau laluan `file://` mahupun berkod peratus — dan ia dibuka dan bukannya dibaca sebagai nama nota.
-- **Laluan panjang memendek di tempat hurufnya berlebihan** — tidak pernah melepasi apa yang membezakan sebuah folder daripada jirannya — dan hanya menatal apabila tiada lagi yang boleh dimampatkan. Tuding nama yang dipendekkan untuk melihatnya sepenuhnya.
-- **<kbd>F2</kbd>** berselang antara tajuk dalam nota dan bar laluan.
-- **Klik nama bilik kebal** untuk melayari bilik kebal anda yang lain, folder rumah, akar sistem fail dan pemacu yang dilekapkan tanpa bertukar bilik kebal. Baca sahaja sehingga anda membuka mangga, dan berbingkai warna ralat sepanjang masa. Dimatikan secara lalai — lihat [di luar bilik kebal](#di-luar-bilik-kebal).
+- **Seret nota ke sebuah folder pada baris itu** untuk memindahkannya ke sana, berserta pautannya — destinasinya sudah pun di skrin, jadi ia satu seretan sahaja dan bukan perjalanan melalui pepohon fail. Nama bilik kebal turut menerimanya, untuk akar. Satu pilihan penuh berpindah sebagai satu, dan folder yang tidak dapat menerima apa yang ditawarkan tidak memaparkan apa-apa dan bukannya gagal selepas perkara berlaku.
+- **Lepaskan teks pada baris itu untuk menulisnya** — pada sebuah folder atau nama bilik kebal untuk menamakan sebuah nota baharu di situ, pada nama nota itu sendiri untuk menambahkannya ke hujung apa yang sedang anda baca. Fail daripada desktop anda berfungsi sama, dan baris itu bercahaya biru selagi lepasan itu akan mendarat.
+- **Medan memakai warna apa yang dinamakannya** — warna yang sama seperti barisnya dalam senarai, kelabu untuk nota sesebuah folder — dan **bertukar merah** sebaik sahaja tiada apa-apa yang menyahutnya, supaya anda dapat melihat sebelum menekan <kbd>Enter</kbd> sama ada ia akan membuka sesuatu nota atau menciptanya.
+- **Fail HTML dipaparkan sebagai halaman**, dalam bingkai yang setiap kebenarannya ditahan — tiada skrip, tiada rangkaian, tiada asal usulnya sendiri — dengan helaian gaya dan imej di sebelah fail itu dibawa masuk supaya halaman yang disimpan masih kelihatan seperti dirinya. Sumbernya hanya satu tekanan jauhnya.
+- **Taip URL** — `https://`, `obsidian://`, atau laluan `file://` mahupun berkod peratus — dan ia dibuka dan bukannya dibaca sebagai nama nota. Alamat web dibawa ke tab pemapar Web Obsidian sendiri jika anda menghidupkannya.
+- **Laluan panjang memendek di tempat hurufnya berlebihan** — tidak pernah melepasi apa yang membezakan sebuah folder daripada jirannya, secara sekata dan bukan sehuruf demi sehuruf — dan hanya menatal apabila tiada lagi yang boleh dimampatkan. Tuding nama yang dipendekkan untuk melihatnya sepenuhnya.
+- **<kbd>F2</kbd>** berselang antara tajuk dalam nota dan bar laluan, bermula pada nama tanpa sambungannya dan meluas keluar ke laluan penuh pada tekanan berikutnya. Ia melintas dengan kemas melalui dialog tukar nama Obsidian apabila tajuknya ditatal hilang daripada pandangan. Ada perintah *Fokus pada bar laluan* untuk diikat jika anda mahukan gerak isyarat bar alamat itu.
+- **Klik nama bilik kebal** untuk melayari bilik kebal anda yang lain, folder rumah, akar sistem fail dan pemacu yang dilekapkan tanpa bertukar bilik kebal. Baca sahaja sehingga anda membuka mangga merah yang mengambil tempat togol tukar nama di luar sana, dan berbingkai warna ralat sepanjang masa. Dimatikan secara lalai — lihat [di luar bilik kebal](#di-luar-bilik-kebal).
 - **Dua tahap amaran** — merah di luar bilik kebal, jingga untuk fail teks yang tiada penyunting dalam Obsidian. Lihat [dua warna amaran](usage.ms.md#dua-warna-amaran).
-- **Ikon yang mengikut tema**, boleh ditukar daripada cebisan CSS — dan **45 bahasa**, setiap satu yang dibawa Obsidian.
-- **Tetapan:** penjajaran, pemisah sedia ada, klik yang mana membuka senarai, nama bilik kebal, fail tersembunyi, sambungan fail.
+- **Ikon yang mengikut tema**, boleh ditukar daripada cebisan CSS — dan **46 bahasa**: setiap satu yang dibawa Obsidian, tambah bahasa Yunani dan Sanskrit, yang tiada tetapannya dalam Obsidian. Pilih satu untuk plugin ini sahaja, atau ikut bahasa Obsidian sendiri.
+- **Tetapan:** bahasa, penjajaran, pemisah sedia ada, klik yang mana membuka senarai, nama bilik kebal, fail tersembunyi, sambungan fail.
 
 ![Senarai yang sama dalam mod alih/tukar nama: nama fail semasa disematkan di atas, folder jiran di bawahnya, dan nota sedia ada dikelabukan](../images/dropdown.png)
 
@@ -57,9 +60,11 @@ Dasar pembangun Obsidian menuntut sesuatu plugin menjelaskan setiap capaian kepa
 **Apa yang ia tulis.** Tiada apa-apa, sehingga anda menekan butang yang menyatakannya. Ada dua butang sedemikian, dan masing-masing hanya meliputi bidangnya sendiri:
 
 - Butang **Sunting sebagai teks** pada pemapar membuka kunci fail di hadapan anda, fail itu sahaja dalam tab itu sahaja. Selepas itu suntingan anda disimpan ke dalamnya sambil anda menaip.
-- **Mangga** pada bar tajuk, yang hanya kelihatan selagi bar laluan menghala ke luar bilik kebal anda, membuka kunci pembuatan, penukaran nama dan pengalihan pada laluan luaran. Ia terkunci semula sebaik sahaja anda kembali ke dalam, jadi kebenaran itu tidak pernah hidup lebih lama daripada folder yang anda berikannya.
+- **Mangga merah** pada bar tajuk, yang mengambil tempat togol tukar nama selagi bar laluan menghala ke luar bilik kebal anda, membuka kunci pembuatan, penukaran nama, pengalihan dan pemadaman pada laluan luaran — dan memulangkan tempat itu kepada togol sebaik sahaja ia terbuka. Ia terkunci semula sebaik sahaja anda kembali ke dalam, dan pada tekanan yang meninggalkan mod tukar nama, jadi kebenaran itu tidak pernah hidup lebih lama daripada folder yang anda berikannya.
 
-Kedua-dua pembukaan kunci itu tidak disimpan dalam ruang kerja mahupun dalam tetapan, jadi penulisan tidak pernah tersedia pada fail yang anda tidak ingat pernah dibuka. Dalam kedua-dua keadaan itu tiada apa-apa ditulis ganti — sasaran yang sudah ada ditolak, menggunakan penciptaan eksklusif sistem fail itu sendiri dan bukan pemeriksaan yang boleh kalah dalam perlumbaan — dan sesuatu nota tidak pernah boleh *dialihkan* keluar daripada bilik kebal anda, kerana pautan kepadanya akan putus secara senyap; menahan <kbd>Ctrl</kbd> menyalinnya ke luar sebagai gantinya.
+Kedua-dua pembukaan kunci itu tidak disimpan dalam ruang kerja mahupun dalam tetapan, jadi penulisan tidak pernah tersedia pada fail yang anda tidak ingat pernah dibuka. Dalam kedua-dua keadaan itu tiada apa-apa ditulis ganti — sasaran yang sudah ada ditolak, menggunakan penciptaan eksklusif sistem fail itu sendiri dan bukan pemeriksaan yang boleh kalah dalam perlumbaan.
+
+Mengalihkan sesuatu nota *keluar* daripada bilik kebal anda ialah satu-satunya penulisan yang memakan sesuatu yang tidak dapat dipulangkan: Obsidian hanya mengemas kini pautan di dalam bilik kebal, jadi setiap pautan yang menghala ke nota itu akan putus. Ia ditawarkan di sebalik dialog yang menyatakannya dan mengira jumlah nota yang terjejas, dan ia berlaku secara salin-kemudian-padam melalui tong sampah Obsidian sendiri, jadi ia boleh dipulihkan sama seperti nota yang dipadam. Menahan <kbd>Ctrl</kbd> menyalinnya ke luar sebagai gantinya.
 
 **Mengapa.** Nota yang anda cari selalunya berada dalam bilik kebal lain, dalam folder penyegerakan atau pada pemacu USB, sedangkan jawapan Obsidian sendiri — tukar bilik kebal — menutup segala yang sedang anda buka. Ini membolehkan anda pergi melihat tanpa beredar, dan membetulkan salah taip sementara anda di situ.
 
@@ -81,7 +86,7 @@ Tiada plugin diperlukan. **Peneroka fail** teras, jika dihidupkan, ialah yang me
 
 Diuji terhadap plugin komuniti yang berkongsi bar tajuk nota atau menjawab klik pada folder — pada kedua-dua susunan pemuatan, masing-masing hidup dan mati:
 
-- [Folder notes](obsidian://show-plugin?id=folder-notes) — pemisah membuka nota folder dan bukannya menunjukkan foldernya, menjadikan setiap ruas laluan sebagai tempat yang boleh dituju. Satu-satunya plugin nota folder yang menuntut laluan pada bar tajuk; [Folder Note](obsidian://show-plugin?id=folder-note-plugin) dan [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) tidak mendengar di situ, jadi pemisah menunjukkan folder seperti biasa.
+- [Folder notes](obsidian://show-plugin?id=folder-notes) — pemisah membuka nota folder dan bukannya menunjukkan foldernya, menjadikan setiap ruas laluan sebagai tempat yang boleh dituju, sedalam mana sekalipun: notanya dicari menurut konvensyen plugin itu sendiri dan bukan diserahkan kepadanya untuk menjawab. Ia juga satu-satunya yang menerbitkan konvensyen sedemikian; [Folder Note](obsidian://show-plugin?id=folder-note-plugin) dan [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) tidak menerbitkan apa-apa dan tidak pernah menuntut laluan pada bar tajuk, jadi dengan kedua-duanya pemisah menunjukkan folder seperti biasa.
 - [Quick Explorer](obsidian://show-plugin?id=quick-explorer) dan [Front Matter Title](obsidian://show-plugin?id=obsidian-front-matter-title-plugin) — kedua-duanya melukis ke elemen bar tajuk yang sama; Lure mengekalkan barisnya siapa pun yang dimuatkan dahulu, dan mematikan mana-mana satu membiarkan yang lain utuh.
 - [Nav Link Header](obsidian://show-plugin?id=nav-link-header), [Running Head](obsidian://show-plugin?id=running-head), [Crumbs](obsidian://show-plugin?id=crumbs-obsidian), [Breadcrumbs](obsidian://show-plugin?id=breadcrumbs) — mempunyai jalurnya sendiri, dan hidup berdampingan tanpa masalah.
 
@@ -105,7 +110,9 @@ Penyumbang akan disenaraikan di sini apabila sumbangan mula tiba.
 
 ## Pautan
 
+
 - **Dokumentasi:** [docs/](../)
+- **Log perubahan:** [CHANGELOG.md](CHANGELOG.ms.md)
 - **Halaman plugin:** https://community.obsidian.md/plugins/lure
 - **Kehadiran web / sumber:** https://github.com/Gelaende51/obsidian-lure
 - **Derma:** [Ko-fi](https://ko-fi.com/vault51) — lihat [menyumbang](#menyumbang).

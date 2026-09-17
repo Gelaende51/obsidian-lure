@@ -1,4 +1,4 @@
-<!-- Terjemahan README.md — status: commit dc475f7.
+<!-- Terjemahan README.md — status: commit f133f41.
      Terjemahan mesin (Claude Opus 5), belum ditinjau penutur asli.
      Koreksi sangat diterima; README bahasa Inggris adalah versi acuan. -->
 
@@ -15,30 +15,33 @@ Obsidian 1.8.7+ · hanya desktop · AGPL-3.0
 ## Pengungkapan AI
 
 - **Agen** — **Claude Opus 5** dan **Claude Sonnet 5** (Anthropic, lewat Claude Code): menulis TypeScript, CSS, seluruh 45 set terjemahan, dan dokumentasinya. Terjemahan dibuat mesin dan belum ditinjau penutur asli.
-- **Pemakaian** — 3–22 Agustus 2026, 22 sesi, \~11.820 balasan: \~15,4 juta token dihasilkan, \~55,5 juta dikirim, \~3644,2 juta pembacaan ulang dari singgahan (\~3715,0 juta total).
+- **Pemakaian** — 3 Agustus – 6 September 2026, 22 sesi, \~13.378 balasan: \~16,3 juta token dihasilkan, \~62,3 juta dikirim, \~4245,1 juta pembacaan ulang dari singgahan (\~4323,6 juta total).
 - **Hulu** — model belajar dari kode sumber terbuka, dokumentasi, dan tulisan komunitas yang diterbitkan orang lain. Sebagian besar kreditnya milik mereka.
 - **Penulis** — Vault51: menentukan setiap fitur, mencoba tiap versi di vault sungguhan, mengarahkan perbaikan, meninjau seluruh hasilnya.
 
 ## Fitur
 
-- **Klik sebuah folder** untuk menampilkan isi folder *induknya* — tukar satu folder dengan tetangganya tanpa menyentuh sisa jalurnya. Nama catatan bekerja dengan cara yang sama, termasuk ekstensinya.
+- **Klik sebuah folder** untuk menampilkan isi folder *induknya* — tukar satu folder dengan tetangganya, biarkan sisa jalurnya utuh. Nama catatan bekerja dengan cara yang sama, memilih namanya tanpa ekstensi.
 - **Klik pemisah** setelah sebuah folder untuk menampilkan dan membentangkannya di Penjelajah berkas. Satu setelan menukar kedua peran itu.
-- **Klik kanan atau seret entri mana pun** — menu konteks dan perilaku seret milik Penjelajah berkas sendiri.
-- **Klik nama berkas atau ruang kosong** untuk mengetik jalur, dengan pelengkapan otomatis. `/` turun ke dalam, <kbd>Backspace</kbd> naik satu tingkat, <kbd>Enter</kbd> mengesahkan.
-- **Tombol pensil pada folder** mengalihkan interaksi yang sama ke mode pindah/ganti nama, dengan pemeriksaan yang sama seperti yang Obsidian lakukan.
-- **Tahan <kbd>Ctrl</kbd>** untuk membuka di tab baru — atau, dalam mode pindah/ganti nama, untuk menyalin catatan ke sana alih-alih memindahkannya.
-- **Daftar terbuka pada entri tempat kamu berada**, dan menelusurinya dengan panah atau penunjuk mengisi bidang dengan apa yang kamu tunjuk. Melewati salah satu ujungnya, ia mengembalikan apa yang kamu ketik.
-- **Nama melengkapi dirinya saat kamu mengetik** — sejauh nama-nama di folder itu sama, kesamaannya muncul setelah kursor, tersorot; <kbd>Tab</kbd> atau <kbd>→</kbd> mengambilnya utuh, <kbd>Backspace</kbd> mengembalikannya.
-- **<kbd>Tab</kbd> melengkapi seperti shell**: ia memanjangkan yang kamu ketik sejauh nama-nama itu sama, dan masuk ke sebuah folder begitu tinggal satu nama. Melewati ujung jalur, ia justru memperluas pilihan: nama, nama dengan ekstensi, jalur dari vault, jalur dari akar sistem. <kbd>Shift</kbd>+<kbd>Tab</kbd> menempuh jalan yang sama ke belakang.
+- **Klik kanan atau seret entri mana pun** — menu konteks milik Penjelajah berkas sendiri, entri demi entri, berikut perilaku seretnya. Jalur di luar vault mendapat menu setara yang dibuat khusus untuknya, sampai ke *Hapus* lewat tong sampah sistem.
+- **Klik nama berkas atau ruang kosong** untuk mengetik jalur, dengan pelengkapan otomatis. `/` turun ke dalam, <kbd>Backspace</kbd> naik satu tingkat, <kbd>Enter</kbd> mengesahkan — dan jalur yang belum ada langsung dibuat, dengan pemberitahuan yang menyebutkan ke mana ia pergi.
+- **Daftar terbuka pada entri tempat Anda berdiri**, dan menelusurinya dengan panah atau penunjuk mengisi bidang dengan apa yang Anda tunjuk. Melewati salah satu ujung daftar mengembalikan apa yang tadi Anda ketik, dan menjauhkan penunjuk darinya menyerahkan sorotan kembali ke tempat Anda tadi.
+- **Tombol pensil pada folder** mengalihkan interaksi yang sama ke mode pindah/ganti nama, diperiksa dengan cara Obsidian memeriksanya.
+- **Tahan <kbd>Ctrl</kbd>** untuk membuka di tab baru — atau, dalam mode pindah/ganti nama, untuk menyalin catatan ke sana sebagai gantinya. Nama catatan dan segmen folder menerima pengubah yang sama, dan juga seretan, persis seperti barisnya di Penjelajah berkas.
+- **Nama melengkapi dirinya saat Anda mengetik** — sejauh nama-nama di folder itu sama, kesamaannya muncul setelah kursor, tersorot; mengetik menelannya huruf demi huruf, <kbd>Tab</kbd> atau <kbd>→</kbd> mengambilnya utuh, <kbd>Backspace</kbd> mengembalikannya. Daftar tetap menyaring berdasarkan apa yang Anda ketik, bukan apa yang ditawarkan.
+- **<kbd>Tab</kbd> melengkapi seperti shell**: ia memanjangkan apa yang Anda ketik sejauh nama-nama di folder itu sama, melangkah menuju salah satunya setapak demi setapak ketika mereka berbeda, dan baru masuk ke sebuah folder begitu tinggal satu nama. Melewati ujung jalur, ia justru memperluas pilihan: nama, nama dengan ekstensi, jalur dari vault, jalur dari akar sistem. <kbd>Shift</kbd>+<kbd>Tab</kbd> menempuh jalan yang sama ke belakang — menandai apa yang dikembalikannya alih-alih menghapusnya — dan melewati pangkalnya ia terus naik menyusuri jalur, lalu berputar ke jalur sistem. Ke arah mana pun, satu putaran kembali ke jalur yang Anda bangun.
 - **Klik kanan untuk menyalin** — dua kali untuk sebuah nama, tiga kali untuk semua yang di sebelah kanannya, dan pada ruang kosong untuk seluruh jalur atau jalur sistem.
-- **Seret catatan ke sebuah folder di baris itu** untuk memindahkannya ke sana, berikut tautannya. Nama vault juga menerimanya, untuk akar; satu pilihan utuh berpindah sebagai satu, dan folder yang tak dapat menerimanya tidak menampilkan apa pun.
-- **Ketik URL** — `https://`, `obsidian://`, atau jalur `file://` maupun berkode persen — dan ia dibuka alih-alih dibaca sebagai nama catatan.
-- **Jalur panjang memendek di tempat hurufnya berlebih** — tak pernah melewati apa yang membedakan sebuah folder dari tetangganya — dan baru bergulir ketika tak ada lagi yang bisa dimampatkan. Tunjuk nama yang dipendekkan untuk melihatnya utuh.
-- **<kbd>F2</kbd>** berganti antara judul di dalam catatan dan bilah jalur.
-- **Klik nama vault** untuk menjelajahi vault Anda yang lain, folder rumah, akar sistem berkas, dan diska yang terpasang tanpa berpindah vault. Hanya-baca sampai Anda membuka gembok, dan berbingkai warna galat sepanjang waktu. Mati secara bawaan — lihat [di luar vault](#di-luar-vault).
+- **Seret catatan ke sebuah folder di baris itu** untuk memindahkannya ke sana, berikut tautannya — tujuannya sudah ada di layar, jadi cukup satu seretan alih-alih perjalanan melewati pohon berkas. Nama vault juga menerimanya, untuk akar. Satu pilihan utuh berpindah sebagai satu, dan folder yang tak dapat menerima apa yang ditawarkan tidak menampilkan apa pun alih-alih gagal belakangan.
+- **Jatuhkan teks ke baris itu untuk menuliskannya** — ke sebuah folder atau nama vault untuk menamai catatan baru di sana, ke nama catatannya sendiri untuk menambahkannya ke akhir apa yang sedang Anda baca. Berkas dari desktop Anda bekerja dengan cara yang sama, dan baris itu bercincin biru selagi ia akan mendarat.
+- **Bidang itu mengenakan warna dari apa yang dinamainya** — warna yang sama dengan barisnya di dalam daftar, kelabu untuk catatan sebuah folder — dan **menjadi merah** begitu tak ada lagi yang menyahut, sehingga Anda bisa melihat sebelum menekan <kbd>Enter</kbd> apakah ia akan membuka sebuah catatan atau membuatnya.
+- **Berkas HTML tampil sebagai halaman**, dalam bingkai tanpa satu pun izin diberikan — tanpa skrip, tanpa jaringan, tanpa asalnya sendiri — dengan lembar gaya dan gambar di sebelah berkas itu ikut dibawa masuk sehingga halaman tersimpan tetap tampak seperti dirinya. Sumbernya cukup satu tekanan jauhnya.
+- **Ketik URL** — `https://`, `obsidian://`, atau jalur `file://` maupun berkode persen — dan ia dibuka alih-alih diperlakukan sebagai nama catatan. Alamat web menuju tab penampil Web milik Obsidian sendiri bila Anda menyalakannya.
+- **Jalur panjang memendek di tempat hurufnya berlebih** — tak pernah melewati apa yang membedakan sebuah folder dari tetangganya, secara mulus alih-alih huruf demi huruf — dan baru bergulir ketika tak ada lagi yang bisa dimampatkan. Tunjuk nama yang dipendekkan untuk mendapatkannya kembali secara utuh.
+- **<kbd>F2</kbd>** berganti antara judul di dalam catatan dan bilah jalur, terbuka pada nama tanpa ekstensinya dan melebar ke jalur lengkap pada tekanan berikutnya. Ia melintas mulus melewati dialog ganti nama milik Obsidian ketika judulnya tergulir ke luar pandangan. Tersedia perintah *Fokus ke bilah jalur* untuk Anda tetapkan pintasannya bila Anda menginginkan gerak bilah alamat.
+- **Klik nama vault** untuk menjelajahi vault Anda yang lain, folder rumah, akar sistem berkas, dan diska yang terpasang tanpa berpindah vault. Hanya-baca sampai Anda membuka gembok merah yang di luar sana menggantikan tempat sakelar ganti nama, dan berbingkai warna galat sepanjang waktu. Mati secara bawaan — lihat [di luar vault](#di-luar-vault).
 - **Dua tingkat peringatan** — merah di luar vault, jingga untuk berkas teks yang tak punya penyunting di Obsidian. Lihat [dua warna peringatan](usage.id.md#dua-warna-peringatan).
-- **Ikon yang mengikuti tema**, bisa ditukar dari potongan CSS — dan **45 bahasa**, setiap bahasa yang dibawa Obsidian.
-- **Pengaturan:** perataan, pemisah siap pakai, klik mana yang membuka daftar, nama vault, berkas tersembunyi, ekstensi berkas.
+- **Ikon yang mengikuti tema**, bisa ditukar dari potongan CSS — dan **46 bahasa**: setiap bahasa yang dibawa Obsidian, ditambah Yunani dan Sanskerta, yang tak punya setelan di sana. Pilih satu untuk plugin ini saja, atau ikuti pilihan Obsidian sendiri.
+- **Pengaturan:** bahasa, perataan, pemisah siap pakai, klik mana yang membuka daftar, nama vault, berkas tersembunyi, ekstensi berkas.
 
 ![Daftar yang sama dalam mode pindah/ganti nama: nama berkas saat ini disematkan di atas, folder tetangga di bawahnya, dan catatan yang sudah ada diredupkan](../images/dropdown.png)
 
@@ -57,9 +60,11 @@ Kebijakan pengembang Obsidian mewajibkan sebuah plugin menjelaskan setiap akses 
 **Apa yang ia tulis.** Tidak ada, sampai Anda menekan tombol yang menyatakannya. Ada dua tombol semacam itu, dan masing-masing hanya mencakup wilayahnya sendiri:
 
 - Tombol **Edit sebagai teks** pada penampil membuka kunci berkas di hadapan Anda, berkas itu saja di tab itu saja. Sesudahnya suntingan Anda tersimpan ke dalamnya sembari Anda mengetik.
-- **Gembok** di bilah judul, yang hanya tampak selagi bilah jalur menunjuk ke luar vault, membuka kunci pembuatan, penggantian nama, dan pemindahan pada jalur eksternal. Ia terkunci lagi begitu Anda kembali ke dalam, sehingga izin itu tak pernah hidup lebih lama daripada folder yang Anda beri izin.
+- **Gembok merah** di bilah judul, yang menggantikan tempat sakelar ganti nama selagi bilah jalur menunjuk ke luar vault Anda, membuka kunci pembuatan, penggantian nama, pemindahan, dan penghapusan pada jalur eksternal — lalu menyerahkan tempat itu kembali kepada sakelar begitu terbuka. Ia terkunci lagi begitu Anda kembali ke dalam, dan pada tekanan yang meninggalkan mode ganti nama, sehingga izin itu tak pernah hidup lebih lama daripada folder yang Anda beri izin.
 
-Kedua pembukaan kunci itu tidak disimpan di ruang kerja maupun di pengaturan, jadi penulisan tak pernah terpasang siap pada berkas yang tak Anda ingat pernah dibuka. Pada kedua keadaan itu tak ada yang ditimpa — sasaran yang sudah ada ditolak, memakai pembuatan eksklusif milik sistem berkas sendiri alih-alih pemeriksaan yang bisa kalah dalam adu cepat — dan sebuah catatan tak pernah bisa *dipindahkan* keluar dari vault Anda, sebab tautan yang menuju ke sana akan putus diam-diam; menahan <kbd>Ctrl</kbd> menyalinnya ke luar sebagai gantinya.
+Kedua pembukaan kunci itu tidak disimpan di ruang kerja maupun di pengaturan, jadi penulisan tak pernah terpasang siap pada berkas yang tak Anda ingat pernah dibuka. Pada kedua keadaan itu tak ada yang ditimpa — sasaran yang sudah ada ditolak, memakai pembuatan eksklusif milik sistem berkas sendiri alih-alih pemeriksaan yang bisa kalah dalam adu cepat.
+
+Memindahkan catatan *keluar* dari vault Anda adalah satu-satunya penulisan yang berongkos dan tak tergantikan: Obsidian hanya memperbarui tautan di dalam vault, jadi setiap tautan yang menuju catatan itu akan putus. Ia ditawarkan di balik dialog yang menyatakannya dan menghitung catatan yang terpengaruh, dan ia berlangsung sebagai salin-lalu-hapus lewat tong sampah Obsidian sendiri, jadi ia sepulih menghapus sebuah catatan. Menahan <kbd>Ctrl</kbd> menyalinnya ke luar sebagai gantinya.
 
 **Mengapa.** Catatan yang Anda cari sering ada di vault lain, di folder sinkronisasi, atau di flashdisk, sementara jawaban Obsidian sendiri — berpindah vault — menutup semua yang sedang Anda buka. Ini membiarkan Anda pergi melihat tanpa beranjak, dan membetulkan salah ketik selagi di sana.
 
@@ -81,11 +86,11 @@ Tak ada plugin yang diperlukan. **Penjelajah berkas** bawaan, kalau menyala, ada
 
 Diuji terhadap plugin komunitas yang berbagi bilah judul catatan atau menanggapi klik pada folder — pada kedua urutan pemuatan, masing-masing menyala dan mati:
 
-- [Folder notes](obsidian://show-plugin?id=folder-notes) — pemisah membuka catatan folder alih-alih menampilkan foldernya, sehingga setiap ruas jalur menjadi tempat yang bisa dituju. Satu-satunya plugin catatan folder yang mengambil alih jalur di bilah judul; [Folder Note](obsidian://show-plugin?id=folder-note-plugin) dan [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) tidak menyimak di sana, jadi pemisah menampilkan folder seperti biasa.
+- [Folder notes](obsidian://show-plugin?id=folder-notes) — pemisah membuka catatan folder alih-alih menampilkan foldernya, sehingga setiap segmen jalur menjadi tempat yang bisa Anda tuju, sedalam apa pun: catatannya diuraikan dari konvensi milik plugin itu sendiri alih-alih diserahkan kepadanya untuk dijawab. Ia juga satu-satunya yang menerbitkan konvensi semacam itu; [Folder Note](obsidian://show-plugin?id=folder-note-plugin) dan [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) tidak menerbitkan apa pun dan tak pernah mengambil alih jalur di bilah judul, jadi dengan keduanya pemisah menampilkan folder seperti biasa.
 - [Quick Explorer](obsidian://show-plugin?id=quick-explorer) dan [Front Matter Title](obsidian://show-plugin?id=obsidian-front-matter-title-plugin) — keduanya menggambar ke elemen bilah judul yang sama; Lure mempertahankan barisnya siapa pun yang dimuat lebih dulu, dan mematikan salah satunya membiarkan yang lain utuh.
-- [Nav Link Header](obsidian://show-plugin?id=nav-link-header), [Running Head](obsidian://show-plugin?id=running-head), [Crumbs](obsidian://show-plugin?id=crumbs-obsidian), [Breadcrumbs](obsidian://show-plugin?id=breadcrumbs) — punya jalurnya sendiri, dan hidup berdampingan tanpa masalah.
+- [Nav Link Header](obsidian://show-plugin?id=nav-link-header), [Running Head](obsidian://show-plugin?id=running-head), [Crumbs](obsidian://show-plugin?id=crumbs-obsidian), [Breadcrumbs](obsidian://show-plugin?id=breadcrumbs) — punya jalurnya sendiri, dan hidup berdampingan.
 
-Hanya desktop — model interaksinya menuntut arahan tetikus, klik yang tepat, dan papan ketik. Hasil lengkap, apa yang masih perlu diuji, dan perbandingan dengan Quick Explorer serta Breadcrumbs ada di [kecocokan](../compatibility.md).
+Hanya desktop — model interaksinya menuntut arahan tetikus, klik yang tepat, dan papan ketik. Hasil lengkap, harapan yang masih tersisa, dan perbandingan dengan Quick Explorer serta Breadcrumbs ada di [kecocokan](../compatibility.md).
 
 ## Berkontribusi
 
@@ -106,6 +111,7 @@ Para kontributor akan didaftar di sini seiring sumbangan berdatangan.
 ## Tautan
 
 - **Dokumentasi:** [docs/](../)
+- **Log perubahan:** [CHANGELOG.md](CHANGELOG.id.md)
 - **Halaman plugin:** https://community.obsidian.md/plugins/lure
 - **Kehadiran web / sumber:** https://github.com/Gelaende51/obsidian-lure
 - **Donasi:** [Ko-fi](https://ko-fi.com/vault51) — lihat [berkontribusi](#berkontribusi).

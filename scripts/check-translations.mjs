@@ -133,20 +133,25 @@ for (const code of named) {
  * near-identical copy of it would go stale rather than help.
  */
 const DOCS_EXEMPT = new Set(["en", "en-GB"]);
-let documented = new Set();
+/**
+ * The documents translated per locale. Each is checked on its own: the
+ * changelog only counts once any translation of it exists, so a document whose
+ * localisation has not begun is not reported 44 times over.
+ */
+const TRANSLATED_DOCS = ["README", "CHANGELOG"];
+let i18nFiles = [];
 try {
-	documented = new Set(
-		readdirSync(resolve(root, "docs/i18n"))
-			.map((name) => /^README\.(.+)\.md$/.exec(name)?.[1])
-			.filter(Boolean),
-	);
+	i18nFiles = readdirSync(resolve(root, "docs/i18n"));
 } catch {
 	warnings.push("docs/i18n: not readable, skipping the guide check");
 }
-if (documented.size) {
+for (const doc of TRANSLATED_DOCS) {
+	const pattern = new RegExp(`^${doc}\\.(.+)\\.md$`);
+	const documented = new Set(i18nFiles.map((name) => pattern.exec(name)?.[1]).filter(Boolean));
+	if (!documented.size) continue;
 	for (const code of Object.keys(TRANSLATIONS)) {
 		if (!DOCS_EXEMPT.has(code) && !documented.has(code)) {
-			warnings.push(`${code}: translated strings but no docs/i18n/README.${code}.md`);
+			warnings.push(`${code}: translated strings but no docs/i18n/${doc}.${code}.md`);
 		}
 	}
 }

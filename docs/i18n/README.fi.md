@@ -1,4 +1,4 @@
-<!-- Käännös tiedostosta README.md — tilanne: commit dc475f7.
+<!-- Käännös tiedostosta README.md — tilanne: commit f133f41.
      Konekäännös (Claude Opus 5), jota äidinkieliset puhujat eivät ole
      tarkastaneet. Korjaukset ovat tervetulleita; englanninkielinen README
      on ratkaiseva versio. -->
@@ -16,34 +16,37 @@ Obsidian 1.8.7+ · vain työpöytä · AGPL-3.0
 ## Tekoälyilmoitus
 
 - **Agentti** — **Claude Opus 5** ja **Claude Sonnet 5** (Anthropic, Claude Coden kautta): kirjoitti TypeScriptin, CSS:n, kaikki 45 käännösjoukkoa ja dokumentaation. Käännökset ovat koneellisia, eivätkä äidinkieliset puhujat ole niitä tarkastaneet.
-- **Kulutus** — 3.–22. elokuuta 2026, 22 istuntoa, \~11 820 vastausta: \~15,4 milj. tuotettua tokenia, \~55,5 milj. lähetettyä, \~3644,2 milj. uudelleenlukua välimuistista (\~3715,0 milj. yhteensä).
+- **Kulutus** — 3. elokuuta – 6. syyskuuta 2026, 22 istuntoa, \~13 378 vastausta: \~16,3 milj. tuotettua tokenia, \~62,3 milj. lähetettyä, \~4245,1 milj. uudelleenlukua välimuistista (\~4323,6 milj. yhteensä).
 - **Lähde** — malli oppi avoimesta lähdekoodista, dokumentaatiosta ja yhteisön kirjoituksista, jotka muut ovat julkaisseet. Suurin osa ansiosta kuuluu sinne.
 - **Tekijä** — Vault51: määritteli jokaisen ominaisuuden, kokeili jokaista versiota oikeassa holvissa, ohjasi korjaukset ja luki kaikki tulokset läpi.
 
 ## Ominaisuudet
 
-- **Napsauta kansiota** saadaksesi luettelon sen *yläpuolella* olevan kansion sisällöstä — vaihda yksi kansio naapurikansioon koskematta muuhun polkuun. Muistiinpanon nimi toimii samoin, tiedostopääte mukaan lukien.
-- **Napsauta kansion jälkeistä erotinta** näyttääksesi ja avataksesi sen Tiedostot-paneelissa. Yksi asetus vaihtaa nämä kaksi roolia keskenään.
-- **Napsauta hiiren oikealla tai raahaa mitä tahansa riviä** — Tiedostot-paneelin oma pikavalikko ja raahaustoiminta.
-- **Napsauta tiedostonimeä tai tyhjää tilaa** kirjoittaaksesi polun, täydennyksen kanssa. `/` laskeutuu alaspäin, <kbd>Askelpalautin</kbd> nousee tason ylöspäin, <kbd>Enter</kbd> vahvistaa.
+- **Napsauta kansiota** saadaksesi luettelon sen *yläkansion* sisällöstä — vaihda yksi kansio sisarkansioon koskematta muuhun polkuun. Muistiinpanon nimi toimii samoin ja valitsee nimen ilman tiedostopäätettä.
+- **Napsauta kansion jälkeistä erotinta** näyttääksesi ja avataksesi kansion Tiedostot-paneelissa. Yksi asetus vaihtaa nämä kaksi roolia keskenään.
+- **Napsauta mitä tahansa kohtaa hiiren oikealla tai raahaa sitä** — Tiedostot-paneelin oma pikavalikko kohta kohdalta, ja sen raahauskäytös. Holvin ulkopuolisille poluille rakennetaan vastaava valikko, aina *Delete*-kohtaan (Poista) asti, joka kulkee järjestelmän roskakorin kautta.
+- **Napsauta tiedostonimeä tai tyhjää tilaa** kirjoittaaksesi polun, täydennyksen kanssa. `/` laskeutuu alaspäin, <kbd>Askelpalautin</kbd> nousee tason ylöspäin, <kbd>Enter</kbd> vahvistaa — ja polku, jota ei vielä ole, yksinkertaisesti luodaan, ja ilmoitus kertoo, minne se päätyi.
+- **Luettelo avautuu siihen kohtaan, jossa olet**, ja sen selaaminen nuolinäppäimillä tai osoittimella täyttää kentän sillä, mitä osoitat. Luettelon kummankin pään ohi siirtyminen palauttaa kirjoittamasi tekstin, ja osoittimen vieminen pois luettelosta palauttaa korostuksen sinne, missä olit.
 - **Kansion kynäpainike** vaihtaa samat toiminnot siirto-/nimeämistilaan, samoilla tarkistuksilla kuin Obsidian itse tekee.
-- **Pidä <kbd>Ctrl</kbd> pohjassa** avataksesi uudessa välilehdessä — tai siirto-/nimeämistilassa kopioidaksesi muistiinpanon sinne sen sijaan, että siirtäisit sen.
-- **Luettelo avautuu siihen kohtaan, jossa olet**, ja sen selaaminen nuolilla tai osoittimella täyttää kentän sillä, mitä osoitat. Kummankin pään ohi se palauttaa sen, minkä olit kirjoittanut.
-- **Nimet täydentyvät kirjoittaessa** — siltä osin kuin kansion nimet ovat yhtenevät, yhteneväisyys ilmestyy kohdistimen jälkeen valittuna; <kbd>Sarkain</kbd> tai <kbd>→</kbd> ottaa sen kokonaan, <kbd>Askelpalautin</kbd> ottaa sen takaisin.
-- **<kbd>Sarkain</kbd> täydentää kuin komentotulkki**: se jatkaa kirjoittamaasi niin pitkälle kuin nimet ovat yhtenevät, ja astuu kansioon heti kun yksi nimi on jäljellä. Polun lopun jälkeen se sen sijaan laajentaa valintaa: nimi, nimi päätteineen, polku holvista, polku järjestelmän juuresta. <kbd>Vaihto</kbd>+<kbd>Sarkain</kbd> kulkee saman matkan takaperin.
+- **Pidä <kbd>Ctrl</kbd> pohjassa** avataksesi uudessa välilehdessä — tai siirto-/nimeämistilassa kopioidaksesi muistiinpanon sinne siirtämisen sijaan. Muistiinpanon nimi ja kansio-osat ottavat vastaan samat muokkausnäppäimet ja raahauksen kuin niiden rivit Tiedostot-paneelissa.
+- **Nimet täydentyvät kirjoittaessa** — siltä osin kuin kansion nimet ovat yhtenevät, yhteinen osa ilmestyy kohdistimen jälkeen valittuna; kirjoittaminen nielee sen kirjain kirjaimelta, <kbd>Sarkain</kbd> tai <kbd>→</kbd> ottaa sen kokonaan, <kbd>Askelpalautin</kbd> ottaa sen takaisin. Luettelo suodattaa edelleen sen mukaan, mitä kirjoitit, eikä sen mukaan, mitä tarjottiin.
+- **<kbd>Sarkain</kbd> täydentää kuin komentotulkki**: se jatkaa kirjoittamaasi niin pitkälle kuin kansion nimet ovat yhtenevät, etenee askel kerrallaan kohti yhtä niistä, kun ne eroavat, ja astuu kansioon vasta, kun vain yksi nimi on jäljellä. Polun lopun jälkeen se sen sijaan laajentaa valintaa: nimi, nimi päätteineen, polku holvista, polku järjestelmän juuresta. <kbd>Vaihto</kbd>+<kbd>Sarkain</kbd> kulkee saman tien takaperin — merkiten palauttamansa sen sijaan, että poistaisi sen — ja alun ohi jatkaa polkua ylöspäin ja kiertää sitten järjestelmäpolkuun. Kumpaan suuntaan tahansa kierros palaa lopulta rakentamaasi polkuun.
 - **Kopioi napsauttamalla hiiren oikealla** — kahdesti nimen, kolmesti kaiken sen oikealla puolella, ja tyhjässä tilassa koko polun tai järjestelmäpolun.
-- **Vedä muistiinpano rivin kansion päälle** siirtääksesi sen sinne, linkkeineen. Myös holvin nimi ottaa vastaan, juureen; koko valinta siirtyy yhtenä, eikä kansio joka ei voi ottaa vastaan näytä mitään.
-- **Kirjoita URL** — `https://`, `obsidian://`, tai `file://`- tai prosenttikoodattu polku — ja se avataan sen sijaan että sitä luettaisiin muistiinpanon nimenä.
-- **Pitkät polut lyhenevät siitä, missä kirjaimet ovat tarpeettomia** — ei koskaan yli sen, mikä erottaa kansion viereisestä — ja vierivät vasta kun mitään ei ole enää tiivistettävissä. Osoita lyhennettyä nimeä nähdäksesi sen kokonaan.
-- **<kbd>F2</kbd>** vaihtaa muistiinpanon sisäisen otsikon ja polkurivin välillä.
-- **Napsauta holvin nimeä** selataksesi muita holvejasi, kotikansiotasi, tiedostojärjestelmän juurta ja liitettyjä asemia holvia vaihtamatta. Vain luku, kunnes avaat riippulukon, ja kehystettynä virhevärillä koko ajan. Oletuksena pois päältä — katso [holvin ulkopuolella](#holvin-ulkopuolella).
+- **Vedä muistiinpano rivin kansion päälle** siirtääksesi sen sinne linkkeineen — kohde on jo näkyvissä, joten se on yksi raahaus eikä matka tiedostopuun läpi. Myös holvin nimi käy, juureen. Koko valinta siirtyy yhtenä, eikä kansio, joka ei voi ottaa tarjottua vastaan, näytä mitään sen sijaan, että epäonnistuisi jälkikäteen.
+- **Pudota tekstiä riville kirjoittaaksesi sen muistiin** — kansion tai holvin nimen päälle nimetäksesi sille uuden muistiinpanon, muistiinpanon oman nimen päälle lisätäksesi sen lukemasi tekstin loppuun. Työpöydältä tuotu tiedosto toimii samoin, ja rivi hehkuu sinisenä niin kauan kuin pudotus osuisi.
+- **Kenttä saa nimeämänsä kohteen värin** — saman värin kuin sen rivillä on luettelossa, harmaan kansion muistiinpanolle — ja **muuttuu punaiseksi**, kun mikään ei vastaa sitä, joten näet ennen <kbd>Enter</kbd>-painallusta, avaako se muistiinpanon vai luoko uuden.
+- **HTML-tiedostot näkyvät sivuina** kehyksessä, josta kaikki oikeudet on evätty — ei skriptejä, ei verkkoa, ei omaa alkuperää — ja tiedoston vieressä olevat tyylitiedostot ja kuvat tuodaan mukaan, jotta tallennettu sivu näyttää yhä itseltään. Lähdekoodi on yhden painalluksen päässä.
+- **Kirjoita URL** — `https://`, `obsidian://`, tai `file://`- tai prosenttikoodattu polku — ja se avataan sen sijaan, että sitä käsiteltäisiin muistiinpanon nimenä. Verkko-osoitteet avautuvat Obsidianin oman Web viewer -näkymän (verkkokatselin) välilehteen, jos se on käytössä.
+- **Pitkät polut lyhenevät siitä, missä kirjaimet ovat tarpeettomia** — ei koskaan yli sen, mikä erottaa kansion viereisestä, ja sujuvasti eikä kirjain kerrallaan — ja vierivät vasta, kun mitään ei ole enää tiivistettävissä. Osoita lyhennettyä nimeä saadaksesi sen takaisin kokonaan.
+- **<kbd>F2</kbd>** vaihtaa muistiinpanon sisäisen otsikon ja polkupalkin välillä: se avautuu nimeen ilman päätettä ja laajenee seuraavilla painalluksilla täysiin polkuihin. Se kulkee siististi Obsidianin nimeämisikkunan läpi, kun otsikko on vieritetty näkyvistä. Komento *Kohdista polkupalkkiin* on valmiina sidottavaksi, jos haluat osoiterivin eleen.
+- **Napsauta holvin nimeä** selataksesi muita holvejasi, kotikansiotasi, tiedostojärjestelmän juurta ja liitettyjä asemia holvia vaihtamatta. Vain luku, kunnes avaat punaisen riippulukon, joka on siellä nimeämiskytkimen paikalla, ja kehystettynä virhevärillä koko ajan. Oletuksena pois päältä — katso [holvin ulkopuolella](#holvin-ulkopuolella).
 - **Kaksi varoitustasoa** — punainen holvin ulkopuolella, oranssi tekstitiedostoille, joille Obsidianilla ei ole muokkainta. Katso [kaksi varoitusväriä](usage.fi.md#kaksi-varoitusväriä).
-- **Teemaan mukautuvat kuvakkeet**, vaihdettavissa CSS-pätkästä — ja **45 kieltä**, jokainen jonka Obsidian toimittaa.
-- **Asetukset:** tasaus, valmiit erottimet, mikä napsautus avaa luettelon, holvin nimi, piilotiedostot, tiedostopäätteet.
+- **Teemaan mukautuvat kuvakkeet**, vaihdettavissa CSS-pätkästä — ja **46 kieltä**: jokainen, jonka Obsidian toimittaa, sekä kreikka ja sanskrit, joille siinä ei ole asetusta. Valitse kieli pelkästään lisäosalle tai seuraa Obsidianin omaa.
+- **Asetukset:** kieli, tasaus, valmiit erottimet, mikä napsautus avaa luettelon, holvin nimi, piilotiedostot, tiedostopäätteet.
 
 ![Sama luettelo siirto-/nimeämistilassa: tiedoston nykyinen nimi kiinnitettynä ylimmäksi, naapurikansiot alapuolella, ja olemassa olevat muistiinpanot himmennettyinä](../images/dropdown.png)
 
-*Siirto-/nimeämistilassa sama luettelo tarjoaa jotain muuta: muistiinpanon nykyinen nimi kiinnitettynä ylimmäksi, jotta sen voi siirtää nimeämättä uudelleen; kansiot joihin sen voi siirtää; ja jo varatut nimet himmennettyinä, jottei mitään korvattaisi vahingossa.*
+*Siirto-/nimeämistilassa sama luettelo tarjoaa jotain muuta: muistiinpanon nykyinen nimi kiinnitettynä ylimmäksi, jotta sen voi siirtää nimeämättä uudelleen; kansiot, joihin sen voi siirtää; ja jo varatut nimet himmennettyinä, jottei mitään korvattaisi vahingossa.*
 
 → [Täysi käyttöohje](usage.fi.md)
 
@@ -51,20 +54,22 @@ Obsidian 1.8.7+ · vain työpöytä · AGPL-3.0
 
 Obsidianin kehittäjäsäännöt vaativat, että lisäosa selittää kaiken pääsyn holvin ulkopuolisiin tiedostoihin, joten suoraan sanottuna:
 
-**Tekeekö se ylipäätään mitään tästä.** Vain jos kytket päälle **Pääsy ulkoisiin tiedostoihin**, joka on **oletuksena pois päältä**. Asetuksen ollessa pois päältä lisäosasta ei ole mitään reittiä ulkoiseen polkuun, eikä mikään alla kuvatusta koodista koskaan suoritu.
+**Tekeekö se ylipäätään mitään tästä.** Vain jos kytket päälle asetuksen **Pääsy ulkoisiin tiedostoihin**, joka on **oletuksena pois päältä**. Asetuksen ollessa pois päältä lisäosasta ei ole mitään reittiä ulkoiseen polkuun, eikä mikään alla kuvatusta koodista koskaan suoritu.
 
 **Mitä se lukee.** Vain kun sitä pyydät. Holvin nimen napsautus luettelee muut holvisi — luettuina Obsidianin omasta `obsidian.json`-tiedostosta — sekä kotikansiosi, tiedostojärjestelmän juuren ja liitetyt asemat (`/proc/mounts` Linuxissa, `/Volumes` macOS:ssä, asemakirjaimet Windowsissa). Sieltä eteenpäin selaaminen luettelee hakemistojen sisältöä, ja tiedoston avaaminen lukee juuri sen tiedoston.
 
 **Mitä se kirjoittaa.** Ei mitään, ennen kuin painat painiketta, joka niin sanoo. Tällaisia painikkeita on kaksi, ja kumpikin kattaa vain oman alueensa:
 
 - Katselimen painike **Muokkaa tekstinä** avaa lukituksen edessäsi olevasta tiedostosta, juuri siitä tiedostosta juuri siinä välilehdessä. Sen jälkeen muutoksesi tallentuvat siihen sitä mukaa kuin kirjoitat.
-- Otsikkorivin **riippulukko**, joka näkyy vain polkurivin osoittaessa holvin ulkopuolelle, avaa luomisen, uudelleennimeämisen ja siirtämisen ulkoisissa poluissa. Se lukkiutuu uudelleen heti kun palaat sisäpuolelle, joten lupa ei koskaan elä pidempään kuin kansio, jota varten sen annoit.
+- Otsikkorivin **punainen riippulukko**, joka on nimeämiskytkimen paikalla silloin, kun polkupalkki osoittaa holvin ulkopuolelle, avaa luomisen, uudelleennimeämisen, siirtämisen ja poistamisen ulkoisissa poluissa — ja luovuttaa paikan takaisin kytkimelle, kun se on auki. Se lukkiutuu uudelleen, kun palaat sisäpuolelle, sekä painalluksella, joka poistuu nimeämistilasta, joten lupa ei koskaan elä pidempään kuin kansio, jota varten sen annoit.
 
-Kumpaakaan avausta ei tallenneta työtilaan eikä asetuksiin, joten kirjoitus ei koskaan ole viritettynä tiedostoon, jonka avaamista et muista. Kummassakaan tilassa mitään ei korvata — olemassa oleva kohde hylätään käyttäen tiedostojärjestelmän omaa yksinomaista luontia eikä tarkistusta, joka voisi hävitä kilpajuoksun — eikä muistiinpanoa voi koskaan *siirtää* pois holvista, koska siihen osoittavat linkit hajoaisivat äänettömästi; <kbd>Ctrl</kbd>-näppäimen pohjassa pitäminen kopioi sen ulos sen sijaan.
+Kumpaakaan avausta ei tallenneta työtilaan eikä asetuksiin, joten kirjoitus ei koskaan ole viritettynä tiedostoon, jonka avaamista et muista. Kummassakaan tilassa mitään ei koskaan korvata — olemassa oleva kohde hylätään käyttäen tiedostojärjestelmän omaa yksinomaista luontia eikä tarkistusta, joka voisi hävitä kilpajuoksun.
 
-**Miksi.** Etsimäsi muistiinpanot ovat usein toisessa holvissa, synkronointikansiossa tai USB-tikulla, ja Obsidianin oma vastaus — vaihda holvia — sulkee kaiken mitä sinulla oli auki. Tämä antaa sinun mennä katsomaan lähtemättä pois, ja korjata kirjoitusvirheen samalla.
+Muistiinpanon siirtäminen *pois* holvista on ainoa kirjoitus, jonka hintaa mikään ei voi palauttaa: Obsidian päivittää linkkejä vain holvin sisällä, joten jokainen tähän muistiinpanoon osoittava linkki katkeaa. Se tarjotaan vain valintaikkunan takana, joka sanoo tämän ja laskee vaikutuksen kohteena olevat muistiinpanot, ja se tapahtuu kopioimalla ja sitten poistamalla Obsidianin oman roskakorin kautta, joten se on yhtä palautettavissa kuin muistiinpanon poistaminen. <kbd>Ctrl</kbd>-näppäimen pohjassa pitäminen kopioi sen ulos sen sijaan.
 
-**Rajoitus.** Obsidianin muokkain on sidottu holvin sisäisiin tiedostoihin, joten ulkoista tiedostoa **ei voi** avata oikeana muistiinpanona linkkeineen, takaisinlinkkeineen ja kaikkineen; siihen ei pysty mikään lisäosa. Lure näyttää sen sen sijaan omassa katselimessaan (Markdown, kuvat, ääni, video, PDF), ja kaikelle muulle tarjolla on *Avaa ulkoisesti*. Polkurivi pysyy virhevärillä kehystettynä aina kun se osoittaa holvin ulkopuolelle, ja jälki alkaa valitsemastasi paikasta — holvin nimestä, kotikansiosta, asemasta — eikä koneen hakemistorakenteesta.
+**Miksi.** Etsimäsi muistiinpanot ovat usein toisessa holvissa, synkronointikansiossa tai USB-tikulla, ja Obsidianin oma vastaus — vaihda holvia — sulkee kaiken, mitä sinulla oli auki. Tämä antaa sinun mennä katsomaan lähtemättä pois, ja korjata kirjoitusvirheen samalla.
+
+**Rajoitus.** Obsidianin muokkain on sidottu holvin sisäisiin tiedostoihin, joten ulkoista tiedostoa **ei voi** avata oikeana muistiinpanona linkkeineen, takaisinlinkkeineen ja kaikkineen; siihen ei pysty mikään lisäosa. Lure näyttää sen sen sijaan omassa katselimessaan (Markdown, kuvat, ääni, video, PDF), ja kaikelle muulle tarjolla on *Avaa ulkoisesti*. Polkupalkki pysyy virhevärillä kehystettynä aina, kun se osoittaa holvin ulkopuolelle, ja polku alkaa valitsemastasi paikasta — holvin nimestä, kotikansiosta, asemasta — eikä koneen hakemistorakenteesta.
 
 ## Asennus
 
@@ -78,27 +83,27 @@ Listattu osoitteessa [community.obsidian.md/plugins/lure](https://community.obsi
 
 ## Yhteensopivuus
 
-Mitään lisäosaa ei vaadita. Ydinlisäosa **Tiedostot** on, jos se on päällä, se joka näyttää kansiot sivupalkissa; ilman sitä nuo napsautukset eivät tee mitään.
+Mitään lisäosaa ei vaadita. Ydinlisäosa **Tiedostot** on, jos se on päällä, se, joka näyttää kansiot sivupalkissa; ilman sitä nuo napsautukset eivät tee mitään.
 
 Kokeiltu niitä yhteisön lisäosia vastaan, jotka jakavat muistiinpanon otsikkorivin tai vastaavat kansionapsautukseen — molemmissa latausjärjestyksissä, kukin päällä ja pois:
 
-- [Folder notes](obsidian://show-plugin?id=folder-notes) — erotin avaa kansion muistiinpanon sen sijaan, että näyttäisi kansion, jolloin polun jokaisesta osasta tulee paikka johon mennä. Ainoa kansiomuistiinpanolisäosa, joka ottaa otsikkorivin polun haltuunsa; [Folder Note](obsidian://show-plugin?id=folder-note-plugin) ja [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) eivät kuuntele siellä, joten erotin näyttää kansion tavalliseen tapaan.
-- [Quick Explorer](obsidian://show-plugin?id=quick-explorer) ja [Front Matter Title](obsidian://show-plugin?id=obsidian-front-matter-title-plugin) — molemmat piirtävät samaan otsikkorivin elementtiin; Lure säilyttää rivinsä riippumatta siitä kumpi latautuu ensin, ja kumman tahansa sammuttaminen jättää toisen koskemattomaksi.
+- [Folder notes](obsidian://show-plugin?id=folder-notes) — erotin avaa kansion muistiinpanon sen sijaan, että näyttäisi kansion, jolloin polun jokaisesta osasta tulee paikka, johon voi mennä, kuinka syvällä tahansa: muistiinpano selvitetään lisäosan oman käytännön mukaan sen sijaan, että vastaaminen jätettäisiin sille. Se on myös ainoa, joka julkaisee tällaisen käytännön; [Folder Note](obsidian://show-plugin?id=folder-note-plugin) ja [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) eivät julkaise mitään eivätkä koskaan ota otsikkorivin polkua haltuunsa, joten niiden kanssa erotin näyttää kansion tavalliseen tapaan.
+- [Quick Explorer](obsidian://show-plugin?id=quick-explorer) ja [Front Matter Title](obsidian://show-plugin?id=obsidian-front-matter-title-plugin) — molemmat piirtävät samaan otsikkorivin elementtiin; Lure säilyttää rivinsä riippumatta siitä, kumpi latautuu ensin, ja kumman tahansa sammuttaminen jättää toisen koskemattomaksi.
 - [Nav Link Header](obsidian://show-plugin?id=nav-link-header), [Running Head](obsidian://show-plugin?id=running-head), [Crumbs](obsidian://show-plugin?id=crumbs-obsidian), [Breadcrumbs](obsidian://show-plugin?id=breadcrumbs) — niillä on oma nauhansa, ja ne tulevat toimeen rinnakkain.
 
-Vain työpöytä — vuorovaikutusmalli tarvitsee hiiren viemistä päälle, tarkkoja napsautuksia ja näppäimistön. Täydet tulokset, mitä on vielä testaamatta, ja vertailu Quick Exploreriin ja Breadcrumbsiin ovat [yhteensopivuudessa](../compatibility.md).
+Vain työpöytä — vuorovaikutusmalli tarvitsee osoittimen viemistä kohteen päälle, tarkkoja napsautuksia ja näppäimistön. Täydet tulokset, mitä on vielä odotettavissa, ja vertailu Quick Exploreriin ja Breadcrumbsiin löytyvät sivulta [yhteensopivuus](../compatibility.md).
 
 ## Osallistuminen
 
 - Virheilmoitukset ja pull requestit ovat tervetulleita — erityisesti **käännöskorjaukset**, koska kaikki 45 kieltä on käännetty koneellisesti eivätkä äidinkieliset puhujat ole niitä tarkastaneet. Katso [kehitys](../development.md) asennuksen ja perussääntöjen osalta.
 - **Virheseuranta:** https://github.com/Gelaende51/obsidian-lure/issues
-- **Lahjoitukset:** [Ko-fi](https://ko-fi.com/vault51). Lisäosa on joka tapauksessa ilmainen ja AGPL-lisensoitu; tipit ilahduttavat eikä niitä koskaan vaadita. Tarkoituksena on hiilikompensaatio — aikomus, ei sitoumus: mitään ei kompensoida ennen kuin summa on vaivan arvoinen, ja tämä rivi kertoo siitä heti kun jotain on todella kompensoitu.
+- **Lahjoitukset:** [Ko-fi](https://ko-fi.com/vault51). Lisäosa on joka tapauksessa ilmainen ja AGPL-lisensoitu; tipit ilahduttavat eikä niitä koskaan vaadita. Tarkoituksena on hiilikompensaatio — aikomus, ei sitoumus: mitään ei kompensoida ennen kuin summa on vaivan arvoinen, ja tämä rivi kertoo siitä heti, kun jotain on todella kompensoitu.
 
 ## Kiitokset
 
 - **Vault51** — tekijä: suunnittelu, vaatimukset ja käsin testaus koko matkan.
 - **Claude Opus 5** ja **Claude Sonnet 5** (Anthropic, Claude Coden kautta) — toteutus, käännökset ja dokumentaatio, tekijän johdolla. Katso [tekoälyilmoitus](#tekoälyilmoitus).
-- **[Obsidian](https://obsidian.md)** — sovellus, jota tämä laajentaa, ja jokaisen lisäosan käyttämän osan lähde: sen lisäosarajapinta, `setIcon`-kutsun takana oleva Lucide-kuvakejoukko, mukana tuleva i18next-esiintymä josta pikavalikon tekstit luetaan, sekä sen omat CSS-luokat ja -muuttujat. Mitään kolmannen osapuolen koodia ei paketoida mukaan; lisäosalla **ei ole ajonaikaisia riippuvuuksia**.
+- **[Obsidian](https://obsidian.md)** — sovellus, jota tämä laajentaa, ja jokaisen lisäosan käyttämän osan lähde: sen lisäosarajapinta, `setIcon`-kutsun takana oleva Lucide-kuvakejoukko, mukana tuleva i18next-esiintymä, josta pikavalikon tekstit luetaan, sekä sen omat CSS-luokat ja -muuttujat. Mitään kolmannen osapuolen koodia ei paketoida mukaan; lisäosalla **ei ole ajonaikaisia riippuvuuksia**.
 
 > **Obsidianin tiimi ei ole osallistunut tähän projektiin millään tavalla** — he eivät ole kirjoittaneet, tarkastaneet, hyväksyneet eivätkä tukeneet sitä. Obsidian on Dynalist Inc:n tavaramerkki; tämä on itsenäinen, riippumaton lisäosa.
 
@@ -106,7 +111,9 @@ Osallistujat luetellaan tässä sitä mukaa kuin panoksia saapuu.
 
 ## Linkit
 
+
 - **Dokumentaatio:** [docs/](../)
+- **Muutosloki:** [CHANGELOG.fi.md](CHANGELOG.fi.md)
 - **Lisäosan sivu:** https://community.obsidian.md/plugins/lure
 - **Verkkosivu / lähdekoodi:** https://github.com/Gelaende51/obsidian-lure
 - **Lahjoitukset:** [Ko-fi](https://ko-fi.com/vault51) — katso [osallistuminen](#osallistuminen).

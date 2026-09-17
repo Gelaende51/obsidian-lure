@@ -1,4 +1,4 @@
-<!-- Tłumaczenie README.md — stan: commit dc475f7.
+<!-- Tłumaczenie README.md — stan: commit f133f41.
      Tłumaczenie maszynowe (Claude Opus 5), nieskorygowane przez native
      speakerów. Poprawki mile widziane; wersją rozstrzygającą jest
      angielskie README. -->
@@ -9,37 +9,40 @@
 
 Wtyczka do [Obsidiana](https://obsidian.md), która zamienia nazwę pliku na pasku nagłówka notatki w klikalną, edytowalną ścieżkę przez cały skarbiec — jak pasek adresu w menedżerze plików [Dolphin](https://apps.kde.org/dolphin/).
 
-![Kliknięcie separatora za folderem: wskaźnik spoczywa na nim, a Przeglądarka plików pokazała i rozwinęła ten folder](../images/breadcrumb.png)
+![Kliknięcie separatora za folderem: wskaźnik spoczywa na nim, a Eksplorator plików pokazał i rozwinął ten folder](../images/breadcrumb.png)
 
 Obsidian 1.8.7+ · tylko komputer · AGPL-3.0
 
 ## Ujawnienie użycia SI
 
 - **Agent** — **Claude Opus 5** i **Claude Sonnet 5** (Anthropic, przez Claude Code): napisał TypeScript, CSS, wszystkie 45 zestawów tłumaczeń i dokumentację. Tłumaczenia powstały maszynowo i nie były sprawdzane przez native speakerów.
-- **Zużycie** — 3–22 sierpnia 2026, 22 sesje, \~11820 odpowiedzi: \~15,4 mln wygenerowanych tokenów, \~55,5 mln wysłanych, \~3644,2 mln odczytów z pamięci podręcznej (\~3715,0 mln łącznie).
+- **Zużycie** — 3 sierpnia – 6 września 2026, 22 sesje, \~13 378 odpowiedzi: \~16,3 mln wygenerowanych tokenów, \~62,3 mln wysłanych, \~4245,1 mln odczytów z pamięci podręcznej (\~4323,6 mln łącznie).
 - **Źródło** — model nauczył się z otwartego kodu, dokumentacji i tekstów społeczności opublikowanych przez innych. Większość zasługi należy do nich.
 - **Autor** — Vault51: określił każdą funkcję, przetestował każdą wersję w prawdziwym skarbcu, pokierował poprawkami, przejrzał wszystkie wyniki.
 
 ## Funkcje
 
-- **Kliknięcie folderu** otwiera listę z zawartością folderu *nadrzędnego* — zamień jeden folder na sąsiedni, nie ruszając reszty ścieżki. Nazwa notatki działa tak samo, razem z rozszerzeniem.
-- **Kliknięcie separatora** za folderem pokazuje go i rozwija w Przeglądarce plików. Jedno ustawienie zamienia obie role.
-- **Prawy przycisk myszy lub przeciągnięcie dowolnej pozycji** — menu kontekstowe i przeciąganie samej Przeglądarki plików.
-- **Kliknięcie nazwy pliku lub pustego miejsca** pozwala wpisać ścieżkę, z uzupełnianiem. `/` schodzi w dół, <kbd>Backspace</kbd> wychodzi poziom wyżej, <kbd>Enter</kbd> zatwierdza.
-- **Przycisk ołówka na folderze** przełącza te same interakcje na przenoszenie/zmianę nazwy, ze sprawdzeniami takimi, jakie robi sam Obsidian.
-- **Przytrzymaj <kbd>Ctrl</kbd>**, aby otworzyć w nowej karcie — albo, w trybie przenoszenia/zmiany nazwy, aby skopiować tam notatkę zamiast ją przenosić.
-- **Lista otwiera się na wpisie, w którym stoisz**, a przechodzenie po niej strzałkami lub wskaźnikiem wypełnia pole tym, co wskazujesz. Za którymkolwiek z końców oddaje to, co wpisałeś.
-- **Nazwy uzupełniają się w trakcie pisania** — tam, gdzie nazwy w folderze się zgadzają, zgodność pojawia się za kursorem, zaznaczona; <kbd>Tab</kbd> lub <kbd>→</kbd> bierze ją w całości, <kbd>Backspace</kbd> ją oddaje.
-- **<kbd>Tab</kbd> uzupełnia jak powłoka**: przedłuża wpisane tak daleko, jak nazwy się zgadzają, i wchodzi do folderu, gdy zostanie tylko jedna. Za końcem ścieżki poszerza natomiast zaznaczenie: nazwa, nazwa z rozszerzeniem, ścieżka od skarbca, ścieżka od katalogu głównego systemu. <kbd>Shift</kbd>+<kbd>Tab</kbd> idzie tą samą drogą wstecz.
+- **Kliknięcie folderu** otwiera listę z zawartością folderu *nadrzędnego* — zamień jeden folder na sąsiedni, nie ruszając reszty ścieżki. Nazwa notatki działa tak samo, zaznaczając nazwę bez rozszerzenia.
+- **Kliknięcie separatora** za folderem pokazuje go i rozwija w Eksploratorze plików. Jedno ustawienie zamienia obie role.
+- **Prawy przycisk myszy lub przeciągnięcie dowolnej pozycji** — własne menu kontekstowe Eksploratora plików, pozycja po pozycji, i jego zachowanie przy przeciąganiu. Ścieżki poza skarbcem dostają zbudowane dla nich równoważne menu, aż po *Usuń* przez kosz systemowy.
+- **Kliknięcie nazwy pliku lub pustego miejsca** pozwala wpisać ścieżkę, z autouzupełnianiem. `/` schodzi w dół, <kbd>Backspace</kbd> wychodzi poziom wyżej, <kbd>Enter</kbd> zatwierdza — a ścieżka, której jeszcze nie ma, zostaje po prostu utworzona, z powiadomieniem mówiącym, gdzie trafiła.
+- **Lista otwiera się na pozycji, w której stoisz**, a przechodzenie po niej strzałkami lub wskaźnikiem wypełnia pole tym, co wskazujesz. Wyjście za którykolwiek z końców listy oddaje to, co wpisałeś, a zabranie z niej wskaźnika zwraca podświetlenie tam, gdzie byłeś.
+- **Przycisk z ołówkiem na folderze** przełącza te same interakcje na przenoszenie/zmianę nazwy, ze sprawdzeniami takimi, jakie robi sam Obsidian.
+- **Przytrzymaj <kbd>Ctrl</kbd>**, aby otworzyć w nowej karcie — albo, w trybie przenoszenia/zmiany nazwy, aby skopiować tam notatkę zamiast ją przenosić. Nazwa notatki i segmenty folderów przyjmują te same modyfikatory i to samo przeciąganie co ich wiersze w Eksploratorze plików.
+- **Nazwy uzupełniają się w trakcie pisania** — tam, gdzie nazwy w folderze się zgadzają, zgodność pojawia się za kursorem, zaznaczona; pisanie pochłania ją litera po literze, <kbd>Tab</kbd> lub <kbd>→</kbd> bierze ją w całości, <kbd>Backspace</kbd> ją oddaje. Lista nadal filtruje według tego, co wpisałeś, a nie według tego, co jej podpowiedziano.
+- **<kbd>Tab</kbd> uzupełnia jak powłoka**: przedłuża wpisane tak daleko, jak zgadzają się nazwy w tym folderze, a gdy się nie zgadzają, idzie w stronę jednej z nich krok po kroku i wchodzi do folderu dopiero wtedy, gdy zostanie jedna nazwa. Za końcem ścieżki poszerza natomiast zaznaczenie: nazwa, nazwa z rozszerzeniem, ścieżka od skarbca, ścieżka od katalogu głównego systemu. <kbd>Shift</kbd>+<kbd>Tab</kbd> idzie tą samą drogą wstecz — zaznaczając to, co oddaje, zamiast to usuwać — a za jej początkiem wspina się dalej w górę ścieżki, po czym zawraca do ścieżki systemowej. W którąkolwiek stronę, pełne okrążenie wraca do ścieżki, którą zbudowałeś.
 - **Kliknij prawym, aby skopiować** — dwa razy nazwę, trzy razy wszystko na prawo od niej, a na pustym miejscu całą ścieżkę albo ścieżkę systemową.
-- **Przeciągnij notatkę na folder na pasku**, aby ją tam przenieść, razem z odnośnikami. Nazwa skarbca też ją przyjmie, do katalogu głównego; całe zaznaczenie przenosi się jako jedno, a folder, który nie może go przyjąć, nie pokazuje nic.
-- **Wpisz adres URL** — `https://`, `obsidian://` albo ścieżkę `file://` lub zakodowaną procentowo — a zostanie otwarty zamiast potraktowany jak nazwa notatki.
-- **Długie ścieżki skracają się tam, gdzie litery są zbędne** — nigdy poza to, co odróżnia folder od sąsiedniego — a przewijają się dopiero, gdy nie ma już czego ściskać. Wskaż skrócona nazwę, aby zobaczyć ją w całości.
-- **<kbd>F2</kbd>** przełącza między tytułem w treści a paskiem ścieżki.
-- **Kliknięcie nazwy skarbca** pozwala przeglądać inne skarbce, katalog domowy, katalog główny systemu plików i zamontowane napędy bez zmiany skarbca. Tylko do odczytu, dopóki nie otworzysz kłódki, i przez cały czas obramowane kolorem błędu. Domyślnie wyłączone — zobacz [poza skarbcem](#poza-skarbcem).
+- **Przeciągnij notatkę na folder na pasku**, aby ją tam przenieść, razem z odnośnikami — cel jest już na ekranie, więc wystarczy jedno przeciągnięcie zamiast wędrówki po drzewie plików. Nazwa skarbca też ją przyjmie, do katalogu głównego. Całe zaznaczenie przenosi się jako jedno, a folder, który nie może przyjąć tego, co mu podano, nie pokazuje nic, zamiast zawieść po fakcie.
+- **Upuść tekst na pasek, aby go zapisać** — na folder lub nazwę skarbca, aby nazwać w nim nową notatkę, na nazwę samej notatki, aby dodać go na końcu tego, co czytasz. Plik z pulpitu działa tak samo, a pasek obrysowuje się na niebiesko tam, gdzie upuszczone wyląduje.
+- **Pole przybiera kolor tego, co nazywa** — ten sam, który jego wiersz ma na liście, szary dla notatki folderu — i **robi się czerwone**, gdy nic mu już nie odpowiada, więc jeszcze przed naciśnięciem <kbd>Enter</kbd> widzisz, czy otworzy notatkę, czy ją utworzy.
+- **Pliki HTML pokazują się jako strony**, w ramce z odebranymi wszystkimi uprawnieniami — bez skryptów, bez sieci, bez własnego źródła — z wciągniętymi arkuszami stylów i obrazami leżącymi obok pliku, żeby zapisana strona nadal wyglądała jak ona sama. Do źródła dzieli cię jedno naciśnięcie.
+- **Wpisz adres URL** — `https://`, `obsidian://` albo ścieżkę `file://` lub zakodowaną procentowo — a zostanie otwarty zamiast potraktowany jak nazwa notatki. Adresy internetowe trafiają do karty własnej przeglądarki internetowej Obsidiana, jeśli masz ją włączoną.
+- **Długie ścieżki skracają się tam, gdzie litery są zbędne** — nigdy poza to, co odróżnia folder od sąsiedniego, i płynnie, a nie litera po literze — a przewijają się dopiero, gdy nie ma już czego ściskać. Wskaż skróconą nazwę, aby zobaczyć ją w całości.
+- **<kbd>F2</kbd>** przełącza między tytułem w treści a paskiem ścieżki, otwierając się na nazwie bez rozszerzenia i rozszerzając zaznaczenie przy kolejnych naciśnięciach aż do pełnych ścieżek. Przechodzi czysto przez okno zmiany nazwy Obsidiana, gdy tytuł jest przewinięty poza widok. Jest też polecenie *Ustaw fokus na pasku ścieżki*, które możesz przypisać, jeśli chcesz gestu paska adresu.
+- **Kliknięcie nazwy skarbca** pozwala przeglądać inne skarbce, katalog domowy, katalog główny systemu plików i zamontowane napędy bez zmiany skarbca. Tylko do odczytu, dopóki nie otworzysz czerwonej kłódki, która zajmuje tam miejsce przełącznika zmiany nazwy, i przez cały czas obramowane kolorem błędu. Domyślnie wyłączone — zobacz [poza skarbcem](#poza-skarbcem).
 - **Dwa poziomy ostrzeżenia** — czerwony poza skarbcem, pomarańczowy dla plików tekstowych, dla których Obsidian nie ma edytora. Zobacz [dwa kolory ostrzeżeń](usage.pl.md#dwa-kolory-ostrzeżeń).
-- **Ikony podatne na motywy**, wymienne z poziomu fragmentu CSS — i **45 języków**, wszystkie, które dostarcza Obsidian.
-- **Ustawienia:** wyrównanie, gotowe separatory, które kliknięcie otwiera listę, nazwa skarbca, pliki ukryte, rozszerzenia plików.
+- **Ikony podatne na motywy**, wymienne z poziomu fragmentu CSS — i **46 języków**: wszystkie, które dostarcza Obsidian, plus greka i sanskryt, dla których nie ma on ustawienia. Wybierz jeden dla samej wtyczki albo podążaj za językiem Obsidiana.
+- **Ustawienia:** język, wyrównanie, gotowe separatory, które kliknięcie otwiera listę, nazwa skarbca, pliki ukryte, rozszerzenia plików.
 
 ![Ta sama lista w trybie przenoszenia/zmiany nazwy: bieżąca nazwa pliku przypięta na górze, poniżej foldery sąsiednie, a istniejące notatki wyszarzone](../images/dropdown.png)
 
@@ -58,13 +61,15 @@ Zasady Obsidiana dla twórców wymagają, by wtyczka wyjaśniła każdy dostęp 
 **Co zapisuje.** Nic, dopóki nie naciśniesz przycisku, który to mówi. Takie przyciski są dwa i każdy obejmuje wyłącznie własny zakres:
 
 - Przycisk **Edytuj jako tekst** w podglądzie odblokowuje plik, który masz przed sobą — ten jeden plik w tej jednej karcie. Od tej chwili twoje zmiany są w nim zapisywane w miarę pisania.
-- **Kłódka** w nagłówku, widoczna tylko wtedy, gdy pasek ścieżki wskazuje poza skarbiec, odblokowuje tworzenie, zmianę nazwy i przenoszenie w ścieżkach zewnętrznych. Zamyka się z powrotem, gdy wrócisz do środka, więc zgoda nigdy nie przeżywa folderu, dla którego jej udzielono.
+- **Czerwona kłódka** w nagłówku, która zajmuje miejsce przełącznika zmiany nazwy, dopóki pasek ścieżki wskazuje poza twój skarbiec, odblokowuje tworzenie, zmianę nazwy, przenoszenie i usuwanie w ścieżkach zewnętrznych — a po otwarciu oddaje to miejsce przełącznikowi. Zamyka się z powrotem, gdy wrócisz do środka, a także przy naciśnięciu kończącym tryb zmiany nazwy, więc zgoda nigdy nie przeżywa folderu, dla którego jej udzielono.
 
-Żadne z odblokowań nie jest zapisywane w obszarze roboczym ani w ustawieniach, więc zapis nigdy nie jest odbezpieczony na pliku, o którego otwarciu nie pamiętasz. W żadnym z tych stanów nic nie jest nadpisywane — istniejący cel jest odrzucany, przy użyciu wyłącznego tworzenia oferowanego przez sam system plików, a nie sprawdzenia, które mogłoby przegrać wyścig — a notatki nigdy nie da się *przenieść* poza skarbiec, bo odnośniki do niej pękłyby po cichu; przytrzymanie <kbd>Ctrl</kbd> kopiuje ją tam zamiast tego.
+Żadne z odblokowań nie jest zapisywane w obszarze roboczym ani w ustawieniach, więc zapis nigdy nie jest odbezpieczony na pliku, o którego otwarciu nie pamiętasz. W żadnym z tych stanów nic nie jest nadpisywane — istniejący cel jest odrzucany, przy użyciu wyłącznego tworzenia oferowanego przez sam system plików, a nie sprawdzenia, które mogłoby przegrać wyścig.
+
+Przeniesienie notatki *poza* skarbiec to jedyny zapis, który kosztuje coś, czego nic nie odda: Obsidian aktualizuje odnośniki tylko wewnątrz skarbca, więc każdy odnośnik wskazujący na tę notatkę przestanie działać. Jest oferowane za oknem, które to mówi i liczy notatki, których dotknie, a odbywa się jako skopiowanie, a potem usunięcie przez własny kosz Obsidiana, więc daje się odzyskać tak samo jak usunięta notatka. Przytrzymanie <kbd>Ctrl</kbd> kopiuje ją tam zamiast tego.
 
 **Po co.** Notatki, których szukasz, często leżą w innym skarbcu, w folderze synchronizacji albo na pendrivie, a własna odpowiedź Obsidiana — zmień skarbiec — zamyka wszystko, co miałeś otwarte. To pozwala pójść i zajrzeć bez wychodzenia, a przy okazji poprawić literówkę.
 
-**Ograniczenie.** Edytor Obsidiana jest przywiązany do plików wewnątrz skarbca, więc pliku zewnętrznego **nie da się** otworzyć jako prawdziwej notatki, z odnośnikami, odnośnikami zwrotnymi i całą resztą; nie potrafi tego żadna wtyczka. Lure pokazuje go zamiast tego we własnym podglądzie (Markdown, obrazy, dźwięk, wideo, PDF), a dla wszystkiego innego oferuje *Otwórz zewnętrznie*. Pasek ścieżki pozostaje obramowany kolorem błędu, kiedy tylko wskazuje poza skarbiec, a trop zaczyna się w miejscu, które wybrałeś — nazwie skarbca, katalogu domowym, napędzie — a nie w układzie katalogów maszyny.
+**Ograniczenie.** Edytor Obsidiana jest przywiązany do plików wewnątrz skarbca, więc pliku zewnętrznego **nie da się** otworzyć jako prawdziwej notatki, z odnośnikami, odnośnikami zwrotnymi i całą resztą; nie potrafi tego żadna wtyczka. Lure pokazuje go zamiast tego we własnym podglądzie (Markdown, obrazy, dźwięk, wideo, PDF), a dla wszystkiego innego oferuje *Otwórz zewnętrznie*. Pasek ścieżki pozostaje obramowany kolorem błędu, kiedy tylko wskazuje poza twój skarbiec, a trop zaczyna się w miejscu, które wybrałeś — nazwie skarbca, katalogu domowym, napędzie — a nie w układzie katalogów maszyny.
 
 ## Instalacja
 
@@ -78,11 +83,11 @@ Widnieje na [community.obsidian.md/plugins/lure](https://community.obsidian.md/p
 
 ## Zgodność
 
-Żadna wtyczka nie jest wymagana. Wbudowana **Przeglądarka plików**, jeśli jest włączona, jest tym, co pokazuje foldery na pasku bocznym; bez niej te kliknięcia nic nie robią.
+Żadna wtyczka nie jest wymagana. Wbudowany **Eksplorator plików**, jeśli jest włączony, jest tym, co pokazuje foldery na pasku bocznym; bez niego te kliknięcia nic nie robią.
 
 Sprawdzone z wtyczkami społeczności, które dzielą nagłówek notatki albo odpowiadają na kliknięcie folderu — w obu kolejnościach ładowania, każda włączona i wyłączona:
 
-- [Folder notes](obsidian://show-plugin?id=folder-notes) — separator otwiera notatkę folderu zamiast go pokazywać, dzięki czemu każdy odcinek ścieżki staje się miejscem, do którego można pójść. To jedyna wtyczka notatek folderowych, która zajmuje ścieżkę w nagłówku; [Folder Note](obsidian://show-plugin?id=folder-note-plugin) i [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) tam nie nasłuchują, więc separator pokazuje folder jak zwykle.
+- [Folder notes](obsidian://show-plugin?id=folder-notes) — separator otwiera notatkę folderu zamiast go pokazywać, dzięki czemu każdy segment ścieżki staje się miejscem, do którego można pójść, choćby najgłębiej: notatka jest ustalana według własnej konwencji tamtej wtyczki, zamiast zostawiać jej odpowiedź. Jest też jedyną, która taką konwencję ogłasza; [Folder Note](obsidian://show-plugin?id=folder-note-plugin) i [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) nie ogłaszają żadnej i nigdy nie zajmują ścieżki w nagłówku, więc przy nich separator pokazuje folder jak zwykle.
 - [Quick Explorer](obsidian://show-plugin?id=quick-explorer) i [Front Matter Title](obsidian://show-plugin?id=obsidian-front-matter-title-plugin) — obie rysują w tym samym elemencie nagłówka; Lure zachowuje swój wiersz niezależnie od kolejności ładowania, a wyłączenie którejkolwiek zostawia drugą nienaruszoną.
 - [Nav Link Header](obsidian://show-plugin?id=nav-link-header), [Running Head](obsidian://show-plugin?id=running-head), [Crumbs](obsidian://show-plugin?id=crumbs-obsidian), [Breadcrumbs](obsidian://show-plugin?id=breadcrumbs) — mają własny pasek i współistnieją bez problemu.
 
@@ -106,7 +111,9 @@ Współtwórcy będą wymieniani tutaj w miarę napływu wkładu.
 
 ## Odnośniki
 
+
 - **Dokumentacja:** [docs/](../)
+- **Lista zmian:** [CHANGELOG.md](CHANGELOG.pl.md)
 - **Strona wtyczki:** https://community.obsidian.md/plugins/lure
 - **Obecność w sieci / źródła:** https://github.com/Gelaende51/obsidian-lure
 - **Darowizny:** [Ko-fi](https://ko-fi.com/vault51) — zobacz [współtworzenie](#współtworzenie).

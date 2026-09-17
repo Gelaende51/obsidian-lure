@@ -1,4 +1,4 @@
-<!-- Oversettelse av README.md — status: commit dc475f7.
+<!-- Oversettelse av README.md — status: commit f133f41.
      Maskinoversatt (Claude Opus 5) og ikke gjennomlest av morsmålsbrukere.
      Rettelser er velkomne; den engelske README-filen er den gjeldende
      utgaven.
@@ -11,7 +11,7 @@
 
 # Lure
 
-Et [Obsidian](https://obsidian.md)-tillegg som gjør filnavnet i overskriftslinjen til en notat om til en klikkbar, redigerbar sti gjennom hele hvelvet — som adresselinjen i filbehandleren [Dolphin](https://apps.kde.org/dolphin/).
+Et [Obsidian](https://obsidian.md)-tillegg som gjør filnavnet i overskriftslinjen til et notat om til en klikkbar, redigerbar sti gjennom hele hvelvet — som adresselinjen i filbehandleren [Dolphin](https://apps.kde.org/dolphin/).
 
 ![Klikk på skilletegnet etter en mappe: pekeren hviler på det, og Filutforskeren har vist og utvidet den mappen](../images/breadcrumb.png)
 
@@ -20,34 +20,37 @@ Obsidian 1.8.7+ · kun datamaskin · AGPL-3.0
 ## AI-erklæring
 
 - **Agent** — **Claude Opus 5** og **Claude Sonnet 5** (Anthropic, via Claude Code): skrev TypeScript-koden, CSS-en, alle 45 oversettelsessettene og dokumentasjonen. Oversettelsene er laget maskinelt og ikke gjennomlest av morsmålsbrukere.
-- **Forbruk** — 3.–22. august 2026, 22 økter, \~11820 svar: \~15,4 mill. genererte tokens, \~55,5 mill. sendte, \~3644,2 mill. gjenlesinger fra hurtiglageret (\~3715,0 mill. totalt).
+- **Forbruk** — 3. august – 6. september 2026, 22 økter, \~13 378 svar: \~16,3 mill. genererte tokens, \~62,3 mill. sendte, \~4245,1 mill. gjenlesinger fra hurtiglageret (\~4323,6 mill. totalt).
 - **Opphav** — modellen har lært av åpen kildekode, dokumentasjon og fellesskapstekster utgitt av andre. Mesteparten av æren tilfaller dem.
 - **Forfatter** — Vault51: fastsatte hver funksjon, prøvde hver utgave i et ekte hvelv, styrte rettelsene og leste gjennom alle resultater.
 
 ## Funksjoner
 
-- **Klikk på en mappe** for en liste over innholdet i mappen *over* — bytt ut én mappe med en nabomappe uten å røre resten av stien. Navnet på notatet virker på samme måte, filendelsen inkludert.
+- **Klikk på en mappe** for en liste over innholdet i mappen *over* — bytt ut én mappe med en nabomappe, og la resten av stien være. Navnet på notatet virker på samme måte, og merker navnet uten filendelsen.
 - **Klikk på skilletegnet** etter en mappe for å vise og utvide den i Filutforskeren. Én innstilling bytter om på de to rollene.
-- **Høyreklikk eller dra hvilken som helst oppføring** — Filutforskerens egen hurtigmeny og draoppførsel.
-- **Klikk på filnavnet eller på tom plass** for å skrive en sti, med fullføring. `/` går nedover, <kbd>Rettetast</kbd> går ett nivå opp, <kbd>Enter</kbd> bekrefter.
-- **Blyantknappen på mappe** stiller de samme handlingene om til flytt/gi nytt navn, med de samme kontrollene Obsidian selv gjør.
-- **Hold <kbd>Ctrl</kbd>** for å åpne i en ny fane — eller, i flytt/gi nytt navn-modus, for å kopiere notatet dit i stedet for å flytte det.
-- **Listen åpner på oppføringen du står i**, og å gå gjennom den med piltastene eller pekeren fyller feltet med det du peker på. Forbi begge ender gir den deg tilbake det du hadde skrevet.
-- **Navn fullfører seg selv mens du skriver** — der mappens navn stemmer overens, vises overensstemmelsen etter markøren, merket; <kbd>Tab</kbd> eller <kbd>→</kbd> tar den hel, <kbd>Rettetast</kbd> tar den tilbake.
-- **<kbd>Tab</kbd> fullfører som et skall**: det forlenger det du skrev så langt navnene stemmer overens, og går inn i en mappe så snart bare ett navn står igjen. Forbi enden av stien utvider det i stedet merkingen: navn, navn med endelse, sti fra hvelvet, sti fra systemroten. <kbd>Skift</kbd>+<kbd>Tab</kbd> går samme vei tilbake.
+- **Høyreklikk eller dra hvilken som helst oppføring** — Filutforskerens egen hurtigmeny, oppføring for oppføring, og dens draoppførsel. Stier utenfor hvelvet får en tilsvarende meny bygget for seg, helt ned til *Slett* via systemets papirkurv.
+- **Klikk på filnavnet eller på tom plass** for å skrive en sti, med autofullføring. `/` går nedover, <kbd>Rettetast</kbd> går ett nivå ut, <kbd>Enter</kbd> bekrefter — og en sti som ikke finnes ennå, blir rett og slett opprettet, med en melding om hvor den havnet.
+- **Listen åpner på oppføringen du står i**, og å gå gjennom den med piltastene eller pekeren fyller feltet med det du peker på. Forbi begge ender av listen får du tilbake det du hadde skrevet, og tar du pekeren bort fra den, går merkingen tilbake dit du var.
+- **Blyantknappen på mappe** stiller de samme handlingene om til å gi nytt navn / flytte, med de samme kontrollene Obsidian selv gjør.
+- **Hold <kbd>Ctrl</kbd>** for å åpne i en ny fane — eller, i gi nytt navn-/flyttemodus, for å kopiere notatet dit i stedet. Navnet på notatet og mappeleddene tar de samme tastekombinasjonene, og draing, som radene deres i Filutforskeren gjør.
+- **Navn fullfører seg selv mens du skriver** — der navnene i mappen stemmer overens, vises overensstemmelsen etter markøren, merket; skriving sluker den bokstav for bokstav, <kbd>Tab</kbd> eller <kbd>→</kbd> tar den hel, <kbd>Rettetast</kbd> tar den tilbake. Listen fortsetter å filtrere etter det du skrev, ikke etter det som ble tilbudt.
+- **<kbd>Tab</kbd> fullfører som et skall**: det forlenger det du skrev så langt navnene i mappen stemmer overens, går ett skritt av gangen mot ett av dem når de ikke gjør det, og går inn i en mappe først når bare ett navn står igjen. Forbi enden av stien utvider det i stedet merkingen: navn, navn med endelse, sti fra hvelvet, sti fra systemroten. <kbd>Skift</kbd>+<kbd>Tab</kbd> går samme vei tilbake — og merker det den gir tilbake i stedet for å slette det — og forbi starten fortsetter den oppover stien, og går så rundt til systemstien. Uansett vei ender en runde tilbake på stien du bygde.
 - **Høyreklikk for å kopiere** — to ganger for et navn, tre ganger for alt til høyre for det, og på det tomme feltet for hele stien eller systemstien.
-- **Dra en notat til en mappe i raden** for å flytte det dit, lenker og alt. Hvelvets navn tar imot også, til roten; en hel merking flytter som én, og en mappe som ikke kan ta imot, viser ingenting.
-- **Skriv en URL** — `https://`, `obsidian://` eller en `file://`- eller prosentkodet sti — og den åpnes i stedet for å leses som et notatnavn.
-- **Lange stier kortes ned der bokstavene er overflødige** — aldri lenger enn det som skiller en mappe fra nabomappen — og ruller først når det ikke er mer å presse sammen. Pek på et forkortet navn for å få det helt igjen.
-- **<kbd>F2</kbd>** veksler mellom overskriften i notatet og stilinjen.
-- **Klikk på navnet på hvelvet** for å bla i de andre hvelvene dine, hjemmemappen, roten av filsystemet og monterte stasjoner uten å bytte hvelv. Skrivebeskyttet til du åpner en hengelås, og innrammet i feilfargen hele veien. Av som standard — se [utenfor hvelvet](#utenfor-hvelvet).
+- **Dra et notat til en mappe i raden** for å flytte det dit, lenker og alt — målet står allerede på skjermen, så det blir ett dratak i stedet for en tur gjennom filtreet. Hvelvets navn virker også, til roten. En hel merking flytter som én, og en mappe som ikke kan ta imot det som tilbys, viser ingenting i stedet for å svikte etterpå.
+- **Slipp tekst på raden for å skrive den ned** — på en mappe eller på hvelvets navn for å gi et nytt notat der navn, på notatets eget navn for å legge den til på slutten av det du leser. En fil fra skrivebordet virker på samme måte, og raden lyser blått der den ville lande.
+- **Feltet bærer fargen til det det navngir** — den samme fargen raden har i listen, grått for et mappenotat — og **blir rødt** når ingenting svarer til det, så du ser før du trykker <kbd>Enter</kbd> om det åpner et notat eller lager et.
+- **HTML-filer vises som sider**, i en ramme uten en eneste tillatelse — ingen skript, ingen nettverkstilgang, ingen egen opprinnelse — med stilarkene og bildene som ligger ved siden av filen tatt med, slik at en lagret side fortsatt ser ut som seg selv. Kildekoden er ett tastetrykk unna.
+- **Skriv en URL** — `https://`, `obsidian://` eller en `file://`- eller prosentkodet sti — og den åpnes i stedet for å leses som et notatnavn. Nettadresser går til en fane i Obsidians egen nettviser der du har den på.
+- **Lange stier kortes ned der bokstavene er overflødige** — aldri lenger enn det som skiller en mappe fra nabomappen, og jevnt heller enn en bokstav av gangen — og ruller først når det ikke er mer å presse sammen. Pek på et forkortet navn for å få det helt igjen.
+- **<kbd>F2</kbd>** veksler mellom overskriften i notatet og stilinjen, åpner på navnet uten filendelsen og går ved videre trykk ut til de fullstendige stiene. Den passerer rent gjennom Obsidians dialog for å gi nytt navn når tittelen er rullet ut av syne. Kommandoen *Fokuser på stilinjen* står klar til å bindes om du vil ha adresselinjebevegelsen.
+- **Klikk på hvelvets navn** for å bla i de andre hvelvene dine, hjemmemappen, roten av filsystemet og monterte stasjoner uten å bytte hvelv. Skrivebeskyttet til du åpner den røde hengelåsen som der ute tar plassen til bryteren for å gi nytt navn, og innrammet i feilfargen hele veien. Av som standard — se [utenfor hvelvet](#utenfor-hvelvet).
 - **To varselnivåer** — rødt utenfor hvelvet, oransje for tekstfiler Obsidian ikke har noen redigerer for. Se [de to varselfargene](usage.no.md#de-to-varselfargene).
-- **Temavennlige ikoner**, som kan byttes ut fra et CSS-utdrag — og **45 språk**, alle Obsidian leverer.
-- **Innstillinger:** justering, ferdige skilletegn, hvilket klikk som åpner listen, navnet på hvelvet, skjulte filer, filendelser.
+- **Temavennlige ikoner**, som kan byttes ut fra et CSS-utdrag — og **46 språk**: alle Obsidian leverer, pluss gresk og sanskrit, som det ikke har noen innstilling for. Velg ett for tillegget alene, eller følg Obsidians eget.
+- **Innstillinger:** språk, justering, ferdige skilletegn, hvilket klikk som åpner listen, hvelvets navn, skjulte filer, filendelser.
 
-![Den samme listen i flytt/gi nytt navn-modus: filens nåværende navn festet øverst, nabomapper under, og eksisterende notater nedtonet](../images/dropdown.png)
+![Den samme listen i gi nytt navn-/flyttemodus: filens nåværende navn festet øverst, nabomapper under, og eksisterende notater nedtonet](../images/dropdown.png)
 
-*I flytt/gi nytt navn-modus tilbyr den samme listen noe annet: notatets nåværende navn festet øverst, så det kan flyttes uten å få nytt navn; mapper å flytte det inn i; og navn som allerede er tatt nedtonet, slik at ingenting blir overskrevet ved et uhell.*
+*I gi nytt navn-/flyttemodus tilbyr den samme listen noe annet: notatets nåværende navn festet øverst, så det kan flyttes uten å få nytt navn; mapper å flytte det inn i; og navn som allerede er tatt nedtonet, slik at ingenting blir overskrevet ved et uhell.*
 
 → [Fullstendig veiledning](usage.no.md)
 
@@ -57,14 +60,16 @@ Obsidians utviklerregler krever at et tillegg forklarer all tilgang til filer ut
 
 **Om det i det hele tatt gjør noe av dette.** Bare hvis du slår på **Tilgang til eksterne filer**, som er **av som standard**. Med innstillingen av finnes det ingen vei fra tillegget til en ekstern sti, og ingenting av koden nedenfor kjøres noen gang.
 
-**Hva det leser.** Bare når du ber om det. Et klikk på navnet på hvelvet lister opp de andre hvelvene dine — lest fra Obsidians egen `obsidian.json` — pluss hjemmemappen, roten av filsystemet og monterte stasjoner (`/proc/mounts` på Linux, `/Volumes` på macOS, stasjonsbokstaver på Windows). Videre blaing derfra lister opp mappeinnhold, og å åpne en fil leser nettopp den filen.
+**Hva det leser.** Bare når du ber om det. Et klikk på hvelvets navn lister opp de andre hvelvene dine — lest fra Obsidians egen `obsidian.json` — pluss hjemmemappen, roten av filsystemet og monterte stasjoner (`/proc/mounts` på Linux, `/Volumes` på macOS, stasjonsbokstaver på Windows). Videre blaing derfra lister opp mappeinnhold, og å åpne en fil leser nettopp den filen.
 
 **Hva det skriver.** Ingenting, før du trykker på en knapp som sier det. Det er to slike knapper, og hver dekker bare sitt eget område:
 
 - Viserens knapp **Rediger som tekst** låser opp filen du har foran deg, nettopp den filen i nettopp den fanen. Deretter lagres endringene dine til den mens du skriver.
-- **Hengelåsen** i overskriftslinjen, som bare vises mens stilinjen peker utenfor hvelvet, låser opp å opprette, gi nytt navn og flytte på eksterne stier. Den låses igjen så snart du kommer tilbake innenfor, så tillatelsen overlever aldri mappen du ga den for.
+- Overskriftslinjens **røde hengelås**, som står på plassen til bryteren for å gi nytt navn mens stilinjen peker utenfor hvelvet, låser opp å opprette, gi nytt navn, flytte og slette på eksterne stier — og gir plassen tilbake til bryteren så snart den er åpnet. Den låses igjen når du kommer tilbake innenfor, og ved trykket som forlater modusen for å gi nytt navn, slik at tillatelsen aldri overlever mappen du ga den for.
 
-Ingen av opplåsingene lagres i arbeidsflaten eller i innstillingene, så skriving er aldri spent på en fil du ikke husker at du åpnet. I ingen av tilstandene blir noe overskrevet — et mål som allerede finnes blir avvist, med filsystemets egen eksklusive opprettelse i stedet for en sjekk som kunne tape kappløpet — og et notat kan aldri *flyttes* ut av hvelvet, fordi lenker til det ville ryke i stillhet; å holde <kbd>Ctrl</kbd> kopierer det ut i stedet.
+Ingen av opplåsingene lagres i arbeidsflaten eller i innstillingene, så skriving er aldri spent på en fil du ikke husker at du åpnet. I ingen av tilstandene blir noe overskrevet — et mål som allerede finnes blir avvist, med filsystemets egen eksklusive opprettelse i stedet for en sjekk som kunne tape kappløpet.
+
+Å flytte et notat *ut* av hvelvet er den ene skrivingen som koster noe ingenting kan gi tilbake: Obsidian oppdaterer bare lenker inne i hvelvet, så hver eneste lenke som peker på det notatet, blir brutt. Det tilbys bak en dialog som sier det og teller notatene det gjelder, og det skjer som kopier-så-slett gjennom Obsidians egen papirkurv, så det kan gjenopprettes like lett som et slettet notat. Å holde <kbd>Ctrl</kbd> kopierer det ut i stedet.
 
 **Hvorfor.** Notatene du er ute etter ligger ofte i et annet hvelv, i en synkroniseringsmappe eller på en minnepinne, og Obsidians eget svar — bytt hvelv — lukker alt du hadde åpent. Dette lar deg gå og se uten å forlate noe, og rette en skrivefeil mens du likevel er der.
 
@@ -82,11 +87,11 @@ Oppført på [community.obsidian.md/plugins/lure](https://community.obsidian.md/
 
 ## Kompatibilitet
 
-Ingen tillegg kreves. Kjernetillegget **Filutforsker** er, hvis det er på, det som viser mapper i sidepanelet; uten det gjør de klikkene ingenting.
+Ingen tillegg kreves. Kjerneutvidelsen **Filutforsker** er, hvis den er på, det som viser mapper i sidepanelet; uten den gjør de klikkene ingenting.
 
 Prøvd mot de fellesskapstilleggene som deler overskriftslinjen til notatet eller svarer på mappeklikket — i begge innlastingsrekkefølger, hvert av dem på og av:
 
-- [Folder notes](obsidian://show-plugin?id=folder-notes) — skilletegnet åpner mappens notat i stedet for å vise mappen, slik at hvert ledd i stien blir et sted å gå. Det eneste mappenotat-tillegget som gjør krav på stien i overskriftslinjen; [Folder Note](obsidian://show-plugin?id=folder-note-plugin) og [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) lytter ikke der, så skilletegnet viser mappen som vanlig.
+- [Folder notes](obsidian://show-plugin?id=folder-notes) — skilletegnet åpner mappens notat i stedet for å vise mappen, slik at hvert ledd i stien blir et sted du kan gå, uansett hvor dypt: notatet finnes fram etter det tilleggets egen konvensjon i stedet for å overlates til det å svare. Det er også det eneste som offentliggjør en slik konvensjon; [Folder Note](obsidian://show-plugin?id=folder-note-plugin) og [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) offentliggjør ingen og gjør aldri krav på stien i overskriftslinjen, så med dem viser skilletegnet mappen som vanlig.
 - [Quick Explorer](obsidian://show-plugin?id=quick-explorer) og [Front Matter Title](obsidian://show-plugin?id=obsidian-front-matter-title-plugin) — begge tegner i det samme elementet i overskriftslinjen; Lure beholder raden sin uansett hvem som lastes først, og å slå av den ene lar den andre være urørt.
 - [Nav Link Header](obsidian://show-plugin?id=nav-link-header), [Running Head](obsidian://show-plugin?id=running-head), [Crumbs](obsidian://show-plugin?id=crumbs-obsidian), [Breadcrumbs](obsidian://show-plugin?id=breadcrumbs) — har sin egen stripe, og lever fint side om side.
 
@@ -111,6 +116,7 @@ Bidragsytere blir nevnt her etter hvert som bidrag kommer inn.
 ## Lenker
 
 - **Dokumentasjon:** [docs/](../)
+- **Endringslogg:** [CHANGELOG.md](CHANGELOG.no.md)
 - **Tilleggsside:** https://community.obsidian.md/plugins/lure
 - **Nettsted / kildekode:** https://github.com/Gelaende51/obsidian-lure
 - **Donasjoner:** [Ko-fi](https://ko-fi.com/vault51) — se [bidra](#bidra).

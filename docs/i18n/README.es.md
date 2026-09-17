@@ -1,4 +1,4 @@
-<!-- Traducción de README.md — estado: commit dc475f7.
+<!-- Traducción de README.md — estado: commit f133f41.
      Traducción automática (Claude Opus 5), no revisada por hablantes nativos.
      Se agradecen las correcciones; el README en inglés es la versión
      de referencia. -->
@@ -7,7 +7,7 @@
 
 # Lure
 
-Un plugin de [Obsidian](https://obsidian.md) que convierte el nombre de archivo de la barra de encabezado de una nota en una ruta completa navegable y editable, segmento a segmento — como la barra de direcciones del gestor de archivos [Dolphin](https://apps.kde.org/dolphin/).
+Un plugin de [Obsidian](https://obsidian.md) que convierte el nombre de archivo de la barra de encabezado de una nota en una ruta clicable y editable, segmento a segmento, con su ubicación completa en la bóveda — como la barra de direcciones del gestor de archivos [Dolphin](https://apps.kde.org/dolphin/).
 
 ![Clic en el separador que sigue a una carpeta: el puntero descansa sobre él y el Explorador de archivos ha mostrado y desplegado esa carpeta](../images/breadcrumb.png)
 
@@ -16,30 +16,33 @@ Obsidian 1.8.7+ · solo escritorio · AGPL-3.0
 ## Divulgación sobre IA
 
 - **Agente** — **Claude Opus 5** y **Claude Sonnet 5** (Anthropic, mediante Claude Code): escribió el TypeScript, el CSS, los 45 juegos de traducciones y la documentación. Las traducciones son automáticas y no han sido revisadas por hablantes nativos.
-- **Consumo** — del 3 al 22 de agosto de 2026, 22 sesiones, \~11.820 respuestas: \~15,4 M de tokens generados, \~55,5 M enviados, \~3644,2 M de relecturas en caché (\~3715,0 M en total).
+- **Consumo** — del 3 de agosto al 6 de septiembre de 2026, 22 sesiones, \~13.378 respuestas: \~16,3 M de tokens generados, \~62,3 M enviados, \~4245,1 M de relecturas en caché (\~4323,6 M en total).
 - **Origen** — el modelo aprendió de código abierto, documentación y escritos de la comunidad publicados por otras personas. La mayor parte del mérito es suya.
 - **Autor** — Vault51: definió cada función, probó cada iteración en una bóveda real, dirigió las correcciones y revisó todos los resultados.
 
 ## Funciones
 
-- **Clic en una carpeta** para desplegar el contenido de su carpeta *superior* — cambia una carpeta por otra hermana sin tocar el resto de la ruta. El nombre de la nota funciona igual, extensión incluida.
+- **Clic en una carpeta** para desplegar el contenido de su carpeta *superior* — cambia una carpeta por otra hermana sin tocar el resto de la ruta. El nombre de la nota funciona igual, y lo selecciona sin la extensión.
 - **Clic en el separador** que sigue a una carpeta para mostrarla y desplegarla en el Explorador de archivos. Una opción intercambia los dos papeles.
-- **Clic derecho o arrastrar cualquier entrada** — el menú contextual y el arrastre propios del Explorador de archivos.
-- **Clic en el nombre del archivo o en el espacio vacío** para escribir una ruta, con autocompletado. `/` desciende, <kbd>Retroceso</kbd> sube un nivel, <kbd>Intro</kbd> confirma.
+- **Clic derecho o arrastrar cualquier entrada** — el menú contextual del propio Explorador de archivos, entrada por entrada, y su mismo comportamiento de arrastre. Las rutas fuera de la bóveda reciben un menú equivalente hecho para ellas, hasta *Eliminar*, que pasa por la papelera del sistema.
+- **Clic en el nombre del archivo o en el espacio vacío** para escribir una ruta, con autocompletado. `/` desciende, <kbd>Retroceso</kbd> sube un nivel, <kbd>Intro</kbd> confirma — y una ruta que todavía no existe simplemente se crea, con un aviso que dice dónde ha ido a parar.
+- **El desplegable se abre en la entrada donde estás**, y recorrerlo con las flechas o el puntero rellena el campo con aquello a lo que apuntas. Salir por cualquiera de los extremos de la lista te devuelve lo que habías escrito, y retirar el puntero de ella devuelve el resaltado a donde estabas.
 - **El botón de lápiz sobre carpeta** cambia las mismas interacciones a mover/renombrar, con las mismas validaciones que aplica Obsidian.
-- **Mantén <kbd>Ctrl</kbd>** para abrir en una pestaña nueva — o, en modo mover/renombrar, para copiar la nota allí en lugar de moverla.
-- **El desplegable se abre en la entrada donde estás**, y recorrerlo con las flechas o el puntero rellena el campo con aquello a lo que apuntas. Al pasar de cualquiera de los extremos te devuelve lo que habías escrito.
-- **Los nombres se completan mientras escribes** — donde los nombres de la carpeta coinciden, la coincidencia aparece tras el cursor, seleccionada; <kbd>Tab</kbd> o <kbd>→</kbd> la toma entera, <kbd>Retroceso</kbd> la devuelve.
-- **<kbd>Tab</kbd> completa como un intérprete de comandos**: extiende lo escrito hasta donde los nombres coinciden, y entra en una carpeta en cuanto queda una sola. Pasado el final de la ruta amplía la selección: nombre, nombre con extensión, ruta desde el almacén, ruta desde la raíz del sistema. <kbd>Mayús</kbd>+<kbd>Tab</kbd> recorre el mismo camino al revés.
+- **Mantén <kbd>Ctrl</kbd>** para abrir en una pestaña nueva — o, en modo mover/renombrar, para copiar la nota allí en lugar de moverla. El nombre de la nota y los segmentos de carpeta admiten los mismos modificadores, y el mismo arrastre, que sus filas en el Explorador de archivos.
+- **Los nombres se completan mientras escribes** — donde los nombres de la carpeta coinciden, la coincidencia aparece tras el cursor, seleccionada; al escribir te la vas comiendo letra a letra, <kbd>Tab</kbd> o <kbd>→</kbd> la toma entera, <kbd>Retroceso</kbd> la devuelve. El desplegable sigue filtrando por lo que escribiste, no por lo que se te ofreció.
+- **<kbd>Tab</kbd> completa como un intérprete de comandos**: extiende lo escrito hasta donde coinciden los nombres de esa carpeta, avanza paso a paso hacia uno de ellos cuando no coinciden, y solo entra en una carpeta cuando queda un único nombre. Pasado el final de la ruta amplía la selección: nombre, nombre con extensión, ruta desde la bóveda, ruta desde la raíz del sistema. <kbd>Mayús</kbd>+<kbd>Tab</kbd> recorre el mismo camino al revés — marcando lo que devuelve en vez de borrarlo — y, pasado el principio, sigue subiendo por la ruta y luego da la vuelta hasta la ruta del sistema. En un sentido o en otro, una vuelta completa te trae de regreso a la ruta que construiste.
 - **Clic derecho para copiar** — dos veces para un nombre, tres para todo lo que está a su derecha, y en el espacio vacío para la ruta entera o la del sistema.
-- **Arrastra una nota sobre una carpeta de la barra** para moverla allí, con sus enlaces. El nombre del almacén también la acepta, para la raíz; una selección entera se mueve como una sola, y una carpeta que no puede aceptarla no muestra nada.
-- **Escribe una URL** — `https://`, `obsidian://`, o una ruta `file://` o codificada en porcentaje — y se abre en vez de tratarse como nombre de nota.
-- **Las rutas largas se acortan donde las letras sobran** — nunca más allá de lo que distingue una carpeta de la de al lado — y solo se desplazan cuando ya no queda nada que comprimir. Apunta a un nombre acortado para verlo completo.
-- **<kbd>F2</kbd>** alterna entre el título en línea y la barra de ruta.
-- **Clic en el nombre de la bóveda** para recorrer tus otras bóvedas, tu carpeta personal, la raíz del sistema de archivos y las unidades montadas sin cambiar de bóveda. Solo lectura hasta que abras un candado, y enmarcado en el color de error todo el tiempo. Desactivado por defecto — véase [fuera de la bóveda](#fuera-de-la-bóveda).
-- **Dos niveles de aviso** — rojo fuera de la bóveda, naranja para los archivos de texto que Obsidian no sabe editar. Véase [los dos colores de aviso](usage.es.md#los-dos-colores-de-aviso).
-- **Iconos adaptables al tema**, sustituibles desde un fragmento CSS — y **45 idiomas**, todos los que Obsidian incluye.
-- **Opciones:** alineación, separadores predefinidos, qué clic abre el desplegable, nombre de la bóveda, archivos ocultos, extensiones de archivo.
+- **Arrastra una nota sobre una carpeta de la fila** para moverla allí, con enlaces y todo — el destino ya está en pantalla, así que basta un arrastre en lugar de un viaje por el árbol de archivos. El nombre de la bóveda también sirve, para la raíz. Una selección entera se mueve de una vez, y una carpeta que no puede aceptar lo que se le ofrece no muestra nada en lugar de fallar a toro pasado.
+- **Suelta texto sobre la fila para anotarlo** — sobre una carpeta o el nombre de la bóveda para ponerle nombre a una nota nueva que lo contenga, sobre el propio nombre de la nota para añadirlo al final de lo que estás leyendo. Un archivo arrastrado desde el escritorio funciona igual, y la fila se rodea de azul mientras soltar surtiría efecto.
+- **El campo lleva el color de lo que nombra** — el mismo color que tiene su fila en el desplegable, gris para la nota de una carpeta — y **se vuelve rojo** en cuanto nada responde a ese nombre, así que ves antes de pulsar <kbd>Intro</kbd> si abrirá una nota o creará una.
+- **Los archivos HTML se muestran como páginas**, en un marco al que se le niegan todos los permisos — sin scripts, sin red, sin origen propio — y con las hojas de estilo e imágenes que acompañan al archivo incorporadas, para que una página guardada siga pareciéndose a sí misma. El código fuente está a una pulsación.
+- **Escribe una URL** — `https://`, `obsidian://`, o una ruta `file://` o codificada en porcentaje — y se abre en vez de tratarse como nombre de nota. Las direcciones web van a una pestaña del Web viewer (visor web) de Obsidian si lo tienes activado.
+- **Las rutas largas se acortan donde las letras sobran** — nunca más allá de lo que distingue una carpeta de la de al lado, y de forma fluida en lugar de letra a letra — y solo se desplazan cuando ya no queda nada que comprimir. Apunta a un nombre acortado para verlo completo.
+- **<kbd>F2</kbd>** alterna entre el título en línea y la barra de ruta: se abre sobre el nombre sin la extensión y, con más pulsaciones, se amplía hasta las rutas completas. Atraviesa limpiamente el diálogo de renombrar de Obsidian cuando el título ha quedado fuera de la vista. Hay además un comando *Enfocar la barra de ruta* al que asignar un atajo si quieres el gesto de la barra de direcciones.
+- **Clic en el nombre de la bóveda** para recorrer tus otras bóvedas, tu carpeta personal, la raíz del sistema de archivos y las unidades montadas sin cambiar de bóveda. Solo lectura hasta que abras el candado rojo que allí fuera ocupa el lugar del botón de renombrar, y enmarcado en el color de error todo el tiempo. Desactivado por defecto — véase [fuera de la bóveda](#fuera-de-la-bóveda).
+- **Dos niveles de aviso** — rojo fuera de la bóveda, naranja para los archivos de texto que Obsidian no sabe editar. Véase [los colores de aviso](usage.es.md#los-dos-colores-de-aviso).
+- **Iconos adaptables al tema**, sustituibles desde un fragmento CSS — y **46 idiomas**: todos los que incluye Obsidian, más el griego y el sánscrito, para los que Obsidian no tiene opción. Elige uno solo para el plugin, o sigue el del propio Obsidian.
+- **Opciones:** idioma, alineación, separadores predefinidos, qué clic abre el desplegable, nombre de la bóveda, archivos ocultos, extensiones de archivo.
 
 ![El mismo desplegable en modo mover/renombrar: el nombre actual del archivo fijado arriba, las carpetas hermanas debajo y las notas existentes atenuadas](../images/dropdown.png)
 
@@ -58,17 +61,19 @@ Las políticas para desarrolladores de Obsidian exigen que un plugin explique cu
 **Qué escribe.** Nada, hasta que pulses un botón que lo diga. Hay dos botones así, y cada uno cubre únicamente su propio ámbito:
 
 - El botón **Editar como texto** del visor desbloquea el archivo que tienes delante, solo ese archivo y solo en esa pestaña. A partir de ahí tus cambios se guardan en él según escribes.
-- El **candado** del encabezado, visible solo mientras la barra de ruta apunta fuera de tu bóveda, desbloquea crear, renombrar y mover en rutas externas. Se vuelve a cerrar en cuanto regresas al interior, de modo que el permiso nunca sobrevive a la carpeta para la que lo concediste.
+- El **candado rojo** del encabezado, que ocupa el lugar del botón de renombrar mientras la barra de ruta apunta fuera de tu bóveda, desbloquea crear, renombrar, mover y eliminar en rutas externas — y, una vez abierto, devuelve ese hueco al botón. Se vuelve a cerrar cuando regresas al interior, y con la pulsación que sale del modo renombrar, de modo que el permiso nunca sobrevive a la carpeta para la que lo concediste.
 
-Ningún desbloqueo se guarda en el espacio de trabajo ni en las opciones, así que la escritura nunca queda armada sobre un archivo que no recuerdas haber abierto. En ninguno de los dos estados se sobrescribe nada — un destino existente se rechaza, usando la creación exclusiva del propio sistema de archivos en lugar de una comprobación que podría perder la carrera — y una nota nunca puede *moverse* fuera de tu bóveda, porque los enlaces hacia ella se romperían en silencio; mantener <kbd>Ctrl</kbd> la copia fuera en su lugar.
+Ningún desbloqueo se guarda en el espacio de trabajo ni en las opciones, así que la escritura nunca queda armada sobre un archivo que no recuerdas haber abierto. En ninguno de los dos estados se sobrescribe nada — un destino existente se rechaza, usando la creación exclusiva del propio sistema de archivos en lugar de una comprobación que podría perder la carrera.
+
+Mover una nota *fuera* de tu bóveda es la única escritura que cuesta algo que nada puede devolver: Obsidian solo actualiza los enlaces dentro de la bóveda, así que todos los enlaces que apuntan a esa nota se rompen. Se ofrece tras un diálogo que lo advierte y cuenta las notas afectadas, y se hace como copiar y luego eliminar a través de la propia papelera de Obsidian, así que es tan recuperable como borrar una nota. Mantener <kbd>Ctrl</kbd> la copia fuera en su lugar.
 
 **Por qué.** Las notas que quieres suelen estar en otra bóveda, en una carpeta de sincronización o en un USB, y la respuesta de Obsidian — cambiar de bóveda — cierra todo lo que tenías abierto. Esto te deja ir a mirar sin salir, y corregir una errata ya que estás.
 
-**La limitación.** El editor de Obsidian está atado a los archivos del interior de la bóveda, así que un archivo externo **no puede** abrirse como una nota de verdad, con enlaces, retroenlaces y lo demás; ningún plugin puede hacerlo. Lure lo muestra en su propio visor (Markdown, imágenes, audio, vídeo, PDF), con *Abrir externamente* para todo lo demás. La barra de ruta permanece enmarcada en el color de error siempre que apunta fuera de tu bóveda, y el recorrido empieza en el lugar que elegiste — el nombre de una bóveda, tu carpeta personal, una unidad — y no en la disposición de directorios de la máquina.
+**La limitación.** El editor de Obsidian está atado a los archivos del interior de la bóveda, así que un archivo externo **no puede** abrirse como una nota de verdad, con enlaces, retroenlaces y lo demás; ningún plugin puede hacerlo. Lure lo muestra en cambio en su propio visor (Markdown, imágenes, audio, vídeo, PDF), con *Abrir externamente* para todo lo demás. La barra de ruta permanece enmarcada en el color de error siempre que apunta fuera de tu bóveda, y el recorrido empieza en el lugar que elegiste — el nombre de una bóveda, tu carpeta personal, una unidad — y no en la disposición de directorios de la máquina.
 
 ## Instalación
 
-Aparece en [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), pero todavía no está aprobado para el explorador dentro de la aplicación: instálalo de una de estas maneras:
+Aparece en [community.obsidian.md/plugins/lure](https://community.obsidian.md/plugins/lure), pero todavía no está aprobado para el explorador dentro de la aplicación, así que instálalo de una de estas maneras:
 
 **Manual:** descarga `main.js`, `manifest.json` y `styles.css` de la [última versión publicada](https://github.com/Gelaende51/obsidian-lure/releases) en `<vault>/.obsidian/plugins/lure/` y actívalo en **Preferencias → Complementos comunitarios**.
 
@@ -80,13 +85,13 @@ Aparece en [community.obsidian.md/plugins/lure](https://community.obsidian.md/pl
 
 No hace falta ningún plugin. El **Explorador de archivos** básico, si está activado, es lo que muestra las carpetas en la barra lateral; sin él, esos clics no hacen nada.
 
-Probado contra los plugins comunitarios que comparten el encabezado de la nota o responden al clic sobre una carpeta — en ambos órdenes de carga y con cada uno activado y desactivado:
+Probado con los plugins comunitarios que comparten el encabezado de la nota o responden al clic sobre una carpeta — en ambos órdenes de carga y con cada uno activado y desactivado:
 
-- [Folder notes](obsidian://show-plugin?id=folder-notes) — el separador abre la nota de la carpeta en vez de mostrar la carpeta, con lo que cada segmento de la ruta pasa a ser un sitio al que ir. Es el único plugin de notas de carpeta que reclama la ruta del encabezado; [Folder Note](obsidian://show-plugin?id=folder-note-plugin) y [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) no escuchan ahí, así que el separador muestra la carpeta como siempre.
+- [Folder notes](obsidian://show-plugin?id=folder-notes) — el separador abre la nota de la carpeta en vez de mostrar la carpeta, con lo que cada segmento de la ruta, por profundo que esté, pasa a ser un sitio al que ir: la nota se localiza según la convención del propio plugin en lugar de dejar que sea él quien responda. Es además el único que publica una convención así; [Folder Note](obsidian://show-plugin?id=folder-note-plugin) y [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) no publican ninguna ni reclaman nunca la ruta del encabezado, así que con ellos el separador muestra la carpeta como siempre.
 - [Quick Explorer](obsidian://show-plugin?id=quick-explorer) y [Front Matter Title](obsidian://show-plugin?id=obsidian-front-matter-title-plugin) — ambos dibujan en el mismo elemento del encabezado; Lure conserva su fila cargue quien cargue primero, y desactivar cualquiera de los dos deja el otro intacto.
 - [Nav Link Header](obsidian://show-plugin?id=nav-link-header), [Running Head](obsidian://show-plugin?id=running-head), [Crumbs](obsidian://show-plugin?id=crumbs-obsidian), [Breadcrumbs](obsidian://show-plugin?id=breadcrumbs) — tienen su propia franja, y conviven sin problema.
 
-Solo escritorio — el modelo de interacción necesita pasar el ratón por encima, clics precisos y un teclado. Los resultados completos, lo que queda por comprobar y la comparación con Quick Explorer y Breadcrumbs están en [compatibilidad](../compatibility.md).
+Solo escritorio — el modelo de interacción necesita pasar el puntero por encima, clics precisos y un teclado. Los resultados completos, lo que queda por comprobar y la comparación con Quick Explorer y Breadcrumbs están en [compatibilidad](../compatibility.md).
 
 ## Cómo contribuir
 
@@ -107,6 +112,7 @@ Los contribuyentes se irán listando aquí a medida que lleguen aportaciones.
 ## Enlaces
 
 - **Documentación:** [docs/](../)
+- **Registro de cambios:** [CHANGELOG.es.md](CHANGELOG.es.md)
 - **Página del complemento:** https://community.obsidian.md/plugins/lure
 - **Presencia web / código fuente:** https://github.com/Gelaende51/obsidian-lure
 - **Donaciones:** [Ko-fi](https://ko-fi.com/vault51) — véase [cómo contribuir](#cómo-contribuir).

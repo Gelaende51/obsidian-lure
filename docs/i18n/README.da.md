@@ -1,4 +1,4 @@
-<!-- Oversættelse af README.md — status: commit dc475f7.
+<!-- Oversættelse af README.md — status: commit f133f41.
      Maskinoversat (Claude Opus 5) og ikke gennemlæst af modersmålstalere.
      Rettelser er velkomne; den engelske README er den gældende udgave. -->
 
@@ -8,39 +8,42 @@
 
 Et [Obsidian](https://obsidian.md)-plugin, der forvandler filnavnet i en notes overskriftslinje til en klikbar, redigerbar sti gennem hele boksen — som adresselinjen i filhåndteringen [Dolphin](https://apps.kde.org/dolphin/).
 
-![Klik på adskilleren efter en mappe: markøren hviler på den, og Filer har vist og foldet den mappe ud](../images/breadcrumb.png)
+![Klik på skilletegnet efter en mappe: markøren hviler på det, og Filer har vist og foldet den mappe ud](../images/breadcrumb.png)
 
 Obsidian 1.8.7+ · kun computer · AGPL-3.0
 
 ## AI-oplysning
 
 - **Agent** — **Claude Opus 5** og **Claude Sonnet 5** (Anthropic, via Claude Code): skrev TypeScript-koden, CSS'en, alle 45 oversættelsessæt og dokumentationen. Oversættelserne er lavet maskinelt og ikke gennemlæst af modersmålstalere.
-- **Forbrug** — 3.–22. august 2026, 22 sessioner, \~11.820 svar: \~15,4 mio. genererede tokens, \~55,5 mio. sendte, \~3644,2 mio. genlæsninger fra cachen (\~3715,0 mio. i alt).
+- **Forbrug** — 3. august–6. september 2026, 22 sessioner, \~13.378 svar: \~16,3 mio. genererede tokens, \~62,3 mio. sendte, \~4245,1 mio. genlæsninger fra cachen (\~4323,6 mio. i alt).
 - **Ophav** — modellen har lært af open source-kode, dokumentation og fællesskabstekster udgivet af andre. Størstedelen af æren tilfalder dem.
 - **Forfatter** — Vault51: fastlagde hver funktion, prøvede hver udgave i en rigtig boks, styrede rettelserne og læste alle resultater igennem.
 
 ## Funktioner
 
-- **Klik på en mappe** for en liste over indholdet i mappen *ovenover* — byt én mappe ud med en nabomappe uden at røre resten af stien. Notens navn virker på samme måde, filendelsen med.
-- **Klik på adskilleren** efter en mappe for at vise og folde den ud i Filer. Én indstilling bytter om på de to roller.
-- **Højreklik eller træk et hvilket som helst punkt** — Filers egen genvejsmenu og trækadfærd.
-- **Klik på filnavnet eller på tom plads** for at skrive en sti, med fuldførelse. `/` går nedad, <kbd>Backspace</kbd> går et niveau op, <kbd>Enter</kbd> bekræfter.
-- **Blyantsknappen på mappe** stiller de samme handlinger om til flyt/omdøb, med de samme kontroller, som Obsidian selv laver.
-- **Hold <kbd>Ctrl</kbd>** for at åbne i en ny fane — eller, i flyt/omdøb-tilstand, for at kopiere noten derhen i stedet for at flytte den.
-- **Listen åbner på den post, du står i**, og at gå gennem den med piletasterne eller markøren fylder feltet med det, du peger på. Forbi begge ender giver den dig tilbage, hvad du havde skrevet.
-- **Navne fuldfører sig selv, mens du skriver** — hvor mappens navne stemmer overens, vises overensstemmelsen efter markøren, markeret; <kbd>Tab</kbd> eller <kbd>→</kbd> tager den hel, <kbd>Backspace</kbd> tager den tilbage.
-- **<kbd>Tab</kbd> fuldfører som en shell**: den forlænger det skrevne, så langt navnene stemmer overens, og træder ind i en mappe, så snart der kun er ét navn tilbage. Forbi stiens ende udvider den i stedet markeringen: navn, navn med endelse, sti fra boksen, sti fra systemroden. <kbd>Skift</kbd>+<kbd>Tab</kbd> går samme vej tilbage.
+- **Klik på en mappe** for en liste over indholdet i mappen *ovenover* — byt én mappe ud med en søskendemappe, og lad resten af stien være. Notens navn virker på samme måde og markerer navnet uden filendelsen.
+- **Klik på skilletegnet** efter en mappe for at vise og folde den ud i Filer. Én indstilling bytter om på de to roller.
+- **Højreklik eller træk en hvilken som helst post** — Filers egen genvejsmenu, punkt for punkt, og dens trækadfærd. Stier uden for boksen får en tilsvarende menu bygget til dem, helt ned til *Slet* via systemets papirkurv.
+- **Klik på filnavnet eller på tom plads** for at skrive en sti, med autofuldførelse. `/` går ned, <kbd>Backspace</kbd> går et niveau op, <kbd>Enter</kbd> bekræfter — og en sti, der ikke findes endnu, bliver ganske enkelt oprettet, med en meddelelse om, hvor den havnede.
+- **Listen åbner på den post, du står i**, og at gå gennem den med piletasterne eller markøren fylder feltet med det, du peger på. Går du forbi en af listens ender, får du det tilbage, du havde skrevet, og fjerner du markøren fra listen, vender fremhævningen tilbage til der, hvor du var.
+- **Blyant-mappe-knappen** stiller de samme handlinger om til flyt/omdøb, med de samme kontroller, som Obsidian selv laver.
+- **Hold <kbd>Ctrl</kbd>** for at åbne i en ny fane — eller, i flyt/omdøb-tilstand, for at kopiere noten derhen i stedet. Notens navn og mappesegmenterne tager de samme modifikatortaster og kan trækkes, ligesom deres rækker i Filer.
+- **Navne fuldfører sig selv, mens du skriver** — hvor mappens navne stemmer overens, vises overensstemmelsen efter tekstmarkøren, markeret; når du skriver videre, sluges den bogstav for bogstav, <kbd>Tab</kbd> eller <kbd>→</kbd> tager den hel, <kbd>Backspace</kbd> tager den tilbage. Listen bliver ved med at filtrere efter det, du skrev, ikke efter det, der blev tilbudt.
+- **<kbd>Tab</kbd> fuldfører som en shell**: den forlænger det, du skrev, så langt navnene i mappen stemmer overens, går et skridt ad gangen mod et af dem, når de ikke gør, og træder først ind i en mappe, når der kun er ét navn tilbage. Forbi stiens ende udvider den i stedet markeringen: navn, navn med endelse, sti fra boksen, sti fra systemroden. <kbd>Skift</kbd>+<kbd>Tab</kbd> går samme vej baglæns — og markerer det, den giver tilbage, i stedet for at slette det — og fortsætter forbi begyndelsen op ad stien, hvorefter den slår om til systemstien. Uanset retning fører en hel runde tilbage til den sti, du byggede.
 - **Højreklik for at kopiere** — to gange for et navn, tre gange for alt til højre for det, og på det tomme felt for hele stien eller systemstien.
-- **Træk en note hen på en mappe i rækken** for at flytte den derhen, links og det hele. Boksens navn tager også imod, til roden; en hel markering flytter som én, og en mappe, der ikke kan tage imod, viser ingenting.
-- **Skriv en URL** — `https://`, `obsidian://` eller en `file://`- eller procentkodet sti — og den åbnes i stedet for at blive læst som et notenavn.
-- **Lange stier forkortes, hvor bogstaverne er overflødige** — aldrig ud over det, der skiller en mappe fra naboen — og ruller først, når der ikke er mere at presse sammen. Peg på et forkortet navn for at få det helt igen.
-- **<kbd>F2</kbd>** skifter mellem overskriften i noten og stilinjen.
-- **Klik på boksens navn** for at gennemse dine andre bokse, hjemmemappen, filsystemets rod og tilsluttede drev uden at skifte boks. Skrivebeskyttet, indtil du åbner en hængelås, og indrammet i fejlfarven hele vejen. Slået fra som standard — se [uden for boksen](#uden-for-boksen).
+- **Træk en note hen på en mappe i rækken** for at flytte den derhen, links og det hele — målet er allerede på skærmen, så det er ét træk i stedet for en tur gennem filtræet. Boksens navn virker også, til roden. En hel markering flytter som én, og en mappe, der ikke kan tage imod det tilbudte, viser ingenting i stedet for at fejle bagefter.
+- **Slip tekst på rækken for at skrive den ned** — på en mappe eller boksens navn for at navngive en ny note til den, på notens eget navn for at tilføje den til slutningen af det, du læser. En fil fra dit skrivebord virker på samme måde, og rækken får en blå ring, så længe den ville lande.
+- **Feltet bærer farven fra det, det navngiver** — den samme farve som dets række i listen, gråt for en mappes note — og **bliver rødt**, så snart intet svarer til det, så du kan se, før du trykker <kbd>Enter</kbd>, om det vil åbne en note eller oprette en.
+- **HTML-filer vises som sider**, i en ramme, hvor alle tilladelser er holdt tilbage — ingen scripts, intet netværk, ingen egen oprindelse — og med stylesheets og billeder ved siden af filen hentet ind, så en gemt side stadig ligner sig selv. Kildekoden er ét tryk væk.
+- **Skriv en URL** — `https://`, `obsidian://` eller en `file://`- eller procentkodet sti — og den åbnes i stedet for at blive læst som et notenavn. Webadresser går til en fane i Obsidians egen Web viewer (webfremviser), hvis du har den slået til.
+- **Lange stier forkortes, hvor bogstaverne er overflødige** — aldrig ud over det, der skiller en mappe fra naboen, og glidende i stedet for et bogstav ad gangen — og ruller først, når der ikke er mere at presse sammen. Peg på et forkortet navn for at få det helt igen.
+- **<kbd>F2</kbd>** skifter mellem overskriften i noten og stilinjen, åbner på navnet uden endelse og går ud til de fulde stier ved flere tryk. Den glider rent gennem Obsidians omdøbningsdialog, når overskriften er rullet ud af syne. Kommandoen *Fokusér stilinjen* står klar til en genvejstast, hvis du vil have adresselinjens greb.
+- **Klik på boksens navn** for at gennemse dine andre bokse, hjemmemappen, filsystemets rod og tilsluttede drev uden at skifte boks. Skrivebeskyttet, indtil du åbner den røde hængelås, der derude står på omdøbningsknappens plads, og indrammet i fejlfarven hele vejen. Slået fra som standard — se [uden for boksen](#uden-for-boksen).
 - **To advarselstrin** — rødt uden for boksen, orange for tekstfiler, som Obsidian ikke har en editor til. Se [de to advarselsfarver](usage.da.md#de-to-advarselsfarver).
-- **Ikoner der følger temaet**, kan udskiftes fra et CSS-uddrag — og **45 sprog**, alle dem Obsidian leverer.
-- **Indstillinger:** justering, foruddefinerede adskillere, hvilket klik der åbner listen, boksens navn, skjulte filer, filendelser.
+- **Ikoner der følger temaet**, kan udskiftes fra et CSS-uddrag — og **46 sprog**: alle dem Obsidian leverer, plus græsk og sanskrit, som Obsidian ikke har en indstilling til. Vælg ét kun til pluginet, eller følg Obsidians eget.
+- **Indstillinger:** sprog, justering, foruddefinerede skilletegn, hvilket klik der åbner listen, boksens navn, skjulte filer, filendelser.
 
-![Den samme liste i flyt/omdøb-tilstand: filens nuværende navn fastgjort øverst, nabomapper nedenunder, og eksisterende noter nedtonede](../images/dropdown.png)
+![Den samme liste i flyt/omdøb-tilstand: filens nuværende navn fastgjort øverst, søskendemapper nedenunder, og eksisterende noter nedtonede](../images/dropdown.png)
 
 *I flyt/omdøb-tilstand tilbyder den samme liste noget andet: notens nuværende navn fastgjort øverst, så den kan flyttes uden at blive omdøbt; mapper at flytte den ind i; og allerede optagede navne nedtonede, så intet bliver overskrevet ved et uheld.*
 
@@ -57,9 +60,11 @@ Obsidians udviklerregler kræver, at et plugin forklarer al adgang til filer ude
 **Hvad det skriver.** Intet, før du trykker på en knap, der siger det. Der er to sådanne knapper, og hver dækker kun sit eget område:
 
 - Fremviserens knap **Rediger som tekst** låser filen op foran dig, netop den fil i netop den fane. Derefter gemmes dine ændringer i den, mens du skriver.
-- **Hængelåsen** i overskriftslinjen, der kun er synlig, mens stilinjen peger uden for boksen, låser op for at oprette, omdøbe og flytte på eksterne stier. Den låser igen, så snart du kommer tilbage indenfor, så tilladelsen overlever aldrig den mappe, du gav den til.
+- **Den røde hængelås** i overskriftslinjen, der står på omdøbningsknappens plads, mens stilinjen peger uden for boksen, låser op for at oprette, omdøbe, flytte og slette på eksterne stier — og overlader pladsen til knappen igen, når den er åbnet. Den låser igen, når du kommer tilbage indenfor, og ved det tryk, der forlader omdøbningstilstanden, så tilladelsen overlever aldrig den mappe, du gav den til.
 
-Ingen af oplåsningerne gemmes i arbejdsområdet eller i indstillingerne, så skrivning er aldrig spændt an på en fil, du ikke husker at have åbnet. I ingen af tilstandene bliver noget overskrevet — et eksisterende mål bliver afvist, med filsystemets egen eksklusive oprettelse i stedet for et tjek, der kunne tabe kapløbet — og en note kan aldrig *flyttes* ud af boksen, fordi links til den ville gå i stykker i stilhed; at holde <kbd>Ctrl</kbd> kopierer den derud i stedet.
+Ingen af oplåsningerne gemmes i arbejdsområdet eller i indstillingerne, så skrivning er aldrig spændt an på en fil, du ikke husker at have åbnet. I ingen af tilstandene bliver noget overskrevet — et eksisterende mål bliver afvist, med filsystemets egen eksklusive oprettelse i stedet for et tjek, der kunne tabe kapløbet.
+
+At flytte en note *ud* af din boks er den ene skrivehandling, der koster noget, som intet kan give tilbage: Obsidian opdaterer kun links inde i boksen, så alle links, der peger på noten, går i stykker. Den tilbydes bag en dialog, der siger det og tæller de berørte noter, og den foregår som kopiér-og-slet gennem Obsidians egen papirkurv, så den kan gendannes lige så let som en slettet note. At holde <kbd>Ctrl</kbd> kopierer den ud i stedet.
 
 **Hvorfor.** De noter, du er ude efter, ligger tit i en anden boks, i en synkroniseringsmappe eller på en USB-nøgle, og Obsidians eget svar — skift boks — lukker alt, hvad du havde åbent. Det her lader dig gå hen og kigge uden at forlade noget, og rette en tastefejl, mens du alligevel er der.
 
@@ -81,7 +86,7 @@ Der kræves ingen plugins. Kerneplugin'et **Filer** er, hvis det er slået til, 
 
 Prøvet mod de fællesskabsplugins, der deler notens overskriftslinje eller svarer på mappeklikket — i begge indlæsningsrækkefølger, hver især slået til og fra:
 
-- [Folder notes](obsidian://show-plugin?id=folder-notes) — adskilleren åbner mappens note i stedet for at vise mappen, hvilket gør hvert led i stien til et sted, man kan gå hen. Det eneste mappenoteplugin, der gør krav på stien i overskriftslinjen; [Folder Note](obsidian://show-plugin?id=folder-note-plugin) og [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) lytter ikke der, så adskilleren viser mappen som sædvanlig.
+- [Folder notes](obsidian://show-plugin?id=folder-notes) — skilletegnet åbner mappens note i stedet for at vise mappen, hvilket gør hvert segment i stien til et sted, man kan gå hen, uanset hvor dybt: noten findes ud fra det plugins egen konvention i stedet for at blive overladt til det at svare på. Det er også det eneste, der offentliggør en sådan konvention; [Folder Note](obsidian://show-plugin?id=folder-note-plugin) og [create folder notes with dropdown](obsidian://show-plugin?id=create-folder-notes-with-dropdown) offentliggør ingen og gør aldrig krav på stien i overskriftslinjen, så med dem viser skilletegnet mappen som sædvanlig.
 - [Quick Explorer](obsidian://show-plugin?id=quick-explorer) og [Front Matter Title](obsidian://show-plugin?id=obsidian-front-matter-title-plugin) — begge tegner i det samme element i overskriftslinjen; Lure beholder sin række, uanset hvem der indlæses først, og at slå den ene fra lader den anden være urørt.
 - [Nav Link Header](obsidian://show-plugin?id=nav-link-header), [Running Head](obsidian://show-plugin?id=running-head), [Crumbs](obsidian://show-plugin?id=crumbs-obsidian), [Breadcrumbs](obsidian://show-plugin?id=breadcrumbs) — har deres egen stribe og lever fint side om side.
 
@@ -105,7 +110,9 @@ Bidragydere bliver nævnt her, efterhånden som bidrag kommer ind.
 
 ## Links
 
+
 - **Dokumentation:** [docs/](../)
+- **Ændringslog:** [CHANGELOG.da.md](CHANGELOG.da.md)
 - **Pluginside:** https://community.obsidian.md/plugins/lure
 - **Web / kildekode:** https://github.com/Gelaende51/obsidian-lure
 - **Donationer:** [Ko-fi](https://ko-fi.com/vault51) — se [bidrag](#bidrag).
