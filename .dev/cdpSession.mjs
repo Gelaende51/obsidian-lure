@@ -194,6 +194,60 @@ export async function pressKey(page, spec) {
 export const PAUSE = (ms) => `await new Promise((r) => setTimeout(r, ${ms}));`;
 
 /**
+ * Empties the editor area: every pane but one, and that one holding nothing.
+ *
+ * Page-side source, not a function, because the suites build their setup as
+ * one evaluated string and a round trip per step is what makes them slow.
+ *
+ * It sweeps the root split by *position* rather than by an enumerated list of
+ * view types, which is what every suite here used to do — `["markdown",
+ * "lure-external-file", "empty"]`, the three types the plugin knows about. Any
+ * other plugin's view survived that list. A home-tab plugin is the case that
+ * caught it: it answers a new tab with a view of its own, so a case that asked
+ * for a blank tab got that view instead, the sweep left it standing, and every
+ * later case was measured in a workspace with one more pane in it than it
+ * thought. That is enough to change what the fitter does — panes share the
+ * width — which is why the `long paths` family could pass alone and fail,
+ * differently each time, in a full run.
+ *
+ * The sidebars are left alone: they are not the editor area, and a suite that
+ * closed them would be testing a workspace nobody uses.
+ */
+/**
+ * Takes down any notice still on screen.
+ *
+ * Obsidian's notices are toasts in the top-right corner of the window, which
+ * is where the right-hand end of the header row is — so a notice one case
+ * raised sits *over* the row the next case acts on, and a synthetic click
+ * built from `document.elementFromPoint` lands on the toast instead of the
+ * row. The case then reports that the field would not open.
+ *
+ * Whether it happens depends on how long the case before it took: a notice
+ * lives about four seconds, so a quick case is still covered and a slow one
+ * is not. That is the whole of "identical code failed differently between
+ * runs" for the gesture suites — a race with a toast, not with the plugin.
+ */
+export const CLEAR_NOTICES = `document.querySelectorAll(".notice").forEach((n) => n.remove());`;
+
+export const CLEAR_PANES = `
+	{
+		const editors = [];
+		app.workspace.iterateAllLeaves((leaf) => {
+			if (leaf.getRoot() === app.workspace.rootSplit) editors.push(leaf);
+		});
+		// All but the first: detaching every one of them leaves no tab group
+		// to open the next file in, and Obsidian throws "No tab group found".
+		for (const leaf of editors.slice(1)) leaf.detach();
+		const kept = editors[0];
+		// Emptied rather than closed, so what is left is a pane holding
+		// nothing — which is what the sweep is for. A home-tab plugin may
+		// answer this with a view of its own; that is its business, and the
+		// caller opens whatever it needs in this leaf next.
+		if (kept) await kept.setViewState({ type: "empty" });
+	}
+`;
+
+/**
  * Re-reads main.js from disk before a run.
  *
  * Obsidian loads a plugin's bundle once, at enable time, and holds it. Edit

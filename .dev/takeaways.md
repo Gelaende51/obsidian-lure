@@ -2421,3 +2421,40 @@ The third ambient-setting trap in this suite, after `accessExternalFiles` and
 `showFileExtension`, and the first belonging to Obsidian rather than to the
 plugin — so the rule generalises: before blaming a popover that will not open,
 ask what the host has been told it may show.
+
+## What a flaky UI suite is usually measuring is the last case's leftovers
+
+The `long paths` family passed alone and failed in a full run, differently
+between runs of identical code, for four sessions. It was never the fitter.
+Four separate carriers were found by bisecting with a new `--first=N` flag
+(the first N cases, plus every case a filter names, so the family stays in
+every run while the prefix is halved), and every one of them was state the
+*previous* case had left in the window:
+
+- **A notice.** Obsidian's toasts occupy the top-right corner, which is where
+  the right-hand end of the header row is. A press built from
+  `document.elementFromPoint` landed on the toast, so the field never opened —
+  but only when the case before it had been quick enough that its notice had
+  not yet expired.
+- **The pointer.** It is a real pointer and it stays where the last case left
+  it. A row drawn under it has that name hovered, which this plugin answers by
+  holding the name open at full width — so a fitting case measured a row with
+  one name refusing to give anything up. Park it between cases, but not in a
+  screen corner: that is a hot corner on many desktops, and driving the
+  pointer into one takes the window out of compositing.
+- **Panes of a type the suite had never heard of.** Sweeps that detach an
+  enumerated list of view types miss every other plugin's view. A home-tab
+  plugin answers each new tab with its own view, so those leaves survived
+  every reset and each later case ran in a workspace one pane fuller than it
+  thought. Sweep the root split by position instead.
+- **Pixel widths written for the crowded workspace the leftovers produced.**
+  Once the sweep made the workspace deterministic the geometry cases stopped
+  squeezing at all: on a clean 1920px window the path fits three times over.
+  They had been passing on the leftovers. Derive a target from the row's own
+  natural width, or the case asserts the host's font.
+
+Two smaller ones of the same shape: a reading taken between a resize and the
+`ResizeObserver` that answers it describes the width before last — read until
+two readings agree — and a double-click assembled with 400ms plus a round trip
+between its presses falls outside the double-click interval whenever the
+machine is busy, which is to say in a full run and never alone.

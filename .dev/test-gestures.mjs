@@ -16,12 +16,26 @@
  * Requires --remote-debugging-port=9222 and OBSIDIAN_VAULT set.
  */
 
-import { canFocusEditable, canRenameFiles, connect, isPainting, PAUSE, pressKey, quiesce, reloadPlugin, setSettings, setVaultConfig } from "./cdpSession.mjs";
+import { canFocusEditable, canRenameFiles, CLEAR_NOTICES, CLEAR_PANES, connect, isPainting, PAUSE, pressKey, quiesce, reloadPlugin, setSettings, setVaultConfig } from "./cdpSession.mjs";
 import { createSuite, skipCase } from "./harness.mjs";
 import { mkdirSync, rmSync, writeFileSync } from "fs";
 import { join } from "path";
 
 const ROOT = "GestureTest";
+/**
+ * Plugins that answer a new tab with a view of their own.
+ *
+ * Stood down for the run and put back at the end — `disablePlugin` unloads
+ * without touching the saved list, and `enablePlugin` loads without adding to
+ * it, so the vault's own configuration is never written to. Named rather than
+ * detected: what a plugin puts in an empty tab is not something the workspace
+ * can be asked about in advance, and a gate below checks the answer anyway.
+ */
+/** Where the pointer is put between cases — low in the window, away from the row and from any screen corner. */
+const POINTER_PARK = { x: 600, y: 700 };
+const TAB_TAKERS = ["home-launcher", "home-tab", "obsidian-home-tab", "homepage"];
+/** Which of them were running when this suite started, so they can be put back. */
+const takersFound = [];
 /** Outside every vault, for the half of the table that only exists out there. */
 const EXT = `${process.env.HOME}/lure-gesture-fixtures`;
 
@@ -83,6 +97,22 @@ const { test, expect, run } = createSuite({
 		// a vault an earlier run had left switched on. Setting it here rather
 		// than reading it; see `setSettings`.
 		await setSettings(page, { accessExternalFiles: true });
+		// Anything the case before it said out loud goes now: a notice sits in
+		// the corner the row's right-hand end is in, and a press built from
+		// `elementFromPoint` lands on the toast rather than on the row.
+		await page.evaluate(`${CLEAR_NOTICES} return true;`);
+		// And the pointer goes back to a corner. It is a real pointer: where
+		// the last case left it is where it still is, and a row drawn under
+		// it has that name *hovered* — which this plugin answers by holding
+		// the name open at its full width, on purpose. A fitting case then
+		// measures a row with one name refusing to give anything up, and
+		// which name that is depends on which case ran before it.
+		//
+		// Parked low in the window rather than at a corner: a screen corner
+		// is a hot corner on many desktops, and driving the pointer into one
+		// every case took the window out of compositing — whereupon this
+		// suite, quite correctly, skipped every geometry case it had.
+		await page.send("Input.dispatchMouseEvent", { type: "mouseMoved", ...POINTER_PARK, buttons: 0 });
 		await page.evaluate(buildVaultFixture);
 		buildExternalFixture();
 		await page.evaluate(openVaultNote);
@@ -97,10 +127,25 @@ const { test, expect, run } = createSuite({
 		// what it needs — without this one deciding it for the vault.
 		await setSettings(page, { accessExternalFiles: EXTERNAL_AT_START });
 		await setVaultConfig(page, LINKS_AT_START);
+		// Whatever was stood down for the run goes back on, for the same
+		// reason: this suite borrows the window, it does not own it.
+		await restoreTabTakers();
 		rmSync(EXT, { recursive: true, force: true });
 		page.close();
 	},
 });
+
+/** Switches back on whichever tab-takers were running when the suite began. */
+async function restoreTabTakers() {
+	if (!takersFound.length) return;
+	await page.evaluate(`
+		for (const id of ${JSON.stringify(takersFound)}) {
+			if (!app.plugins.plugins[id]) await app.plugins.enablePlugin(id);
+		}
+		${PAUSE(600)}
+		return true;
+	`);
+}
 
 const buildVaultFixture = `
 	const mk = async (p) => { if (!app.vault.getAbstractFileByPath(p)) await app.vault.createFolder(p); };
@@ -143,9 +188,7 @@ function buildExternalFixture() {
 
 /** The one pane everything here acts on, showing a vault note three levels down. */
 const openVaultNote = `
-	for (const type of ["markdown", "lure-external-file", "empty"]) {
-		app.workspace.getLeavesOfType(type).forEach((l) => l.detach());
-	}
+	${CLEAR_PANES}
 	${PAUSE(300)}
 	const leaf = app.workspace.getLeaf(false);
 	await leaf.openFile(app.vault.getAbstractFileByPath("${ROOT}/inner/leaf.md"));
@@ -154,9 +197,7 @@ const openVaultNote = `
 `;
 
 const openExternalNote = `
-	for (const type of ["markdown", "lure-external-file", "empty"]) {
-		app.workspace.getLeavesOfType(type).forEach((l) => l.detach());
-	}
+	${CLEAR_PANES}
 	${PAUSE(300)}
 	const leaf = app.workspace.getLeaf(false);
 	await leaf.setViewState({
@@ -1332,7 +1373,13 @@ test("vault name: a second press widens the mark to the whole absolute path", as
 	`;
 
 	await press(1);
-	await page.evaluate(PAUSE(400) + "return true;");
+	// Short, and deliberately so: the second press has to land inside the
+	// browser's double-click interval or no `dblclick` is synthesised and the
+	// widening never happens. The reading between them costs a round trip of
+	// its own, and at 400ms plus that round trip the pair fell outside the
+	// interval whenever the machine was busy — which is to say, in a full run
+	// and not alone.
+	await page.evaluate(PAUSE(120) + "return true;");
 	const first = JSON.parse(await page.evaluate(marked));
 	expect("one press marks the place the path starts at", first.selected, app.vaultPath);
 
@@ -1351,9 +1398,7 @@ test("vault name: a second press widens the mark to the whole absolute path", as
  * bite: two splits leaves roughly a third of the window, three a quarter.
  */
 const narrowPane = (name, splits) => `
-	for (const type of ["markdown", "lure-external-file", "empty"]) {
-		app.workspace.getLeavesOfType(type).forEach((l) => l.detach());
-	}
+	${CLEAR_PANES}
 	${PAUSE(300)}
 	const target = app.vault.getAbstractFileByPath("${ROOT}/aaaa-common-one/unmistakable/${name}");
 	await app.workspace.getLeaf(false).openFile(target);
@@ -1456,6 +1501,27 @@ const squeeze = (px) => `
  * Every geometry case goes through here rather than through `squeeze`
  * directly, so none of them can report a measurement the window never made.
  */
+/**
+ * Reads the row twice and only believes it once the two agree.
+ *
+ * `squeeze` waits for the refit before it returns, but the *reading* is a
+ * call of its own, and the observer that refits the row can land between the
+ * two. A sample taken in that gap describes the width before last — which is
+ * how a sweep produced three clipped folders at 470px and none at 400, an
+ * order no fitter could have produced and every rule below was then judged
+ * against.
+ */
+const settledRead = async (source) => {
+	let last = await page.evaluate(source);
+	for (let i = 0; i < 6; i++) {
+		await page.evaluate(`await new Promise((r) => requestAnimationFrame(() => r())); ${PAUSE(60)} return true;`);
+		const next = await page.evaluate(source);
+		if (next === last) return next;
+		last = next;
+	}
+	return last;
+};
+
 const squeezeTo = async (px) => {
 	if (!(await page.evaluate(squeeze(px)))) {
 		skipCase("this window stopped compositing frames, so the row never refitted to this width");
@@ -1585,6 +1651,19 @@ test("long paths: the vault name gives way before any folder", async () => {
 test("long paths: a name is cut only to where it stays distinguishable", async () => {
 	await page.evaluate(buildVaultFixture);
 	await page.evaluate(narrowPane("leaf.md", 2));
+	// Squeezed to what this row actually wants rather than to a number of
+	// panes. How much room two splits leave is a fact about the window, not
+	// about the fitter: on a wide screen the path fits three times over and
+	// nothing is shared out, which is not the feature failing but the
+	// question never being asked. It used to be asked by accident — a pane
+	// another suite's leftovers had crowded — and that is why this family
+	// passed alone and failed in a run, differently each time.
+	const loose = await page.evaluate(rowState);
+	const wanted = loose.names.reduce((sum, n) => sum + n.natural, 0);
+	// Room for the file's name and the delimiters, and rather less than the
+	// folders want: every one of them has to give something up, and none is
+	// pushed anywhere near its floor.
+	await squeezeTo(Math.round(loose.file.natural + wanted * 0.62 + 40));
 	const row = await page.evaluate(rowState);
 	// Its sibling is "aaaa-common-two", and everything they share is at the
 	// front — so the front is what goes. What has to survive is the end,
@@ -1604,8 +1683,19 @@ test("long paths: a name is cut only to where it stays distinguishable", async (
 	// additionally capped at the run it actually drew, which is worth up to a
 	// character on its own. What protects a short name is its floor, and that
 	// is asserted directly, just below.
-	expect("every folder gave up something", row.names.every((n) => n.width < n.natural), true);
-	expect("no folder is ground below its floor", row.names.every((n) => n.width >= n.floor - 1), true);
+	// Reported by name rather than as a bare `false`: this family fails
+	// differently between runs of identical code, and "something on the row
+	// kept its width" is not a bug report — which one, and by how much, is.
+	expect(
+		"every folder gave up something",
+		row.names.filter((n) => n.width >= n.natural).map((n) => `${n.text} ${n.width}/${n.natural}`),
+		[],
+	);
+	expect(
+		"no folder is ground below its floor",
+		row.names.filter((n) => n.width < n.floor - 1).map((n) => `${n.text} ${n.width}/${Math.round(n.floor)}`),
+		[],
+	);
 	expect("the file's own name is untouched", isCut(row.file), false);
 	await page.evaluate(unsqueeze);
 });
@@ -2061,10 +2151,21 @@ test("long paths: the extension goes second, straight after the vault name", asy
 		${PAUSE(400)}
 		return true;
 	`);
+	// The widths are read off this row rather than written down: a list of
+	// pixels is a statement about the host's font and about how much room a
+	// pane happens to have, and on a wide enough screen every one of them
+	// leaves the path fitting whole — so the sweep never reaches the state
+	// the case is about.
+	const roomy = await page.evaluate(rowState);
+	const wanted =
+		(roomy.root?.natural ?? 0) +
+		roomy.names.reduce((sum, n) => sum + n.natural, 0) +
+		(roomy.file?.natural ?? 0) +
+		40;
 	const seen = [];
-	for (const width of [900, 620, 470, 400, 330, 280]) {
-		await squeezeTo(width);
-		seen.push(JSON.parse(await page.evaluate(`
+	for (const share of [1.15, 0.92, 0.8, 0.68, 0.56, 0.46]) {
+		await squeezeTo(Math.round(wanted * share));
+		seen.push(JSON.parse(await settledRead(`
 			const c = app.workspace.getLeavesOfType("markdown")[0].view.containerEl
 				.querySelector(".view-header-title-container");
 			const ext = c.querySelector(".lure-filename-ext");
@@ -2245,10 +2346,26 @@ test("long paths: the extension goes once, not in and out", async () => {
 			folders: [...c.querySelectorAll(".view-header-title-parent .view-header-breadcrumb")].some(clipped),
 		});
 	`;
+	// Measured rather than written down, for the reason the case above gives:
+	// a pixel range is a statement about the host's font and about how much
+	// room this window has, and on a wide screen the whole sweep happens
+	// above the width where anything has to give way.
+	const roomy = await page.evaluate(rowState);
+	const wanted =
+		(roomy.root?.natural ?? 0) +
+		roomy.names.reduce((sum, n) => sum + n.natural, 0) +
+		(roomy.file?.natural ?? 0) +
+		40;
 	const shown = [];
-	for (let w = 470; w >= 170; w -= 6) {
+	const from = Math.round(wanted * 1.1);
+	const to = Math.round(wanted * 0.42);
+	// Roughly fifty samples across it, whatever it is: the point is
+	// neighbouring widths, and six pixels was that at 470 and would be a
+	// quarter of the sweep at 60.
+	const step = Math.max(2, Math.round((from - to) / 50));
+	for (let w = from; w >= to; w -= step) {
 		await squeezeTo(w);
-		shown.push(JSON.parse(await page.evaluate(read)));
+		shown.push(JSON.parse(await settledRead(read)));
 	}
 	await page.evaluate(`
 		app.plugins.plugins.lure.settings.showFileExtension = false;
@@ -2264,7 +2381,7 @@ test("long paths: the extension goes once, not in and out", async () => {
 	const flips = shown.filter((s, i) => i > 0 && s.ext !== shown[i - 1].ext).length;
 	const state = JSON.stringify(shown);
 	if (shown[shown.length - 1].ext) {
-		skipCase(`the row never had to give up the extension down to 170px here (${state})`);
+		skipCase(`the row never had to give up the extension down to ${to}px here (${state})`);
 	}
 	expect("it was on the row to begin with", shown[0].ext, true);
 	expect("and gone by the end", shown[shown.length - 1].ext, false);
@@ -2804,6 +2921,46 @@ if (!(await canRenameFiles(page))) {
 			"neither resolves nor rejects and nothing reaches the disk, while every\n" +
 			"other API keeps answering. Restart Obsidian and run again.",
 	);
+	page.close();
+	process.exit(2);
+}
+// And a third: a plugin that answers a new tab with a view of its own. A
+// dozen cases here open one and then ask what is in it, which reads as a
+// question about Lure and is really a question about whichever plugin got
+// there first — the answer came back as somebody's home tab, and the cases
+// failed saying the tab "holds nothing yet — got home-launcher-view". Those
+// plugins are stood down for the run and put back after it, and if a tab
+// still arrives holding something the run stops rather than reporting
+// failures it cannot stand behind.
+takersFound.push(
+	...JSON.parse(
+		await page.evaluate(
+			`return JSON.stringify(${JSON.stringify(TAB_TAKERS)}.filter((id) => !!app.plugins.plugins[id]));`,
+		),
+	),
+);
+const blankTabType = await page.evaluate(`
+	// The loaded instance is the question, not the saved list: a plugin
+	// switched on with \`enablePlugin\` was never added to that set.
+	for (const id of ${JSON.stringify(TAB_TAKERS)}) {
+		if (app.plugins.plugins[id]) await app.plugins.disablePlugin(id);
+	}
+	${PAUSE(600)}
+	const leaf = app.workspace.getLeaf("tab");
+	${PAUSE(400)}
+	const type = leaf.getViewState().type;
+	leaf.detach();
+	${PAUSE(200)}
+	return type;
+`);
+if (blankTabType !== "empty") {
+	console.log(
+		`\nA new tab in this window arrives holding a "${blankTabType}" view rather\n` +
+			"than nothing, so the cases that open one and ask what is in it would be\n" +
+			"reporting on that plugin instead. Add it to TAB_TAKERS at the top of\n" +
+			"this file, or turn it off for the run.",
+	);
+	await restoreTabTakers();
 	page.close();
 	process.exit(2);
 }

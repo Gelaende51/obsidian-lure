@@ -85,19 +85,23 @@ function readArgs(argv) {
 	let seed = null;
 	let shuffled = false;
 	let verbose = false;
+	let first = null;
 	for (const arg of argv) {
 		if (arg === "--verbose" || arg === "-v") verbose = true;
 		else if (arg === "--shuffle") shuffled = true;
 		else if (arg.startsWith("--shuffle=")) {
 			shuffled = true;
 			seed = Number(arg.slice("--shuffle=".length));
+		} else if (arg.startsWith("--first=")) {
+			first = Number(arg.slice("--first=".length));
 		} else if (arg.startsWith("--")) continue;
 		else if (filter === null) filter = arg;
 	}
 	if (shuffled && (seed === null || Number.isNaN(seed))) {
 		seed = Math.floor(Math.random() * 0xffffffff);
 	}
-	return { filter, seed, shuffled, verbose };
+	if (first !== null && (!Number.isFinite(first) || first < 0)) first = null;
+	return { filter, seed, shuffled, verbose, first };
 }
 
 /**
@@ -116,7 +120,7 @@ function readArgs(argv) {
 export function createSuite({ reset, teardown, skip, argv = process.argv.slice(2) } = {}) {
 	const results = [];
 	const tests = [];
-	const { filter, seed, shuffled, verbose } = readArgs(argv);
+	const { filter, seed, shuffled, verbose, first } = readArgs(argv);
 
 	const test = (name, fn) => tests.push({ name, fn });
 
@@ -133,9 +137,27 @@ export function createSuite({ reset, teardown, skip, argv = process.argv.slice(2
 		// `skip` applies only when no filter was given: naming a case
 		// explicitly is asking for it, including the ones a plain run leaves
 		// out (the external suite parks the two that kill the renderer there).
-		const chosen = tests.filter((t) =>
-			filter ? t.name.toLowerCase().includes(filter.toLowerCase()) : !skip?.(t.name),
-		);
+		const matches = (t) => !!filter && t.name.toLowerCase().includes(filter.toLowerCase());
+		// `--first=N` runs the first N cases in declaration order *and*, where
+		// a filter was also given, every case it names however far down they
+		// are. That pairing is the whole point: a family that passes alone and
+		// fails in a full run is failing on something an earlier case leaves
+		// behind, and the only way to find which is to keep the family in
+		// every run while the prefix in front of it is halved. Without it the
+		// question can only be asked by commenting cases out, which is a diff
+		// nobody dares keep and an answer nobody can replay.
+		const prefix = first === null ? null : tests.filter((t) => !skip?.(t.name)).slice(0, first);
+		const chosen =
+			prefix === null
+				? tests.filter((t) => (filter ? matches(t) : !skip?.(t.name)))
+				: tests.filter((t) => prefix.includes(t) || matches(t));
+		if (prefix !== null) {
+			console.log(
+				`order: the first ${prefix.length} case${prefix.length === 1 ? "" : "s"}` +
+					(filter ? `, and every case matching "${filter}"` : "") +
+					` — ${chosen.length} in all\n`,
+			);
+		}
 		if (shuffled) {
 			shuffle(chosen, mulberry32(seed));
 			console.log(`order: shuffled — replay with --shuffle=${seed}\n`);
