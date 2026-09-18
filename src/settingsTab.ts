@@ -119,8 +119,8 @@ export class BreadcrumbSettingTab extends PluginSettingTab {
 			},
 			{
 				name: t("settingDotFilesName"),
-				desc: this.dotFilesDescription(),
-				render: (setting: Setting) => this.drawDotFiles(setting),
+				desc: t("settingDotFilesDesc"),
+				control: { type: "toggle", key: "showDotFiles" },
 			},
 			{
 				name: t("settingExtensionName"),
@@ -135,6 +135,25 @@ export class BreadcrumbSettingTab extends PluginSettingTab {
 				name: t("settingExternalName"),
 				desc: this.externalDescription(),
 				control: { type: "toggle", key: "accessExternalFiles" },
+			},
+			// A section of its own, because what follows is not a setting of
+			// this plugin's at all: it is Obsidian's, it decides what these
+			// dropdowns are allowed to list, and it is the first thing to look
+			// at when a folder reads as emptier than it is. Headed in
+			// Obsidian's own words so it can be searched for by the name it
+			// has on the page the button leads to.
+			{
+				name: obsidianLabel(LABELS.showAllFileTypes, "Show all file types"),
+				render: (setting: Setting) => {
+					setting.setHeading();
+				},
+			},
+			{
+				// The heading above carries the name; this row is the sentence
+				// and the way there.
+				name: "",
+				desc: t("settingAllFilesDesc"),
+				render: (setting: Setting) => this.drawAllFilesJump(setting),
 			},
 		];
 	}
@@ -261,42 +280,21 @@ export class BreadcrumbSettingTab extends PluginSettingTab {
 
 	/** The external-access description, warning line and all. */
 	/**
-	 * The dot-file rule, and beside it the *other* rule that decides what a
-	 * dropdown can list — Obsidian's own, which is not this plugin's to
-	 * toggle but is the first thing to look at when a folder reads as emptier
-	 * than it is.
+	 * The way to Obsidian's own *Show all file types*.
 	 *
-	 * Named in Obsidian's own words, in whatever language it is running in, so
-	 * nothing here needs translating and nothing goes stale when that page is
-	 * reworded.
-	 */
-	private dotFilesDescription(): DocumentFragment {
-		const fragment = createFragment();
-		fragment.createDiv({ text: t("settingDotFilesDesc") });
-		fragment.createDiv({
-			cls: "lure-setting-aside",
-			text: `${obsidianLabel(LABELS.showAllFileTypes, "Show all file types")} →`,
-		});
-		return fragment;
-	}
-
-	/**
-	 * The dot-file toggle, with a button that goes to that other setting.
-	 *
-	 * Obsidian's own button rather than an anchor in the description. An
-	 * anchor with an `href` *navigates*, and these settings can be a window of
-	 * their own — sending that window to "#" tore it down, which is what "the
-	 * settings close when I click it" was. An anchor without one is inert
-	 * unless something listens, and a listener put on it by this plugin never
-	 * fired in a popped-out window at all. A button built through the API is
-	 * wired by Obsidian, exactly as the toggle beside it is, and works
-	 * wherever the toggle works.
+	 * Obsidian's own button rather than a link in the text. An anchor with an
+	 * `href` *navigates*, and these settings can be a window of their own —
+	 * sending that window to "#" tore it down, which is what "the settings
+	 * close when I click it" was. An anchor without one is inert unless
+	 * something listens, and a listener put on it by this plugin never fired
+	 * in a popped-out window at all. A button built through the API is wired
+	 * by Obsidian, exactly as the toggles are, and works wherever they work.
 	 *
 	 * It switches to the tab that is already there rather than asking for the
 	 * settings to be opened: `openTabById` opens on the way, and opening what
 	 * is already open is what closes a window of its own.
 	 */
-	private drawDotFiles(setting: Setting): void {
+	private drawAllFilesJump(setting: Setting): void {
 		setting.addExtraButton((button) =>
 			button
 				.setIcon("settings")
@@ -311,11 +309,6 @@ export class BreadcrumbSettingTab extends PluginSettingTab {
 						/* The setting is still where Obsidian keeps it. */
 					}
 				}),
-		);
-		setting.addToggle((toggle) =>
-			toggle
-				.setValue(!!this.getControlValue("showDotFiles"))
-				.onChange((value) => void this.setControlValue("showDotFiles", value)),
 		);
 	}
 

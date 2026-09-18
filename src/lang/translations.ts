@@ -33,6 +33,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Als erstes Segment des Pfads.",
 		settingSwapActionsName: "Ordnername öffnet das Dropdown",
 		settingSwapActionsDesc: "Eingeschaltet öffnet der Ordnername sein Dropdown, und das Trennzeichen dahinter zeigt den Ordner in der Seitenleiste — oder öffnet seine Ordnernotiz, sofern Folder notes das übernimmt. Ausgeschaltet tauschen beide die Rollen. Gilt nie im Umbenennen-/Verschieben-Modus.",
+		settingAllFilesDesc:
+			"Hier können nur Dateien erscheinen, die dein Vault indexiert. Schalte es in den Obsidian-Einstellungen ein, um die übrigen zu sehen; die Schaltfläche führt zu dieser Seite.",
 		settingDotFilesName: "Punktdateien anzeigen",
 		settingDotFilesDesc: "Punktdateien im Dropdown auflisten. Ob ausgeblendet oder nicht, sie verhindern weiterhin das Umbenennen auf ihren Namen.",
 		menuOpenThisVault: "Diesen Vault öffnen",
@@ -120,6 +122,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Comme premier segment du chemin.",
 		settingSwapActionsName: "Le nom du dossier ouvre le menu",
 		settingSwapActionsDesc: "Activé, le nom du dossier ouvre son menu et le séparateur qui suit révèle le dossier dans la barre latérale — ou ouvre sa note de dossier, si Folder notes s'en charge. Désactivé, les deux s'échangent. Jamais en mode renommer/déplacer.",
+		settingAllFilesDesc:
+			"Seuls les fichiers indexés par votre coffre peuvent apparaître ici. Activez-le dans les réglages d’Obsidian pour voir les autres ; le bouton mène à cette page.",
 		settingDotFilesName: "Afficher les fichiers cachés",
 		settingDotFilesDesc: "Lister les fichiers cachés dans le menu. Masqués ou non, ils empêchent toujours de renommer vers leur nom.",
 		menuOpenThisVault: "Ouvrir ce coffre",
@@ -208,6 +212,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Como primer segmento de la ruta.",
 		settingSwapActionsName: "El nombre de la carpeta abre el desplegable",
 		settingSwapActionsDesc: "Activado, el nombre de la carpeta abre su desplegable y el separador siguiente muestra la carpeta en la barra lateral — o abre su nota de carpeta, si Folder notes se encarga. Desactivado, ambos se intercambian. Nunca en modo renombrar/mover.",
+		settingAllFilesDesc:
+			"Aquí solo pueden aparecer los archivos que indexa tu bóveda. Actívalo en la configuración de Obsidian para ver el resto; el botón lleva a esa página.",
 		settingDotFilesName: "Mostrar archivos ocultos",
 		settingDotFilesDesc: "Listar los archivos ocultos en el desplegable. Ocultos o no, siguen impidiendo renombrar a su nombre.",
 		menuOpenThisVault: "Abrir esta bóveda",
@@ -295,6 +301,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Come primo segmento del percorso.",
 		settingSwapActionsName: "Il nome della cartella apre il menu",
 		settingSwapActionsDesc: "Attivo, il nome della cartella apre il suo menu e il separatore successivo mostra la cartella nella barra laterale — o apre la sua nota di cartella, se se ne occupa Folder notes. Disattivo, i due si scambiano. Mai in modalità rinomina/sposta.",
+		settingAllFilesDesc:
+			"Qui possono comparire solo i file indicizzati dal tuo vault. Attivalo nelle impostazioni di Obsidian per vedere gli altri; il pulsante porta a quella pagina.",
 		settingDotFilesName: "Mostra i file nascosti",
 		settingDotFilesDesc: "Elenca i file nascosti nel menu. Nascosti o no, impediscono comunque di rinominare sul loro nome.",
 		menuOpenThisVault: "Apri questo vault",
@@ -382,6 +390,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Como primeiro segmento do caminho.",
 		settingSwapActionsName: "O nome da pasta abre a lista",
 		settingSwapActionsDesc: "Ligado, o nome da pasta abre a sua lista e o separador seguinte mostra a pasta na barra lateral — ou abre a sua nota de pasta, se o Folder notes tratar disso. Desligado, os dois trocam. Nunca no modo renomear/mover.",
+		settingAllFilesDesc:
+			"Só aparecem aqui os ficheiros que o seu cofre indexa. Ative-o nas definições do Obsidian para ver os restantes; o botão leva a essa página.",
 		settingDotFilesName: "Mostrar ficheiros ocultos",
 		settingDotFilesDesc: "Listar ficheiros ocultos na lista. Ocultos ou não, continuam a impedir renomear para o nome deles.",
 		menuOpenThisVault: "Abrir este cofre",
@@ -469,6 +479,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Como primeiro segmento do caminho.",
 		settingSwapActionsName: "O nome da pasta abre a lista",
 		settingSwapActionsDesc: "Ligado, o nome da pasta abre sua lista e o separador seguinte mostra a pasta na barra lateral — ou abre sua nota de pasta, se o Folder notes cuidar disso. Desligado, os dois trocam. Nunca no modo renomear/mover.",
+		settingAllFilesDesc:
+			"Só aparecem aqui os arquivos que o seu cofre indexa. Ative-o nas configurações do Obsidian para ver os demais; o botão leva a essa página.",
 		settingDotFilesName: "Mostrar arquivos ocultos",
 		settingDotFilesDesc: "Listar arquivos ocultos na lista. Ocultos ou não, eles ainda impedem renomear para o nome deles.",
 		menuOpenThisVault: "Abrir este cofre",
@@ -556,6 +568,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Als eerste segment van het pad.",
 		settingSwapActionsName: "Mapnaam opent de lijst",
 		settingSwapActionsDesc: "Aan opent de mapnaam zijn lijst en toont het scheidingsteken erna de map in de zijbalk — of opent de mapnotitie, als Folder notes dat afhandelt. Uit wisselen de twee om. Nooit in hernoem-/verplaatsmodus.",
+		settingAllFilesDesc:
+			"Alleen bestanden die je kluis indexeert kunnen hier verschijnen. Zet het aan in de instellingen van Obsidian om de rest te zien; de knop gaat naar die pagina.",
 		settingDotFilesName: "Verborgen bestanden tonen",
 		settingDotFilesDesc: "Verborgen bestanden in de lijst tonen. Verborgen of niet, ze blokkeren nog steeds hernoemen naar hun naam.",
 		menuOpenThisVault: "Deze kluis openen",
@@ -642,6 +656,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Jako pierwszy segment ścieżki.",
 		settingSwapActionsName: "Nazwa folderu otwiera listę",
 		settingSwapActionsDesc: "Włączone — nazwa folderu otwiera jego listę, a separator za nią pokazuje folder na pasku bocznym lub otwiera jego notatkę folderu, jeśli obsługuje ją Folder notes. Wyłączone — oba zamieniają się rolami. Nigdy w trybie zmiany nazwy/przenoszenia.",
+		settingAllFilesDesc:
+			"Mogą się tu pojawić tylko pliki indeksowane przez twój sejf. Włącz to w ustawieniach Obsidiana, aby zobaczyć resztę; przycisk prowadzi do tej strony.",
 		settingDotFilesName: "Pokaż pliki ukryte",
 		settingDotFilesDesc: "Wyświetlaj pliki ukryte na liście. Ukryte czy nie, nadal blokują zmianę nazwy na ich nazwę.",
 		menuOpenThisVault: "Otwórz ten skarbiec",
@@ -728,6 +744,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Как первый сегмент пути.",
 		settingSwapActionsName: "Имя папки открывает список",
 		settingSwapActionsDesc: "Включено — имя папки открывает свой список, а разделитель после него показывает папку на боковой панели или открывает её заметку папки, если этим занимается Folder notes. Выключено — они меняются ролями. Никогда в режиме переименования/перемещения.",
+		settingAllFilesDesc:
+			"Здесь показываются только файлы, которые индексирует хранилище. Включите это в настройках Obsidian, чтобы увидеть остальные; кнопка ведёт на ту страницу.",
 		settingDotFilesName: "Показывать скрытые файлы",
 		settingDotFilesDesc: "Показывать скрытые файлы в списке. Скрытые или нет, они по-прежнему не дают переименовать на их имя.",
 		menuOpenThisVault: "Открыть это хранилище",
@@ -814,6 +832,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Як перший сегмент шляху.",
 		settingSwapActionsName: "Назва теки відкриває список",
 		settingSwapActionsDesc: "Увімкнено — назва теки відкриває свій список, а роздільник після неї показує теку на бічній панелі або відкриває її нотатку теки, якщо цим займається Folder notes. Вимкнено — вони міняються ролями. Ніколи в режимі перейменування/переміщення.",
+		settingAllFilesDesc:
+			"Тут показуються лише файли, які індексує сховище. Увімкніть це в налаштуваннях Obsidian, щоб побачити решту; кнопка веде на ту сторінку.",
 		settingDotFilesName: "Показувати приховані файли",
 		settingDotFilesDesc: "Показувати приховані файли у списку. Приховані чи ні, вони й далі не дають перейменувати на їхню назву.",
 		menuOpenThisVault: "Відкрити це сховище",
@@ -900,6 +920,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Jako první segment cesty.",
 		settingSwapActionsName: "Název složky otevírá seznam",
 		settingSwapActionsDesc: "Zapnuto — název složky otevře svůj seznam a oddělovač za ním zobrazí složku v postranním panelu, případně otevře její poznámku složky, pokud se o ni stará Folder notes. Vypnuto — obojí si role vymění. Nikdy v režimu přejmenování/přesunu.",
+		settingAllFilesDesc:
+			"Zde se mohou objevit jen soubory, které váš trezor indexuje. Zapněte to v nastavení Obsidianu, abyste viděli i ostatní; tlačítko vede na tu stránku.",
 		settingDotFilesName: "Zobrazit skryté soubory",
 		settingDotFilesDesc: "Zobrazovat skryté soubory v seznamu. Skryté či ne, stále brání přejmenování na jejich název.",
 		menuOpenThisVault: "Otevřít tento trezor",
@@ -986,6 +1008,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Som sökvägens första segment.",
 		settingSwapActionsName: "Mappnamnet öppnar listan",
 		settingSwapActionsDesc: "På öppnar mappnamnet sin lista och avgränsaren efter det visar mappen i sidopanelen — eller öppnar dess mappanteckning, om Folder notes hanterar den. Av byter de två plats. Aldrig i byt namn-/flyttläge.",
+		settingAllFilesDesc:
+			"Bara filer som ditt valv indexerar kan visas här. Slå på det i Obsidians inställningar för att se resten; knappen leder till den sidan.",
 		settingDotFilesName: "Visa dolda filer",
 		settingDotFilesDesc: "Visa dolda filer i listan. Dolda eller inte, de hindrar fortfarande namnbyte till deras namn.",
 		menuOpenThisVault: "Öppna det här valvet",
@@ -1072,6 +1096,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Som stiens første segment.",
 		settingSwapActionsName: "Mappenavnet åbner listen",
 		settingSwapActionsDesc: "Til åbner mappenavnet sin liste, og skilletegnet efter det viser mappen i sidepanelet — eller åbner dens mappenote, hvis Folder notes håndterer den. Fra bytter de to plads. Aldrig i omdøb-/flyttetilstand.",
+		settingAllFilesDesc:
+			"Kun filer, som din boks indekserer, kan vises her. Slå det til i Obsidians indstillinger for at se resten; knappen fører til den side.",
 		settingDotFilesName: "Vis skjulte filer",
 		settingDotFilesDesc: "Vis skjulte filer i listen. Skjulte eller ej, de blokerer stadig for omdøbning til deres navn.",
 		menuOpenThisVault: "Åbn denne hvælving",
@@ -1158,6 +1184,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Som første segment i stien.",
 		settingSwapActionsName: "Mappenavnet åpner listen",
 		settingSwapActionsDesc: "På åpner mappenavnet listen sin, og skilletegnet etter det viser mappen i sidepanelet — eller åpner mappenotatet, hvis Folder notes håndterer det. Av bytter de to plass. Aldri i endre navn-/flyttemodus.",
+		settingAllFilesDesc:
+			"Bare filer som hvelvet ditt indekserer kan vises her. Slå det på i Obsidians innstillinger for å se resten; knappen går til den siden.",
 		settingDotFilesName: "Vis skjulte filer",
 		settingDotFilesDesc: "Vis skjulte filer i listen. Skjulte eller ei, de hindrer fortsatt navnebytte til navnet deres.",
 		menuOpenThisVault: "Åpne dette hvelvet",
@@ -1244,6 +1272,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Polun ensimmäisenä osana.",
 		settingSwapActionsName: "Kansion nimi avaa luettelon",
 		settingSwapActionsDesc: "Päällä kansion nimi avaa luettelonsa ja sen jälkeinen erotin näyttää kansion sivupalkissa — tai avaa sen kansiomuistiinpanon, jos Folder notes hoitaa sen. Pois päältä nämä vaihtavat paikkaa. Ei koskaan nimeä/siirrä-tilassa.",
+		settingAllFilesDesc:
+			"Täällä voidaan luetella vain tiedostot, jotka holvisi indeksoi. Ota se käyttöön Obsidianin asetuksissa nähdäksesi loput; painike vie sille sivulle.",
 		settingDotFilesName: "Näytä piilotiedostot",
 		settingDotFilesDesc: "Näytä piilotiedostot luettelossa. Piilossa tai ei, ne estävät yhä nimeämisen niiden nimelle.",
 		menuOpenThisVault: "Avaa tämä holvi",
@@ -1330,6 +1360,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Yolun ilk parçası olarak.",
 		settingSwapActionsName: "Klasör adı listeyi açar",
 		settingSwapActionsDesc: "Açıkken klasör adı listesini açar, ardındaki ayırıcı ise klasörü kenar çubuğunda gösterir — ya da Folder notes devredeyse klasör notunu açar. Kapalıyken ikisi yer değiştirir. Yeniden adlandır/taşı modunda asla geçerli değildir.",
+		settingAllFilesDesc:
+			"Burada yalnızca kasanızın dizinlediği dosyalar listelenebilir. Geri kalanını görmek için Obsidian ayarlarında açın; düğme o sayfaya götürür.",
 		settingDotFilesName: "Gizli dosyaları göster",
 		settingDotFilesDesc: "Gizli dosyaları listede göster. Gizli olsun olmasın, adlarına yeniden adlandırmayı yine de engellerler.",
 		menuOpenThisVault: "Bu kasayı aç",
@@ -1416,6 +1448,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "パスの最初の要素として表示します。",
 		settingSwapActionsName: "フォルダ名で一覧を開く",
 		settingSwapActionsDesc: "オンのとき、フォルダ名はその一覧を開き、後ろの区切り文字はサイドバーでフォルダを表示します（Folder notes が有効ならそのフォルダノートを開きます）。オフでは両者が入れ替わります。名前変更・移動モードでは適用されません。",
+		settingAllFilesDesc:
+			"ここに表示できるのは、保管庫がインデックスしているファイルだけです。残りも見るには Obsidian の設定でこれをオンにしてください。ボタンはそのページへ移動します。",
 		settingDotFilesName: "ドットファイルを表示",
 		settingDotFilesDesc: "ドットファイルを一覧に表示します。表示・非表示にかかわらず、その名前への変更は引き続き妨げられます。",
 		menuOpenThisVault: "この Vault を開く",
@@ -1502,6 +1536,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "경로의 첫 번째 항목으로 표시합니다.",
 		settingSwapActionsName: "폴더 이름으로 목록 열기",
 		settingSwapActionsDesc: "켜면 폴더 이름이 목록을 열고, 뒤의 구분자는 사이드바에서 폴더를 표시합니다 — Folder notes가 처리한다면 폴더 노트를 엽니다. 끄면 둘이 서로 바뀝니다. 이름 변경·이동 모드에서는 적용되지 않습니다.",
+		settingAllFilesDesc:
+			"여기에는 보관함이 색인한 파일만 표시됩니다. 나머지도 보려면 Obsidian 설정에서 이 항목을 켜세요. 버튼을 누르면 그 페이지로 이동합니다.",
 		settingDotFilesName: "숨김 파일 표시",
 		settingDotFilesDesc: "숨김 파일을 목록에 표시합니다. 표시 여부와 상관없이 해당 이름으로의 변경은 계속 막습니다.",
 		menuOpenThisVault: "이 보관함 열기",
@@ -1588,6 +1624,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "作为路径的第一段。",
 		settingSwapActionsName: "文件夹名打开列表",
 		settingSwapActionsDesc: "开启时，文件夹名打开其列表，其后的分隔符在侧边栏中显示该文件夹——若有 Folder notes 接管，则打开其文件夹笔记。关闭时两者互换。重命名/移动模式下始终不适用。",
+		settingAllFilesDesc:
+			"这里只能列出库已索引的文件。在 Obsidian 设置中打开它即可看到其余文件；按钮会前往该页面。",
 		settingDotFilesName: "显示点文件",
 		settingDotFilesDesc: "在列表中显示点文件。无论是否隐藏，它们仍会阻止重命名为其名称。",
 		menuOpenThisVault: "打开此仓库",
@@ -1674,6 +1712,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "作為路徑的第一段。",
 		settingSwapActionsName: "資料夾名稱開啟清單",
 		settingSwapActionsDesc: "開啟時，資料夾名稱開啟其清單，其後的分隔符在側邊欄中顯示該資料夾——若有 Folder notes 接管，則開啟其資料夾筆記。關閉時兩者互換。重新命名/移動模式下永不適用。",
+		settingAllFilesDesc:
+			"這裡只能列出庫已索引的檔案。在 Obsidian 設定中開啟它即可看到其餘檔案；按鈕會前往該頁面。",
 		settingDotFilesName: "顯示點檔案",
 		settingDotFilesDesc: "在清單中顯示點檔案。無論是否隱藏，它們仍會阻止重新命名為其名稱。",
 		menuOpenThisVault: "開啟此儲存庫",
@@ -1760,6 +1800,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "كأول جزء من المسار.",
 		settingSwapActionsName: "اسم المجلد يفتح القائمة",
 		settingSwapActionsDesc: "عند التفعيل، يفتح اسم المجلد قائمته، ويُظهر الفاصل الذي يليه المجلد في الشريط الجانبي — أو يفتح ملاحظة المجلد إن كان Folder notes يتولى ذلك. عند الإيقاف يتبادل الاثنان. لا ينطبق أبدًا في وضع إعادة التسمية/النقل.",
+		settingAllFilesDesc:
+			"لا يمكن أن تظهر هنا سوى الملفات التي تفهرسها خزنتك. فعّل هذا في إعدادات Obsidian لرؤية البقية؛ والزر ينقلك إلى تلك الصفحة.",
 		settingDotFilesName: "إظهار الملفات المخفية",
 		settingDotFilesDesc: "إظهار الملفات المخفية في القائمة. مخفية أو لا، تظل تمنع إعادة التسمية إلى اسمها.",
 		menuOpenThisVault: "فتح هذا القبو",
@@ -1846,6 +1888,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Com a primer segment del camí.",
 		settingSwapActionsName: "El nom de la carpeta obre el desplegable",
 		settingSwapActionsDesc: "Activat, el nom de la carpeta obre el seu desplegable i el separador següent mostra la carpeta a la barra lateral — o obre la seva nota de carpeta, si se n'ocupa Folder notes. Desactivat, tots dos s'intercanvien. Mai en mode reanomena/mou.",
+		settingAllFilesDesc:
+			"Aquí només poden aparèixer els fitxers que el teu magatzem indexa. Activa-ho a la configuració d’Obsidian per veure la resta; el botó porta a aquesta pàgina.",
 		settingDotFilesName: "Mostra els fitxers ocults",
 		settingDotFilesDesc: "Llista els fitxers ocults al desplegable. Ocults o no, continuen impedint reanomenar al seu nom.",
 		menuOpenThisVault: "Obre aquest magatzem",
@@ -1934,6 +1978,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Ca primul segment al căii.",
 		settingSwapActionsName: "Numele folderului deschide lista",
 		settingSwapActionsDesc: "Activat, numele folderului deschide lista sa, iar separatorul de după el arată folderul în bara laterală — sau deschide nota folderului, dacă se ocupă Folder notes. Dezactivat, cele două fac schimb. Niciodată în modul redenumire/mutare.",
+		settingAllFilesDesc:
+			"Aici pot apărea doar fișierele pe care seiful tău le indexează. Activează-l în setările Obsidian pentru a le vedea pe celelalte; butonul duce la acea pagină.",
 		settingDotFilesName: "Afișează fișierele ascunse",
 		settingDotFilesDesc: "Afișează fișierele ascunse în listă. Ascunse sau nu, ele împiedică în continuare redenumirea la numele lor.",
 		menuOpenThisVault: "Deschide acest seif",
@@ -2021,6 +2067,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Az útvonal első szakaszaként.",
 		settingSwapActionsName: "A mappanév nyitja a listát",
 		settingSwapActionsDesc: "Bekapcsolva a mappanév nyitja a listáját, az utána álló elválasztó pedig megmutatja a mappát az oldalsávon — vagy megnyitja a mappajegyzetét, ha a Folder notes kezeli. Kikapcsolva a kettő szerepet cserél. Átnevezés/áthelyezés módban soha nem érvényes.",
+		settingAllFilesDesc:
+			"Itt csak azok a fájlok jelenhetnek meg, amelyeket a széfed indexel. Kapcsold be az Obsidian beállításaiban, hogy lásd a többit is; a gomb arra az oldalra visz.",
 		settingDotFilesName: "Rejtett fájlok megjelenítése",
 		settingDotFilesDesc: "Rejtett fájlok listázása. Rejtve vagy sem, továbbra is megakadályozzák a nevükre való átnevezést.",
 		menuOpenThisVault: "Ennek a széfnek a megnyitása",
@@ -2108,6 +2156,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Ako prvý segment cesty.",
 		settingSwapActionsName: "Názov priečinka otvára zoznam",
 		settingSwapActionsDesc: "Zapnuté — názov priečinka otvorí svoj zoznam a oddeľovač za ním zobrazí priečinok v bočnom paneli, prípadne otvorí jeho poznámku priečinka, ak sa o ňu stará Folder notes. Vypnuté — obidva si vymenia úlohy. Nikdy v režime premenovania/presunu.",
+		settingAllFilesDesc:
+			"Tu sa môžu objaviť len súbory, ktoré váš trezor indexuje. Zapnite to v nastaveniach Obsidianu, aby ste videli aj ostatné; tlačidlo vedie na tú stránku.",
 		settingDotFilesName: "Zobraziť skryté súbory",
 		settingDotFilesDesc: "Zobrazovať skryté súbory v zozname. Skryté či nie, stále bránia premenovaniu na ich názov.",
 		menuOpenThisVault: "Otvoriť tento trezor",
@@ -2194,6 +2244,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Kā ceļa pirmais segments.",
 		settingSwapActionsName: "Mapes nosaukums atver sarakstu",
 		settingSwapActionsDesc: "Ieslēgts — mapes nosaukums atver savu sarakstu, bet atdalītājs aiz tā parāda mapi sānjoslā vai atver tās mapes piezīmi, ja to apstrādā Folder notes. Izslēgts — abi apmainās vietām. Nekad pārdēvēšanas/pārvietošanas režīmā.",
+		settingAllFilesDesc:
+			"Šeit var parādīties tikai faili, ko indeksē tava glabātava. Ieslēdz to Obsidian iestatījumos, lai redzētu pārējos; poga ved uz šo lapu.",
 		settingDotFilesName: "Rādīt slēptos failus",
 		settingDotFilesDesc: "Rādīt slēptos failus sarakstā. Slēpti vai ne, tie joprojām neļauj pārdēvēt uz to nosaukumu.",
 		menuOpenThisVault: "Atvērt šo glabātavu",
@@ -2280,6 +2332,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Si segmenti i parë i shtegut.",
 		settingSwapActionsName: "Emri i dosjes hap listën",
 		settingSwapActionsDesc: "I ndezur, emri i dosjes hap listën e vet dhe ndarësi pas tij e shfaq dosjen në shiritin anësor — ose hap shënimin e dosjes, nëse e trajton Folder notes. I fikur, të dy ndërrojnë vend. Kurrë në modalitetin riemërtim/zhvendosje.",
+		settingAllFilesDesc:
+			"Këtu mund të shfaqen vetëm skedarët që kasaforta jote indekson. Aktivizoje te cilësimet e Obsidian-it për të parë të tjerët; butoni të çon te ajo faqe.",
 		settingDotFilesName: "Shfaq skedarët e fshehur",
 		settingDotFilesDesc: "Listo skedarët e fshehur në listë. Të fshehur a jo, ata prapë pengojnë riemërtimin në emrin e tyre.",
 		menuOpenThisVault: "Hap këtë kasafortë",
@@ -2367,6 +2421,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Као први сегмент путање.",
 		settingSwapActionsName: "Име фасцикле отвара листу",
 		settingSwapActionsDesc: "Укључено — име фасцикле отвара своју листу, а раздвојник иза њега приказује фасциклу у бочној траци или отвара њену белешку фасцикле, ако то обрађује Folder notes. Искључено — то двоје мењају улоге. Никада у режиму преименовања/премештања.",
+		settingAllFilesDesc:
+			"Овде се могу приказати само датотеке које ваш трезор индексира. Укључите то у подешавањима Obsidian-а да видите остале; дугме води на ту страницу.",
 		settingDotFilesName: "Прикажи скривене датотеке",
 		settingDotFilesDesc: "Приказуј скривене датотеке у листи. Скривене или не, и даље спречавају преименовање на њихово име.",
 		menuOpenThisVault: "Отвори овај трезор",
@@ -2453,6 +2509,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Як першы сегмент шляху.",
 		settingSwapActionsName: "Назва папкі адкрывае спіс",
 		settingSwapActionsDesc: "Уключана — назва папкі адкрывае свой спіс, а падзяляльнік пасля яе паказвае папку ў бакавой панэлі або адкрывае яе нататку папкі, калі гэтым займаецца Folder notes. Выключана — яны мяняюцца ролямі. Ніколі ў рэжыме пераймянавання/перамяшчэння.",
+		settingAllFilesDesc:
+			"Тут могуць паказвацца толькі файлы, якія індэксуе ваша сховішча. Уключыце гэта ў наладах Obsidian, каб убачыць астатнія; кнопка вядзе на тую старонку.",
 		settingDotFilesName: "Паказваць схаваныя файлы",
 		settingDotFilesDesc: "Паказваць схаваныя файлы ў спісе. Схаваныя ці не, яны па-ранейшаму не даюць пераймянаваць на іх імя.",
 		menuOpenThisVault: "Адкрыць гэта сховішча",
@@ -2540,6 +2598,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Ως πρώτο τμήμα της διαδρομής.",
 		settingSwapActionsName: "Το όνομα φακέλου ανοίγει τη λίστα",
 		settingSwapActionsDesc: "Ενεργό, το όνομα του φακέλου ανοίγει τη λίστα του και ο διαχωριστής μετά από αυτό εμφανίζει τον φάκελο στην πλαϊνή μπάρα — ή ανοίγει τη σημείωση φακέλου, αν την χειρίζεται το Folder notes. Ανενεργό, τα δύο εναλλάσσονται. Ποτέ σε λειτουργία μετονομασίας/μετακίνησης.",
+		settingAllFilesDesc:
+			"Εδώ μπορούν να εμφανιστούν μόνο τα αρχεία που ευρετηριάζει το θησαυροφυλάκιό σου. Ενεργοποίησέ το στις ρυθμίσεις του Obsidian για να δεις τα υπόλοιπα· το κουμπί οδηγεί σε εκείνη τη σελίδα.",
 		settingDotFilesName: "Εμφάνιση κρυφών αρχείων",
 		settingDotFilesDesc: "Εμφάνιση κρυφών αρχείων στη λίστα. Κρυφά ή όχι, εξακολουθούν να εμποδίζουν τη μετονομασία στο όνομά τους.",
 		menuOpenThisVault: "Άνοιγμα αυτού του θησαυροφυλακίου",
@@ -2628,6 +2688,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Mar chéad mhír den chonair.",
 		settingSwapActionsName: "Osclaíonn ainm an fhillteáin an liosta",
 		settingSwapActionsDesc: "Air, osclaíonn ainm an fhillteáin a liosta agus taispeánann an deighilteoir ina dhiaidh an fillteán sa bharra taoibh — nó osclaíonn sé nóta an fhillteáin, má tá Folder notes á láimhseáil. As, malartaíonn an bheirt. Ní bhaineann sé riamh leis an mód athainmnithe/bogtha.",
+		settingAllFilesDesc:
+			"Ní féidir ach comhaid a chuireann do chróntaisce innéacs orthu a thaispeáint anseo. Cuir ar siúl é i socruithe Obsidian chun an chuid eile a fheiceáil; téann an cnaipe chuig an leathanach sin.",
 		settingDotFilesName: "Taispeáin comhaid fholaithe",
 		settingDotFilesDesc: "Liostaigh comhaid fholaithe sa liosta. Folaithe nó nach ea, cuireann siad cosc fós ar athainmniú chuig a n-ainm.",
 		menuOpenThisVault: "Oscail an cruinneachán seo",
@@ -2714,6 +2776,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "כמקטע הראשון של הנתיב.",
 		settingSwapActionsName: "שם התיקייה פותח את הרשימה",
 		settingSwapActionsDesc: "כשמופעל, שם התיקייה פותח את הרשימה שלה והמפריד שאחריו מציג את התיקייה בסרגל הצד — או פותח את פתק התיקייה, אם Folder notes מטפל בכך. כשמכובה, השניים מתחלפים. לעולם לא במצב שינוי שם/העברה.",
+		settingAllFilesDesc:
+			"כאן יכולים להופיע רק קבצים שהכספת שלך מוסיפה לאינדקס. הפעל זאת בהגדרות של Obsidian כדי לראות את השאר; הכפתור מוביל לעמוד הזה.",
 		settingDotFilesName: "הצגת קבצים מוסתרים",
 		settingDotFilesDesc: "הצג קבצים מוסתרים ברשימה. מוסתרים או לא, הם עדיין חוסמים שינוי שם לשמם.",
 		menuOpenThisVault: "פתיחת כספת זו",
@@ -2800,6 +2864,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "به‌عنوان نخستین بخش مسیر.",
 		settingSwapActionsName: "نام پوشه فهرست را باز می‌کند",
 		settingSwapActionsDesc: "روشن باشد، نام پوشه فهرستش را باز می‌کند و جداکنندهٔ پس از آن پوشه را در نوار کناری نشان می‌دهد — یا اگر Folder notes فعال باشد، یادداشت پوشه را باز می‌کند. خاموش باشد، این دو جا عوض می‌کنند. هرگز در حالت تغییر نام/جابه‌جایی اعمال نمی‌شود.",
+		settingAllFilesDesc:
+			"تنها فایل‌هایی که گاوصندوق شما فهرست می‌کند اینجا نمایش داده می‌شوند. برای دیدن بقیه، آن را در تنظیمات Obsidian روشن کنید؛ دکمه به همان صفحه می‌برد.",
 		settingDotFilesName: "نمایش پرونده‌های پنهان",
 		settingDotFilesDesc: "نمایش پرونده‌های پنهان در فهرست. پنهان باشند یا نه، همچنان مانع تغییر نام به نام آن‌ها می‌شوند.",
 		menuOpenThisVault: "باز کردن این مخزن",
@@ -2886,6 +2952,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Sebagai segmen pertama path.",
 		settingSwapActionsName: "Nama folder membuka daftar",
 		settingSwapActionsDesc: "Aktif, nama folder membuka daftarnya dan pemisah setelahnya menampilkan folder di bilah sisi — atau membuka catatan foldernya, jika Folder notes menanganinya. Nonaktif, keduanya bertukar. Tidak pernah berlaku dalam mode ganti nama/pindah.",
+		settingAllFilesDesc:
+			"Hanya berkas yang diindeks brankas Anda yang dapat muncul di sini. Aktifkan di pengaturan Obsidian untuk melihat sisanya; tombolnya menuju halaman itu.",
 		settingDotFilesName: "Tampilkan berkas tersembunyi",
 		settingDotFilesDesc: "Tampilkan berkas tersembunyi dalam daftar. Tersembunyi atau tidak, mereka tetap menghalangi penggantian nama ke nama mereka.",
 		menuOpenThisVault: "Buka brankas ini",
@@ -2972,6 +3040,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Sebagai segmen pertama laluan.",
 		settingSwapActionsName: "Nama folder membuka senarai",
 		settingSwapActionsDesc: "Hidup, nama folder membuka senarainya dan pemisah selepasnya memaparkan folder di bar sisi — atau membuka nota foldernya, jika Folder notes mengendalikannya. Mati, kedua-duanya bertukar. Tidak pernah terpakai dalam mod nama semula/alih.",
+		settingAllFilesDesc:
+			"Hanya fail yang diindeks oleh bilik kebal anda boleh disenaraikan di sini. Hidupkannya dalam tetapan Obsidian untuk melihat yang selebihnya; butang itu menuju ke halaman tersebut.",
 		settingDotFilesName: "Tunjukkan fail tersembunyi",
 		settingDotFilesDesc: "Senaraikan fail tersembunyi dalam senarai. Tersembunyi atau tidak, ia tetap menghalang penamaan semula kepada namanya.",
 		menuOpenThisVault: "Buka bilik kebal ini",
@@ -3058,6 +3128,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Là đoạn đầu tiên của đường dẫn.",
 		settingSwapActionsName: "Tên thư mục mở danh sách",
 		settingSwapActionsDesc: "Bật, tên thư mục mở danh sách của nó và dấu phân cách sau đó hiện thư mục ở thanh bên — hoặc mở ghi chú thư mục, nếu có Folder notes đảm nhiệm. Tắt, hai bên đổi chỗ. Không bao giờ áp dụng trong chế độ đổi tên/di chuyển.",
+		settingAllFilesDesc:
+			"Chỉ những tệp mà kho của bạn lập chỉ mục mới hiện ở đây. Hãy bật nó trong cài đặt Obsidian để thấy phần còn lại; nút này dẫn tới trang đó.",
 		settingDotFilesName: "Hiển thị tệp ẩn",
 		settingDotFilesDesc: "Liệt kê tệp ẩn trong danh sách. Ẩn hay không, chúng vẫn chặn việc đổi tên thành tên của chúng.",
 		menuOpenThisVault: "Mở kho này",
@@ -3144,6 +3216,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "เป็นส่วนแรกของเส้นทาง",
 		settingSwapActionsName: "ชื่อโฟลเดอร์เปิดรายการ",
 		settingSwapActionsDesc: "เมื่อเปิด ชื่อโฟลเดอร์จะเปิดรายการของมัน และตัวคั่นที่ตามมาจะแสดงโฟลเดอร์ในแถบข้าง — หรือเปิดโน้ตโฟลเดอร์ หากมี Folder notes ดูแลอยู่ เมื่อปิด ทั้งสองจะสลับกัน ไม่มีผลในโหมดเปลี่ยนชื่อ/ย้าย",
+		settingAllFilesDesc:
+			"ที่นี่จะแสดงเฉพาะไฟล์ที่ห้องนิรภัยของคุณจัดทำดัชนีไว้ เปิดใช้งานในการตั้งค่าของ Obsidian เพื่อดูไฟล์ที่เหลือ ปุ่มนี้จะพาไปยังหน้านั้น",
 		settingDotFilesName: "แสดงไฟล์ที่ซ่อนอยู่",
 		settingDotFilesDesc: "แสดงไฟล์ซ่อนในรายการ ไม่ว่าจะซ่อนหรือไม่ ไฟล์เหล่านั้นยังคงกันไม่ให้เปลี่ยนชื่อไปเป็นชื่อของมัน",
 		menuOpenThisVault: "เปิดห้องนิรภัยนี้",
@@ -3230,6 +3304,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "ជាផ្នែកទីមួយនៃផ្លូវ។",
 		settingSwapActionsName: "ឈ្មោះថតបើកបញ្ជី",
 		settingSwapActionsDesc: "បើកដំណើរការ ឈ្មោះថតបើកបញ្ជីរបស់វា ហើយសញ្ញាបំបែកបន្ទាប់បង្ហាញថតនៅរបារចំហៀង — ឬបើកកំណត់ត្រាថត បើ Folder notes គ្រប់គ្រងវា។ បិទ ទាំងពីរប្តូរតួនាទីគ្នា។ មិនអនុវត្តទេក្នុងរបៀបប្តូរឈ្មោះ/ផ្លាស់ទី។",
+		settingAllFilesDesc:
+			"នៅទីនេះបង្ហាញតែឯកសារដែលឃ្លាំងរបស់អ្នកបានធ្វើលិបិក្រមប៉ុណ្ណោះ។ សូមបើកវានៅក្នុងការកំណត់របស់ Obsidian ដើម្បីមើលឯកសារផ្សេងទៀត។ ប៊ូតុងនេះនាំទៅកាន់ទំព័រនោះ។",
 		settingDotFilesName: "បង្ហាញឯកសារលាក់",
 		settingDotFilesDesc: "រាយឯកសារលាក់ក្នុងបញ្ជី។ លាក់ឬអត់ ពួកវានៅតែរារាំងការប្តូរឈ្មោះទៅជាឈ្មោះរបស់ពួកវា។",
 		menuOpenThisVault: "បើកឃ្លាំងនេះ",
@@ -3316,6 +3392,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "पथको पहिलो खण्डका रूपमा।",
 		settingSwapActionsName: "फोल्डरको नामले सूची खोल्छ",
 		settingSwapActionsDesc: "सक्रिय हुँदा, फोल्डरको नामले आफ्नो सूची खोल्छ र पछिको छुट्याउने चिन्हले फोल्डरलाई साइडबारमा देखाउँछ — वा Folder notes ले सम्हालेको छ भने त्यसको फोल्डर नोट खोल्छ। निष्क्रिय हुँदा दुवैले भूमिका साट्छन्। पुनःनामाकरण/सार्ने मोडमा कहिल्यै लागू हुँदैन।",
+		settingAllFilesDesc:
+			"यहाँ तपाईंको भल्टले अनुक्रमणिका गरेका फाइलहरू मात्र देखिन्छन्। बाँकी हेर्न Obsidian को सेटिङमा यो सक्रिय गर्नुहोस्; बटनले त्यही पृष्ठमा लैजान्छ।",
 		settingDotFilesName: "लुकेका फाइल देखाउनुहोस्",
 		settingDotFilesDesc: "सूचीमा लुकेका फाइलहरू देखाउनुहोस्। लुकेका होऊन् वा नहोऊन्, तिनीहरूको नाममा पुनःनामाकरण गर्न अझै रोक्छन्।",
 		menuOpenThisVault: "यो भल्ट खोल्नुहोस्",
@@ -3402,6 +3480,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "পাথের প্রথম অংশ হিসেবে।",
 		settingSwapActionsName: "ফোল্ডারের নাম তালিকা খোলে",
 		settingSwapActionsDesc: "চালু থাকলে ফোল্ডারের নাম তার তালিকা খোলে এবং পরের বিভাজক ফোল্ডারটি সাইডবারে দেখায় — অথবা Folder notes সামলালে তার ফোল্ডার নোট খোলে। বন্ধ থাকলে দুটি অদলবদল হয়। নাম পরিবর্তন/সরানো মোডে কখনও প্রযোজ্য নয়।",
+		settingAllFilesDesc:
+			"এখানে কেবল সেই ফাইলগুলি দেখা যায় যেগুলি আপনার ভল্ট সূচিবদ্ধ করে। বাকিগুলি দেখতে Obsidian-এর সেটিংসে এটি চালু করুন; বোতামটি সেই পাতায় নিয়ে যায়।",
 		settingDotFilesName: "লুকানো ফাইল দেখান",
 		settingDotFilesDesc: "তালিকায় লুকানো ফাইল দেখান। লুকানো হোক বা না হোক, সেগুলো এখনও তাদের নামে পুনর্নামকরণ আটকায়।",
 		menuOpenThisVault: "এই ভল্ট খুলুন",
@@ -3488,6 +3568,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "ბილიკის პირველ სეგმენტად.",
 		settingSwapActionsName: "საქაღალდის სახელი ხსნის სიას",
 		settingSwapActionsDesc: "ჩართულია — საქაღალდის სახელი ხსნის თავის სიას, ხოლო მის შემდეგ მდგომი გამყოფი აჩვენებს საქაღალდეს გვერდით ზოლში ან ხსნის მის საქაღალდის ჩანაწერს, თუ ამას Folder notes უზრუნველყოფს. გამორთულია — ორივე ცვლის როლს. არასოდეს მოქმედებს გადარქმევის/გადატანის რეჟიმში.",
+		settingAllFilesDesc:
+			"აქ მხოლოდ ის ფაილები ჩანს, რომლებსაც თქვენი საცავი ინდექსირებს. დანარჩენების სანახავად ჩართეთ ეს Obsidian-ის პარამეტრებში; ღილაკი მიგიყვანთ იმ გვერდზე.",
 		settingDotFilesName: "დამალული ფაილების ჩვენება",
 		settingDotFilesDesc: "აჩვენე დამალული ფაილები სიაში. დამალულია თუ არა, ისინი მაინც კრძალავენ მათ სახელზე გადარქმევას.",
 		menuOpenThisVault: "ამ საცავის გახსნა",
@@ -3576,6 +3658,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "Yo‘lning birinchi qismi sifatida.",
 		settingSwapActionsName: "Jild nomi ro‘yxatni ochadi",
 		settingSwapActionsDesc: "Yoqilganda jild nomi o‘z ro‘yxatini ochadi, undan keyingi ajratgich esa jildni yon panelda ko‘rsatadi — yoki Folder notes shug‘ullansa, uning jild eslatmasini ochadi. O‘chirilganda ikkovi o‘rin almashadi. Nomini o‘zgartirish/ko‘chirish rejimida hech qachon qo‘llanilmaydi.",
+		settingAllFilesDesc:
+			"Bu yerda faqat xazinangiz indekslagan fayllar ko‘rinadi. Qolganlarini ko‘rish uchun uni Obsidian sozlamalarida yoqing; tugma o‘sha sahifaga olib boradi.",
 		settingDotFilesName: "Yashirin fayllarni ko‘rsatish",
 		settingDotFilesDesc: "Ro‘yxatda yashirin fayllarni ko‘rsatish. Yashirin bo‘ladimi yoki yo‘qmi, ular baribir o‘z nomiga o‘zgartirishga to‘sqinlik qiladi.",
 		menuOpenThisVault: "Ushbu omborni ochish",
@@ -3662,6 +3746,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "እንደ መንገዱ የመጀመሪያ ክፍል።",
 		settingSwapActionsName: "የአቃፊ ስም ዝርዝሩን ይከፍታል",
 		settingSwapActionsDesc: "ሲበራ የአቃፊው ስም ዝርዝሩን ይከፍታል፣ ከሱ በኋላ ያለው መለያያ ደግሞ አቃፊውን በጎን አሞሌ ያሳያል — ወይም Folder notes የሚያስተዳድረው ከሆነ የአቃፊውን ማስታወሻ ይከፍታል። ሲጠፋ ሁለቱ ይለዋወጣሉ። በዳግም ስያሜ/ማዛወር ሁነታ ፈጽሞ አይሠራም።",
+		settingAllFilesDesc:
+			"እዚህ ሊታዩ የሚችሉት ካዝናዎ ኢንዴክስ ያደረጋቸው ፋይሎች ብቻ ናቸው። የቀሩትን ለማየት በObsidian ቅንብሮች ውስጥ ያብሩት፤ ቁልፉ ወደዚያ ገጽ ይወስዳል።",
 		settingDotFilesName: "የተደበቁ ፋይሎችን አሳይ",
 		settingDotFilesDesc: "የተደበቁ ፋይሎችን በዝርዝሩ አሳይ። ተደብቀውም ባይደበቁም አሁንም ወደ ስማቸው ዳግም መሰየምን ይከለክላሉ።",
 		menuOpenThisVault: "ይህን ቮልት ክፈት",
@@ -3748,6 +3834,8 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingVaultNameDesc: "पथस्य प्रथमखण्डरूपेण।",
 		settingSwapActionsName: "पुटनाम सूचीं उद्घाटयति",
 		settingSwapActionsDesc: "सक्रिये सति पुटस्य नाम स्वसूचीं उद्घाटयति, तदनन्तरं विभाजकः पार्श्वपट्टिकायां पुटं दर्शयति — अथवा Folder notes सक्रियः चेत् तस्य पुटटिप्पणीं उद्घाटयति। निष्क्रिये सति उभौ परिवर्तेते। नामपरिवर्तन/स्थानान्तरणविधौ कदापि न प्रवर्तते।",
+		settingAllFilesDesc:
+			"अत्र तान्येव सञ्चिकाः दृश्यन्ते याः भवतः कोशः अनुक्रमणीकरोति। शेषाः द्रष्टुं Obsidian-सेट्टिङ्गेषु एतत् प्रवर्तयतु; कुञ्जिका तं पृष्ठं नयति।",
 		settingDotFilesName: "गुप्तसञ्चिकाः प्रदर्श्यन्ताम्",
 		settingDotFilesDesc: "सूच्यां गुप्तसञ्चिकाः दर्शय। गुप्ताः वा न वा, ताः तेषां नाम्ने पुनर्नामकरणं निवारयन्ति एव।",
 		menuOpenThisVault: "एतत् कोशं उद्घाटयतु",

@@ -24,6 +24,9 @@ export const EN = {
 		"sidebar — or opens its folder note, if Folder notes handles it. Off, the two swap. " +
 		"Never in rename/move mode.",
 	settingDotFilesName: "Show dot files",
+	settingAllFilesDesc:
+		"Only files your vault indexes can be listed here. Turn it on in Obsidian's " +
+		"settings to see the rest; the button goes to that page.",
 	settingDotFilesDesc:
 		"List dot files in the dropdown. Hidden or not, they still block renaming onto their name.",
 	menuOpenThisVault: "Open this vault",

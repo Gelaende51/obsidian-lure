@@ -456,8 +456,9 @@ test("settings: the jump to Obsidian's own file-types setting switches the tab, 
 		tab.containerEl = host;
 		try { tab.display(); } catch (e) { return JSON.stringify({ threw: String(e) }); }
 		${PAUSE(300)}
-		const row = [...host.querySelectorAll(".setting-item")]
-			.find((item) => item.querySelector(".lure-setting-aside"));
+		const rows = [...host.querySelectorAll(".setting-item")];
+		const row = rows.find((item) => item.querySelector(".extra-setting-button, .clickable-icon"));
+		const heading = row ? rows[rows.indexOf(row) - 1] : null;
 		const button = row?.querySelector(".extra-setting-button, .clickable-icon");
 		const called = [];
 		const realOpen = app.setting.open;
@@ -472,9 +473,11 @@ test("settings: the jump to Obsidian's own file-types setting switches the tab, 
 		app.setting.openTab = realTab;
 		const out = {
 			tab: true,
-			aside: row?.querySelector(".lure-setting-aside")?.textContent ?? null,
+			isHeading: !!heading?.classList.contains("setting-item-heading"),
+			headingName: heading?.querySelector(".setting-item-name")?.textContent ?? null,
+			desc: row?.querySelector(".setting-item-description")?.textContent ?? null,
 			tooltip: button?.getAttribute("aria-label") ?? null,
-			hasAnchor: !!host.querySelector(".lure-setting-aside a"),
+			anchorsInRow: row ? row.querySelectorAll("a").length : null,
 			called,
 		};
 		tab.containerEl = original;
@@ -482,12 +485,16 @@ test("settings: the jump to Obsidian's own file-types setting switches the tab, 
 		return JSON.stringify(out);
 	`));
 	expect("the plugin has a settings tab", r.tab, true);
-	// Obsidian's own wording for both, read from its i18n, so this says what
-	// the page it leads to says — in whatever language Obsidian is running in.
-	expect("the line names Obsidian's setting", r.aside, (v) => typeof v === "string" && v.endsWith("→"));
-	expect("and so does the button", r.tooltip, (v) => typeof v === "string" && v.length > 0);
-	// An anchor is the thing that navigates, so there must not be one.
-	expect("nothing in the description is a link", r.hasAnchor, false);
+	// A section of its own: what it is about is Obsidian's setting, not one of
+	// this plugin's, and it is headed in Obsidian's own words so it can be
+	// searched for by the name it has on the page the button leads to.
+	expect("it stands under a heading of its own", r.isHeading, true);
+	expect("worded by Obsidian", r.headingName, (v) => typeof v === "string" && v.length > 0);
+	expect("the row says what to do about it", r.desc, (v) => typeof v === "string" && v.length > 20);
+	expect("the button says where it goes", r.tooltip, (v) => typeof v === "string" && v.length > 0);
+	// An anchor is the thing that navigates, and navigating is what tore the
+	// settings window down; nothing in this row may be one.
+	expect("nothing in the row is a link", r.anchorsInRow, 0);
 	expect("the press switches to Files and links and does no more", r.called, ["openTab:file"]);
 });
 

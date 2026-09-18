@@ -818,14 +818,6 @@
 	color: var(--text-error);
 }
 
-/* The second line of a description, naming a setting of Obsidian's own that
-   decides what these dropdowns may list. The button beside the toggle is what
-   goes there; this says where "there" is. */
-.lure-setting-aside {
-	margin-top: var(--size-2-3);
-	color: var(--text-accent);
-}
-
 /* The overflow row that ends a truncated listing. Muted and centred so it
    reads as a count rather than another entry, and inert to the pointer —
    there is nothing behind it to open. Keyboard selection can still land on
