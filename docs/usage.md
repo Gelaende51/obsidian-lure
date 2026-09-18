@@ -39,7 +39,9 @@ my-vault / :<type>     anything else with no file
 The colon is the point — no file or folder can be called `:graph`, so the row
 cannot be mistaken for a path that could be opened. The label comes from the
 view type rather than from Obsidian's own wording, so it reads the same
-whatever the interface language is.
+whatever the interface language is, and a trailing `-view` is dropped: a
+home-tab plugin registers its view as `home-launcher-view`, and the row says
+`:home-launcher`.
 
 Clicking the empty space, or the label itself, **opens the field at the vault
 root**: type a path and <kbd>Enter</kbd> opens it in this very pane, with the

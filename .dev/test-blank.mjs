@@ -16,13 +16,21 @@
  * Requires --remote-debugging-port=9222 and OBSIDIAN_VAULT set.
  */
 
-import { connect, PAUSE, pressKey, quiesce, reloadPlugin } from "./cdpSession.mjs";
-import { createSuite } from "./harness.mjs";
+import { connect, PAUSE, pressKey, quiesce, reloadPlugin, restoreTabTakers, standDownTabTakers } from "./cdpSession.mjs";
+import { createSuite, skipCase } from "./harness.mjs";
 
 const ROOT = "LureBlank";
 const NOTE = `${ROOT}/target.md`;
 
 const page = await connect();
+/**
+ * A home-tab plugin answers every new tab with a view of its own, so with one
+ * running there is no such thing as an empty tab to ask about — the row would
+ * be describing that plugin rather than the case in hand. They are stood down
+ * for the run and put back after it; what a row makes of such a view is a
+ * question of its own, and the last case asks it.
+ */
+const takersFound = await standDownTabTakers(page);
 const { test, expect, run } = createSuite({ reset, teardown });
 
 /** What the row is showing, beside what Obsidian's own title is doing. */
@@ -160,6 +168,43 @@ test("the pseudo-segment is a label, not a target", async () => {
 	await pressKey(page, "Escape");
 });
 
+test("a view this plugin has never heard of is named after itself", async () => {
+	// The open-ended rung of the label, asked of a real stranger: a home-tab
+	// plugin, which answers every new tab with a view of its own and is the
+	// commonest way an unknown view ends up in front of this row. Its type is
+	// `home-launcher-view`, and the label drops the trailing `-view` — the
+	// segment is already a view's name, and saying so twice makes it longer
+	// and no clearer.
+	//
+	// The suite stands these plugins down for the run (see the top of the
+	// file); this one case puts one back, asks, and stands it down again.
+	if (!takersFound.length) {
+		skipCase("no home-tab plugin is installed in this vault, so no stranger's view to name");
+	}
+	const id = takersFound[0];
+	await restoreTabTakers(page, [id]);
+	try {
+		const type = await page.evaluate(`
+			document.querySelector(".lure-path-input")?.blur();
+			app.workspace.getLeavesOfType("empty").forEach((l) => l.detach());
+			${PAUSE(200)}
+			await app.workspace.getLeaf(false).openFile(app.vault.getAbstractFileByPath(${JSON.stringify(NOTE)}));
+			${PAUSE(400)}
+			const fresh = app.workspace.getLeaf("tab");
+			app.workspace.setActiveLeaf(fresh, { focus: true });
+			${PAUSE(900)}
+			return app.workspace.getMostRecentLeaf().view.getViewType();
+		`);
+		expect("the plugin answered the new tab", type, (v) => v !== "empty");
+		const s = await look();
+		expect("the row names the view it found", s.parts, (v) => v.some((p) => p.startsWith(":")));
+		expect("without the word view twice", s.parts, (v) => !v.some((p) => p.endsWith("-view")));
+		expect("and it is that view's own name", s.parts.join(""), (v) => v.includes(`:${type.replace(/-view$/, "")}`));
+	} finally {
+		await standDownTabTakers(page);
+	}
+});
+
 test("a sidebar pane keeps the title Obsidian gave it", async () => {
 	// The row is for editor panes. A backlinks pane has no path to show, and
 	// hiding its title left it with nothing at all — which is the defect
@@ -217,6 +262,9 @@ async function teardown() {
 		${PAUSE(300)}
 		return true;
 	`);
+	// Back on, for the same reason the gestures suite puts them back: this
+	// suite borrows the window, it does not own it.
+	await restoreTabTakers(page, takersFound);
 	page.close();
 }
 

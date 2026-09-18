@@ -3206,8 +3206,12 @@ export class PathBreadcrumb {
 		if (type === "empty") return ":blank";
 		if (type === "graph" || type === "localgraph") return ":graph";
 		// Open-ended on purpose: a view this plugin has never heard of still
-		// gets an honest label rather than an empty header.
-		return `:${type}`;
+		// gets an honest label rather than an empty header. A trailing
+		// `-view` goes, because the label is already a view's name and saying
+		// so twice only makes it longer — a home-tab plugin, which is exactly
+		// what puts an unknown view in front of this row, registers its own
+		// as `home-launcher-view`.
+		return `:${type.replace(/-view$/, "")}`;
 	}
 
 	/** Absolute path of the external file this leaf shows, if that's what it holds. */

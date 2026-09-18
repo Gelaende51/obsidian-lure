@@ -16,26 +16,19 @@
  * Requires --remote-debugging-port=9222 and OBSIDIAN_VAULT set.
  */
 
-import { canFocusEditable, canRenameFiles, CLEAR_NOTICES, CLEAR_PANES, connect, isPainting, PAUSE, pressKey, quiesce, reloadPlugin, setSettings, setVaultConfig } from "./cdpSession.mjs";
+import { canFocusEditable, canRenameFiles, CLEAR_NOTICES, CLEAR_PANES, connect, restoreTabTakers, standDownTabTakers, isPainting, PAUSE, pressKey, quiesce, reloadPlugin, setSettings, setVaultConfig } from "./cdpSession.mjs";
 import { createSuite, skipCase } from "./harness.mjs";
 import { mkdirSync, rmSync, writeFileSync } from "fs";
 import { join } from "path";
 
 const ROOT = "GestureTest";
-/**
- * Plugins that answer a new tab with a view of their own.
- *
- * Stood down for the run and put back at the end — `disablePlugin` unloads
- * without touching the saved list, and `enablePlugin` loads without adding to
- * it, so the vault's own configuration is never written to. Named rather than
- * detected: what a plugin puts in an empty tab is not something the workspace
- * can be asked about in advance, and a gate below checks the answer anyway.
- */
 /** Where the pointer is put between cases — low in the window, away from the row and from any screen corner. */
 const POINTER_PARK = { x: 600, y: 700 };
-const TAB_TAKERS = ["home-launcher", "home-tab", "obsidian-home-tab", "homepage"];
-/** Which of them were running when this suite started, so they can be put back. */
-const takersFound = [];
+/**
+ * Which tab-takers were running when this suite started, so they can be put
+ * back — the list itself, and why they are stood down, live in `cdpSession`.
+ */
+let takersFound = [];
 /** Outside every vault, for the half of the table that only exists out there. */
 const EXT = `${process.env.HOME}/lure-gesture-fixtures`;
 
@@ -129,23 +122,11 @@ const { test, expect, run } = createSuite({
 		await setVaultConfig(page, LINKS_AT_START);
 		// Whatever was stood down for the run goes back on, for the same
 		// reason: this suite borrows the window, it does not own it.
-		await restoreTabTakers();
+		await restoreTabTakers(page, takersFound);
 		rmSync(EXT, { recursive: true, force: true });
 		page.close();
 	},
 });
-
-/** Switches back on whichever tab-takers were running when the suite began. */
-async function restoreTabTakers() {
-	if (!takersFound.length) return;
-	await page.evaluate(`
-		for (const id of ${JSON.stringify(takersFound)}) {
-			if (!app.plugins.plugins[id]) await app.plugins.enablePlugin(id);
-		}
-		${PAUSE(600)}
-		return true;
-	`);
-}
 
 const buildVaultFixture = `
 	const mk = async (p) => { if (!app.vault.getAbstractFileByPath(p)) await app.vault.createFolder(p); };
@@ -2932,20 +2913,8 @@ if (!(await canRenameFiles(page))) {
 // plugins are stood down for the run and put back after it, and if a tab
 // still arrives holding something the run stops rather than reporting
 // failures it cannot stand behind.
-takersFound.push(
-	...JSON.parse(
-		await page.evaluate(
-			`return JSON.stringify(${JSON.stringify(TAB_TAKERS)}.filter((id) => !!app.plugins.plugins[id]));`,
-		),
-	),
-);
+takersFound = await standDownTabTakers(page);
 const blankTabType = await page.evaluate(`
-	// The loaded instance is the question, not the saved list: a plugin
-	// switched on with \`enablePlugin\` was never added to that set.
-	for (const id of ${JSON.stringify(TAB_TAKERS)}) {
-		if (app.plugins.plugins[id]) await app.plugins.disablePlugin(id);
-	}
-	${PAUSE(600)}
 	const leaf = app.workspace.getLeaf("tab");
 	${PAUSE(400)}
 	const type = leaf.getViewState().type;
@@ -2960,7 +2929,7 @@ if (blankTabType !== "empty") {
 			"reporting on that plugin instead. Add it to TAB_TAKERS at the top of\n" +
 			"this file, or turn it off for the run.",
 	);
-	await restoreTabTakers();
+	await restoreTabTakers(page, takersFound);
 	page.close();
 	process.exit(2);
 }

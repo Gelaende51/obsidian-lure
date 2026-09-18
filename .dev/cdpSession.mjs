@@ -227,6 +227,50 @@ export const PAUSE = (ms) => `await new Promise((r) => setTimeout(r, ${ms}));`;
  * is not. That is the whole of "identical code failed differently between
  * runs" for the gesture suites — a race with a toast, not with the plugin.
  */
+/**
+ * Plugins that answer a new tab with a view of their own.
+ *
+ * A suite that opens a blank tab and then asks what is in it is asking about
+ * Lure; with one of these running it is really asking about that plugin, and
+ * the answer comes back as somebody's home tab. They are stood down for a run
+ * and put back after it — `disablePlugin` unloads without touching the saved
+ * list and `enablePlugin` loads without adding to it, so the vault's own
+ * configuration is never written.
+ *
+ * Named rather than detected: what a plugin puts in an empty tab cannot be
+ * asked of the workspace in advance. Whether it worked is checked instead.
+ */
+export const TAB_TAKERS = ["home-launcher", "home-tab", "obsidian-home-tab", "homepage"];
+
+/** Stands them down, and answers with the ones that were running. */
+export async function standDownTabTakers(page) {
+	const running = JSON.parse(
+		await page.evaluate(
+			`return JSON.stringify(${JSON.stringify(TAB_TAKERS)}.filter((id) => !!app.plugins.plugins[id]));`,
+		),
+	);
+	if (running.length) {
+		await page.evaluate(`
+			for (const id of ${JSON.stringify(running)}) await app.plugins.disablePlugin(id);
+			${PAUSE(600)}
+			return true;
+		`);
+	}
+	return running;
+}
+
+/** Puts back whichever of them `standDownTabTakers` found. */
+export async function restoreTabTakers(page, running) {
+	if (!running?.length) return;
+	await page.evaluate(`
+		for (const id of ${JSON.stringify(running)}) {
+			if (!app.plugins.plugins[id]) await app.plugins.enablePlugin(id);
+		}
+		${PAUSE(600)}
+		return true;
+	`);
+}
+
 export const CLEAR_NOTICES = `document.querySelectorAll(".notice").forEach((n) => n.remove());`;
 
 export const CLEAR_PANES = `

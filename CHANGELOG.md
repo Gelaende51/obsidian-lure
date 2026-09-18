@@ -8,7 +8,7 @@ Every release of Lure, newest first. What has landed since the last release is u
 
 ### Added
 
-- **A path bar on panes that hold no file.** An empty tab reads `vault / :blank`, the graph `vault / :graph`, and any other view with nothing to name gets its own `:` label. The field beside it is an address bar: type a path and <kbd>Enter</kbd> opens it in that pane, or makes it. Before this the row was blank — the plugin hid Obsidian's own title and put nothing in its place.
+- **A path bar on panes that hold no file.** An empty tab reads `vault / :blank`, the graph `vault / :graph`, and any other view with nothing to name gets its own `:` label — a home-tab plugin's own tab reads `:home-launcher`. The field beside it is an address bar: type a path and <kbd>Enter</kbd> opens it in that pane, or makes it. Before this the row was blank — the plugin hid Obsidian's own title and put nothing in its place.
 - **Type a path from the filesystem root.** A `/` in front of an empty field opens one instead of being swallowed, every later slash in it belongs to it, and the dropdown lists the machine rather than the vault.
 
 ### Changed
