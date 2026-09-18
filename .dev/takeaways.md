@@ -2404,3 +2404,20 @@ Marking `dragManager.draggable` itself, and again on the next tick once every
 handler for that press has run, is order-proof. Worth remembering wherever a
 host and a plugin both answer one gesture: the shared slot is the truth, not
 the object you handed it.
+
+## An extension Obsidian has no view for is invisible in a listing by default
+
+`viewRegistry.isExtensionRegistered` is what decides whether a file appears in
+one of this plugin's dropdowns; everything it does not know is shown only
+where Obsidian's *Show all file types* is on, which is not where a vault
+starts. That is the rule the plugin asks for on purpose — the dropdowns are
+meant to read like the File Explorer — and it makes `.txt` a poor choice of
+test fixture: a case that bedded two of them outside the vault and then
+asserted its dropdown was up could never hold its own precondition, and read
+for a long time as a flaky suggester. Fixtures that must be *seen* have to be
+of a type the host displays.
+
+The third ambient-setting trap in this suite, after `accessExternalFiles` and
+`showFileExtension`, and the first belonging to Obsidian rather than to the
+plugin — so the rule generalises: before blaming a popover that will not open,
+ask what the host has been told it may show.
