@@ -26,6 +26,16 @@ export const LABELS = {
 	openToTheRight: ["interface.menu.open-to-the-right", "interface.menu.openToTheRight"],
 	openInNewWindow: ["interface.menu.open-in-new-window", "interface.menu.openInNewWindow"],
 	copyPath: ["interface.menu.copy-path", "interface.menu.copyPath"],
+	/**
+	 * Obsidian's own *Show all file types* — the setting that decides which
+	 * files the vault indexes at all, and so which of them these dropdowns
+	 * can list. Quoted rather than translated here, so the link in this
+	 * plugin's settings is worded exactly as the page it leads to.
+	 */
+	showAllFileTypes: [
+		"setting.file.option-show-unsupported-files",
+		"setting.file.optionShowUnsupportedFiles",
+	],
 	openInDefaultApp: [
 		"plugins.open-with-default-app.action-open-file",
 		"plugins.openWithDefaultApp.actionOpenFile",

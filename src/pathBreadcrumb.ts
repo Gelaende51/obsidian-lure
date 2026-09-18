@@ -31,7 +31,7 @@ import {
 	readableMinimum,
 } from "./pathFit";
 import { commonPrefix, planSuggestion, planTab } from "./tabComplete";
-import { FolderChildSuggest, MODIFIED_ENTER, guardFieldKeys, PathSuggestion } from "./folderChildSuggest";
+import { FolderChildSuggest, MODIFIED_ENTER, guardFieldKeys, pageLabel, PathSuggestion } from "./folderChildSuggest";
 import { ExternalChild, PATH_SEP, externalJoin, externalParent, externalSegments, isExternalFile, isExternalFolder, listExternalChildren } from "./externalFs";
 import {
 	CURRENT_VAULT_ICON,
@@ -1856,7 +1856,27 @@ export class PathBreadcrumb {
 	private mainPaneViewTypes(): string[] {
 		if (this.renameMode) return [];
 		if (this.externalPath !== null || this.showingLocations) return [];
-		if (this.currentFolderPath() !== "") return [];
+		// At the vault root they are simply listed, under what is in it. In
+		// any other folder they appear once a colon has been typed — the one
+		// character that can begin no name — so the pages are discoverable
+		// where a reader would look for them without turning up uninvited in
+		// every folder's listing, and the field can take its colour from the
+		// row that names what is in it.
+		const typed = this.inputEl?.value.trim() ?? "";
+		if (this.currentFolderPath() !== "" && !typed.startsWith(":")) return [];
+		return this.pageTypes();
+	}
+
+	/**
+	 * The same views, without the rules about where they are *listed*.
+	 *
+	 * A page is in no folder at all, so where the row happens to be standing
+	 * has nothing to say about whether `:graph` names one. The listing is
+	 * root-only because that is where a reader would look for it; typing is
+	 * not, or the label would mean something in one folder and nothing in the
+	 * next.
+	 */
+	private pageTypes(): string[] {
 		const registry = this.plugin.app.viewRegistry;
 		const all = registry?.viewByType;
 		if (!all) return [];
@@ -3334,9 +3354,20 @@ export class PathBreadcrumb {
 		// put in its place. It used to go the moment a leaf was patched, and
 		// a leaf with nothing to draw — a sidebar pane holding no file — was
 		// left with a header emptier than the one the plugin replaced.
+		//
+		// A field counts as something drawn even though it is not here yet:
+		// the locations menu empties the row *in order to* put its input
+		// where the vault name was, and `enterTypingMode` adds that input
+		// after this runs. Measuring the boxes alone therefore called the row
+		// empty at exactly that moment and handed Obsidian's title back — so
+		// clicking the vault name showed the note's name, greyed, sitting
+		// after the path in the field, which it does at no other time.
+		const editing = this.showingLocations || this.mode === "typing";
 		this.titleEl.toggleClass(
 			NATIVE_TITLE_HIDDEN_CLASS,
-			this.vaultSegmentEl.childElementCount > 0 || this.filenameEl.childElementCount > 0,
+			editing ||
+				this.vaultSegmentEl.childElementCount > 0 ||
+				this.filenameEl.childElementCount > 0,
 		);
 		this.fitRow();
 	}
@@ -5551,6 +5582,23 @@ export class PathBreadcrumb {
 	 * empty field names nothing yet, and a web address is not a place here
 	 * to go looking for.
 	 */
+	/**
+	 * The page a typed `:something` names, or null.
+	 *
+	 * The label is the one the dropdown offers and the row shows, so what can
+	 * be picked from the list can equally be typed — which is what an address
+	 * bar means. Nothing else can collide with it: a colon is not a character
+	 * Obsidian allows in a name, so a path can never be mistaken for a page.
+	 */
+	private typedPageType(rawText: string): string | null {
+		// Never while a move is pending: there the field is naming where a
+		// file goes, and a view is not a place to put one.
+		if (this.renameMode) return null;
+		const typed = rawText.trim().toLowerCase();
+		if (!typed.startsWith(":")) return null;
+		return this.pageTypes().find((type) => pageLabel(type).toLowerCase() === typed) ?? null;
+	}
+
 	private typedCreatesNew(rawText: string): boolean {
 		// Same expansion the commit does, so the field's colour and Enter can
 		// never disagree about what a tilde means.
@@ -5562,6 +5610,10 @@ export class PathBreadcrumb {
 		// illegal name and a taken one. Two reds on one field, meaning
 		// opposite things, would leave neither readable.
 		if (this.renameMode) return false;
+		// A page is somewhere to go, not something to make — and the red here
+		// would be a promise that Enter is about to create a note called
+		// `:graph`, which is a name the vault would refuse anyway.
+		if (this.typedPageType(trimmed)) return false;
 
 		const target = classifyTypedTarget(trimmed);
 		// An absolute path resolves against the real filesystem — inside the
@@ -7965,6 +8017,17 @@ export class PathBreadcrumb {
 			// which is the one thing that did not happen; the field stays up
 			// so the path can be finished, and Escape is still the way out.
 			new Notice(t("noticeNoSelection"));
+			return;
+		}
+
+		// A page the row can name — `:graph`, `:search`, a plugin's own tab.
+		// Before everything else because it is not a path at all, and because
+		// the colon that marks it is a character no name may contain.
+		const page = this.typedPageType(trimmed);
+		if (page) {
+			this.cancelNavigation();
+			const target = paneType ? this.plugin.app.workspace.getLeaf(paneType) : this.leaf;
+			void target.setViewState({ type: page, active: true });
 			return;
 		}
 

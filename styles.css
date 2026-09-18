@@ -818,6 +818,14 @@
 	color: var(--text-error);
 }
 
+/* A line in a description that leads somewhere: the setting of Obsidian's own
+   that decides what these dropdowns may list. Spaced like the warning line
+   above it, and coloured as a link rather than as a caution — it is a way
+   there, not a risk. */
+.lure-setting-link {
+	margin-top: var(--size-2-3);
+}
+
 /* The overflow row that ends a truncated listing. Muted and centred so it
    reads as a count rather than another entry, and inert to the pointer —
    there is nothing behind it to open. Keyboard selection can still land on

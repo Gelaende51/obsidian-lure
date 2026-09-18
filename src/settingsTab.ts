@@ -10,6 +10,7 @@ import type BreadcrumbPathPlugin from "./main";
 import type { BreadcrumbPathSettings } from "./settings";
 import { setLanguageOverride, t } from "./lang";
 import { FOLLOW_OBSIDIAN, LOCALE_NAMES } from "./lang/locales";
+import { LABELS, obsidianLabel } from "./obsidianLabels";
 
 const DELIMITER_PRESETS = ["/", ">", "▸", "›", "\\", "•"];
 
@@ -118,7 +119,7 @@ export class BreadcrumbSettingTab extends PluginSettingTab {
 			},
 			{
 				name: t("settingDotFilesName"),
-				desc: t("settingDotFilesDesc"),
+				desc: this.dotFilesDescription(),
 				control: { type: "toggle", key: "showDotFiles" },
 			},
 			{
@@ -259,6 +260,38 @@ export class BreadcrumbSettingTab extends PluginSettingTab {
 	}
 
 	/** The external-access description, warning line and all. */
+	/**
+	 * The dot-file rule, and beside it the *other* rule that decides what a
+	 * dropdown can list — Obsidian's own, which is not this plugin's to
+	 * toggle but is the first thing to look at when a folder reads as emptier
+	 * than it is.
+	 *
+	 * The link is worded by Obsidian, in whatever language it is running in,
+	 * and it opens the page it names. Nothing new to translate, and nothing
+	 * to go stale when that page is reworded.
+	 */
+	private dotFilesDescription(): DocumentFragment {
+		const fragment = createFragment();
+		fragment.createDiv({ text: t("settingDotFilesDesc") });
+		const line = fragment.createDiv({ cls: "lure-setting-link" });
+		const label = obsidianLabel(LABELS.showAllFileTypes, "Show all file types");
+		const link = line.createEl("a", { text: `${label} →`, href: "#" });
+		link.addEventListener("click", (evt) => {
+			evt.preventDefault();
+			// Internal, and guarded as every internal call here is: failing to
+			// open the page is a link that does nothing, not a settings tab
+			// that throws while you are looking at it.
+			try {
+				const setting = this.app.setting;
+				setting?.open?.();
+				setting?.openTabById?.("file");
+			} catch {
+				/* The setting is still where Obsidian keeps it. */
+			}
+		});
+		return fragment;
+	}
+
 	private externalDescription(): DocumentFragment {
 		const fragment = createFragment();
 		fragment.createDiv({ text: t("settingExternalDesc") });

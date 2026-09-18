@@ -2811,7 +2811,10 @@ const treeState = `
 	return JSON.stringify({
 		open: items.filter((i) => i.collapsible && !i.collapsed).length,
 		view: leaf.view.getViewType(),
-		underlined: sep ? sep.classList.contains("lure-has-folder-note") : null,
+		// What is drawn, not what is set: the class was on the separator for a
+		// morning while the rule underlined a different element, and a case
+		// that asked for the class passed the whole time.
+		underlined: sep ? getComputedStyle(sep).textDecorationLine.includes("underline") : null,
 	});
 `;
 
@@ -2885,9 +2888,15 @@ test("with a start page to offer, the delimiter opens it first and folds second"
 		expect("one press opens the start page in this pane", first.view, (v) => v !== "markdown");
 		expect("and leaves the tree alone", first.open, before.open);
 
-		const second = await pressRootDelimiter(2);
+		// A *single* press again, not the second half of a double-click: two
+		// unhurried clicks are how anyone opens a page and then folds the
+		// tree, and counting the run made the fold need a double-click.
+		const second = await pressRootDelimiter(1);
 		expect("the press after it folds the tree", second.open, 0);
 		expect("with the start page still in the pane", second.view, first.view);
+
+		const third = await pressRootDelimiter(1);
+		expect("and the one after that puts the tree back", third.open, before.open);
 	} finally {
 		await standDownTabTakers(page);
 		await page.evaluate(`app.plugins.plugins.lure.manager.refreshAll(); ${PAUSE(300)} return true;`);

@@ -750,7 +750,11 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		for (const type of context.pages) {
 			const label = pageLabel(type);
 			if (!matches(label)) continue;
-			suggestions.push({ label, kind: "page", path: type, disabled: false });
+			// Orange, as every other entry that is not a note is: a page is
+			// the least note-like thing in the list, and the field takes the
+			// colour of what it names, so an offered `:graph` says what it is
+			// before Enter is pressed.
+			suggestions.push({ label, kind: "page", path: type, disabled: false, warn: true });
 		}
 
 		return suggestions;

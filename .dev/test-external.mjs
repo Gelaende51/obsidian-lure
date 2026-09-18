@@ -471,6 +471,48 @@ test("path bar: adopts the external file and rings red", async () => {
 	expect("padlock shown", r.padlock, true);
 });
 
+test("path bar: a text file out here is listed whatever the vault indexes", async () => {
+	// Obsidian's *Show all file types* decides what the **vault** indexes as
+	// a file. Nothing out here is in the vault, so applying it out here hid a
+	// `.txt` sitting beside the notes and made the folder read as empty — and
+	// this plugin has a viewer for exactly those files.
+	writeFileSync(join(BED, "plain.txt"), "text\n");
+	const before = await setVaultConfig(page, { showUnsupportedFiles: false });
+	try {
+		const r = JSON.parse(await page.evaluate(`
+			${open(join(BED, "note.md"))}
+			${breadcrumb}
+			bc.startBrowsingHere?.();
+			const box = app.workspace.getMostRecentLeaf().view.containerEl
+				.querySelector(".view-header-title-container");
+			box.querySelector(".lure-filename-text")?.click();
+			${PAUSE(700)}
+			const probe = document.body.createDiv();
+			probe.style.color = "var(--text-warning)";
+			const warn = getComputedStyle(probe).color;
+			probe.remove();
+			return JSON.stringify({
+				setting: app.vault.getConfig("showUnsupportedFiles"),
+				rows: [...document.querySelectorAll(".suggestion-item")].map((e) => ({
+					label: e.textContent,
+					orange: getComputedStyle(e.querySelector(".lure-suggest-label") ?? e).color === warn,
+				})),
+			});
+		`));
+		expect("the vault's own setting is off", r.setting, false);
+		expect("the text file is listed all the same", r.rows, (v) =>
+			v.some((row) => row.label.includes("plain.txt")));
+		// And orange, as everything that is not a note is.
+		expect("and coloured as the not-a-note it is", r.rows, (v) =>
+			v.some((row) => row.label.includes("plain.txt") && row.orange));
+		expect("while the note beside it is not", r.rows, (v) =>
+			v.some((row) => row.label.includes("note.md") && !row.orange));
+	} finally {
+		await setVaultConfig(page, before);
+		await page.evaluate(`document.querySelector(".lure-path-input")?.blur(); return true;`);
+	}
+});
+
 test("path bar: Tab completes and steps, out here too", async () => {
 	// Stepping into a folder outside the vault is a different move from
 	// stepping into one inside it — the row is drawn from an absolute path,
@@ -1250,7 +1292,7 @@ test("invariant: an unreadable file fails visibly and is never writable", async 
 	expect("editing not offered", r.hasEdit, false);
 });
 
-test("invariant: unsupported extensions follow Obsidian's own setting", async () => {
+test("invariant: outside the vault, an unsupported extension is listed either way", async () => {
 	const r = await page.evaluate(`
 		${open(join(BED, "note.md"))}
 		${breadcrumb}
@@ -1268,8 +1310,14 @@ test("invariant: unsupported extensions follow Obsidian's own setting", async ()
 		app.vault.setConfig("showUnsupportedFiles", was);
 		return seen;
 	`);
+	// The rule this case used to assert — that *Show all file types* governs
+	// these listings — is right inside the vault and was wrong out here. That
+	// setting decides what the **vault** indexes as a file, and nothing out
+	// here is in the vault: with it off, a `.txt` sitting beside the notes
+	// vanished and the folder read as empty, while the plugin has a viewer
+	// for exactly those files.
 	expect("on: lists .txt", r.true?.includes("plain.txt"), true);
-	expect("off: hides .txt", r.false?.includes("plain.txt"), false);
+	expect("off: lists it too, because the setting is not about out here", r.false?.includes("plain.txt"), true);
 	expect("off: still lists .md", r.false?.includes("note.md"), true);
 });
 

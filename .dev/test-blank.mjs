@@ -212,6 +212,84 @@ test("the vault root lists the pages a pane can hold, and picking one opens it",
 	expect("and the row names it as the segment does", after.parts, (v) => v.includes(":graph"));
 });
 
+test("the vault name opens its places on a pane holding no file", async () => {
+	// The one gesture that leads out of the vault, on exactly the pane you
+	// would use to go somewhere: it wanted a file before it would open, and a
+	// blank tab has none.
+	expect("the tab is empty", await page.evaluate(blankTab), "empty");
+	const opened = JSON.parse(await page.evaluate(`
+		const box = app.workspace.getMostRecentLeaf().view.containerEl
+			.querySelector(".view-header-title-container");
+		box.querySelector(".lure-vault-segment").click();
+		${PAUSE(800)}
+		const title = app.workspace.getMostRecentLeaf().view.containerEl
+			.querySelector(".view-header-title");
+		return JSON.stringify({
+			field: document.querySelector(".lure-path-input")?.value ?? null,
+			places: document.querySelectorAll(".suggestion-item").length,
+			// The field stands where the vault name was, so Obsidian's own
+			// title must stay out of the way — it reappeared beside the path
+			// for as long as the row measured itself by what it had drawn.
+			titleWidth: Math.round(title.getBoundingClientRect().width),
+		});
+	`));
+	expect("the field opens on the vault's own path", opened.field, (v) =>
+		typeof v === "string" && v.startsWith("/"));
+	expect("with the places listed under it", opened.places, (v) => v > 0);
+	expect("and Obsidian's title nowhere beside it", opened.titleWidth, 0);
+	await pressKey(page, "Escape");
+});
+
+test("a page can be typed as well as picked, and is not something to make", async () => {
+	// The labels are the same in both directions, which is what an address
+	// bar means: what the list offers can be typed, and what is typed is
+	// coloured as what it names — orange for a page, as for anything that is
+	// not a note, rather than red for a note about to be created.
+	await page.evaluate(blankTab);
+	await page.evaluate(`
+		await app.workspace.getMostRecentLeaf().openFile(app.vault.getAbstractFileByPath(${JSON.stringify(NOTE)}));
+		${PAUSE(600)}
+		const box = app.workspace.getMostRecentLeaf().view.containerEl
+			.querySelector(".view-header-title-container");
+		box.querySelector(".lure-filename-text").click();
+		${PAUSE(500)}
+		const input = document.querySelector(".lure-path-input");
+		input.value = ""; input.dispatchEvent(new Event("input", { bubbles: true }));
+		${PAUSE(200)}
+		return true;
+	`);
+	await page.send("Input.insertText", { text: ":graph" });
+	await page.evaluate(PAUSE(700) + "return true;");
+	const typed = JSON.parse(await page.evaluate(`
+		const input = document.querySelector(".lure-path-input");
+		const probe = document.body.createDiv();
+		probe.style.color = "var(--text-warning)";
+		const warn = getComputedStyle(probe).color;
+		probe.remove();
+		return JSON.stringify({
+			value: input.value,
+			willCreate: input.classList.contains("lure-will-create"),
+			orange: getComputedStyle(input).color === warn,
+			rows: [...document.querySelectorAll(".suggestion-item")].map((e) => ({
+				label: e.textContent,
+				orange: getComputedStyle(e.querySelector(".lure-suggest-label") ?? e).color === warn,
+			})),
+		});
+	`));
+	expect("the name stands as typed", typed.value, ":graph");
+	expect("the field does not offer to make it", typed.willCreate, false);
+	expect("it wears the colour of what it names", typed.orange, true);
+	expect("and the row offering it wears the same", typed.rows, (v) =>
+		v.some((row) => row.label.includes(":graph") && row.orange));
+
+	await pressKey(page, "Enter");
+	await page.evaluate(PAUSE(1100) + "return true;");
+	const after = await look();
+	expect("Enter opens the page", after.type, "graph");
+	expect("and made nothing", await page.evaluate(
+		`return app.vault.getRoot().children.filter((f) => f.name.startsWith(":")).length;`), 0);
+});
+
 test("a folder that is not the root offers no pages", async () => {
 	// They are the vault's, not every folder's: a listing of `LureBlank`
 	// offering `:graph` would read as something inside it.
