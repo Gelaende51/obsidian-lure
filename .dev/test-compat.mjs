@@ -439,7 +439,7 @@ if (!installed.length) {
 	process.exit(0);
 }
 
-test("settings: the jump to Obsidian's own file-types setting switches the tab, and nothing else", async () => {
+test("settings: the jump to Obsidian's own file-types setting reveals it, and nothing else", async () => {
 	// Twice this has closed the settings instead. An anchor with an `href`
 	// navigates, and these settings can be a window of their own — sending
 	// that window to "#" tore it down. And `openTabById` opens on the way,
@@ -464,13 +464,17 @@ test("settings: the jump to Obsidian's own file-types setting switches the tab, 
 		const realOpen = app.setting.open;
 		const realById = app.setting.openTabById;
 		const realTab = app.setting.openTab;
+		const realNavigate = app.setting.navigateToSearchResult;
 		app.setting.open = () => called.push("open");
 		app.setting.openTabById = (id) => called.push("openTabById:" + id);
 		app.setting.openTab = (t) => called.push("openTab:" + (t?.id ?? "?"));
+		app.setting.navigateToSearchResult = (hit, result) =>
+			called.push("reveal:" + (hit?.tab?.id ?? "?") + ":" + (result?.entry?.definition?.name ?? "?"));
 		button?.click();
 		app.setting.open = realOpen;
 		app.setting.openTabById = realById;
 		app.setting.openTab = realTab;
+		app.setting.navigateToSearchResult = realNavigate;
 		const out = {
 			tab: true,
 			name: row?.querySelector(".setting-item-name")?.textContent ?? null,
@@ -496,7 +500,10 @@ test("settings: the jump to Obsidian's own file-types setting switches the tab, 
 	// An anchor is the thing that navigates, and navigating is what tore the
 	// settings window down; nothing in this row may be one.
 	expect("nothing in the row is a link", r.anchorsInRow, 0);
-	expect("the press switches to Files and links and does no more", r.called, ["openTab:file"]);
+	// What a click on a settings search result does: the tab, the setting
+	// scrolled into view and flashed — and nothing that reopens the window.
+	expect("the press reveals the setting as a search result would, and does no more", r.called,
+		[`reveal:file:${r.name}`]);
 });
 
 test("settings: the Hotkeys row opens Obsidian's hotkeys filtered to this plugin", async () => {

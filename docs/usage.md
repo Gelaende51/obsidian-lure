@@ -769,18 +769,18 @@ The rename command (<kbd>F2</kbd> by default, or whatever you've rebound it to) 
 
 In the path bar it opens on the **name without its extension** — the edit a rename
 almost always is, and the same thing clicking the name selects. Press it again and
-it walks the same rungs <kbd>Tab</kbd> does: the name with its extension, the path
-from your vault folder, the path from the system root. Typing hands the key back to
-renaming, so the ladder never gets in the way of the edit you came for.
+it does whatever <kbd>Tab</kbd> would do there: on the name, that is the next rung —
+the name with its extension, the path from your vault folder, the path from the
+system root; with something typed, it completes it, as <kbd>Tab</kbd> does.
 
 **The cycle closes at the heading.** Five presses take you round it — the inline
 title, the name, the name with its extension, the path from your vault, the path
-from the system root — and the sixth is the inline title again. <kbd>Tab</kbd>
-still laps the same rungs inside the field, because that key is reading the path
-rather than choosing where to rename it.
+from the system root — and the sixth is the inline title again. That last press is the only one that differs
+from <kbd>Tab</kbd>, which laps back to the front of the path instead.
 
-The **Focus the path bar** command walks the same four rungs, and its fifth press
-hands the cursor back to the note, as <kbd>F2</kbd>'s does.
+The **Focus the path bar** command does the same inside the field — whatever
+<kbd>Tab</kbd> would — and where <kbd>Tab</kbd> would lap, it hands the cursor back
+to the note instead.
 
 Outside the vault the key works too — there is no inline title out there, so the
 first press goes straight to the path bar.
@@ -872,7 +872,7 @@ appear in a real name, where an apostrophe very much can.
 | **Show vault name** | On / Off | On | Whether the vault itself is the first breadcrumb segment. Turned off, that segment becomes a 🏠 icon rather than disappearing, so the path still starts somewhere clickable. |
 | **Folder name opens the dropdown** | On / Off | On | Swaps what a folder name and the delimiter after it do — see [the table above](#the-breadcrumb). With [Folder notes](obsidian://show-plugin?id=folder-notes) the delimiter opens folder notes. Never applies in rename/move mode. |
 | **Show dot files** | On / Off | Off | Whether dot-files and dot-folders are listed in the dropdowns. Overwrite protection applies either way. |
-| **Show all file types** | — | — | Not this plugin's setting but Obsidian's, named here because it answers the same question: your vault indexes only the file types it is told to, and only what it indexes can be listed. Look for it in Obsidian's settings and turn it on to see every file; the button beside the row opens that page. Outside the vault it does not apply, since nothing out there is indexed anyway. |
+| **Show all file types** | — | — | Not this plugin's setting but Obsidian's, named here because it answers the same question: your vault indexes only the file types it is told to, and only what it indexes can be listed. Look for it in Obsidian's settings and turn it on to see every file; the button beside the row opens that page with the setting scrolled into view and flashed, as clicking it in the settings' own search would. Outside the vault it does not apply, since nothing out there is indexed anyway. |
 | **Show file extensions** | On / Off | Off | Whether the file's name on the row carries its extension. Off, it is left off — as Obsidian leaves it off a note's title. On, the row names the file the way the filesystem does. Either way the extension is the second thing given up when the row runs out of room, straight after the vault name. |
 | **Access external files** | On / Off | **Off** | Whether the vault name opens the locations dropdown. Off, nothing in the plugin ever looks past this vault. |
 | **Hotkeys** | button | — | Opens Obsidian's *Hotkeys* filtered to this plugin, where *Focus the path bar* can be given a key. |

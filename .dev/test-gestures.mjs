@@ -587,6 +587,58 @@ test("the rename key opens the name without its extension, then walks the path",
 	expect("a further press takes the extension too", second.selected, "leaf.md");
 });
 
+test("off the rungs, F2 and the focus command press Tab", async () => {
+	// A field someone has typed into is not on the selection ladder, and the
+	// keys used to answer it their own ways: F2 by starting over on the name,
+	// the command by closing the field. Whatever Tab does there, they do.
+	const outcome = async (key) => {
+		await page.evaluate(openVaultNote);
+		await page.evaluate(`
+			app.commands.executeCommandById("lure:focus-path-bar");
+			${PAUSE(300)}
+			document.querySelector(".lure-path-input")?.focus();
+			return true;
+		`);
+		await pressKey(page, "ctrl+a");
+		await page.send("Input.insertText", { text: "as" });
+		await page.evaluate(PAUSE(300) + "return true;");
+		if (key === "command") {
+			await page.evaluate(`app.commands.executeCommandById("lure:focus-path-bar");` + PAUSE(300) + "return true;");
+		} else {
+			await pressKey(page, key);
+			await page.evaluate(PAUSE(300) + "return true;");
+		}
+		return page.evaluate(`
+			const input = document.querySelector(".view-header-title-container input");
+			const out = {
+				value: input?.value ?? null,
+				chips: [...document.querySelectorAll(".lure-browse-chip")].map((e) => e.textContent),
+			};
+			document.querySelector(".lure-path-input")?.blur();
+			document.body.click();
+			${PAUSE(300)}
+			return out;
+		`);
+	};
+	const tab = await outcome("Tab");
+	expect("Tab completes the name", tab.value, (v) => typeof v === "string" && v.startsWith("aside"));
+	expect("F2 does the same", await outcome("F2"), tab);
+	expect("and so does the command", await outcome("command"), tab);
+});
+
+test("F2 ends its cycle on the inline title", async () => {
+	await page.evaluate(openVaultNote);
+	for (let i = 0; i < 6; i++) {
+		await pressKey(page, "F2");
+		await page.evaluate(PAUSE(300) + "return true;");
+	}
+	const r = await page.evaluate(`return {
+		field: !!document.querySelector(".view-header-title-container input"),
+		title: !!document.activeElement?.closest(".inline-title"),
+	};`);
+	expect("heading, four rungs, and back to the heading", r, { field: false, title: true });
+});
+
 test("the focus command walks F2's rungs, then hands focus back to the note", async () => {
 	await page.evaluate(openVaultNote);
 	const press = () => page.evaluate(`app.commands.executeCommandById("lure:focus-path-bar");` + PAUSE(300) + `

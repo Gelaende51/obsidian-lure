@@ -2628,17 +2628,33 @@ export class PathBreadcrumb {
 	 * the caller can fall back to its usual behaviour.
 	 */
 	advanceRenameSelection(): boolean {
-		if (!this.inputEl || !this.renameMode) return false;
-		// The last rung hands the key back instead of wrapping, so the cycle
-		// is heading, name, name with extension, the path from the vault, the
-		// path from the system root, and round to the heading again. Tab still
-		// laps the same rungs: that key is reading the path, this one is
-		// choosing where to rename.
+		// The last rung hands the key back to the inline title instead of
+		// wrapping, so the cycle is heading, name, name with extension, the
+		// path from the vault, the path from the system root, and round to the
+		// heading again.
+		return this.pressLikeTab(() => this.dismissEditing());
+	}
+
+	/**
+	 * F2 and the focus command, pressed while the field is open: whatever Tab
+	 * would do there — complete, step in, widen the selection — except where
+	 * Tab would lap back to the front of the path. There `leave` runs instead
+	 * and the press reports false, so each key can end the cycle its own way:
+	 * F2 on the inline title, the command in the note.
+	 *
+	 * Only the rungs used to be shared. A field opened by a click or by
+	 * typing is not on them, and the keys answered it differently — F2 by
+	 * starting over on the name, the command by closing the field — where
+	 * Tab would have carried on with the path in front of it.
+	 */
+	private pressLikeTab(leave: () => void): boolean {
+		const input = this.inputEl;
+		if (!input) return false;
 		if (this.tabStage !== null && this.tabStage >= LAST_RENAME_RUNG) {
-			this.finishRename();
+			leave();
 			return false;
 		}
-		this.advanceLadder();
+		this.handleTabCompletion(input);
 		return true;
 	}
 
@@ -8607,13 +8623,13 @@ export class PathBreadcrumb {
 	 */
 	focusPathBar(): void {
 		// The same rungs F2 walks — name, name with extension, the path from
-		// the vault, the path from the system root — and the same way out:
-		// the press after the last one hands the key back to the note rather
-		// than lapping. It used to open on the whole path and lap forever,
-		// so the one key that reached the row could never leave it again.
+		// the vault, the path from the system root — and, once the field is
+		// open, whatever Tab would do; the press after the last rung hands
+		// the key back to the note rather than lapping. It used to open on the
+		// whole path and lap forever, so the one key that reached the row
+		// could never leave it again.
 		if (this.inputEl) {
-			if (this.tabStage === null || this.tabStage >= LAST_RENAME_RUNG) this.dismissEditing();
-			else this.advanceLadder();
+			this.pressLikeTab(() => this.dismissEditing());
 			return;
 		}
 		this.startLadderAt(0);

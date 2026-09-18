@@ -217,6 +217,17 @@ declare module "obsidian" {
 		plugins: Record<string, { settings?: unknown } | undefined>;
 	}
 
+	/** One tab's share of a settings search. */
+	interface SettingSearchHit {
+		tab?: { id?: string };
+		results?: SettingSearchResult[];
+	}
+
+	/** One setting in it, carrying the definition the tab drew it from. */
+	interface SettingSearchResult {
+		entry?: { definition?: { name?: unknown } };
+	}
+
 	interface App {
 		/**
 		 * The vault's own identifier — what Obsidian keys its vault registry,
@@ -238,6 +249,10 @@ declare module "obsidian" {
 			settingTabs?: { id?: string; setQuery?: (query: string) => void }[];
 			/** In a document while the settings are on screen — in the main window or in one of their own. */
 			containerEl?: HTMLElement;
+			/** The index the settings' own search box queries: one hit per tab, one result per setting in it. */
+			searchIndex?: { search?(query: string): SettingSearchHit[] };
+			/** What clicking a search result does: switch to its tab, scroll the setting into view, flash it. */
+			navigateToSearchResult?(hit: SettingSearchHit, result: SettingSearchResult): void;
 		};
 		commands: CommandRegistry;
 		dragManager: DragManager;

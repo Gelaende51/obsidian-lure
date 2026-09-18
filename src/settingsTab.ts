@@ -300,6 +300,16 @@ export class BreadcrumbSettingTab extends PluginSettingTab {
 				.onClick(() => {
 					try {
 						const settings = this.app.setting;
+						// What a click on a settings search result does: the
+						// tab, then the setting scrolled to the middle and
+						// flashed, so it is found rather than looked for.
+						const label = obsidianLabel(LABELS.showAllFileTypes, "Show all file types");
+						const hit = settings?.searchIndex?.search?.(label)?.find((h) => h.tab?.id === "file");
+						const result = hit?.results?.find((r) => r.entry?.definition?.name === label);
+						if (hit && result && settings?.navigateToSearchResult) {
+							settings.navigateToSearchResult(hit, result);
+							return;
+						}
 						const files = (settings?.settingTabs ?? []).find((tab) => tab?.id === "file");
 						if (files && settings?.openTab) settings.openTab(files);
 						else settings?.openTabById?.("file");
