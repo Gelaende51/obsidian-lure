@@ -458,7 +458,7 @@ test("settings: the jump to Obsidian's own file-types setting switches the tab, 
 		${PAUSE(300)}
 		const rows = [...host.querySelectorAll(".setting-item")];
 		const row = rows.find((item) => item.querySelector(".extra-setting-button, .clickable-icon"));
-		const heading = row ? rows[rows.indexOf(row) - 1] : null;
+		const above = row ? rows[rows.indexOf(row) - 1] : null;
 		const button = row?.querySelector(".extra-setting-button, .clickable-icon");
 		const called = [];
 		const realOpen = app.setting.open;
@@ -473,8 +473,8 @@ test("settings: the jump to Obsidian's own file-types setting switches the tab, 
 		app.setting.openTab = realTab;
 		const out = {
 			tab: true,
-			isHeading: !!heading?.classList.contains("setting-item-heading"),
-			headingName: heading?.querySelector(".setting-item-name")?.textContent ?? null,
+			name: row?.querySelector(".setting-item-name")?.textContent ?? null,
+			above: above?.querySelector(".setting-item-name")?.textContent ?? null,
 			desc: row?.querySelector(".setting-item-description")?.textContent ?? null,
 			tooltip: button?.getAttribute("aria-label") ?? null,
 			anchorsInRow: row ? row.querySelectorAll("a").length : null,
@@ -485,11 +485,12 @@ test("settings: the jump to Obsidian's own file-types setting switches the tab, 
 		return JSON.stringify(out);
 	`));
 	expect("the plugin has a settings tab", r.tab, true);
-	// A section of its own: what it is about is Obsidian's setting, not one of
-	// this plugin's, and it is headed in Obsidian's own words so it can be
-	// searched for by the name it has on the page the button leads to.
-	expect("it stands under a heading of its own", r.isHeading, true);
-	expect("worded by Obsidian", r.headingName, (v) => typeof v === "string" && v.length > 0);
+	// A row of its own, named as Obsidian names the setting — so it can be
+	// searched for by the name it has on the page the button leads to — and
+	// standing beside the dot-file rule, which answers the same question about
+	// what a dropdown may list.
+	expect("named by Obsidian", r.name, (v) => typeof v === "string" && v.length > 0);
+	expect("and it follows the dot-file rule", r.above, (v) => typeof v === "string" && v.length > 0);
 	expect("the row says what to do about it", r.desc, (v) => typeof v === "string" && v.length > 20);
 	expect("the button says where it goes", r.tooltip, (v) => typeof v === "string" && v.length > 0);
 	// An anchor is the thing that navigates, and navigating is what tore the

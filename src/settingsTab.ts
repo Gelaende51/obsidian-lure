@@ -122,6 +122,16 @@ export class BreadcrumbSettingTab extends PluginSettingTab {
 				desc: t("settingDotFilesDesc"),
 				control: { type: "toggle", key: "showDotFiles" },
 			},
+			// Beside the dot-file rule because it answers the same question —
+			// what a dropdown is allowed to list — and immediately after it
+			// because it is the one that is *not* this plugin's to toggle. It
+			// is named as Obsidian names it, so it can be searched for by the
+			// name it has on the page the button leads to.
+			{
+				name: obsidianLabel(LABELS.showAllFileTypes, "Show all file types"),
+				desc: t("settingAllFilesDesc"),
+				render: (setting: Setting) => this.drawAllFilesJump(setting),
+			},
 			{
 				name: t("settingExtensionName"),
 				desc: t("settingExtensionDesc"),
@@ -135,25 +145,6 @@ export class BreadcrumbSettingTab extends PluginSettingTab {
 				name: t("settingExternalName"),
 				desc: this.externalDescription(),
 				control: { type: "toggle", key: "accessExternalFiles" },
-			},
-			// A section of its own, because what follows is not a setting of
-			// this plugin's at all: it is Obsidian's, it decides what these
-			// dropdowns are allowed to list, and it is the first thing to look
-			// at when a folder reads as emptier than it is. Headed in
-			// Obsidian's own words so it can be searched for by the name it
-			// has on the page the button leads to.
-			{
-				name: obsidianLabel(LABELS.showAllFileTypes, "Show all file types"),
-				render: (setting: Setting) => {
-					setting.setHeading();
-				},
-			},
-			{
-				// The heading above carries the name; this row is the sentence
-				// and the way there.
-				name: "",
-				desc: t("settingAllFilesDesc"),
-				render: (setting: Setting) => this.drawAllFilesJump(setting),
 			},
 		];
 	}
