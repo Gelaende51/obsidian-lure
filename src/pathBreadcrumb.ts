@@ -4886,12 +4886,15 @@ export class PathBreadcrumb {
 			return;
 		}
 		if (!this.file) {
-			// The pseudo-segment is a label, not a name: there is nothing to
-			// put in the field and nothing to select, so the click opens it
-			// empty at the vault root — the address bar an empty tab is for.
-			if (this.pseudoSegment() === null) return;
+			// The pseudo-segment names what the pane is holding, so the field
+			// opens on that name exactly as it opens on a file's — selected,
+			// ready to be typed over. It opened empty at first, which threw
+			// away the one thing the row had to say and made every one of
+			// these panes look alike.
+			const pseudo = this.pseudoSegment();
+			if (pseudo === null) return;
 			this.extendBrowsePath("");
-			this.enterTypingMode("", "none");
+			this.enterTypingMode(pseudo, "all");
 			return;
 		}
 		const parent = this.file.parent?.path ?? "";
@@ -6005,6 +6008,13 @@ export class PathBreadcrumb {
 		if (tookStep) this.tabTrail.push(tookStep);
 
 		if (action.kind === "ladder") {
+			// Unless what the field names is a page. The ladder widens a
+			// *path* — name, name with extension, from the vault, from the
+			// machine — and a page has none of those: its `path` is the view
+			// type, which the rungs would have written into the field as
+			// though it were a folder, turning `:graph` into `graph`. A page
+			// is whole the moment it is spelled, so the press stops there.
+			if (rows.some((row) => row.kind === "page" && row.path === action.path)) return;
 			// From the second rung: the name is already whole in the field —
 			// completed by this very key, or chosen off the list — and the
 			// first rung would take its extension back off, which is a press
@@ -8664,12 +8674,14 @@ export class PathBreadcrumb {
 			return;
 		}
 		if (!this.file) {
-			// Nothing to fill it with out here: the pane names no file, so
-			// the field opens empty at the vault root and whatever is typed
-			// is opened or made exactly as it is from any other row.
-			if (this.pseudoSegment() === null) return;
+			// The pane names no file, so what the field opens on is what the
+			// row says it is holding — `:graph`, `:blank` — marked, because
+			// this gesture is "take the whole path" and out here that label
+			// is the whole of it.
+			const pseudo = this.pseudoSegment();
+			if (pseudo === null) return;
 			this.extendBrowsePath("");
-			this.enterTypingMode("", "none");
+			this.enterTypingMode(pseudo, "all");
 			return;
 		}
 		// Identical to clicking the delimiter right after the vault name

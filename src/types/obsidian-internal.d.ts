@@ -228,7 +228,12 @@ declare module "obsidian" {
 		internalPlugins: InternalPlugins;
 		viewRegistry: ViewRegistry;
 		/** The settings window, so a link in this plugin's own page can open the page it names. */
-		setting?: { open?(): void; openTabById?(id: string): void };
+		setting?: {
+			open?(): void;
+			openTabById?(id: string): void;
+			/** In a document while the settings are on screen — in the main window or in one of their own. */
+			containerEl?: HTMLElement;
+		};
 		commands: CommandRegistry;
 		dragManager: DragManager;
 		hotkeyManager: HotkeyManager;

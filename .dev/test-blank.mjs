@@ -122,7 +122,9 @@ test("the field opens on the vault root and opens what it is given", async () =>
 		return true;
 	`);
 	const opened = await look();
-	expect("the field is open and empty", opened.field, "");
+	// Holding the name of what the pane is showing, marked — so the first
+	// thing typed replaces it, and nothing has to be cleared by hand.
+	expect("the field opens on the pane's own name", opened.field, ":blank");
 	// Rooted at the vault, so the first thing typed names something at the
 	// top of it — which is what an address bar with no path yet can mean.
 	expect("listing the vault root", opened.rows, (v) => v.includes(ROOT));
@@ -288,6 +290,55 @@ test("a page can be typed as well as picked, and is not something to make", asyn
 	expect("Enter opens the page", after.type, "graph");
 	expect("and made nothing", await page.evaluate(
 		`return app.vault.getRoot().children.filter((f) => f.name.startsWith(":")).length;`), 0);
+});
+
+test("the field opens on the page's own name, and Tab finishes it", async () => {
+	// A page names what the pane is holding, so clicking it opens the field
+	// on that name exactly as clicking a file's name does — it opened empty
+	// at first, which threw away the one thing the row had to say. And Tab
+	// completes it: the labels are the same in both directions, so `:gr`
+	// reaches `:graph` as `Sch` reaches `Schemes`.
+	await page.evaluate(blankTab);
+	await page.evaluate(`
+		const leaf = app.workspace.getMostRecentLeaf();
+		await leaf.setViewState({ type: "graph", active: true });
+		app.workspace.setActiveLeaf(leaf, { focus: true });
+		${PAUSE(900)}
+		const box = app.workspace.getMostRecentLeaf().view.containerEl
+			.querySelector(".view-header-title-container");
+		box.querySelector(".lure-filename-text").click();
+		${PAUSE(600)}
+		return true;
+	`);
+	const opened = JSON.parse(await page.evaluate(`
+		const input = document.querySelector(".lure-path-input");
+		return JSON.stringify({ value: input?.value ?? null,
+			selected: input ? input.value.slice(input.selectionStart, input.selectionEnd) : null });
+	`));
+	expect("the field holds the page's name", opened.value, ":graph");
+	expect("marked, ready to be typed over", opened.selected, ":graph");
+
+	await page.evaluate(`
+		const input = document.querySelector(".lure-path-input");
+		input.value = ""; input.dispatchEvent(new Event("input", { bubbles: true })); input.focus();
+		${PAUSE(200)}
+		return true;
+	`);
+	await page.send("Input.insertText", { text: ":gr" });
+	await page.evaluate(PAUSE(500) + "return true;");
+	await pressKey(page, "Tab");
+	await page.evaluate(PAUSE(600) + "return true;");
+	const completed = JSON.parse(await page.evaluate(`
+		const input = document.querySelector(".lure-path-input");
+		return JSON.stringify({ value: input?.value ?? null,
+			selected: input ? input.value.slice(input.selectionStart, input.selectionEnd) : null });
+	`));
+	// Whole, colon and all: the ladder that widens a path used to take this
+	// press, and a page has no path for it to widen — it wrote the view type
+	// into the field and `:graph` became `graph`.
+	expect("Tab finishes the name", completed.value, ":graph");
+	expect("and stops there, since a page is whole", completed.selected, "");
+	await pressKey(page, "Escape");
 });
 
 test("a folder that is not the root offers no pages", async () => {

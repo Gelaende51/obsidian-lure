@@ -439,6 +439,43 @@ if (!installed.length) {
 	process.exit(0);
 }
 
+test("settings: the link to Obsidian's own file-types setting only changes the tab", async () => {
+	// The link lives *in* the settings, so they are open by the time anyone
+	// can click it — and asking Obsidian to open them again closed them
+	// instead, which is what the press appeared to do. Obsidian can run them
+	// in a window of their own, where "open" is not the no-op it looks like.
+	//
+	// Rendered into a box of its own rather than through the real settings:
+	// with the settings popped out, their DOM is in another window entirely
+	// and nothing here can see it.
+	const r = JSON.parse(await page.evaluate(`
+		const tab = (app.setting.pluginTabs ?? []).find((t) => t.id === "lure");
+		if (!tab) return JSON.stringify({ tab: false });
+		const host = document.body.createDiv();
+		const original = tab.containerEl;
+		tab.containerEl = host;
+		try { tab.display(); } catch (e) { return JSON.stringify({ threw: String(e) }); }
+		${PAUSE(300)}
+		const link = host.querySelector(".lure-setting-link a");
+		const called = [];
+		const realOpen = app.setting.open;
+		const realTab = app.setting.openTabById;
+		app.setting.open = () => called.push("open");
+		app.setting.openTabById = (id) => called.push("tab:" + id);
+		link?.click();
+		app.setting.open = realOpen;
+		app.setting.openTabById = realTab;
+		tab.containerEl = original;
+		host.remove();
+		return JSON.stringify({ tab: true, text: link?.textContent ?? null, called });
+	`));
+	expect("the plugin has a settings tab", r.tab, true);
+	// Obsidian's own wording, read from its i18n, so the link says what the
+	// page it leads to says — in whatever language Obsidian is running in.
+	expect("the link is worded by Obsidian", r.text, (v) => typeof v === "string" && v.endsWith("→"));
+	expect("and the press only changes the tab", r.called, ["tab:file"]);
+});
+
 /**
  * Put the vault back the way it was found.
  */

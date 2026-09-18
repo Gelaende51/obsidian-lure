@@ -549,7 +549,16 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		const lower = prefix.toLowerCase();
 		return this.buildSuggestions(this.getContext(), (name) =>
 			name.toLowerCase().startsWith(lower),
-		).filter((s) => s.kind === "folder" || s.kind === "file" || s.kind === "location");
+		).filter(
+			(s) =>
+				s.kind === "folder" ||
+				s.kind === "file" ||
+				s.kind === "location" ||
+				// A page is as completable as a name: its label is what the
+				// field holds and what Enter acts on, so Tab extending `:gr`
+				// to `:graph` is the same service it does for a folder.
+				s.kind === "page",
+		);
 	}
 
 	/**

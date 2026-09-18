@@ -282,9 +282,12 @@ export class BreadcrumbSettingTab extends PluginSettingTab {
 			// open the page is a link that does nothing, not a settings tab
 			// that throws while you are looking at it.
 			try {
-				const setting = this.app.setting;
-				setting?.open?.();
-				setting?.openTabById?.("file");
+				// Only the tab is changed, never opened: this link lives *in*
+				// the settings, so they are open by the time anyone can click
+				// it. Asking for them again closed them instead — Obsidian
+				// can run them in a window of their own, and "open" there is
+				// not the no-op it looks like.
+				this.app.setting?.openTabById?.("file");
 			} catch {
 				/* The setting is still where Obsidian keeps it. */
 			}
