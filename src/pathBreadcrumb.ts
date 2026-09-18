@@ -8600,23 +8600,23 @@ export class PathBreadcrumb {
 	 * to go"; the chip trail is reached via a delimiter click instead.
 	 */
 	/**
-	 * Focuses the row and selects the whole path, the way Ctrl+L does in a
-	 * browser's address bar.
+	 * Focuses the row on the name, and walks it the way the rename key does.
 	 *
-	 * The same thing clicking the empty space beside the breadcrumbs does —
-	 * exposed as a command so it can be reached without the pointer, and so
-	 * the key that reaches it is the user's to choose.
+	 * Exposed as a command so the row can be reached without the pointer,
+	 * and so the key that reaches it is the user's to choose.
 	 */
 	focusPathBar(): void {
-		// The whole path first — the address-bar gesture the command is for.
-		// Pressing again walks the same rungs Tab does rather than
-		// re-selecting what is already selected, so one key reaches the
-		// system path too.
+		// The same rungs F2 walks — name, name with extension, the path from
+		// the vault, the path from the system root — and the same way out:
+		// the press after the last one hands the key back to the note rather
+		// than lapping. It used to open on the whole path and lap forever,
+		// so the one key that reached the row could never leave it again.
 		if (this.inputEl) {
-			this.advanceLadder();
+			if (this.tabStage === null || this.tabStage >= LAST_RENAME_RUNG) this.dismissEditing();
+			else this.advanceLadder();
 			return;
 		}
-		this.startLadderAt(2);
+		this.startLadderAt(0);
 	}
 
 	/**

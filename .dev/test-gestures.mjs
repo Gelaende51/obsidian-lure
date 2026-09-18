@@ -587,28 +587,38 @@ test("the rename key opens the name without its extension, then walks the path",
 	expect("a further press takes the extension too", second.selected, "leaf.md");
 });
 
-test("the focus command selects the whole path, then walks on", async () => {
+test("the focus command walks F2's rungs, then hands focus back to the note", async () => {
 	await page.evaluate(openVaultNote);
-	await page.evaluate(`app.commands.executeCommandById("lure:focus-path-bar");` + PAUSE(300) + "return true;");
-	const first = await page.evaluate(`
+	const press = () => page.evaluate(`app.commands.executeCommandById("lure:focus-path-bar");` + PAUSE(300) + `
 		const input = document.querySelector(".view-header-title-container input");
-		return { value: input?.value, selected: input?.value.slice(input.selectionStart, input.selectionEnd) };
+		return {
+			selected: input ? input.value.slice(input.selectionStart, input.selectionEnd) : null,
+			inEditor: !!document.activeElement?.closest(".cm-editor"),
+			renaming: !!document.querySelector(".lure-rename-active"),
+		};
 	`);
-	expect("whole vault path selected", first.selected, `${ROOT}/inner/leaf.md`);
+	const rungs = [];
+	for (let i = 0; i < 4; i++) rungs.push(await press());
+	expect("opens on the name, without its extension", rungs[0].selected, "leaf");
+	expect("then with it", rungs[1].selected, "leaf.md");
+	expect("then the path from the vault", rungs[2].selected, `${ROOT}/inner/leaf.md`);
+	expect("then the path from the system root", rungs[3].selected, `${app.vaultPath}/${ROOT}/inner/leaf.md`);
+	expect("navigating, not renaming", rungs.some((r) => r.renaming), false);
 
-	await page.evaluate(`app.commands.executeCommandById("lure:focus-path-bar");` + PAUSE(300) + "return true;");
-	const second = await page.evaluate(`
-		const input = document.querySelector(".view-header-title-container input");
-		return { value: input?.value, selected: input?.value.slice(input.selectionStart, input.selectionEnd) };
-	`);
-	expect("the next rung is the system path", second.selected, `${app.vaultPath}/${ROOT}/inner/leaf.md`);
+	const after = await press();
+	expect("the next press closes the field", after.selected, null);
+	expect("and the cursor is back in the note", after.inEditor, true);
 });
 
 test("ctrl+enter creates the note in a new tab", async () => {
 	await page.evaluate(openVaultNote);
 	await page.evaluate(`
-		app.commands.executeCommandById("lure:focus-path-bar");
-		${PAUSE(400)}
+		// Three presses: the command opens on the name, and the third rung
+		// is the field counting from the vault root.
+		for (let i = 0; i < 3; i++) {
+			app.commands.executeCommandById("lure:focus-path-bar");
+			${PAUSE(300)}
+		}
 		return true;
 	`);
 	// Typed for real, not assigned. Assigning leaves the dropdown showing the

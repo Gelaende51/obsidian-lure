@@ -146,6 +146,13 @@ export class BreadcrumbSettingTab extends PluginSettingTab {
 				desc: this.externalDescription(),
 				control: { type: "toggle", key: "accessExternalFiles" },
 			},
+			// The command ships without a key, so the way to give it one sits
+			// where someone looking for its settings is already looking.
+			{
+				name: obsidianLabel(LABELS.hotkeys, "Hotkeys"),
+				desc: t("settingHotkeysDesc").replace("{command}", t("commandFocusPathBar")),
+				render: (setting: Setting) => this.drawHotkeysJump(setting),
+			},
 		];
 	}
 
@@ -298,6 +305,33 @@ export class BreadcrumbSettingTab extends PluginSettingTab {
 						else settings?.openTabById?.("file");
 					} catch {
 						/* The setting is still where Obsidian keeps it. */
+					}
+				}),
+		);
+	}
+
+	/**
+	 * The way to Obsidian's Hotkeys, filtered to this plugin's commands.
+	 *
+	 * Built as the jump to *Show all file types* is, and for the same reason:
+	 * an anchor tears a popped-out settings window down, and `openTabById`
+	 * re-opens it. The filter is the page's own search, typed with the name
+	 * Obsidian prefixes every one of these commands with.
+	 */
+	private drawHotkeysJump(setting: Setting): void {
+		setting.addExtraButton((button) =>
+			button
+				.setIcon("keyboard")
+				.setTooltip(obsidianLabel(LABELS.hotkeys, "Hotkeys"))
+				.onClick(() => {
+					try {
+						const settings = this.app.setting;
+						const hotkeys = (settings?.settingTabs ?? []).find((tab) => tab?.id === "hotkeys");
+						if (hotkeys && settings?.openTab) settings.openTab(hotkeys);
+						else settings?.openTabById?.("hotkeys");
+						hotkeys?.setQuery?.(this.plugin.manifest.name);
+					} catch {
+						/* The page is still where Obsidian keeps it. */
 					}
 				}),
 		);

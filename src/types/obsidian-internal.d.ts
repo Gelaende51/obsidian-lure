@@ -235,7 +235,7 @@ declare module "obsidian" {
 			/** Switches to a tab that is already there, without reopening anything. */
 			openTab?(tab: unknown): void;
 			/** Obsidian's own tabs, by id: "file" is Files and links. */
-			settingTabs?: { id?: string }[];
+			settingTabs?: { id?: string; setQuery?: (query: string) => void }[];
 			/** In a document while the settings are on screen — in the main window or in one of their own. */
 			containerEl?: HTMLElement;
 		};

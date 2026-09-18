@@ -196,8 +196,11 @@ async function armAtRoot() {
 		${PAUSE(300)}
 		await app.workspace.getLeaf(false).openFile(app.vault.getAbstractFileByPath(${JSON.stringify(NOTE)}));
 		${PAUSE(700)}
-		app.commands.executeCommandById("lure:focus-path-bar");
-		${PAUSE(500)}
+		// The command opens on the name; its third rung counts from the root.
+		for (let i = 0; i < 3; i++) {
+			app.commands.executeCommandById("lure:focus-path-bar");
+			${PAUSE(300)}
+		}
 		document.querySelector(".lure-path-input")?.focus();
 		return true;
 	`);

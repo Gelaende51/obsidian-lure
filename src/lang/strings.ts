@@ -24,6 +24,9 @@ export const EN = {
 		"sidebar — or opens its folder note, if Folder notes handles it. Off, the two swap. " +
 		"Never in rename/move mode.",
 	settingDotFilesName: "Show dot files",
+	settingHotkeysDesc:
+		"{command} has no key of its own. Bind one in Obsidian's hotkeys; the button opens them " +
+		"showing only this plugin's commands.",
 	settingAllFilesDesc:
 		"Only files your vault indexes can be listed here. Turn it on in Obsidian's " +
 		"settings to see the rest; the button goes to that page.",

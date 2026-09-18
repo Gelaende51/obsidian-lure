@@ -8,6 +8,7 @@ Every release of Lure, newest first. What has landed since the last release is u
 
 ### Added
 
+- **A Hotkeys row in the settings.** Its button opens Obsidian's *Hotkeys* filtered to this plugin, where *Focus the path bar* — which ships without a key — can be given one.
 - **A path bar on panes that hold no file.** An empty tab reads `vault / :blank`, the graph `vault / :graph`, and any other view with nothing to name gets its own `:` label — a home-tab plugin's own tab reads `:home-launcher`. The field beside it is an address bar: type a path and <kbd>Enter</kbd> opens it in that pane, or makes it. Before this the row was blank — the plugin hid Obsidian's own title and put nothing in its place.
 - **A page can be typed as well as picked** — `:graph` and the rest are an address, not only a list entry. A colon begins no filename, so typing one anywhere summons them, and the field wears their colour instead of offering to create a note nothing could be called.
 - **A row for Obsidian's own *Show all file types***, beside the dot-file rule, since both decide what a dropdown may list: it says to look for that setting in Obsidian's own settings and turn it on to see every file, and the button beside it opens that page. Named in Obsidian's words, explained in 45 languages.
@@ -17,6 +18,7 @@ Every release of Lure, newest first. What has landed since the last release is u
 
 ### Changed
 
+- **Focus the path bar walks like F2.** It opens on the name instead of the whole path, takes the same four rungs, and the press after the last closes the field and puts the cursor back in the note — before, it lapped the rungs forever and the one key that reached the row could not leave it.
 - **A taken name is reported when you use it, not while you type it.** Every name typed toward `Notes.md` passes through names that may be files of their own, and the warning used to flash up and away letter by letter. What is wrong with a name's spelling is still said as it is spelled.
 - **A delimiter whose folder note is already open reveals the folder** rather than reopening what is on screen — which is what its second press has always meant.
 - **Where you are is bold in a dropdown**, not just blue.

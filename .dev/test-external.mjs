@@ -1576,8 +1576,9 @@ test("path bar: the field outside reads from the place you picked", async () => 
 	const r = await page.evaluate(`
 		${open(join(BED, "note.md"))}
 		${breadcrumb}
-		bc.focusPathBar();
-		${PAUSE(400)}
+		// The third rung: the command opens on the name, like F2.
+		for (let i = 0; i < 3; i++) { bc.focusPathBar(); ${PAUSE(200)} }
+		${PAUSE(200)}
 		const container = app.workspace.activeLeaf.view.containerEl
 			.querySelector(".view-header-title-container");
 		const out = {

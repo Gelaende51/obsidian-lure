@@ -66,7 +66,10 @@ function pickTarget(targets, vault) {
 				candidates.map((t) => decodeTitle(t.title)).join("\n  "),
 		);
 	}
-	const isSettings = (t) => /^Settings - /.test(decodeTitle(t.title));
+	// Titled by the settings page it is showing ("Community plugins - …"), so
+	// the title alone does not give it away; the address does. A vault window
+	// is served from app://, a window of Obsidian's own UI is about:blank.
+	const isSettings = (t) => /^Settings - /.test(decodeTitle(t.title)) || t.url === "about:blank";
 	const match = candidates.find((t) => !isSettings(t)) ?? candidates[0];
 	if (!match) {
 		throw new Error(

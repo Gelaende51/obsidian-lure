@@ -32,6 +32,8 @@ export const LABELS = {
 	 * can list. Quoted rather than translated here, so the link in this
 	 * plugin's settings is worded exactly as the page it leads to.
 	 */
+	/** The settings page keys are bound on, named as its own sidebar names it. */
+	hotkeys: ["setting.hotkeys.name"],
 	showAllFileTypes: [
 		"setting.file.option-show-unsupported-files",
 		"setting.file.optionShowUnsupportedFiles",

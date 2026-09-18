@@ -402,7 +402,7 @@ Only explicit schemes count — a note called `100%20` is still a note. A `/` th
 
 ## A command for the keyboard
 
-**Focus the path bar** selects the whole path, ready to be typed over — the address-bar gesture. It has no key of its own out of the box, because Obsidian's guidelines discourage plugins claiming one; bind it under *Settings → Hotkeys* to whatever suits you.
+**Focus the path bar** opens the field on the note's name and walks it the way <kbd>F2</kbd> does — the name, the name with its extension, the path from your vault, the path from the system root — and the press after that closes the field and puts the cursor back in the note. It does not rename: Enter navigates, as in any other field. It has no key of its own out of the box, because Obsidian's guidelines discourage plugins claiming one; the **Hotkeys** row at the end of this plugin's settings opens *Settings → Hotkeys* showing only its commands, so you can bind it there.
 
 ## Navigation never touches the open file
 
@@ -779,8 +779,8 @@ from the system root — and the sixth is the inline title again. <kbd>Tab</kbd>
 still laps the same rungs inside the field, because that key is reading the path
 rather than choosing where to rename it.
 
-The **Focus the path bar** command walks the same rungs, starting where an address
-bar starts: the whole path selected.
+The **Focus the path bar** command walks the same four rungs, and its fifth press
+hands the cursor back to the note, as <kbd>F2</kbd>'s does.
 
 Outside the vault the key works too — there is no inline title out there, so the
 first press goes straight to the path bar.
@@ -875,6 +875,7 @@ appear in a real name, where an apostrophe very much can.
 | **Show all file types** | — | — | Not this plugin's setting but Obsidian's, named here because it answers the same question: your vault indexes only the file types it is told to, and only what it indexes can be listed. Look for it in Obsidian's settings and turn it on to see every file; the button beside the row opens that page. Outside the vault it does not apply, since nothing out there is indexed anyway. |
 | **Show file extensions** | On / Off | Off | Whether the file's name on the row carries its extension. Off, it is left off — as Obsidian leaves it off a note's title. On, the row names the file the way the filesystem does. Either way the extension is the second thing given up when the row runs out of room, straight after the vault name. |
 | **Access external files** | On / Off | **Off** | Whether the vault name opens the locations dropdown. Off, nothing in the plugin ever looks past this vault. |
+| **Hotkeys** | button | — | Opens Obsidian's *Hotkeys* filtered to this plugin, where *Focus the path bar* can be given a key. |
 
 ## Replacing the icons
 

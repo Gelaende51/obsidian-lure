@@ -499,6 +499,58 @@ test("settings: the jump to Obsidian's own file-types setting switches the tab, 
 	expect("the press switches to Files and links and does no more", r.called, ["openTab:file"]);
 });
 
+test("settings: the Hotkeys row opens Obsidian's hotkeys filtered to this plugin", async () => {
+	// Built as the file-types jump is, so the same two ways of closing a
+	// popped-out settings window are ruled out here too.
+	const r = JSON.parse(await page.evaluate(`
+		const tab = (app.setting.pluginTabs ?? []).find((t) => t.id === "lure");
+		const hotkeys = (app.setting.settingTabs ?? []).find((t) => t.id === "hotkeys");
+		if (!tab || !hotkeys) return JSON.stringify({ tab: !!tab, hotkeys: !!hotkeys });
+		const host = document.body.createDiv();
+		const original = tab.containerEl;
+		tab.containerEl = host;
+		try { tab.display(); } catch (e) { return JSON.stringify({ threw: String(e) }); }
+		${PAUSE(300)}
+		const rows = [...host.querySelectorAll(".setting-item")];
+		const row = rows.filter((item) => item.querySelector(".extra-setting-button, .clickable-icon")).at(-1);
+		const button = row?.querySelector(".extra-setting-button, .clickable-icon");
+		const called = [];
+		const realOpen = app.setting.open;
+		const realById = app.setting.openTabById;
+		const realTab = app.setting.openTab;
+		const realQuery = hotkeys.setQuery;
+		app.setting.open = () => called.push("open");
+		app.setting.openTabById = (id) => called.push("openTabById:" + id);
+		app.setting.openTab = (t) => called.push("openTab:" + (t?.id ?? "?"));
+		hotkeys.setQuery = (q) => called.push("setQuery:" + q);
+		button?.click();
+		app.setting.open = realOpen;
+		app.setting.openTabById = realById;
+		app.setting.openTab = realTab;
+		hotkeys.setQuery = realQuery;
+		const out = {
+			tab: true,
+			hotkeys: true,
+			last: row === rows.at(-1),
+			name: row?.querySelector(".setting-item-name")?.textContent ?? null,
+			desc: row?.querySelector(".setting-item-description")?.textContent ?? null,
+			anchorsInRow: row ? row.querySelectorAll("a").length : null,
+			plugin: app.plugins.manifests.lure?.name ?? null,
+			called,
+		};
+		tab.containerEl = original;
+		host.remove();
+		return JSON.stringify(out);
+	`));
+	expect("the Hotkeys tab is there to reach", r.hotkeys, true);
+	expect("the last row", r.last, true);
+	expect("named as Obsidian names the page", r.name, "Hotkeys");
+	expect("and it names the command it is about", r.desc, (v) => typeof v === "string" && v.includes("Focus the path bar"));
+	expect("nothing in the row is a link", r.anchorsInRow, 0);
+	expect("the press switches to Hotkeys and filters it to this plugin", r.called,
+		["openTab:hotkeys", `setQuery:${r.plugin}`]);
+});
+
 /**
  * Put the vault back the way it was found.
  */
