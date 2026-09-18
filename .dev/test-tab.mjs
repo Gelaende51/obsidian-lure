@@ -24,7 +24,7 @@
  * Requires --remote-debugging-port=9222 and OBSIDIAN_VAULT set.
  */
 
-import { connect, PAUSE, pressKey, quiesce, reloadPlugin } from "./cdpSession.mjs";
+import { CLEAR_NOTICES, connect, PAUSE, pressKey, quiesce, reloadPlugin, parkPointer } from "./cdpSession.mjs";
 import { createSuite } from "./harness.mjs";
 
 const NOTE = "Schemes/2026/Cake catapult.md";
@@ -104,6 +104,14 @@ const { test, expect, run } = createSuite({
 	reset: async () => {
 		await reloadPlugin(page);
 		await quiesce(page);
+		// The same hygiene the gesture suite needs, and for the same reasons:
+		// a notice from the case before sits over the row's right-hand end and
+		// swallows presses aimed at it, and the pointer stays where the last
+		// case left it, holding whatever name it rests on open at full width.
+		// Both are leftovers of the previous case, and both make a case that
+		// passes alone fail in a run.
+		await page.evaluate(`${CLEAR_NOTICES} return true;`);
+		await parkPointer(page);
 		await page.evaluate(buildFixture);
 	},
 	teardown: async () => {

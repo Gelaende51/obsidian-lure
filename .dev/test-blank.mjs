@@ -168,6 +168,69 @@ test("the pseudo-segment is a label, not a target", async () => {
 	await pressKey(page, "Escape");
 });
 
+test("the vault root lists the pages a pane can hold, and picking one opens it", async () => {
+	// The only things a pane can hold that no path names, so the root — where
+	// everything else in the vault is reached from — is where they belong.
+	await page.evaluate(blankTab);
+	await page.evaluate(`
+		await app.workspace.getMostRecentLeaf().openFile(app.vault.getAbstractFileByPath(${JSON.stringify(NOTE)}));
+		${PAUSE(600)}
+		const root = app.workspace.getMostRecentLeaf().view.containerEl
+			.querySelector(".view-header-title-container");
+		// The first folder's own name, which lists the folder above it — the
+		// vault root. The delimiter beside it is not the way in any more: with
+		// the swap on it belongs to the tree, and to the start page where one
+		// is installed.
+		const folder = [...root.querySelectorAll(".view-header-breadcrumb")]
+			.find((el) => !el.classList.contains("lure-vault-segment"));
+		folder.click();
+		${PAUSE(600)}
+		return true;
+	`);
+	const listed = await look();
+	expect("the graph is offered", listed.rows, (v) => v.includes(":graph"));
+	expect("and so is search", listed.rows, (v) => v.includes(":search"));
+	// Read rather than written down: a view that exists to show a file is a
+	// value of `typeByExtension`, and those are not pages you can open empty.
+	expect("but nothing that needs a file", listed.rows, (v) =>
+		!v.includes(":markdown") && !v.includes(":pdf") && !v.includes(":image") && !v.includes(":canvas"));
+	expect("nor this plugin's own viewer", listed.rows, (v) => !v.includes(":lure-external-file"));
+	// The folder's own contents come first: these are not in it.
+	expect("the folders of the root are listed before them", listed.rows, (v) => {
+		const first = v.findIndex((row) => row.startsWith(":"));
+		return first > 0 && v.slice(0, first).every((row) => !row.startsWith(":"));
+	});
+
+	await page.evaluate(`
+		const row = [...document.querySelectorAll(".suggestion-item")].find((e) => e.textContent.includes(":graph"));
+		row.click();
+		${PAUSE(900)}
+		return true;
+	`);
+	const after = await look();
+	expect("picking it opens that view in this pane", after.type, "graph");
+	expect("and the row names it as the segment does", after.parts, (v) => v.includes(":graph"));
+});
+
+test("a folder that is not the root offers no pages", async () => {
+	// They are the vault's, not every folder's: a listing of `LureBlank`
+	// offering `:graph` would read as something inside it.
+	await page.evaluate(blankTab);
+	await page.evaluate(`
+		await app.workspace.getMostRecentLeaf().openFile(app.vault.getAbstractFileByPath(${JSON.stringify(NOTE)}));
+		${PAUSE(600)}
+		const root = app.workspace.getMostRecentLeaf().view.containerEl
+			.querySelector(".view-header-title-container");
+		root.querySelector(".lure-filename-text").click();
+		${PAUSE(600)}
+		return true;
+	`);
+	const listed = await look();
+	expect("the folder's own contents are listed", listed.rows, (v) => v.length > 0);
+	expect("and no page among them", listed.rows, (v) => !v.some((row) => row.startsWith(":")));
+	await pressKey(page, "Escape");
+});
+
 test("a view this plugin has never heard of is named after itself", async () => {
 	// The open-ended rung of the label, asked of a real stranger: a home-tab
 	// plugin, which answers every new tab with a view of its own and is the

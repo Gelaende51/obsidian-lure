@@ -16,14 +16,12 @@
  * Requires --remote-debugging-port=9222 and OBSIDIAN_VAULT set.
  */
 
-import { canFocusEditable, canRenameFiles, CLEAR_NOTICES, CLEAR_PANES, connect, restoreTabTakers, standDownTabTakers, isPainting, PAUSE, pressKey, quiesce, reloadPlugin, setSettings, setVaultConfig } from "./cdpSession.mjs";
+import { canFocusEditable, canRenameFiles, CLEAR_NOTICES, CLEAR_PANES, connect, restoreTabTakers, standDownTabTakers, isPainting, PAUSE, pressKey, quiesce, reloadPlugin, setSettings, setVaultConfig, parkPointer } from "./cdpSession.mjs";
 import { createSuite, skipCase } from "./harness.mjs";
 import { mkdirSync, rmSync, writeFileSync } from "fs";
 import { join } from "path";
 
 const ROOT = "GestureTest";
-/** Where the pointer is put between cases — low in the window, away from the row and from any screen corner. */
-const POINTER_PARK = { x: 600, y: 700 };
 /**
  * Which tab-takers were running when this suite started, so they can be put
  * back — the list itself, and why they are stood down, live in `cdpSession`.
@@ -105,7 +103,7 @@ const { test, expect, run } = createSuite({
 		// is a hot corner on many desktops, and driving the pointer into one
 		// every case took the window out of compositing — whereupon this
 		// suite, quite correctly, skipped every geometry case it had.
-		await page.send("Input.dispatchMouseEvent", { type: "mouseMoved", ...POINTER_PARK, buttons: 0 });
+		await parkPointer(page);
 		await page.evaluate(buildVaultFixture);
 		buildExternalFixture();
 		await page.evaluate(openVaultNote);
@@ -2801,6 +2799,99 @@ test("a selection holding a folder and its own child is refused", async () => {
 	);
 	expect("the tree is intact", after.tree, (v) => v.includes(`${ROOT}/branch/twig/nest.md`));
 	expect("and the child did not move on its own", after.tree, (v) => !v.includes(`${ROOT}/twig`));
+});
+
+/** The tree's state, and what the vault's own delimiter promises about itself. */
+const treeState = `
+	const view = app.workspace.getLeavesOfType("file-explorer")[0]?.view;
+	const items = Object.values(view?.fileItems ?? {});
+	const leaf = app.workspace.getMostRecentLeaf();
+	const c = leaf.view.containerEl.querySelector(".view-header-title-container");
+	const sep = c?.querySelector(".lure-vault-wrapper .view-header-breadcrumb-separator");
+	return JSON.stringify({
+		open: items.filter((i) => i.collapsible && !i.collapsed).length,
+		view: leaf.view.getViewType(),
+		underlined: sep ? sep.classList.contains("lure-has-folder-note") : null,
+	});
+`;
+
+/** Opens the sidebar and every folder in it, so there is something to fold. */
+const openTree = `
+	app.workspace.leftSplit.expand();
+	${PAUSE(400)}
+	const view = app.workspace.getLeavesOfType("file-explorer")[0]?.view;
+	for (const item of Object.values(view?.fileItems ?? {})) {
+		if (item.collapsible && item.collapsed) item.toggleCollapsed(false);
+	}
+	${PAUSE(600)}
+	return true;
+`;
+
+/** Presses the vault's own delimiter, as the browser counts a run of presses. */
+async function pressRootDelimiter(clickCount) {
+	const spot = JSON.parse(await page.evaluate(`
+		const c = app.workspace.getMostRecentLeaf().view.containerEl
+			.querySelector(".view-header-title-container");
+		const sep = c.querySelector(".lure-vault-wrapper .view-header-breadcrumb-separator");
+		const r = sep.getBoundingClientRect();
+		return JSON.stringify({ x: Math.round(r.left + r.width / 2), y: Math.round(r.top + r.height / 2) });
+	`));
+	for (const type of ["mousePressed", "mouseReleased"]) {
+		await page.send("Input.dispatchMouseEvent", {
+			type, x: spot.x, y: spot.y, button: "left",
+			buttons: type === "mousePressed" ? 1 : 0, clickCount,
+		});
+	}
+	await page.evaluate(PAUSE(800) + "return true;");
+	return JSON.parse(await page.evaluate(treeState));
+}
+
+test("the vault's delimiter folds the tree away, and the next press puts it back", async () => {
+	// With no start page to offer — which is how this suite runs, since it
+	// stands those plugins down — the first press is the fold.
+	await page.evaluate(openVaultNote);
+	await page.evaluate(openTree);
+	const before = JSON.parse(await page.evaluate(treeState));
+	expect("the tree has folders open", before.open, (v) => v > 0);
+	expect("and the delimiter promises nothing to open", before.underlined, false);
+
+	const folded = await pressRootDelimiter(1);
+	expect("one press folds every one of them", folded.open, 0);
+	expect("without leaving the note", folded.view, "markdown");
+
+	const back = await pressRootDelimiter(1);
+	expect("and the next press puts back exactly what was open", back.open, before.open);
+});
+
+test("with a start page to offer, the delimiter opens it first and folds second", async () => {
+	// The rule as asked for: something that meets you when Obsidian starts is
+	// the more specific thing this delimiter can do, so it takes the first
+	// press and the fold moves to the second. The underline is the same
+	// promise a folder note's delimiter makes — there is something here.
+	if (!takersFound.length) {
+		skipCase("no start-page plugin is installed in this vault, so there is no page to offer");
+	}
+	const id = takersFound[0];
+	await restoreTabTakers(page, [id]);
+	try {
+		await page.evaluate(openVaultNote);
+		await page.evaluate(`app.plugins.plugins.lure.manager.refreshAll(); ${PAUSE(400)} return true;`);
+		await page.evaluate(openTree);
+		const before = JSON.parse(await page.evaluate(treeState));
+		expect("the delimiter says there is something to open", before.underlined, true);
+		expect("the tree has folders open", before.open, (v) => v > 0);
+
+		const first = await pressRootDelimiter(1);
+		expect("one press opens the start page in this pane", first.view, (v) => v !== "markdown");
+		expect("and leaves the tree alone", first.open, before.open);
+
+		const second = await pressRootDelimiter(2);
+		expect("the press after it folds the tree", second.open, 0);
+		expect("with the start page still in the pane", second.view, first.view);
+	} finally {
+		await standDownTabTakers(page);
+		await page.evaluate(`app.plugins.plugins.lure.manager.refreshAll(); ${PAUSE(300)} return true;`);
+	}
 });
 
 test("the vault name takes a drop, to the top of the tree", async () => {

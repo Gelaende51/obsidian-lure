@@ -53,7 +53,7 @@ import {
 	readExternalFile,
 	trashExternalEntry,
 } from "./externalFileOps";
-import { ExternalFileView, extensionOf, openExternalFile } from "./externalFileView";
+import { ExternalFileView, extensionOf, openExternalFile, EXTERNAL_VIEW_TYPE } from "./externalFileView";
 import { showExternalMenu, showInFolder } from "./externalMenu";
 import { UrlTarget, classifyTypedTarget, isAbsolutePath, slashBelongsToScheme, unquotePath } from "./urlTargets";
 import {
@@ -68,6 +68,7 @@ import {
 	FOLDER_NAME_TOKEN,
 	FOLDER_NOTES_PLUGIN_ID,
 	FOLDER_NOTE_PLUGIN_IDS,
+	START_PAGE_PLUGIN_IDS,
 	GestureTarget,
 	RightClickCounter,
 	classifyTarget,
@@ -1809,6 +1810,69 @@ export class PathBreadcrumb {
 	 */
 	private folderNotesRunning(): boolean {
 		return !!this.plugin.app.plugins?.plugins?.[FOLDER_NOTES_PLUGIN_ID];
+	}
+
+	/**
+	 * The view a start-page plugin puts in front of you, or null where none is
+	 * running.
+	 *
+	 * Found from the plugin's id rather than written down beside it: a plugin
+	 * names its view after itself, so `home-launcher` is asked for whichever
+	 * registered type begins with `home-launcher`. A plugin whose start page
+	 * is an ordinary note registers no view and answers null here — its page
+	 * is reachable as a path like any other note, which is what the row is
+	 * already for.
+	 */
+	private startPageViewType(): string | null {
+		const plugins = this.plugin.app.plugins?.plugins;
+		if (!plugins) return null;
+		const registry = this.plugin.app.viewRegistry?.viewByType;
+		if (!registry) return null;
+		for (const id of START_PAGE_PLUGIN_IDS) {
+			if (!plugins[id]) continue;
+			const own = Object.keys(registry).find((type) => type.startsWith(id));
+			if (own) return own;
+		}
+		return null;
+	}
+
+	/**
+	 * The views a pane can hold that no path names: the graph, search, and
+	 * whatever the running plugins register — a home tab, a calendar.
+	 *
+	 * Only at the vault root, and never while a move is pending: the root is
+	 * where everything in the vault is reached from, so it is where the things
+	 * that are *not* in it belong, and a rename is asking where a file goes,
+	 * which a view cannot answer.
+	 *
+	 * What counts as file-bound is read rather than listed: every value of
+	 * `typeByExtension` is a view that exists to show a file — markdown, pdf,
+	 * image, canvas, bases — so the vault's own extensions decide it, and a
+	 * new file type in a later Obsidian needs no change here. This plugin's
+	 * own viewer goes with them, for the same reason.
+	 */
+	private mainPaneViewTypes(): string[] {
+		if (this.renameMode) return [];
+		if (this.externalPath !== null || this.showingLocations) return [];
+		if (this.currentFolderPath() !== "") return [];
+		const registry = this.plugin.app.viewRegistry;
+		const all = registry?.viewByType;
+		if (!all) return [];
+		const fileBound = new Set<string>(Object.values(registry.typeByExtension ?? {}));
+		fileBound.add(EXTERNAL_VIEW_TYPE);
+		return Object.keys(all)
+			.filter((type) => !fileBound.has(type))
+			.sort();
+	}
+
+	/**
+	 * Opens the start page in this pane.
+	 *
+	 * In this pane rather than a new tab: the delimiter is part of the path
+	 * bar, and everything else on the row acts on the pane it belongs to.
+	 */
+	private openStartPage(type: string): void {
+		void this.leaf.setViewState({ type, active: true });
 	}
 
 	private folderNoteFor(folder: TFolder): TFile | null {
@@ -4216,9 +4280,24 @@ export class PathBreadcrumb {
 			cls: "view-header-breadcrumb-separator",
 			text: this.plugin.settings.delimiter,
 		});
+		// The one thing the vault's own delimiter can open, where something is
+		// running that provides it: the page that meets you when Obsidian
+		// starts. Marked with the same underline a folder note gets, because
+		// it is the same promise — there is something here to open.
+		const startPage = this.startPageViewType();
+		if (startPage) separator.addClass(FOLDER_NOTE_CLASS);
 		separator.addEventListener("click", (evt) => {
 			evt.stopPropagation();
 			if (this.swapActions) {
+				// With a start page, the first press opens it and the second
+				// folds the tree; with none, the first press folds the tree.
+				// The tree is the fallback rather than the rule, because a
+				// page you can open is the more specific thing to offer and
+				// the press that folds is still one press away.
+				if (startPage && evt.detail <= 1) {
+					this.openStartPage(startPage);
+					return;
+				}
 				this.toggleExplorerTree();
 				this.titleEl.parentElement?.focus({ preventScroll: true });
 			} else {
@@ -7557,6 +7636,7 @@ export class PathBreadcrumb {
 				mayListExternal: this.plugin.settings.accessExternalFiles,
 				warnsOnOpen: (extension) => this.warnsOnOpen(extension),
 				isFolderNote: (path) => this.isFolderNote(path),
+				pages: this.mainPaneViewTypes(),
 				queryOverride: this.suggestQueryOverride,
 				offered: this.suggested
 					? {
@@ -7602,6 +7682,18 @@ export class PathBreadcrumb {
 				const paneType = this.paneTypeFor(evt);
 				if (value.kind === "location") {
 					this.goToLocation(value.path);
+					return;
+				}
+				// A page, not a path: it opens where a note picked from the
+				// same list would open — this pane, or a new tab under a held
+				// modifier — and the row then names it as the pseudo-segment
+				// does, because that is what the leaf is holding.
+				if (value.kind === "page") {
+					this.cancelNavigation();
+					const leaf = paneType
+						? this.plugin.app.workspace.getLeaf(paneType)
+						: this.leaf;
+					void leaf.setViewState({ type: value.path, active: true });
 					return;
 				}
 				// Checked before `external`, which is about where the entry

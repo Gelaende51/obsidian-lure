@@ -82,6 +82,25 @@ export const FOLDER_NOTE_PLUGIN_IDS = [
  */
 export const FOLDER_NOTES_PLUGIN_ID = "folder-notes";
 
+/**
+ * Plugin ids that put a start page in front of you — the page a new tab, or
+ * the application itself, opens on.
+ *
+ * Named rather than detected, as the folder-note peers are and for the same
+ * reason: what a plugin means to put in an empty tab is not something the
+ * workspace can be asked in advance. The view each of them registers is found
+ * from the id rather than written down beside it — a plugin calls its view
+ * after itself (`home-launcher` registers `home-launcher-view`), and reading
+ * that from the registry means a rename of the view does not need a release
+ * here.
+ */
+export const START_PAGE_PLUGIN_IDS = [
+	"home-launcher",
+	"home-tab",
+	"obsidian-home-tab",
+	"homepage",
+] as const;
+
 /** Folder notes' one template placeholder, replaced once as its own code replaces it. */
 export const FOLDER_NAME_TOKEN = "{{folder_name}}";
 

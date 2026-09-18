@@ -271,6 +271,33 @@ export async function restoreTabTakers(page, running) {
 	`);
 }
 
+/**
+ * Puts the pointer where it cannot be hovering anything a case measures.
+ *
+ * It is a real pointer and it stays where the last case left it, so whatever
+ * it rests on is *hovered*: a name on the row is then held open at its full
+ * width — which this plugin does on purpose — and a row of the dropdown is
+ * highlighted, which decides what Tab offers. Either one turns a case that
+ * passes alone into one that fails in a run.
+ *
+ * The far right edge, halfway down: the row and its names are along the top,
+ * and the popover is left-aligned to the field and nothing like the width of
+ * the window. A screen corner is avoided deliberately — on many desktops it is
+ * a hot corner, and driving the pointer into one takes the window out of
+ * compositing, which is worse than what it fixes.
+ */
+export async function parkPointer(page) {
+	const size = JSON.parse(
+		await page.evaluate(`return JSON.stringify([window.innerWidth, window.innerHeight]);`),
+	);
+	await page.send("Input.dispatchMouseEvent", {
+		type: "mouseMoved",
+		x: Math.max(0, size[0] - 8),
+		y: Math.round(size[1] / 2),
+		buttons: 0,
+	});
+}
+
 export const CLEAR_NOTICES = `document.querySelectorAll(".notice").forEach((n) => n.remove());`;
 
 export const CLEAR_PANES = `

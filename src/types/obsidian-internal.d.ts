@@ -46,6 +46,10 @@ declare module "obsidian" {
 	/** Mirrors what the core file explorer uses for its own `isSupported()` check. */
 	interface ViewRegistry {
 		isExtensionRegistered(extension: string): boolean;
+		/** Every view type registered, by name. Read to find a plugin's own view, and to list the pages a pane can hold. */
+		viewByType?: Record<string, unknown>;
+		/** Which view type opens a file extension — so the file-bound types are data rather than a list to keep. */
+		typeByExtension?: Record<string, string>;
 	}
 
 	interface Vault {

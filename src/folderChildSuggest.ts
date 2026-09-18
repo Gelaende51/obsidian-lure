@@ -5,11 +5,23 @@ import { ExternalChild, externalJoin, listExternalChildren } from "./externalFs"
 import { isMarkdownExtension } from "./fileKinds";
 import { t } from "./lang";
 
+/**
+ * What a view is called, on the row and in the list: its type with a leading
+ * colon, minus a trailing `-view`.
+ *
+ * The colon is what makes it legible as not-a-path — nothing can be called
+ * `:graph` — and the row spells it the same way, so picking `:graph` from a
+ * list and reading `:graph` off the row are plainly the same thing.
+ */
+export function pageLabel(viewType: string): string {
+	return `:${viewType.replace(/-view$/, "")}`;
+}
+
 export interface PathSuggestion {
 	/** Text shown in the list. */
 	label: string;
-	kind: "folder" | "file" | "keep-name" | "location" | "more";
-	/** Folder path for "folder"; full target file path for "file"/"keep-name"; absolute path for "location". */
+	kind: "folder" | "file" | "keep-name" | "location" | "page" | "more";
+	/** Folder path for "folder"; full target path for "file"/"keep-name"; absolute path for "location"; view type for "page". */
 	path: string;
 	/** Rendered greyed out to mark the name as already taken; still selectable. */
 	disabled: boolean;
@@ -85,6 +97,16 @@ export interface SuggestContext {
 	warnsOnOpen: (extension: string) => boolean;
 	/** Whether a vault file is some folder's note — tinted so it reads as the folder's, not as one more note. */
 	isFolderNote: (path: string) => boolean;
+	/**
+	 * The pages a pane can hold that are not files: the graph, search, and
+	 * whatever views the running plugins register — a home tab, a calendar.
+	 *
+	 * Listed at the foot of the vault root's own listing, because the root is
+	 * where everything in this vault is reached from and these are the only
+	 * things a pane can hold that no path names. Empty everywhere else, and
+	 * while a move is pending.
+	 */
+	pages: string[];
 	/**
 	 * Filters the listing in place of the input's own text when set.
 	 * A delimiter click prefills the input with the rest of the path and
@@ -712,6 +734,15 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 					current: child.path === context.currentPath,
 				});
 			}
+		}
+
+		// After everything the folder holds, never among it: these are not in
+		// the vault at all, and a listing that opened with them would bury the
+		// names that are.
+		for (const type of context.pages) {
+			const label = pageLabel(type);
+			if (!matches(label)) continue;
+			suggestions.push({ label, kind: "page", path: type, disabled: false });
 		}
 
 		return suggestions;

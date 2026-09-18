@@ -25,6 +25,21 @@ A delimiter is **underlined only when the folder before it actually has a folder
 
 The **vault root** is the one segment that isn't a path segment. It has no parent to list siblings from, so instead it opens the [locations dropdown](#browsing-outside-the-vault) — your other vaults, home, the filesystem root, and mounted drives.
 
+## The vault's own delimiter
+
+The delimiter right after the vault name stands for the vault itself rather
+than for a folder, so it does what no other delimiter can:
+
+| | First click | Second click |
+| --- | --- | --- |
+| **With a start-page plugin** (a page that meets you when Obsidian opens) | Opens that page in this pane | Folds the file tree away |
+| **Without one** | Folds the file tree away | Puts back exactly what was open |
+
+It is **underlined** when there is a start page to open, which is the same
+promise a folder's delimiter makes: something is there. Folding is a toggle —
+the next press restores the folders that were open, and only those, so a tree
+you had arranged is not lost to a glance at something else.
+
 ## A pane with no file
 
 An empty tab, the graph and anything else that names no file get a row of
@@ -35,6 +50,15 @@ my-vault / :blank      a new tab
 my-vault / :graph      the graph, local or global
 my-vault / :<type>     anything else with no file
 ```
+
+The **vault root's own listing** offers these pages too, under the folders and
+notes that are actually in it: pick `:graph` or `:search` there and the pane
+opens that view, exactly as picking a note opens the note. Which pages exist is
+read from Obsidian rather than written down here — every view that does not
+exist to show a file, so a plugin that registers one (a home tab, a calendar)
+appears without this plugin knowing anything about it. Views that need a file —
+Markdown, PDF, images, canvases, bases — are not offered: there is nothing for
+them to show.
 
 The colon is the point — no file or folder can be called `:graph`, so the row
 cannot be mistaken for a path that could be opened. The label comes from the
