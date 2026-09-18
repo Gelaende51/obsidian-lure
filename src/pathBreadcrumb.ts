@@ -6013,8 +6013,12 @@ export class PathBreadcrumb {
 			// machine — and a page has none of those: its `path` is the view
 			// type, which the rungs would have written into the field as
 			// though it were a folder, turning `:graph` into `graph`. A page
-			// is whole the moment it is spelled, so the press stops there.
-			if (rows.some((row) => row.kind === "page" && row.path === action.path)) return;
+			// is whole the moment it is spelled, so the press stops there —
+			// and takes with it whatever the field still holds around it.
+			if (rows.some((row) => row.kind === "page" && row.path === action.path)) {
+				this.writeWholePage(input, input.value.slice(bounds.start, bounds.end));
+				return;
+			}
 			// From the second rung: the name is already whole in the field —
 			// completed by this very key, or chosen off the list — and the
 			// first rung would take its extension back off, which is a press
@@ -6045,7 +6049,28 @@ export class PathBreadcrumb {
 		// arithmetic and records nothing.
 		const step = this.trailStep(resuming);
 		if (step) this.tabTrail.push(step);
+		// A completed page is the whole of what the field says, so it replaces
+		// the whole of it: a page is in no folder, and nothing lives under
+		// one, so `atlas/:gr` finishing as `atlas/:graph/note.md` would name
+		// something that cannot exist. Anything the press did not complete
+		// goes with it.
+		if (this.typedPageType(action.text)) {
+			this.writeWholePage(input, action.text);
+			return;
+		}
 		this.writeSegment(input, bounds, action.text);
+	}
+
+	/**
+	 * Puts a page's name in the field and nothing else.
+	 *
+	 * Not `writeSegment`, which replaces the segment the caret is in and
+	 * leaves the path around it standing. Around a page there is no path to
+	 * leave: it is not in a folder and has nothing under it.
+	 */
+	private writeWholePage(input: HTMLInputElement, label: string): void {
+		if (input.value === label) return;
+		this.writeSegment(input, { start: 0, end: input.value.length }, label);
 	}
 
 	/**

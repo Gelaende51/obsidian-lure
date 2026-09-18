@@ -54,6 +54,18 @@ function pickTarget(targets, vault) {
 	// plugin having broken. The window holding a file is preferred, and the
 	// known windowless ones are refused outright.
 	const candidates = pages.filter((t) => decodeTitle(t.title).includes(` - ${vault} - `));
+	// One window of that vault by name, for the parts of the app that open in
+	// a window of their own — Obsidian's settings, when they are set to. The
+	// suites never want it; a probe that has to click something in there does.
+	const named = process.env.OBSIDIAN_WINDOW;
+	if (named) {
+		const wanted = candidates.find((t) => decodeTitle(t.title).includes(named));
+		if (wanted) return wanted;
+		throw new Error(
+			`No window of "${vault}" whose title contains "${named}". Open windows:\n  ` +
+				candidates.map((t) => decodeTitle(t.title)).join("\n  "),
+		);
+	}
 	const isSettings = (t) => /^Settings - /.test(decodeTitle(t.title));
 	const match = candidates.find((t) => !isSettings(t)) ?? candidates[0];
 	if (!match) {
@@ -117,6 +129,36 @@ export async function connect() {
 		}
 		return result.result.value;
 	};
+
+	// Obsidian's settings, open in a window of their own, sit in front of the
+	// vault and take the focus with them — and a suite then measures a window
+	// that cannot answer a click. Three suites failed sixteen assertions that
+	// way in one run, every one of them a dropdown that "would not open".
+	// Refused rather than worked around: it is the same class as a window that
+	// is not compositing, and the answer is the same — say so, and let the
+	// person close it.
+	//
+	// A probe that means to drive the settings says so with OBSIDIAN_WINDOW,
+	// or with ALLOW_SETTINGS for the ones that open them from the vault side.
+	if (!process.env.OBSIDIAN_WINDOW && !process.env.ALLOW_SETTINGS) {
+		const settingsOpen = await evaluate(
+			`const s = window.app?.setting;
+			 // Two ways for them to be up: in this window, where the container
+			 // is in this document, or in one of their own, where it is not —
+			 // the instance here keeps a stale container either way, so the
+			 // window itself is the honest question.
+			 const own = s?.win;
+			 return !!(s?.containerEl?.isConnected) || !!(own && own !== window && !own.closed);`,
+		).catch(() => false);
+		if (settingsOpen) {
+			socket.close();
+			throw new Error(
+				"Obsidian's settings are open, and in a window of their own they take the\n" +
+					"focus this window needs — clicks land nowhere and dropdowns never open.\n" +
+					"Close them and run again (ALLOW_SETTINGS=1 to drive them on purpose).",
+			);
+		}
+	}
 
 	return { send, evaluate, close: () => socket.close() };
 }

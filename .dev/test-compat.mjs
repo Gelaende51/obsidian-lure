@@ -439,15 +439,15 @@ if (!installed.length) {
 	process.exit(0);
 }
 
-test("settings: the link to Obsidian's own file-types setting only changes the tab", async () => {
-	// The link lives *in* the settings, so they are open by the time anyone
-	// can click it — and asking Obsidian to open them again closed them
-	// instead, which is what the press appeared to do. Obsidian can run them
-	// in a window of their own, where "open" is not the no-op it looks like.
+test("settings: the jump to Obsidian's own file-types setting switches the tab, and nothing else", async () => {
+	// Twice this has closed the settings instead. An anchor with an `href`
+	// navigates, and these settings can be a window of their own — sending
+	// that window to "#" tore it down. And `openTabById` opens on the way,
+	// which is the same demolition by another route. So: Obsidian's own
+	// button, which it wires itself, and the tab handed over as an object.
 	//
-	// Rendered into a box of its own rather than through the real settings:
-	// with the settings popped out, their DOM is in another window entirely
-	// and nothing here can see it.
+	// Rendered into a box of its own: with the settings popped out, their DOM
+	// is in another window and nothing here can reach it.
 	const r = JSON.parse(await page.evaluate(`
 		const tab = (app.setting.pluginTabs ?? []).find((t) => t.id === "lure");
 		if (!tab) return JSON.stringify({ tab: false });
@@ -456,24 +456,39 @@ test("settings: the link to Obsidian's own file-types setting only changes the t
 		tab.containerEl = host;
 		try { tab.display(); } catch (e) { return JSON.stringify({ threw: String(e) }); }
 		${PAUSE(300)}
-		const link = host.querySelector(".lure-setting-link a");
+		const row = [...host.querySelectorAll(".setting-item")]
+			.find((item) => item.querySelector(".lure-setting-aside"));
+		const button = row?.querySelector(".extra-setting-button, .clickable-icon");
 		const called = [];
 		const realOpen = app.setting.open;
-		const realTab = app.setting.openTabById;
+		const realById = app.setting.openTabById;
+		const realTab = app.setting.openTab;
 		app.setting.open = () => called.push("open");
-		app.setting.openTabById = (id) => called.push("tab:" + id);
-		link?.click();
+		app.setting.openTabById = (id) => called.push("openTabById:" + id);
+		app.setting.openTab = (t) => called.push("openTab:" + (t?.id ?? "?"));
+		button?.click();
 		app.setting.open = realOpen;
-		app.setting.openTabById = realTab;
+		app.setting.openTabById = realById;
+		app.setting.openTab = realTab;
+		const out = {
+			tab: true,
+			aside: row?.querySelector(".lure-setting-aside")?.textContent ?? null,
+			tooltip: button?.getAttribute("aria-label") ?? null,
+			hasAnchor: !!host.querySelector(".lure-setting-aside a"),
+			called,
+		};
 		tab.containerEl = original;
 		host.remove();
-		return JSON.stringify({ tab: true, text: link?.textContent ?? null, called });
+		return JSON.stringify(out);
 	`));
 	expect("the plugin has a settings tab", r.tab, true);
-	// Obsidian's own wording, read from its i18n, so the link says what the
-	// page it leads to says — in whatever language Obsidian is running in.
-	expect("the link is worded by Obsidian", r.text, (v) => typeof v === "string" && v.endsWith("→"));
-	expect("and the press only changes the tab", r.called, ["tab:file"]);
+	// Obsidian's own wording for both, read from its i18n, so this says what
+	// the page it leads to says — in whatever language Obsidian is running in.
+	expect("the line names Obsidian's setting", r.aside, (v) => typeof v === "string" && v.endsWith("→"));
+	expect("and so does the button", r.tooltip, (v) => typeof v === "string" && v.length > 0);
+	// An anchor is the thing that navigates, so there must not be one.
+	expect("nothing in the description is a link", r.hasAnchor, false);
+	expect("the press switches to Files and links and does no more", r.called, ["openTab:file"]);
 });
 
 /**

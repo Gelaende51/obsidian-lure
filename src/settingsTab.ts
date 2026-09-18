@@ -120,7 +120,7 @@ export class BreadcrumbSettingTab extends PluginSettingTab {
 			{
 				name: t("settingDotFilesName"),
 				desc: this.dotFilesDescription(),
-				control: { type: "toggle", key: "showDotFiles" },
+				render: (setting: Setting) => this.drawDotFiles(setting),
 			},
 			{
 				name: t("settingExtensionName"),
@@ -266,33 +266,57 @@ export class BreadcrumbSettingTab extends PluginSettingTab {
 	 * toggle but is the first thing to look at when a folder reads as emptier
 	 * than it is.
 	 *
-	 * The link is worded by Obsidian, in whatever language it is running in,
-	 * and it opens the page it names. Nothing new to translate, and nothing
-	 * to go stale when that page is reworded.
+	 * Named in Obsidian's own words, in whatever language it is running in, so
+	 * nothing here needs translating and nothing goes stale when that page is
+	 * reworded.
 	 */
 	private dotFilesDescription(): DocumentFragment {
 		const fragment = createFragment();
 		fragment.createDiv({ text: t("settingDotFilesDesc") });
-		const line = fragment.createDiv({ cls: "lure-setting-link" });
-		const label = obsidianLabel(LABELS.showAllFileTypes, "Show all file types");
-		const link = line.createEl("a", { text: `${label} →`, href: "#" });
-		link.addEventListener("click", (evt) => {
-			evt.preventDefault();
-			// Internal, and guarded as every internal call here is: failing to
-			// open the page is a link that does nothing, not a settings tab
-			// that throws while you are looking at it.
-			try {
-				// Only the tab is changed, never opened: this link lives *in*
-				// the settings, so they are open by the time anyone can click
-				// it. Asking for them again closed them instead — Obsidian
-				// can run them in a window of their own, and "open" there is
-				// not the no-op it looks like.
-				this.app.setting?.openTabById?.("file");
-			} catch {
-				/* The setting is still where Obsidian keeps it. */
-			}
+		fragment.createDiv({
+			cls: "lure-setting-aside",
+			text: `${obsidianLabel(LABELS.showAllFileTypes, "Show all file types")} →`,
 		});
 		return fragment;
+	}
+
+	/**
+	 * The dot-file toggle, with a button that goes to that other setting.
+	 *
+	 * Obsidian's own button rather than an anchor in the description. An
+	 * anchor with an `href` *navigates*, and these settings can be a window of
+	 * their own — sending that window to "#" tore it down, which is what "the
+	 * settings close when I click it" was. An anchor without one is inert
+	 * unless something listens, and a listener put on it by this plugin never
+	 * fired in a popped-out window at all. A button built through the API is
+	 * wired by Obsidian, exactly as the toggle beside it is, and works
+	 * wherever the toggle works.
+	 *
+	 * It switches to the tab that is already there rather than asking for the
+	 * settings to be opened: `openTabById` opens on the way, and opening what
+	 * is already open is what closes a window of its own.
+	 */
+	private drawDotFiles(setting: Setting): void {
+		setting.addExtraButton((button) =>
+			button
+				.setIcon("settings")
+				.setTooltip(obsidianLabel(LABELS.showAllFileTypes, "Show all file types"))
+				.onClick(() => {
+					try {
+						const settings = this.app.setting;
+						const files = (settings?.settingTabs ?? []).find((tab) => tab?.id === "file");
+						if (files && settings?.openTab) settings.openTab(files);
+						else settings?.openTabById?.("file");
+					} catch {
+						/* The setting is still where Obsidian keeps it. */
+					}
+				}),
+		);
+		setting.addToggle((toggle) =>
+			toggle
+				.setValue(!!this.getControlValue("showDotFiles"))
+				.onChange((value) => void this.setControlValue("showDotFiles", value)),
+		);
 	}
 
 	private externalDescription(): DocumentFragment {

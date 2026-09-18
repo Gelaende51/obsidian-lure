@@ -818,12 +818,12 @@
 	color: var(--text-error);
 }
 
-/* A line in a description that leads somewhere: the setting of Obsidian's own
-   that decides what these dropdowns may list. Spaced like the warning line
-   above it, and coloured as a link rather than as a caution — it is a way
-   there, not a risk. */
-.lure-setting-link {
+/* The second line of a description, naming a setting of Obsidian's own that
+   decides what these dropdowns may list. The button beside the toggle is what
+   goes there; this says where "there" is. */
+.lure-setting-aside {
 	margin-top: var(--size-2-3);
+	color: var(--text-accent);
 }
 
 /* The overflow row that ends a truncated listing. Muted and centred so it

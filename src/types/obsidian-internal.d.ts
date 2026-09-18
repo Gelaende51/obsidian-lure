@@ -230,7 +230,12 @@ declare module "obsidian" {
 		/** The settings window, so a link in this plugin's own page can open the page it names. */
 		setting?: {
 			open?(): void;
+			/** Re-opens the settings before switching, which closes a popped-out window. See `openTab`. */
 			openTabById?(id: string): void;
+			/** Switches to a tab that is already there, without reopening anything. */
+			openTab?(tab: unknown): void;
+			/** Obsidian's own tabs, by id: "file" is Files and links. */
+			settingTabs?: { id?: string }[];
 			/** In a document while the settings are on screen — in the main window or in one of their own. */
 			containerEl?: HTMLElement;
 		};

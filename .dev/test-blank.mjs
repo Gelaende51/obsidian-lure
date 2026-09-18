@@ -338,6 +338,27 @@ test("the field opens on the page's own name, and Tab finishes it", async () => 
 	// into the field and `:graph` became `graph`.
 	expect("Tab finishes the name", completed.value, ":graph");
 	expect("and stops there, since a page is whole", completed.selected, "");
+
+	// And it takes whatever the field still held around it: a page is in no
+	// folder and nothing lives under one, so `:gr/tail.md` finishing as
+	// `:graph/tail.md` would name something that cannot exist.
+	await page.evaluate(`
+		const input = document.querySelector(".lure-path-input");
+		input.value = ""; input.dispatchEvent(new Event("input", { bubbles: true })); input.focus();
+		${PAUSE(200)}
+		return true;
+	`);
+	await page.send("Input.insertText", { text: ":gr/tail.md" });
+	await page.evaluate(`
+		const input = document.querySelector(".lure-path-input");
+		input.setSelectionRange(3, 3);
+		${PAUSE(300)}
+		return true;
+	`);
+	await pressKey(page, "Tab");
+	await page.evaluate(PAUSE(600) + "return true;");
+	expect("the tail goes with the completion", await page.evaluate(
+		`return document.querySelector(".lure-path-input")?.value ?? null;`), ":graph");
 	await pressKey(page, "Escape");
 });
 
