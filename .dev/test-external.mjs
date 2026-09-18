@@ -1608,10 +1608,18 @@ test("writes: Ctrl copies a note out instead of moving it", async () => {
 });
 
 test("writes: Ctrl+Enter copies with the list still up", async () => {
-	const from = join(BED, "list-up.txt");
+	// Notes rather than text files, which is what the list being up depends
+	// on out here: `.txt` is not an extension Obsidian has a view for, so it
+	// appears in a listing only where *Show all file types* is on. With that
+	// setting off — which is where a vault starts — this case's own fixtures
+	// were invisible, the popover closed for want of a row, and the
+	// precondition could never hold however the case was written.
+	const from = join(BED, "list-up.md");
 	writeFileSync(from, "copy me\n");
-	// Matched by what is typed below, so the list stays up over it.
-	writeFileSync(join(BED, "list-up-copy-old.txt"), "in the list\n");
+	// Matched by what is typed below, so the list stays up over it — and by
+	// the whole of it, extension included: replacing the stem leaves `.md`
+	// standing, so what filters the list is `list-up-copy.md`.
+	writeFileSync(join(BED, "old-list-up-copy.md"), "in the list\n");
 	await page.evaluate(`
 		${open(from)}
 		${breadcrumb}
@@ -1629,7 +1637,7 @@ test("writes: Ctrl+Enter copies with the list still up", async () => {
 	expect("precondition: the list is still up", await page.evaluate(`return !!document.querySelector(".suggestion-container");`), true);
 	await pressKey(page, "ctrl+Enter");
 	await page.evaluate(PAUSE(1000) + "return true;");
-	const copy = join(BED, "list-up-copy.txt");
+	const copy = join(BED, "list-up-copy.md");
 	expect("the copy landed", existsSync(copy) && readFileSync(copy, "utf8"), "copy me\n");
 	expect("and the original stayed", existsSync(from), true);
 });
