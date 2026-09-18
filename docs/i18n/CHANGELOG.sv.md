@@ -9,6 +9,38 @@
 
 Varje utgåva av Lure, nyast först. Det som har landat sedan den senaste utgåvan ligger under *Ej släppt*. Versionerna bär inget `v`-prefix, i linje med utgåvetaggarna.
 
+## 1.4.0 — 2026-09-19[^1.4.0]
+
+### Tillagt
+
+- **En rad för Snabbkommandon i inställningarna.** Dess knapp öppnar Obsidians *Snabbkommandon* filtrerat till det här tillägget, där *Fokusera sökvägsfältet* — som levereras utan tangent — kan ges en.
+- **Ett sökvägsfält på flikar som inte håller någon fil.** En tom flik läser `vault / :blank`, grafen `vault / :graph`, och varje annan vy utan något att namnge får sin egen `:`-etikett — ett hemflik-tilläggs egen flik läser `:home-launcher`. Fältet bredvid är ett adressfält: skriv en sökväg och <kbd>Retur</kbd> öppnar den i den fliken, eller skapar den. Innan detta var raden tom — tillägget dolde Obsidians egen titel och satte ingenting i dess ställe.
+- **En sida kan skrivas lika väl som väljas** — `:graph` och de andra är en adress, inte bara en post i listan. Ett kolon inleder inget filnamn, så att skriva ett var som helst frammanar dem, och fältet bär deras färg i stället för att erbjuda att skapa en anteckning som ingenting kunde heta.
+- **En rad för Obsidians egna *Visa alla filtyper***, bredvid regeln för punktfiler, eftersom båda avgör vad en lista får innehålla: den säger åt dig att leta efter den inställningen i Obsidians egna inställningar och slå på den för att se varje fil, och knappen bredvid öppnar den sidan med inställningen inrullad och blinkande i vyn, som ett sökresultat i inställningarna skulle göra. Namngiven med Obsidians egna ord, förklarad på 45 språk.
+- **Valvets rot listar de sidor en flik kan hålla** — `:graph`, `:search`, och vilka vyer dina tillägg än registrerar, en hemflik eller en kalender bland dem. Välj en och fliken öppnar den, precis som att välja en anteckning öppnar anteckningen. Vyer som finns för att visa en fil är uteslutna, eftersom det inte skulle finnas något för dem att visa.
+- **Valvets egen avgränsare öppnar din startsida**, där ett tillägg tillhandahåller en, och är understruken för att visa det; trycket efter det fäller ihop filträdet, och trycket efter det sätter tillbaka precis det som var öppet. Utan ett sådant tillägg fäller det första trycket ihop, som förut.
+- **Skriv en sökväg från filsystemets rot.** Ett `/` framför ett tomt fält öppnar en sådan i stället för att sväljas, varje senare snedstreck i den tillhör den, och listan visar maskinen i stället för valvet.
+
+### Ändrat
+
+- **F2 och Fokusera sökvägsfältet trycker Tab inuti fältet.** Vad Tab än skulle göra där — nästa steg, att fylla i det du skrivit, att stiga in i en mapp — gör de också; bara där Tab varvar tillbaka till sökvägens början lämnar de fältet, F2 till den infogade titeln, kommandot till anteckningen. Tidigare fick ett fält du skrivit i F2 att börja om på namnet och kommandot att stänga fältet.
+- **Steget efter att varvet lämnar fältet är rotmappen.** Trycket efter F2:s återgång till den infogade titeln, eller kommandots återgång till anteckningen, hamnar där Tabs varv gör det — valvets rot, hela sökvägen i fältet, dess första mapp markerad — så att inget steg i ringen längre är förbehållet Tab ensam.
+- **Fokusera sökvägsfältet går som F2.** Det öppnar på namnet i stället för hela sökvägen, tar samma fyra steg, och trycket efter det sista stänger fältet och sätter tillbaka markören i anteckningen — tidigare varvade det stegen i evighet, och den enda tangenten som nådde raden kunde inte lämna den.
+- **Ett upptaget namn rapporteras när du använder det, inte medan du skriver det.** Varje namn skrivet mot `Notes.md` passerar genom namn som kan vara egna filer, och varningen brukade blinka upp och försvinna bokstav för bokstav. Vad som är fel med en stavning sägs fortfarande medan den stavas.
+- **En avgränsare vars mappanteckning redan är öppen avslöjar mappen** i stället för att öppna om det som redan visas på skärmen — vilket är vad dess andra tryck alltid har betytt.
+- **Var du är är fetstil i en lista**, inte bara blå.
+- **Allt som inte är en anteckning är orange i en lista**, inte bara de textformat Obsidian saknar en vy för. Det lila plockar ut anteckningarna ur en mapp med blandat innehåll; en färg för resten säger samma sak snabbare.
+
+### Rättat
+
+- **Backsteg över en klickad mapp tar inte längre bort valvets namn.** Snedstrecket som blev kvar längst fram lästes som en sökväg från maskinens rot, vilket tömmer det inledande segmentet — och att stänga fältet med Escape satte aldrig tillbaka det, så fliken förlorade sitt valvnamn och sin ikon för gott. Ett inledande snedstreck räknas nu som maskinens bara när dess första mapp verkligen finns där, och det inledande segmentet kommer tillbaka med varje sätt att lämna fältet.
+- Utanför valvet doldes filer om inte Obsidians **Identifiera alla filändelser** var påslaget — en inställning om vad valvet indexerar, tillämpad på mappar som inte finns i valvet. En `.txt` bredvid dina anteckningar listas där ute oavsett.
+- Valvnamnets lista gjorde ingenting på en flik som inte höll någon fil, vilket är precis den flik du skulle använda för att gå någon annanstans.
+- Att klicka på valvnamnet lämnade Obsidians egen titel stående bredvid sökvägen i fältet, gråtonad, där den annars aldrig syns: raden mäter sig själv efter det den har ritat, och i det ögonblicket har den tömt sig själv för att göra plats åt fältet.
+
+- Att klicka på det tomma utrymmet öppnade fältet och tappade det sedan: att avslöja anteckningen i Filutforskaren tar markören med sig, så fältet stod öppet och markerat medan varje tangenttryckning gick till trädet.
+- Steget som visar sökvägen från systemets rot ritade ett spår av samma sökväg bredvid fältet, ej anpassat, så att en djup sökväg målades över sig själv.
+
 ## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### Tillagt
@@ -147,6 +179,7 @@ Första utgåvan. Ersätter filnamnet i en anteckningens rubrikrad med en klickb
 - **Utanför valvet** (avstängt som standard): valvets namn öppnar dina andra valv, hemmappen, filsystemets rot och monterade enheter. Ingenting där ute skrivs förrän du låser upp det, och en anteckning kan bara kopieras ut ur valvet, aldrig flyttas.
 - **45 språk.**
 
+[^1.4.0]: Ändringar sedan 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Ändringar sedan 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Ändringar sedan 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Ändringar sedan 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>

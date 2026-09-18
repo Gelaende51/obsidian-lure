@@ -9,6 +9,38 @@
 
 Jede Veröffentlichung von Lure, die neueste zuerst. Was seit der letzten Veröffentlichung dazugekommen ist, steht unter *Unveröffentlicht*. Versionen tragen kein `v` davor, passend zu den Release-Tags.
 
+## 1.4.0 — 2026-09-19[^1.4.0]
+
+### Hinzugefügt
+
+- **Eine Tastenkombinationen-Zeile in den Einstellungen.** Ihre Schaltfläche öffnet Obsidians *Tastenkombinationen*, gefiltert auf dieses Plugin, wo *Pfadleiste fokussieren* — das ohne eigene Taste ausgeliefert wird — eine erhalten kann.
+- **Eine Pfadleiste auf Panes ohne Datei.** Ein leerer Tab liest sich als `vault / :blank`, der Graph als `vault / :graph`, und jede andere Ansicht ohne etwas zu benennen bekommt ihr eigenes `:`-Label — der Tab eines Startseiten-Plugins liest sich als `:home-launcher`. Das Feld daneben ist eine Adressleiste: Pfad eingeben, und <kbd>Enter</kbd> öffnet ihn in diesem Pane oder legt ihn an. Zuvor war die Zeile leer — das Plugin verbarg Obsidians eigenen Titel und setzte nichts an seine Stelle.
+- **Eine Seite lässt sich ebenso tippen wie auswählen** — `:graph` und die anderen sind eine Adresse, nicht nur ein Listeneintrag. Kein Dateiname beginnt mit einem Doppelpunkt, also ruft ein Doppelpunkt sie überall herbei, wo du ihn tippst, und das Feld trägt ihre Farbe, statt anzubieten, eine Notiz anzulegen, die ohnehin keinen Namen tragen könnte.
+- **Eine Zeile für Obsidians eigenes *Alle Dateitypen anzeigen***, neben der Punktdatei-Regel, da beide bestimmen, was ein Dropdown auflisten darf: Sie verweist darauf, diese Einstellung in Obsidians eigenen Einstellungen zu suchen und einzuschalten, um jede Datei zu sehen, und die Schaltfläche daneben öffnet diese Seite mit der Einstellung ins Bild gescrollt und aufblitzend, wie es ein Einstellungen-Suchergebnis täte. Benannt in Obsidians eigenen Worten, erklärt in 45 Sprachen.
+- **Die Vault-Wurzel listet die Seiten, die ein Pane halten kann** — `:graph`, `:search` und was auch immer deine Plugins registrieren, darunter ein Home-Tab oder ein Kalender. Wähle eine aus, und das Pane öffnet sie, so wie das Wählen einer Notiz die Notiz öffnet. Ansichten, die dazu da sind, eine Datei zu zeigen, bleiben außen vor, weil es für sie nichts zu zeigen gäbe.
+- **Das eigene Trennzeichen des Vaults öffnet deine Startseite**, sofern ein Plugin eine bereitstellt, und ist dafür unterstrichen; der Druck danach klappt den Dateibaum weg, und der Druck danach stellt genau das wieder her, was offen war. Ohne ein solches Plugin klappt der erste Druck wie zuvor weg.
+- **Tippe einen Pfad ab der Systemwurzel.** Ein `/` am Anfang eines leeren Feldes öffnet eine, statt verschluckt zu werden, jeder weitere Schrägstrich darin gehört dazu, und das Dropdown listet die Maschine statt den Vault.
+
+### Geändert
+
+- **F2 und Pfadleiste fokussieren drücken innerhalb des Feldes Tab.** Was auch immer Tab dort täte — die nächste Stufe, das Vervollständigen des Getippten, das Hineingehen in einen Ordner — tun sie auch; nur dort, wo Tab an den Anfang des Pfads zurückspringt, verlassen sie das Feld, F2 zum Inline-Titel, der Befehl zur Notiz. Zuvor ließ ein Feld, in das du getippt hattest, F2 beim Namen neu beginnen und den Befehl das Feld schließen.
+- **Der Schritt, nachdem der Zyklus verlässt, ist der Wurzelordner.** Der Druck nach F2s Rückkehr zum Inline-Titel oder der Rückkehr des Befehls zur Notiz landet dort, wo auch Tabs Runde landet — die Vault-Wurzel, der ganze Pfad im Feld, sein erster Ordner markiert — sodass kein Schritt des Rings allein Tab überlassen bleibt.
+- **Pfadleiste fokussieren läuft wie F2.** Es öffnet auf dem Namen statt dem ganzen Pfad, durchläuft dieselben vier Stufen, und der Druck nach der letzten schließt das Feld und setzt den Cursor zurück in die Notiz — zuvor drehte es endlos seine Runden durch die Stufen, und die einzige Taste, die die Zeile erreichte, konnte sie nicht verlassen.
+- **Ein vergebener Name wird gemeldet, wenn du ihn verwendest, nicht während du ihn tippst.** Jeder Name, der auf `Notes.md` zutippt, durchläuft dabei Namen, die selbst Dateien sein können, und die Warnung blitzte früher Buchstabe für Buchstabe auf und wieder weg. Was an der Schreibweise eines Namens falsch ist, wird weiterhin so gesagt, wie er geschrieben ist.
+- **Ein Trennzeichen, dessen Ordnernotiz bereits offen ist, deckt den Ordner auf**, statt das erneut zu öffnen, was schon auf dem Bildschirm steht — was sein zweiter Druck schon immer bedeutet hat.
+- **Wo du dich befindest, ist im Dropdown fett**, nicht nur blau.
+- **Alles, was keine Notiz ist, ist im Dropdown orange**, nicht nur die Textarten, für die Obsidian keine Ansicht hat. Das Lila hebt die Notizen aus einem Ordner mit gemischtem Inhalt hervor; eine Farbe für den Rest sagt dasselbe schneller.
+
+### Behoben
+
+- **Backspace über einen angeklickten Ordner nimmt dem Vault nicht mehr seinen Namen.** Der am Anfang verbliebene Schrägstrich las sich als Pfad ab der Wurzel der Maschine, was das erste Segment leerte — und das Schließen des Feldes mit Escape stellte es nie wieder her, sodass der Tab seinen Vault-Namen und sein Symbol für immer verlor. Ein führender Schrägstrich zählt jetzt nur dann als der der Maschine, wenn sein erster Ordner wirklich da ist, und das erste Segment kehrt bei jedem Weg aus dem Feld zurück.
+- Außerhalb des Vaults waren Dateien verborgen, sofern Obsidians **Alle Dateiendungen erkennen** nicht eingeschaltet war — eine Einstellung darüber, was der Vault indiziert, angewandt auf Ordner, die nicht im Vault liegen. Eine `.txt` neben deinen Notizen wird dort draußen so oder so aufgeführt.
+- Das Dropdown des Vault-Namens tat nichts auf einem Pane ohne Datei — genau dem Pane, das du benutzen würdest, um woanders hinzugehen.
+- Ein Klick auf den Vault-Namen ließ Obsidians eigenen Titel grau neben dem Pfad im Feld stehen, wo er sonst nie erscheint: Die Zeile bemisst sich an dem, was sie gezeichnet hat, und in diesem Moment hat sie sich selbst geleert, um dem Feld Platz zu machen.
+
+- Ein Klick auf die leere Fläche öffnete das Feld und verlor es gleich wieder: Das Anzeigen der Notiz im Dateiexplorer nimmt den Cursor mit sich, sodass das Feld offen und markiert stehen blieb, während jeder Tastendruck an den Baum ging.
+- Die Stufe, die den Pfad ab der Systemwurzel zeigt, zeichnete eine Spur desselben Pfads neben dem Feld, ungekürzt, sodass ein tiefer Pfad sich selbst überdeckte.
+
 ## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### Hinzugefügt
@@ -147,6 +179,7 @@ Erste Veröffentlichung. Ersetzt den Dateinamen in der Kopfzeile einer Notiz dur
 - **Außerhalb des Vaults** (standardmäßig aus): Der Vault-Name öffnet deine anderen Vaults, den Persönlichen Ordner, das Wurzelverzeichnis und eingehängte Laufwerke. Dort draußen wird nichts geschrieben, bevor du es freigibst, und eine Notiz kann nur aus dem Vault hinauskopiert, nie hinausverschoben werden.
 - **45 Sprachen.**
 
+[^1.4.0]: Änderungen seit 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Änderungen seit 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Änderungen seit 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Änderungen seit 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>

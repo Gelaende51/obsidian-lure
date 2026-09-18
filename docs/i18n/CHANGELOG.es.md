@@ -9,6 +9,38 @@
 
 Todas las versiones de Lure, de la más reciente a la más antigua. Lo que ha entrado desde la última versión está bajo *Sin publicar*. Los números de versión no llevan el prefijo `v`, igual que las etiquetas de publicación.
 
+## 1.4.0 — 2026-09-19[^1.4.0]
+
+### Añadido
+
+- **Una fila de *Atajos de teclado* en los ajustes.** Su botón abre los *Atajos de teclado* de Obsidian filtrados a este plugin, donde *Enfocar la barra de ruta* — que no trae ninguna tecla asignada — puede recibir una.
+- **Una barra de ruta en los paneles que no contienen ningún archivo.** Una pestaña vacía se lee `vault / :blank`, el grafo `vault / :graph`, y cualquier otra vista sin nada que nombrar recibe su propia etiqueta `:` — la propia pestaña de un plugin de pestaña de inicio se lee `:home-launcher`. El campo de al lado es una barra de direcciones: escribe una ruta y <kbd>Intro</kbd> la abre en ese panel, o la crea. Antes de esto la fila estaba en blanco — el plugin ocultaba el título propio de Obsidian y no ponía nada en su lugar.
+- **Una página se puede escribir además de elegirse** — `:graph` y las demás son una dirección, no solo una entrada de lista. Ningún nombre de archivo empieza con dos puntos, así que escribir uno en cualquier parte las convoca, y el campo adopta su color en lugar de ofrecer crear una nota que nada podría llamarse.
+- **Una fila para *Mostrar todos los tipos de archivo*, el ajuste propio de Obsidian**, junto a la regla de los archivos ocultos, ya que ambos deciden lo que puede listar un desplegable: indica que hay que buscar ese ajuste en la configuración propia de Obsidian y activarlo para ver todos los archivos, y el botón de al lado abre esa página con el ajuste desplazado a la vista y destacado con un parpadeo, como haría un resultado de búsqueda en los ajustes. Nombrado con las palabras de Obsidian, explicado en 45 idiomas.
+- **La raíz de la bóveda lista las páginas que puede contener un panel** — `:graph`, `:search`, y cualquier vista que registren tus plugins, entre ellas una pestaña de inicio o un calendario. Elige una y el panel la abre, igual que elegir una nota abre la nota. Las vistas que existen para mostrar un archivo quedan fuera, porque no tendrían nada que mostrar.
+- **El separador propio de la bóveda abre tu página de inicio**, cuando algún plugin la ofrece, y aparece subrayado para indicarlo; la pulsación siguiente pliega el árbol de archivos, y la de después restaura exactamente lo que había abierto. Sin un plugin así, la primera pulsación pliega, como antes.
+- **Escribe una ruta desde la raíz del sistema de archivos.** Una `/` al principio de un campo vacío abre esa ruta en lugar de ser ignorada, cada barra posterior le pertenece a ella, y el desplegable lista la máquina en lugar de la bóveda.
+
+### Cambiado
+
+- **F2 y *Enfocar la barra de ruta* pulsan Tab dentro del campo.** Todo lo que Tab haría ahí — el siguiente peldaño, completar lo que has escrito, entrar en una carpeta — lo hacen también ellos; solo donde Tab vuelve al principio de la ruta salen del campo, F2 hacia el título en línea, el comando hacia la nota. Antes, un campo en el que habías escrito hacía que F2 empezara de nuevo por el nombre y que el comando cerrara el campo.
+- **El paso siguiente a que el ciclo termine es la carpeta raíz.** La pulsación que sigue al regreso de F2 al título en línea, o al regreso del comando a la nota, llega adonde llega la vuelta de Tab — la raíz de la bóveda, la ruta completa en el campo, con su primera carpeta marcada — de modo que ningún paso del anillo queda solo para Tab.
+- ***Enfocar la barra de ruta* recorre los mismos peldaños que F2.** Se abre sobre el nombre en lugar de la ruta completa, recorre los mismos cuatro peldaños, y la pulsación después del último cierra el campo y devuelve el cursor a la nota — antes daba vueltas a los peldaños sin parar, y la única tecla que llegaba a la fila no podía salir de ella.
+- **Un nombre ya ocupado se avisa cuando lo usas, no mientras lo escribes.** Todo nombre que se escribe camino de `Notes.md` pasa por nombres que pueden ser archivos por derecho propio, y el aviso antes aparecía y desaparecía letra a letra. Lo que está mal en la ortografía de un nombre se sigue diciendo tal como se escribe.
+- **Un separador cuya nota de carpeta ya está abierta revela la carpeta** en lugar de reabrir lo que ya está en pantalla — que es lo que su segunda pulsación ha significado siempre.
+- **Dónde estás aparece en negrita en el desplegable**, no solo en azul.
+- **Todo lo que no es una nota aparece en naranja en el desplegable**, no solo los tipos de texto para los que Obsidian no tiene vista. El morado distingue las notas dentro de una carpeta de contenido mixto; un solo color para el resto dice lo mismo más rápido.
+
+### Corregido
+
+- **Retroceso sobre una carpeta pulsada ya no borra el nombre de la bóveda.** La barra que quedaba al principio se leía como una ruta desde la raíz de la máquina, lo que vaciaba el segmento inicial — y cerrar el campo con Esc nunca lo devolvía, así que la pestaña perdía el nombre y el icono de la bóveda para siempre. Una barra inicial ahora cuenta como de la máquina solo cuando su primera carpeta existe de verdad, y el segmento inicial vuelve con cualquier forma de salir del campo.
+- Fuera de la bóveda, los archivos quedaban ocultos a menos que **Detectar todas las extensiones de archivo** de Obsidian estuviera activado — un ajuste sobre lo que indexa la bóveda, aplicado a carpetas que no están en la bóveda. Un `.txt` junto a tus notas aparece listado ahí fuera de cualquier modo.
+- El desplegable del nombre de la bóveda no hacía nada en un panel sin ningún archivo, que es justo el panel que usarías para ir a otra parte.
+- Hacer clic en el nombre de la bóveda dejaba el título propio de Obsidian junto a la ruta en el campo, en gris, donde no aparece en ningún otro momento: la fila se mide por lo que ha dibujado, y en ese instante se ha vaciado para hacer sitio al campo.
+
+- Hacer clic en el espacio vacío abría el campo y luego lo perdía: revelar la nota en el navegador de archivos se lleva el cursor con ella, así que el campo quedaba abierto y marcado mientras cada pulsación iba al árbol.
+- El peldaño que muestra la ruta desde la raíz del sistema dibujaba un rastro de la misma ruta junto al campo, sin ajustar, de modo que una ruta profunda se pintaba encima de sí misma.
+
 ## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### Añadido
@@ -147,6 +179,7 @@ Primera versión. Sustituye el nombre de archivo del encabezado de una nota por 
 - **Fuera de la bóveda** (desactivado por defecto): el nombre de la bóveda abre tus otras bóvedas, tu carpeta personal, la raíz del sistema de archivos y las unidades montadas. Ahí fuera no se escribe nada hasta que lo desbloquees, y una nota solo se puede copiar fuera de la bóveda, nunca mover.
 - **45 idiomas.**
 
+[^1.4.0]: Cambios desde 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Cambios desde 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Cambios desde 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Cambios desde 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>

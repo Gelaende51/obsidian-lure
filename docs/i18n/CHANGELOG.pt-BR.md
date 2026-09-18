@@ -8,6 +8,38 @@
 
 Todas as versões do Lure, da mais recente para a mais antiga. O que entrou desde a última versão está em *Não publicado*. As versões não levam o prefixo `v`, assim como as tags de release.
 
+## 1.4.0 — 2026-09-19[^1.4.0]
+
+### Adicionado
+
+- **Uma linha de Atalhos nas configurações.** O botão dela abre os *Atalhos* do Obsidian filtrados para este plugin, onde *Focar a barra de caminho* — que vem sem uma tecla — pode receber uma.
+- **Uma barra de caminho nos painéis que não contêm nenhum arquivo.** Uma aba vazia mostra `vault / :blank`, o grafo `vault / :graph`, e qualquer outra visualização sem nada para nomear recebe seu próprio rótulo `:` — a aba de um plugin de aba inicial mostra `:home-launcher`. O campo ao lado dela é uma barra de endereço: digite um caminho e <kbd>Enter</kbd> o abre nesse painel, ou o cria. Antes disso a linha ficava em branco — o plugin escondia o próprio título do Obsidian e não colocava nada no lugar.
+- **Uma página pode ser digitada, além de escolhida** — `:graph` e as demais são um endereço, não apenas um item da lista. Dois-pontos não inicia nenhum nome de arquivo, então digitar um em qualquer lugar as convoca, e o campo assume a cor delas em vez de oferecer a criação de uma nota que nada poderia se chamar assim.
+- **Uma linha para o próprio *Mostrar todos os tipos de arquivo* do Obsidian**, ao lado da regra dos arquivos ocultos, já que os dois decidem o que uma lista pode exibir: ela diz para procurar essa configuração nas próprias configurações do Obsidian e ativá-la para ver todos os arquivos, e o botão ao lado abre essa página com a configuração rolada até a vista e piscando, como faria um resultado de busca nas configurações. Nomeada com as palavras do Obsidian, explicada em 45 idiomas.
+- **A raiz do cofre lista as páginas que um painel pode conter** — `:graph`, `:search`, e o que quer que seus plugins registrem, uma aba inicial ou um calendário entre elas. Escolha uma e o painel a abre, assim como escolher uma nota abre a nota. Visualizações que existem para mostrar um arquivo ficam de fora, porque não haveria nada para elas mostrarem.
+- **O próprio separador do cofre abre sua página inicial**, quando um plugin fornece uma, e fica sublinhado para indicar isso; o toque seguinte recolhe a árvore de arquivos, e o toque depois desse repõe exatamente o que estava aberto. Sem esse tipo de plugin, o primeiro toque recolhe, como antes.
+- **Digite um caminho a partir da raiz do sistema de arquivos.** Uma `/` no início de um campo vazio abre uma em vez de ser engolida, cada barra seguinte nele passa a pertencer a ela, e a lista passa a exibir a máquina em vez do cofre.
+
+### Alterado
+
+- **F2 e Focar a barra de caminho pressionam Tab dentro do campo.** O que quer que Tab faria ali — o degrau seguinte, completar o que você digitou, entrar em uma pasta — eles também fazem; só onde Tab dá a volta e retorna ao início do caminho é que eles saem do campo: o F2 para o título embutido, o comando para a nota. Antes, um campo em que você tinha digitado fazia o F2 recomeçar pelo nome, e o comando fechava o campo.
+- **O passo seguinte à saída do ciclo é a pasta raiz.** O toque depois do retorno do F2 ao título embutido, ou do retorno do comando à nota, chega aonde a volta do Tab chega — a raiz do cofre, o caminho completo no campo, com sua primeira pasta marcada — de modo que nenhum passo do ciclo fica só para o Tab.
+- **Focar a barra de caminho percorre os mesmos degraus que o F2.** Ele abre no nome em vez do caminho completo, passa pelos mesmos quatro degraus, e o toque depois do último fecha o campo e devolve o cursor à nota — antes, ele dava voltas nos degraus para sempre, e a única tecla que alcançava a linha não conseguia sair dela.
+- **Um nome já em uso é informado quando você o usa, não enquanto você o digita.** Todo nome digitado a caminho de `Notes.md` passa por nomes que podem ser arquivos por si só, e o aviso costumava aparecer e sumir letra por letra. O que está errado na grafia de um nome continua sendo dito conforme ele é digitado.
+- **Um separador cuja nota de pasta já está aberta revela a pasta**, em vez de reabrir o que já está na tela — que é o que seu segundo toque sempre significou.
+- **Onde você está fica em negrito na lista**, não só azul.
+- **Tudo o que não é uma nota fica laranja na lista**, não apenas os tipos de texto para os quais o Obsidian não tem visualização. O roxo destaca as notas em uma pasta de conteúdo variado; uma única cor para o restante diz a mesma coisa mais rápido.
+
+### Corrigido
+
+- **Backspace sobre uma pasta clicada não tira mais o nome do cofre.** A barra que sobrava no início era lida como um caminho a partir da raiz da máquina, o que esvaziava o segmento inicial — e fechar o campo com Escape nunca o devolvia, então a aba perdia o nome e o ícone do cofre para sempre. Uma barra no início agora só conta como a da máquina quando sua primeira pasta realmente existe, e o segmento inicial volta com qualquer forma de sair do campo.
+- Fora do cofre, os arquivos ficavam ocultos a menos que a opção do Obsidian **Detectar todas as extensões de arquivo** estivesse ativada — uma configuração sobre o que o cofre indexa, aplicada a pastas que não fazem parte do cofre. Um `.txt` ao lado das suas notas é listado lá fora de qualquer forma.
+- A lista do nome do cofre não fazia nada em um painel sem nenhum arquivo, que é exatamente o painel que você usaria para ir a outro lugar.
+- Clicar no nome do cofre deixava o próprio título do Obsidian parado ao lado do caminho no campo, acinzentado, onde ele não aparece em nenhum outro momento: a linha se mede pelo que já desenhou, e nesse instante ela havia se esvaziado para abrir espaço ao campo.
+
+- Clicar no espaço vazio abria o campo e depois o perdia: revelar a nota no Navegador de arquivos leva o cursor junto, então o campo ficava aberto e marcado enquanto cada tecla pressionada ia para a árvore.
+- O degrau que mostra o caminho a partir da raiz do sistema desenhava um rastro do mesmo caminho ao lado do campo, sem ajuste, então um caminho profundo ficava pintado sobre si mesmo.
+
 ## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### Adicionado
@@ -146,6 +178,7 @@ Primeira versão. Substitui o nome do arquivo no cabeçalho de uma nota por uma 
 - **Fora do cofre** (desativado por padrão): o nome do cofre abre seus outros cofres, a pasta pessoal, a raiz do sistema de arquivos e as unidades montadas. Nada lá fora é gravado até você desbloquear, e uma nota só pode ser copiada para fora do cofre, nunca movida.
 - **45 idiomas.**
 
+[^1.4.0]: Alterações desde a 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Alterações desde a 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Alterações desde a 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Alterações desde a 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>

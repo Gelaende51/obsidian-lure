@@ -9,6 +9,37 @@
 
 Każde wydanie Lure, od najnowszego. To, co pojawiło się od ostatniego wydania, znajduje się pod nagłówkiem *Niewydane*. Wersje nie mają przedrostka `v`, zgodnie ze znacznikami wydań.
 
+## 1.4.0 — 2026-09-19[^1.4.0]
+
+### Dodano
+
+- **Wiersz Skróty klawiszowe w ustawieniach.** Jego przycisk otwiera *Skróty klawiszowe* Obsidiana przefiltrowane do tej wtyczki, gdzie *Ustaw fokus na pasku ścieżki* — które nie ma domyślnie przypisanego skrótu — można taki przypisać.
+- **Pasek ścieżki na kartach bez pliku.** Pusta karta pokazuje `skarbiec / :blank`, graf `skarbiec / :graph`, a każdy inny widok, który nie ma czego nazwać, dostaje własną etykietę `:` — karta wtyczki startowej pokazuje `:home-launcher`. Pole obok jest paskiem adresu: wpisz ścieżkę i <kbd>Enter</kbd> otwiera ją na tej karcie albo ją tworzy. Wcześniej ten wiersz był pusty — wtyczka chowała własny tytuł Obsidiana i nie stawiała na jego miejscu niczego.
+- **Stronę można wpisać, a nie tylko wybrać** — `:graph` i reszta to adres, a nie tylko pozycja na liście. Dwukropek nie zaczyna żadnej nazwy pliku, więc wpisanie go w dowolnym miejscu je przywołuje, a pole przybiera ich kolor zamiast proponować utworzenie notatki, która nie mogłaby się tak nazywać.
+- **Wiersz dla własnego ustawienia Obsidiana *Pokaż wszystkie typy plików*,** obok reguły plików ukrytych, bo oba decydują o tym, co może pokazać lista: mówi, by poszukać tego ustawienia w ustawieniach Obsidiana i je włączyć, aby widzieć każdy plik, a przycisk obok otwiera tę stronę z ustawieniem przewiniętym w widok i podświetlonym, tak jak zrobiłby to wynik wyszukiwania w ustawieniach. Nazwane słowami Obsidiana, wyjaśnione w 45 językach.
+- **Katalog główny skarbca pokazuje strony, jakie może otworzyć karta** — `:graph`, `:search` i wszystkie widoki, jakie rejestrują twoje wtyczki, w tym kartę startową czy kalendarz. Wybierz jedną, a karta ją otwiera, tak jak wybranie notatki otwiera notatkę. Widoki, które istnieją po to, by pokazywać plik, są pominięte, bo nie miałyby czego pokazać.
+- **Separator nazwy skarbca otwiera twoją stronę startową**, gdy dostarcza ją jakaś wtyczka, i jest wtedy podkreślony, by to zaznaczyć; naciśnięcie po nim chowa drzewo plików, a kolejne przywraca dokładnie to, co było otwarte. Bez takiej wtyczki pierwsze naciśnięcie chowa drzewo, tak jak dotychczas.
+- **Wpisz ścieżkę od katalogu głównego systemu plików.** `/` na początku pustego pola otwiera taką ścieżkę zamiast zostać połknięty, każdy kolejny ukośnik w niej należy już do niej, a lista pokazuje zawartość komputera zamiast skarbca.
+
+### Zmieniono
+
+- **F2 i Ustaw fokus na pasku ścieżki naciskają Tab wewnątrz pola.** Cokolwiek zrobiłby tam Tab — kolejny stopień, dokończenie tego, co wpisałeś, wejście do folderu — one robią to samo; tylko tam, gdzie Tab zawraca na początek ścieżki, one z niej wychodzą: F2 do tytułu w treści, polecenie do notatki. Wcześniej pole, w które coś wpisałeś, sprawiało, że F2 zaczynało od nowa na nazwie, a polecenie zamykało pole.
+- **Krok po wyjściu z cyklu to katalog główny.** Naciśnięcie po powrocie F2 do tytułu w treści albo po powrocie polecenia do notatki trafia tam, gdzie zawraca Tab — do katalogu głównego skarbca, z całą ścieżką w polu i zaznaczonym pierwszym folderem — więc żaden krok cyklu nie zależy już tylko od Tab.
+- **Ustaw fokus na pasku ścieżki chodzi jak F2.** Otwiera się na nazwie zamiast na całej ścieżce, przechodzi te same cztery stopnie, a naciśnięcie po ostatnim zamyka pole i wraca kursorem do notatki — wcześniej krążyło po stopniach w nieskończoność, a jedyny klawisz, który wchodził w ten wiersz, nie potrafił z niego wyjść.
+- **Zajęta nazwa jest zgłaszana, gdy jej użyjesz, a nie podczas pisania.** Każda nazwa wpisywana w kierunku `Notes.md` przechodzi przez nazwy, które same mogą być plikami, a ostrzeżenie dotąd migało i znikało litera po literze. To, co jest nie tak z pisownią nazwy, wciąż jest mówione tak, jak jest napisane.
+- **Separator, którego notatka folderu jest już otwarta, ujawnia folder**, zamiast ponownie otwierać to, co już jest na ekranie — bo to zawsze znaczyło jego drugie naciśnięcie.
+- **Miejsce, w którym jesteś, jest na liście pogrubione**, a nie tylko niebieskie.
+- **Wszystko, co nie jest notatką, jest na liście pomarańczowe**, nie tylko typy tekstowe, dla których Obsidian nie ma widoku. Fiolet wyróżnia notatki w folderze o mieszanej zawartości; jeden kolor dla reszty mówi to samo szybciej.
+
+### Naprawiono
+
+- **Backspace nad klikniętym folderem nie zabiera już nazwy skarbca.** Ukośnik pozostawiony na początku odczytywano jako ścieżkę od katalogu głównego komputera, co opróżniało segment otwierający — a zamknięcie pola klawiszem Escape nigdy go nie przywracało, więc karta traciła nazwę i ikonę skarbca na stałe. Wiodący ukośnik liczy się teraz jako ścieżka komputera tylko wtedy, gdy jego pierwszy folder naprawdę istnieje, a segment otwierający wraca przy każdym sposobie wyjścia z pola.
+- **Poza skarbcem pliki były ukryte, chyba że włączone było ustawienie Obsidiana *Wykrywaj wszystkie rozszerzenia plików*** — ustawienie o tym, co indeksuje skarbiec, stosowane do folderów, które w skarbcu nie leżą. Plik `.txt` obok twoich notatek jest tam wypisany tak czy inaczej.
+- **Lista przy nazwie skarbca nic nie robiła na karcie bez pliku** — a to właśnie takiej karty użyłbyś, żeby przejść gdzie indziej.
+- **Kliknięcie nazwy skarbca zostawiało własny tytuł Obsidiana stojący obok ścieżki w polu**, wyszarzony, tam, gdzie nigdy indziej się nie pojawia: wiersz mierzy się tym, co narysował, a w tej chwili opróżnił się, by zrobić miejsce na pole.
+- **Kliknięcie pustego miejsca otwierało pole, a potem je traciło:** ujawnienie notatki w eksploratorze plików zabiera ze sobą kursor, więc pole stało otwarte i zaznaczone, podczas gdy każde naciśnięcie klawisza trafiało do drzewa.
+- **Stopień pokazujący ścieżkę od katalogu głównego systemu rysował ślad tej samej ścieżki obok pola, niedopasowany do niego**, przez co głęboka ścieżka nakładała się sama na siebie.
+
 ## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### Dodano
@@ -147,6 +178,7 @@ Pierwsze wydanie. Zastępuje nazwę pliku w nagłówku notatki klikalną, edytow
 - **Poza skarbcem** (domyślnie wyłączone): nazwa skarbca otwiera inne skarbce, katalog domowy, katalog główny systemu plików i zamontowane napędy. Nic tam na zewnątrz nie jest zapisywane, dopóki tego nie odblokujesz, a notatkę można poza skarbiec tylko skopiować, nigdy przenieść.
 - **45 języków.**
 
+[^1.4.0]: Zmiany od 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Zmiany od 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Zmiany od 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Zmiany od 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>

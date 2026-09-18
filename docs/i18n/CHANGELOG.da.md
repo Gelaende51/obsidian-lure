@@ -8,6 +8,38 @@
 
 Hver udgivelse af Lure, nyeste først. Det, der er kommet til siden seneste udgivelse, står under *Ikke udgivet*. Versioner har intet `v`-præfiks, så de svarer til udgivelsesmærkerne.
 
+## 1.4.0 — 2026-09-19[^1.4.0]
+
+### Tilføjet
+
+- **En række til Genvejstaster i indstillingerne.** Dens knap åbner Obsidians *Genvejstaster* filtreret til dette plugin, hvor *Fokusér stilinjen* — der leveres uden en tast — kan tildeles én.
+- **En stilinje på faner uden fil.** En tom fane viser `vault / :blank`, grafen `vault / :graph`, og enhver anden visning uden noget at kalde sig, får sit eget `:`-mærke — et hjemmefane-plugins egen fane viser `:home-launcher`. Feltet ved siden af er en adresselinje: skriv en sti, og <kbd>Enter</kbd> åbner den i den fane, eller opretter den. Før stod rækken tom — pluginet skjulte Obsidians egen titel og satte intet i stedet.
+- **En side kan skrives lige så vel som vælges** — `:graph` og de andre er en adresse, ikke kun et listepunkt. Et kolon starter intet filnavn, så at skrive ét hvor som helst tilkalder dem, og feltet bærer deres farve i stedet for at tilbyde at oprette en note, intet kunne hedde.
+- **En række til Obsidians egen *Vis alle filtyper***, ved siden af reglen for prikfiler, da begge afgør, hvad en liste kan vise: den fortæller, at man skal finde indstillingen i Obsidians egne indstillinger og slå den til for at se alle filer, og knappen ved siden af åbner den side med indstillingen rullet i syne og blinket, som et resultat af en indstillingssøgning ville. Navngivet med Obsidians egne ord, forklaret på 45 sprog.
+- **Boksens rod viser de sider, en fane kan indeholde** — `:graph`, `:search`, og hvad end visninger dine plugins registrerer, en hjemmefane eller en kalender iblandt dem. Vælg én, og fanen åbner den, ligesom et klik på en note åbner noten. Visninger, der findes for at vise en fil, er udeladt, fordi der ikke ville være noget for dem at vise.
+- **Boksens eget skilletegn åbner din startside**, hvor et plugin tilbyder én, og er understreget for at vise det; trykket derefter folder filtræet væk, og trykket efter det sætter nøjagtigt det, der var åbent, tilbage. Uden et sådant plugin folder det første tryk, som før.
+- **Skriv en sti fra filsystemets rod.** Et `/` forrest i et tomt felt åbner en i stedet for at blive slugt, hver senere skråstreg i den hører til den, og listen viser maskinen i stedet for boksen.
+
+### Ændret
+
+- **F2 og Fokusér stilinjen trykker Tab inde i feltet.** Hvad end Tab ville gøre der — næste trin, fuldførelse af det, du har skrevet, et skridt ind i en mappe — gør de også; kun der, hvor Tab løber tilbage til stiens begyndelse, forlader de feltet, F2 til overskriften i noten, kommandoen til noten. Før fik et felt, du havde skrevet i, F2 til at starte forfra på navnet, og kommandoen lukkede feltet.
+- **Trinnet efter, at runden forlader feltet, er rodmappen.** Trykket efter F2's tilbagevenden til overskriften i noten, eller kommandoens tilbagevenden til noten, lander dér, hvor Tabs omgang gør — boksens rod, hele stien i feltet, dens første mappe markeret — så intet trin i ringen er overladt til Tab alene.
+- **Fokusér stilinjen går samme runde som F2.** Den åbner på navnet i stedet for hele stien, tager de samme fire trin, og trykket efter det sidste lukker feltet og sætter markøren tilbage i noten — før løb den trinene rundt i det uendelige, og den eneste tast, der nåede rækken, kunne ikke forlade den.
+- **Et optaget navn meldes, når du bruger det, ikke mens du skriver det.** Ethvert navn skrevet hen imod `Notes.md` passerer gennem navne, der kan være filer i sig selv, og advarslen plejede at blinke op og forsvinde bogstav for bogstav. Det, der er galt med et navns stavning, siges stadig, som det staves.
+- **Et skilletegn, hvis mappenote allerede er åben, viser mappen** i stedet for at genåbne det, der allerede er på skærmen — hvilket er, hvad dets andet tryk altid har betydet.
+- **Der, hvor du er, er fed i en liste**, ikke kun blå.
+- **Alt, der ikke er en note, er orange i en liste**, ikke kun de teksttyper, Obsidian ikke har en visning til. Den lilla farve udpeger noterne i en mappe med blandet indhold; én farve til resten siger det samme hurtigere.
+
+### Rettet
+
+- **Backspace over en klikket mappe fjerner ikke længere boksens navn.** Skråstregen, der stod tilbage forrest, blev læst som en sti fra maskinens rod, hvilket tømte det indledende segment — og lukning af feltet med Escape satte det aldrig tilbage, så fanen mistede sit boksnavn og ikon for altid. En skråstreg forrest tæller nu kun som maskinens, når dens første mappe rent faktisk er der, og det indledende segment kommer tilbage ved enhver måde at forlade feltet på.
+- Uden for boksen var filer skjulte, medmindre Obsidians **Registrer alle filendelser** var slået til — en indstilling om, hvad boksen indekserer, anvendt på mapper, der ikke er i boksen. En `.txt` ved siden af dine noter vises derude under alle omstændigheder.
+- Boksnavnets liste gjorde intet på en fane uden fil, hvilket er netop den fane, du ville bruge til at gå et andet sted hen.
+- Klik på boksens navn lod Obsidians egen titel stå tilbage ved siden af stien i feltet, gråtonet, hvor den ellers aldrig viser sig: rækken måler sig selv efter det, den har tegnet, og i det øjeblik har den tømt sig selv for at gøre plads til feltet.
+
+- Klik på det tomme rum åbnede feltet og mistede det derefter: at afsløre noten i filudforskeren tager markøren med sig, så feltet stod åbent og markeret, mens hvert tastetryk gik til træet.
+- Trinnet, der viser stien fra systemroden, tegnede et spor af den samme sti ved siden af feltet, utilpasset, så en dyb sti blev malet oven i sig selv.
+
 ## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### Tilføjet
@@ -146,6 +178,7 @@ Første udgivelse. Erstatter filnavnet i en notes overskriftslinje med en klikba
 - **Uden for boksen** (slået fra som standard): boksens navn åbner dine andre bokse, hjemmemappen, filsystemets rod og tilsluttede drev. Intet derude bliver skrevet, før du låser op, og en note kan kun kopieres ud af boksen, aldrig flyttes.
 - **45 sprog.**
 
+[^1.4.0]: Ændringer siden 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Ændringer siden 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Ændringer siden 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Ændringer siden 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>

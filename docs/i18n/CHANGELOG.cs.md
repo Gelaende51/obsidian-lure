@@ -8,6 +8,38 @@
 
 Každé vydání pluginu Lure, od nejnovějšího. Co přibylo od posledního vydání, najdete pod *Nevydáno*. Verze nemají předponu `v`, stejně jako značky vydání.
 
+## 1.4.0 — 2026-09-19[^1.4.0]
+
+### Přidáno
+
+- **Řádek Klávesové zkratky v nastavení.** Jeho tlačítko otevře Obsidianovy *Klávesové zkratky* filtrované na tento plugin, kde příkaz *Zaměřit lištu cesty* — který se dodává bez klávesy — může klávesu dostat.
+- **Lišta cesty na panelech, které neobsahují žádný soubor.** Prázdná karta se čte jako `vault / :blank`, graf jako `vault / :graph`, a každý další pohled, který nemá co pojmenovat, dostane vlastní popisek `:` — vlastní karta pluginu pro domovskou kartu se čte jako `:home-launcher`. Pole vedle ní je adresní řádek: napište cestu a <kbd>Enter</kbd> ji v tom panelu otevře, nebo ji vytvoří. Předtím byl řádek prázdný — plugin skryl Obsidianův vlastní nadpis a nic na jeho místo nedal.
+- **Stránku lze napsat stejně jako vybrat** — `:graph` a ostatní jsou adresa, ne jen položka seznamu. Dvojtečkou nezačíná žádný název souboru, takže její napsání kdekoli tyto stránky přivolá a pole na sebe vezme jejich barvu, místo aby nabízelo vytvoření poznámky, kterou by nešlo nijak pojmenovat.
+- **Řádek pro Obsidianovo vlastní *Zobrazit všechny typy souborů*** vedle pravidla pro skryté soubory, protože obě rozhodují, co smí seznam vypsat: říká, kde toto nastavení v Obsidianových vlastních nastaveních najít a zapnout ho, aby bylo vidět každý soubor, a tlačítko vedle něj otevře tu stránku s nastavením odrolovaným do zorného pole a zablikaným, jako by šlo o výsledek hledání v nastavení. Pojmenováno Obsidianovými slovy, vysvětleno ve 45 jazycích.
+- **Kořen trezoru vypisuje stránky, které panel dokáže obsahovat** — `:graph`, `:search` a jakékoli pohledy, které zaregistrují vaše pluginy, mezi nimi třeba domovská karta nebo kalendář. Vyberte jeden a panel ho otevře, stejně jako výběr poznámky otevře poznámku. Pohledy, které existují k zobrazení souboru, jsou vynechány, protože by pro ně nebylo co zobrazovat.
+- **Trezoru vlastní oddělovač otevře vaši úvodní stránku**, pokud ji nějaký plugin poskytuje, a je to naznačeno podtržením; stisk po něm sbalí strom souborů a další stisk vrátí přesně to, co bylo otevřené předtím. Bez takového pluginu první stisk jako dřív sbalí strom.
+- **Napište cestu od kořene souborového systému.** Lomítko `/` na začátku prázdného pole cestu otevře, místo aby bylo pohlceno, každé další lomítko v ní pak patří jí, a seznam vypisuje počítač místo trezoru.
+
+### Změněno
+
+- **F2 a Zaměřit lištu cesty v poli stisknou Tab.** Cokoli by tam Tab udělal — další příčku, doplnění napsaného, vstup do složky — udělají také; opustí pole jen tam, kde se Tab vrací na začátek cesty, F2 k nadpisu v textu, příkaz k poznámce. Předtím pole, do kterého jste napsali, přimělo F2 začít znovu u názvu a příkaz pole zavřel.
+- **Krok po opuštění cyklu je kořenová složka.** Stisk po F2 návratu k nadpisu v textu nebo po příkazovém návratu k poznámce přistane tam, kde končí i okruh Tabu — kořen trezoru, celá cesta v poli, jeho první složka označená — takže žádný krok kruhu není ponechán jen Tabu.
+- **Zaměřit lištu cesty prochází stejně jako F2.** Otevře se na názvu místo celé cesty, projde stejnými čtyřmi příčkami a stisk po poslední zavře pole a vrátí kurzor do poznámky — předtím obcházel příčky donekonečna a klávesa, která se k řádku jako jediná dostala, ho nedokázala opustit.
+- **Obsazený název se hlásí, až když ho použijete, ne zatímco ho píšete.** Každý název napsaný směrem k `Notes.md` prochází názvy, které mohou být vlastními soubory, a varování dřív blikalo nahoru a zas pryč s každým písmenem. Co je na pravopisu názvu špatně, se pořád řekne tak, jak je napsáno.
+- **Oddělovač, jehož poznámka složky je už otevřená, odhalí složku** místo toho, aby znovu otevřel to, co je už na obrazovce — což jeho druhý stisk vždycky znamenal.
+- **Kde se nacházíte, je v seznamu tučně**, nejen modře.
+- **Vše, co není poznámka, je v seznamu oranžové**, nejen textové typy, pro které Obsidian nemá pohled. Fialová vybírá poznámky ze složky se smíšeným obsahem; jedna barva pro zbytek říká totéž rychleji.
+
+### Opraveno
+
+- **Backspace přes rozkliknutou složku už nebere trezoru jeho název.** Lomítko zanechané na začátku se četlo jako cesta od kořene souborového systému, což vyprázdnilo úvodní segment — a zavření pole klávesou Escape ho už nikdy nevrátilo, takže karta o název a ikonu trezoru přišla natrvalo. Počáteční lomítko se teď počítá za cestu souborového systému, jen když je jeho první složka opravdu přítomná, a úvodní segment se vrátí při každém způsobu, jak pole opustit.
+- Mimo trezor byly soubory skryté, pokud nebylo zapnuté Obsidianovo **Rozpoznávat všechny přípony souborů** — nastavení o tom, co trezor indexuje, uplatněné na složky, které v trezoru nejsou. `.txt` vedle vašich poznámek se tam venku vypisuje tak jako tak.
+- Seznam u názvu trezoru nedělal nic na panelu, který neobsahuje žádný soubor — a to je přesně ten panel, který byste použili k přechodu někam jinam.
+- Kliknutí na název trezoru nechalo Obsidianův vlastní nadpis stát vedle cesty v poli, zešedlý, tam, kde se jindy nikdy neobjevuje: řádek se měří podle toho, co vykreslil, a v tu chvíli se sám vyprázdnil, aby udělal místo pro pole.
+
+- Kliknutí na prázdné místo otevřelo pole a hned ho ztratilo: odhalení poznámky v Průzkumníku souborů si s sebou odneslo kurzor, takže pole zůstalo otevřené a označené, zatímco každý úhoz klávesy směřoval do stromu.
+- Příčka, která ukazuje cestu od kořene systému, kreslila vedle pole stopu téže cesty, nepřizpůsobenou, takže se hluboká cesta vykreslovala sama přes sebe.
+
 ## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### Přidáno
@@ -146,6 +178,7 @@ První vydání. Nahrazuje název souboru v záhlaví poznámky klikatelnou, upr
 - **Mimo trezor** (ve výchozím stavu vypnuto): název trezoru otevírá vaše další trezory, domovskou složku, kořen souborového systému a připojené jednotky. Nic se tam nezapíše, dokud to neodemknete, a poznámku lze z trezoru jen zkopírovat, nikdy přesunout.
 - **45 jazyků.**
 
+[^1.4.0]: Změny od 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Změny od 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Změny od 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Změny od 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>

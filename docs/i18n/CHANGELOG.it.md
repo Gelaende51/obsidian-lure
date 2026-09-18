@@ -9,6 +9,38 @@
 
 Ogni release di Lure, dalla più recente. Ciò che è arrivato dopo l'ultima release sta sotto *Non rilasciato*. Le versioni non hanno il prefisso `v`, come i tag delle release.
 
+## 1.4.0 — 2026-09-19[^1.4.0]
+
+### Aggiunto
+
+- **Una riga per i Tasti di scelta rapida nelle impostazioni.** Il suo pulsante apre i *Tasti di scelta rapida* di Obsidian filtrati su questo plugin, dove ad *Attiva la barra del percorso* — che non ha un tasto assegnato di serie — se ne può assegnare uno.
+- **Una barra del percorso sui riquadri che non contengono un file.** Una scheda vuota si legge `vault / :blank`, il grafo `vault / :graph`, e ogni altra vista senza nulla da nominare riceve una propria etichetta `:` — la scheda di un plugin per la pagina iniziale si legge `:home-launcher`. Il campo accanto è una barra degli indirizzi: digita un percorso e <kbd>Invio</kbd> lo apre in quel riquadro, o lo crea. Prima la riga era vuota — il plugin nascondeva il titolo di Obsidian e non metteva nulla al suo posto.
+- **Una pagina si può anche digitare, non solo scegliere** — `:graph` e le altre sono un indirizzo, non solo una voce d'elenco. Nessun nome di file inizia con i due punti, quindi digitarne uno in qualsiasi punto le richiama, e il campo assume il loro colore invece di proporre di creare una nota che non potrebbe chiamarsi così.
+- **Una riga per l'impostazione di Obsidian *Mostra tutti i tipi di file***, accanto alla regola dei file che iniziano con un punto, perché entrambe decidono cosa un menu a discesa può elencare: dice di cercare quell'impostazione nelle impostazioni di Obsidian e di attivarla per vedere ogni file, e il pulsante accanto apre quella pagina con l'impostazione scorsa in vista e evidenziata con un lampeggio, come farebbe un risultato di ricerca nelle impostazioni. Chiamata con le parole di Obsidian, spiegata in 45 lingue.
+- **La radice del vault elenca le pagine che un riquadro può contenere** — `:graph`, `:search`, e qualsiasi vista registrata dai tuoi plugin, tra cui una scheda per la pagina iniziale o un calendario. Scegline una e il riquadro la apre, come scegliere una nota apre la nota. Le viste che esistono per mostrare un file restano fuori, perché non avrebbero nulla da mostrare.
+- **Il separatore del vault apre la tua pagina iniziale**, dove un plugin ne fornisce una, ed è sottolineato per dirlo; la pressione successiva richiude l'albero dei file, e quella dopo ancora rimette esattamente ciò che era aperto. Senza un plugin del genere la prima pressione richiude, come prima.
+- **Digita un percorso dalla radice del file system.** Una `/` davanti a un campo vuoto ne apre uno invece di essere inghiottita, ogni barra successiva al suo interno gli appartiene, e il menu a discesa elenca la macchina invece del vault.
+
+### Modificato
+
+- **F2 e Attiva la barra del percorso premono Tab dentro il campo.** Qualunque cosa Tab farebbe lì — il gradino successivo, completare ciò che hai digitato, entrare in una cartella — lo fanno anche loro; solo dove Tab richiude il giro tornando all'inizio del percorso escono dal campo, F2 verso il titolo in linea, il comando verso la nota. Prima, un campo in cui avevi digitato faceva ricominciare F2 dal nome e il comando chiudeva il campo.
+- **Il passo dopo l'uscita dal ciclo è la cartella radice.** La pressione dopo il ritorno di F2 al titolo in linea, o il ritorno del comando alla nota, atterra dove atterra il giro di Tab — la radice del vault, il percorso intero nel campo, la sua prima cartella evidenziata — così nessun passo del ciclo resta solo a Tab.
+- **Attiva la barra del percorso percorre lo stesso ciclo di F2.** Si apre sul nome invece che sul percorso intero, attraversa gli stessi quattro gradini, e la pressione dopo l'ultimo chiude il campo e riporta il cursore nella nota — prima, girava sui gradini all'infinito e l'unico tasto che raggiungeva la riga non riusciva a lasciarla.
+- **Un nome già occupato viene segnalato quando lo usi, non mentre lo digiti.** Ogni nome digitato verso `Notes.md` attraversa nomi che possono essere file a loro volta, e l'avviso prima lampeggiava e spariva lettera per lettera. Ciò che non va nella grafia di un nome viene comunque segnalato mentre lo scrivi.
+- **Un separatore la cui nota di cartella è già aperta rivela la cartella** invece di riaprire ciò che è già sullo schermo — che è quanto la sua seconda pressione ha sempre significato.
+- **Dove ti trovi è in grassetto in un menu a discesa**, non solo blu.
+- **Tutto ciò che non è una nota è arancione in un menu a discesa**, non solo i tipi di testo per cui Obsidian non ha una vista. Il viola distingue le note in una cartella dal contenuto misto; un solo colore per il resto dice la stessa cosa più in fretta.
+
+### Corretto
+
+- **Backspace su una cartella cliccata non toglie più il nome del vault.** La barra rimasta all'inizio veniva letta come un percorso dalla radice della macchina, il che svuotava il segmento iniziale — e chiudere il campo con Escape non lo rimetteva mai a posto, così la scheda perdeva per sempre il nome e l'icona del vault. Una barra iniziale ora conta come quella della macchina solo quando la sua prima cartella esiste davvero, e il segmento iniziale torna con ogni modo di uscire dal campo.
+- Fuori dal vault, i file restavano nascosti a meno che l'impostazione di Obsidian **Rileva tutte le estensioni dei file** non fosse attiva — un'impostazione su cosa il vault indicizza, applicata a cartelle che non fanno parte del vault. Un `.txt` accanto alle tue note viene comunque elencato là fuori.
+- Il menu a discesa del nome del vault non faceva nulla su un riquadro che non conteneva un file, che è esattamente il riquadro che useresti per andare altrove.
+- Cliccare sul nome del vault lasciava il titolo di Obsidian accanto al percorso nel campo, in grigio, dove non compare in nessun altro momento: la riga si misura in base a ciò che ha disegnato, e in quel momento si è svuotata per fare posto al campo.
+
+- Cliccare sullo spazio vuoto apriva il campo per poi perderlo: rivelare la nota in Esplora file porta via con sé il cursore, così il campo restava aperto ed evidenziato mentre ogni tasto premuto andava all'albero.
+- Il gradino che mostra il percorso dalla radice del sistema disegnava una scia dello stesso percorso accanto al campo, non adattata, così un percorso profondo si sovrapponeva a se stesso.
+
 ## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### Aggiunto
@@ -147,6 +179,7 @@ Prima release. Sostituisce il nome del file nell'intestazione di una nota con un
 - **Fuori dal vault** (disattivato di default): il nome del vault apre gli altri vault, la cartella home, la radice del file system e le unità montate. Nulla là fuori viene scritto finché non lo sblocchi, e una nota può solo essere copiata fuori dal vault, mai spostata.
 - **45 lingue.**
 
+[^1.4.0]: Modifiche dopo la 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Modifiche dopo la 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Modifiche dopo la 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Modifiche dopo la 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>

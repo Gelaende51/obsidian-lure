@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · endast dator · AGPL-3.0
 ## AI-redovisning
 
 - **Agent** — **Claude Opus 5** och **Claude Sonnet 5** (Anthropic, via Claude Code): skrev TypeScript-koden, CSS:en, alla 45 översättningsuppsättningar och dokumentationen. Översättningarna är maskingenererade och inte granskade av modersmålstalare.
-- **Förbrukning** — 3 aug – 17 sep 2026, 23 sessioner, \~14 844 svar: \~19,2 M genererade token, \~85,2 M skickade, \~4800,6 M cachade omläsningar (\~4905,0 M totalt).
+- **Förbrukning** — 3 aug – 19 sep 2026, 20 sessioner, \~16 460 svar: \~19,9 M genererade token, \~87,0 M skickade, \~5451,0 M cachade omläsningar (\~5558,0 M totalt).
 - **Ursprung** — modellen har lärt sig av öppen källkod, dokumentation och gemenskapstexter som andra har publicerat. Det mesta av förtjänsten ligger där.
 - **Författare** — Vault51: angav varje funktion, testade varje iteration i ett levande valv, ledde rättningarna, granskade all utdata.
 
@@ -38,8 +38,10 @@ Obsidian 1.8.7+ · endast dator · AGPL-3.0
 - **HTML-filer visas som sidor**, i en ram där varje behörighet är fråntagen — inga skript, inget nätverk, inget eget ursprung — med stilmallarna och bilderna bredvid filen medtagna så att en sparad sida fortfarande ser ut som sig själv. Källkoden är ett tryck bort.
 - **Skriv en URL** — `https://`, `obsidian://`, eller en `file://`-sökväg eller procentkodad sökväg — så öppnas den i stället för att behandlas som ett anteckningsnamn. Webbadresser går till en flik i Obsidians egen webbvisare där du har den påslagen.
 - **Långa sökvägar kortas där bokstäverna är överflödiga** — aldrig bortom det som skiljer en mapp från den bredvid, mjukt snarare än en bokstav i taget — och rullar bara när det inte finns något kvar att komprimera. Peka på ett förkortat namn för att få tillbaka det i sin helhet.
-- **<kbd>F2</kbd>** växlar mellan den infogade titeln och sökvägsfältet, öppnar på namnet utan filändelse och går vid fler tryck ut till de fullständiga sökvägarna. Den passerar rent genom Obsidians namnbytesdialog när titeln är bortrullad. Ett kommando *Fokusera sökvägsfältet* finns att binda om du vill ha adressfältsgesten.
+- **<kbd>F2</kbd>** växlar mellan den infogade titeln och sökvägsfältet, öppnar på namnet utan filändelse och går vid fler tryck ut till de fullständiga sökvägarna. Den passerar rent genom Obsidians namnbytesdialog när titeln är bortrullad. Ett kommando *Fokusera sökvägsfältet* går samma steg utan att byta namn; inställningarnas rad för Snabbkommandon tar dig dit för att binda det.
 - **Klicka på valvets namn** för att bläddra bland dina andra valv, hemmappen, filsystemets rot och monterade enheter utan att byta valv. Skrivskyddat tills du öppnar det röda hänglåset som tar namnbytesväxlarens plats där ute, och inramat i felfärgen hela vägen. Avstängt som standard — se [utanför valvet](#utanför-valvet).
+- **Valvets rot listar de sidor en flik kan hålla** — `:graph`, `:search`, och vilka vyer dina tillägg än registrerar. Välj en, eller skriv den: ett kolon inleder inget filnamn, så etiketterna fungerar även som en adress. Med ett startsidestillägg installerat öppnar valvets egen avgränsare den sidan vid det första klicket och fäller ihop filträdet vid nästa.
+- **En rad på flikar som inte håller någon fil** — en tom flik läser `vault / :blank`, grafen `vault / :graph`, och fältet bredvid är ett adressfält: skriv en sökväg och <kbd>Retur</kbd> öppnar den i den fliken, eller skapar den. Sidopanelsflikar behåller Obsidians egen titel.
 - **Två varningsnivåer** — rött utanför valvet, orange för textfiler som Obsidian saknar redigerare för. Se [de två varningsfärgerna](usage.sv.md#de-två-varningsfärgerna).
 - **Temabara ikoner**, utbytta från ett CSS-utdrag — och **46 språk**: alla som Obsidian levererar, plus grekiska och sanskrit, som det inte har någon inställning för. Välj ett för enbart tillägget, eller följ Obsidians eget.
 - **Inställningar:** språk, justering, avgränsarförval, vilket klick som öppnar listan, valvets namn, punktfiler, filändelser.

@@ -9,6 +9,38 @@
 
 Elke release van Lure, de nieuwste eerst. Wat er sinds de laatste release is geland staat onder *Niet uitgebracht*. Versies dragen geen `v`-voorvoegsel, net als de release-tags.
 
+## 1.4.0 — 2026-09-19[^1.4.0]
+
+### Toegevoegd
+
+- **Een rij 'Sneltoetsen' in de instellingen.** De knop erbij opent Obsidians *Sneltoetsen*, gefilterd op deze plugin, waar *Focus op de padbalk* — dat zonder toets wordt geleverd — er een kan krijgen.
+- **Een padbalk op deelvensters zonder bestand.** Een leeg tabblad toont `vault / :blank`, de graaf `vault / :graph`, en elke andere weergave zonder naam krijgt haar eigen `:`-label — het eigen tabblad van een home-tab-plugin toont `:home-launcher`. Het veld ernaast is een adresbalk: typ een pad en <kbd>Enter</kbd> opent het in dat deelvenster, of maakt het aan. Voorheen was de rij leeg — de plugin verborg Obsidians eigen titel en zette er niets voor in de plaats.
+- **Een pagina kan getypt worden, niet alleen gekozen** — `:graph` en de rest zijn een adres, niet alleen een lijstitem. Geen bestandsnaam begint met een dubbele punt, dus roept het typen van één, waar dan ook, ze op, en draagt het veld hun kleur in plaats van aan te bieden een notitie te maken die niets zou kunnen heten.
+- **Een rij voor Obsidians eigen *Alle bestandstypen weergeven***, naast de regel voor puntbestanden, aangezien beide bepalen wat een lijst mag tonen: hij zegt dat je die instelling in Obsidians eigen instellingen moet opzoeken en aanzetten om elk bestand te zien, en de knop ernaast opent die pagina met de instelling in beeld gescrold en opgelicht, zoals een zoekresultaat in de instellingen dat zou doen. Genoemd met Obsidians eigen woorden, uitgelegd in 45 talen.
+- **De hoofdmap van de kluis toont de pagina's die een deelvenster kan bevatten** — `:graph`, `:search`, en welke weergaven je plugins ook registreren, een home-tab of een kalender erbij. Kies er één en het deelvenster opent hem, zoals het kiezen van een notitie de notitie opent. Weergaven die er zijn om een bestand te tonen, blijven buiten beschouwing, omdat er dan niets voor hen te tonen zou zijn.
+- **Het eigen scheidingsteken van de kluis opent je startpagina**, waar een plugin er een levert, en is daarom onderstreept; de druk erna vouwt de bestandsboom weg, en de druk daarna zet precies terug wat open stond. Zonder zo'n plugin vouwt de eerste druk, zoals voorheen.
+- **Typ een pad vanaf de hoofdmap van het bestandssysteem.** Een `/` vooraan in een leeg veld opent er een in plaats van te worden opgeslokt, elke latere schuine streep erin hoort erbij, en de lijst toont de machine in plaats van de kluis.
+
+### Gewijzigd
+
+- **F2 en Focus op de padbalk drukken Tab binnen het veld.** Wat Tab daar ook zou doen — de volgende trede, het aanvullen van wat je typte, een map in stappen — dat doen ze ook; alleen waar Tab terug naar het begin van het pad loopt, verlaten ze het veld, F2 naar de titel in de notitie, de opdracht naar de notitie. Voorheen liet een veld waarin je had getypt, F2 opnieuw beginnen bij de naam en de opdracht het veld sluiten.
+- **De stap na het verlaten van de cyclus is de hoofdmap van de kluis.** De druk na F2's terugkeer naar de titel in de notitie, of de terugkeer van de opdracht naar de notitie, komt uit waar Tabs ronde ook uitkomt — de hoofdmap van de kluis, het hele pad in het veld, de eerste map ervan gemarkeerd — zodat geen enkele stap van de cyclus alleen aan Tab is overgelaten.
+- **Focus op de padbalk loopt als F2.** Het opent op de naam in plaats van het hele pad, doorloopt dezelfde vier treden, en de druk na de laatste sluit het veld en zet de cursor terug in de notitie — voorheen liep het de treden eindeloos rond, en de enige toets die de rij bereikte, kon er niet meer uit.
+- **Een bezette naam wordt gemeld wanneer je hem gebruikt, niet terwijl je hem typt.** Elke naam die naar `Notes.md` toe wordt getypt, doorloopt namen die zelf ook bestanden kunnen zijn, en de waarschuwing flitste vroeger letter voor letter op en weer weg. Wat er mis is met de spelling van een naam wordt nog steeds gezegd zoals hij gespeld is.
+- **Een scheidingsteken waarvan de mapnotitie al open is, onthult de map** in plaats van te heropenen wat al op het scherm staat — wat de tweede druk erop altijd al betekend heeft.
+- **Waar je bent, is vetgedrukt in een lijst**, niet alleen blauw.
+- **Alles wat geen notitie is, is oranje in een lijst**, niet alleen de teksttypen waar Obsidian geen weergave voor heeft. Het paars pikt de notities uit een map met gemengde inhoud; één kleur voor de rest zegt hetzelfde, sneller.
+
+### Opgelost
+
+- **Backspace over een aangeklikte map haalt de naam van de kluis niet langer weg.** De schuine streep die vooraan overbleef, werd gelezen als een pad vanaf de wortel van de machine, waardoor het beginsegment leeg raakte — en het veld sluiten met Escape zette het nooit terug, zodat het tabblad zijn kluisnaam en icoon voorgoed kwijtraakte. Een schuine streep vooraan telt nu alleen als die van de machine wanneer de eerste map erachter er echt is, en het beginsegment keert terug bij elke manier om het veld te verlaten.
+- Buiten de kluis werden bestanden verborgen tenzij Obsidians **Alle bestandsextensies detecteren** aanstond — een instelling over wat de kluis indexeert, toegepast op mappen die niet in de kluis zitten. Een `.txt` naast je notities wordt daarbuiten hoe dan ook getoond.
+- De lijst van de kluisnaam deed niets op een deelvenster zonder bestand — precies het deelvenster waarmee je ergens anders naartoe zou gaan.
+- Klikken op de kluisnaam liet Obsidians eigen titel grijs naast het pad in het veld staan, waar hij op geen enkel ander moment verschijnt: de rij meet zichzelf af aan wat ze getekend heeft, en op dat moment heeft ze zichzelf geleegd om plaats te maken voor het veld.
+
+- Klikken op de lege ruimte opende het veld en verloor het daarna weer: de notitie onthullen in de Bestandsverkenner neemt de cursor mee, zodat het veld open en gemarkeerd bleef staan terwijl elke toetsaanslag naar de boom ging.
+- De trede die het pad vanaf de systeemwortel toont, tekende een spoor van datzelfde pad naast het veld, niet passend, zodat een diep pad over zichzelf heen werd geschilderd.
+
 ## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### Toegevoegd
@@ -147,6 +179,7 @@ Eerste release. Vervangt de bestandsnaam in de kopbalk van een notitie door een 
 - **Buiten de kluis** (standaard uit): de kluisnaam opent je andere kluizen, je persoonlijke map, de hoofdmap van het bestandssysteem en aangekoppelde schijven. Daarbuiten wordt er niets geschreven tot je het ontgrendelt, en een notitie kan alleen uit de kluis worden gekopieerd, nooit verplaatst.
 - **45 talen.**
 
+[^1.4.0]: Wijzigingen sinds 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Wijzigingen sinds 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Wijzigingen sinds 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Wijzigingen sinds 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>

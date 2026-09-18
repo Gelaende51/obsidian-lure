@@ -15,7 +15,7 @@ Obsidian 1.8.7+ · pouze počítač · AGPL-3.0
 ## Prohlášení o AI
 
 - **Agent** — **Claude Opus 5** a **Claude Sonnet 5** (Anthropic, přes Claude Code): napsal TypeScript, CSS, všech 45 sad překladů a dokumentaci. Překlady vznikly strojově a rodilí mluvčí je nekontrolovali.
-- **Spotřeba** — 3. srpna – 17. září 2026, 23 sezení, \~14 844 odpovědí: \~19,2 mil. vygenerovaných tokenů, \~85,2 mil. odeslaných, \~4800,6 mil. opětovných čtení z mezipaměti (\~4905,0 mil. celkem).
+- **Spotřeba** — 3. srpna – 19. září 2026, 20 sezení, \~16 460 odpovědí: \~19,9 mil. vygenerovaných tokenů, \~87,0 mil. odeslaných, \~5451,0 mil. opětovných čtení z mezipaměti (\~5558,0 mil. celkem).
 - **Zdroj** — model se učil z otevřeného kódu, dokumentace a textů komunity, které zveřejnili jiní. Většina zásluh patří tam.
 - **Autor** — Vault51: určil každou funkci, každou verzi vyzkoušel ve skutečném trezoru, řídil opravy, prošel všechny výstupy.
 
@@ -37,8 +37,10 @@ Obsidian 1.8.7+ · pouze počítač · AGPL-3.0
 - **Soubory HTML se zobrazují jako stránky**, v rámu s odepřenými všemi oprávněními — žádné skripty, žádná síť, žádný vlastní původ — a se styly a obrázky ze sousedství souboru, takže uložená stránka vypadá pořád jako ona. Zdrojový kód je na jedno stisknutí.
 - **Napište URL** — `https://`, `obsidian://`, nebo cestu `file://` či zakódovanou procenty — a otevře se, místo aby se četla jako název poznámky. Webové adresy se otevřou na kartě vlastního modulu Webový prohlížeč Obsidianu, pokud ho máte zapnutý.
 - **Dlouhé cesty se zkracují tam, kde jsou písmena nadbytečná** — nikdy za hranici toho, co odliší složku od sousední, plynule, ne po jednom písmenu — a posouvají se, teprve když už není co stlačit. Ukažte na zkrácený název a uvidíte jej celý.
-- **<kbd>F2</kbd>** přepíná mezi nadpisem v textu a řádkem cesty; otevře se na názvu bez přípony a dalšími stisky postupuje až k úplným cestám. Hladce projde dialogem přejmenování Obsidianu, když je nadpis odrolovaný z dohledu. Pokud chcete gesto adresního řádku, můžete si přiřadit klávesovou zkratku k příkazu *Zaměřit lištu cesty*.
+- **<kbd>F2</kbd>** přepíná mezi nadpisem v textu a řádkem cesty; otevře se na názvu bez přípony a dalšími stisky postupuje až k úplným cestám. Hladce projde dialogem přejmenování Obsidianu, když je nadpis odrolovaný z dohledu. Příkaz *Zaměřit lištu cesty* prochází stejnými příčkami bez přejmenovávání; k jeho přiřazení klávesy vás zavede řádek *Klávesové zkratky* v nastavení.
 - **Kliknutí na název trezoru** umožní procházet ostatní trezory, domovskou složku, kořen souborového systému a připojené jednotky, aniž byste měnili trezor. Jen ke čtení, dokud neotevřete červený zámek, který tam venku zaujme místo přepínače přejmenování, a po celou dobu orámováno chybovou barvou. Ve výchozím stavu vypnuto — viz [mimo trezor](#mimo-trezor).
+- **Kořen trezoru vypisuje stránky, které panel dokáže obsahovat** — `:graph`, `:search` a jakékoli pohledy, které zaregistrují vaše pluginy. Vyberte jeden, nebo ho napište: dvojtečkou nezačíná žádný název souboru, takže popisky slouží zároveň jako adresa. S nainstalovaným pluginem pro úvodní stránku otevře trezoru vlastní oddělovač tuto stránku prvním kliknutím a dalším sbalí strom souborů.
+- **Řádek na panelech, které neobsahují žádný soubor** — prázdná karta se čte jako `vault / :blank`, graf jako `vault / :graph`, a pole vedle něj je adresní řádek: napište cestu a <kbd>Enter</kbd> ji v tom panelu otevře, nebo ji vytvoří. Postranní panely si ponechávají Obsidianův vlastní nadpis.
 - **Dva stupně varování** — červená mimo trezor, oranžová pro textové soubory, pro které Obsidian nemá editor. Viz [dvě varovné barvy](usage.cs.md#dvě-varovné-barvy).
 - **Ikony přizpůsobitelné motivu**, vyměnitelné z úryvku CSS — a **46 jazyků**: každý, který Obsidian přináší, plus řečtina a sanskrt, pro které nemá nastavení. Zvolte jeden jen pro plugin, nebo se řiďte jazykem Obsidianu.
 - **Nastavení:** jazyk, zarovnání, přednastavené oddělovače, které kliknutí otevírá seznam, název trezoru, skryté soubory, přípony souborů.

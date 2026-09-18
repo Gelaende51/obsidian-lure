@@ -8,6 +8,37 @@
 
 Toutes les versions de Lure, de la plus récente à la plus ancienne. Ce qui a été ajouté depuis la dernière version figure sous *Non publié*. Les numéros de version ne portent pas de préfixe `v`, comme les étiquettes de publication.
 
+## 1.4.0 — 2026-09-19[^1.4.0]
+
+### Ajouté
+
+- **Une ligne Raccourcis clavier dans les paramètres.** Son bouton ouvre les *Raccourcis clavier* d'Obsidian filtrés sur ce plugin, où *Placer le focus sur la barre de chemin* — qui n'a pas de raccourci par défaut — peut s'en voir attribuer un.
+- **Une barre de chemin sur les volets qui ne contiennent aucun fichier.** Un onglet vide affiche `vault / :blank`, le graphe `vault / :graph`, et toute autre vue n'ayant rien à nommer reçoit sa propre étiquette `:` — l'onglet d'un plugin de page d'accueil affiche `:home-launcher`. Le champ à côté est une barre d'adresse : tapez un chemin et <kbd>Entrée</kbd> l'ouvre dans ce volet, ou le crée. Avant cela, la ligne était vide — le plugin masquait le titre propre d'Obsidian sans rien mettre à sa place.
+- **Une page peut se taper autant que se choisir** — `:graph` et les autres sont une adresse, pas seulement une entrée de liste. Un deux-points ne commence jamais un nom de fichier, donc en taper un n'importe où les invoque, et le champ prend leur couleur au lieu de proposer de créer une note qu'aucun nom ne pourrait porter.
+- **Une ligne pour *Afficher tous les types de fichiers* d'Obsidian**, à côté de la règle des fichiers pointés, puisque les deux décident de ce qu'un menu peut lister : elle indique où trouver ce paramètre dans les paramètres d'Obsidian et de l'activer pour voir tous les fichiers, et le bouton à côté ouvre cette page avec le paramètre déroulé dans la vue et mis en surbrillance, comme le ferait un résultat de recherche dans les paramètres. Nommé avec les mots d'Obsidian, expliqué en 45 langues.
+- **La racine du coffre liste les pages qu'un volet peut contenir** — `:graph`, `:search`, et toutes les vues que vos plugins enregistrent, un onglet d'accueil ou un calendrier parmi elles. Choisissez-en une et le volet l'ouvre, comme choisir une note ouvre la note. Les vues qui existent pour afficher un fichier sont laissées de côté, puisqu'elles n'auraient rien à afficher.
+- **Le séparateur du coffre lui-même ouvre votre page de démarrage**, là où un plugin en fournit une, et il est souligné pour le signaler ; la pression suivante replie l'arborescence de fichiers, et celle d'après restitue exactement ce qui était ouvert. Sans un tel plugin, la première pression replie, comme avant.
+- **Tapez un chemin depuis la racine du système de fichiers.** Un `/` au début d'un champ vide en ouvre une au lieu d'être avalé, chaque barre oblique suivante lui appartient, et le menu liste la machine plutôt que le coffre.
+
+### Modifié
+
+- **F2 et Placer le focus sur la barre de chemin appuient sur Tab à l'intérieur du champ.** Tout ce que Tab y ferait — l'étape suivante, compléter ce que vous avez tapé, entrer dans un dossier — ils le font aussi ; ce n'est que là où Tab reboucle au début du chemin qu'ils quittent le champ, F2 vers le titre en ligne, la commande vers la note. Avant, un champ dans lequel vous aviez tapé faisait recommencer F2 sur le nom et fermait le champ avec la commande.
+- **L'étape suivant la sortie du cycle est le dossier racine.** La pression qui suit le retour de F2 au titre en ligne, ou le retour de la commande à la note, atterrit là où Tab reboucle — la racine du coffre, le chemin entier dans le champ, son premier dossier marqué — de sorte qu'aucune étape du cycle ne reste réservée à Tab seul.
+- **Placer le focus sur la barre de chemin se déroule comme F2.** Elle s'ouvre sur le nom au lieu du chemin entier, parcourt les quatre mêmes étapes, et la pression qui suit la dernière ferme le champ et replace le curseur dans la note — avant, elle rebouclait indéfiniment sur ces étapes et la seule touche qui atteignait la ligne ne pouvait pas en sortir.
+- **Un nom déjà pris est signalé quand vous l'utilisez, pas pendant que vous le tapez.** Chaque nom tapé en visant `Notes.md` passe par des noms qui peuvent être des fichiers à part entière, et l'avertissement avait l'habitude d'apparaître puis de disparaître lettre par lettre. Ce qui ne va pas dans l'orthographe d'un nom continue d'être signalé au fil de sa frappe.
+- **Un séparateur dont la note de dossier est déjà ouverte révèle le dossier** plutôt que de rouvrir ce qui est déjà à l'écran — ce qu'a toujours signifié sa seconde pression.
+- **Votre position est en gras dans un menu**, pas seulement en bleu.
+- **Tout ce qui n'est pas une note est orange dans un menu**, pas seulement les types de texte pour lesquels Obsidian n'a pas de vue. Le violet distingue les notes dans un dossier au contenu mixte ; une seule couleur pour le reste dit la même chose plus vite.
+
+### Corrigé
+
+- **Backspace au-dessus d'un dossier cliqué ne retire plus le nom du coffre.** La barre oblique laissée au début était lue comme un chemin depuis la racine de la machine, ce qui vidait le segment initial — et fermer le champ avec Échap ne le restituait jamais, si bien que l'onglet perdait pour de bon le nom et l'icône du coffre. Une barre oblique en tête ne compte désormais pour celle de la machine que lorsque son premier dossier existe vraiment, et le segment initial revient quelle que soit la façon de quitter le champ.
+- Hors du coffre, les fichiers étaient masqués à moins que **Détecter toutes les extensions de fichiers** d'Obsidian ne soit activé — un paramètre qui concerne ce que le coffre indexe, appliqué à des dossiers qui ne sont pas dans le coffre. Un `.txt` à côté de vos notes y est listé dans tous les cas.
+- Le menu du nom du coffre ne faisait rien sur un volet ne contenant aucun fichier, précisément le volet que l'on utiliserait pour aller ailleurs.
+- Cliquer sur le nom du coffre laissait le titre propre d'Obsidian subsister à côté du chemin dans le champ, grisé, là où il n'apparaît à aucun autre moment : la ligne se mesure d'après ce qu'elle a dessiné, et à cet instant elle s'était vidée pour faire de la place au champ.
+- Cliquer sur l'espace vide ouvrait le champ puis le perdait aussitôt : révéler la note dans l'Explorateur de fichiers emporte le curseur avec elle, si bien que le champ restait ouvert et marqué pendant que chaque frappe partait vers l'arborescence.
+- L'étape qui affiche le chemin depuis la racine du système dessinait une traînée du même chemin à côté du champ, non ajustée, si bien qu'un chemin profond se peignait par-dessus lui-même.
+
 ## 1.3.0 — 2026-09-17[^1.3.0]
 
 ### Ajouté
@@ -146,6 +177,7 @@ Première version. Remplace le nom de fichier dans l'en-tête d'une note par un 
 - **Hors du coffre** (désactivé par défaut) : le nom du coffre ouvre vos autres coffres, votre dossier personnel, la racine du système de fichiers et les disques montés. Rien n'y est écrit tant que vous ne l'avez pas déverrouillé, et une note ne peut être que copiée hors du coffre, jamais déplacée.
 - **45 langues.**
 
+[^1.4.0]: Modifications depuis 1.3.0 : <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Modifications depuis 1.2.0 : <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Modifications depuis 1.1.2 : <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Modifications depuis 1.1.1 : <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>

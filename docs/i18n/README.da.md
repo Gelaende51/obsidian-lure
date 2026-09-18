@@ -15,7 +15,7 @@ Obsidian 1.8.7+ · kun computer · AGPL-3.0
 ## AI-oplysning
 
 - **Agent** — **Claude Opus 5** og **Claude Sonnet 5** (Anthropic, via Claude Code): skrev TypeScript-koden, CSS'en, alle 45 oversættelsessæt og dokumentationen. Oversættelserne er lavet maskinelt og ikke gennemlæst af modersmålstalere.
-- **Forbrug** — 3. august–17. september 2026, 23 sessioner, \~14.844 svar: \~19,2 mio. genererede tokens, \~85,2 mio. sendte, \~4800,6 mio. genlæsninger fra cachen (\~4905,0 mio. i alt).
+- **Forbrug** — 3. august–19. september 2026, 20 sessioner, \~16.460 svar: \~19,9 mio. genererede tokens, \~87,0 mio. sendte, \~5451,0 mio. genlæsninger fra cachen (\~5558,0 mio. i alt).
 - **Ophav** — modellen har lært af open source-kode, dokumentation og fællesskabstekster udgivet af andre. Størstedelen af æren tilfalder dem.
 - **Forfatter** — Vault51: fastlagde hver funktion, prøvede hver udgave i en rigtig boks, styrede rettelserne og læste alle resultater igennem.
 
@@ -37,8 +37,10 @@ Obsidian 1.8.7+ · kun computer · AGPL-3.0
 - **HTML-filer vises som sider**, i en ramme, hvor alle tilladelser er holdt tilbage — ingen scripts, intet netværk, ingen egen oprindelse — og med stylesheets og billeder ved siden af filen hentet ind, så en gemt side stadig ligner sig selv. Kildekoden er ét tryk væk.
 - **Skriv en URL** — `https://`, `obsidian://` eller en `file://`- eller procentkodet sti — og den åbnes i stedet for at blive læst som et notenavn. Webadresser går til en fane i Obsidians egen Webfremviser, hvis du har den slået til.
 - **Lange stier forkortes, hvor bogstaverne er overflødige** — aldrig ud over det, der skiller en mappe fra naboen, og glidende i stedet for et bogstav ad gangen — og ruller først, når der ikke er mere at presse sammen. Peg på et forkortet navn for at få det helt igen.
-- **<kbd>F2</kbd>** skifter mellem overskriften i noten og stilinjen, åbner på navnet uden endelse og går ud til de fulde stier ved flere tryk. Den glider rent gennem Obsidians omdøbningsdialog, når overskriften er rullet ud af syne. Kommandoen *Fokusér stilinjen* står klar til en genvejstast, hvis du vil have adresselinjens greb.
+- **<kbd>F2</kbd>** skifter mellem overskriften i noten og stilinjen, åbner på navnet uden endelse og går ud til de fulde stier ved flere tryk. Den glider rent gennem Obsidians omdøbningsdialog, når overskriften er rullet ud af syne. Kommandoen *Fokusér stilinjen* går den samme runde uden at omdøbe; indstillingernes *Genvejstaster*-række fører dig hen for at binde den.
 - **Klik på boksens navn** for at gennemse dine andre bokse, hjemmemappen, filsystemets rod og tilsluttede drev uden at skifte boks. Skrivebeskyttet, indtil du åbner den røde hængelås, der derude står på omdøbningsknappens plads, og indrammet i fejlfarven hele vejen. Slået fra som standard — se [uden for boksen](#uden-for-boksen).
+- **Boksens rod viser de sider, en fane kan indeholde** — `:graph`, `:search`, og hvad end visninger dine plugins registrerer. Vælg én, eller skriv den: et kolon starter intet filnavn, så mærkerne fungerer også som en adresse. Med et startside-plugin installeret åbner boksens eget skilletegn den side ved første klik og folder filtræet ved næste.
+- **En række på faner uden fil** — en tom fane viser `vault / :blank`, grafen `vault / :graph`, og feltet ved siden af er en adresselinje: skriv en sti, og <kbd>Enter</kbd> åbner den i den fane, eller opretter den. Sidepanel-faner beholder Obsidians egen titel.
 - **To advarselstrin** — rødt uden for boksen, orange for tekstfiler, som Obsidian ikke har en editor til. Se [de to advarselsfarver](usage.da.md#de-to-advarselsfarver).
 - **Ikoner der følger temaet**, kan udskiftes fra et CSS-uddrag — og **46 sprog**: alle dem Obsidian leverer, plus græsk og sanskrit, som Obsidian ikke har en indstilling til. Vælg ét kun til pluginet, eller følg Obsidians eget.
 - **Indstillinger:** sprog, justering, foruddefinerede skilletegn, hvilket klik der åbner listen, boksens navn, skjulte filer, filendelser.
