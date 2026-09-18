@@ -808,7 +808,11 @@ export class PathBreadcrumb {
 		private titleEl: HTMLElement,
 	) {
 		this.titleEl.addClass(PATCHED_CLASS);
-		this.titleEl.addClass(NATIVE_TITLE_HIDDEN_CLASS);
+		// Not hidden here: whether Obsidian's title goes is decided by what
+		// this row manages to draw, and that is not known until it has drawn
+		// it (see `render`). Hiding it on the way in left every patched leaf
+		// with no row of its own — a sidebar pane holding no file — showing
+		// nothing at all until some later refresh happened along.
 		this.titleEl.setAttribute("contenteditable", "false");
 
 		this.vaultSegmentEl = createSpan();
@@ -3042,6 +3046,16 @@ export class PathBreadcrumb {
 		const viewActions = this.titleEl.parentElement?.parentElement?.querySelector<HTMLElement>(
 			".view-actions",
 		);
+		// A pane with nothing to rename gets no toggle: an empty tab, the
+		// graph, a sidebar pane holding no file. The mode itself already
+		// refuses there (`startHeaderRename`), so the button was one that
+		// could only ever be pressed in vain.
+		if (!this.file && this.externalPath === null) {
+			this.renameButtonEl.remove();
+			this.unlockButtonEl.remove();
+			this.updateNavLockButton();
+			return;
+		}
 		// Rename mode keeps the toggle on screen whatever the padlock says.
 		// The merge governs the button, not the mode: the rename command has
 		// a hotkey of its own, and a mode entered that way must stay visible
@@ -3163,6 +3177,39 @@ export class PathBreadcrumb {
 		return this.leaf.view instanceof FileView ? this.leaf.view.file : null;
 	}
 
+	/**
+	 * What this row says when the pane holds no file at all: an empty tab,
+	 * the graph, or anything else with nothing to name. Null when the row
+	 * has a path to draw, and null in the sidebars.
+	 *
+	 * Every leaf with a `.view-header-title` is patched, which is right for
+	 * a canvas or a PDF — they arrive as `FileView`s and have a path like
+	 * any note — and was wrong for these: the native title was hidden and
+	 * nothing drawn in its place, so the plugin left a header emptier than
+	 * Obsidian's own.
+	 *
+	 * The colon marks it as not a path. No file or folder can be called
+	 * `:graph`, so the row cannot be mistaken for something that could be
+	 * opened, and anyone who has seen `host:port` reads it as a namespace
+	 * rather than a name. It is built from the view type rather than from
+	 * Obsidian's display text, so it does not change with the interface
+	 * language and stays short enough not to fight the fitter.
+	 *
+	 * Sidebar leaves are excluded: the row is for editor panes, and a
+	 * backlinks pane keeps the title Obsidian gives it.
+	 */
+	private pseudoSegment(): string | null {
+		if (this.file || this.externalPath !== null || this.browsePath !== null) return null;
+		if (this.leaf.getRoot() !== this.plugin.app.workspace.rootSplit) return null;
+		const type = this.leaf.view?.getViewType?.() ?? "";
+		if (!type) return null;
+		if (type === "empty") return ":blank";
+		if (type === "graph" || type === "localgraph") return ":graph";
+		// Open-ended on purpose: a view this plugin has never heard of still
+		// gets an honest label rather than an empty header.
+		return `:${type}`;
+	}
+
 	/** Absolute path of the external file this leaf shows, if that's what it holds. */
 	private getExternalPathForLeaf(): string | null {
 		const view = this.leaf.view;
@@ -3213,6 +3260,14 @@ export class PathBreadcrumb {
 		this.applyExternalState();
 		this.renderVaultSegment();
 		this.renderFilename();
+		// Obsidian's own title is hidden only where this row has something to
+		// put in its place. It used to go the moment a leaf was patched, and
+		// a leaf with nothing to draw — a sidebar pane holding no file — was
+		// left with a header emptier than the one the plugin replaced.
+		this.titleEl.toggleClass(
+			NATIVE_TITLE_HIDDEN_CLASS,
+			this.vaultSegmentEl.childElementCount > 0 || this.filenameEl.childElementCount > 0,
+		);
 		this.fitRow();
 	}
 
@@ -4113,7 +4168,16 @@ export class PathBreadcrumb {
 	/** Vault name, plus — while browsing — the clicked/typed-through folder chips after it. */
 	private renderVaultSegment(): void {
 		this.vaultSegmentEl.empty();
-		if (!this.file && this.externalPath === null && this.browsePath === null) return;
+		// A pane with no file still has a vault, and the row says which one:
+		// the pseudo-segment after it is what stands in for the path.
+		if (
+			!this.file &&
+			this.externalPath === null &&
+			this.browsePath === null &&
+			this.pseudoSegment() === null
+		) {
+			return;
+		}
 
 		// The locations menu replaces the opening segment with its input
 		// rather than sitting after it. Obsidian left-aligns the popover to
@@ -4439,6 +4503,16 @@ export class PathBreadcrumb {
 			return;
 		}
 
+		const pseudo = this.pseudoSegment();
+		if (pseudo !== null) {
+			// In the name's own box, so the gestures that belong to the end
+			// of the row — the click that opens the field, the empty space
+			// beside it — find what they look for. It is a label and not a
+			// target: no dropdown, no drag, no rename.
+			this.filenameEl.createSpan({ cls: "lure-filename-text lure-pseudo-segment", text: pseudo });
+			return;
+		}
+
 		if (!this.file) return;
 
 		const nameEl = this.filenameEl.createSpan({
@@ -4689,7 +4763,15 @@ export class PathBreadcrumb {
 			this.enterTypingMode(this.externalFileName, stemLength(this.externalFileName));
 			return;
 		}
-		if (!this.file) return;
+		if (!this.file) {
+			// The pseudo-segment is a label, not a name: there is nothing to
+			// put in the field and nothing to select, so the click opens it
+			// empty at the vault root — the address bar an empty tab is for.
+			if (this.pseudoSegment() === null) return;
+			this.extendBrowsePath("");
+			this.enterTypingMode("", "none");
+			return;
+		}
 		const parent = this.file.parent?.path ?? "";
 		const folderPath = parent === "/" ? "" : parent;
 		this.extendBrowsePath(folderPath);
@@ -7023,7 +7105,16 @@ export class PathBreadcrumb {
 		// the focus command or a key, the field is a text field from the
 		// start and a double-click in it picks out a word.
 		this.climbFromClick = false;
-		if (!this.file && this.externalPath === null && this.browsePath === null) return;
+		// A pane with no file has the vault root to type from, which is what
+		// makes an empty tab's row an address bar rather than a label.
+		if (
+			!this.file &&
+			this.externalPath === null &&
+			this.browsePath === null &&
+			this.pseudoSegment() === null
+		) {
+			return;
+		}
 		// Locked bars do not type. A typed path is an arbitrary destination,
 		// and arbitrary is exactly what the lock exists to rule out — the
 		// other panes could not be asked to follow it. Renaming is not
@@ -8395,7 +8486,15 @@ export class PathBreadcrumb {
 			this.enterTypingMode(here, marked(here));
 			return;
 		}
-		if (!this.file) return;
+		if (!this.file) {
+			// Nothing to fill it with out here: the pane names no file, so
+			// the field opens empty at the vault root and whatever is typed
+			// is opened or made exactly as it is from any other row.
+			if (this.pseudoSegment() === null) return;
+			this.extendBrowsePath("");
+			this.enterTypingMode("", "none");
+			return;
+		}
 		// Identical to clicking the delimiter right after the vault name
 		// — browsing from the vault root, with the same autocomplete —
 		// except the whole current path starts out filled in and

@@ -25,6 +25,35 @@ A delimiter is **underlined only when the folder before it actually has a folder
 
 The **vault root** is the one segment that isn't a path segment. It has no parent to list siblings from, so instead it opens the [locations dropdown](#browsing-outside-the-vault) — your other vaults, home, the filesystem root, and mounted drives.
 
+## A pane with no file
+
+An empty tab, the graph and anything else that names no file get a row of
+their own: the vault, then one segment saying what the pane is holding.
+
+```
+my-vault / :blank      a new tab
+my-vault / :graph      the graph, local or global
+my-vault / :<type>     anything else with no file
+```
+
+The colon is the point — no file or folder can be called `:graph`, so the row
+cannot be mistaken for a path that could be opened. The label comes from the
+view type rather than from Obsidian's own wording, so it reads the same
+whatever the interface language is.
+
+Clicking the empty space, or the label itself, **opens the field at the vault
+root**: type a path and <kbd>Enter</kbd> opens it in this very pane, with the
+same completion, the same dropdown and the same red field offering to make
+what is not there yet. An empty tab is a good place to type where you want to
+go, which is what it is for.
+
+The label is a label and nothing more: no dropdown, no drag, no rename. Panes
+in the sidebars are left alone entirely — a backlinks pane keeps the title
+Obsidian gives it.
+
+Canvases, PDFs, images and bases need none of this. They are files, so they
+get an ordinary path bar.
+
 ## Clicking a segment: swap it for a sibling
 
 Clicking a folder name selects **that folder's name** in a text input and opens a dropdown of the folder **one layer up** — its parent. Typing or picking an entry swaps this folder for a sibling and leaves everything below it untouched, so `Projects/2026/Kickoff.md` → click `2026` → pick `2025` gets you `Projects/2025/Kickoff.md`.
