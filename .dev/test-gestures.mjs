@@ -587,6 +587,50 @@ test("the rename key opens the name without its extension, then walks the path",
 	expect("a further press takes the extension too", second.selected, "leaf.md");
 });
 
+test("Backspace over a clicked folder keeps the vault's name in the row", async () => {
+	// Clicking a folder marks its name; Backspace over it leaves `/inner/…`,
+	// a slash that was the folder's separator. Read as a path from the
+	// machine's root, it emptied the opening segment — and nothing put it
+	// back, so the vault's name and icon were gone for the life of the tab.
+	await page.evaluate(openVaultNote);
+	const spot = JSON.parse(await page.evaluate(`
+		const c = app.workspace.activeLeaf.view.containerEl.querySelector(".view-header-title-container");
+		const el = [...c.querySelectorAll(".view-header-breadcrumb")].find((e) => e.textContent === "${ROOT}");
+		const b = el.getBoundingClientRect();
+		return JSON.stringify({ x: Math.round(b.left + b.width / 2), y: Math.round(b.top + b.height / 2) });
+	`));
+	for (const type of ["mousePressed", "mouseReleased"]) {
+		await page.send("Input.dispatchMouseEvent", {
+			type, x: spot.x, y: spot.y, button: "left", buttons: type === "mousePressed" ? 1 : 0, clickCount: 1,
+		});
+	}
+	await page.evaluate(PAUSE(400) + "return true;");
+	const vault = `return !!app.workspace.activeLeaf.view.containerEl.querySelector(".lure-vault-segment .lure-vault-icon");`;
+	await pressKey(page, "Backspace");
+	await page.evaluate(PAUSE(300) + "return true;");
+	expect("the field lost the folder", await page.evaluate(`return document.querySelector(".lure-path-input")?.value ?? null;`),
+		"/inner/leaf.md");
+	expect("and the vault is still in the row", await page.evaluate(vault), true);
+	await pressKey(page, "Escape");
+	await page.evaluate(PAUSE(300) + "return true;");
+	expect("and after the field closes", await page.evaluate(vault), true);
+});
+
+test("a typed machine path gives the vault's name back when the field closes", async () => {
+	await page.evaluate(openVaultNote);
+	await page.evaluate(`app.commands.executeCommandById("lure:focus-path-bar");` + PAUSE(300) + "return true;");
+	await pressKey(page, "ctrl+a");
+	await page.send("Input.insertText", { text: "/home" });
+	await page.evaluate(PAUSE(300) + "return true;");
+	const vault = `return !!app.workspace.activeLeaf.view.containerEl.querySelector(".lure-vault-segment .lure-vault-icon");`;
+	expect("a real machine path empties the opening segment", await page.evaluate(vault), false);
+	await pressKey(page, "Escape");
+	await page.evaluate(PAUSE(300) + "return true;");
+	expect("Escape gives the vault back", await page.evaluate(vault), true);
+	await page.evaluate(openVaultNote);
+	expect("and it stays back on the next note", await page.evaluate(vault), true);
+});
+
 test("off the rungs, F2 and the focus command press Tab", async () => {
 	// A field someone has typed into is not on the selection ladder, and the
 	// keys used to answer it their own ways: F2 by starting over on the name,
@@ -637,6 +681,33 @@ test("F2 ends its cycle on the inline title", async () => {
 		title: !!document.activeElement?.closest(".inline-title"),
 	};`);
 	expect("heading, four rungs, and back to the heading", r, { field: false, title: true });
+});
+
+test("after the cycle leaves, the next press is Tab's lap: the root folder", async () => {
+	// Tab reaches the front of the path; F2 and the command left it out, so
+	// one step of the ring could only be reached by another key.
+	const read = `
+		const input = document.querySelector(".view-header-title-container input");
+		return JSON.stringify({
+			value: input?.value ?? null,
+			selected: input ? input.value.slice(input.selectionStart, input.selectionEnd) : null,
+		});
+	`;
+	await page.evaluate(openVaultNote);
+	for (let i = 0; i < 7; i++) {
+		await pressKey(page, "F2");
+		await page.evaluate(PAUSE(300) + "return true;");
+	}
+	expect("F2: past the heading, the root folder with the path after it",
+		JSON.parse(await page.evaluate(read)), { value: `${ROOT}/inner/leaf.md`, selected: ROOT });
+
+	await page.evaluate(openVaultNote);
+	for (let i = 0; i < 6; i++) {
+		await page.evaluate(`app.commands.executeCommandById("lure:focus-path-bar");` + PAUSE(300) + "return true;");
+	}
+	expect("the command: past the note, the same",
+		JSON.parse(await page.evaluate(read)), { value: `${ROOT}/inner/leaf.md`, selected: ROOT });
+	await pressKey(page, "Escape");
 });
 
 test("the focus command walks F2's rungs, then hands focus back to the note", async () => {

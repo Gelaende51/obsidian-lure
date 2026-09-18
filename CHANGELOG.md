@@ -19,6 +19,7 @@ Every release of Lure, newest first. What has landed since the last release is u
 ### Changed
 
 - **F2 and Focus the path bar press Tab inside the field.** Whatever Tab would do there — the next rung, completing what you typed, stepping into a folder — they do too; only where Tab laps back to the front of the path do they leave, F2 for the inline title, the command for the note. Before, a field you had typed into made F2 start over on the name and the command close the field.
+- **The step after the cycle leaves is the root folder.** The press after F2's return to the inline title, or the command's return to the note, lands where Tab's lap does — the vault root, the whole path in the field, its first folder marked — so no step of the ring is left to Tab alone.
 - **Focus the path bar walks like F2.** It opens on the name instead of the whole path, takes the same four rungs, and the press after the last closes the field and puts the cursor back in the note — before, it lapped the rungs forever and the one key that reached the row could not leave it.
 - **A taken name is reported when you use it, not while you type it.** Every name typed toward `Notes.md` passes through names that may be files of their own, and the warning used to flash up and away letter by letter. What is wrong with a name's spelling is still said as it is spelled.
 - **A delimiter whose folder note is already open reveals the folder** rather than reopening what is on screen — which is what its second press has always meant.
@@ -27,6 +28,7 @@ Every release of Lure, newest first. What has landed since the last release is u
 
 ### Fixed
 
+- **Backspace over a clicked folder no longer takes the vault's name away.** The slash left at the front read as a path from the machine's root, which empties the opening segment — and closing the field with Escape never put it back, so the tab lost its vault name and icon for good. A leading slash now counts as the machine's only when its first folder is really there, and the opening segment comes back with every way out of the field.
 - Outside the vault, files were hidden unless Obsidian's **Detect all file extensions** was on — a setting about what the vault indexes, applied to folders that are not in the vault. A `.txt` beside your notes is listed out there either way.
 - The vault name's dropdown did nothing on a pane holding no file, which is exactly the pane you would use to go somewhere else.
 - Clicking the vault name left Obsidian's own title standing beside the path in the field, greyed, where it appears at no other time: the row measures itself by what it has drawn, and at that moment it has emptied itself to make room for the field.

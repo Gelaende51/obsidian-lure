@@ -775,12 +775,15 @@ system root; with something typed, it completes it, as <kbd>Tab</kbd> does.
 
 **The cycle closes at the heading.** Five presses take you round it — the inline
 title, the name, the name with its extension, the path from your vault, the path
-from the system root — and the sixth is the inline title again. That last press is the only one that differs
-from <kbd>Tab</kbd>, which laps back to the front of the path instead.
+from the system root — and the sixth is the inline title again. That press is the only one that differs from
+<kbd>Tab</kbd>, which laps back to the front of the path instead — and the seventh
+goes where <kbd>Tab</kbd>'s lap goes: the vault root, with the whole path in the
+field and its first folder marked. So every step <kbd>Tab</kbd> reaches, the key
+reaches too.
 
 The **Focus the path bar** command does the same inside the field — whatever
 <kbd>Tab</kbd> would — and where <kbd>Tab</kbd> would lap, it hands the cursor back
-to the note instead.
+to the note instead. Its next press is the lap: the vault root, first folder marked.
 
 Outside the vault the key works too — there is no inline title out there, so the
 first press goes straight to the path bar.

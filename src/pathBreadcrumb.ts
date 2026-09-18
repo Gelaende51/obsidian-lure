@@ -801,6 +801,13 @@ export class PathBreadcrumb {
 	 * drawn from, so the row never claims a vault a typed path has left.
 	 */
 	private typedAbsolute: string | null = null;
+	/**
+	 * The note F2 or the focus command last left the field for, at the end
+	 * of their cycle. Their next press on it goes where Tab's lap goes — the
+	 * root folder — so every step Tab reaches, they reach too. Any other way
+	 * into the field, or another note, lets it go.
+	 */
+	private lapArmedFor: string | null = null;
 	/** Name of the external file this leaf is showing, when it holds one instead of a note. */
 	private externalFileName: string | null = null;
 
@@ -2612,6 +2619,7 @@ export class PathBreadcrumb {
 		if (this.askForPadlockFirst()) return;
 		this.renameMode = true;
 		this.updateRenameModeStyling();
+		if (this.startAtLap()) return;
 		// The name without its extension, which is what a rename almost
 		// always means — and the same thing clicking the name selects, so
 		// the key and the click agree. The rest of the path is one further
@@ -2651,10 +2659,29 @@ export class PathBreadcrumb {
 		const input = this.inputEl;
 		if (!input) return false;
 		if (this.tabStage !== null && this.tabStage >= LAST_RENAME_RUNG) {
+			const target = this.tabTargetPath;
 			leave();
+			this.lapArmedFor = target;
 			return false;
 		}
 		this.handleTabCompletion(input);
+		return true;
+	}
+
+	/**
+	 * The press after the cycle left the field: Tab's lap, which lands on the
+	 * root folder with the whole path after it. Returns whether it was spent
+	 * there.
+	 */
+	private startAtLap(): boolean {
+		const armed = this.lapArmedFor;
+		this.lapArmedFor = null;
+		if (armed === null || armed !== this.ladderTargetPath()) return false;
+		this.tabTrail = [];
+		this.tabLadderStart = null;
+		this.tabTargetPath = armed;
+		this.tabStage = LAST_RENAME_RUNG + 1;
+		this.applyLadderStage();
 		return true;
 	}
 
@@ -4284,6 +4311,11 @@ export class PathBreadcrumb {
 
 	/** Vault name, plus — while browsing — the clicked/typed-through folder chips after it. */
 	private renderVaultSegment(): void {
+		// A typed absolute path lasts as long as the field holding it. Every
+		// way out of the field that forgot to say so — Escape was one — left
+		// the vault's name and icon out of the row for the life of the tab,
+		// on every note it went on to show.
+		if (this.typedAbsolute !== null && this.mode !== "typing") this.typedAbsolute = null;
 		this.vaultSegmentEl.empty();
 		// A pane with no file still has a vault, and the row says which one:
 		// the pseudo-segment after it is what stands in for the path.
@@ -4523,13 +4555,33 @@ export class PathBreadcrumb {
 		if (this.showingLocations) return;
 		const trimmed = expandHome(value.trim());
 		const absolute =
-			this.externalPath === null && isAbsolutePath(trimmed) ? externalParent(trimmed) : null;
+			this.externalPath === null && isAbsolutePath(trimmed) && this.reachesMachineRoot(trimmed)
+				? externalParent(trimmed)
+				: null;
 		if (absolute === this.typedAbsolute) return;
 		this.typedAbsolute = absolute;
 		// Only the opening segment is redrawn. The field is hosted in the
 		// filename slot, so it keeps its value, its caret and its focus.
 		this.renderVaultSegment();
 		this.layOutTrailNames();
+	}
+
+	/**
+	 * Whether a path with a leading slash is really one from the machine's
+	 * root, rather than a vault path whose first folder was just deleted.
+	 *
+	 * Clicking a folder marks its name in the field, and Backspace over it
+	 * leaves `/2027/note.md` — a slash that was the separator after the
+	 * folder, not a root anyone typed. Read as a machine path, it took the
+	 * vault's name and icon out of the row. A first folder that is not on the
+	 * disk, with more path after it, settles it: nobody is typing a path down
+	 * from a directory that does not exist. While the first name is still
+	 * being written (`/ho`), nothing follows it and it counts.
+	 */
+	private reachesMachineRoot(path: string): boolean {
+		const { root, segments } = externalSegments(path);
+		if (segments.length < 2) return true;
+		return isExternalFolder(externalJoin(root, segments[0]));
 	}
 
 	/**
@@ -7364,6 +7416,7 @@ export class PathBreadcrumb {
 			value: initialText,
 		});
 		this.inputEl = inputEl;
+		this.lapArmedFor = null;
 
 		// Measured against its own font rather than flex-sized, so it fits
 		// whatever it's seeded with (a full path, say) as tightly as the
@@ -8632,6 +8685,7 @@ export class PathBreadcrumb {
 			this.pressLikeTab(() => this.dismissEditing());
 			return;
 		}
+		if (this.startAtLap()) return;
 		this.startLadderAt(0);
 	}
 

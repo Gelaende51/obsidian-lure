@@ -1243,7 +1243,10 @@ test("the dropdown follows the caret into the folder it stands in", async () => 
 	// a list filtered by that name holds a single row, which is itself, and
 	// looking for a sibling is what moving the caret there was for.
 	expect("and lists what stands there", front.rows, (v) => v.includes("Schemes"));
-	expect("its siblings included", front.rows, (v) => v.includes("atlas") && v.length > 1);
+	// A sibling this suite made itself, not a folder of the vault's own: the
+	// vault's `atlas` was what this asked for, and it went the day it was
+	// moved to the trash.
+	expect("its siblings included", front.rows, (v) => v.includes(`${PREFIX}only`) && v.length > 1);
 
 	// The chips alone were the answer before, so a caret two folders along
 	// still listed the root's children.
