@@ -168,6 +168,68 @@ test("the rename key walks the heading, the name, the extension and both paths, 
 	expect("and the press after that is the heading again", seen[5].active, "inline-title");
 });
 
+test("a taken name is reported by the key that uses it, not while it is typed", async () => {
+	// Every name typed toward one that exists passes through names that may
+	// exist too, so the warning used to flash up and away letter by letter,
+	// about a name nobody had asked for yet. What is wrong with a name's
+	// spelling is still said as it is spelled; that it is taken waits for
+	// Enter, which refuses the rename and says so itself.
+	await page.evaluate(`
+		const neighbour = ${JSON.stringify(FIXTURE)} + "/Taken.md";
+		if (!app.vault.getAbstractFileByPath(neighbour)) await app.vault.create(neighbour, "# taken\\n");
+		return true;
+	`);
+	await page.evaluate(arrange(0));
+	await pressKey(page, "F2");
+	await page.evaluate(PAUSE(500) + "return true;");
+	await pressKey(page, "F2");
+	await page.evaluate(PAUSE(600) + "return true;");
+	expect("the path bar has the rename", await page.evaluate(
+		`return document.activeElement?.className?.includes("lure-path-input") ?? false;`), true);
+	await page.evaluate(`
+		const input = document.querySelector(".lure-path-input");
+		input.select();
+		return true;
+	`);
+	await page.send("Input.insertText", { text: "Taken" });
+	await page.evaluate(PAUSE(600) + "return true;");
+	const typed = JSON.parse(await page.evaluate(`
+		return JSON.stringify({
+			value: document.querySelector(".lure-path-input")?.value ?? null,
+			tooltips: [...document.querySelectorAll(".tooltip.mod-error")].map((e) => e.textContent),
+		});
+	`));
+	// The list offers the neighbour and the field takes the offer, so what
+	// stands there is `Taken.md` — the very name that is taken, which is
+	// what this case wants in front of Enter.
+	expect("the name is in the field", typed.value, (v) => typeof v === "string" && v.startsWith("Taken"));
+	expect("and nothing was said about it being taken", typed.tooltips, (v) => v.length === 0);
+
+	await pressKey(page, "Enter");
+	await page.evaluate(PAUSE(900) + "return true;");
+	const applied = JSON.parse(await page.evaluate(`
+		return JSON.stringify({
+			notices: [...document.querySelectorAll(".notice")].map((n) => n.textContent),
+			still: !!app.vault.getAbstractFileByPath(${JSON.stringify(NOTE)}),
+		});
+	`));
+	expect("the key that uses the name says it is taken", applied.notices, (v) =>
+		v.some((text) => text.includes("Taken.md")));
+	expect("and the note was not renamed onto it", applied.still, true);
+	// A name that could never be a name is still answered as it is written.
+	await page.evaluate(arrange(0));
+	await pressKey(page, "F2");
+	await page.evaluate(PAUSE(500) + "return true;");
+	await pressKey(page, "F2");
+	await page.evaluate(PAUSE(600) + "return true;");
+	await page.evaluate(`document.querySelector(".lure-path-input")?.select(); return true;`);
+	await page.send("Input.insertText", { text: "bad?name" });
+	await page.evaluate(PAUSE(600) + "return true;");
+	expect("an impossible name is still flagged as it is typed", await page.evaluate(
+		`return document.querySelectorAll(".tooltip.mod-error").length;`), (v) => v > 0);
+	await pressKey(page, "Escape");
+});
+
 test("the rename key leaves other dialogs alone", async () => {
 	await page.evaluate(arrange(4000));
 	// Obsidian's delete confirmation, opened without the rename command being

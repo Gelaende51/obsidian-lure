@@ -203,6 +203,14 @@ const SEGMENT_DOUBLE_CLICK_MS = 500;
 
 /** On the header row while navigation is locked; suppresses typing, tints the marking. */
 const NAV_LOCKED_CLASS = "lure-nav-locked";
+/**
+ * When a name is being judged: as it is written, or as it is used.
+ *
+ * The two questions differ by one rule — whether something already answers
+ * to the name — because a half-typed name may collide with a real file and
+ * still be on its way somewhere else entirely.
+ */
+type ValidationStage = "typing" | "commit";
 /** On the row when even the shortest honest names do not fit; turns it into a scroller. */
 const SCROLL_CLASS = "lure-row-scrolls";
 /** The clipping part of a name, cut at its end unless it also carries `NAME_BACK_CLASS`. */
@@ -971,8 +979,12 @@ export class PathBreadcrumb {
 			// The space keeps opening the field, and says where you are while
 			// it does: the note you are editing gets its row in the File
 			// Explorer, so the tree follows the pane without a second gesture.
-			this.revealCurrentFile();
+			// The field first, the tree after it: revealing focuses the row it
+			// scrolls to, so a reveal in front of the field opened a field
+			// nothing could be typed into. Opened first, it is the field that
+			// the reveal takes the caret from — and gives it straight back.
 			this.startFullPathEdit("stem");
+			this.revealCurrentFile();
 			this.climbFromClick = true;
 		}, { signal: this.domListeners.signal });
 
@@ -2724,7 +2736,14 @@ export class PathBreadcrumb {
 			? this.plugin.app.vault.getAbstractFileByPath(folderPath)
 			: null;
 		const note = folder instanceof TFolder ? this.folderNoteFor(folder) : null;
-		if (note && !wantsFolder) {
+		// Unless the note is the one this pane is already showing. Opening it
+		// again is the one thing the press cannot achieve — it is on screen —
+		// so the press means the other half of what this delimiter does, and
+		// says where that folder is in the tree. Which is what the second
+		// press means too, and rightly: both are "I can see the note, show me
+		// the folder".
+		const showing = note !== null && this.file?.path === note.path;
+		if (note && !wantsFolder && !showing) {
 			void this.plugin.app.workspace.getLeaf(false).openFile(note);
 			return;
 		}
@@ -4971,9 +4990,42 @@ export class PathBreadcrumb {
 		if (!fileExplorer) return;
 		try {
 			fileExplorer.instance.revealInFolder(file);
+			// Revealing puts the caret in the tree — Obsidian focuses the row
+			// it just scrolled to, a frame or two later. On a gesture that is
+			// really about the field that left the field open and dead:
+			// everything looked right, the path was marked, and nothing typed
+			// into it arrived. The field is asked for back once the reveal has
+			// finished taking it.
+			this.restoreFieldFocus();
 		} catch {
 			/* The row stays where it is; the click's real work is done. */
 		}
+	}
+
+	/**
+	 * Puts the caret back in the path field after something else has taken it.
+	 *
+	 * Twice over, because what takes it is asynchronous: the tree focuses its
+	 * row on the frame after the reveal, and on a cold explorer a frame after
+	 * that. Re-selecting rather than only focusing, since a field that is
+	 * focused with its marking gone is a field the next keystroke appends to
+	 * instead of replacing.
+	 */
+	private restoreFieldFocus(): void {
+		const input = this.inputEl;
+		if (!input) return;
+		const start = input.selectionStart ?? 0;
+		const end = input.selectionEnd ?? 0;
+		const claim = (): void => {
+			if (!input.isConnected || this.inputEl !== input) return;
+			if (document.activeElement === input) return;
+			input.focus({ preventScroll: true });
+			input.setSelectionRange(start, end);
+		};
+		window.requestAnimationFrame(() => {
+			claim();
+			window.requestAnimationFrame(claim);
+		});
 	}
 
 	private revealFolderInExplorer(path: string): void {
@@ -5241,9 +5293,17 @@ export class PathBreadcrumb {
 	 * rename/move mode — while navigating, an existing name is exactly
 	 * what you're looking for rather than a conflict.
 	 */
-	private validateTarget(rawText: string, baseFolder: string): string {
+	private validateTarget(rawText: string, baseFolder: string, stage: ValidationStage = "commit"): string {
 		const trimmed = rawText.trim();
 		if (!trimmed) return t("msgEmpty");
+		// A name that is taken is only a fault once you try to use it. Every
+		// name typed toward `Notes.md` passes through `N`, `No`, `Not` — and
+		// any of those may be a file of its own, so the warning flashed up
+		// and away as the name was being written, about a name nobody had
+		// asked for yet. What is wrong with the *spelling* of a name is worth
+		// saying while it is spelled; what is wrong with using it waits for
+		// the key that uses it, which reports it itself.
+		const taken = stage === "commit";
 
 		if (this.externalPath !== null) {
 			// Obsidian's naming rules stop at the vault boundary. A leading
@@ -5255,6 +5315,7 @@ export class PathBreadcrumb {
 			const target = externalJoin(this.externalPath, trimmed);
 			const source = this.externalRenameSource();
 			if (source && samePath(source.path, target)) return "";
+			if (!taken) return "";
 			return isExternalFile(target) || isExternalFolder(target) ? t("msgExists") : "";
 		}
 
@@ -5271,6 +5332,7 @@ export class PathBreadcrumb {
 			if (UNSAFE_CHARS_RE.test(segment)) return MSG_UNSAFE();
 		}
 
+		if (!taken) return "";
 		const target = this.buildTargetPath(rawText, baseFolder);
 		const existing = this.plugin.app.vault.getAbstractFileByPath(target);
 		if (existing && existing !== this.file) return t("msgExists");
@@ -5285,7 +5347,7 @@ export class PathBreadcrumb {
 	 * appears once there's something actually wrong.
 	 */
 	private updateValidation(rawText: string, baseFolder: string): void {
-		const message = rawText.trim() ? this.validateTarget(rawText, baseFolder) : "";
+		const message = rawText.trim() ? this.validateTarget(rawText, baseFolder, "typing") : "";
 		if (message === this.validationError) return;
 		this.validationError = message;
 

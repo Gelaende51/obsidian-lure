@@ -612,7 +612,12 @@
    fact in both cases. */
 .suggestion-item.lure-suggest-current .lure-suggest-label {
 	color: var(--color-blue);
-	font-weight: var(--font-medium);
+	/* Bold rather than medium. Medium is a weight you can only see beside
+	   the same word set normally, and the row it marks is rarely beside its
+	   own twin: in a list of twenty names, "where you are" has to be findable
+	   at a glance rather than by comparison. The colour alone was doing that
+	   work, and a theme that tints its lists leaves it nothing to do. */
+	font-weight: var(--font-bold, 700);
 }
 
 /* Read-only external file view

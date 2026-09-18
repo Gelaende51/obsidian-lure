@@ -231,6 +231,38 @@ test("a folder note opens from the delimiter however deep its folder is", async 
 	expect("the folder's own note is what opened", JSON.parse(await page.evaluate(state)).active, `${ROOT}/child/child.md`);
 });
 
+test("the delimiter of the note you are reading shows its folder instead of reopening it", async () => {
+	// One press opens the folder's note, which is right until the note is
+	// the one already on screen: there is nothing to open, and the press
+	// would spend itself proving it. It says where that folder is in the
+	// tree instead — the other half of what this delimiter does, and what
+	// the second press has always meant.
+	await withPeer();
+	await page.evaluate(`await app.vault.create("${ROOT}/child/child.md", ""); ${PAUSE(300)} return true;`);
+	await page.evaluate(openLeaf);
+	const spot = JSON.parse(await page.evaluate(spotOf("delimiter")));
+	expect("the delimiter is on screen", spot, (v) => v && typeof v.x === "number");
+	await press(spot, 1);
+	await page.evaluate(PAUSE(900) + "return true;");
+	expect("the note opened on the first press", JSON.parse(await page.evaluate(state)).active, `${ROOT}/child/child.md`);
+
+	// The same delimiter again, with its note now the one being read.
+	const again = JSON.parse(await page.evaluate(spotOf("delimiter")));
+	expect("the row still has the delimiter", again, (v) => v && typeof v.x === "number");
+	await press(again, 1);
+	await page.evaluate(PAUSE(900) + "return true;");
+	const after = JSON.parse(await page.evaluate(`
+		return JSON.stringify({
+			active: app.workspace.getActiveFile()?.path ?? null,
+			revealed: [...document.querySelectorAll(".nav-folder-title.is-active, .tree-item-self.is-active")]
+				.map((el) => el.dataset.path ?? el.textContent),
+		});
+	`));
+	expect("the note is still the one open", after.active, `${ROOT}/child/child.md`);
+	expect("and the folder is the row the tree is pointing at", after.revealed, (v) =>
+		v.some((name) => String(name).includes("child")));
+});
+
 test("with no folder-note plugin running, nothing is made", async () => {
 	// Folder notes are a convention, not a fact about the filesystem. A vault
 	// with no plugin managing them has no such thing, and inventing one here
