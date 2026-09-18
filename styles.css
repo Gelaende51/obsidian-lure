@@ -145,6 +145,18 @@
 	text-underline-offset: 2px;
 }
 
+/* The vault's own delimiter, when a start-page plugin gives it a page to
+   open. The same underline and the same promise as a folder note's — there
+   is something here — but drawn on this separator itself rather than on the
+   one after a marked name, because what it opens belongs to the vault and
+   not to any folder on the row. */
+.view-header-title-container[data-lure-swap="true"][data-lure-on]
+	.view-header-breadcrumb-separator.lure-has-start-page {
+	text-decoration-line: underline;
+	text-decoration-color: var(--text-faint);
+	text-underline-offset: 2px;
+}
+
 /* With the delimiter now carrying it, the name giving up the underline
    is the point of the swap: underlining both would say the name opens
    the note, which is exactly what it no longer does. Longhand and above

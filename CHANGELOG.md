@@ -18,8 +18,12 @@ Every release of Lure, newest first. What has landed since the last release is u
 - **A taken name is reported when you use it, not while you type it.** Every name typed toward `Notes.md` passes through names that may be files of their own, and the warning used to flash up and away letter by letter. What is wrong with a name's spelling is still said as it is spelled.
 - **A delimiter whose folder note is already open reveals the folder** rather than reopening what is on screen — which is what its second press has always meant.
 - **Where you are is bold in a dropdown**, not just blue.
+- **Everything that is not a note is orange in a dropdown**, not only the text types Obsidian has no view for. The purple picks the notes out of a folder of mixed contents; one colour for the rest says the same thing faster.
 
 ### Fixed
+
+- Outside the vault, files were hidden unless Obsidian's **Detect all file extensions** was on — a setting about what the vault indexes, applied to folders that are not in the vault. A `.txt` beside your notes is listed out there either way.
+- The vault name's dropdown did nothing on a pane holding no file, which is exactly the pane you would use to go somewhere else.
 
 - Clicking the empty space opened the field and then lost it: revealing the note in the File Explorer takes the caret with it, so the field stood open and marked while every keystroke went to the tree.
 - The rung that shows the path from the system root drew a trail of the same path beside the field, unfitted, so a deep path was painted over itself.

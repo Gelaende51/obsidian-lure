@@ -285,6 +285,8 @@ const PADLOCK_DOUBLE_MS = 500;
 const PADLOCK_FLASH_CLASS = "lure-padlock-flash";
 /** Put on a segment whose folder has a note, so the delimiter after it can say so. */
 const FOLDER_NOTE_CLASS = "lure-has-folder-note";
+/** On the vault's own delimiter while a start-page plugin has a page for it to open. */
+const START_PAGE_CLASS = "lure-has-start-page";
 /** The custom property each box's floor is written to; the stylesheet reads it. */
 const FLOOR_VAR = "--lure-floor";
 /** And the one a clipped part's exact drawn width is written to, so no empty strip is left. */
@@ -4285,16 +4287,22 @@ export class PathBreadcrumb {
 		// starts. Marked with the same underline a folder note gets, because
 		// it is the same promise — there is something here to open.
 		const startPage = this.startPageViewType();
-		if (startPage) separator.addClass(FOLDER_NOTE_CLASS);
+		// Its own class rather than the folder note's: the underline says the
+		// same thing — there is something here to open — but it is drawn on
+		// this separator itself, while a folder note's is drawn on the
+		// separator *after* the folder that has one.
+		if (startPage) separator.addClass(START_PAGE_CLASS);
 		separator.addEventListener("click", (evt) => {
 			evt.stopPropagation();
 			if (this.swapActions) {
-				// With a start page, the first press opens it and the second
-				// folds the tree; with none, the first press folds the tree.
-				// The tree is the fallback rather than the rule, because a
-				// page you can open is the more specific thing to offer and
-				// the press that folds is still one press away.
-				if (startPage && evt.detail <= 1) {
+				// The start page first, unless it is what this pane is
+				// already showing — then the press means the other thing this
+				// delimiter does. Asked of the pane rather than counted from
+				// the press, because a run of presses is a double-click and
+				// this is not one: two unhurried clicks are how anyone
+				// actually opens a page and then folds the tree.
+				const showing = this.leaf.view?.getViewType?.() ?? "";
+				if (startPage && showing !== startPage) {
 					this.openStartPage(startPage);
 					return;
 				}
@@ -5642,7 +5650,13 @@ export class PathBreadcrumb {
 		if (child.isDotEntry && !this.plugin.settings.showDotFiles) return false;
 		if (child.isFolder) return true;
 		if (this.isSupportedExtension(child.extension)) return true;
-		return this.readsUnsupportedFilesSetting();
+		// Out here Obsidian's *Detect all file extensions* does not apply. It
+		// governs what the vault indexes as a file, and nothing out here is
+		// in the vault: a `.txt` beside your notes is a file this row can
+		// show — the plugin has a viewer for exactly these — so hiding it
+		// because of a setting about vault contents said the folder was
+		// empty when it was not.
+		return true;
 	}
 
 	private isSupportedExtension(extension: string): boolean {
@@ -7005,7 +7019,11 @@ export class PathBreadcrumb {
 			this.revealRoot();
 			return;
 		}
-		if (!this.file && this.externalPath === null) return;
+		// A pane holding no file still has a vault, and the places are about
+		// the vault rather than about a note: refusing here left the one
+		// gesture that leads out of the vault dead on an empty tab and on the
+		// graph, which are exactly the panes you would use to go somewhere.
+		if (!this.file && this.externalPath === null && this.pseudoSegment() === null) return;
 		this.showingLocations = true;
 		this.pinRowStart();
 		this.hideNativeBreadcrumb();

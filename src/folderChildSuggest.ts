@@ -728,7 +728,15 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 					kind: "file",
 					path: child.path,
 					disabled: renameMode,
-					warn: context.warnsOnOpen(child.extension),
+					// Orange for everything that is not a note, not only for
+					// the text types Obsidian has no view for. A folder of
+					// mixed contents is read for the notes in it — that is
+					// what the purple is for — and one colour saying "this is
+					// not one of those" is more use than a caution that only
+					// applies to a few of them. What the caution *meant* is
+					// still said where it matters: at the field, and on the
+					// way into the file.
+					warn: !isMarkdownExtension(child.extension),
 					markdown: isMarkdownExtension(child.extension),
 					folderNote: context.isFolderNote(child.path),
 					current: child.path === context.currentPath,
@@ -836,7 +844,8 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 				path: child.path,
 				disabled: false,
 				external: true,
-				warn: !child.isFolder && context.warnsOnOpen(child.extension),
+				// As inside the vault: anything that is not a note is orange.
+				warn: !child.isFolder && !isMarkdownExtension(child.extension),
 				markdown: !child.isFolder && isMarkdownExtension(child.extension),
 				current: child.isFolder && child.path === context.currentFolder,
 			})));

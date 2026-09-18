@@ -30,10 +30,14 @@ The **vault root** is the one segment that isn't a path segment. It has no paren
 The delimiter right after the vault name stands for the vault itself rather
 than for a folder, so it does what no other delimiter can:
 
-| | First click | Second click |
+| | First click | Next click |
 | --- | --- | --- |
 | **With a start-page plugin** (a page that meets you when Obsidian opens) | Opens that page in this pane | Folds the file tree away |
 | **Without one** | Folds the file tree away | Puts back exactly what was open |
+
+Ordinary clicks, not a double-click: once the page is open, the delimiter has
+nothing left to open, so the next press is the fold — however long you take
+over it.
 
 It is **underlined** when there is a start page to open, which is the same
 promise a folder's delimiter makes: something is there. Folding is a toggle —
@@ -785,7 +789,7 @@ This works by wrapping the `workspace:edit-file-title` command rather than grabb
 | --- | --- |
 | **Purple** | A note (`.md`, `.markdown`) — what Obsidian will open as a note, picked out of a folder of mixed contents |
 | **Grey** | A folder's own note, where a folder-note plugin is running — it stands for its folder more than for itself |
-| **Orange** | A text type Obsidian has no view for; see [the warning colours](#the-warning-colours) |
+| **Orange** | Not a note — anything Obsidian will not open as one, from a PDF to a `.txt`. A folder of mixed contents is read for the notes in it, and one colour for everything else says that faster than a caution on a few of them; see [the warning colours](#the-warning-colours) |
 | **Muted** | Outside your vault, so the vault's own handling doesn't apply |
 | **Blue** | The note you're on. Browsing, that's its own entry; in rename/move mode the *keep this name* entry stands in its place — the same note either way |
 | **Blue** | Where you already are: this bar's own note, and the folder the path bar is standing on |
@@ -795,7 +799,7 @@ The field takes the same colours for what it names — see [Typing a path](#typi
 
 ## Visibility rules
 
-- Files with unsupported extensions appear in the dropdowns only if Obsidian's **Show all file types** setting is on.
+- Files with unsupported extensions appear in the dropdowns only if Obsidian's **Detect all file extensions** setting is on — **inside the vault**. Outside it the setting does not apply: it governs what the vault indexes, and nothing out there is in the vault, so a `.txt` beside your notes is listed either way.
 - The dropdown shows at most 100 entries — Obsidian's own limit. When a folder has more, the last row says how many were left out; keep typing to narrow the list.
 - Dot-files and dot-folders appear only if this plugin's **Show dot files** setting is on.
 - **Overwrite protection works identically regardless of visibility** — a hidden file still blocks you from overwriting it.

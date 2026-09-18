@@ -47,7 +47,15 @@ function pickTarget(targets, vault) {
 		}
 		return pages[0];
 	}
-	const match = pages.find((t) => decodeTitle(t.title).includes(` - ${vault} - `));
+	// A vault can have more than one window, and not all of them hold a
+	// vault: Obsidian's Settings opens as a page target of its own, titled
+	// "Settings - <vault> - Obsidian", with no `app` in it at all. Picking it
+	// fails every evaluate with "app is not defined", which reads like the
+	// plugin having broken. The window holding a file is preferred, and the
+	// known windowless ones are refused outright.
+	const candidates = pages.filter((t) => decodeTitle(t.title).includes(` - ${vault} - `));
+	const isSettings = (t) => /^Settings - /.test(decodeTitle(t.title));
+	const match = candidates.find((t) => !isSettings(t)) ?? candidates[0];
 	if (!match) {
 		throw new Error(
 			`No window for vault "${vault}". Open windows:\n  ` +
