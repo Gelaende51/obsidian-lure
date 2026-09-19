@@ -1,4 +1,4 @@
-<!-- Terjemahan README.md — status: commit e1e2247.
+<!-- Terjemahan README.md — status: commit 2cbb237.
      Terjemahan mesin (Claude Opus 5), belum disemak penutur jati.
      Pembetulan dialu-alukan; README bahasa Inggeris ialah versi rujukan. -->
 
@@ -15,7 +15,7 @@ Obsidian 1.8.7+ · komputer meja sahaja · AGPL-3.0
 ## Pendedahan AI
 
 - **Ejen** — **Claude Opus 5** dan **Claude Sonnet 5** (Anthropic, melalui Claude Code): menulis TypeScript, CSS, kesemua 45 set terjemahan dan dokumentasi. Terjemahan dihasilkan mesin dan belum disemak penutur jati.
-- **Penggunaan** — 3 Ogos – 17 September 2026, 23 sesi, \~14,844 balasan: \~19.2 juta token dijana, \~85.2 juta dihantar, \~4800.6 juta bacaan semula daripada cache (\~4905.0 juta kesemuanya).
+- **Penggunaan** — 3 Ogos – 19 September 2026, 20 sesi, \~16,460 balasan: \~19.9 juta token dijana, \~87.0 juta dihantar, \~5451.0 juta bacaan semula daripada cache (\~5558.0 juta kesemuanya).
 - **Hulu** — model belajar daripada kod sumber terbuka, dokumentasi dan tulisan komuniti yang diterbitkan orang lain. Sebahagian besar kreditnya milik mereka.
 - **Penulis** — Vault51: menetapkan setiap ciri, mencuba setiap versi dalam bilik kebal sebenar, mengarahkan pembetulan, menyemak semua hasilnya.
 
@@ -37,8 +37,10 @@ Obsidian 1.8.7+ · komputer meja sahaja · AGPL-3.0
 - **Fail HTML dipaparkan sebagai halaman**, dalam bingkai yang setiap kebenarannya ditahan — tiada skrip, tiada rangkaian, tiada asal usulnya sendiri — dengan helaian gaya dan imej di sebelah fail itu dibawa masuk supaya halaman yang disimpan masih kelihatan seperti dirinya. Sumbernya hanya satu tekanan jauhnya.
 - **Taip URL** — `https://`, `obsidian://`, atau laluan `file://` mahupun berkod peratus — dan ia dibuka dan bukannya dibaca sebagai nama nota. Alamat web dibawa ke tab pemapar Web Obsidian sendiri jika anda menghidupkannya.
 - **Laluan panjang memendek di tempat hurufnya berlebihan** — tidak pernah melepasi apa yang membezakan sebuah folder daripada jirannya, secara sekata dan bukan sehuruf demi sehuruf — dan hanya menatal apabila tiada lagi yang boleh dimampatkan. Tuding nama yang dipendekkan untuk melihatnya sepenuhnya.
-- **<kbd>F2</kbd>** berselang antara tajuk dalam nota dan bar laluan, bermula pada nama tanpa sambungannya dan meluas keluar ke laluan penuh pada tekanan berikutnya. Ia melintas dengan kemas melalui dialog tukar nama Obsidian apabila tajuknya ditatal hilang daripada pandangan. Ada perintah *Fokus pada bar laluan* untuk diikat jika anda mahukan gerak isyarat bar alamat itu.
+- **<kbd>F2</kbd>** berselang antara tajuk dalam nota dan bar laluan, bermula pada nama tanpa sambungannya dan meluas keluar ke laluan penuh pada tekanan berikutnya. Ia melintas dengan kemas melalui dialog tukar nama Obsidian apabila tajuknya ditatal hilang daripada pandangan. Perintah *Fokus pada bar laluan* melalui anak tangga yang sama tanpa menukar nama; baris *Kekunci pintas* dalam tetapan membawa anda ke sana untuk mengikatnya.
 - **Klik nama bilik kebal** untuk melayari bilik kebal anda yang lain, folder rumah, akar sistem fail dan pemacu yang dilekapkan tanpa bertukar bilik kebal. Baca sahaja sehingga anda membuka mangga merah yang mengambil tempat togol tukar nama di luar sana, dan berbingkai warna ralat sepanjang masa. Dimatikan secara lalai — lihat [di luar bilik kebal](#di-luar-bilik-kebal).
+- **Akar bilik kebal menyenaraikan halaman yang boleh dipegang oleh sesebuah panel** — `:graph`, `:search`, dan apa sahaja pandangan yang didaftarkan oleh pemalam anda. Pilih satu, atau taipkannya: titik bertindih tidak memulakan mana-mana nama fail, jadi label itu turut berfungsi sebagai alamat. Dengan pemalam halaman permulaan dipasang, pembatas bilik kebal membuka halaman itu pada klik pertama dan melipat pepohon fail pada klik seterusnya.
+- **Satu baris pada panel yang tidak memegang fail** — tab kosong berbunyi `vault / :blank`, graf `vault / :graph`, dan medan di sebelahnya ialah bar alamat: taip laluan dan <kbd>Enter</kbd> membukanya dalam panel itu, atau mencipta failnya. Panel sisi mengekalkan tajuk Obsidian sendiri.
 - **Dua tahap amaran** — merah di luar bilik kebal, jingga untuk fail teks yang tiada penyunting dalam Obsidian. Lihat [dua warna amaran](usage.ms.md#dua-warna-amaran).
 - **Ikon yang mengikut tema**, boleh ditukar daripada cebisan CSS — dan **46 bahasa**: setiap satu yang dibawa Obsidian, tambah bahasa Yunani dan Sanskrit, yang tiada tetapannya dalam Obsidian. Pilih satu untuk plugin ini sahaja, atau ikut bahasa Obsidian sendiri.
 - **Tetapan:** bahasa, penjajaran, pemisah sedia ada, klik yang mana membuka senarai, nama bilik kebal, fail tersembunyi, sambungan fail.

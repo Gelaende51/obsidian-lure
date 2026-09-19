@@ -1,4 +1,4 @@
-<!-- README.md tulkojums — stāvoklis: revīzija e1e2247.
+<!-- README.md tulkojums — stāvoklis: revīzija 2cbb237.
      Mašīntulkojums (Claude Opus 5), ko nav pārlasījuši dzimtās valodas
      runātāji. Labojumi ir gaidīti; noteicošā ir README angļu valodā. -->
 
@@ -15,7 +15,7 @@ Obsidian 1.8.7+ · tikai datoram · AGPL-3.0
 ## Paziņojums par MI
 
 - **Aģents** — **Claude Opus 5** un **Claude Sonnet 5** (Anthropic, caur Claude Code): uzrakstīja TypeScript kodu, CSS, visus 45 tulkojumu komplektus un dokumentāciju. Tulkojumi ir mašīnas veidoti, un dzimtās valodas runātāji tos nav pārlasījuši.
-- **Patēriņš** — 2026. gada 3. augusts – 17. septembris, 23 sesijas, \~14 844 atbildes: \~19,2 milj. ģenerētu marķieru, \~85,2 milj. nosūtītu, \~4800,6 milj. atkārtotu nolasījumu no kešatmiņas (\~4905,0 milj. kopā).
+- **Patēriņš** — 2026. gada 3. augusts – 19. septembris, 20 sesijas, \~16 460 atbildes: \~19,9 milj. ģenerētu marķieru, \~87,0 milj. nosūtītu, \~5451,0 milj. atkārtotu nolasījumu no kešatmiņas (\~5558,0 milj. kopā).
 - **Pirmavots** — modelis mācījās no atvērtā pirmkoda, dokumentācijas un kopienas rakstiem, ko publicējuši citi. Lielākā daļa nopelnu pieder tiem.
 - **Autors** — Vault51: noteica katru funkciju, izmēģināja katru versiju īstā glabātavā, vadīja labojumus, pārskatīja visus rezultātus.
 
@@ -37,8 +37,10 @@ Obsidian 1.8.7+ · tikai datoram · AGPL-3.0
 - **HTML faili rādās kā lapas**, rāmī ar atņemtām visām atļaujām — bez skriptiem, bez tīkla, bez savas izcelsmes — kur līdzi ienesti blakus failam esošie stilu faili un attēli, lai saglabāta lapa joprojām izskatītos pati par sevi. Pirmkods ir viena klikšķa attālumā.
 - **Ieraksti URL** — `https://`, `obsidian://`, vai `file://` vai procentkodētu ceļu — un tas tiek atvērts, nevis lasīts kā piezīmes nosaukums. Tīmekļa adreses nonāk paša Obsidian Tīmekļa skatītāja cilnē, ja tas tev ir ieslēgts.
 - **Gari ceļi saīsinās tur, kur burti ir lieki** — nekad tālāk par to, kas atšķir mapi no blakusesošās, un plūstoši, nevis pa burtam — un ritina tikai tad, kad vairs nav ko saspiest. Norādi uz saīsinātu nosaukumu, lai redzētu to visu.
-- **<kbd>F2</kbd>** pārslēdzas starp virsrakstu pašā piezīmē un ceļa joslu, atveroties uz nosaukuma bez paplašinājuma un ar nākamajiem spiedieniem izejot līdz pilnajiem ceļiem. Tas tīri iziet cauri Obsidian pārdēvēšanas dialogam, kad virsraksts ir aizritināts prom. Komanda *Fokusēt ceļa joslu* ir gatava piesaistei, ja gribi adreses joslas žestu.
+- **<kbd>F2</kbd>** pārslēdzas starp virsrakstu pašā piezīmē un ceļa joslu, atveroties uz nosaukuma bez paplašinājuma un ar nākamajiem spiedieniem izejot līdz pilnajiem ceļiem. Tas tīri iziet cauri Obsidian pārdēvēšanas dialogam, kad virsraksts ir aizritināts prom. Komanda *Fokusēt ceļa joslu* iet cauri tiem pašiem pakāpieniem bez pārdēvēšanas; iestatījumu rindā *Karstie taustiņi* vari to piesaistīt.
 - **Uzklikšķini uz glabātavas nosaukuma**, lai pārlūkotu savas pārējās glabātavas, mājas mapi, failu sistēmas sakni un pievienotos diskus, nemainot glabātavu. Tikai lasāms, kamēr neatver sarkano piekaramo atslēgu, kas tur ārpusē ieņem pārdēvēšanas slēdža vietu, un visu laiku ierāmēts kļūdas krāsā. Pēc noklusējuma izslēgts — sk. [ārpus glabātavas](#ārpus-glabātavas).
+- **Glabātavas sakne uzskaita lapas, ko panelis var saturēt** — `:graph`, `:search` un visus skatus, ko reģistrē tavi spraudņi. Izvēlies vienu vai ieraksti to: kols nesāk nevienu faila nosaukumu, tāpēc birkas kalpo arī kā adrese. Ja ir uzstādīts sākumlapas spraudnis, glabātavas paša atdalītājs pirmajā klikšķī atver šo lapu, bet nākamajā sakļauj failu koku.
+- **Rinda paneļos, kuros nav faila** — tukša cilne rāda `vault / :blank`, grafs `vault / :graph`, un lauks blakus ir adreses josla: ieraksti ceļu, un <kbd>Enter</kbd> atver to šajā panelī vai izveido. Sānjoslas paneļi patur Obsidian paša virsrakstu.
 - **Divi brīdinājuma līmeņi** — sarkans ārpus glabātavas, oranžs teksta failiem, kuriem Obsidian nav redaktora. Sk. [divas brīdinājuma krāsas](usage.lv.md#divas-brīdinājuma-krāsas).
 - **Motīvam pielāgojamas ikonas**, nomaināmas no CSS fragmenta — un **46 valodas**: katra, ko Obsidian piedāvā, plus grieķu un sanskrits, kuriem tam nav iestatījuma. Izvēlies vienu spraudnim atsevišķi vai seko paša Obsidian valodai.
 - **Iestatījumi:** valoda, līdzinājums, sagatavoti atdalītāji, kurš klikšķis atver sarakstu, glabātavas nosaukums, slēptie faili, failu paplašinājumi.

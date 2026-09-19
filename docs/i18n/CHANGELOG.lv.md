@@ -1,4 +1,4 @@
-<!-- CHANGELOG.md tulkojums — stāvoklis: revīzija 973105b.
+<!-- CHANGELOG.md tulkojums — stāvoklis: revīzija 2cbb237.
      Mašīntulkojums (Claude Opus 5), ko nav pārlasījuši dzimtās valodas
      runātāji. Labojumi ir gaidīti; noteicošais ir CHANGELOG angļu valodā. -->
 
@@ -7,6 +7,38 @@
 # Izmaiņu žurnāls
 
 Katrs Lure laidiens, jaunākais pirmais. Tas, kas ienācis kopš pēdējā laidiena, ir sadaļā *Neizdots*. Versijām nav `v` priedēkļa, tāpat kā laidienu tagiem.
+
+## 1.4.0 — 2026-09-19[^1.4.0]
+
+### Pievienots
+
+- **Karsto taustiņu rinda iestatījumos.** Tās poga atver Obsidian *Karstos taustiņus*, filtrētus uz šo spraudni, kur komandai *Fokusēt ceļa joslu* — kas tiek piegādāta bez taustiņa — var piešķirt taustiņu.
+- **Ceļa josla paneļos, kuros nav faila.** Tukša cilne rāda `vault / :blank`, grafs `vault / :graph`, un jebkurš cits skats, kam nav ko nosaukt, saņem savu `:` birku — sākumlapas spraudņa paša cilne rāda `:home-launcher`. Lauks blakus ir adreses josla: ieraksti ceļu, un <kbd>Enter</kbd> atver to šajā panelī vai izveido. Pirms tam rinda bija tukša — spraudnis paslēpa Obsidian paša virsrakstu un neko tā vietā nenovietoja.
+- **Lapu var gan ierakstīt, gan izvēlēties** — `:graph` un pārējās ir adrese, nevis tikai saraksta ieraksts. Kols nesāk nevienu faila nosaukumu, tāpēc, ierakstot to jebkur, tās tiek izsauktas, un lauks iekrāsojas to krāsā, nevis piedāvā izveidot piezīmi, kādu nevarētu nosaukt nekādi.
+- **Rinda Obsidian paša *Rādīt visus failu tipus***, blakus punktfailu noteikumam, jo abi nosaka, ko nolaižamais saraksts drīkst uzskaitīt: tajā teikts, ka šis iestatījums jāmeklē paša Obsidian iestatījumos un jāieslēdz, lai redzētu visus failus, bet poga blakus atver to lapu ar iestatījumu, ritinot to redzamībā un īsi izgaismojot, kā iestatījumu meklēšanas rezultātu. Nosaukts Obsidian vārdiem, izskaidrots 45 valodās.
+- **Glabātavas sakne uzskaita lapas, ko panelis var saturēt** — `:graph`, `:search` un visus skatus, ko reģistrē tavi spraudņi, to vidū sākumcilne vai kalendārs. Izvēlies vienu, un panelis to atver, tāpat kā piezīmes izvēle atver piezīmi. Skati, kas pastāv, lai rādītu failu, ir izlaisti, jo tiem nebūtu ko rādīt.
+- **Glabātavas paša atdalītājs atver tavu sākumlapu**, ja spraudnis to nodrošina, un tas ir pasvītrots, to norādot; nākamais spiediens sakļauj failu koku, un tad nākamais atjauno tieši to, kas bija atvērts. Ja šāda spraudņa nav, pirmais spiediens sakļauj, kā iepriekš.
+- **Ieraksti ceļu no failu sistēmas saknes.** `/` tukša lauka priekšā to atver, nevis tiek norīts, katra tālākā slīpsvītra tajā tam pieder, un nolaižamais saraksts uzskaita datoru, nevis glabātavu.
+
+### Mainīts
+
+- **F2 un Fokusēt ceļa joslu nospiež Tab laukā.** Ko Tab tur darītu — nākamo pakāpienu, pabeigtu ierakstīto, ieietu mapē —, to dara arī tie; tikai tur, kur Tab atgriežas ceļa sākumā, tie iziet: F2 uz virsrakstu pašā piezīmē, komanda uz piezīmi. Agrāk lauks, kurā bija ierakstīts, lika F2 sākt no jauna ar nosaukumu, bet komandai — aizvērt lauku.
+- **Solis pēc cikla iziešanas ir saknes mape.** Spiediens pēc F2 atgriešanās pie virsraksta pašā piezīmē vai komandas atgriešanās pie piezīmes nonāk tur, kur Tab aplis — glabātavas saknē, viss ceļš laukā, tā pirmā mape atzīmēta —, tāpēc neviens apļa solis nepaliek vienīgi Tab ziņā.
+- **Fokusēt ceļa joslu iet kā F2.** Tā atveras uz nosaukuma, nevis uz visa ceļa, iet cauri tiem pašiem četriem pakāpieniem, un spiediens pēc pēdējā aizver lauku un atgriež kursoru piezīmē — agrāk tā bezgalīgi riņķoja pa pakāpieniem, un vienīgais taustiņš, kas sasniedza rindu, no tās nevarēja izkļūt.
+- **Aizņemts nosaukums tiek paziņots, kad to izmanto, nevis kamēr to raksta.** Katrs nosaukums, ko raksta virzienā uz `Notes.md`, iet caur nosaukumiem, kas var būt paši savi faili, un brīdinājums agrāk uzplaiksnīja un pazuda burts pa burtam. Par to, kas nav kārtībā ar nosaukuma rakstību, joprojām tiek paziņots, tiklīdz tas tiek uzrakstīts.
+- **Atdalītājs, kura mapes piezīme jau ir atvērta, parāda mapi**, nevis atkārtoti atver to, kas jau ir ekrānā — un tieši to tā otrais spiediens vienmēr ir nozīmējis.
+- **Kur tu esi, nolaižamajā sarakstā ir treknrakstā**, ne tikai zilā krāsā.
+- **Viss, kas nav piezīme, nolaižamajā sarakstā ir oranžs**, ne tikai teksta tipi, kuriem Obsidian nav skata. Violetā krāsa izceļ piezīmes jauktas satura mapē; viena krāsa pārējam saka to pašu ātrāk.
+
+### Labots
+
+- **Backspace pāri noklikšķinātai mapei vairs neatņem glabātavas nosaukumu.** Priekšā palikusī slīpsvītra tika lasīta kā ceļš no datora saknes, kas iztukšo sākuma segmentu — un lauka aizvēršana ar Escape to nekad neatjaunoja, tāpēc cilne uz visiem laikiem zaudēja glabātavas nosaukumu un ikonu. Sākuma slīpsvītra tagad tiek uzskatīta par datora slīpsvītru tikai tad, ja tās pirmā mape tur tiešām ir, un sākuma segments atgriežas ar katru izeju no lauka.
+- Ārpus glabātavas faili bija paslēpti, ja vien nebija ieslēgts Obsidian **Noteikt visus failu paplašinājumus** — iestatījums par to, ko glabātava indeksē, piemērots mapēm, kas nav glabātavā. `.txt` blakus tavām piezīmēm tur tiek uzskaitīts tā vai citādi.
+- Glabātavas nosaukuma nolaižamais saraksts neko nedarīja panelī bez faila, kas ir tieši tas panelis, ko izmantotu, lai dotos citur.
+- Noklikšķinot uz glabātavas nosaukuma, Obsidian paša virsraksts palika stāvam blakus ceļam laukā, pelēks, kur tas neparādās nevienā citā brīdī: rinda mēra sevi pēc tā, ko tā uzzīmējusi, un tajā brīdī tā ir sevi iztukšojusi, lai atbrīvotu vietu laukam.
+
+- Klikšķis uz tukšās vietas atvēra lauku un tad to pazaudēja: piezīmes atklāšana Failu pārlūkā paņem līdzi kursoru, tāpēc lauks stāvēja atvērts un iezīmēts, kamēr katrs taustiņsitiens devās kokam.
+- Pakāpiens, kas rāda ceļu no sistēmas saknes, zīmēja tā paša ceļa pēdu blakus laukam, nepielāgotu, tāpēc dziļš ceļš tika pārkrāsots pats pāri sev.
 
 ## 1.3.0 — 2026-09-17[^1.3.0]
 
@@ -146,6 +178,7 @@ Pirmais laidiens. Aizstāj faila nosaukumu piezīmes galvenē ar uzklikšķinām
 - **Ārpus glabātavas** (pēc noklusējuma izslēgts): glabātavas nosaukums atver tavas pārējās glabātavas, mājas mapi, failu sistēmas sakni un pievienotos diskus. Tur ārā nekas netiek rakstīts, kamēr to neatslēdz, un piezīmi no glabātavas var tikai izkopēt, nekad pārvietot.
 - **45 valodas.**
 
+[^1.4.0]: Izmaiņas kopš 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Izmaiņas kopš 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Izmaiņas kopš 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Izmaiņas kopš 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>

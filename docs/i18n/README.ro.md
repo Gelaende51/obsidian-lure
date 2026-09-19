@@ -1,4 +1,4 @@
-<!-- Traducere a README.md — stare: commit e1e2247.
+<!-- Traducere a README.md — stare: commit 2cbb237.
      Traducere automată (Claude Opus 5), nerevizuită de vorbitori nativi.
      Corecturile sunt binevenite; versiunea de referință este README-ul
      în engleză. -->
@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · doar desktop · AGPL-3.0
 ## Divulgare privind IA
 
 - **Agent** — **Claude Opus 5** și **Claude Sonnet 5** (Anthropic, prin Claude Code): au scris codul TypeScript, CSS-ul, toate cele 45 de seturi de traduceri și documentația. Traducerile sunt generate automat și nerevizuite de vorbitori nativi.
-- **Consum** — 3 aug. – 17 sept. 2026, 23 de sesiuni, ~14.844 de răspunsuri: ~19,2 M de jetoane generate, ~85,2 M trimise, ~4800,6 M recitiri din cache (~4905,0 M în total).
+- **Consum** — 3 aug. – 19 sept. 2026, 20 de sesiuni, ~16.460 de răspunsuri: ~19,9 M de jetoane generate, ~87,0 M trimise, ~5451,0 M recitiri din cache (~5558,0 M în total).
 - **Amonte** — modelul a învățat din cod open source, documentație și scrieri ale comunității publicate de alții. Cea mai mare parte a meritului le revine lor.
 - **Autor** — Vault51: a specificat fiecare funcție, a testat fiecare iterație într-un seif real, a coordonat corecturile, a revizuit tot ce a rezultat.
 
@@ -38,8 +38,10 @@ Obsidian 1.8.7+ · doar desktop · AGPL-3.0
 - **Fișierele HTML se afișează ca pagini**, într-un cadru cu toate permisiunile retrase — fără scripturi, fără rețea, fără origine proprie — cu foile de stil și imaginile de lângă fișier aduse înăuntru, ca o pagină salvată să arate tot ca ea însăși. Sursa e la o apăsare distanță.
 - **Scrie un URL** — `https://`, `obsidian://` sau o cale `file://` ori codificată procentual — și va fi deschis, în loc să fie tratat ca nume de notiță. Adresele web ajung într-o filă din Vizualizator web propriu al Obsidian, dacă îl ai activat.
 - **Căile lungi se scurtează acolo unde literele sunt de prisos** — niciodată dincolo de ce deosebește un dosar de cel de lângă el, lin, nu literă cu literă — și defilează abia când nu mai e nimic de comprimat. Arată spre un nume scurtat ca să-l vezi din nou întreg.
-- **<kbd>F2</kbd>** alternează între titlul din text și bara de cale, deschizându-se pe numele fără extensie și lărgindu-se spre căile complete la apăsările următoare. Trece curat prin dialogul de redenumire al Obsidian atunci când titlul a ieșit din câmpul vizual. Există și o comandă *Focalizează bara de cale*, de asociat unei taste dacă vrei gestul de bară de adrese.
+- **<kbd>F2</kbd>** alternează între titlul din text și bara de cale, deschizându-se pe numele fără extensie și lărgindu-se spre căile complete la apăsările următoare. Trece curat prin dialogul de redenumire al Obsidian atunci când titlul a ieșit din câmpul vizual. O comandă *Focalizează bara de cale* parcurge aceleași trepte fără redenumire; rândul *Taste rapide* din setări te duce să o asociezi unei taste.
 - **Clic pe numele seifului** pentru a răsfoi celelalte seifuri, dosarul personal, rădăcina sistemului de fișiere și unitățile montate, fără a schimba seiful. Doar-citire până când deschizi lacătul roșu care ia acolo locul comutatorului de redenumire, și încadrat tot timpul în culoarea de eroare. Dezactivat implicit — vezi [în afara seifului](#în-afara-seifului).
+- **Rădăcina seifului listează paginile pe care le poate conține un panou** — `:graph`, `:search` și orice vizualizări înregistrează pluginurile tale. Alege una sau tastează-o: două puncte nu încep niciun nume de fișier, așa că etichetele servesc și ca adresă. Cu un plugin de pagină de start instalat, delimitatorul propriu al seifului deschide acea pagină la primul clic și strânge arborele de fișiere la următorul.
+- **Un rând pe panourile fără fișier** — o filă goală se citește `vault / :blank`, graful `vault / :graph`, iar câmpul de lângă este o bară de adrese: tastează o cale și <kbd>Enter</kbd> o deschide în acel panou sau o creează. Panourile laterale păstrează titlul propriu al Obsidian.
 - **Două niveluri de avertizare** — roșu în afara seifului, portocaliu pentru fișierele text pentru care Obsidian nu are editor. Vezi [culorile de avertizare](usage.ro.md#cele-două-culori-de-avertizare).
 - **Pictograme care urmează tema**, înlocuite dintr-un fragment CSS — și **46 de limbi**: toate cele pe care le livrează Obsidian, plus greaca și sanscrita, pentru care el nu are setare. Alege una doar pentru plugin sau urmeaz-o pe cea a Obsidian.
 - **Setări:** limbă, aliniere, presetări de separator, ce clic deschide lista, numele seifului, fișiere ascunse, extensii de fișier.

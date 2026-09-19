@@ -1,4 +1,4 @@
-<!-- Vertaling van CHANGELOG.md — stand: commit 973105b.
+<!-- Vertaling van CHANGELOG.md — stand: commit 2cbb237.
      Machinaal vertaald (Claude Opus 5) en niet nagekeken door
      moedertaalsprekers. Correcties zijn welkom; het Engelse CHANGELOG is de
      maatgevende versie. -->

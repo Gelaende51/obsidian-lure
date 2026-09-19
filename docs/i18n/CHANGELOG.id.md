@@ -1,4 +1,4 @@
-<!-- Terjemahan CHANGELOG.md — status: commit 973105b.
+<!-- Terjemahan CHANGELOG.md — status: commit 2cbb237.
      Terjemahan mesin (Claude Opus 5), belum ditinjau penutur asli.
      Koreksi sangat diterima; CHANGELOG bahasa Inggris adalah versi acuan. -->
 
@@ -7,6 +7,38 @@
 # Log perubahan
 
 Setiap rilis Lure, yang terbaru lebih dulu. Apa yang sudah mendarat sejak rilis terakhir ada di bawah *Belum dirilis*. Versi tidak memakai awalan `v`, sesuai dengan tanda rilisnya.
+
+## 1.4.0 — 2026-09-19[^1.4.0]
+
+### Ditambahkan
+
+- **Baris Tombol pintas di pengaturan.** Tombolnya membuka *Tombol pintas* Obsidian yang disaring untuk plugin ini, tempat *Fokus ke bilah jalur* — yang dikirim tanpa tombol — bisa diberi satu.
+- **Bilah jalur pada panel yang tidak memuat berkas.** Tab kosong terbaca `vault / :blank`, grafik `vault / :graph`, dan tampilan lain yang tak punya apa pun untuk dinamai mendapat label `:`-nya sendiri — tab milik plugin tab beranda terbaca `:home-launcher`. Kolom di sebelahnya adalah bilah alamat: ketik jalur dan <kbd>Enter</kbd> membukanya di panel itu, atau membuatnya. Sebelumnya barisnya kosong — plugin menyembunyikan judul bawaan Obsidian dan tidak menaruh apa pun sebagai gantinya.
+- **Halaman bisa diketik selain dipilih** — `:graph` dan lainnya adalah alamat, bukan sekadar entri daftar. Tanda titik dua tidak mengawali nama berkas mana pun, jadi mengetikkannya di mana saja memunculkan halaman itu, dan kolom berwarna sama dengan halaman tersebut alih-alih menawarkan pembuatan catatan yang tak mungkin diberi nama itu.
+- **Baris untuk *Tampilkan semua jenis berkas* milik Obsidian**, di samping aturan berkas titik, karena keduanya menentukan apa yang boleh dicantumkan daftar tarik-turun: baris itu menyuruh Anda mencari pengaturan tersebut di pengaturan Obsidian sendiri dan mengaktifkannya untuk melihat semua berkas, dan tombol di sampingnya membuka halaman itu dengan pengaturannya digulir ke tampilan dan dikedipkan, seperti hasil pencarian pengaturan. Dinamai dengan kata-kata Obsidian, dijelaskan dalam 45 bahasa.
+- **Akar vault mencantumkan halaman yang bisa dimuat sebuah panel** — `:graph`, `:search`, dan tampilan apa pun yang didaftarkan plugin Anda, termasuk tab beranda atau kalender. Pilih salah satu dan panel membukanya, seperti memilih catatan membuka catatan itu. Tampilan yang ada untuk menampilkan berkas tidak disertakan, karena tak akan ada yang bisa ditampilkannya.
+- **Pembatas milik vault membuka halaman awal Anda**, bila ada plugin yang menyediakannya, dan digarisbawahi sebagai penandanya; tekanan berikutnya melipat pohon berkas, dan tekanan sesudahnya mengembalikan persis apa yang tadinya terbuka. Tanpa plugin seperti itu, tekanan pertama melipat, seperti sebelumnya.
+- **Ketik jalur dari akar sistem berkas.** Tanda `/` di depan kolom kosong membukanya alih-alih ditelan, setiap garis miring sesudahnya menjadi bagian darinya, dan daftar tarik-turun mencantumkan isi mesin, bukan vault.
+
+### Diubah
+
+- **F2 dan Fokus ke bilah jalur menekan Tab di dalam kolom.** Apa pun yang akan dilakukan Tab di sana — anak tangga berikutnya, melengkapi yang Anda ketik, masuk ke sebuah folder — mereka lakukan juga; hanya di titik Tab berputar kembali ke awal jalur mereka keluar, F2 ke judul di dalam catatan, perintahnya ke catatan. Sebelumnya, kolom yang sudah Anda ketiki membuat F2 mengulang dari nama dan perintahnya menutup kolom.
+- **Langkah setelah siklus keluar adalah folder akar.** Tekanan setelah F2 kembali ke judul di dalam catatan, atau perintahnya kembali ke catatan, mendarat di tempat putaran Tab mendarat — akar vault, seluruh jalur di dalam kolom, folder pertamanya ditandai — sehingga tak ada langkah dalam lingkaran itu yang tersisa hanya untuk Tab.
+- **Fokus ke bilah jalur berjalan seperti F2.** Ia terbuka pada nama alih-alih seluruh jalur, mengambil empat anak tangga yang sama, dan tekanan setelah yang terakhir menutup kolom lalu mengembalikan kursor ke catatan — sebelumnya, ia memutari anak tangga tanpa henti dan satu-satunya tombol yang menjangkau baris itu tidak bisa meninggalkannya.
+- **Nama yang sudah dipakai dilaporkan saat Anda menggunakannya, bukan saat Anda mengetiknya.** Setiap nama yang diketik menuju `Notes.md` melewati nama-nama yang mungkin berkas tersendiri, dan peringatannya dulu berkedip muncul lalu hilang huruf demi huruf. Kesalahan pada ejaan sebuah nama tetap dilaporkan saat nama itu dieja.
+- **Pembatas yang catatan foldernya sudah terbuka menampilkan folder** alih-alih membuka ulang apa yang sudah ada di layar — itulah yang selama ini dimaksud tekanan keduanya.
+- **Posisi Anda kini tebal dalam daftar tarik-turun**, tidak hanya biru.
+- **Semua yang bukan catatan berwarna oranye dalam daftar tarik-turun**, tidak hanya jenis teks yang tak punya tampilan di Obsidian. Warna ungu memilih catatan dari folder berisi campuran; satu warna untuk sisanya menyampaikan hal yang sama lebih cepat.
+
+### Diperbaiki
+
+- **Backspace di atas folder yang diklik tidak lagi menghilangkan nama vault.** Garis miring yang tertinggal di depan terbaca sebagai jalur dari akar mesin, yang mengosongkan segmen pembuka — dan menutup kolom dengan Escape tidak pernah mengembalikannya, sehingga tab kehilangan nama dan ikon vault-nya untuk selamanya. Garis miring di depan kini dianggap milik mesin hanya bila folder pertamanya benar-benar ada, dan segmen pembuka kembali dengan setiap cara keluar dari kolom.
+- Di luar vault, berkas disembunyikan kecuali **Deteksi semua ekstensi berkas** milik Obsidian aktif — pengaturan tentang apa yang diindeks vault, diterapkan pada folder yang tidak ada di vault. Berkas `.txt` di samping catatan Anda kini dicantumkan di sana, apa pun pengaturannya.
+- Daftar tarik-turun nama vault tidak berbuat apa-apa pada panel yang tidak memuat berkas, padahal itulah panel yang akan Anda pakai untuk pergi ke tempat lain.
+- Mengklik nama vault membiarkan judul bawaan Obsidian tetap berdiri di samping jalur di dalam kolom, berwarna abu-abu, padahal ia tidak muncul di waktu lain: baris mengukur dirinya dari apa yang telah digambarnya, dan pada saat itu ia telah mengosongkan dirinya untuk memberi ruang bagi kolom.
+
+- Mengklik ruang kosong membuka kolom lalu kehilangannya: menampilkan catatan di Penjelajah Berkas membawa serta karet penanda, sehingga kolom berdiri terbuka dan bertanda sementara setiap ketukan tombol masuk ke pohon berkas.
+- Anak tangga yang menampilkan jalur dari akar sistem menggambar jejak jalur yang sama di samping kolom, tanpa disesuaikan, sehingga jalur yang dalam tergambar menimpa dirinya sendiri.
 
 ## 1.3.0 — 2026-09-17[^1.3.0]
 
@@ -146,6 +178,7 @@ Rilis pertama. Mengganti nama berkas di bilah judul sebuah catatan dengan jalur 
 - **Di luar vault** (mati secara bawaan): nama vault membuka vault Anda yang lain, folder rumah, akar sistem berkas, dan diska yang terpasang. Tak ada apa pun di luar sana yang ditulis sampai Anda membuka kuncinya, dan sebuah catatan hanya bisa disalin keluar dari vault, tak pernah dipindahkan.
 - **45 bahasa.**
 
+[^1.4.0]: Perubahan sejak 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Perubahan sejak 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Perubahan sejak 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Perubahan sejak 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>

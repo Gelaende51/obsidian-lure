@@ -1,4 +1,4 @@
-<!-- Terjemahan CHANGELOG.md — status: commit 973105b.
+<!-- Terjemahan CHANGELOG.md — status: commit 2cbb237.
      Terjemahan mesin (Claude Opus 5), belum disemak penutur jati.
      Pembetulan dialu-alukan; CHANGELOG bahasa Inggeris ialah versi rujukan. -->
 
@@ -7,6 +7,38 @@
 # Log perubahan
 
 Setiap keluaran Lure, yang terbaharu dahulu. Apa yang telah mendarat sejak keluaran terakhir ada di bawah *Belum dikeluarkan*. Versi tidak membawa awalan `v`, sepadan dengan tag keluarannya.
+
+## 1.4.0 — 2026-09-19[^1.4.0]
+
+### Ditambah
+
+- **Baris Kekunci pintas dalam tetapan.** Butangnya membuka *Kekunci pintas* Obsidian yang ditapis kepada pemalam ini, tempat *Fokus pada bar laluan* — yang dihantar tanpa kekunci — boleh diberikan satu.
+- **Bar laluan pada panel yang tidak memegang fail.** Tab kosong berbunyi `vault / :blank`, graf `vault / :graph`, dan mana-mana pandangan lain yang tiada apa untuk dinamakan mendapat label `:` tersendiri — tab pemalam tab utama sendiri berbunyi `:home-launcher`. Medan di sebelahnya ialah bar alamat: taip laluan dan <kbd>Enter</kbd> membukanya dalam panel itu, atau mencipta failnya. Sebelum ini baris itu kosong — pemalam menyembunyikan tajuk Obsidian sendiri dan tidak meletakkan apa-apa sebagai gantinya.
+- **Sesebuah halaman boleh ditaip dan juga dipilih** — `:graph` dan selebihnya ialah alamat, bukan sekadar entri senarai. Titik bertindih tidak memulakan mana-mana nama fail, jadi menaipnya di mana-mana sahaja memanggil halaman tersebut, dan medan itu berwarna seperti halaman berkenaan dan bukannya menawarkan untuk mencipta nota yang tiada apa yang boleh dinamakan sedemikian.
+- **Satu baris untuk *Papar semua jenis fail*** Obsidian sendiri, di sebelah peraturan fail titik, kerana kedua-duanya menentukan apa yang boleh disenaraikan oleh menu lungsur: ia menyuruh anda mencari tetapan itu dalam tetapan Obsidian sendiri dan menghidupkannya untuk melihat setiap fail, dan butang di sebelahnya membuka halaman itu dengan tetapan tersebut ditatal ke pandangan dan dikelipkan, seperti hasil carian tetapan. Dinamakan dalam perkataan Obsidian, dijelaskan dalam 45 bahasa.
+- **Akar bilik kebal menyenaraikan halaman yang boleh dipegang oleh sesebuah panel** — `:graph`, `:search`, dan apa sahaja pandangan yang didaftarkan oleh pemalam anda, termasuk tab utama atau kalendar. Pilih satu dan panel membukanya, seperti memilih nota membuka nota itu. Pandangan yang wujud untuk memaparkan fail ditinggalkan, kerana tiada apa untuk dipaparkan oleh pandangan tersebut.
+- **Pembatas bilik kebal sendiri membuka halaman permulaan anda**, jika ada pemalam yang menyediakannya, dan digaris bawah untuk menyatakannya; tekanan selepas itu melipat pepohon fail, dan tekanan selepas itu mengembalikan tepat apa yang terbuka tadi. Tanpa pemalam sedemikian, tekanan pertama melipat, seperti dahulu.
+- **Taip laluan dari akar sistem fail.** Tanda `/` di hadapan medan kosong membuka satu laluan, bukannya ditelan, setiap garis condong selepasnya dalam laluan itu menjadi miliknya, dan menu lungsur menyenaraikan mesin dan bukannya bilik kebal.
+
+### Diubah
+
+- **F2 dan Fokus pada bar laluan menekan Tab di dalam medan.** Apa sahaja yang Tab akan lakukan di situ — anak tangga seterusnya, melengkapkan apa yang anda taip, melangkah masuk ke dalam folder — mereka lakukan juga; hanya di tempat Tab berpusing kembali ke hadapan laluan mereka keluar, F2 ke tajuk dalam nota, perintah ke nota. Sebelum ini, medan yang telah anda taip membuat F2 bermula semula pada nama dan perintah menutup medan.
+- **Langkah selepas kitaran keluar ialah folder akar.** Tekanan selepas F2 kembali ke tajuk dalam nota, atau perintah kembali ke nota, mendarat di tempat pusingan Tab mendarat — akar bilik kebal, seluruh laluan dalam medan, folder pertamanya ditandakan — supaya tiada langkah dalam gelung ditinggalkan kepada Tab semata-mata.
+- **Fokus pada bar laluan berjalan seperti F2.** Ia dibuka pada nama dan bukannya seluruh laluan, mengambil empat anak tangga yang sama, dan tekanan selepas yang terakhir menutup medan dan meletakkan kursor kembali dalam nota — sebelum ini, ia berpusing melalui anak tangga selama-lamanya dan satu-satunya kekunci yang sampai ke baris itu tidak dapat meninggalkannya.
+- **Nama yang telah diambil dilaporkan apabila anda menggunakannya, bukan semasa anda menaipnya.** Setiap nama yang ditaip menuju `Notes.md` melalui nama yang mungkin fail tersendiri, dan amaran itu dahulu terpapar dan hilang huruf demi huruf. Apa yang salah dengan ejaan sesuatu nama masih dinyatakan sebaik sahaja ia dieja.
+- **Pembatas yang nota folder-nya sudah terbuka mendedahkan folder itu** dan bukannya membuka semula apa yang ada di skrin — itulah yang sentiasa dimaksudkan oleh tekanan keduanya.
+- **Di mana anda berada adalah tebal dalam menu lungsur**, bukan sekadar biru.
+- **Segala yang bukan nota berwarna oren dalam menu lungsur**, bukan sekadar jenis teks yang Obsidian tiada pandangan untuknya. Ungu memilih nota daripada folder yang berisi campuran; satu warna untuk selebihnya menyatakan perkara yang sama dengan lebih pantas.
+
+### Dibaiki
+
+- **Backspace pada folder yang diklik tidak lagi menghilangkan nama bilik kebal.** Garis condong yang tertinggal di hadapan dibaca sebagai laluan dari akar mesin, yang mengosongkan segmen pembuka — dan menutup medan dengan Escape tidak pernah mengembalikannya, jadi tab kehilangan nama dan ikon bilik kebalnya selama-lamanya. Garis condong di hadapan kini dikira sebagai milik mesin hanya apabila folder pertamanya benar-benar wujud, dan segmen pembuka kembali dengan setiap cara keluar dari medan.
+- Di luar bilik kebal, fail disembunyikan melainkan **Kesan semua sambungan fail** Obsidian dihidupkan — tetapan tentang apa yang diindeks oleh bilik kebal, yang digunakan pada folder yang tidak berada dalam bilik kebal. Fail `.txt` di sebelah nota anda disenaraikan di sana sama ada dihidupkan atau tidak.
+- Menu lungsur nama bilik kebal tidak berbuat apa-apa pada panel yang tidak memegang fail, iaitu panel yang tepat sekali akan anda gunakan untuk pergi ke tempat lain.
+- Mengklik nama bilik kebal meninggalkan tajuk Obsidian sendiri berdiri di sebelah laluan dalam medan, berwarna kelabu, tempat ia tidak muncul pada masa lain: baris itu mengukur dirinya mengikut apa yang telah dilukisnya, dan pada saat itu ia telah mengosongkan dirinya untuk memberi ruang kepada medan.
+
+- Mengklik ruang kosong membuka medan dan kemudian kehilangannya: mendedahkan nota dalam Penjelajah Fail membawa kursor bersamanya, jadi medan itu terbuka dan bertanda sementara setiap ketukan kekunci pergi ke pepohon.
+- Anak tangga yang menunjukkan laluan dari akar sistem melukis jejak laluan yang sama di sebelah medan, tidak dimuatkan, jadi laluan yang dalam dicat di atas dirinya sendiri.
 
 ## 1.3.0 — 2026-09-17[^1.3.0]
 
@@ -146,6 +178,7 @@ Keluaran pertama. Menggantikan nama fail pada bar tajuk sesuatu nota dengan lalu
 - **Di luar bilik kebal** (dimatikan secara lalai): nama bilik kebal membuka bilik kebal anda yang lain, folder rumah, akar sistem fail dan pemacu yang dilekapkan. Tiada apa-apa di luar sana ditulis sehingga anda membuka kuncinya, dan sesuatu nota hanya boleh disalin keluar dari bilik kebal, tidak pernah dialihkan.
 - **45 bahasa.**
 
+[^1.4.0]: Perubahan sejak 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Perubahan sejak 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Perubahan sejak 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Perubahan sejak 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>

@@ -1,4 +1,4 @@
-<!-- Përkthim i README.md — gjendja: commit e1e2247.
+<!-- Përkthim i README.md — gjendja: commit 2cbb237.
      Përkthim me makinë (Claude Opus 5), i pashqyrtuar nga folës amtarë.
      Ndreqjet janë të mirëpritura; versioni përcaktues është README-ja
      në anglisht. -->
@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · vetëm për desktop · AGPL-3.0
 ## Deklarim për IA-në
 
 - **Agjenti** — **Claude Opus 5** dhe **Claude Sonnet 5** (Anthropic, përmes Claude Code): shkroi TypeScript-in, CSS-në, të 45 grupet e përkthimeve dhe dokumentacionin. Përkthimet janë të krijuara nga makina dhe të pashqyrtuara nga folës amtarë.
-- **Konsumi** — 3 gusht – 17 shtator 2026, 23 sesione, \~14.844 përgjigje: \~19,2 mln token të gjeneruar, \~85,2 mln të dërguar, \~4800,6 mln rilexime nga kesh-i (\~4905,0 mln gjithsej).
+- **Konsumi** — 3 gusht – 19 shtator 2026, 20 sesione, \~16.460 përgjigje: \~19,9 mln token të gjeneruar, \~87,0 mln të dërguar, \~5451,0 mln rilexime nga kesh-i (\~5558,0 mln gjithsej).
 - **Burimi** — modeli mësoi nga kodi me burim të hapur, dokumentacioni dhe shkrimet e komunitetit të botuara nga të tjerë. Pjesa më e madhe e meritës u takon atyre.
 - **Autori** — Vault51: përcaktoi çdo veçori, provoi çdo përsëritje në një kasafortë të gjallë, drejtoi ndreqjet, shqyrtoi çdo rezultat.
 
@@ -38,8 +38,10 @@ Obsidian 1.8.7+ · vetëm për desktop · AGPL-3.0
 - **Skedarët HTML shfaqen si faqe**, brenda një kornize së cilës i është mohuar çdo leje — pa skripte, pa rrjet, pa origjinë të vetën — me fletët e stilit dhe figurat pranë skedarit të sjella brenda, që një faqe e ruajtur të duket ende vetvetja. Burimi është vetëm një shtypje larg.
 - **Shkruaj një URL** — `https://`, `obsidian://`, ose një shteg `file://` a të koduar me përqindje — dhe ai hapet, në vend që të merret si emër shënimi. Adresat e internetit shkojnë te një skedë e Shikues uebi-t të vetë Obsidian-it, aty ku e ke të ndezur.
 - **Shtigjet e gjata shkurtohen aty ku shkronjat janë të tepërta** — kurrë përtej asaj që e dallon një dosje nga ajo pranë saj, butësisht dhe jo shkronjë pas shkronje — dhe rrëshqasin vetëm kur nuk ka më asgjë për të ngjeshur. Trego me kursor një emër të shkurtuar për ta parë sërish të plotë.
-- **<kbd>F2</kbd>** alternon mes titullit brenda tekstit dhe shiritit të shtegut, duke u hapur te emri pa prapashtesën e tij dhe duke dalë te shtigjet e plota me shtypjet e mëtejshme. Kalon pastër përmes dialogut të riemërtimit të Obsidian-it edhe kur titulli ka dalë jashtë pamjes. Ekziston edhe një komandë *Fokuso shiritin e shtegut* për ta lidhur me një tast, nëse e do gjestin e shiritit të adresës.
+- **<kbd>F2</kbd>** alternon mes titullit brenda tekstit dhe shiritit të shtegut, duke u hapur te emri pa prapashtesën e tij dhe duke dalë te shtigjet e plota me shtypjet e mëtejshme. Kalon pastër përmes dialogut të riemërtimit të Obsidian-it kur titulli ka dalë jashtë pamjes. Një komandë *Fokuso shiritin e shtegut* ecën nëpër të njëjtat shkallë pa riemërtuar; rreshti *Shkurtoret e tastierës* i cilësimeve të çon ta lidhësh me një tast.
 - **Kliko emrin e kasafortës** për të shfletuar kasafortat e tua të tjera, dosjen e shtëpisë, rrënjën e sistemit të skedarëve dhe disqet e montuara pa ndërruar kasafortë. Vetëm për lexim derisa të hapësh dryjen e kuqe që atje jashtë zë vendin e çelësit të riemërtimit, dhe e kornizuar me ngjyrën e gabimit gjatë gjithë kohës. E fikur si parazgjedhje — shih [jashtë kasafortës](#jashtë-kasafortës).
+- **Rrënja e kasafortës liston faqet që mund të mbajë një panel** — `:graph`, `:search`, dhe cilëndo pamje që regjistrojnë shtojcat e tua. Zgjidh një, ose shkruaje: dy pika nuk e fillojnë asnjë emër skedari, kështu etiketat shërbejnë edhe si adresë. Me një shtojcë të faqes së nisjes të instaluar, ndarësi i vetë kasafortës e hap atë faqe me klikimin e parë dhe e palos pemën e skedarëve me tjetrin.
+- **Një rresht te panelet që nuk mbajnë skedar** — një skedë e zbrazët lexohet `vault / :blank`, grafiku `vault / :graph`, dhe fusha pranë tij është një shirit adrese: shkruaj një shteg dhe <kbd>Enter</kbd> e hap në atë panel, ose e krijon. Panelet anësore e mbajnë titullin e vetë të Obsidian-it.
 - **Dy shkallë paralajmërimi** — e kuqe jashtë kasafortës, portokalli për skedarët tekst për të cilët Obsidian nuk ka redaktues. Shih [ngjyrat e paralajmërimit](usage.sq.md#dy-ngjyrat-e-paralajmërimit).
 - **Ikona që ndjekin temën**, të zëvendësueshme nga një copëz CSS — dhe **46 gjuhë**: çdo gjuhë që vjen me Obsidian, plus greqishtja dhe sanskritishtja, për të cilat ai nuk ka cilësim. Zgjidh një vetëm për shtojcën, ose ndiq atë të vetë Obsidian-it.
 - **Cilësimet:** gjuha, rreshtimi, paracaktimet e ndarësit, se cili klikim e hap listën, emri i kasafortës, skedarët me pikë, prapashtesat e skedarëve.

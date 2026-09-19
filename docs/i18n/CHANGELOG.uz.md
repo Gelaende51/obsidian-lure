@@ -1,4 +1,4 @@
-<!-- CHANGELOG.md tarjimasi — holat: commit 973105b.
+<!-- CHANGELOG.md tarjimasi — holat: commit 2cbb237.
      Mashina tarjimasi (Claude Opus 5), ona tili egalari tomonidan
      tekshirilmagan. Tuzatishlar mamnuniyat bilan qabul qilinadi;
      hal qiluvchi nusxa — inglizcha CHANGELOG. -->
@@ -8,6 +8,38 @@
 # O‘zgarishlar jurnali
 
 Lure'ning har bir relizi, eng yangisi birinchi. Oxirgi relizdan beri qo‘shilganlar *Chiqarilmagan* bo‘limida. Versiyalar reliz teglariga mos ravishda `v` prefiksisiz yoziladi.
+
+## 1.4.0 — 2026-09-19[^1.4.0]
+
+### Qo‘shildi
+
+- **Sozlamalarda Hotkeys qatori.** Uning tugmasi Obsidian'ning *Hotkeys* bo‘limini shu plaginga filtrlab ochadi; u yerda tugmasiz keladigan *Yo‘l paneliga fokus* buyrug‘iga klavish biriktirish mumkin.
+- **Fayl ochilmagan panellarda yo‘l paneli.** Bo‘sh varaq `vault / :blank`, graf `vault / :graph` deb ko‘rinadi, nomlanadigan narsasi bo‘lmagan har qanday boshqa ko‘rinish esa o‘zining `:` yorlig‘ini oladi — bosh sahifa plaginining varag‘i `:home-launcher` deb ko‘rinadi. Yonidagi maydon manzil satri: yo‘lni kiriting va <kbd>Enter</kbd> uni shu panelda ochadi yoki yaratadi. Bundan oldin bu qator bo‘sh edi — plagin Obsidian'ning o‘z sarlavhasini yashirar, uning o‘rniga hech narsa qo‘ymas edi.
+- **Sahifani tanlash bilan birga yozish ham mumkin** — `:graph` va boshqalar manzil, faqat ro‘yxat elementi emas. Ikki nuqta hech bir fayl nomini boshlamaydi, shuning uchun uni istalgan joyda yozish ularni chaqiradi, maydon esa hech narsa nomlana olmaydigan qaydni yaratishni taklif qilish o‘rniga ularning rangini oladi.
+- **Obsidian'ning o‘z *Show all file types* sozlamasi uchun qator** nuqtali fayllar qoidasi yonida turadi, chunki ikkalasi ham ochiladigan ro‘yxatda nimalar ko‘rsatilishini belgilaydi: u ushbu sozlamani Obsidian'ning o‘z sozlamalaridan izlashni va barcha fayllarni ko‘rish uchun yoqishni aytadi, yonidagi tugma esa sozlamalar qidiruvi natijasi kabi, o‘sha sahifani sozlama ko‘rinadigan qilib aylantirib va yorqin belgilab ochadi. Obsidian'ning o‘z so‘zlari bilan nomlangan, 45 tilda tushuntirilgan.
+- **Ombor ildizi panel ushlab turishi mumkin bo‘lgan sahifalarni ko‘rsatadi** — `:graph`, `:search` va plaginlaringiz ro‘yxatdan o‘tkazgan har qanday ko‘rinishlar, jumladan bosh varaq yoki kalendar. Birini tanlang — panel uni ochadi, xuddi qaydni tanlaganda qayd ochilgandek. Fayl ko‘rsatish uchun mavjud ko‘rinishlar chiqarib tashlanadi, chunki ularga ko‘rsatadigan narsa bo‘lmaydi.
+- **Omborning o‘z ajratgichi boshlang‘ich sahifangizni ochadi**, agar plagin uni taqdim etsa, va buni bildirish uchun tagi chizilgan bo‘ladi; undan keyingi bosish fayl daraxtini yig‘adi, undan keyingisi esa ochiq bo‘lgan narsani aynan qaytaradi. Bunday plagin bo‘lmasa, avvalgidek, birinchi bosish yig‘adi.
+- **Yo‘lni fayl tizimi ildizidan kiriting.** Bo‘sh maydon oldidagi `/` yutib yuborilmasdan, uni ochadi, undagi har bir keyingi qiyshiq chiziq unga tegishli bo‘ladi, ochiladigan ro‘yxat esa omborni emas, kompyuterni ko‘rsatadi.
+
+### O‘zgartirildi
+
+- **F2 va Yo‘l paneliga fokus maydon ichida Tab bosadi.** Tab u yerda nima qilsa — keyingi pog‘ona, kiritilganni to‘ldirish, papkaga kirish — ular ham shuni qiladi; faqat Tab yo‘lning boshiga qaytadigan joyda ular chiqib ketadi: F2 matn ichidagi sarlavhaga, buyruq esa qaydga. Ilgari kiritish qilingan maydonda F2 nomdan qayta boshlar, buyruq esa maydonni yopar edi.
+- **Aylanishdan chiqqandan keyingi qadam — ildiz papka.** F2 matn ichidagi sarlavhaga qaytgandan yoki buyruq qaydga qaytgandan keyingi bosish Tab aylanishi tushadigan joyga — ombor ildiziga tushadi: maydonda butun yo‘l, uning birinchi papkasi belgilangan — shunday qilib halqaning hech bir qadami faqat Tabga qolmaydi.
+- **Yo‘l paneliga fokus F2 kabi yuradi.** U butun yo‘l o‘rniga nomdan ochiladi, xuddi shu to‘rtta pog‘onadan o‘tadi, oxirgisidan keyingi bosish esa maydonni yopib, kursorni qaydga qaytaradi — ilgari u pog‘onalarni cheksiz aylanar, qatorga yetib boradigan yagona tugma undan chiqa olmas edi.
+- **Band nom u ishlatilganda xabar qilinadi, yozilayotganda emas.** `Notes.md` sari yozilgan har bir nom o‘z-o‘zicha fayl bo‘lishi mumkin bo‘lgan nomlar orqali o‘tadi, ogohlantirish esa harfma-harf yonib-o‘chib turar edi. Nom imlosidagi xato esa, yozilgan zahoti, avvalgidek aytiladi.
+- **Papka qaydi allaqachon ochiq bo‘lgan ajratgich papkani ko‘rsatadi**, ekrandagini qayta ochmaydi — uning ikkinchi bosishi doim shuni anglatgan.
+- **Qayerdaligingiz ochiladigan ro‘yxatda qalin bo‘ladi**, faqat ko‘k emas.
+- **Qayd bo‘lmagan hamma narsa ochiladigan ro‘yxatda to‘q sariq**, faqat Obsidian ko‘rinishga ega bo‘lmagan matn turlari emas. Binafsha rang aralash mazmunli papkada qaydlarni ajratib turadi; qolganlar uchun bitta rang xuddi shuni tezroq aytadi.
+
+### Tuzatildi
+
+- **Bosilgan papka ustida Backspace endi ombor nomini olib tashlamaydi.** Boshida qolgan qiyshiq chiziq kompyuter ildizidan boshlanadigan yo‘l deb o‘qilar edi, bu esa ochuvchi segmentni bo‘shatadi — Escape bilan maydonni yopish uni hech qachon qaytarmas, varaq ombor nomi va belgisini butunlay yo‘qotar edi. Endi boshidagi qiyshiq chiziq faqat birinchi papka haqiqatan mavjud bo‘lgandagina kompyuternikiga hisoblanadi, ochuvchi segment esa maydondan chiqishning har qanday usulida qaytadi.
+- Ombordan tashqarida Obsidian'ning **Detect all file extensions** sozlamasi yoqilmaguncha fayllar yashirilar edi — bu ombor nimani indekslashi haqidagi sozlama bo‘lib, omborda bo‘lmagan papkalarga qo‘llanardi. Endi qaydlaringiz yonidagi `.txt` u yerda har ikki holatda ham ko‘rsatiladi.
+- Ombor nomining ochiladigan ro‘yxati fayl ochilmagan panelda hech narsa qilmas edi, aynan boshqa joyga borish uchun ishlatiladigan panelda.
+- Ombor nomini bosish Obsidian'ning o‘z sarlavhasini maydondagi yo‘l yonida, xiralashgan holda qoldirar edi, u boshqa hech qachon ko‘rinmaydi: qator o‘zini chizilgani bo‘yicha o‘lchaydi, o‘sha payt esa u maydon uchun joy bo‘shatish maqsadida o‘zini bo‘shatgan bo‘ladi.
+
+- Bo‘sh joyni bosish maydonni ochar, so‘ng uni yo‘qotar edi: qaydni Fayl tadqiqotchisida ko‘rsatish kursorni o‘zi bilan olib ketadi, shuning uchun maydon ochiq va belgilangan turar, har bir tugma bosilishi esa daraxtga borar edi.
+- Tizim ildizidan yo‘lni ko‘rsatadigan pog‘ona maydon yonida xuddi shu yo‘lning izini sig‘dirmasdan chizar edi, natijada chuqur yo‘l o‘zining ustiga bo‘yalardi.
 
 ## 1.3.0 — 2026-09-17[^1.3.0]
 
@@ -147,6 +179,7 @@ Birinchi reliz. Qayd sarlavhasidagi fayl nomini ombordagi yo‘lning bosiladigan
 - **Ombordan tashqarida** (sukut bo‘yicha o‘chiq): ombor nomi boshqa omborlaringiz, uy papkasi, fayl tizimi ildizi va ulangan disklarni ochadi. U yerda qulfdan chiqarmaguningizcha hech narsa yozilmaydi, qaydni esa ombordan faqat nusxalab chiqarish mumkin, hech qachon ko‘chirib emas.
 - **45 til.**
 
+[^1.4.0]: 1.3.0 dan beri o‘zgarishlar: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: 1.2.0 dan beri o‘zgarishlar: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: 1.1.2 dan beri o‘zgarishlar: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: 1.1.1 dan beri o‘zgarishlar: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>

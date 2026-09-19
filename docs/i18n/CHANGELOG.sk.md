@@ -1,4 +1,4 @@
-<!-- Preklad CHANGELOG.md — stav: commit 973105b.
+<!-- Preklad CHANGELOG.md — stav: commit 2cbb237.
      Strojový preklad (Claude Opus 5), neskontrolovaný rodenými hovoriacimi.
      Opravy sú vítané; rozhodujúcou verziou je anglický CHANGELOG. -->
 
@@ -7,6 +7,38 @@
 # Zoznam zmien
 
 Každé vydanie pluginu Lure, od najnovšieho. Čo pribudlo od posledného vydania, nájdeš pod *Nevydané*. Verzie nemajú predponu `v`, rovnako ako značky vydaní.
+
+## 1.4.0 — 2026-09-19[^1.4.0]
+
+### Pridané
+
+- **Riadok Klávesové skratky v nastaveniach.** Jeho tlačidlo otvorí *Klávesové skratky* Obsidianu prefiltrované na tento plugin, kde môžeš príkazu *Zamerať lištu cesty* — ktorý sa dodáva bez klávesovej skratky — nejakú priradiť.
+- **Lišta cesty na paneloch bez súboru.** Prázdna karta ukazuje `vault / :blank`, graf `vault / :graph` a každé ďalšie zobrazenie, ktoré nemá čo pomenovať, dostane vlastný štítok s `:` — karta pluginu domovskej karty ukazuje `:home-launcher`. Pole vedľa je adresný riadok: napíš cestu a <kbd>Enter</kbd> ju v tomto paneli otvorí alebo vytvorí. Predtým bol riadok prázdny — plugin skryl vlastný nadpis Obsidianu a nič nedal na jeho miesto.
+- **Stránku možno aj napísať, nielen vybrať** — `:graph` a ostatné sú adresa, nielen položka zoznamu. Dvojbodka nezačína žiadny názov súboru, takže jej napísanie kdekoľvek ich vyvolá a pole má ich farbu namiesto ponuky vytvoriť poznámku, ktorá by sa tak nemohla volať.
+- **Riadok pre vlastné nastavenie Obsidianu *Zobraziť všetky typy súborov***, vedľa pravidla pre súbory s bodkou, keďže obe rozhodujú o tom, čo môže rozbaľovací zoznam uvádzať: hovorí, aby si toto nastavenie hľadal vo vlastných nastaveniach Obsidianu a zapol ho, ak chceš vidieť všetky súbory, a tlačidlo vedľa neho otvorí príslušnú stránku s nastavením odrolovaným do zobrazenia a zablikaným, ako výsledok vyhľadávania v nastaveniach. Pomenované Obsidianovými slovami, vysvetlené v 45 jazykoch.
+- **Koreň trezora uvádza stránky, ktoré môže panel obsahovať** — `:graph`, `:search` a všetky zobrazenia, ktoré registrujú tvoje pluginy, vrátane domovskej karty či kalendára. Vyber jednu a panel ju otvorí, tak ako výber poznámky otvorí poznámku. Zobrazenia, ktoré existujú na zobrazenie súboru, sú vynechané, pretože by nemali čo ukázať.
+- **Oddeľovač samotného trezora otvorí tvoju úvodnú stránku**, ak ju nejaký plugin poskytuje, a je podčiarknutý, aby to naznačil; ďalšie stlačenie zbalí strom súborov a to po ňom vráti presne to, čo bolo otvorené. Bez takého pluginu prvé stlačenie zbalí, ako predtým.
+- **Napíš cestu od koreňa súborového systému.** `/` pred prázdnym poľom ho otvorí namiesto toho, aby sa stratilo, každé ďalšie lomítko v ňom mu patrí a rozbaľovací zoznam uvádza počítač, nie trezor.
+
+### Zmenené
+
+- **F2 a Zamerať lištu cesty stláčajú Tab vo vnútri poľa.** Čokoľvek by tam urobil Tab — ďalší stupeň, doplnenie napísaného, vstup do priečinka — urobia aj oni; odídu iba tam, kde sa Tab vracia na začiatok cesty: F2 na nadpis v texte, príkaz do poznámky. Predtým F2 v poli, do ktorého si písal, začalo znova od názvu a príkaz pole zatvoril.
+- **Krok po odchode z cyklu je koreňový priečinok.** Stlačenie po návrate F2 na nadpis v texte alebo príkazu do poznámky skončí tam, kde končí okruh Tabu — v koreni trezora, s celou cestou v poli a prvým priečinkom označeným — takže žiadny krok okruhu nezostáva len pre Tab.
+- **Zamerať lištu cesty postupuje ako F2.** Otvorí sa na názve namiesto celej cesty, prejde tými istými štyrmi stupňami a stlačenie po poslednom pole zatvorí a vráti kurzor do poznámky — predtým donekonečna kružilo po stupňoch a jediný kláves, ktorý sa k riadku dostal, ho nemohol opustiť.
+- **Obsadený názov sa hlási pri použití, nie pri písaní.** Každý názov písaný smerom k `Notes.md` prechádza názvami, ktoré môžu byť samostatné súbory, a upozornenie predtým blikalo a miznalo písmeno po písmene. To, čo je zle v pravopise názvu, sa naďalej hlási hneď, ako sa napíše.
+- **Oddeľovač, ktorého poznámka priečinka je už otvorená, zobrazí priečinok** namiesto opätovného otvárania toho, čo je na obrazovke — čo jeho druhé stlačenie vždy znamenalo.
+- **Kde sa nachádzaš, je v rozbaľovacom zozname tučné**, nielen modré.
+- **Všetko, čo nie je poznámka, je v rozbaľovacom zozname oranžové**, nielen textové typy, pre ktoré Obsidian nemá zobrazenie. Fialová vyberie poznámky z priečinka so zmiešaným obsahom; jedna farba pre zvyšok povie to isté rýchlejšie.
+
+### Opravené
+
+- **Backspace nad kliknutým priečinkom už neberie meno trezora.** Lomítko, ktoré zostalo na začiatku, sa čítalo ako cesta od koreňa počítača, čo vyprázdni úvodný segment — a zatvorenie poľa Escapom ho nikdy nevrátilo, takže karta natrvalo prišla o názov a ikonu trezora. Úvodné lomítko sa teraz počíta ako koreň počítača, iba ak tam jeho prvý priečinok naozaj je, a úvodný segment sa vráti pri každom spôsobe odchodu z poľa.
+- Mimo trezora boli súbory skryté, ak nebolo zapnuté nastavenie Obsidianu **Rozpoznať všetky prípony súborov** — nastavenie o tom, čo trezor indexuje, použité na priečinky, ktoré v trezore nie sú. `.txt` vedľa tvojich poznámok sa tam zobrazí v každom prípade.
+- Rozbaľovací zoznam názvu trezora nerobil nič na paneli bez súboru, čo je presne ten panel, ktorý by si použil na presun inam.
+- Kliknutie na názov trezora nechalo vlastný nadpis Obsidianu stáť vedľa cesty v poli, zosivený, kde sa inak nikdy nezobrazuje: riadok sa meria podľa toho, čo vykreslil, a v tom okamihu sa vyprázdnil, aby urobil miesto poľu.
+
+- Kliknutie na prázdne miesto otvorilo pole a potom ho stratilo: zobrazenie poznámky v Prieskumníkovi súborov si berie kurzor so sebou, takže pole stálo otvorené a označené, kým každý stlačený kláves išiel do stromu.
+- Stupeň, ktorý ukazuje cestu od koreňa systému, vykreslil vedľa poľa stopu tej istej cesty, neprispôsobenú, takže hlboká cesta bola namaľovaná sama cez seba.
 
 ## 1.3.0 — 2026-09-17[^1.3.0]
 
@@ -146,6 +178,7 @@ Prvé vydanie. Nahrádza názov súboru v hlavičke poznámky klikateľnou a upr
 - **Mimo trezora** (predvolene vypnuté): názov trezora otvorí tvoje ďalšie trezory, domovský priečinok, koreň súborového systému a pripojené jednotky. Tam vonku sa nič nezapíše, kým to neodomkneš, a poznámku možno z trezora iba skopírovať, nikdy nie presunúť.
 - **45 jazykov.**
 
+[^1.4.0]: Zmeny od 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Zmeny od 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Zmeny od 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Zmeny od 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>

@@ -1,4 +1,4 @@
-<!-- CHANGELOG.md çevirisi — durum: commit 973105b.
+<!-- CHANGELOG.md çevirisi — durum: commit 2cbb237.
      Makine çevirisi (Claude Opus 5), ana dili konuşanlarca gözden
      geçirilmedi. Düzeltmeler memnuniyetle karşılanır; belirleyici sürüm
      İngilizce CHANGELOG'dur. -->
@@ -8,6 +8,38 @@
 # Değişiklik günlüğü
 
 Lure'un her sürümü, en yenisi en üstte. Son sürümden bu yana gelenler *Yayımlanmamış* başlığı altındadır. Sürüm numaraları, sürüm etiketleriyle uyumlu olarak `v` öneki taşımaz.
+
+## 1.4.0 — 2026-09-19[^1.4.0]
+
+### Eklenenler
+
+- **Ayarlarda bir Kısayollar satırı.** Düğmesi, Obsidian'ın *Kısayollar* sayfasını bu eklentiye göre süzülmüş olarak açar; tuşsuz gelen *Yol çubuğuna odaklan* komutuna orada bir tuş atanabilir.
+- **Dosya tutmayan bölmelerde bir yol çubuğu.** Boş bir sekme `vault / :blank`, grafik `vault / :graph` yazar; adlandırılacak bir şeyi olmayan her diğer görünüm kendi `:` etiketini alır — bir ana sayfa eklentisinin kendi sekmesi `:home-launcher` yazar. Yanındaki alan bir adres çubuğudur: bir yol yazın, <kbd>Enter</kbd> onu o bölmede açar ya da oluşturur. Bundan önce satır boştu — eklenti Obsidian'ın kendi başlığını gizliyor, yerine hiçbir şey koymuyordu.
+- **Bir sayfa seçilebildiği gibi yazılabilir de** — `:graph` ve diğerleri yalnızca birer liste girdisi değil, bir adrestir. İki nokta üst üste hiçbir dosya adını başlatmaz; bu yüzden herhangi bir yerde yazmak onları çağırır ve alan, hiçbir şeyin adı olamayacak bir not oluşturmayı önermek yerine onların rengine bürünür.
+- **Obsidian'ın kendi *Tüm dosya türlerini göster* ayarı için bir satır**, nokta dosyası kuralının yanında, çünkü ikisi de bir açılır listenin neleri gösterebileceğini belirler: bu ayarı Obsidian'ın kendi ayarlarında aramanızı ve her dosyayı görmek için açmanızı söyler; yanındaki düğme de o sayfayı, ayar görünüme kaydırılmış ve bir ayar arama sonucundaki gibi yanıp sönecek şekilde açar. Obsidian'ın sözcükleriyle adlandırılmış, 45 dilde açıklanmış.
+- **Kasa kökü, bir bölmenin tutabileceği sayfaları listeler** — `:graph`, `:search` ve eklentilerinizin kaydettiği tüm görünümler; bir ana sekme ya da bir takvim de bunlar arasındadır. Birini seçin, bölme onu açar; tıpkı bir notu seçince notun açılması gibi. Yalnızca bir dosyayı göstermek için var olan görünümler dışarıda bırakılır, çünkü gösterecekleri bir şey olmazdı.
+- **Kasanın kendi ayırıcısı, bir eklenti sağlıyorsa başlangıç sayfanızı açar** ve bunu belirtmek için altı çizilir; ondan sonraki basış dosya ağacını katlar, onun ardından gelen basış da açık olanı tam olarak geri getirir. Böyle bir eklenti yoksa ilk basış eskisi gibi katlar.
+- **Dosya sistemi kökünden bir yol yazın.** Boş bir alanın önündeki `/` yutulmak yerine bir tane açar, içindeki sonraki her eğik çizgi ona aittir ve açılır liste kasayı değil makineyi listeler.
+
+### Değişenler
+
+- **F2 ve Yol çubuğuna odaklan, alanın içinde Tab'a basar.** Tab orada ne yapacaksa — sonraki basamak, yazdığınızı tamamlamak, bir klasöre girmek — onlar da yapar; yalnızca Tab'ın yolun başına geri döndüğü yerde çıkarlar: F2 satır içi başlığa, komut nota. Önceden, içine yazı yazdığınız bir alanda F2 adın başına dönüyor, komut da alanı kapatıyordu.
+- **Döngü çıktıktan sonraki adım kök klasördür.** F2'nin satır içi başlığa dönüşünden ya da komutun nota dönüşünden sonraki basış, Tab'ın turunun indiği yere iner — kasa kökü, alanda tüm yol, ilk klasörü işaretli — böylece halkanın hiçbir adımı yalnızca Tab'a bırakılmaz.
+- **Yol çubuğuna odaklan artık F2 gibi ilerler.** Tüm yol yerine ad üzerinde açılır, aynı dört basamağı izler ve sonuncudan sonraki basış alanı kapatıp imleci nota geri koyar — önceden basamakları sonsuza dek dönüyor, satıra ulaşan tek tuş da ondan çıkamıyordu.
+- **Alınmış bir ad, yazarken değil kullandığınızda bildirilir.** `Notes.md`'ye doğru yazılan her ad, kendi başına dosya olabilecek adlardan geçer ve uyarı harf harf belirip kayboluyordu. Bir adın yazımındaki hata ise yazıldığı anda söylenmeye devam eder.
+- **Klasör notu zaten açık olan bir ayırıcı klasörü gösterir**; ekrandakini yeniden açmaz — ikinci basışın hep anlamı buydu.
+- **Bulunduğunuz yer açılır listede kalındır**, yalnızca mavi değil.
+- **Not olmayan her şey açılır listede turuncudur**, yalnızca Obsidian'ın görünümü olmayan metin türleri değil. Mor, karışık içerikli bir klasörde notları ayırır; geri kalanlar için tek bir renk aynı şeyi daha hızlı söyler.
+
+### Düzeltilenler
+
+- **Tıklanmış bir klasörün üzerinde Backspace artık kasanın adını almıyor.** Başta kalan eğik çizgi makinenin kökünden bir yol olarak okunuyordu; bu da açılış bölümünü boşaltır — ve alanı Escape ile kapatmak onu hiç geri koymuyordu, böylece sekme kasa adını ve simgesini kalıcı olarak yitiriyordu. Baştaki eğik çizgi artık yalnızca ilk klasörü gerçekten varsa makineye ait sayılır ve açılış bölümü alandan çıkışın her yolunda geri gelir.
+- Kasanın dışında, Obsidian'ın **Tüm dosya uzantılarını algıla** ayarı açık değilse dosyalar gizleniyordu — bu, kasanın neyi dizinlediğiyle ilgili bir ayardır ve kasada olmayan klasörlere uygulanıyordu. Notlarınızın yanındaki bir `.txt` artık orada her iki durumda da listelenir.
+- Kasa adının açılır listesi dosya tutmayan bir bölmede hiçbir şey yapmıyordu; oysa başka bir yere gitmek için kullanacağınız bölme tam olarak odur.
+- Kasa adına tıklamak, alanda yolun yanında Obsidian'ın kendi başlığını, başka hiçbir zaman görünmediği yerde gri olarak bırakıyordu: satır kendini çizdiği şeye göre ölçer ve o anda alana yer açmak için kendini boşaltmıştır.
+
+- Boş alana tıklamak alanı açıyor ve sonra kaybediyordu: notu Dosya Gezgini'nde göstermek imleci de beraberinde alır, böylece alan açık ve işaretli dururken her tuş vuruşu ağaca gidiyordu.
+- Sistem kökünden yolu gösteren basamak, alanın yanına aynı yolun bir izini sığdırılmadan çiziyordu, bu yüzden derin bir yol kendi üzerine boyanıyordu.
 
 ## 1.3.0 — 2026-09-17[^1.3.0]
 
@@ -147,6 +179,7 @@ Lure'un her sürümü, en yenisi en üstte. Son sürümden bu yana gelenler *Yay
 - **Kasanın dışında** (öntanımlı olarak kapalı): kasa adı diğer kasalarınızı, ev klasörünüzü, dosya sistemi kökünü ve bağlı sürücüleri açar. Siz kilidini açana kadar orada hiçbir şey yazılmaz ve bir not kasanın dışına yalnızca kopyalanabilir, asla taşınamaz.
 - **45 dil.**
 
+[^1.4.0]: 1.3.0'dan bu yana değişiklikler: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: 1.2.0'dan bu yana değişiklikler: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: 1.1.2'den bu yana değişiklikler: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: 1.1.1'den bu yana değişiklikler: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>

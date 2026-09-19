@@ -1,4 +1,4 @@
-<!-- Käännös tiedostosta CHANGELOG.md — tilanne: commit 973105b.
+<!-- Käännös tiedostosta CHANGELOG.md — tilanne: commit 2cbb237.
      Konekäännös (Claude Opus 5), jota äidinkieliset puhujat eivät ole
      tarkastaneet. Korjaukset ovat tervetulleita; englanninkielinen
      CHANGELOG on ratkaiseva versio. -->
@@ -8,6 +8,38 @@
 # Muutosloki
 
 Kaikki Luren julkaisut, uusin ensin. Se, mikä on valmistunut viimeisimmän julkaisun jälkeen, on kohdassa *Julkaisematon*. Versionumeroissa ei ole `v`-etuliitettä, samoin kuin julkaisutunnisteissa.
+
+## 1.4.0 — 2026-09-19[^1.4.0]
+
+### Lisätty
+
+- **Pikanäppäimet-rivi asetuksissa.** Sen painike avaa Obsidianin *Pikanäppäimet*-näkymän suodatettuna tähän lisäosaan, jossa komennolle *Kohdista polkupalkkiin* — joka toimitetaan ilman näppäintä — voi antaa sellaisen.
+- **Polkupalkki paneeleissa, joissa ei ole tiedostoa.** Tyhjä välilehti näyttää `vault / :blank`, graafi `vault / :graph`, ja jokainen muu näkymä, jolla ei ole nimettävää, saa oman `:`-tunnisteensa — kotivälilehtilisäosan oma välilehti näyttää `:home-launcher`. Sen vieressä oleva kenttä on osoiterivi: kirjoita polku ja <kbd>Enter</kbd> avaa sen kyseisessä paneelissa tai luo sen. Aiemmin rivi oli tyhjä — lisäosa piilotti Obsidianin oman otsikon eikä asettanut mitään sen tilalle.
+- **Sivun voi kirjoittaa yhtä hyvin kuin valita** — `:graph` ja muut ovat osoite, eivät vain luettelon kohta. Kaksoispiste ei aloita mitään tiedostonimeä, joten sen kirjoittaminen mihin tahansa kutsuu ne esiin, ja kenttä saa niiden värin sen sijaan, että tarjoaisi luomaan muistiinpanon, jolle mikään ei voisi olla nimeksi.
+- **Rivi Obsidianin omalle asetukselle *Näytä kaikki tiedostotyypit***, pistetiedostosäännön vieressä, koska molemmat ratkaisevat, mitä pudotusvalikko saa listata: se kehottaa etsimään tuota asetusta Obsidianin omista asetuksista ja ottamaan sen käyttöön nähdäkseen kaikki tiedostot, ja sen vieressä oleva painike avaa kyseisen sivun asetus vieritettynä näkyviin ja välähtäen, kuten asetushaun tulos. Nimetty Obsidianin sanoin, selitetty 45 kielellä.
+- **Holvin juuri listaa paneelin sisältämät sivut** — `:graph`, `:search` ja mitkä tahansa näkymät, jotka lisäosasi rekisteröivät, kotivälilehti tai kalenteri niiden joukossa. Valitse yksi, niin paneeli avaa sen, kuten muistiinpanon valitseminen avaa muistiinpanon. Näkymät, jotka on olemassa tiedoston näyttämistä varten, jätetään pois, koska niillä ei olisi mitään näytettävää.
+- **Holvin oma erotin avaa aloitussivusi**, jos lisäosa sellaisen tarjoaa, ja se on alleviivattu sen merkiksi; seuraava painallus taittaa tiedostopuun pois, ja sitä seuraava palauttaa täsmälleen sen, mikä oli auki. Ilman tällaista lisäosaa ensimmäinen painallus taittaa puun kuten ennenkin.
+- **Kirjoita polku tiedostojärjestelmän juuresta.** `/` tyhjän kentän edessä avaa sellaisen sen sijaan, että se nieltäisiin, jokainen sen jälkeinen vinoviiva kuuluu siihen, ja pudotusvalikko listaa koneen holvin sijaan.
+
+### Muutettu
+
+- **F2 ja Kohdista polkupalkkiin painavat Tab-näppäintä kentän sisällä.** Mitä tahansa Tab siellä tekisikin — seuraava porras, kirjoitetun täydentäminen, kansioon astuminen — ne tekevät myös; vain siellä, missä Tab kiertää takaisin polun alkuun, ne poistuvat: F2 sisäiseen otsikkoon, komento muistiinpanoon. Aiemmin kenttä, johon olit kirjoittanut, sai F2:n aloittamaan nimestä alusta ja komennon sulkemaan kentän.
+- **Kierrosta poistumista seuraava askel on juurikansio.** F2:n paluun sisäiseen otsikkoon tai komennon paluun muistiinpanoon jälkeinen painallus päätyy sinne, minne Tabin kierroskin — holvin juureen, koko polku kentässä, sen ensimmäinen kansio merkittynä — joten yksikään kehän askel ei jää pelkän Tabin varaan.
+- **Kohdista polkupalkkiin kulkee kuten F2.** Se avautuu nimeen koko polun sijaan, käyttää samoja neljää porrasta, ja viimeisen jälkeinen painallus sulkee kentän ja palauttaa kohdistimen muistiinpanoon — aiemmin se kiersi portaita loputtomasti, eikä ainoa riviin yltävä näppäin päässyt siitä pois.
+- **Varattu nimi ilmoitetaan, kun sitä käytät, ei kun kirjoitat sitä.** Jokainen kohti `Notes.md`-nimeä kirjoitettu nimi kulkee nimien kautta, jotka voivat olla omia tiedostojaan, ja varoitus välähti esiin ja katosi kirjain kirjaimelta. Se, mikä nimen kirjoitusasussa on vialla, sanotaan yhä sitä mukaa kuin se kirjoitetaan.
+- **Erotin, jonka kansiomuistiinpano on jo auki, paljastaa kansion** sen sijaan, että avaisi uudelleen sen, mikä on jo ruudulla — mitä sen toinen painallus on aina tarkoittanut.
+- **Missä olet, on lihavoitu pudotusvalikossa**, ei vain sinisellä.
+- **Kaikki, mikä ei ole muistiinpano, on oranssi pudotusvalikossa**, ei vain tekstityypit, joille Obsidianilla ei ole näkymää. Violetti poimii muistiinpanot sekalaisen kansion sisällöstä; yksi väri muulle sanoo saman nopeammin.
+
+### Korjattu
+
+- **Askelpalautin klikatun kansion päällä ei enää vie holvin nimeä pois.** Etuosaan jäänyt vinoviiva luettiin poluksi koneen juuresta, mikä tyhjentää avaussegmentin — eikä kentän sulkeminen Escapella koskaan palauttanut sitä, joten välilehti menetti holvin nimen ja kuvakkeen pysyvästi. Alkuvinoviiva lasketaan nyt koneen juureksi vain, kun sen ensimmäinen kansio todella on olemassa, ja avaussegmentti palaa jokaisella kentästä poistumistavalla.
+- Holvin ulkopuolella tiedostot piilotettiin, ellei Obsidianin **Tunnista kaikki tiedostopäätteet** ollut päällä — asetus koskee sitä, mitä holvi indeksoi, mutta sitä sovellettiin kansioihin, jotka eivät ole holvissa. Muistiinpanojesi vieressä oleva `.txt` listataan siellä joka tapauksessa.
+- Holvin nimen pudotusvalikko ei tehnyt mitään paneelissa, jossa ei ole tiedostoa, ja juuri sellaista paneelia käyttäisit siirtyäksesi muualle.
+- Holvin nimen napsauttaminen jätti Obsidianin oman otsikon polun viereen kenttään harmaana, missä se ei näy muulloin: rivi mittaa itsensä sen mukaan, mitä se on piirtänyt, ja sillä hetkellä se on tyhjentänyt itsensä tehdäkseen tilaa kentälle.
+
+- Tyhjän tilan napsauttaminen avasi kentän ja menetti sen sitten: muistiinpanon paljastaminen tiedostoselaimessa vie kohdistimen mukanaan, joten kenttä oli auki ja merkittynä samalla, kun jokainen näppäinpainallus meni puuhun.
+- Porras, joka näyttää polun järjestelmän juuresta, piirsi kentän viereen jäljen samasta polusta sovittamatta sitä, joten syvä polku maalautui itsensä päälle.
 
 ## 1.3.0 — 2026-09-17[^1.3.0]
 
@@ -147,6 +179,7 @@ Ensimmäinen julkaisu. Korvaa muistiinpanon otsikkorivillä olevan tiedostonimen
 - **Holvin ulkopuolella** (oletuksena pois päältä): holvin nimi avaa muut holvisi, kotikansion, tiedostojärjestelmän juuren ja liitetyt asemat. Mitään siellä ei kirjoiteta, ennen kuin avaat lukituksen, ja muistiinpanon voi vain kopioida holvista ulos, ei koskaan siirtää.
 - **45 kieltä.**
 
+[^1.4.0]: Muutokset version 1.3.0 jälkeen: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Muutokset version 1.2.0 jälkeen: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Muutokset version 1.1.2 jälkeen: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Muutokset version 1.1.1 jälkeen: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>

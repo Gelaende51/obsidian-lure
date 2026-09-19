@@ -1,4 +1,4 @@
-<!-- Traducere a CHANGELOG.md — stare: commit 973105b.
+<!-- Traducere a CHANGELOG.md — stare: commit 2cbb237.
      Traducere automată (Claude Opus 5), nerevizuită de vorbitori nativi.
      Corecturile sunt binevenite; versiunea de referință este jurnalul de
      modificări în engleză. -->
@@ -8,6 +8,38 @@
 # Jurnal de modificări
 
 Fiecare versiune a Lure, cea mai nouă prima. Ce a apărut de la ultima versiune se află sub *Nelansate*. Versiunile nu poartă prefixul `v`, la fel ca etichetele de lansare.
+
+## 1.4.0 — 2026-09-19[^1.4.0]
+
+### Adăugat
+
+- **Un rând Taste rapide în setări.** Butonul lui deschide *Taste rapide* din Obsidian filtrat pe acest plugin, unde *Focalizează bara de cale* — care vine fără o tastă — poate primi una.
+- **O bară de cale pe panourile care nu conțin niciun fișier.** O filă goală se citește `vault / :blank`, graful `vault / :graph`, iar orice altă vizualizare fără nimic de numit primește propria etichetă `:` — fila proprie a unui plugin de pagină de start se citește `:home-launcher`. Câmpul de lângă ea este o bară de adrese: tastează o cale și <kbd>Enter</kbd> o deschide în acel panou sau o creează. Înainte, rândul era gol — pluginul ascundea titlul propriu al Obsidian și nu punea nimic în locul lui.
+- **O pagină poate fi tastată, nu doar aleasă** — `:graph` și celelalte sunt o adresă, nu doar o intrare din listă. Două puncte nu încep niciun nume de fișier, așa că tastându-le oriunde le invoci, iar câmpul ia culoarea lor în loc să se ofere să creeze o notă care nu ar putea purta un asemenea nume.
+- **Un rând pentru *Afișează toate tipurile de fișiere*** din Obsidian, lângă regula fișierelor cu punct, deoarece ambele decid ce poate lista o listă derulantă: spune să cauți acea setare în setările proprii ale Obsidian și s-o activezi pentru a vedea toate fișierele, iar butonul de lângă deschide acea pagină cu setarea derulată în vedere și clipită, ca un rezultat al căutării în setări. Numit cu cuvintele Obsidian, explicat în 45 de limbi.
+- **Rădăcina seifului listează paginile pe care le poate conține un panou** — `:graph`, `:search` și orice vizualizări înregistrează pluginurile tale, printre ele o filă de start sau un calendar. Alege una și panoul o deschide, așa cum alegerea unei note deschide nota. Vizualizările care există ca să afișeze un fișier sunt omise, pentru că nu ar avea ce să afișeze.
+- **Delimitatorul propriu al seifului deschide pagina ta de start**, acolo unde un plugin o oferă, și este subliniat ca să o spună; apăsarea următoare strânge arborele de fișiere, iar cea de după readuce exact ce era deschis. Fără un astfel de plugin, prima apăsare strânge, ca înainte.
+- **Tastează o cale de la rădăcina sistemului de fișiere.** Un `/` în fața unui câmp gol deschide una în loc să fie înghițit, fiecare bară oblică ulterioară îi aparține, iar lista derulantă listează mașina, nu seiful.
+
+### Modificat
+
+- **F2 și Focalizează bara de cale apasă Tab în câmp.** Orice ar face Tab acolo — următoarea treaptă, completarea a ceea ce ai tastat, intrarea într-un dosar — fac și ele; ies doar acolo unde Tab se întoarce la începutul căii, F2 spre titlul din text, comanda spre notă. Înainte, un câmp în care tastaseși făcea ca F2 să înceapă din nou pe nume, iar comanda să închidă câmpul.
+- **Pasul de după ce ciclul iese este dosarul rădăcină.** Apăsarea de după întoarcerea lui F2 la titlul din text, sau a comenzii la notă, aterizează unde aterizează și turul lui Tab — rădăcina seifului, calea întreagă în câmp, primul ei dosar marcat — astfel încât niciun pas al inelului nu rămâne doar pentru Tab.
+- **Focalizează bara de cale parcurge treptele ca F2.** Se deschide pe nume în loc de calea întreagă, parcurge aceleași patru trepte, iar apăsarea de după ultima închide câmpul și readuce cursorul în notă — înainte, învârtea treptele la nesfârșit, iar singura tastă care ajungea la rând nu îl putea părăsi.
+- **Un nume deja luat este semnalat când îl folosești, nu cât îl tastezi.** Fiecare nume tastat către `Notes.md` trece prin nume care pot fi fișiere de sine stătătoare, iar avertismentul obișnuia să apară și să dispară literă cu literă. Ce nu e în regulă cu ortografia unui nume se spune în continuare pe măsură ce e scris.
+- **Un delimitator al cărui dosar-notă este deja deschis dezvăluie dosarul** în loc să redeschidă ce e pe ecran — ceea ce a însemnat dintotdeauna a doua lui apăsare.
+- **Locul unde te afli este îngroșat într-o listă derulantă**, nu doar albastru.
+- **Tot ce nu este notă este portocaliu într-o listă derulantă**, nu doar tipurile de text pentru care Obsidian nu are vizualizare. Violetul scoate notele dintr-un dosar cu conținut mixt; o singură culoare pentru restul spune același lucru mai repede.
+
+### Corectat
+
+- **Backspace peste un dosar pe care s-a dat clic nu mai ia numele seifului.** Bara oblică rămasă în față se citea ca o cale de la rădăcina mașinii, ceea ce golește segmentul de început — iar închiderea câmpului cu Escape nu îl punea niciodată înapoi, așa că fila pierdea definitiv numele și pictograma seifului. O bară oblică inițială contează acum ca a mașinii doar când primul ei dosar chiar există, iar segmentul de început revine la orice ieșire din câmp.
+- În afara seifului, fișierele erau ascunse dacă nu era activată opțiunea **Detectează toate extensiile de fișiere** din Obsidian — o setare despre ce indexează seiful, aplicată unor dosare care nu sunt în seif. Un `.txt` de lângă notele tale este listat acolo în ambele cazuri.
+- Lista derulantă a numelui seifului nu făcea nimic pe un panou fără fișier, tocmai panoul pe care l-ai folosi ca să mergi în altă parte.
+- Clic pe numele seifului lăsa titlul propriu al Obsidian lângă cale în câmp, estompat, unde nu apare în niciun alt moment: rândul se măsoară după ce a desenat, iar în acel moment s-a golit ca să facă loc câmpului.
+
+- Clic pe spațiul gol deschidea câmpul și apoi îl pierdea: dezvăluirea notei în Explorator de fișiere ia cursorul cu ea, așa că câmpul rămânea deschis și marcat în timp ce fiecare apăsare de tastă mergea în arbore.
+- Treapta care arată calea de la rădăcina sistemului desena lângă câmp o urmă a aceleiași căi, nepotrivită, astfel încât o cale adâncă era pictată peste ea însăși.
 
 ## 1.3.0 — 2026-09-17[^1.3.0]
 
@@ -147,6 +179,7 @@ Prima lansare. Înlocuiește numele fișierului din antetul unei notițe cu un t
 - **În afara seifului** (dezactivat implicit): numele seifului deschide celelalte seifuri, dosarul personal, rădăcina sistemului de fișiere și unitățile montate. Nimic de acolo nu este scris până nu deblochezi, iar o notiță poate fi doar copiată în afara seifului, niciodată mutată.
 - **45 de limbi.**
 
+[^1.4.0]: Modificări de la 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Modificări de la 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Modificări de la 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Modificări de la 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>

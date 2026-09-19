@@ -1,4 +1,4 @@
-<!-- A CHANGELOG.md fordítása — állapot: 973105b commit.
+<!-- A CHANGELOG.md fordítása — állapot: 2cbb237 commit.
      Gépi fordítás (Claude Opus 5), anyanyelvi lektorálás nélkül.
      A javításokat szívesen fogadjuk; az irányadó változat az angol
      CHANGELOG. -->
@@ -8,6 +8,38 @@
 # Változásnapló
 
 A Lure minden kiadása, a legújabbal kezdve. Ami a legutóbbi kiadás óta került be, a *Kiadatlan* szakaszban található. A verziószámok elé nem kerül `v` előtag, így megegyeznek a kiadási címkékkel.
+
+## 1.4.0 — 2026-09-19[^1.4.0]
+
+### Hozzáadva
+
+- **Gyorsbillentyűk sor a beállításokban.** A gombja az Obsidian *Gyorsbillentyűk* oldalát nyitja meg erre a bővítményre szűrve, ahol a *Fókusz az útvonalsávra* parancshoz — amely alapból billentyű nélkül érkezik — rendelhetsz egyet.
+- **Útvonalsáv a fájlt nem tartalmazó paneleken.** Az üres lapon `vault / :blank` áll, a gráfon `vault / :graph`, és minden más nézet, amelynek nincs mit megneveznie, saját `:` címkét kap — egy kezdőlap-bővítmény saját lapján `:home-launcher` áll. A mellette lévő mező címsor: írj be egy útvonalat, és az <kbd>Enter</kbd> megnyitja abban a panelben, vagy létrehozza. Korábban a sor üres volt — a bővítmény elrejtette az Obsidian saját címét, és semmit sem tett a helyére.
+- **Az oldalakat be is lehet gépelni, nem csak kiválasztani** — a `:graph` és a többi cím, nem csupán listaelem. A kettőspont egyetlen fájlnevet sem kezd, ezért bárhol beírva előhívja őket, és a mező az ő színüket veszi fel ahelyett, hogy olyan jegyzet létrehozását kínálná, amelyet semmilyen néven nem lehetne nevezni.
+- **Sor az Obsidian saját *Az összes fájltípus megjelenítése* beállításához** a pontfájl-szabály mellett, mivel mindkettő azt határozza meg, mit listázhat egy legördülő menü: azt mondja, hogy keresd ezt a beállítást az Obsidian saját beállításai között, és kapcsold be, hogy minden fájl látszódjon, a mellette lévő gomb pedig megnyitja azt az oldalt úgy, hogy a beállítás láthatóvá görgetődik és felvillan, mint egy beállításkeresési találat. Az Obsidian szavaival nevezve, 45 nyelven magyarázva.
+- **A széf gyökere felsorolja a panel által megjeleníthető oldalakat** — `:graph`, `:search`, és mindazokat a nézeteket, amelyeket a bővítményeid regisztrálnak, köztük egy kezdőlapot vagy egy naptárat. Válassz ki egyet, és a panel megnyitja, ahogy egy jegyzet kiválasztásakor a jegyzetet. A kizárólag fájlok megjelenítésére szolgáló nézetek kimaradnak, mert nem lenne mit mutatniuk.
+- **A széf saját elválasztója megnyitja a kezdőoldaladat**, ha valamelyik bővítmény biztosít ilyet, és aláhúzás jelzi ezt; az utána következő lenyomás összecsukja a fájlfát, az azt követő pedig pontosan azt állítja vissza, ami nyitva volt. Ilyen bővítmény nélkül az első lenyomás összecsuk, mint korábban.
+- **Írj be útvonalat a fájlrendszer gyökerétől.** Egy üres mező előtt álló `/` ahelyett, hogy elnyelődne, ilyet nyit meg, benne minden további perjel hozzá tartozik, a legördülő menü pedig a gépet listázza, nem a széfet.
+
+### Módosítva
+
+- **Az F2 és a Fókusz az útvonalsávra a mezőn belül Tabot nyom.** Amit a Tab ott tenne — a következő fok, a beírtak kiegészítése, belépés egy mappába —, azt ők is megteszik; csak ott lépnek ki, ahol a Tab visszaugrik az útvonal elejére: az F2 a beágyazott címre, a parancs a jegyzetre. Korábban egy olyan mezőben, amelybe már gépeltél, az F2 elölről kezdte a nevet, a parancs pedig bezárta a mezőt.
+- **A ciklus elhagyása utáni lépés a gyökérmappa.** Az F2-nek a beágyazott címre való visszatérése, illetve a parancsnak a jegyzetre való visszatérése utáni lenyomás oda visz, ahová a Tab körbeugrása — a széf gyökerére, a teljes útvonal a mezőben, az első mappája megjelölve —, így a körnek nem marad olyan lépése, amelyet csak a Tab érne el.
+- **A Fókusz az útvonalsávra úgy jár, mint az F2.** A teljes útvonal helyett a néven nyílik meg, ugyanazt a négy fokot járja be, és az utolsó után következő lenyomás bezárja a mezőt, a kurzort pedig visszateszi a jegyzetbe — korábban örökké körbejárta a fokokat, és az egyetlen billentyű, amely elérte a sort, nem tudott kilépni belőle.
+- **A már foglalt nevet akkor jelzi, amikor használod, nem gépelés közben.** Minden `Notes.md` felé gépelt név olyan neveken halad át, amelyek külön fájlok is lehetnek, és a figyelmeztetés betűről betűre felvillant, majd eltűnt. Azt, ha egy név helyesírása hibás, továbbra is jelzi, ahogy leírod.
+- **Az az elválasztó, amelynek mappajegyzete már meg van nyitva, felfedi a mappát** ahelyett, hogy újra megnyitná azt, ami a képernyőn van — ez volt mindig is a második lenyomás jelentése.
+- **A hely, ahol vagy, félkövér a legördülő menüben**, nem csupán kék.
+- **Minden, ami nem jegyzet, narancssárga a legördülő menüben**, nem csak azok a szövegtípusok, amelyekhez az Obsidiannak nincs nézete. A lila kiemeli a jegyzeteket egy vegyes tartalmú mappában; a többire egyetlen szín ugyanezt mondja gyorsabban.
+
+### Javítva
+
+- **A Backspace egy rákattintott mappán már nem viszi el a széf nevét.** Az elöl maradt perjel a gép gyökeréből induló útvonalnak számított, ami kiüríti a nyitó szegmenst — és a mező Escape-pel való bezárása sosem tette vissza, így a lap végleg elveszítette a széf nevét és ikonját. A kezdő perjel mostantól csak akkor számít a gépének, ha az első mappája tényleg létezik, a nyitó szegmens pedig a mezőből való minden kilépéskor visszatér.
+- A széfen kívül a fájlok el voltak rejtve, hacsak az Obsidian **Az összes fájlkiterjesztés észlelése** beállítása nem volt bekapcsolva — ez a széf indexelését érintő beállítás, amelyet olyan mappákra alkalmazott, amelyek nincsenek a széfben. A jegyzeteid mellett lévő `.txt` fájl odakint mindkét esetben megjelenik a listában.
+- A széf nevének legördülő menüje nem csinált semmit a fájlt nem tartalmazó panelen, pedig éppen ezt a panelt használnád arra, hogy máshová menj.
+- A széf nevére kattintva az Obsidian saját címe a mezőben az útvonal mellett maradt, szürkén, ahol máskor sosem jelenik meg: a sor abból méri magát, amit kirajzolt, és ebben a pillanatban éppen kiürítette magát, hogy helyet adjon a mezőnek.
+
+- Az üres helyre kattintás megnyitotta a mezőt, majd elvesztette: a jegyzet felfedése a Fájlkezelőben magával viszi a kurzort, így a mező nyitva és megjelölve állt, miközben minden billentyűleütés a fába ment.
+- A rendszergyökértől mutatott útvonalat megjelenítő fok a mező mellé ugyanannak az útvonalnak egy illesztetlen nyomvonalát rajzolta, így egy mély útvonal önmagára lett festve.
 
 ## 1.3.0 — 2026-09-17[^1.3.0]
 
@@ -147,6 +179,7 @@ Első kiadás. A jegyzet fejlécében lévő fájlnevet a széfbeli útvonalát 
 - **A széfen kívül** (alapból kikapcsolva): a széf neve megnyitja a többi széfedet, a saját mappádat, a fájlrendszer gyökerét és a csatolt meghajtókat. Odakint semmi sem íródik, amíg fel nem oldod, egy jegyzetet pedig csak kimásolni lehet a széfből, áthelyezni sosem.
 - **45 nyelv.**
 
+[^1.4.0]: Változások az 1.3.0 óta: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Változások az 1.2.0 óta: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Változások az 1.1.2 óta: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Változások az 1.1.1 óta: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>

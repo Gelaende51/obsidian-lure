@@ -1,4 +1,4 @@
-<!-- Traducció de CHANGELOG.md — estat: commit 973105b.
+<!-- Traducció de CHANGELOG.md — estat: commit 2cbb237.
      Traducció automàtica (Claude Opus 5), no revisada per parlants nadius.
      Les correccions són benvingudes; el CHANGELOG en anglès és la versió
      de referència. -->
@@ -8,6 +8,38 @@
 # Registre de canvis
 
 Cada versió de Lure, de la més nova a la més antiga. El que ha arribat des de la darrera versió és a *Sense publicar*. Les versions no porten el prefix `v`, igual que les etiquetes de les versions.
+
+## 1.4.0 — 2026-09-19[^1.4.0]
+
+### Afegit
+
+- **Una fila de Dreceres de teclat a la configuració.** El botó obre les *Dreceres de teclat* d'Obsidian filtrades per aquest connector, on es pot assignar una tecla a *Enfoca la barra de camí* — que ve sense cap.
+- **Una barra de camí als panells que no contenen cap fitxer.** Una pestanya buida diu `vault / :blank`, el graf `vault / :graph`, i qualsevol altra vista sense res a nomenar rep la seva pròpia etiqueta amb `:` — la pestanya pròpia d'un connector de pestanya d'inici diu `:home-launcher`. El camp del costat és una barra d'adreces: escriu un camí i <kbd>Enter</kbd> l'obre en aquell panell, o el crea. Abans la fila quedava en blanc — el connector amagava el títol propi d'Obsidian i no hi posava res en el seu lloc.
+- **Una pàgina es pot escriure i també triar** — `:graph` i les altres són una adreça, no només una entrada de llista. Els dos punts no comencen cap nom de fitxer, així que escriure'n un en qualsevol lloc les convoca, i el camp es vesteix del seu color en lloc d'oferir crear una nota que no es podria dir així.
+- **Una fila per a *Mostra tots els tipus de fitxer* d'Obsidian**, al costat de la regla dels fitxers que comencen amb punt, ja que totes dues decideixen què pot llistar un menú desplegable: diu que cerquis aquesta opció a la configuració d'Obsidian i l'activis per veure tots els fitxers, i el botó del costat obre aquella pàgina amb l'opció desplaçada a la vista i ressaltada, com faria el resultat d'una cerca a la configuració. Anomenada amb les paraules d'Obsidian, explicada en 45 llengües.
+- **L'arrel del cofre llista les pàgines que un panell pot contenir** — `:graph`, `:search` i les vistes que registrin els teus connectors, entre elles una pestanya d'inici o un calendari. Tria'n una i el panell l'obre, com triar una nota obre la nota. Les vistes que existeixen per mostrar un fitxer s'exclouen, perquè no tindrien res per mostrar.
+- **El delimitador propi del cofre obre la teva pàgina d'inici**, si un connector en proporciona una, i es subratlla per indicar-ho; la pulsació següent plega l'arbre de fitxers, i la que ve després restaura exactament el que hi havia obert. Sense aquest connector, la primera pulsació plega, com abans.
+- **Escriu un camí des de l'arrel del sistema de fitxers.** Un `/` davant d'un camp buit n'obre un en lloc de ser empassat, cada barra posterior hi pertany, i el menú desplegable llista la màquina en lloc del cofre.
+
+### Canviat
+
+- **F2 i Enfoca la barra de camí premen Tab dins del camp.** Tot el que Tab hi faria — el graó següent, completar el que has escrit, entrar en una carpeta — ho fan també; només allà on Tab torna al principi del camí se'n van, F2 cap al títol dins la nota, l'ordre cap a la nota. Abans, un camp en què haguessis escrit feia que F2 tornés a començar pel nom i que l'ordre tanqués el camp.
+- **El pas després de sortir del cicle és la carpeta arrel.** La pulsació posterior al retorn de F2 al títol dins la nota, o al retorn de l'ordre a la nota, arriba on arriba la volta de Tab — l'arrel del cofre, amb el camí sencer al camp i la seva primera carpeta marcada — de manera que cap pas de l'anell queda només per a Tab.
+- **Enfoca la barra de camí recorre com F2.** S'obre sobre el nom en lloc de tot el camí, pren els mateixos quatre graons, i la pulsació posterior a l'últim tanca el camp i torna el cursor a la nota — abans, giravoltava pels graons indefinidament i l'única tecla que arribava a la fila no la podia deixar.
+- **Un nom ocupat s'avisa quan l'uses, no mentre l'escrius.** Cada nom escrit cap a `Notes.md` passa per noms que poden ser fitxers propis, i l'avís solia aparèixer i desaparèixer lletra a lletra. El que està malament en l'ortografia d'un nom continua avisant-se a mesura que s'escriu.
+- **Un delimitador la nota de carpeta del qual ja és oberta revela la carpeta** en lloc de reobrir el que ja és en pantalla — que és el que ha volgut dir sempre la seva segona pulsació.
+- **On ets és en negreta en un menú desplegable**, no només blau.
+- **Tot el que no és una nota és taronja en un menú desplegable**, no només els tipus de text per als quals Obsidian no té vista. El porpra distingeix les notes d'una carpeta de contingut barrejat; un sol color per a la resta diu el mateix més ràpid.
+
+### Corregit
+
+- **Retrocés sobre una carpeta clicada ja no t'emporta el nom del cofre.** La barra que quedava al davant es llegia com un camí des de l'arrel de la màquina, cosa que buida el segment inicial — i tancar el camp amb Esc mai no el tornava, de manera que la pestanya perdia el nom i la icona del cofre per sempre. Ara una barra inicial compta com a de la màquina només quan la seva primera carpeta hi és realment, i el segment inicial torna amb totes les maneres de sortir del camp.
+- Fora del cofre, els fitxers s'amagaven tret que **Detecta totes les extensions de fitxer** d'Obsidian estigués activada — una opció sobre què indexa el cofre, aplicada a carpetes que no són al cofre. Un `.txt` al costat de les teves notes ara es llista allà fora en qualsevol cas.
+- El menú desplegable del nom del cofre no feia res en un panell sense fitxer, que és justament el panell que faries servir per anar a un altre lloc.
+- Clicar el nom del cofre deixava el títol propi d'Obsidian al costat del camí al camp, en gris, on no apareix en cap altre moment: la fila es mesura pel que ha dibuixat, i en aquell moment s'ha buidat per fer lloc al camp.
+
+- Clicar l'espai buit obria el camp i el perdia: revelar la nota a l'Explorador de fitxers s'emporta el cursor, de manera que el camp quedava obert i marcat mentre cada tecla anava a l'arbre.
+- El graó que mostra el camí des de l'arrel del sistema dibuixava un rastre del mateix camí al costat del camp, sense ajustar, de manera que un camí profund quedava pintat sobre si mateix.
 
 ## 1.3.0 — 2026-09-17[^1.3.0]
 
@@ -147,6 +179,7 @@ Primera versió. Substitueix el nom del fitxer a la capçalera d'una nota per un
 - **Fora del cofre** (desactivat per defecte): el nom del cofre obre els teus altres cofres, la carpeta personal, l'arrel del sistema de fitxers i les unitats muntades. No s'hi escriu res fins que ho desbloquegis, i una nota només es pot copiar fora del cofre, mai moure.
 - **45 idiomes.**
 
+[^1.4.0]: Canvis des de la 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Canvis des de la 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Canvis des de la 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Canvis des de la 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>

@@ -1,4 +1,4 @@
-<!-- Preklad README.md — stav: commit e1e2247.
+<!-- Preklad README.md — stav: commit 2cbb237.
      Strojový preklad (Claude Opus 5), neskontrolovaný rodenými hovoriacimi.
      Opravy sú vítané; rozhodujúcou verziou je anglické README. -->
 
@@ -15,7 +15,7 @@ Obsidian 1.8.7+ · iba počítač · AGPL-3.0
 ## Vyhlásenie o AI
 
 - **Agent** — **Claude Opus 5** a **Claude Sonnet 5** (Anthropic, cez Claude Code): napísal TypeScript, CSS, všetkých 45 sád prekladov a dokumentáciu. Preklady vznikli strojovo a rodení hovoriaci ich nekontrolovali.
-- **Spotreba** — 3. augusta – 17. septembra 2026, 23 relácií, \~14844 odpovedí: \~19,2 mil. vygenerovaných tokenov, \~85,2 mil. odoslaných, \~4800,6 mil. opätovných čítaní z vyrovnávacej pamäte (\~4905,0 mil. celkom).
+- **Spotreba** — 3. augusta – 19. septembra 2026, 20 relácií, \~16460 odpovedí: \~19,9 mil. vygenerovaných tokenov, \~87,0 mil. odoslaných, \~5451,0 mil. opätovných čítaní z vyrovnávacej pamäte (\~5558,0 mil. celkom).
 - **Zdroj** — model sa učil z otvoreného kódu, dokumentácie a textov komunity, ktoré zverejnili iní. Väčšina zásluh patrí im.
 - **Autor** — Vault51: určil každú funkciu, každú verziu vyskúšal v skutočnom trezore, riadil opravy, prezrel všetky výstupy.
 
@@ -37,8 +37,10 @@ Obsidian 1.8.7+ · iba počítač · AGPL-3.0
 - **Súbory HTML sa zobrazujú ako stránky**, v rámci, ktorému sú odopreté všetky oprávnenia — žiadne skripty, žiadna sieť, žiadny vlastný pôvod — pričom štýly a obrázky uložené vedľa súboru sa načítajú s ním, takže uložená stránka stále vyzerá ako ona. Zdrojový kód je vzdialený jediné stlačenie.
 - **Napíš URL** — `https://`, `obsidian://`, alebo cestu `file://` či zakódovanú percentami — a otvorí sa, namiesto aby sa brala ako názov poznámky. Webové adresy idú na kartu vlastného modulu Obsidianu Webový prehliadač, ak ho máš zapnutý.
 - **Dlhé cesty sa skracujú tam, kde sú písmená nadbytočné** — nikdy za hranicu toho, čo odlíši priečinok od susedného, a plynulo, nie po jednom písmene — a posúvajú sa, až keď už niet čo stlačiť. Ukáž na skrátený názov a uvidíš ho celý.
-- **<kbd>F2</kbd>** prepína medzi nadpisom v texte a riadkom cesty; otvorí sa na názve bez prípony a ďalšími stlačeniami sa rozširuje až po úplné cesty. Hladko prejde cez dialóg premenovania Obsidianu, keď je nadpis odrolovaný mimo obrazovky. Ak chceš gesto adresného riadka, môžeš si priradiť príkaz *Zamerať lištu cesty*.
+- **<kbd>F2</kbd>** prepína medzi nadpisom v texte a riadkom cesty; otvorí sa na názve bez prípony a ďalšími stlačeniami sa rozširuje až po úplné cesty. Hladko prejde cez dialóg premenovania Obsidianu, keď je nadpis odrolovaný mimo obrazovky. Príkaz *Zamerať lištu cesty* prejde tými istými stupňami bez premenovania; riadok *Klávesové skratky* v nastaveniach ťa tam privedie, aby si ho mohol priradiť.
 - **Kliknutie na názov trezora** umožní prezerať ostatné trezory, domovský priečinok, koreň súborového systému a pripojené jednotky bez prepnutia trezora. Iba na čítanie, kým neotvoríš červený zámok, ktorý tam vonku zaujme miesto prepínača premenovania, a po celý čas orámované chybovou farbou. Predvolene vypnuté — pozri [mimo trezora](#mimo-trezora).
+- **Koreň trezora uvádza stránky, ktoré môže panel obsahovať** — `:graph`, `:search` a všetky zobrazenia, ktoré registrujú tvoje pluginy. Vyber jednu alebo ju napíš: dvojbodka nezačína žiadny názov súboru, takže štítky slúžia zároveň ako adresa. Ak je nainštalovaný plugin úvodnej stránky, oddeľovač samotného trezora ju otvorí prvým kliknutím a ďalším zbalí strom súborov.
+- **Riadok na paneloch bez súboru** — prázdna karta ukazuje `vault / :blank`, graf `vault / :graph` a pole vedľa je adresný riadok: napíš cestu a <kbd>Enter</kbd> ju v tomto paneli otvorí alebo vytvorí. Panely na bočnej lište si ponechávajú vlastný nadpis Obsidianu.
 - **Dva stupne varovania** — červená mimo trezora, oranžová pre textové súbory, pre ktoré Obsidian nemá editor. Pozri [dve varovné farby](usage.sk.md#dve-varovné-farby).
 - **Ikony prispôsobiteľné motívu**, vymeniteľné z útržku CSS — a **46 jazykov**: každý, ktorý Obsidian prináša, plus gréčtina a sanskrit, pre ktoré Obsidian nastavenie nemá. Vyber si jazyk len pre plugin, alebo nasleduj jazyk Obsidianu.
 - **Nastavenia:** jazyk, zarovnanie, prednastavené oddeľovače, ktoré kliknutie otvára zoznam, názov trezora, skryté súbory, prípony súborov.

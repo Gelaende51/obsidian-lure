@@ -1,4 +1,4 @@
-<!-- Traducció de README.md — estat: commit e1e2247.
+<!-- Traducció de README.md — estat: commit 2cbb237.
      Traducció automàtica (Claude Opus 5), no revisada per parlants nadius.
      Les correccions són benvingudes; el README en anglès és la versió
      de referència. -->
@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · només escriptori · AGPL-3.0
 ## Divulgació sobre la IA
 
 - **Agent** — **Claude Opus 5** i **Claude Sonnet 5** (Anthropic, mitjançant Claude Code): va escriure el TypeScript, el CSS, els 45 jocs de traduccions i la documentació. Les traduccions són automàtiques i no han estat revisades per parlants nadius.
-- **Consum** — del 3 d'agost al 17 de setembre de 2026, 23 sessions, \~14.844 respostes: \~19,2 M de tokens generats, \~85,2 M enviats, \~4800,6 M de relectures de la memòria cau (\~4905,0 M en total).
+- **Consum** — del 3 d'agost al 19 de setembre de 2026, 20 sessions, \~16.460 respostes: \~19,9 M de tokens generats, \~87,0 M enviats, \~5451,0 M de relectures de la memòria cau (\~5558,0 M en total).
 - **Origen** — el model ho ha après de codi obert, documentació i escrits de la comunitat publicats per altres. La major part del mèrit és seva.
 - **Autor** — Vault51: va definir cada funció, va provar cada iteració en un cofre real, va dirigir les correccions i va revisar tots els resultats.
 
@@ -38,8 +38,10 @@ Obsidian 1.8.7+ · només escriptori · AGPL-3.0
 - **Els fitxers HTML es mostren com a pàgines**, dins un marc amb tots els permisos retirats — sense scripts, sense xarxa, sense origen propi — i amb els fulls d'estil i les imatges del costat del fitxer incorporats, perquè una pàgina desada continuï semblant ella mateixa. El codi font és a una pulsació de distància.
 - **Escriu un URL** — `https://`, `obsidian://`, o un camí `file://` o codificat amb percentatges — i s'obre en comptes de tractar-se com un nom de nota. Les adreces web van a una pestanya del *Visor web* del mateix Obsidian, si el tens activat.
 - **Els camins llargs s'escurcen on les lletres són redundants** — mai més enllà del que distingeix una carpeta de la del costat, de manera fluida i no lletra a lletra — i només es desplacen quan ja no queda res per comprimir. Assenyala un nom escurçat per recuperar-lo sencer.
-- **<kbd>F2</kbd>** alterna entre el títol dins la nota i la barra de camí: s'obre sobre el nom sense l'extensió i, amb més pulsacions, s'estén fins als camins complets. Travessa netament el diàleg de reanomenar d'Obsidian quan el títol ha quedat fora de la vista. Hi ha una ordre *Enfoca la barra de camí* per assignar-li una drecera si vols el gest de la barra d'adreces.
+- **<kbd>F2</kbd>** alterna entre el títol dins la nota i la barra de camí: s'obre sobre el nom sense l'extensió i, amb més pulsacions, s'estén fins als camins complets. Travessa netament el diàleg de reanomenar d'Obsidian quan el títol ha quedat fora de la vista. Una ordre *Enfoca la barra de camí* recorre els mateixos graons sense reanomenar; la fila *Dreceres de teclat* de la configuració t'hi porta per assignar-li una drecera.
 - **Clica el nom del cofre** per navegar pels teus altres cofres, la carpeta personal, l'arrel del sistema de fitxers i les unitats muntades sense canviar de cofre. Només lectura fins que obris el cadenat vermell que allà fora ocupa el lloc del commutador de reanomenar, i emmarcat amb el color d'error tota l'estona. Desactivat per defecte — vegeu [fora del cofre](#fora-del-cofre).
+- **L'arrel del cofre llista les pàgines que un panell pot contenir** — `:graph`, `:search` i les vistes que registrin els teus connectors. Tria'n una, o escriu-la: els dos punts no comencen cap nom de fitxer, així que les etiquetes fan també d'adreça. Amb un connector de pàgina d'inici instal·lat, el delimitador propi del cofre obre aquella pàgina al primer clic i plega l'arbre de fitxers al següent.
+- **Una fila als panells que no contenen cap fitxer** — una pestanya buida diu `vault / :blank`, el graf `vault / :graph`, i el camp del costat és una barra d'adreces: escriu un camí i <kbd>Enter</kbd> l'obre en aquell panell, o el crea. Els panells de les barres laterals conserven el títol propi d'Obsidian.
 - **Dos nivells d'avís** — vermell fora del cofre, taronja per als fitxers de text que Obsidian no sap editar. Vegeu [els colors d'avís](usage.ca.md#els-dos-colors-davís).
 - **Icones adaptables al tema**, substituïbles des d'un fragment CSS — i **46 idiomes**: tots els que porta Obsidian, més el grec i el sànscrit, per als quals no té cap opció. Tria'n un només per al connector, o segueix el del mateix Obsidian.
 - **Opcions:** idioma, alineació, separadors predefinits, quin clic obre el desplegable, nom del cofre, fitxers ocults, extensions de fitxer.

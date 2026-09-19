@@ -1,4 +1,4 @@
-<!-- Përkthim i CHANGELOG.md — gjendja: commit 973105b.
+<!-- Përkthim i CHANGELOG.md — gjendja: commit 2cbb237.
      Përkthim me makinë (Claude Opus 5), i pashqyrtuar nga folës amtarë.
      Ndreqjet janë të mirëpritura; versioni përcaktues është CHANGELOG-u
      në anglisht. -->
@@ -8,6 +8,38 @@
 # Regjistri i ndryshimeve
 
 Çdo publikim i Lure, më i riu i pari. Ajo që ka ardhur që nga publikimi i fundit ndodhet nën *Të papublikuara*. Versionet nuk kanë prapashtesën `v`, njësoj si etiketat e publikimeve.
+
+## 1.4.0 — 2026-09-19[^1.4.0]
+
+### Të shtuara
+
+- **Një rresht Shkurtoret e tastierës te cilësimet.** Butoni i tij hap *Shkurtoret e tastierës* të Obsidian-it, të filtruara për këtë shtojcë, ku *Fokuso shiritin e shtegut* — që vjen pa tast — mund të marrë një.
+- **Një shirit shtegu te panelet që nuk mbajnë skedar.** Një skedë e zbrazët lexohet `vault / :blank`, grafiku `vault / :graph`, dhe çdo pamje tjetër pa ndonjë emër për t'i dhënë merr etiketën e vet `:` — skeda e vetë e një shtojce të skedës kryesore lexohet `:home-launcher`. Fusha pranë tij është një shirit adrese: shkruaj një shteg dhe <kbd>Enter</kbd> e hap në atë panel, ose e krijon. Përpara kësaj rreshti ishte bosh — shtojca fshihte titullin e vetë të Obsidian-it dhe nuk vendoste asgjë në vend të tij.
+- **Një faqe mund të shkruhet edhe jo vetëm të zgjidhet** — `:graph` dhe të tjerat janë adresë, jo vetëm zë liste. Dy pika nuk e fillojnë asnjë emër skedari, prandaj shkrimi i një dy pikash kudo i thërret ato, dhe fusha vishet me ngjyrën e tyre në vend që të ofrojë krijimin e një shënimi që s'mund të quhej asgjë.
+- **Një rresht për *Shfaq të gjitha llojet e skedarëve* të vetë Obsidian-it**, pranë rregullit të skedarëve me pikë, pasi të dy vendosin se çfarë mund të listojë një listë rënëse: thotë ta kërkosh atë cilësim te cilësimet e vetë Obsidian-it dhe ta ndezësh për të parë çdo skedar, dhe butoni pranë tij e hap atë faqe me cilësimin të lëvizur në pamje dhe të ndriçuar shkurt, si një rezultat kërkimi te cilësimet. Emërtuar me fjalët e Obsidian-it, shpjeguar në 45 gjuhë.
+- **Rrënja e kasafortës liston faqet që mund të mbajë një panel** — `:graph`, `:search`, dhe cilëndo pamje që regjistrojnë shtojcat e tua, mes tyre një skedë kryesore ose një kalendar. Zgjidh një dhe paneli e hap, ashtu si zgjedhja e një shënimi e hap shënimin. Pamjet që ekzistojnë për të shfaqur një skedar lihen jashtë, sepse nuk do të kishin çfarë të shfaqnin.
+- **Ndarësi i vetë kasafortës hap faqen tënde të nisjes**, aty ku një shtojcë e ofron një të tillë, dhe nënvizohet për ta thënë; shtypja pas tij e palos pemën e skedarëve, dhe shtypja pas asaj vë prapa saktësisht atë që ishte hapur. Pa një shtojcë të tillë, shtypja e parë palos, si më parë.
+- **Shkruaj një shteg nga rrënja e sistemit të skedarëve.** Një `/` para një fushe të zbrazët hap një shteg të tillë në vend që të gëlltitet, çdo vijë e pjerrët e mëvonshme në të i përket asaj, dhe lista rënëse liston makinën në vend të kasafortës.
+
+### Të ndryshuara
+
+- **F2 dhe Fokuso shiritin e shtegut shtypin Tab brenda fushës.** Çfarëdo që do të bënte Tab atje — shkallën tjetër, plotësimin e asaj që shkruajte, hyrjen në një dosje — e bëjnë edhe ato; largohen vetëm aty ku Tab kthehet në fillim të shtegut, F2 te titulli brenda tekstit, komanda te shënimi. Më parë, një fushë ku kishe shkruar bënte që F2 të niste sërish nga emri dhe komanda ta mbyllte fushën.
+- **Hapi pas daljes së ciklit është dosja rrënjë.** Shtypja pas kthimit të F2 te titulli brenda tekstit, ose kthimit të komandës te shënimi, zbret aty ku zbret rrotullimi i Tab — rrënja e kasafortës, i gjithë shtegu në fushë, dosja e tij e parë e shënuar — kështu asnjë hap i unazës nuk mbetet vetëm për Tab.
+- **Fokuso shiritin e shtegut ecën si F2.** Hapet te emri në vend të shtegut të plotë, merr të katër shkallët e njëjta, dhe shtypja pas të fundit e mbyll fushën dhe e kthen kursorin te shënimi — më parë, i rrotullonte shkallët pafundësisht dhe i vetmi tast që arrinte te rreshti nuk mund ta linte atë.
+- **Një emër i zënë raportohet kur e përdor, jo ndërsa e shkruan.** Çdo emër i shkruar drejt `Notes.md` kalon nëpër emra që mund të jenë skedarë më vete, dhe paralajmërimi dikur pulsonte e zhdukej shkronjë pas shkronje. Ajo që është e gabuar në drejtshkrimin e një emri thuhet prapë ndërsa shkruhet.
+- **Një ndarës, dosja e shënimit të të cilit është hapur tashmë, e shfaq dosjen** në vend që të rihapë atë që është në ekran — çka ka nënkuptuar gjithmonë shtypja e tij e dytë.
+- **Ku je tani është me të trasha në një listë rënëse**, jo vetëm blu.
+- **Gjithçka që nuk është shënim është portokalli në një listë rënëse**, jo vetëm llojet e tekstit për të cilat Obsidian-i nuk ka pamje. E purpurta veçon shënimet në një dosje me përmbajtje të përzier; një ngjyrë për pjesën tjetër thotë të njëjtën gjë më shpejt.
+
+### Të ndrequra
+
+- **Backspace mbi një dosje të klikuar nuk ia heq më emrin kasafortës.** Vija e pjerrët e lënë në fillim lexohej si shteg nga rrënja e makinës, çka e zbraz segmentin e hapjes — dhe mbyllja e fushës me Escape nuk e kthente kurrë, kështu skeda e humbi emrin dhe ikonën e kasafortës përgjithmonë. Një vijë e pjerrët në fillim tani llogaritet si e makinës vetëm kur dosja e saj e parë ekziston vërtet, dhe segmenti i hapjes kthehet me çdo mënyrë daljeje nga fusha.
+- Jashtë kasafortës, skedarët fshiheshin nëse nuk ishte ndezur **Zbulo të gjitha prapashtesat e skedarëve** i Obsidian-it — një cilësim për atë që indekson kasaforta, i zbatuar mbi dosje që nuk janë në kasafortë. Një `.txt` pranë shënimeve të tua listohet atje jashtë në të dyja rastet.
+- Lista rënëse e emrit të kasafortës nuk bënte asgjë në një panel pa skedar, që është pikërisht paneli që do të përdorje për të shkuar diku tjetër.
+- Klikimi i emrit të kasafortës linte titullin e vetë të Obsidian-it pranë shtegut në fushë, gri, aty ku shfaqet në asnjë kohë tjetër: rreshti e mat veten nga ajo që ka vizatuar, dhe në atë çast ai ka zbrazur veten për t'i lënë vend fushës.
+
+- Klikimi i hapësirës boshe e hapte fushën dhe pastaj e humbiste: shfaqja e shënimit në Eksploruesin e skedarëve merr kursorin me vete, kështu fusha qëndronte e hapur dhe e shënuar ndërsa çdo goditje tasti shkonte te pema.
+- Shkalla që tregon shtegun nga rrënja e sistemit vizatonte një gjurmë të të njëjtit shteg pranë fushës, e pa përshtatur, kështu një shteg i thellë pikturohej mbi vetveten.
 
 ## 1.3.0 — 2026-09-17[^1.3.0]
 
@@ -147,6 +179,7 @@ Publikimi i parë. E zëvendëson emrin e skedarit në kokën e një shënimi me
 - **Jashtë kasafortës** (e fikur si parazgjedhje): emri i kasafortës hap kasafortat e tua të tjera, dosjen e shtëpisë, rrënjën e sistemit të skedarëve dhe disqet e montuara. Atje jashtë nuk shkruhet asgjë derisa ta shkyçësh, dhe një shënim mund vetëm të kopjohet jashtë kasafortës, kurrë të zhvendoset.
 - **45 gjuhë.**
 
+[^1.4.0]: Ndryshimet që nga 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Ndryshimet që nga 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Ndryshimet që nga 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Ndryshimet që nga 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>

@@ -1,4 +1,4 @@
-<!-- Käännös tiedostosta README.md — tilanne: commit e1e2247.
+<!-- Käännös tiedostosta README.md — tilanne: commit 2cbb237.
      Konekäännös (Claude Opus 5), jota äidinkieliset puhujat eivät ole
      tarkastaneet. Korjaukset ovat tervetulleita; englanninkielinen README
      on ratkaiseva versio. -->
@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · vain työpöytä · AGPL-3.0
 ## Tekoälyilmoitus
 
 - **Agentti** — **Claude Opus 5** ja **Claude Sonnet 5** (Anthropic, Claude Coden kautta): kirjoitti TypeScriptin, CSS:n, kaikki 45 käännösjoukkoa ja dokumentaation. Käännökset ovat koneellisia, eivätkä äidinkieliset puhujat ole niitä tarkastaneet.
-- **Kulutus** — 3. elokuuta – 17. syyskuuta 2026, 23 istuntoa, \~14 844 vastausta: \~19,2 milj. tuotettua tokenia, \~85,2 milj. lähetettyä, \~4800,6 milj. uudelleenlukua välimuistista (\~4905,0 milj. yhteensä).
+- **Kulutus** — 3. elokuuta – 19. syyskuuta 2026, 20 istuntoa, \~16 460 vastausta: \~19,9 milj. tuotettua tokenia, \~87,0 milj. lähetettyä, \~5451,0 milj. uudelleenlukua välimuistista (\~5558,0 milj. yhteensä).
 - **Lähde** — malli oppi avoimesta lähdekoodista, dokumentaatiosta ja yhteisön kirjoituksista, jotka muut ovat julkaisseet. Suurin osa ansiosta kuuluu sinne.
 - **Tekijä** — Vault51: määritteli jokaisen ominaisuuden, kokeili jokaista versiota oikeassa holvissa, ohjasi korjaukset ja luki kaikki tulokset läpi.
 
@@ -38,8 +38,10 @@ Obsidian 1.8.7+ · vain työpöytä · AGPL-3.0
 - **HTML-tiedostot näkyvät sivuina** kehyksessä, josta kaikki oikeudet on evätty — ei skriptejä, ei verkkoa, ei omaa alkuperää — ja tiedoston vieressä olevat tyylitiedostot ja kuvat tuodaan mukaan, jotta tallennettu sivu näyttää yhä itseltään. Lähdekoodi on yhden painalluksen päässä.
 - **Kirjoita URL** — `https://`, `obsidian://`, tai `file://`- tai prosenttikoodattu polku — ja se avataan sen sijaan, että sitä käsiteltäisiin muistiinpanon nimenä. Verkko-osoitteet avautuvat Obsidianin oman Sisäinen verkkoselain -näkymän välilehteen, jos se on käytössä.
 - **Pitkät polut lyhenevät siitä, missä kirjaimet ovat tarpeettomia** — ei koskaan yli sen, mikä erottaa kansion viereisestä, ja sujuvasti eikä kirjain kerrallaan — ja vierivät vasta, kun mitään ei ole enää tiivistettävissä. Osoita lyhennettyä nimeä saadaksesi sen takaisin kokonaan.
-- **<kbd>F2</kbd>** vaihtaa muistiinpanon sisäisen otsikon ja polkupalkin välillä: se avautuu nimeen ilman päätettä ja laajenee seuraavilla painalluksilla täysiin polkuihin. Se kulkee siististi Obsidianin nimeämisikkunan läpi, kun otsikko on vieritetty näkyvistä. Komento *Kohdista polkupalkkiin* on valmiina sidottavaksi, jos haluat osoiterivin eleen.
+- **<kbd>F2</kbd>** vaihtaa sisäisen otsikon ja polkupalkin välillä: se avautuu nimeen ilman päätettä ja etenee seuraavilla painalluksilla täysiin polkuihin. Se kulkee siististi Obsidianin nimeämisikkunan läpi, kun otsikko on vieritetty näkyvistä. Komento *Kohdista polkupalkkiin* kulkee samat portaat nimeämättä; asetusten *Pikanäppäimet*-rivi vie sen sidontaan.
 - **Napsauta holvin nimeä** selataksesi muita holvejasi, kotikansiotasi, tiedostojärjestelmän juurta ja liitettyjä asemia holvia vaihtamatta. Vain luku, kunnes avaat punaisen riippulukon, joka on siellä nimeämiskytkimen paikalla, ja kehystettynä virhevärillä koko ajan. Oletuksena pois päältä — katso [holvin ulkopuolella](#holvin-ulkopuolella).
+- **Holvin juuri listaa paneelin sisältämät sivut** — `:graph`, `:search` ja mitkä tahansa näkymät, jotka lisäosasi rekisteröivät. Valitse yksi tai kirjoita se: kaksoispiste ei aloita mitään tiedostonimeä, joten tunnisteet toimivat myös osoitteena. Kun aloitussivulisäosa on asennettu, holvin oma erotin avaa sen sivun ensimmäisellä napsautuksella ja taittaa tiedostopuun seuraavalla.
+- **Rivi paneeleissa, joissa ei ole tiedostoa** — tyhjä välilehti näyttää `vault / :blank`, graafi `vault / :graph`, ja sen vieressä oleva kenttä on osoiterivi: kirjoita polku ja <kbd>Enter</kbd> avaa sen kyseisessä paneelissa tai luo sen. Sivupalkin paneelit säilyttävät Obsidianin oman otsikon.
 - **Kaksi varoitustasoa** — punainen holvin ulkopuolella, oranssi tekstitiedostoille, joille Obsidianilla ei ole muokkainta. Katso [kaksi varoitusväriä](usage.fi.md#kaksi-varoitusväriä).
 - **Teemaan mukautuvat kuvakkeet**, vaihdettavissa CSS-pätkästä — ja **46 kieltä**: jokainen, jonka Obsidian toimittaa, sekä kreikka ja sanskrit, joille siinä ei ole asetusta. Valitse kieli pelkästään lisäosalle tai seuraa Obsidianin omaa.
 - **Asetukset:** kieli, tasaus, valmiit erottimet, mikä napsautus avaa luettelon, holvin nimi, piilotiedostot, tiedostopäätteet.

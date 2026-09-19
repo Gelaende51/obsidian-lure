@@ -1,4 +1,4 @@
-<!-- Aistriúchán ar CHANGELOG.md — staid: tiomantas 973105b.
+<!-- Aistriúchán ar CHANGELOG.md — staid: tiomantas 2cbb237.
      Aistriúchán meaisín (Claude Opus 5) nár léigh cainteoirí dúchais é.
      Fáilte roimh cheartúcháin; is é an CHANGELOG Béarla an leagan údarásach. -->
 
@@ -7,6 +7,37 @@
 # Loga athruithe
 
 Gach eisiúint de Lure, an ceann is nuaí ar dtús. Tá a bhfuil tagtha isteach ó bhí an eisiúint dheireanach ann faoi *Gan eisiúint*. Níl réimír `v` ar na leaganacha, ar aon dul leis na clibeanna eisiúna.
+
+## 1.4.0 — 2026-09-19[^1.4.0]
+
+### Curtha leis
+
+- **Sraith Eochracha te sna socruithe.** Osclaíonn a cnaipe *Eochracha te* Obsidian scagtha don bhreiseán seo, áit ar féidir eochair a shannadh do *Fócas ar an mbarra conaire* — a sheoltar gan eochair.
+- **Barra conaire ar phánaí gan comhad.** Léann cluaisín folamh `vault / :blank`, léann an graf `vault / :graph`, agus faigheann aon amharc eile nach bhfuil aon rud le hainmniú ann a lipéad `:` féin — léann cluaisín féin breiseáin leathanaigh baile `:home-launcher`. Is barra seolta an réimse lena thaobh: clóscríobh conair agus osclaíonn <kbd>Enter</kbd> í sa phána sin, nó cruthaíonn sé í. Roimhe seo bhí an tsraith bán — cheil an breiseán teideal Obsidian féin agus níor chuir sé faic ina áit.
+- **Is féidir leathanach a chlóscríobh chomh maith lena roghnú** — is seoladh iad `:graph` agus an chuid eile, ní iontráil liosta amháin. Ní thosaíonn ainm comhaid le colon, mar sin tugann ceann a chlóscríobh áit ar bith iad chun cinn, agus caitheann an réimse a ndath in ionad tairiscint nóta a chruthú nach bhféadfaí aon ainm a thabhairt air.
+- **Sraith do *Taispeáin gach cineál comhaid* Obsidian féin**, cois riail na gcomhad ponc, ós rud é go socraíonn an dá cheann cad a fhéadfaidh anuslíosta a liostú: deir sí go bhfuil an socrú sin le lorg i socruithe Obsidian féin agus é a chur air chun gach comhad a fheiceáil, agus osclaíonn an cnaipe lena hais an leathanach sin agus an socrú scrollta isteach san amharc agus splanc air, mar a dhéanfadh toradh cuardaigh socruithe. Ainmnithe i bhfocail Obsidian, mínithe i 45 teanga.
+- **Liostaíonn fréamh an taisceadáin na leathanaigh is féidir le pána a shealbhú** — `:graph`, `:search`, agus cibé amharcanna a chláraíonn do bhreiseáin, cluaisín baile nó féilire ina measc. Roghnaigh ceann agus osclaíonn an pána é, mar a osclaíonn roghnú nóta an nóta. Fágtar amach amharcanna atá ann chun comhad a thaispeáint, mar ní bheadh aon rud acu le taispeáint.
+- **Osclaíonn deighilteoir an taisceadáin féin do leathanach tosaigh**, i gcás go soláthraíonn breiseán ceann, agus tá líne faoi chun sin a rá; fillteann an chéad bhrú eile crann na gcomhad, agus cuireann an bhrú ina dhiaidh sin ar ais go díreach an méid a bhí oscailte. Gan a leithéid de bhreiseán, fillteann an chéad bhrú, mar a bhíodh.
+- **Clóscríobh conair ó fhréamh an chórais comhad.** Osclaíonn `/` os comhair réimse folamh ceann in ionad é a shlogadh, baineann gach slais ina dhiaidh leis, agus liostaíonn an t-anuslíosta an meaisín seachas an taisceadán.
+
+### Athraithe
+
+- **Brúnn F2 agus Fócas ar an mbarra conaire Tab laistigh den réimse.** Cibé rud a dhéanfadh Tab ansin — an chéad chéim eile, an méid a chlóscríobh tú a chomhlánú, céim isteach i bhfillteán — déanann siad é freisin; ní fhágann siad ach nuair a fhillteann Tab siar go tosach na conaire, F2 chuig an teideal laistigh den nóta, an t-ordú chuig an nóta. Roimhe seo, dá gclóscríobhfá isteach sa réimse, thosaigh F2 arís ar an ainm agus dhún an t-ordú an réimse.
+- **Is é an fillteán fréimhe an chéim tar éis don timthriall fágáil.** Tugann an bhrú tar éis fhilleadh F2 ar an teideal laistigh den nóta, nó fhilleadh an ordaithe ar an nóta, chuig an áit a dtugann lap Tab thú — fréamh an taisceadáin, an chonair iomlán sa réimse, a chéad fhillteán marcáilte — ionas nach bhfágtar aon chéim den fháinne do Tab amháin.
+- **Siúlann Fócas ar an mbarra conaire cosúil le F2.** Osclaíonn sé ar an ainm in ionad na conaire iomláine, glacann sé na ceithre chéim chéanna, agus dúnann an bhrú tar éis an chinn dheireanaigh an réimse agus cuireann sé an cúrsóir ar ais sa nóta — roimhe seo, lapáil sé na céimeanna go deo agus níorbh fhéidir leis an eochair amháin a shroich an tsraith í a fhágáil.
+- **Tuairiscítear ainm atá tógtha nuair a úsáideann tú é, ní agus tú á chlóscríobh.** Téann gach ainm a chlóscríobhtar i dtreo `Notes.md` trí ainmneacha a d'fhéadfadh a bheith ina gcomhaid dá gcuid féin, agus ba ghnách leis an rabhadh splancadh agus imeacht litir ar litir. Tuairiscítear fós céard atá cearr le litriú ainm de réir mar a litrítear é.
+- **Nochtann deighilteoir a bhfuil nóta fillteáin oscailte cheana féin an fillteán** in ionad an méid atá ar an scáileán a athoscailt — rud atá i gceist lena dhara bhrú i gcónaí.
+- **Tá an áit a bhfuil tú trom in anuslíosta**, ní gorm amháin.
+- **Tá gach rud nach nóta é oráiste in anuslíosta**, ní hamháin na cineálacha téacs nach bhfuil aon amharc ag Obsidian orthu. Roghnaíonn an corcra na nótaí as fillteán ábhair mheasctha; deir dath amháin don chuid eile an rud céanna níos tapúla.
+
+### Deisithe
+
+- **Ní bhaineann Backspace thar fillteán cliceáilte ainm an taisceadáin ar shiúl a thuilleadh.** Léadh an slais a fágadh chun tosaigh mar chonair ó fhréamh an mheaisín, rud a fholmhaíonn an chéad deighleog — agus níor chuir Escape ar ais riamh é agus an réimse á dhúnadh, agus chaill an cluaisín ainm agus deilbhín a thaisceadáin go deo. Áirítear slais tosaigh mar cheann an mheaisín anois ach amháin nuair a bhíonn a chéad fhillteán ann i ndáiríre, agus filleann an chéad deighleog le gach bealach amach as an réimse.
+- Lasmuigh den taisceadán, bhí comhaid folaithe mura raibh **Braith gach iarmhír comhaid** Obsidian ar siúl — socrú faoin méid a innéacsaíonn an taisceadán, a cuireadh i bhfeidhm ar fhillteáin nach bhfuil sa taisceadán. Liostaítear `.txt` cois do nótaí amuigh ansin ar aon nós.
+- Ní dhearna anuslíosta ainm an taisceadáin faic ar phána gan comhad, arb é go beacht an pána a úsáidfeá chun dul áit éigin eile.
+- Nuair a cliceáladh ainm an taisceadáin, d'fhan teideal Obsidian féin ina sheasamh cois na conaire sa réimse, liath, áit nach mbíonn sé le feiceáil ag am ar bith eile: tomhaiseann an tsraith í féin de réir an méid atá tarraingthe aici, agus ag an nóiméad sin bhí sí folamh chun spás a dhéanamh don réimse.
+- Nuair a cliceáladh ar an spás folamh, osclaíodh an réimse agus chaill sé an fócas ansin: nuair a nochtar an nóta sa Taiscéalaí Comhad tógtar an cúrsóir leis, agus mar sin sheas an réimse oscailte agus marcáilte agus gach brú eochrach ag dul chuig an gcrann.
+- Tharraing an chéim a thaispeánann an chonair ó fhréamh an chórais rian den chonair chéanna cois an réimse, gan é a fheistiú, agus mar sin péinteáladh conair dhomhain os a cionn féin.
 
 ## 1.3.0 — 2026-09-17[^1.3.0]
 
@@ -146,6 +177,7 @@ An chéad eisiúint. Cuireann sé conair an taisceadáin ar féidir cliceáil ui
 - **Lasmuigh den taisceadán** (múchta de réir réamhshocraithe): osclaíonn ainm an taisceadáin do thaisceadáin eile, an fillteán baile, fréamh an chórais comhad agus na tiomántáin fheistithe. Ní scríobhtar aon rud amuigh ansin go dtí go ndíghlasálann tú é, agus ní féidir nóta a chóipeáil amach as an taisceadán ach amháin, riamh a bhogadh.
 - **45 teanga.**
 
+[^1.4.0]: Athruithe ó 1.3.0 i leith: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Athruithe ó 1.2.0 i leith: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Athruithe ó 1.1.2 i leith: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Athruithe ó 1.1.1 i leith: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>

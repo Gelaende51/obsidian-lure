@@ -1,4 +1,4 @@
-<!-- Bản dịch của CHANGELOG.md — trạng thái: commit 973105b.
+<!-- Bản dịch của CHANGELOG.md — trạng thái: commit 2cbb237.
      Dịch máy (Claude Opus 5), chưa được người bản ngữ hiệu đính.
      Rất hoan nghênh mọi đính chính; bản tiếng Anh của CHANGELOG là bản
      chuẩn. -->
@@ -8,6 +8,38 @@
 # Nhật ký thay đổi
 
 Mọi bản phát hành của Lure, mới nhất ở trên cùng. Những gì đã được đưa vào kể từ bản phát hành gần nhất nằm dưới mục *Chưa phát hành*. Số phiên bản không có tiền tố `v`, khớp với các thẻ phát hành.
+
+## 1.4.0 — 2026-09-19[^1.4.0]
+
+### Đã thêm
+
+- **Một hàng Phím tắt trong phần cài đặt.** Nút của nó mở *Phím tắt* của Obsidian đã lọc theo plugin này, nơi có thể gán phím cho *Tập trung vào thanh đường dẫn* — lệnh vốn không đi kèm phím nào.
+- **Thanh đường dẫn trên những ngăn không chứa tệp.** Một tab trống hiển thị `vault / :blank`, đồ thị là `vault / :graph`, và bất kỳ chế độ xem nào khác không có gì để đặt tên sẽ có nhãn `:` riêng — tab của một plugin trang chủ hiển thị `:home-launcher`. Trường nhập bên cạnh là một thanh địa chỉ: gõ một đường dẫn rồi nhấn <kbd>Enter</kbd> để mở nó trong ngăn đó, hoặc tạo mới. Trước đây hàng này để trống — plugin ẩn tiêu đề của Obsidian và không đặt gì vào chỗ đó.
+- **Một trang có thể được gõ vào chứ không chỉ được chọn** — `:graph` và các trang khác là một địa chỉ, không chỉ là một mục trong danh sách. Dấu hai chấm không bắt đầu tên tệp nào, nên gõ nó ở bất cứ đâu sẽ gọi chúng ra, và trường nhập mang màu của chúng thay vì đề nghị tạo một ghi chú không thể có tên như vậy.
+- **Một hàng cho *Hiển thị tất cả các loại tệp* của Obsidian**, bên cạnh quy tắc tệp dấu chấm, vì cả hai cùng quyết định danh sách thả xuống được phép liệt kê những gì: hàng này bảo bạn tìm thiết lập đó trong phần cài đặt của chính Obsidian và bật nó lên để thấy mọi tệp, còn nút bên cạnh mở trang đó với thiết lập được cuộn tới và nháy sáng, như một kết quả tìm kiếm trong cài đặt. Được gọi tên bằng chính từ ngữ của Obsidian, được giải thích bằng 45 ngôn ngữ.
+- **Gốc kho liệt kê các trang mà một ngăn có thể chứa** — `:graph`, `:search`, và mọi chế độ xem mà các plugin của bạn đăng ký, trong đó có tab trang chủ hay lịch. Chọn một trang và ngăn sẽ mở nó, như khi chọn một ghi chú thì ghi chú được mở. Các chế độ xem chỉ tồn tại để hiển thị một tệp thì bị loại ra, vì chúng sẽ không có gì để hiển thị.
+- **Dấu phân cách của chính kho mở trang bắt đầu của bạn**, nếu có plugin cung cấp, và được gạch chân để cho biết điều đó; lần nhấn tiếp theo thu gọn cây tệp, và lần nhấn sau đó khôi phục đúng những gì đang mở. Nếu không có plugin như vậy thì lần nhấn đầu tiên thu gọn, như trước.
+- **Gõ đường dẫn từ gốc hệ thống tệp.** Dấu `/` đứng trước một trường trống sẽ mở một đường dẫn như vậy thay vì bị nuốt mất, mọi dấu gạch chéo sau đó trong trường đều thuộc về nó, và danh sách thả xuống liệt kê máy tính thay vì kho.
+
+### Đã thay đổi
+
+- **F2 và Tập trung vào thanh đường dẫn nhấn Tab bên trong trường nhập.** Bất cứ điều gì Tab sẽ làm ở đó — nấc kế tiếp, hoàn tất những gì bạn đã gõ, bước vào một thư mục — chúng cũng làm như vậy; chỉ khi Tab quay vòng về đầu đường dẫn thì chúng mới thoát ra, F2 sang tiêu đề nội tuyến, còn lệnh sang ghi chú. Trước đây, với một trường bạn đã gõ vào, F2 khiến việc chỉnh bắt đầu lại từ tên và lệnh thì đóng trường.
+- **Bước sau khi chu trình thoát ra là thư mục gốc.** Lần nhấn sau khi F2 quay về tiêu đề nội tuyến, hoặc sau khi lệnh quay về ghi chú, sẽ đến chỗ mà vòng quay của Tab đến — gốc kho, toàn bộ đường dẫn nằm trong trường, thư mục đầu tiên được đánh dấu — nên không còn bước nào của vòng bị bỏ lại chỉ dành cho Tab.
+- **Tập trung vào thanh đường dẫn đi như F2.** Nó mở ở tên thay vì toàn bộ đường dẫn, đi qua cùng bốn nấc, và lần nhấn sau nấc cuối cùng đóng trường và đặt con trỏ trở lại trong ghi chú — trước đây nó quay vòng các nấc mãi mãi và phím duy nhất đến được hàng này lại không thể rời khỏi nó.
+- **Tên đã bị dùng được báo khi bạn dùng nó, không phải khi bạn đang gõ.** Mọi tên được gõ để tiến tới `Notes.md` đều đi qua những tên có thể là tệp riêng, và cảnh báo từng nháy lên rồi biến mất theo từng chữ cái. Điều gì sai trong cách viết một tên vẫn được báo ngay khi nó được viết ra.
+- **Dấu phân cách mà ghi chú thư mục của nó đã mở sẽ hiển thị thư mục** thay vì mở lại thứ đang có trên màn hình — đó chính là ý nghĩa của lần nhấn thứ hai của nó từ trước đến nay.
+- **Vị trí bạn đang đứng được in đậm trong danh sách thả xuống**, không chỉ màu xanh dương.
+- **Mọi thứ không phải ghi chú đều màu cam trong danh sách thả xuống**, không chỉ các loại văn bản mà Obsidian không có chế độ xem. Màu tím chọn ra các ghi chú trong một thư mục có nội dung hỗn hợp; một màu cho phần còn lại nói lên điều tương tự nhanh hơn.
+
+### Đã sửa
+
+- **Nhấn Backspace qua một thư mục đã nhấp không còn làm mất tên kho.** Dấu gạch chéo còn lại ở đầu bị hiểu là đường dẫn từ gốc của máy, điều này làm rỗng đoạn mở đầu — và đóng trường bằng Escape không bao giờ khôi phục nó, nên tab mất tên kho và biểu tượng vĩnh viễn. Dấu gạch chéo đứng đầu giờ chỉ được tính là của máy khi thư mục đầu tiên của nó thật sự tồn tại, và đoạn mở đầu trở lại với mọi cách thoát khỏi trường.
+- Bên ngoài kho, các tệp bị ẩn trừ khi bật **Phát hiện tất cả phần mở rộng tệp** của Obsidian — một thiết lập về những gì kho lập chỉ mục, lại được áp dụng cho các thư mục không nằm trong kho. Một tệp `.txt` cạnh các ghi chú của bạn giờ được liệt kê ở ngoài đó dù thiết lập ra sao.
+- Danh sách thả xuống của tên kho không làm gì trên một ngăn không chứa tệp, đúng là ngăn mà bạn sẽ dùng để đi tới nơi khác.
+- Nhấp vào tên kho để lại tiêu đề của chính Obsidian đứng cạnh đường dẫn trong trường nhập, bị làm mờ, ở nơi nó không xuất hiện vào bất kỳ lúc nào khác: hàng tự đo mình theo những gì nó đã vẽ, và ở thời điểm đó nó đã tự làm rỗng để nhường chỗ cho trường nhập.
+
+- Nhấp vào khoảng trống mở trường nhập rồi làm mất nó: việc hiển thị ghi chú trong Trình khám phá tệp lấy mất con trỏ, nên trường đứng mở và được đánh dấu trong khi mọi lần gõ phím đều đi vào cây tệp.
+- Nấc hiển thị đường dẫn từ gốc hệ thống vẽ một vệt của cùng đường dẫn đó bên cạnh trường, không được co vừa, khiến một đường dẫn sâu bị vẽ chồng lên chính nó.
 
 ## 1.3.0 — 2026-09-17[^1.3.0]
 
@@ -147,6 +179,7 @@ Bản phát hành đầu tiên. Thay tên tệp trên thanh tiêu đề của gh
 - **Ngoài kho** (mặc định tắt): tên kho mở ra các kho khác của bạn, thư mục home, gốc hệ thống tệp và các ổ đĩa đã gắn. Không gì ở ngoài đó được ghi cho tới khi bạn mở khóa, và một ghi chú chỉ có thể được sao chép ra khỏi kho, không bao giờ bị di chuyển.
 - **45 ngôn ngữ.**
 
+[^1.4.0]: Thay đổi kể từ 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Thay đổi kể từ 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Thay đổi kể từ 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Thay đổi kể từ 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>

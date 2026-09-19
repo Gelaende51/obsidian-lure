@@ -1,4 +1,4 @@
-<!-- Bản dịch của README.md — trạng thái: commit e1e2247.
+<!-- Bản dịch của README.md — trạng thái: commit 2cbb237.
      Dịch máy (Claude Opus 5), chưa được người bản ngữ hiệu đính.
      Rất hoan nghênh mọi đính chính; bản tiếng Anh của README là bản
      chuẩn. -->
@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · chỉ trên máy tính · AGPL-3.0
 ## Công bố về AI
 
 - **Tác nhân** — **Claude Opus 5** và **Claude Sonnet 5** (Anthropic, qua Claude Code): viết mã TypeScript, CSS, toàn bộ 45 bộ bản dịch và tài liệu. Các bản dịch do máy tạo ra và chưa được người bản ngữ hiệu đính.
-- **Mức dùng** — 3/8 – 17/9/2026, 23 phiên, \~14.844 phản hồi: \~19,2 triệu token được sinh ra, \~85,2 triệu token được gửi đi, \~4.800,6 triệu token đọc lại từ bộ nhớ đệm (tổng cộng \~4.905,0 triệu).
+- **Mức dùng** — 3/8 – 19/9/2026, 20 phiên, \~16.460 phản hồi: \~19,9 triệu token được sinh ra, \~87,0 triệu token được gửi đi, \~5.451,0 triệu token đọc lại từ bộ nhớ đệm (tổng cộng \~5.558,0 triệu).
 - **Nguồn cội** — mô hình đã học từ mã nguồn mở, tài liệu và bài viết cộng đồng do người khác công bố. Phần lớn công lao thuộc về họ.
 - **Tác giả** — Vault51: đặt ra mọi tính năng, thử nghiệm từng phiên bản trong một kho thật, chỉ đạo các bản sửa, duyệt toàn bộ đầu ra.
 
@@ -38,8 +38,10 @@ Obsidian 1.8.7+ · chỉ trên máy tính · AGPL-3.0
 - **Tệp HTML hiển thị như trang web**, trong một khung bị tước mọi quyền — không script, không mạng, không có origin riêng — còn các stylesheet và hình ảnh nằm cạnh tệp thì được mang vào, để một trang đã lưu vẫn trông đúng như nó. Mã nguồn chỉ cách một lần nhấn.
 - **Gõ một URL** — `https://`, `obsidian://`, hoặc một đường dẫn `file://` hay đường dẫn mã hóa phần trăm — và nó sẽ được mở chứ không bị coi là tên ghi chú. Địa chỉ web mở trong một tab của Trình xem web của chính Obsidian nếu bạn đã bật nó.
 - **Đường dẫn dài rút ngắn ở chỗ các chữ cái là thừa** — không bao giờ rút quá mức còn phân biệt được một thư mục với thư mục bên cạnh, rút mượt mà chứ không nhảy từng chữ — và chỉ cuộn khi không còn gì để nén. Trỏ vào một tên đã rút ngắn để xem lại tên đầy đủ.
-- **<kbd>F2</kbd>** luân phiên giữa tiêu đề nội tuyến và thanh đường dẫn, mở ra ở tên không kèm phần mở rộng và mở rộng dần tới các đường dẫn đầy đủ ở những lần nhấn tiếp theo. Nó đi qua gọn gàng hộp thoại đổi tên của Obsidian khi tiêu đề đã bị cuộn khuất. Có sẵn lệnh *Tập trung vào thanh đường dẫn* để gán phím nếu bạn muốn thao tác kiểu thanh địa chỉ.
+- **<kbd>F2</kbd>** luân phiên giữa tiêu đề nội tuyến và thanh đường dẫn, mở ra ở tên không kèm phần mở rộng và mở rộng dần tới các đường dẫn đầy đủ ở những lần nhấn tiếp theo. Nó đi qua gọn gàng hộp thoại đổi tên của Obsidian khi tiêu đề đã bị cuộn khuất. Lệnh *Tập trung vào thanh đường dẫn* đi qua cùng các nấc mà không đổi tên; hàng *Phím tắt* trong phần cài đặt đưa bạn tới nơi gán phím cho nó.
 - **Bấm vào tên kho** để duyệt các kho khác, thư mục home, gốc hệ thống tệp và các ổ đĩa đã gắn mà không phải chuyển kho. Chỉ đọc cho tới khi bạn mở ổ khóa đỏ nằm thế chỗ nút bật đổi tên ở ngoài đó, và luôn được viền bằng màu lỗi. Mặc định tắt — xem [ngoài kho](#ngoài-kho).
+- **Gốc kho liệt kê các trang mà một ngăn có thể chứa** — `:graph`, `:search`, và mọi chế độ xem mà các plugin của bạn đăng ký. Chọn một trang, hoặc gõ nó: dấu hai chấm không bắt đầu tên tệp nào, nên các nhãn cũng đóng vai trò một địa chỉ. Khi đã cài plugin trang bắt đầu, dấu phân cách của chính kho mở trang đó ở lần nhấp đầu tiên và thu gọn cây tệp ở lần tiếp theo.
+- **Một hàng trên những ngăn không chứa tệp** — một tab trống hiển thị `vault / :blank`, đồ thị là `vault / :graph`, và trường nhập bên cạnh là một thanh địa chỉ: gõ một đường dẫn rồi nhấn <kbd>Enter</kbd> để mở nó trong ngăn đó, hoặc tạo mới. Các ngăn ở thanh bên vẫn giữ tiêu đề riêng của Obsidian.
 - **Hai mức cảnh báo** — đỏ khi ở ngoài kho, cam cho các tệp văn bản mà Obsidian không có trình soạn thảo. Xem [các màu cảnh báo](usage.vi.md#hai-màu-cảnh-báo).
 - **Biểu tượng theo giao diện**, thay được bằng một CSS snippet — và **46 ngôn ngữ**: mọi ngôn ngữ Obsidian có, cộng thêm tiếng Hy Lạp và tiếng Phạn, vốn không có trong thiết lập của Obsidian. Chọn một ngôn ngữ riêng cho plugin, hoặc theo ngôn ngữ của Obsidian.
 - **Cài đặt:** ngôn ngữ, căn chỉnh, các mẫu dấu phân cách, kiểu bấm nào mở danh sách, tên kho, tệp bắt đầu bằng dấu chấm, phần mở rộng tệp.

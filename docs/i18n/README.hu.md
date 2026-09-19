@@ -1,4 +1,4 @@
-<!-- A README.md fordítása — állapot: e1e2247 commit.
+<!-- A README.md fordítása — állapot: 2cbb237 commit.
      Gépi fordítás (Claude Opus 5), anyanyelvi lektorálás nélkül.
      A javításokat szívesen fogadjuk; az irányadó változat az angol
      README. -->
@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · csak asztali gépen · AGPL-3.0
 ## MI-nyilatkozat
 
 - **Ügynök** — **Claude Opus 5** és **Claude Sonnet 5** (Anthropic, a Claude Code-on keresztül): megírta a TypeScript kódot, a CSS-t, mind a 45 fordításkészletet és a dokumentációt. A fordítások gépiek, anyanyelvi lektorálás nélkül.
-- **Fogyasztás** — 2026. augusztus 3. – szeptember 17., 23 munkamenet, \~14844 válasz: \~19,2 M előállított token, \~85,2 M elküldött, \~4800,6 M újraolvasás a gyorsítótárból (összesen \~4905,0 M).
+- **Fogyasztás** — 2026. augusztus 3. – szeptember 19., 20 munkamenet, \~16460 válasz: \~19,9 M előállított token, \~87,0 M elküldött, \~5451,0 M újraolvasás a gyorsítótárból (összesen \~5558,0 M).
 - **Forrás** — a modell nyílt forráskódú kódból, dokumentációból és mások által közzétett közösségi írásokból tanult. Az érdem nagyobb része őket illeti.
 - **Szerző** — Vault51: meghatározott minden funkciót, valódi széfben próbálta ki az egyes változatokat, irányította a javításokat, átnézte az összes eredményt.
 
@@ -38,8 +38,10 @@ Obsidian 1.8.7+ · csak asztali gépen · AGPL-3.0
 - **A HTML-fájlok oldalként jelennek meg**, egy minden jogosultságtól megfosztott keretben — nincs szkript, nincs hálózat, nincs saját eredet —, a fájl mellett lévő stíluslapokat és képeket pedig behúzza, így egy elmentett weboldal továbbra is önmagára hasonlít. A forrás egyetlen gombnyomásnyira van.
 - **Írj be egy URL-t** — `https://`, `obsidian://`, vagy egy `file://`, illetve százalékkódolt útvonalat —, és megnyílik ahelyett, hogy jegyzetnévként kezelné. A webcímek az Obsidian saját Webes megjelenítő lapján nyílnak meg, ha az be van kapcsolva.
 - **A hosszú útvonalak ott rövidülnek, ahol a betűk fölöslegesek** — sosem azon túl, ami egy mappát megkülönböztet a szomszédjától, és egyenletesen, nem betűnként ugrálva —, és csak akkor gördülnek, ha már nincs mit összenyomni. Mutass rá egy lerövidített névre, hogy újra teljes egészében lásd.
-- Az **<kbd>F2</kbd>** a beágyazott cím és az útvonalsáv között vált: a kiterjesztés nélküli néven nyílik meg, a további lenyomásokra pedig egészen a teljes útvonalakig tágul. Az Obsidian átnevezési párbeszédablakán is simán átjut, ha a cím kigördült a látómezőből. Ha a címsoros mozdulatot szeretnéd, a *Fókusz az útvonalsávra* parancshoz rendelhetsz billentyűt.
+- Az **<kbd>F2</kbd>** a beágyazott cím és az útvonalsáv között vált: a kiterjesztés nélküli néven nyílik meg, a további lenyomásokra pedig egészen a teljes útvonalakig tágul. Az Obsidian átnevezési párbeszédablakán is simán átjut, ha a cím kigördült a látómezőből. A *Fókusz az útvonalsávra* parancs ugyanezeket a fokokat járja be átnevezés nélkül; a beállítások *Gyorsbillentyűk* sora oda visz, ahol billentyűt rendelhetsz hozzá.
 - **Kattints a széf nevére**, és széfváltás nélkül böngészheted a többi széfedet, a saját mappádat, a fájlrendszer gyökerét és a csatolt meghajtókat. Csak olvasható, amíg ki nem nyitod a piros lakatot, amely odakint az átnevezés kapcsoló helyére kerül, és végig hibaszínű keret veszi körül. Alapból kikapcsolva — lásd [a széfen kívül](#a-széfen-kívül).
+- **A széf gyökere felsorolja a panel által megjeleníthető oldalakat** — `:graph`, `:search`, és mindazokat a nézeteket, amelyeket a bővítményeid regisztrálnak. Válassz ki egyet, vagy gépeld be: a kettőspont egyetlen fájlnevet sem kezd, így a címkék címként is szolgálnak. Ha telepítve van egy kezdőoldal-bővítmény, a széf saját elválasztója az első kattintásra megnyitja azt az oldalt, a következőre pedig összecsukja a fájlfát.
+- **Sor a fájlt nem tartalmazó paneleken** — az üres lapon `vault / :blank` áll, a gráfon `vault / :graph`, a mellette lévő mező pedig címsor: írj be egy útvonalat, és az <kbd>Enter</kbd> megnyitja abban a panelben, vagy létrehozza. Az oldalsávi panelek megtartják az Obsidian saját címét.
 - **Két figyelmeztetési szint** — piros a széfen kívül, narancs azoknál a szövegfájloknál, amelyekhez az Obsidiannak nincs szerkesztője. Lásd [a figyelmeztető színek](usage.hu.md#a-két-figyelmeztető-szín).
 - **Témához igazítható ikonok**, egy CSS-részletből cserélhetők — és **46 nyelv**: mindegyik, amelyet az Obsidian hoz, továbbá a görög és a szanszkrit, amelyekhez az Obsidiannak nincs beállítása. Választhatsz egyet csak a bővítmény számára, vagy követheted az Obsidian saját nyelvét.
 - **Beállítások:** nyelv, igazítás, előre megadott elválasztók, melyik kattintás nyitja a listát, a széf neve, rejtett fájlok, fájlkiterjesztések.

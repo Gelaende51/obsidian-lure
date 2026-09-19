@@ -1,4 +1,4 @@
-<!-- Oversettelse av CHANGELOG.md — status: commit 973105b.
+<!-- Oversettelse av CHANGELOG.md — status: commit 2cbb237.
      Maskinoversatt (Claude Opus 5) og ikke gjennomlest av morsmålsbrukere.
      Rettelser er velkomne; den engelske CHANGELOG-filen er den gjeldende
      utgaven. -->
@@ -8,6 +8,38 @@
 # Endringslogg
 
 Hver utgivelse av Lure, den nyeste først. Det som har kommet inn siden forrige utgivelse, står under *Ikke utgitt*. Versjonene har ingen `v` foran seg, slik som utgivelsesmerkene.
+
+## 1.4.0 — 2026-09-19[^1.4.0]
+
+### Lagt til
+
+- **En Hurtigtaster-rad i innstillingene.** Knappen åpner Obsidians *Hurtigtaster* filtrert til dette tillegget, der *Fokuser på stilinjen* — som leveres uten tast — kan få en.
+- **En stilinje på paneler som ikke holder noen fil.** En tom fane viser `vault / :blank`, grafen `vault / :graph`, og alle andre visninger uten noe å navngi får sin egen `:`-etikett — fanen til et hjemmeside-tillegg viser `:home-launcher`. Feltet ved siden av er en adresselinje: skriv inn en sti og <kbd>Enter</kbd> åpner den i det panelet, eller oppretter den. Før dette var raden tom — tillegget skjulte Obsidians egen tittel og satte ingenting i stedet.
+- **En side kan skrives inn i tillegg til å velges** — `:graph` og resten er en adresse, ikke bare et listeelement. Et kolon begynner ingen filnavn, så å skrive ett hvor som helst tilkaller dem, og feltet får deres farge i stedet for å tilby å opprette et notat som ingenting kunne hete.
+- **En rad for Obsidians egen *Vis alle filtyper***, ved siden av regelen for punktfiler, siden begge avgjør hva en nedtrekksliste kan vise: den sier at du skal lete etter den innstillingen i Obsidians egne innstillinger og slå den på for å se alle filer, og knappen ved siden av åpner den siden med innstillingen rullet til syne og blinkende, slik et søkeresultat i innstillingene ville gjort. Navngitt med Obsidians ord, forklart på 45 språk.
+- **Hvelvets rot lister opp sidene et panel kan holde** — `:graph`, `:search` og alle visninger tilleggene dine registrerer, deriblant en hjemmefane eller en kalender. Velg en, og panelet åpner den, slik som når du velger et notat åpner notatet. Visninger som finnes for å vise en fil er utelatt, fordi de ikke ville hatt noe å vise.
+- **Hvelvets eget skilletegn åpner startsiden din**, der et tillegg tilbyr en, og er understreket for å si det; trykket etter det bretter filtreet sammen, og trykket etter det setter tilbake nøyaktig det som var åpent. Uten et slikt tillegg bretter første trykk sammen, som før.
+- **Skriv en sti fra filsystemets rot.** En `/` foran et tomt felt åpner en i stedet for å bli slukt, hvert senere skråstrek i den hører til den, og nedtrekkslisten viser maskinen i stedet for hvelvet.
+
+### Endret
+
+- **F2 og Fokuser på stilinjen trykker Tab inne i feltet.** Det Tab ville gjort der — neste trinn, fullføre det du skrev, gå inn i en mappe — gjør de også; bare der Tab går rundt til begynnelsen av stien, forlater de feltet: F2 til overskriften i notatet, kommandoen til notatet. Før fikk F2 et felt du hadde skrevet i til å begynne på nytt på navnet, og kommandoen lukket feltet.
+- **Trinnet etter at syklusen forlater feltet er rotmappen.** Trykket etter at F2 har gått tilbake til overskriften i notatet, eller kommandoen tilbake til notatet, lander der Tabs runde gjør — hvelvets rot, hele stien i feltet, den første mappen markert — slik at intet trinn i ringen er overlatt til Tab alene.
+- **Fokuser på stilinjen går som F2.** Den åpner på navnet i stedet for hele stien, tar de samme fire trinnene, og trykket etter det siste lukker feltet og setter markøren tilbake i notatet — før gikk den rundt i trinnene i det uendelige, og den ene tasten som nådde raden kunne ikke forlate den.
+- **Et opptatt navn meldes når du bruker det, ikke mens du skriver det.** Hvert navn som skrives mot `Notes.md` passerer navn som kan være egne filer, og advarselen pleide å blinke opp og bort bokstav for bokstav. Det som er galt med stavemåten til et navn, sies fortsatt mens det staves.
+- **Et skilletegn hvis mappenotat allerede er åpent, viser mappen** i stedet for å åpne på nytt det som er på skjermen — som er det andre trykket alltid har betydd.
+- **Der du er, er fet i en nedtrekksliste**, ikke bare blå.
+- **Alt som ikke er et notat, er oransje i en nedtrekksliste**, ikke bare teksttypene Obsidian ikke har noen visning for. Det lilla plukker ut notatene i en mappe med blandet innhold; én farge for resten sier det samme raskere.
+
+### Rettet
+
+- **Backspace over en klikket mappe tar ikke lenger hvelvets navn bort.** Skråstreken som ble stående foran, ble lest som en sti fra maskinens rot, noe som tømmer det åpnende segmentet — og å lukke feltet med Escape satte det aldri tilbake, så fanen mistet hvelvets navn og ikon for godt. En innledende skråstrek regnes nå som maskinens bare når dens første mappe faktisk finnes, og det åpnende segmentet kommer tilbake med hver vei ut av feltet.
+- Utenfor hvelvet var filer skjult med mindre Obsidians **Oppdag alle filendelser** var på — en innstilling om hva hvelvet indekserer, brukt på mapper som ikke er i hvelvet. En `.txt` ved siden av notatene dine listes der ute uansett.
+- Nedtrekkslisten til hvelvets navn gjorde ingenting på et panel uten fil, som er nettopp panelet du ville brukt for å gå et annet sted.
+- Å klikke på hvelvets navn lot Obsidians egen tittel stå ved siden av stien i feltet, gråtonet, der den ikke vises noe annet tidspunkt: raden måler seg selv etter det den har tegnet, og i det øyeblikket har den tømt seg selv for å gi plass til feltet.
+
+- Å klikke på det tomme området åpnet feltet og mistet det så: å vise notatet i Filutforsker tar med seg tekstmarkøren, så feltet sto åpent og markert mens hvert tastetrykk gikk til treet.
+- Trinnet som viser stien fra systemroten, tegnet et spor av den samme stien ved siden av feltet, uten tilpasning, slik at en dyp sti ble malt over seg selv.
 
 ## 1.3.0 — 2026-09-17[^1.3.0]
 
@@ -147,6 +179,7 @@ Første utgivelse. Erstatter filnavnet i overskriftslinjen til et notat med en k
 - **Utenfor hvelvet** (av som standard): hvelvnavnet åpner de andre hvelvene dine, hjemmemappen, roten av filsystemet og monterte stasjoner. Ingenting der ute skrives før du låser det opp, og et notat kan bare kopieres ut av hvelvet, aldri flyttes.
 - **45 språk.**
 
+[^1.4.0]: Endringer siden 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Endringer siden 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Endringer siden 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
 [^1.1.2]: Endringer siden 1.1.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.1...1.1.2>

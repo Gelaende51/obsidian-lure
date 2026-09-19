@@ -1,4 +1,4 @@
-<!-- Oversættelse af CHANGELOG.md — status: commit 973105b.
+<!-- Oversættelse af CHANGELOG.md — status: commit 2cbb237.
      Maskinoversat (Claude Opus 5) og ikke gennemlæst af modersmålstalere.
      Rettelser er velkomne; den engelske CHANGELOG er den gældende udgave. -->
 

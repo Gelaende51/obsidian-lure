@@ -1,4 +1,4 @@
-<!-- Aistriúchán ar README.md — staid: tiomantas e1e2247.
+<!-- Aistriúchán ar README.md — staid: tiomantas 2cbb237.
      Aistriúchán meaisín (Claude Opus 5) nár léigh cainteoirí dúchais é.
      Fáilte roimh cheartúcháin; is é an README Béarla an leagan údarásach. -->
 
@@ -15,7 +15,7 @@ Obsidian 1.8.7+ · deasc amháin · AGPL-3.0
 ## Nochtadh faoin IS
 
 - **Gníomhaire** — **Claude Opus 5** agus **Claude Sonnet 5** (Anthropic, trí Claude Code): scríobh sé an TypeScript, an CSS, na 45 sraith aistriúcháin ar fad agus an doiciméadú. Is aistriúcháin mheaisín iad agus níor léigh cainteoirí dúchais iad.
-- **Úsáid** — 3 Lúnasa – 17 Meán Fómhair 2026, 23 seisiún, \~14,844 freagra: \~19.2 milliún ceadchomhartha ginte, \~85.2 milliún seolta, \~4800.6 milliún athléamh ón taisce (\~4905.0 milliún san iomlán).
+- **Úsáid** — 3 Lúnasa – 19 Meán Fómhair 2026, 20 seisiún, \~16,460 freagra: \~19.9 milliún ceadchomhartha ginte, \~87.0 milliún seolta, \~5451.0 milliún athléamh ón taisce (\~5558.0 milliún san iomlán).
 - **Foinse** — d'fhoghlaim an múnla ó chód foinse oscailte, ó dhoiciméadú agus ó scríbhinní pobail a d'fhoilsigh daoine eile. Is leo formhór an chreidiúna.
 - **Údar** — Vault51: shocraigh sé gach gné, thriail sé gach leagan i dtaisceadán fíor, stiúir sé na ceartúcháin, léigh sé gach toradh.
 
@@ -37,8 +37,10 @@ Obsidian 1.8.7+ · deasc amháin · AGPL-3.0
 - **Taispeántar comhaid HTML mar leathanaigh**, i bhfráma nach bhfuil aon chead fágtha aige — gan scripteanna, gan líonra, gan bhunphointe dá chuid féin — agus na stílbhileoga agus na híomhánna atá in aice leis an gcomhad tugtha isteach ionas go bhfuil a chuma féin fós ar leathanach sábháilte. Níl an fhoinse ach brú amháin uait.
 - **Clóscríobh URL** — `https://`, `obsidian://`, nó conair `file://` nó ionchódaithe le céatadáin — agus osclaítear é seachas caitheamh leis mar ainm nóta. Téann seoltaí gréasáin chuig cluaisín den *Breathnóir gréasáin* atá ag Obsidian féin, má tá sé ar siúl agat.
 - **Giorraítear conairí fada san áit a bhfuil na litreacha iomarcach** — riamh thar an méid a dhealaíonn fillteán ón gceann in aice leis, go réidh seachas litir ar litir — agus ní scrollaíonn siad ach nuair nach bhfuil aon rud fágtha le comhbhrú. Dírigh ar ainm giorraithe chun é a fháil ar ais ina iomláine.
-- **Malartaíonn <kbd>F2</kbd>** idir an teideal laistigh den nóta agus barra na conaire, ag oscailt ar an ainm gan a iarmhír agus ag leathnú amach chuig na conairí iomlána le tuilleadh brúnna. Gluaiseann sé go glan trí dhialóg athainmnithe Obsidian nuair atá an teideal scrollta as radharc. Tá ordú *Fócas ar an mbarra conaire* ann le ceangal más mian leat gotha an bharra seolta.
+- **Malartaíonn <kbd>F2</kbd>** idir an teideal laistigh den nóta agus barra na conaire, ag oscailt ar an ainm gan a iarmhír agus ag leathnú amach chuig na conairí iomlána le tuilleadh brúnna. Gluaiseann sé go glan trí dhialóg athainmnithe Obsidian nuair atá an teideal scrollta as radharc. Siúlann ordú *Fócas ar an mbarra conaire* na céimeanna céanna gan athainmniú; téann sraith *Eochracha te* sna socruithe leat chun é a cheangal.
 - **Cliceáil ar ainm an taisceadáin** chun do thaisceadáin eile, an fillteán baile, fréamh an chórais comhad agus na tiomántáin fheistithe a bhrabhsáil gan taisceadán a athrú. Léamh amháin go dtí go n-osclaíonn tú an glas dearg a thagann in ionad scoránaí an athainmnithe amuigh ansin, agus fráma an datha earráide air ó thús deireadh. Múchta de réir réamhshocraithe — féach [lasmuigh den taisceadán](#lasmuigh-den-taisceadán).
+- **Liostaíonn fréamh an taisceadáin na leathanaigh is féidir le pána a shealbhú** — `:graph`, `:search`, agus cibé amharcanna a chláraíonn do bhreiseáin. Roghnaigh ceann, nó clóscríobh é: ní thosaíonn ainm comhaid le colon, mar sin feidhmíonn na lipéid mar sheoladh freisin. Le breiseán leathanaigh tosaigh suiteáilte, osclaíonn deighilteoir an taisceadáin féin an leathanach sin ar an gcéad chliceáil agus fillteann sé crann na gcomhad ar an gcéad cheann eile.
+- **Sraith ar phánaí gan comhad** — léann cluaisín folamh `vault / :blank`, léann an graf `vault / :graph`, agus is barra seolta an réimse lena thaobh: clóscríobh conair agus osclaíonn <kbd>Enter</kbd> í sa phána sin, nó cruthaíonn sé í. Coimeádann pánaí na barra taoibh teideal Obsidian féin.
 - **Dhá leibhéal rabhaidh** — dearg lasmuigh den taisceadán, flannbhuí do chomhaid téacs nach bhfuil eagarthóir ag Obsidian dóibh. Féach [an dá dhath rabhaidh](usage.ga.md#an-dá-dhath-rabhaidh).
 - **Deilbhíní a leanann an téama**, is féidir iad a mhalartú ó ghearrthóg CSS — agus **46 teanga**: gach ceann a thugann Obsidian leis, móide an Ghréigis agus an tSanscrait, nach bhfuil socrú aige dóibh. Roghnaigh ceann don bhreiseán amháin, nó lean teanga Obsidian féin.
 - **Socruithe:** teanga, ailíniú, deighilteoirí réamhshocraithe, cén chliceáil a osclaíonn an liosta, ainm an taisceadáin, comhaid fholaithe, iarmhíreanna comhaid.

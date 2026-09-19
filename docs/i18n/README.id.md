@@ -1,4 +1,4 @@
-<!-- Terjemahan README.md — status: commit e1e2247.
+<!-- Terjemahan README.md — status: commit 2cbb237.
      Terjemahan mesin (Claude Opus 5), belum ditinjau penutur asli.
      Koreksi sangat diterima; README bahasa Inggris adalah versi acuan. -->
 
@@ -15,7 +15,7 @@ Obsidian 1.8.7+ · hanya desktop · AGPL-3.0
 ## Pengungkapan AI
 
 - **Agen** — **Claude Opus 5** dan **Claude Sonnet 5** (Anthropic, lewat Claude Code): menulis TypeScript, CSS, seluruh 45 set terjemahan, dan dokumentasinya. Terjemahan dibuat mesin dan belum ditinjau penutur asli.
-- **Pemakaian** — 3 Agustus – 17 September 2026, 23 sesi, \~14.844 balasan: \~19,2 juta token dihasilkan, \~85,2 juta dikirim, \~4800,6 juta pembacaan ulang dari singgahan (\~4905,0 juta total).
+- **Pemakaian** — 3 Agustus – 19 September 2026, 20 sesi, \~16.460 balasan: \~19,9 juta token dihasilkan, \~87,0 juta dikirim, \~5451,0 juta pembacaan ulang dari singgahan (\~5558,0 juta total).
 - **Hulu** — model belajar dari kode sumber terbuka, dokumentasi, dan tulisan komunitas yang diterbitkan orang lain. Sebagian besar kreditnya milik mereka.
 - **Penulis** — Vault51: menentukan setiap fitur, mencoba tiap versi di vault sungguhan, mengarahkan perbaikan, meninjau seluruh hasilnya.
 
@@ -37,8 +37,10 @@ Obsidian 1.8.7+ · hanya desktop · AGPL-3.0
 - **Berkas HTML tampil sebagai halaman**, dalam bingkai tanpa satu pun izin diberikan — tanpa skrip, tanpa jaringan, tanpa asalnya sendiri — dengan lembar gaya dan gambar di sebelah berkas itu ikut dibawa masuk sehingga halaman tersimpan tetap tampak seperti dirinya. Sumbernya cukup satu tekanan jauhnya.
 - **Ketik URL** — `https://`, `obsidian://`, atau jalur `file://` maupun berkode persen — dan ia dibuka alih-alih diperlakukan sebagai nama catatan. Alamat web menuju tab penampil Web milik Obsidian sendiri bila Anda menyalakannya.
 - **Jalur panjang memendek di tempat hurufnya berlebih** — tak pernah melewati apa yang membedakan sebuah folder dari tetangganya, secara mulus alih-alih huruf demi huruf — dan baru bergulir ketika tak ada lagi yang bisa dimampatkan. Tunjuk nama yang dipendekkan untuk mendapatkannya kembali secara utuh.
-- **<kbd>F2</kbd>** berganti antara judul di dalam catatan dan bilah jalur, terbuka pada nama tanpa ekstensinya dan melebar ke jalur lengkap pada tekanan berikutnya. Ia melintas mulus melewati dialog ganti nama milik Obsidian ketika judulnya tergulir ke luar pandangan. Tersedia perintah *Fokus ke bilah jalur* untuk Anda tetapkan pintasannya bila Anda menginginkan gerak bilah alamat.
+- **<kbd>F2</kbd>** berganti antara judul di dalam catatan dan bilah jalur, terbuka pada nama tanpa ekstensinya dan melebar ke jalur lengkap pada tekanan berikutnya. Ia melintas mulus melewati dialog ganti nama milik Obsidian ketika judulnya tergulir ke luar pandangan. Perintah *Fokus ke bilah jalur* menelusuri anak tangga yang sama tanpa mengganti nama; baris *Tombol pintas* di pengaturan mengantar Anda untuk menetapkannya.
 - **Klik nama vault** untuk menjelajahi vault Anda yang lain, folder rumah, akar sistem berkas, dan diska yang terpasang tanpa berpindah vault. Hanya-baca sampai Anda membuka gembok merah yang di luar sana menggantikan tempat sakelar ganti nama, dan berbingkai warna galat sepanjang waktu. Mati secara bawaan — lihat [di luar vault](#di-luar-vault).
+- **Akar vault mencantumkan halaman yang bisa dimuat sebuah panel** — `:graph`, `:search`, dan tampilan apa pun yang didaftarkan plugin Anda. Pilih salah satu, atau ketik: tanda titik dua tidak mengawali nama berkas mana pun, jadi labelnya berfungsi ganda sebagai alamat. Dengan plugin halaman awal terpasang, pembatas milik vault membuka halaman itu pada klik pertama dan melipat pohon berkas pada klik berikutnya.
+- **Sebuah baris pada panel yang tidak memuat berkas** — tab kosong terbaca `vault / :blank`, grafik `vault / :graph`, dan kolom di sebelahnya adalah bilah alamat: ketik jalur dan <kbd>Enter</kbd> membukanya di panel itu, atau membuatnya. Panel bilah samping tetap memakai judul bawaan Obsidian.
 - **Dua tingkat peringatan** — merah di luar vault, jingga untuk berkas teks yang tak punya penyunting di Obsidian. Lihat [dua warna peringatan](usage.id.md#dua-warna-peringatan).
 - **Ikon yang mengikuti tema**, bisa ditukar dari potongan CSS — dan **46 bahasa**: setiap bahasa yang dibawa Obsidian, ditambah Yunani dan Sanskerta, yang tak punya setelan di sana. Pilih satu untuk plugin ini saja, atau ikuti pilihan Obsidian sendiri.
 - **Pengaturan:** bahasa, perataan, pemisah siap pakai, klik mana yang membuka daftar, nama vault, berkas tersembunyi, ekstensi berkas.

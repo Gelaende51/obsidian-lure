@@ -1,4 +1,4 @@
-<!-- README.md çevirisi — durum: commit e1e2247.
+<!-- README.md çevirisi — durum: commit 2cbb237.
      Makine çevirisi (Claude Opus 5), ana dili konuşanlarca gözden
      geçirilmedi. Düzeltmeler memnuniyetle karşılanır; belirleyici sürüm
      İngilizce README'dir. -->
@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · yalnızca masaüstü · AGPL-3.0
 ## Yapay zekâ bildirimi
 
 - **Aracı** — **Claude Opus 5** ve **Claude Sonnet 5** (Anthropic, Claude Code üzerinden): TypeScript kodunu, CSS'i, 45 çeviri setinin tamamını ve belgeleri yazdı. Çeviriler makine tarafından üretilmiştir ve ana dili konuşanlarca gözden geçirilmemiştir.
-- **Tüketim** — 3 Ağustos – 17 Eylül 2026, 23 oturum, \~14.844 yanıt: \~19,2 M token üretildi, \~85,2 M gönderildi, \~4.800,6 M önbellekten yeniden okundu (toplam \~4.905,0 M).
+- **Tüketim** — 3 Ağustos – 19 Eylül 2026, 20 oturum, \~16.460 yanıt: \~19,9 M token üretildi, \~87,0 M gönderildi, \~5.451,0 M önbellekten yeniden okundu (toplam \~5.558,0 M).
 - **Kaynak** — model, başkalarının yayımladığı açık kaynak kodlardan, belgelerden ve topluluk yazılarından öğrendi. Emeğin büyük kısmı onlara aittir.
 - **Yazar** — Vault51: her özelliği tanımladı, her yinelemeyi gerçek bir kasada test etti, düzeltmeleri yönlendirdi, tüm çıktıyı gözden geçirdi.
 
@@ -38,8 +38,10 @@ Obsidian 1.8.7+ · yalnızca masaüstü · AGPL-3.0
 - **HTML dosyaları sayfa olarak gösterilir**; bütün izinlerin esirgendiği bir çerçevede — betik yok, ağ yok, kendine ait bir köken (origin) yok — dosyanın yanındaki stil sayfaları ve görseller de içeri alınır, böylece kaydedilmiş bir sayfa kendisi gibi görünmeye devam eder. Kaynak kodu tek bir basış uzağınızdadır.
 - **Bir URL yazın** — `https://`, `obsidian://` ya da bir `file://` veya yüzde kodlamalı yol — ve bir not adı olarak değil, adres olarak açılsın. Web adresleri, etkinleştirdiyseniz Obsidian'ın kendi Web görüntüleyici eklentisinin bir sekmesinde açılır.
 - **Uzun yollar harflerin gereksiz olduğu yerden kısalır** — bir klasörü yanındakinden ayırt ettiren noktanın asla ötesine geçmeden, harf harf değil akıcı biçimde — ve yalnızca sıkıştırılacak hiçbir şey kalmadığında kaydırılır. Kısaltılmış bir adın tamamını görmek için üzerine gelin.
-- **<kbd>F2</kbd>**, satır içi başlık ile yol çubuğu arasında gidip gelir; uzantısız adla açılır ve sonraki basışlarda tam yollara kadar genişler. Başlık görünümün dışına kaydırılmışsa Obsidian'ın yeniden adlandırma penceresinden sorunsuz geçer. Adres çubuğu alışkanlığını istiyorsanız kısayol atayabileceğiniz bir *Yol çubuğuna odaklan* komutu da vardır.
+- **<kbd>F2</kbd>**, satır içi başlık ile yol çubuğu arasında gidip gelir; uzantısız adla açılır ve sonraki basışlarda tam yollara kadar genişler. Başlık görünümün dışına kaydırılmışsa Obsidian'ın yeniden adlandırma penceresinden sorunsuz geçer. *Yol çubuğuna odaklan* komutu aynı basamaklarda yeniden adlandırmadan ilerler; ayarlardaki *Kısayollar* satırı ona tuş atamanız için sizi oraya götürür.
 - **Kasanın adına tıklayın**; kasa değiştirmeden diğer kasalarınıza, ev klasörünüze, dosya sistemi köküne ve bağlı sürücülere göz atın. Orada yeniden adlandırma anahtarının yerini alan kırmızı asma kilidi açana kadar salt okunurdur ve baştan sona hata rengiyle çerçevelenir. Öntanımlı olarak kapalıdır — bkz. [kasanın dışında](#kasanın-dışında).
+- **Kasa kökü, bir bölmenin tutabileceği sayfaları listeler** — `:graph`, `:search` ve eklentilerinizin kaydettiği tüm görünümler. Birini seçin ya da yazın: iki nokta üst üste hiçbir dosya adını başlatmaz, bu yüzden etiketler aynı zamanda bir adres işi görür. Bir başlangıç sayfası eklentisi kuruluysa, kasanın kendi ayırıcısı ilk tıklamada o sayfayı açar, sonrakinde dosya ağacını katlar.
+- **Dosya tutmayan bölmelerde bir satır** — boş bir sekme `vault / :blank`, grafik `vault / :graph` yazar ve yanındaki alan bir adres çubuğudur: bir yol yazın, <kbd>Enter</kbd> onu o bölmede açar ya da oluşturur. Kenar çubuğu bölmeleri Obsidian'ın kendi başlığını korur.
 - **İki uyarı düzeyi** — kasanın dışı için kırmızı, Obsidian'da düzenleyicisi olmayan metin dosyaları için turuncu. Bkz. [uyarıların iki rengi](usage.tr.md#uyarıların-iki-rengi).
 - **Temaya uyan simgeler**, bir CSS parçacığıyla (snippet) değiştirilebilir — ve **46 dil**: Obsidian'ın sunduğu her dil, artı Obsidian'da ayarı bulunmayan Yunanca ve Sanskritçe. Yalnızca eklenti için bir dil seçin ya da Obsidian'ın dilini izleyin.
 - **Ayarlar:** dil, hizalama, ayırıcı hazır ayarları, açılır listeyi hangi tıklamanın açacağı, kasa adı, nokta dosyaları, dosya uzantıları.

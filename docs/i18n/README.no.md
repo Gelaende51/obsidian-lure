@@ -1,4 +1,4 @@
-<!-- Oversettelse av README.md — status: commit e1e2247.
+<!-- Oversettelse av README.md — status: commit 2cbb237.
      Maskinoversatt (Claude Opus 5) og ikke gjennomlest av morsmålsbrukere.
      Rettelser er velkomne; den engelske README-filen er den gjeldende
      utgaven.
@@ -20,7 +20,7 @@ Obsidian 1.8.7+ · kun datamaskin · AGPL-3.0
 ## AI-erklæring
 
 - **Agent** — **Claude Opus 5** og **Claude Sonnet 5** (Anthropic, via Claude Code): skrev TypeScript-koden, CSS-en, alle 45 oversettelsessettene og dokumentasjonen. Oversettelsene er laget maskinelt og ikke gjennomlest av morsmålsbrukere.
-- **Forbruk** — 3. august – 17. september 2026, 23 økter, \~14 844 svar: \~19,2 mill. genererte tokens, \~85,2 mill. sendte, \~4800,6 mill. gjenlesinger fra hurtiglageret (\~4905,0 mill. totalt).
+- **Forbruk** — 3. august – 19. september 2026, 20 økter, \~16 460 svar: \~19,9 mill. genererte tokens, \~87,0 mill. sendte, \~5451,0 mill. gjenlesinger fra hurtiglageret (\~5558,0 mill. totalt).
 - **Opphav** — modellen har lært av åpen kildekode, dokumentasjon og fellesskapstekster utgitt av andre. Mesteparten av æren tilfaller dem.
 - **Forfatter** — Vault51: fastsatte hver funksjon, prøvde hver utgave i et ekte hvelv, styrte rettelsene og leste gjennom alle resultater.
 
@@ -42,8 +42,10 @@ Obsidian 1.8.7+ · kun datamaskin · AGPL-3.0
 - **HTML-filer vises som sider**, i en ramme uten en eneste tillatelse — ingen skript, ingen nettverkstilgang, ingen egen opprinnelse — med stilarkene og bildene som ligger ved siden av filen tatt med, slik at en lagret side fortsatt ser ut som seg selv. Kildekoden er ett tastetrykk unna.
 - **Skriv en URL** — `https://`, `obsidian://` eller en `file://`- eller prosentkodet sti — og den åpnes i stedet for å leses som et notatnavn. Nettadresser går til en fane i Obsidians egen Webviser der du har den på.
 - **Lange stier kortes ned der bokstavene er overflødige** — aldri lenger enn det som skiller en mappe fra nabomappen, og jevnt heller enn en bokstav av gangen — og ruller først når det ikke er mer å presse sammen. Pek på et forkortet navn for å få det helt igjen.
-- **<kbd>F2</kbd>** veksler mellom overskriften i notatet og stilinjen, åpner på navnet uten filendelsen og går ved videre trykk ut til de fullstendige stiene. Den passerer rent gjennom Obsidians dialog for å gi nytt navn når tittelen er rullet ut av syne. Kommandoen *Fokuser på stilinjen* står klar til å bindes om du vil ha adresselinjebevegelsen.
+- **<kbd>F2</kbd>** veksler mellom overskriften i notatet og stilinjen, åpner på navnet uten filendelsen og går ved videre trykk ut til de fullstendige stiene. Den passerer rent gjennom Obsidians dialog for å gi nytt navn når tittelen er rullet ut av syne. Kommandoen *Fokuser på stilinjen* går gjennom de samme trinnene uten å gi nytt navn; raden *Hurtigtaster* i innstillingene tar deg dit du kan binde den.
 - **Klikk på hvelvets navn** for å bla i de andre hvelvene dine, hjemmemappen, roten av filsystemet og monterte stasjoner uten å bytte hvelv. Skrivebeskyttet til du åpner den røde hengelåsen som der ute tar plassen til bryteren for å gi nytt navn, og innrammet i feilfargen hele veien. Av som standard — se [utenfor hvelvet](#utenfor-hvelvet).
+- **Hvelvets rot lister opp sidene et panel kan holde** — `:graph`, `:search` og alle visninger tilleggene dine registrerer. Velg en, eller skriv den inn: et kolon begynner ingen filnavn, så etikettene fungerer også som adresse. Med et tillegg for startside installert åpner hvelvets eget skilletegn den siden ved første klikk og bretter filtreet sammen ved det neste.
+- **En rad på paneler som ikke holder noen fil** — en tom fane viser `vault / :blank`, grafen `vault / :graph`, og feltet ved siden av er en adresselinje: skriv inn en sti og <kbd>Enter</kbd> åpner den i det panelet, eller oppretter den. Sidepaneler beholder Obsidians egen tittel.
 - **To varselnivåer** — rødt utenfor hvelvet, oransje for tekstfiler Obsidian ikke har noen redigerer for. Se [de to varselfargene](usage.no.md#de-to-varselfargene).
 - **Temavennlige ikoner**, som kan byttes ut fra et CSS-utdrag — og **46 språk**: alle Obsidian leverer, pluss gresk og sanskrit, som det ikke har noen innstilling for. Velg ett for tillegget alene, eller følg Obsidians eget.
 - **Innstillinger:** språk, justering, ferdige skilletegn, hvilket klikk som åpner listen, hvelvets navn, skjulte filer, filendelser.

@@ -1,4 +1,4 @@
-<!-- README.md tarjimasi — holat: commit e1e2247.
+<!-- README.md tarjimasi — holat: commit 2cbb237.
      Mashina tarjimasi (Claude Opus 5), ona tili egalari tomonidan
      tekshirilmagan. Tuzatishlar mamnuniyat bilan qabul qilinadi;
      hal qiluvchi nusxa — inglizcha README. -->
@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · faqat kompyuter versiyasi · AGPL-3.0
 ## Sun'iy intellekt haqida ma'lumot
 
 - **Agent** — **Claude Opus 5** va **Claude Sonnet 5** (Anthropic, Claude Code orqali): TypeScript kodini, CSS'ni, barcha 45 ta tarjima to‘plamini va hujjatlarni yozgan. Tarjimalar mashina tomonidan yaratilgan va ona tili egalari tomonidan tekshirilmagan.
-- **Sarf** — 2026-yil 3-avgust – 17-sentabr, 23 ta seans, \~14 844 ta javob: \~19,2 mln token yaratilgan, \~85,2 mln yuborilgan, \~4 800,6 mln keshdan qayta o‘qilgan (jami \~4 905,0 mln).
+- **Sarf** — 2026-yil 3-avgust – 19-sentabr, 20 ta seans, \~16 460 ta javob: \~19,9 mln token yaratilgan, \~87,0 mln yuborilgan, \~5 451,0 mln keshdan qayta o‘qilgan (jami \~5 558,0 mln).
 - **Manba** — model boshqalar e'lon qilgan ochiq manbali kod, hujjatlar va hamjamiyat yozuvlaridan o‘rgangan. Asosiy xizmat o‘shalarga tegishli.
 - **Muallif** — Vault51: har bir imkoniyatni belgilagan, har bir iteratsiyani jonli omborda sinab ko‘rgan, tuzatishlarni yo‘naltirgan va barcha natijani ko‘rib chiqqan.
 
@@ -38,8 +38,10 @@ Obsidian 1.8.7+ · faqat kompyuter versiyasi · AGPL-3.0
 - **HTML fayllar sahifa sifatida ko‘rsatiladi** — barcha ruxsatlar olib qo‘yilgan ramka ichida: skriptlar yo‘q, tarmoq yo‘q, o‘z manbasi (origin) yo‘q. Saqlangan sahifa o‘z ko‘rinishini saqlashi uchun fayl yonidagi uslublar jadvallari va rasmlar ham olib kiriladi. Manba kodi bir bosish narida.
 - **URL yozing** — `https://`, `obsidian://`, `file://` yoki foiz bilan kodlangan yo‘l — u qayd nomi deb emas, havola sifatida ochiladi. Veb-manzillar, agar u yoqilgan bo‘lsa, Obsidian'ning o‘z Veb ko‘ruvchi tabida ochiladi.
 - **Uzun yo‘llar harflar ortiqcha bo‘lgan joydan qisqaradi** — papkani yonidagisidan ajratib turadigan chegaradan hech qachon o‘tmaydi, harfma-harf emas, ravon qisqaradi — va siqadigan narsa qolmagandagina aylantiriladi. Qisqartirilgan nomni to‘liq ko‘rish uchun kursorni ustiga olib boring.
-- **<kbd>F2</kbd>** matn ichidagi sarlavha va yo‘l paneli o‘rtasida almashadi: kengaytmasiz nom bilan ochiladi, keyingi bosishlarda esa to‘liq yo‘llargacha kengayadi. Sarlavha ko‘rinishdan chiqib ketgan bo‘lsa, Obsidian'ning nom o‘zgartirish oynasidan muammosiz o‘tadi. Manzil satriga xos odatni xohlasangiz, klavish biriktirish uchun *Yo‘l paneliga fokus* buyrug‘i bor.
+- **<kbd>F2</kbd>** matn ichidagi sarlavha va yo‘l paneli o‘rtasida almashadi: kengaytmasiz nom bilan ochiladi, keyingi bosishlarda esa to‘liq yo‘llargacha kengayadi. Sarlavha ko‘rinishdan chiqib ketgan bo‘lsa, Obsidian'ning nom o‘zgartirish oynasidan muammosiz o‘tadi. *Yo‘l paneliga fokus* buyrug‘i nom o‘zgartirmasdan xuddi shu pog‘onalardan o‘tadi; unga klavish biriktirish uchun sozlamalardagi *Hotkeys* qatoriga o‘ting.
 - **Ombor nomiga bosing** — omborni almashtirmasdan boshqa omborlaringizni, uy papkasini, fayl tizimi ildizini va ulangan disklarni ko‘rib chiqing. U yerda nom o‘zgartirish tugmasi o‘rnida turadigan qizil qulfni ochmaguningizcha faqat o‘qish mumkin, butun vaqt davomida esa xato rangidagi ramka ko‘rinib turadi. Sukut bo‘yicha o‘chiq — [ombordan tashqarida](#ombordan-tashqarida) bo‘limiga qarang.
+- **Ombor ildizi panel ushlab turishi mumkin bo‘lgan sahifalarni ko‘rsatadi** — `:graph`, `:search` va plaginlaringiz ro‘yxatdan o‘tkazgan har qanday ko‘rinishlar. Birini tanlang yoki yozing: ikki nuqta hech bir fayl nomini boshlamaydi, shuning uchun yorliqlar manzil vazifasini ham bajaradi. Boshlang‘ich sahifa plagini o‘rnatilgan bo‘lsa, omborning o‘z ajratgichi birinchi bosishda o‘sha sahifani ochadi, keyingisida esa fayl daraxtini yig‘adi.
+- **Fayl ochilmagan panellardagi qator** — bo‘sh varaq `vault / :blank`, graf `vault / :graph` deb ko‘rinadi, yonidagi maydon esa manzil satri: yo‘lni kiriting va <kbd>Enter</kbd> uni shu panelda ochadi yoki yaratadi. Yon panellar Obsidian'ning o‘z sarlavhasini saqlab qoladi.
 - **Ikki darajali ogohlantirish** — ombordan tashqarida qizil, Obsidian'da muharriri bo‘lmagan matn fayllari uchun to‘q sariq. [Ogohlantirish ranglari](usage.uz.md#ikki-ogohlantirish-rangi) bo‘limiga qarang.
 - **Mavzuga moslashadigan belgilar** CSS snippet orqali almashtiriladi — va **46 til**: Obsidian taqdim etadigan barcha tillar, shuningdek Obsidian'da sozlamasi bo‘lmagan yunon va sanskrit tillari. Tilni faqat plagin uchun tanlang yoki Obsidian tiliga ergashing.
 - **Sozlamalar:** til, tekislash, ajratgich shablonlari, ro‘yxatni qaysi bosish ochishi, ombor nomi, nuqta bilan boshlanadigan fayllar, fayl kengaytmalari.
