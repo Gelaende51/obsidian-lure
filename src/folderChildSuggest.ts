@@ -877,15 +877,14 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 				// twice, the second time greyed out as though the note
 				// blocked its own rename.
 				if (renameMode && child.path === context.keepPath) continue;
-				// In rename mode existing files are greyed to mark the
-				// name as taken. They're still selectable — picking one
-				// just fills the input, where live validation flags the
-				// conflict rather than letting it overwrite the note.
+				// In rename mode an existing file is a taken name, marked
+				// red by `taken`; picking one moves there and asks what to
+				// do about the file in the way.
 				suggestions.push({
 					label: child.name,
 					kind: "file",
 					path: child.path,
-					disabled: renameMode,
+					disabled: false,
 					// Orange for everything that is not a note, not only for
 					// the text types Obsidian has no view for. A folder of
 					// mixed contents is read for the notes in it — that is

@@ -449,6 +449,32 @@ test("a taken name: renaming what is in the way lets the rename through", async 
 	expect("the note has the name it asked for", await body(taken), "note");
 });
 
+test("a taken name picked from the list asks what to do about it", async () => {
+	const taken = `${FIXTURE}/Taken.md`;
+	await page.evaluate(`if (!app.vault.getAbstractFileByPath(${JSON.stringify(taken)})) await app.vault.create(${JSON.stringify(taken)}, "occupant"); return true;`);
+	await page.evaluate(arrange(0));
+	await pressKey(page, "F2");
+	await page.evaluate(PAUSE(500) + "return true;");
+	await pressKey(page, "F2");
+	await page.evaluate(PAUSE(600) + "return true;");
+	await page.evaluate(`document.querySelector(".lure-path-input").select(); return true;`);
+	await page.send("Input.insertText", { text: "Tak" });
+	await page.evaluate(PAUSE(500) + "return true;");
+	const picked = await page.evaluate(`
+		const row = [...document.querySelectorAll(".suggestion-item")]
+			.find((e) => e.querySelector(".lure-suggest-label")?.textContent === "Taken.md");
+		if (!row) return "no row";
+		row.click();
+		${PAUSE(800)}
+		return document.querySelector(".lure-collision-modal")?.textContent ?? "no dialog";`);
+	expect("the dialog asks about the file in the way", picked, (v) => v.includes("Taken.md") && v !== "no row");
+	await page.evaluate(`
+		[...document.querySelectorAll(".lure-collision-modal button")].find((b) => b.textContent === "Swap names")?.click();
+		${PAUSE(1200)}
+		return true;`);
+	expect("and does what was chosen", await body(taken), "note");
+});
+
 test("a taken name in the same folder: the two can swap names, and cannot swap places", async () => {
 	const taken = `${FIXTURE}/Taken.md`;
 	await page.evaluate(`if (!app.vault.getAbstractFileByPath(${JSON.stringify(taken)})) await app.vault.create(${JSON.stringify(taken)}, "occupant"); return true;`);

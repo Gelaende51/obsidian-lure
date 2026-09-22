@@ -142,6 +142,12 @@ export interface DropTargetOptions {
 	label: (folderName: string) => string;
 	/** Called with the file once it has landed, to show it where it now lives. */
 	onMoved?: (file: TAbstractFile) => void;
+	/**
+	 * Called instead of the move when the folder already holds the name,
+	 * to settle it the way a typed move does; resolves to whether the file
+	 * was moved. Without it Obsidian's rename refuses with its own error.
+	 */
+	onTaken?: (file: TAbstractFile, occupant: TAbstractFile, to: string) => Promise<boolean>;
 }
 
 /**
@@ -167,7 +173,7 @@ export function makeDropTarget(
 	app: App,
 	el: HTMLElement,
 	folderPath: string,
-	{ label, onMoved }: DropTargetOptions,
+	{ label, onMoved, onTaken }: DropTargetOptions,
 ): void {
 	const dragManager = app.dragManager;
 	if (!dragManager?.handleDrop) return;
@@ -204,7 +210,7 @@ export function makeDropTarget(
 
 			// The hover pass is a dry run: it says what the drop would do and
 			// changes nothing. Only the drop itself acts.
-			if (!isOver) void moveInto(app, moving, folder, onMoved);
+			if (!isOver) void moveInto(app, moving, folder, onMoved, onTaken);
 
 			return {
 				action: label(folder.name),
@@ -301,10 +307,18 @@ async function moveInto(
 	moving: TAbstractFile[],
 	folder: TFolder,
 	onMoved?: (file: TAbstractFile) => void,
+	onTaken?: DropTargetOptions["onTaken"],
 ): Promise<void> {
 	const landed: TAbstractFile[] = [];
 	for (const file of moving) {
 		const to = folder.path === "/" ? file.name : `${folder.path}/${file.name}`;
+		const occupant = app.vault.getAbstractFileByPath(to);
+		if (occupant && occupant !== file && onTaken) {
+			if (!(await onTaken(file, occupant, to))) break;
+			const at = app.vault.getAbstractFileByPath(to);
+			if (at) landed.push(at);
+			continue;
+		}
 		try {
 			await app.fileManager.renameFile(file, to);
 		} catch (err) {

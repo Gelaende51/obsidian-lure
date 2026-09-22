@@ -5177,6 +5177,7 @@ export class PathBreadcrumb {
 				return obsidianLabel(LABELS.moveInto, `Move into \u201C${folder}\u201D`, { folder });
 			},
 			onMoved: (file) => this.revealInExplorer(file),
+			onTaken: (file, occupant, to) => this.moveThroughCollision(file, occupant, to),
 		});
 	}
 
@@ -5432,7 +5433,7 @@ export class PathBreadcrumb {
 	 * files cannot hold one name even for an instant — and that name is
 	 * given back before this returns.
 	 */
-	private async moveThroughCollision(file: TFile, occupant: TAbstractFile, newPath: string): Promise<boolean> {
+	private async moveThroughCollision(file: TAbstractFile, occupant: TAbstractFile, newPath: string): Promise<boolean> {
 		const app = this.plugin.app;
 		const parentOf = (path: string): string => path.slice(0, Math.max(0, path.lastIndexOf("/")));
 		const join = (folder: string, name: string): string => (folder ? `${folder}/${name}` : name);
@@ -8060,17 +8061,12 @@ export class PathBreadcrumb {
 					return;
 				}
 				if (this.renameMode) {
-					// Existing files stay pickable so a name can be copied
-					// or edited from, but selecting one only fills the
-					// input — the red validation tooltip then flags the
-					// conflict, and committing stays blocked until it's
-					// resolved, so a note is never silently overwritten.
-					inputEl.value = value.label;
-					// Picking a name is a deliberate choice of what the field
-					// holds, so it supersedes the prefill just as typing does.
-					this.suggestQueryOverride = null;
-					inputEl.dispatchEvent(new Event("input"));
-					inputEl.focus();
+					// A file's name is taken by that file, and picking it is
+					// asking for it anyway: the move commits there, and the
+					// collision dialog asks what to do about the one in the
+					// way. Filling the field instead left a choice made in
+					// the list with nothing to do but be typed over.
+					void this.commitRenameTo(value.path, false, paneType);
 					return;
 				}
 				const file = this.plugin.app.vault.getAbstractFileByPath(value.path);
