@@ -25,7 +25,7 @@
  */
 
 import { CLEAR_NOTICES, connect, PAUSE, pressKey, quiesce, reloadPlugin, parkPointer } from "./cdpSession.mjs";
-import { createSuite } from "./harness.mjs";
+import { createSuite, skipCase } from "./harness.mjs";
 
 const NOTE = "Schemes/2026/Cake catapult.md";
 /** Named so nothing in a real vault can collide with them, and deleted at the end. */
@@ -1046,10 +1046,12 @@ test("what the names agree on is offered after the caret as you type", async () 
 	expect("typing the offered letter keeps the word", swallowed.value, `${PREFIX}alp`);
 	expect("with one letter less offered", swallowed.selected, "p");
 
+	// Past the agreement the offer is what Tab would write there: a step
+	// toward the first name, as far as the names on that branch agree.
 	await press("p");
 	const whole = await look();
-	expect("and then nothing is left to offer", whole.value, `${PREFIX}alp`);
-	expect("nothing marked", whole.selected, "");
+	expect("then a step toward the first name is offered", whole.value, `${PREFIX}alpha-`);
+	expect("marked as the part nobody typed", whole.selected, "ha-");
 });
 
 /** The field's text, where its caret is, and which folder the chips stop at. */
@@ -1239,14 +1241,13 @@ test("the dropdown follows the caret into the folder it stands in", async () => 
 	const front = await clickAt(0.05);
 	expect("the caret landed in the first folder", front.caret, (v) => v !== null && v <= "Schemes".length);
 	expect("so the list is about the vault root", front.folder, "");
-	// The folder's whole contents, not the one name the caret is sitting on:
-	// a list filtered by that name holds a single row, which is itself, and
-	// looking for a sibling is what moving the caret there was for.
+	// Filtered by the letters in front of the caret, which count as settled:
+	// the name the caret is in, as far as the caret, and the siblings that
+	// begin the same way.
+	const settledFront = "Schemes".slice(0, front.caret);
 	expect("and lists what stands there", front.rows, (v) => v.includes("Schemes"));
-	// A sibling this suite made itself, not a folder of the vault's own: the
-	// vault's `atlas` was what this asked for, and it went the day it was
-	// moved to the trash.
-	expect("its siblings included", front.rows, (v) => v.includes(`${PREFIX}only`) && v.length > 1);
+	expect("filtered by the letters in front of the caret", front.rows, (v) =>
+		v.length > 0 && v.every((row) => row.toLowerCase().includes(settledFront.toLowerCase())));
 
 	// The chips alone were the answer before, so a caret two folders along
 	// still listed the root's children.
@@ -1254,7 +1255,19 @@ test("the dropdown follows the caret into the folder it stands in", async () => 
 	expect("the caret landed in the name", end.caret, (v) => v !== null && v > "Schemes/2026/".length);
 	expect("so the list is about the folder the path names", end.folder, "Schemes/2026");
 	expect("and lists what is in it", end.rows, (v) => v.includes(NOTE.split("/").pop()));
-	expect("all of it, not the name alone", end.rows, (v) => v.includes("Abacus.md") && v.length > 1);
+
+	// At the very start of a name nothing of it is settled yet, so the whole
+	// folder is listed — which is also what selecting the name does.
+	await page.evaluate(`
+		const input = document.querySelector(".lure-path-input");
+		const at = input.value.lastIndexOf("/") + 1;
+		input.setSelectionRange(at, at);
+		input.dispatchEvent(new Event("select"));
+		return true;`);
+	await settle(600);
+	const whole = JSON.parse(await page.evaluate(`return JSON.stringify(
+		[...document.querySelectorAll(".suggestion-item .lure-suggest-label")].map((e) => e.textContent));`));
+	expect("the start of the name lists all of the folder", whole, (v) => v.includes("Abacus.md") && v.length > 1);
 });
 
 test("a wheel over a name opens its list and walks it", async () => {
@@ -1359,6 +1372,117 @@ const teardown = `
 	if (abacus) await app.fileManager.trashFile(abacus);
 	return true;
 `;
+
+test("the right arrow takes one letter of the offer, not all of it", async () => {
+	await armAtRoot();
+	await type(`${PREFIX}a`);
+	expect("offered", (await look()).selected, "lp");
+	await pressKey(page, "ArrowRight");
+	await page.evaluate(PAUSE(250) + "return true;");
+	const one = await look();
+	expect("one letter taken, the rest still offered", [one.value, one.selected], [`${PREFIX}alp`, "p"]);
+	await pressKey(page, "ArrowRight");
+	await page.evaluate(PAUSE(250) + "return true;");
+	expect("the last letter takes the whole offer", (await look()).selected, "");
+});
+
+test("Tab takes a standing offer and stops there", async () => {
+	await armAtRoot();
+	await type(`${PREFIX}alp`);
+	expect("a step toward the first name is offered", (await look()).selected, "ha-");
+	await tab();
+	const s = await look();
+	expect("the press wrote exactly what was offered", s.value, `${PREFIX}alpha-`);
+	expect("and stepped into nothing", s.chips, (v) => Array.isArray(v) && !v.some((c) => c.startsWith(PREFIX)));
+});
+
+test("pointing at a row shows it as the offer, and leaving brings the offer back", async () => {
+	await armAtRoot();
+	await type(`${PREFIX}a`);
+	const hover = async (label) => {
+		const xy = JSON.parse(await page.evaluate(`
+			const row = [...document.querySelectorAll(".suggestion-item")]
+				.find((e) => e.querySelector(".lure-suggest-label")?.textContent === ${JSON.stringify(label)});
+			const r = row.getBoundingClientRect();
+			return JSON.stringify([r.x + 10, r.y + r.height / 2]);`));
+		await page.send("Input.dispatchMouseEvent", { type: "mouseMoved", x: xy[0], y: xy[1] });
+		await page.evaluate(PAUSE(300) + "return true;");
+	};
+	await hover(`${PREFIX}alpine`);
+	const pointed = await look();
+	expect("the row's name stands in the field", pointed.value, `${PREFIX}alpine`);
+	expect("with only the part nobody typed marked", pointed.selected, "lpine");
+	// Off the list, well away from the field.
+	await page.send("Input.dispatchMouseEvent", { type: "mouseMoved", x: 5, y: 900 });
+	await page.evaluate(PAUSE(400) + "return true;");
+	const back = await look();
+	expect("the offer is back", [back.value, back.selected], [`${PREFIX}alp`, "lp"]);
+});
+
+test("PageDown moves by a page of Obsidian's usual height and keeps the row in sight", async () => {
+	await armAtRoot();
+	const r = JSON.parse(await page.evaluate(`
+		const c = document.querySelector(".lure-suggest-popover");
+		const rows = [...c.querySelectorAll(".suggestion-item")];
+		const probe = document.body.createDiv({ cls: "suggestion-container" });
+		const page = Math.floor(parseFloat(getComputedStyle(probe).maxHeight) / rows[0].getBoundingClientRect().height);
+		probe.remove();
+		return JSON.stringify({ count: rows.length, page });`));
+	if (r.count < r.page * 2 + 1) skipCase(`the vault root lists ${r.count} rows, fewer than two pages`);
+	const selected = async () => JSON.parse(await page.evaluate(`
+		const c = document.querySelector(".lure-suggest-popover");
+		const rows = [...c.querySelectorAll(".suggestion-item")];
+		const i = rows.findIndex((e) => e.classList.contains("is-selected"));
+		const b = c.getBoundingClientRect(), s = rows[i]?.getBoundingClientRect();
+		return JSON.stringify({ i, seen: s ? s.top >= b.top - 1 && s.bottom <= b.bottom + 1 : false });`));
+	await pressKey(page, "PageDown");
+	await page.evaluate(PAUSE(250) + "return true;");
+	const first = await selected();
+	expect("from the field, onto the last row of the first page", first.i, r.page - 1);
+	await pressKey(page, "PageDown");
+	await page.evaluate(PAUSE(250) + "return true;");
+	const second = await selected();
+	expect("then a page further", second.i, 2 * r.page - 1);
+	expect("in sight", second.seen, true);
+	await pressKey(page, "PageUp");
+	await page.evaluate(PAUSE(250) + "return true;");
+	expect("and back by a page", (await selected()).i, r.page - 1);
+});
+
+test("folders are bold in the list, and a folder's note is a note like any other", async () => {
+	await armAtRoot();
+	await type(`${PREFIX}not`);
+	const r = JSON.parse(await page.evaluate(`
+		const weight = (label) => {
+			const row = [...document.querySelectorAll(".suggestion-item")]
+				.find((e) => e.querySelector(".lure-suggest-label")?.textContent === label);
+			const cs = row && getComputedStyle(row.querySelector(".lure-suggest-label"));
+			return cs ? { weight: Number(cs.fontWeight), color: cs.color } : null;
+		};
+		return JSON.stringify({ folder: weight(${JSON.stringify(`${PREFIX}noted`)}), note: weight(${JSON.stringify(`${PREFIX}noted.md`)}) });`));
+	expect("the folder is bold", r.folder?.weight, (v) => v >= 600);
+	expect("the note is not", r.note?.weight, (v) => v < 600);
+});
+
+test(":graph typed inside a folder opens the graph of that folder, and at the root the whole graph", async () => {
+	const graph = async (text) => {
+		await armAtRoot();
+		await type(text);
+		// Whatever is offered after it is taken back: the page is what was typed.
+		await pressKey(page, "Delete");
+		await pressKey(page, "Enter");
+		await page.evaluate(PAUSE(1500) + "return true;");
+		return JSON.parse(await page.evaluate(`
+			const v = app.workspace.getMostRecentLeaf().view;
+			return JSON.stringify({ type: v.getViewType(), search: v.dataEngine?.getOptions?.().search ?? null });`));
+	};
+	const inside = await graph(`${PREFIX}deep/:graph`);
+	expect("the graph opens", inside.type, "graph");
+	expect("filtered to the folder", inside.search, `path:"${PREFIX}deep"`);
+	const root = await graph(":graph");
+	expect("at the root the filter is taken off again", root.search, "");
+	await page.evaluate(`app.workspace.getLeavesOfType("graph").forEach((l) => l.detach()); return true;`);
+});
 
 await run();
 

@@ -365,9 +365,7 @@
 
    After the .lure-path-input rule, which they tie with at (0,2,1). */
 .lure-filename input[data-lure-tint="external"],
-.lure-vault-wrapper input[data-lure-tint="external"],
-.lure-filename input[data-lure-tint="folder-note"],
-.lure-vault-wrapper input[data-lure-tint="folder-note"] {
+.lure-vault-wrapper input[data-lure-tint="external"] {
 	color: var(--text-muted);
 }
 
@@ -379,6 +377,11 @@
 .lure-filename input[data-lure-tint="warn"],
 .lure-vault-wrapper input[data-lure-tint="warn"] {
 	color: var(--text-warning);
+}
+
+.lure-filename input[data-lure-tint="taken"],
+.lure-vault-wrapper input[data-lure-tint="taken"] {
+	color: var(--text-error);
 }
 
 .lure-filename input[data-lure-tint="keep-name"],
@@ -554,6 +557,24 @@
    arithmetic, and follows the window without anything here tracking it. */
 .suggestion-container.lure-suggest-popover {
 	max-height: none;
+	/* No wider than the path bar it hangs from; `fitRows` writes the width
+	   and shortens the names that no longer fit. */
+	max-width: var(--lure-suggest-max, none);
+}
+
+/* A row's name can give way, and nothing else in the row can. `min-width: 0`
+   is what lets it: a flex item otherwise refuses to be narrower than its
+   text, and the row would simply overflow the list. */
+.lure-suggest-popover .suggestion-item {
+	display: flex;
+	align-items: center;
+	min-width: 0;
+}
+
+.lure-suggest-popover .lure-suggest-label {
+	min-width: 0;
+	overflow: hidden;
+	white-space: nowrap;
 }
 
 /* Dropdown rows: an icon column for locations, and a muted tint for
@@ -585,12 +606,12 @@
 	color: var(--color-purple);
 }
 
-/* A folder's own note, in grey: it stands for the folder more than for
-   itself, and a folder's contents read more clearly with it stepped back
-   from the notes that are only notes. After the Markdown rule, which every
-   folder note also matches. */
-.suggestion-item.lure-suggest-folder-note .lure-suggest-label {
-	color: var(--text-muted);
+/* Folders in bold, so the list reads as its two kinds at a glance. That is
+   also what used to set a folder's own note apart — it was greyed so it would
+   not read as one more note — and with the folders marked it no longer
+   needs to be: it is a note, purple like the rest, beside its bold folder. */
+.suggestion-item.lure-suggest-folder .lure-suggest-label {
+	font-weight: var(--font-bold, 700);
 }
 
 /* "Move here, keep this name" — pinned to the top of every dropdown while a
@@ -609,6 +630,14 @@
    that are both. */
 .suggestion-item.lure-suggest-warn .lure-suggest-label {
 	color: var(--text-warning);
+}
+
+/* Moving: an entry that already has the name the file would arrive with.
+   Choosing this folder would collide, so it is said in the list, before the
+   choice, and in the colour that means "not like this". After the warning
+   rule, which a taken file that is not a note also matches. */
+.suggestion-item.lure-suggest-taken .lure-suggest-label {
+	color: var(--text-error);
 }
 
 /* The note this path bar belongs to. Blue, and the same blue as "keep this

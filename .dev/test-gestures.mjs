@@ -1231,7 +1231,12 @@ test("dropdown: typing after a folder click filters instead of closing", async (
 	await page.send("Input.insertText", { text: "br" });
 	await page.evaluate(PAUSE(400) + "return true;");
 	const typed = await page.evaluate(dropdownState);
-	expect("the segment was replaced", typed.field, "br/twig/nest.md");
+	// With what Tab would write offered after it: a step toward the first
+	// name, marked, so the next letter types over it.
+	expect("the segment was replaced, with Tab's step offered", typed.field, "branch/twig/nest.md");
+	expect("the offer is marked", await page.evaluate(`
+		const i = document.querySelector(".lure-path-input");
+		return i.value.slice(i.selectionStart, i.selectionEnd);`), "anch");
 	expect("the dropdown is still up", typed.rows.length > 0, true);
 	expect("filtered by that segment alone", typed.rows, (v) =>
 		Array.isArray(v) && v.includes("branch") && v.includes("brioche") && !v.includes("inner"));

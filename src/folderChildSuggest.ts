@@ -1,4 +1,5 @@
-import { AbstractInputSuggest, App, Modifier, Scope, TAbstractFile, TFile, TFolder, UserEvent, setIcon } from "obsidian";
+import { AbstractInputSuggest, App, Modifier, Scope, TAbstractFile, TFile, TFolder, UserEvent, setIcon, setTooltip } from "obsidian";
+import { agreementWith, chooseCut, cutName, readableMinimum } from "./pathFit";
 import { wireNativeFileItem } from "./nativeFileItem";
 import { SystemLocation, applyIcon, iconFor } from "./systemLocations";
 import { ExternalChild, externalJoin, listExternalChildren } from "./externalFs";
@@ -35,8 +36,13 @@ export interface PathSuggestion {
 	markdown?: boolean;
 	/** Where you already are — this bar's own note, or the folder it is standing in — tinted to say so. */
 	current?: boolean;
-	/** Some folder's own note, as the running folder-note plugin defines one — greyed, since it stands for its folder. */
+	/** Some folder's own note, as the running folder-note plugin defines one. */
 	folderNote?: boolean;
+	/**
+	 * Moving or renaming: this entry already has the name the file would
+	 * arrive with, so choosing this folder for it would collide. Red.
+	 */
+	taken?: boolean;
 }
 
 export interface SuggestContext {
@@ -148,7 +154,28 @@ interface SuggestionList {
 	forceSetSelectedItem(index: number, evt: unknown): void;
 	/** What Obsidian's own Enter handler calls. Wrapped, not called — see wrapList. */
 	useSelectedItem(evt: unknown): void;
+	/** The rendered rows, in the same order as `values`. */
+	suggestions?: HTMLElement[];
 }
+
+/**
+ * How many rows PageUp and PageDown move by: what Obsidian's own dropdowns
+ * show at their default height. This list is as tall as the window (see
+ * `.lure-suggest-popover`), so paging by what fits on screen would jump by
+ * forty rows on a large monitor — more than the eye can follow — where
+ * every other list in the app pages by a familiar handful.
+ */
+function pageRows(list: SuggestionList): number {
+	const probe = document.body.createDiv({ cls: "suggestion-container" });
+	const height = parseFloat(getComputedStyle(probe).maxHeight);
+	probe.remove();
+	const row = list.suggestions?.[0]?.getBoundingClientRect().height ?? 0;
+	if (!(height > 0) || !(row > 0)) return DEFAULT_PAGE_ROWS;
+	return Math.max(1, Math.floor(height / row));
+}
+
+/** What a page is when neither the default height nor a row can be measured. */
+const DEFAULT_PAGE_ROWS = 9;
 
 /**
  * Whether a name belongs in a listing.
@@ -165,6 +192,16 @@ type NameMatcher = (name: string) => boolean;
  * changes: the real limit is read off the instance.
  */
 const DEFAULT_SUGGESTION_LIMIT = 100;
+
+/**
+ * How many rows the list renders before it spends the last one on a count.
+ *
+ * Obsidian's hundred cut ordinary folders short — a folder of a few hundred
+ * notes is not unusual, and the rest were only reachable by typing. A
+ * thousand rows render in a blink; past that the count row still says how
+ * much is left and that typing is the way to it.
+ */
+const SUGGESTION_LIMIT = 1000;
 
 /** The Enter presses that mean "somewhere else": a new tab, a split, a window. */
 export const MODIFIED_ENTER: Modifier[][] = [["Mod"], ["Mod", "Alt"], ["Mod", "Alt", "Shift"]];
@@ -236,11 +273,23 @@ export function guardFieldKeys(scope: Scope): void {
 	}
 }
 
+/**
+ * Whether a name in the folder being listed is the one the file being moved
+ * would arrive with — which is a collision if this folder is chosen. Only in
+ * rename mode, and case-insensitively: `Notes` and `notes` cannot both
+ * exist on Windows or macOS, so a vault synced there would collide anyway.
+ * The file itself is never listed, so it never collides with itself.
+ */
+function collidesWith(context: SuggestContext): (name: string) => boolean {
+	const keep = context.renameMode ? context.keepName?.toLowerCase() : undefined;
+	return (name) => keep !== undefined && name.toLowerCase() === keep;
+}
+
 /** Marks this plugin's popover, so the stylesheet can lift the height cap on it alone. */
 const POPOVER_CLASS = "lure-suggest-popover";
 
 /** The tints a row can carry, named the way the stylesheet names them. */
-export type SuggestTint = "current" | "keep-name" | "warn" | "folder-note" | "md" | "external";
+export type SuggestTint = "current" | "keep-name" | "taken" | "warn" | "md" | "external";
 
 /**
  * The one tint a row shows.
@@ -254,8 +303,8 @@ export type SuggestTint = "current" | "keep-name" | "warn" | "folder-note" | "md
 export function tintOf(value: PathSuggestion): SuggestTint | null {
 	if (value.current) return "current";
 	if (value.kind === "keep-name") return "keep-name";
+	if (value.taken) return "taken";
 	if (value.warn) return "warn";
-	if (value.folderNote) return "folder-note";
 	if (value.markdown) return "md";
 	if (value.external) return "external";
 	return null;
@@ -323,6 +372,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 	) {
 		super(app, inputEl);
 		this.dragKeepFocusEl = inputEl;
+		this.limit = SUGGESTION_LIMIT;
 		// As tall as the window lets it be — see `.lure-suggest-popover`.
 		(this as unknown as { suggestEl?: HTMLElement }).suggestEl?.addClass(POPOVER_CLASS);
 		this.takeModifiedEnter();
@@ -356,7 +406,54 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 	/** Showing a list, changed or not, goes through here; the field's colour is read off it. */
 	open(): void {
 		super.open();
+		this.fitRows();
 		this.onListed?.();
+	}
+
+	/**
+	 * Keeps the list no wider than the path bar it hangs from, and shortens
+	 * the names that do not fit by the path bar's own rule.
+	 *
+	 * A list as wide as its longest name ran off across the note — one long
+	 * file name was enough — and cut at its end, the name lost exactly the
+	 * part that tells it from its neighbours. Shortened here the way the row
+	 * shortens a segment: whichever end the other names share is the end to
+	 * lose, the middle when they share neither. The whole name is a hover
+	 * away.
+	 */
+	private fitRows(): void {
+		const popover = (this as unknown as { suggestEl?: HTMLElement }).suggestEl;
+		const bar = this.dragKeepFocusEl.closest(".view-header-title-container");
+		const list = this.list();
+		if (!popover || !bar || !list) return;
+		popover.style.setProperty("--lure-suggest-max", `${Math.round(bar.getBoundingClientRect().width)}px`);
+		const values = list.values;
+		const rows = list.suggestions;
+		if (!Array.isArray(values) || !rows) return;
+		const labels = values.map((value) => value.label);
+		rows.forEach((row, index) => {
+			const value = values[index];
+			const labelEl = row.querySelector<HTMLElement>(".lure-suggest-label");
+			if (!value || value.kind === "more" || !labelEl) return;
+			if (labelEl.scrollWidth <= labelEl.clientWidth + 1) return;
+			const full = value.label;
+			const siblings = labels.filter((_, other) => other !== index);
+			const stage = value.kind === "folder" ? "folder" : "name";
+			const cut = chooseCut(full, agreementWith(full, siblings), readableMinimum(stage));
+			// The longest cut that fits, found by halving: widths are not
+			// proportional to characters, so the count cannot be worked out.
+			let low = Math.min(cut.floor, full.length);
+			let high = full.length - 1;
+			labelEl.addClass("is-cut");
+			while (low < high) {
+				const keep = Math.ceil((low + high) / 2);
+				labelEl.setText(cutName(full, keep, cut));
+				if (labelEl.scrollWidth <= labelEl.clientWidth + 1) low = keep;
+				else high = keep - 1;
+			}
+			labelEl.setText(cutName(full, low, cut));
+			setTooltip(row, full, { placement: "right" });
+		});
 	}
 
 	close(): void {
@@ -495,6 +592,40 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			}
 			useSelected(evt);
 		};
+
+		// Paging from the field (nothing selected) lands on the last row of
+		// the first page, as though the selection had been just above the
+		// list. Obsidian's own paging measures the *selected* row, so with
+		// nothing selected it had nothing to measure and did nothing; and it
+		// pages by what the container shows, which here is the window.
+		const page = (direction: 1 | -1) => (evt: KeyboardEvent): false => {
+			if (evt.isComposing) return false;
+			const values = list.values;
+			const count = Array.isArray(values) ? values.length : 0;
+			if (count === 0) return false;
+			const rows = pageRows(list);
+			const from = list.selectedItem;
+			const to =
+				from < 0
+					? direction > 0
+						? Math.min(count - 1, rows - 1)
+						: 0
+					: Math.max(0, Math.min(count - 1, from + direction * rows));
+			list.setSelectedItem(to, evt);
+			// Kept in sight, whichever way the page went and however the list
+			// had been scrolled by the wheel in the meantime.
+			list.suggestions?.[list.selectedItem]?.scrollIntoView({ block: "nearest" });
+			return false;
+		};
+		// The popover's scope holds Obsidian's handlers already bound to its
+		// own methods, so replacing the methods changes nothing; the scope's
+		// entries are what have to change. Undocumented, so guarded: without
+		// them the keys simply keep Obsidian's behaviour.
+		const keys = (this.scope as unknown as { keys?: { key: string | null; func: unknown }[] }).keys;
+		for (const entry of Array.isArray(keys) ? keys : []) {
+			if (entry.key === "PageDown") entry.func = page(1);
+			if (entry.key === "PageUp") entry.func = page(-1);
+		}
 
 		// Hovering a row previews it, so taking the pointer off the list has
 		// to be a way back — otherwise a stray sweep of the mouse would
@@ -668,6 +799,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		const folder = resolved instanceof TFolder ? resolved : null;
 
 		const suggestions: PathSuggestion[] = [];
+		const takes = collidesWith(context);
 
 		// Pinned first in rename mode so moving a file without renaming
 		// it is always one click away, in whichever folder you've drilled
@@ -721,6 +853,10 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 					path: child.path,
 					disabled: false,
 					current: child.path === context.currentFolder,
+					// A folder is taken too when the file would collide *inside*
+					// it: that is the choice being made while picking where to
+					// move, long before its contents are on screen.
+					taken: takes(child.name) || this.holdsKeepName(child, context),
 				});
 			} else if (child instanceof TFile) {
 				// The file being renamed is already represented by the pinned
@@ -749,6 +885,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 					markdown: isMarkdownExtension(child.extension),
 					folderNote: context.isFolderNote(child.path),
 					current: child.path === context.currentPath,
+					taken: takes(child.name),
 				});
 			}
 		}
@@ -767,6 +904,13 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		}
 
 		return suggestions;
+	}
+
+	/** Whether moving the file into this folder under its own name would land on another file. */
+	private holdsKeepName(folder: TFolder, context: SuggestContext): boolean {
+		if (!context.renameMode || !context.keepName) return false;
+		const there = this.app.vault.getAbstractFileByPath(`${folder.path}/${context.keepName}`);
+		return there !== null && there.path !== context.keepPath;
 	}
 
 	/**
@@ -857,6 +1001,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 				path: child.path,
 				disabled: false,
 				external: true,
+				taken: collidesWith(context)(child.name),
 				// As inside the vault: anything that is not a note is orange.
 				warn: !child.isFolder && !isMarkdownExtension(child.extension),
 				markdown: !child.isFolder && isMarkdownExtension(child.extension),
@@ -925,6 +1070,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		if (value.markdown) el.addClass("lure-suggest-md");
 		if (value.folderNote) el.addClass("lure-suggest-folder-note");
 		if (value.warn) el.addClass("lure-suggest-warn");
+		if (value.taken) el.addClass("lure-suggest-taken");
 		if (value.current) el.addClass("lure-suggest-current");
 
 		if (value.icon) {

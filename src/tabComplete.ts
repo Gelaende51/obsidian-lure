@@ -124,12 +124,35 @@ function stepToward(typed: string, names: readonly string[], toward: string): st
  * from nowhere.
  */
 export function planSuggestion(typed: string, candidates: readonly TabCandidate[]): string {
+	const whole = planOffer(typed, candidates);
+	return whole ? whole.slice(typed.length) : "";
+}
+
+/**
+ * The whole segment a press of Tab would leave, when it would extend what
+ * was typed — which is what the offer shows. Empty when the press would not
+ * write (it would step in, or hand over to the ladder).
+ *
+ * The offer used to stop at what every name agrees on, while Tab walks on
+ * toward the first name once they agree on nothing further — so where the
+ * names forked straight away the field offered nothing and Tab wrote
+ * something anyway. Asking `planTab` itself keeps the two from drifting
+ * apart again. A folder Tab would step into is offered whole, since that is
+ * what it writes on the way in.
+ */
+export function planOffer(typed: string, candidates: readonly TabCandidate[]): string {
 	if (!typed || !candidates.length) return "";
-	const prefix = commonPrefix(candidates.map((candidate) => candidate.label));
-	// Never shorter than what was typed: the names agree at least that far,
-	// or they would not be candidates.
-	if (prefix.length <= typed.length) return "";
-	return prefix.slice(typed.length);
+	const action = planTab(typed, candidates, null);
+	const text =
+		action.kind === "write"
+			? action.text
+			: action.kind === "descend"
+				? (candidates.find((candidate) => candidate.path === action.path)?.label ?? "")
+				: "";
+	// Only a continuation. A write that respells what was typed, or that
+	// does not reach past it, is not something to put after the caret.
+	if (text.length <= typed.length || !same(text.slice(0, typed.length), typed)) return "";
+	return text;
 }
 
 /**

@@ -212,7 +212,9 @@ test("the agreement between the names is offered as already made", () => {
 	const family = [dir("Alpha-one"), dir("Alpha-two"), dir("Alpine")];
 	// All three agree as far as "Alp", so "Al" is offered the "p".
 	expect("as far as they agree, and no further", offered("Al", family), "p");
-	expect("nothing once the agreement is used up", offered("Alp", family), "");
+	// Past the agreement the offer is what Tab would write: a step toward the
+	// first name, as far as the names on that branch still agree.
+	expect("then a step toward the first name", offered("Alp", family), "ha-");
 	// One candidate agrees with itself all the way to its end.
 	expect("a single name is offered whole", offered("Alpi", family), "ne");
 });
@@ -223,6 +225,16 @@ test("what is offered is the continuation, never a rewrite of what was typed", (
 	// user's, and only what follows them is offered.
 	expect("the tail only, in the folder's spelling", offered("sk", family), "etches");
 	expect("nothing is offered for a name typed out in full", offered("Sketches", family), "");
+});
+
+test("the offer is always what Tab would write", () => {
+	const family = [dir("Alpha-one"), dir("Alpha-two"), dir("Alpine"), file("Amber")];
+	for (const typed of ["A", "Al", "Alp", "Alph", "Alpha-", "Am"]) {
+		const candidates = starting(typed, family);
+		const press = planTab(typed, candidates, null);
+		const whole = press.kind === "write" ? press.text : "";
+		expect(`after "${typed}"`, typed + offered(typed, family), whole || typed);
+	}
 });
 
 test("nothing is offered where there is nothing to agree on", () => {

@@ -30,7 +30,7 @@ import {
 	cutName,
 	readableMinimum,
 } from "./pathFit";
-import { commonPrefix, planSuggestion, planTab } from "./tabComplete";
+import { commonPrefix, planOffer, planTab } from "./tabComplete";
 import { FolderChildSuggest, MODIFIED_ENTER, guardFieldKeys, pageLabel, PathSuggestion } from "./folderChildSuggest";
 import { ExternalChild, PATH_SEP, externalJoin, externalParent, externalSegments, isExternalFile, isExternalFolder, listExternalChildren } from "./externalFs";
 import {
@@ -492,6 +492,24 @@ function queryAtCaret(input: HTMLInputElement): string {
 	return segment;
 }
 
+/**
+ * Where in the field the list is about: the caret, or the start of a
+ * selection. Everything in front of it counts as settled — the folders, and
+ * the letters of the name typed so far — and everything from it on is what
+ * the list is offering to fill in. Selecting the whole field is the same
+ * rule, and lists from the root.
+ */
+function listedFrom(input: HTMLInputElement): number {
+	return input.selectionStart ?? input.value.length;
+}
+
+/** What the list filters by: the part of the segment in front of `listedFrom`. */
+function queryBeforeCaret(input: HTMLInputElement): string {
+	const at = listedFrom(input);
+	const { start } = segmentBoundsAtCaret(input.value, at);
+	return input.value.slice(start, at);
+}
+
 function pathStem(path: string): string {
 	const cut = Math.max(path.lastIndexOf("/"), path.lastIndexOf("\\"));
 	const name = path.slice(cut + 1);
@@ -748,7 +766,9 @@ export class PathBreadcrumb {
 	 * writes: the letters you typed are yours while you type, but a path has
 	 * to be spelled the way the disk spells it.
 	 */
-	private suggested: { start: number; end: number; prefix: string } | null = null;
+	private suggested: { start: number; end: number; prefix: string; agreed: boolean } | null = null;
+	/** Whether an offer stood in the field when a row began previewing, so leaving the list puts it back. */
+	private offerBeforePreview = false;
 	/** Set while an IME is composing, when writing into the field would break the composition. */
 	private composing = false;
 
@@ -6046,8 +6066,18 @@ export class PathBreadcrumb {
 		// taken first, and taken as a step of the walk in its own right, so
 		// the way back gives it back one press at a time like any other.
 		const took = this.suggested !== null;
+		// An offer is what this press would write. Where every name agreed
+		// that far, the press carries on from it as it always has — into the
+		// one folder left, or onto the ladder of a finished name. Where it was
+		// a step toward the first of several, it was a choice, and taking it
+		// is the whole press.
+		const tookWalksOn = this.suggested?.agreed ?? false;
 		const tookStep = took ? this.trailStep(false) : null;
 		if (took) this.settleSuggestion(true);
+		if (took && !tookWalksOn) {
+			if (tookStep) this.tabTrail.push(tookStep);
+			return;
+		}
 
 		const bounds = segmentBoundsAtCaret(input.value, input.selectionEnd ?? input.value.length);
 		// A run marked by Shift+Tab is text the walk gave back, not text
@@ -6335,15 +6365,23 @@ export class PathBreadcrumb {
 			path: row.path,
 			folder: row.kind === "folder",
 		}));
-		const add = planSuggestion(query, candidates);
-		if (!add) return;
+		// Exactly what Tab would write here, so the offer and the key never
+		// disagree about what comes next.
+		const whole = planOffer(query, candidates);
+		if (!whole) return;
+		const add = whole.slice(query.length);
 
 		input.value = input.value.slice(0, caret) + add + input.value.slice(caret);
 		input.setSelectionRange(caret, caret + add.length);
 		this.suggested = {
 			start: caret,
 			end: caret + add.length,
-			prefix: commonPrefix(candidates.map((candidate) => candidate.label)),
+			prefix: whole,
+			// Whether the names all agree this far, or the offer is a step
+			// toward the first of several. Only agreement lets the press that
+			// takes it carry on past it; a step is a choice, and taking it is
+			// the whole of the press.
+			agreed: whole.length <= commonPrefix(candidates.map((candidate) => candidate.label)).length,
 		};
 	}
 
@@ -6409,6 +6447,26 @@ export class PathBreadcrumb {
 		// Untrusted by construction, so `onInput` re-measures and re-lists
 		// without mistaking this for the user typing — which would end the
 		// selection ladder we may be about to start.
+		input.dispatchEvent(new Event("input"));
+	}
+
+	/**
+	 * Moves the start of the offered run on by one letter, so that letter
+	 * counts as typed and the rest is still offered. The last letter takes
+	 * the whole offer, which is what respells the segment the way the names
+	 * spell it.
+	 */
+	private takeOfferedLetter(): void {
+		const run = this.suggested;
+		const input = this.inputEl;
+		if (!run || !input) return;
+		if (run.end - run.start <= 1) {
+			this.settleSuggestion(true);
+			return;
+		}
+		run.start += 1;
+		input.setSelectionRange(run.start, run.end);
+		// The underline in the list follows the offer.
 		input.dispatchEvent(new Event("input"));
 	}
 
@@ -7117,7 +7175,7 @@ export class PathBreadcrumb {
 		const input = this.inputEl;
 		const base = this.currentFolderPath();
 		if (!input) return base;
-		const bounds = segmentBoundsAtCaret(input.value, input.selectionEnd ?? input.value.length);
+		const bounds = segmentBoundsAtCaret(input.value, listedFrom(input));
 		const before = input.value.slice(0, bounds.start).replace(/[\\/]+$/, "");
 		if (!before) return base;
 		return base ? `${base}/${before}` : before;
@@ -7128,7 +7186,7 @@ export class PathBreadcrumb {
 		if (this.externalPath === null) return this.typedSystemFolderAtCaret();
 		const input = this.inputEl;
 		if (!input) return this.externalPath;
-		const bounds = segmentBoundsAtCaret(input.value, input.selectionEnd ?? input.value.length);
+		const bounds = segmentBoundsAtCaret(input.value, listedFrom(input));
 		const before = input.value.slice(0, bounds.start).replace(/[\\/]+$/, "");
 		return before ? externalJoin(this.externalPath, before) : this.externalPath;
 	}
@@ -7500,9 +7558,16 @@ export class PathBreadcrumb {
 					this.settleSuggestion(false);
 					return;
 				}
-				if (key === "ArrowRight" || key === "End") {
+				if (key === "End") {
 					evt.preventDefault();
 					this.settleSuggestion(true);
+					return;
+				}
+				if (key === "ArrowRight" && !evt.shiftKey && !evt.ctrlKey && !evt.metaKey && !evt.altKey) {
+					// One letter of it, the way the arrow moves one letter
+					// anywhere else. The rest stays offered.
+					evt.preventDefault();
+					this.takeOfferedLetter();
 					return;
 				}
 				if (key === "Enter" || key === "/") {
@@ -7605,7 +7670,7 @@ export class PathBreadcrumb {
 		// that answers that threw away the filter the typing had just set,
 		// reopening the whole folder on every keystroke that shortened a name.
 		const segmentIndex = (): number => {
-			const caret = inputEl.selectionEnd ?? 0;
+			const caret = listedFrom(inputEl);
 			let index = 0;
 			for (let i = 0; i < caret && i < inputEl.value.length; i++) {
 				const ch = inputEl.value[i];
@@ -7614,6 +7679,7 @@ export class PathBreadcrumb {
 			return index;
 		};
 		let standingIn = segmentIndex();
+		let settled = queryBeforeCaret(inputEl);
 
 		const onCaretMoved = (evt: Event) => {
 			// Not for the keys the field answers itself. Tab walks the path,
@@ -7629,18 +7695,18 @@ export class PathBreadcrumb {
 			// and re-querying would rebuild the list under the row being
 			// pointed at, or throw away the run being offered.
 			if (this.preview || this.suggested) return;
-			// A different segment, not merely a different caret. Moving
-			// within one changes nothing about which folder is being listed
-			// or what it is being filtered by.
+			// The list is about the caret, or the start of a selection: the
+			// folder it stands in, filtered by the letters in front of it. So
+			// the start of a name lists all of its siblings, and a caret part
+			// of the way in lists the ones that begin the same way — the
+			// letters behind it are settled, and the rest is what is being
+			// looked for.
 			const index = segmentIndex();
-			if (index === standingIn) return;
+			const query = queryBeforeCaret(inputEl);
+			if (index === standingIn && query === settled) return;
 			standingIn = index;
-			// The whole folder, not the name the caret has just landed on.
-			// Moving into a segment is how its siblings are looked for, and
-			// filtering by the name already sitting there leaves exactly one
-			// row: itself. Typing narrows it from there — the same rule a
-			// folder click follows, which passes "" until the first keystroke.
-			this.suggestQueryOverride = "";
+			settled = query;
+			this.suggestQueryOverride = query;
 			inputEl.dispatchEvent(new Event("input"));
 		};
 		// Three events rather than `selectionchange` on the document, so they
@@ -7678,7 +7744,9 @@ export class PathBreadcrumb {
 				// value looked for a child called "2026/Kickoff.md", matched
 				// nothing, and the dropdown closed on the first keystroke —
 				// whatever was typed, valid or not.
-				this.suggestQueryOverride = queryAtCaret(inputEl);
+				this.suggestQueryOverride = queryBeforeCaret(inputEl);
+				settled = this.suggestQueryOverride;
+				standingIn = segmentIndex();
 				// What is in the field is now what was typed, so there is no
 				// earlier text to go back to.
 				this.preview = null;
@@ -7955,14 +8023,12 @@ export class PathBreadcrumb {
 	private previewSuggestion(value: PathSuggestion | null): void {
 		const input = this.inputEl;
 		if (!input) return;
-		// A row of the list is about to write into the field, and what it
-		// writes replaces the segment — offered run and all. Taking the offer
-		// back first is what keeps the text it holds on to, and gives back,
-		// the text the user actually typed.
-		this.settleSuggestion(false);
 		const held = this.preview;
 
 		if (value === null) {
+			// Nothing was being previewed, so there is nothing to put back —
+			// and an offer standing in the field is the one the last restore
+			// made, not something a row wrote.
 			if (!held) return;
 			input.value = held.text;
 			// The selection comes back too. Restoring the text alone left the
@@ -7972,9 +8038,20 @@ export class PathBreadcrumb {
 			// replacing.
 			input.setSelectionRange(held.selectionStart, held.selectionEnd);
 			this.preview = null;
+			// And so does the offer it had to take back to make room, if there
+			// was one: looking at the list and looking away again leaves the
+			// field as it was.
+			if (this.offerBeforePreview) this.offerSuggestion(input);
+			this.offerBeforePreview = false;
 			this.autoSizeInput?.();
 			return;
 		}
+
+		// A row of the list is about to write into the field, and what it
+		// writes replaces the segment — offered run and all. Taking the offer
+		// back first is what keeps the text it holds on to, and gives back,
+		// the text the user actually typed.
+		if (!held) this.offerBeforePreview = this.settleSuggestion(false);
 
 		// The query is not touched here. It already holds the segment that was
 		// being edited, and leaving it alone is what keeps the list still
@@ -8023,10 +8100,15 @@ export class PathBreadcrumb {
 		this.tabGivenBack = null;
 		input.value =
 			base.text.slice(0, start) + value.label + this.tailUnder(value, base.text.slice(end));
-		// Shown selected, the way a completion is: it marks the text as a
-		// suggestion rather than something you typed, and typing replaces it
-		// instead of running on from its end.
-		input.setSelectionRange(start, start + value.label.length);
+		// Shown the way the offer is: what you typed stays yours, and the rest
+		// of the row's name is marked as a suggestion — so pointing at a row
+		// looks exactly like the offer that row would make, and typing runs on
+		// from what you had. A row that does not begin with what was typed
+		// (the list matches anywhere in a name) is marked whole, since none
+		// of it is yours.
+		const typed = base.text.slice(start, Math.min(base.selectionStart, end));
+		const kept = typed && value.label.toLowerCase().startsWith(typed.toLowerCase()) ? typed.length : 0;
+		input.setSelectionRange(start + kept, start + value.label.length);
 		this.autoSizeInput?.();
 	}
 
