@@ -5764,12 +5764,60 @@ export class PathBreadcrumb {
 	 * Obsidian allows in a name, so a path can never be mistaken for a page.
 	 */
 	private typedPageType(rawText: string): string | null {
+		return this.typedPage(rawText)?.type ?? null;
+	}
+
+	/**
+	 * The page a typed `:something` names, and the folder it was typed in.
+	 *
+	 * A page is in no folder, but where you ask for one can still say what it
+	 * should be about: `:graph` typed while standing in `atlas/code` — after
+	 * the chips, or after `atlas/code/` in the field — opens the graph of
+	 * that folder, and at the vault root the graph of everything.
+	 */
+	private typedPage(rawText: string): { type: string; folder: string } | null {
 		// Never while a move is pending: there the field is naming where a
 		// file goes, and a view is not a place to put one.
-		if (this.renameMode) return null;
-		const typed = rawText.trim().toLowerCase();
+		if (this.renameMode || this.externalPath !== null) return null;
+		const trimmed = rawText.trim();
+		const slash = trimmed.lastIndexOf("/");
+		const typed = trimmed.slice(slash + 1).toLowerCase();
 		if (!typed.startsWith(":")) return null;
-		return this.pageTypes().find((type) => pageLabel(type).toLowerCase() === typed) ?? null;
+		const type = this.pageTypes().find((candidate) => pageLabel(candidate).toLowerCase() === typed);
+		if (!type) return null;
+		const base = this.currentFolderPath();
+		const typedFolder = slash > 0 ? trimmed.slice(0, slash).replace(/^\/+|\/+$/g, "") : "";
+		const folder = [base, typedFolder].filter(Boolean).join("/");
+		return { type, folder };
+	}
+
+	/**
+	 * Opens a page in a leaf, about the folder it was asked for in.
+	 *
+	 * Only the graph has anything to say about a folder: it is filtered to it
+	 * through its own search box, exactly as typing `path:"atlas/code"` there
+	 * would. The graph has no view state for this — its filter is one of its
+	 * options, which Obsidian keeps between graphs — so the filter stays in
+	 * that box, visible and clearable, as a typed one would. At the vault
+	 * root the graph is the whole graph again: a filter of exactly the shape
+	 * this sets is taken off, and any other filter is left as it was typed.
+	 */
+	private async openPage(leaf: WorkspaceLeaf, type: string, folder: string): Promise<void> {
+		await leaf.setViewState({ type, active: true });
+		if (type !== "graph") return;
+		const engine = (
+			leaf.view as unknown as {
+				dataEngine?: {
+					getOptions?: () => { search?: string };
+					setOptions?: (options: { search: string }) => void;
+				};
+			}
+		).dataEngine;
+		if (folder) {
+			engine?.setOptions?.({ search: `path:"${folder.replace(/"/g, '\\"')}"` });
+			return;
+		}
+		if (/^path:"[^"]*"$/.test(engine?.getOptions?.().search ?? "")) engine?.setOptions?.({ search: "" });
 	}
 
 	private typedCreatesNew(rawText: string): boolean {
@@ -8291,11 +8339,11 @@ export class PathBreadcrumb {
 		// A page the row can name — `:graph`, `:search`, a plugin's own tab.
 		// Before everything else because it is not a path at all, and because
 		// the colon that marks it is a character no name may contain.
-		const page = this.typedPageType(trimmed);
+		const page = this.typedPage(trimmed);
 		if (page) {
 			this.cancelNavigation();
 			const target = paneType ? this.plugin.app.workspace.getLeaf(paneType) : this.leaf;
-			void target.setViewState({ type: page, active: true });
+			void this.openPage(target, page.type, page.folder);
 			return;
 		}
 
