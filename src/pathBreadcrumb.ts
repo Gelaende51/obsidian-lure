@@ -5376,6 +5376,52 @@ export class PathBreadcrumb {
 	}
 
 	/**
+	 * Rename/move mode's single commit point: moves/renames the current
+	 * file to an absolute vault path, creating missing parent folders.
+	 * Refuses to clobber anything that already exists there.
+	 */
+	private async moveFileTo(newPath: string): Promise<void> {
+		if (!this.file) return;
+
+		// Committing the path unchanged is a plain no-op, not a rename —
+		// easy to do now that a delimiter click prefills the real path, and
+		// asking Obsidian to rename a file onto itself only risks an error
+		// notice for something the user experienced as "nothing to change".
+		if (newPath === this.file.path) {
+			this.finishRename();
+			return;
+		}
+
+		// While coupled, a rename means something wider than this one note.
+		if (this.manager.navLock.isLocked() && this.participates()) {
+			if (await this.commitLockedRename(newPath)) return;
+		}
+
+		const existing = this.plugin.app.vault.getAbstractFileByPath(newPath);
+		if (existing && existing !== this.file) {
+			// Something is in the way. Asked rather than refused: the way
+			// through it is usually one of three things, all of them a step
+			// away from here and a detour from anywhere else.
+			if (!(await this.moveThroughCollision(this.file, existing, newPath))) return;
+		} else {
+			try {
+				const parentPath = newPath.substring(0, newPath.lastIndexOf("/"));
+				await this.ensureFolderExists(parentPath);
+				await this.plugin.app.fileManager.renameFile(this.file, newPath);
+			} catch (err) {
+				new Notice(t("noticeRenameFailed", { error: (err as Error).message }));
+				return;
+			}
+		}
+
+		// The note is where you sent it, and the tree is where you look for
+		// it afterwards — so it is shown there, rather than left for you to
+		// go and find.
+		this.revealInExplorer(this.file);
+		this.finishRename();
+	}
+
+	/**
 	 * Finishes a move or rename whose destination is taken, the way the
 	 * dialog is told to: rename what is in the way and carry on, or trade
 	 * places, or trade names with it. Returns whether the file was moved;
@@ -5437,52 +5483,6 @@ export class PathBreadcrumb {
 			return false;
 		}
 		return true;
-	}
-
-	/**
-	 * Rename/move mode's single commit point: moves/renames the current
-	 * file to an absolute vault path, creating missing parent folders.
-	 * Refuses to clobber anything that already exists there.
-	 */
-	private async moveFileTo(newPath: string): Promise<void> {
-		if (!this.file) return;
-
-		// Committing the path unchanged is a plain no-op, not a rename —
-		// easy to do now that a delimiter click prefills the real path, and
-		// asking Obsidian to rename a file onto itself only risks an error
-		// notice for something the user experienced as "nothing to change".
-		if (newPath === this.file.path) {
-			this.finishRename();
-			return;
-		}
-
-		// While coupled, a rename means something wider than this one note.
-		if (this.manager.navLock.isLocked() && this.participates()) {
-			if (await this.commitLockedRename(newPath)) return;
-		}
-
-		const existing = this.plugin.app.vault.getAbstractFileByPath(newPath);
-		if (existing && existing !== this.file) {
-			// Something is in the way. Asked rather than refused: the way
-			// through it is usually one of three things, all of them a step
-			// away from here and a detour from anywhere else.
-			if (!(await this.moveThroughCollision(this.file, existing, newPath))) return;
-		} else {
-			try {
-				const parentPath = newPath.substring(0, newPath.lastIndexOf("/"));
-				await this.ensureFolderExists(parentPath);
-				await this.plugin.app.fileManager.renameFile(this.file, newPath);
-			} catch (err) {
-				new Notice(t("noticeRenameFailed", { error: (err as Error).message }));
-				return;
-			}
-		}
-
-		// The note is where you sent it, and the tree is where you look for
-		// it afterwards — so it is shown there, rather than left for you to
-		// go and find.
-		this.revealInExplorer(this.file);
-		this.finishRename();
 	}
 
 	/**
@@ -6470,6 +6470,26 @@ export class PathBreadcrumb {
 	}
 
 	/**
+	 * Moves the start of the offered run on by one letter, so that letter
+	 * counts as typed and the rest is still offered. The last letter takes
+	 * the whole offer, which is what respells the segment the way the names
+	 * spell it.
+	 */
+	private takeOfferedLetter(): void {
+		const run = this.suggested;
+		const input = this.inputEl;
+		if (!run || !input) return;
+		if (run.end - run.start <= 1) {
+			this.settleSuggestion(true);
+			return;
+		}
+		run.start += 1;
+		input.setSelectionRange(run.start, run.end);
+		// The underline in the list follows the offer.
+		input.dispatchEvent(new Event("input"));
+	}
+
+	/**
 	 * Takes the offered run, or takes it back, and leaves the field as though
 	 * it had never been offered.
 	 *
@@ -6531,26 +6551,6 @@ export class PathBreadcrumb {
 		// Untrusted by construction, so `onInput` re-measures and re-lists
 		// without mistaking this for the user typing — which would end the
 		// selection ladder we may be about to start.
-		input.dispatchEvent(new Event("input"));
-	}
-
-	/**
-	 * Moves the start of the offered run on by one letter, so that letter
-	 * counts as typed and the rest is still offered. The last letter takes
-	 * the whole offer, which is what respells the segment the way the names
-	 * spell it.
-	 */
-	private takeOfferedLetter(): void {
-		const run = this.suggested;
-		const input = this.inputEl;
-		if (!run || !input) return;
-		if (run.end - run.start <= 1) {
-			this.settleSuggestion(true);
-			return;
-		}
-		run.start += 1;
-		input.setSelectionRange(run.start, run.end);
-		// The underline in the list follows the offer.
 		input.dispatchEvent(new Event("input"));
 	}
 
