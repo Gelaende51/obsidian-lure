@@ -1280,3 +1280,51 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 .suggestion-container {
 	transform: translateX(var(--lure-popover-shift, 0px));
 }
+
+/* On a folder, whose whole name is already bold, the match is picked out the
+   other way round: set in the regular weight against the bold around it. */
+.suggestion-item.lure-suggest-folder .lure-suggest-match {
+	font-weight: var(--font-normal, 400);
+}
+
+/* The collision dialog. Both files by their whole path, one to a line, each
+   with what it is to this move in front of it — the one that the rename
+   field acts on marked in the accent colour, so there is no reading the
+   dialog as being about the file you are moving. */
+.lure-collision-files {
+	display: grid;
+	gap: var(--size-4-1);
+	margin-block: var(--size-4-2) var(--size-4-4);
+}
+
+.lure-collision-file {
+	display: flex;
+	gap: var(--size-4-2);
+	align-items: baseline;
+	min-width: 0;
+}
+
+.lure-collision-file code {
+	overflow-wrap: anywhere;
+}
+
+.lure-collision-role {
+	flex: 0 0 auto;
+	min-width: 6em;
+	color: var(--text-muted);
+}
+
+.lure-collision-file.is-occupant .lure-collision-role,
+.lure-collision-file.is-occupant code {
+	color: var(--text-accent);
+}
+
+.lure-collision-modal .lure-prompt-input {
+	width: 100%;
+}
+
+.lure-collision-error {
+	min-height: 1.5em;
+	color: var(--text-error);
+	font-size: var(--font-ui-small);
+}

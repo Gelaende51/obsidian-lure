@@ -78,6 +78,7 @@ import { makeDraggable, makeDropTarget, showContextMenu } from "./nativeFileItem
 import { warnsOnOpen } from "./fileKinds";
 import { t } from "./lang";
 import { confirmAction } from "./prompts";
+import { askAboutCollision } from "./collisionModal";
 
 const PATCHED_CLASS = "lure-patched";
 /**
@@ -5406,6 +5407,70 @@ export class PathBreadcrumb {
 	}
 
 	/**
+	 * Finishes a move or rename whose destination is taken, the way the
+	 * dialog is told to: rename what is in the way and carry on, or trade
+	 * places, or trade names with it. Returns whether the file was moved;
+	 * cancelling the dialog moves nothing.
+	 *
+	 * Every step goes through `fileManager.renameFile`, so links follow each
+	 * file at every step. A swap needs a third name to pass through — two
+	 * files cannot hold one name even for an instant — and that name is
+	 * given back before this returns.
+	 */
+	private async moveThroughCollision(file: TFile, occupant: TAbstractFile, newPath: string): Promise<boolean> {
+		const app = this.plugin.app;
+		const parentOf = (path: string): string => path.slice(0, Math.max(0, path.lastIndexOf("/")));
+		const join = (folder: string, name: string): string => (folder ? `${folder}/${name}` : name);
+		const from = file.path;
+		const sameFolder = parentOf(from) === parentOf(newPath);
+		const choice = await askAboutCollision(app, {
+			moving: file,
+			occupant,
+			sameFolder,
+			isFree: (name) => app.vault.getAbstractFileByPath(join(parentOf(occupant.path), name)) === null,
+		});
+		if (!choice) return false;
+
+		const rename = (item: TAbstractFile, to: string) => app.fileManager.renameFile(item, to);
+		const passing = (item: TAbstractFile): string => {
+			const folder = parentOf(item.path);
+			for (let n = 1; ; n++) {
+				const candidate = join(folder, `${item.name}.lure-swap-${n}`);
+				if (!app.vault.getAbstractFileByPath(candidate)) return candidate;
+			}
+		};
+		try {
+			if (choice.kind === "rename-occupant") {
+				await rename(occupant, join(parentOf(occupant.path), choice.name));
+				await this.ensureFolderExists(parentOf(newPath));
+				await rename(file, newPath);
+			} else if (choice.kind === "swap-names") {
+				// Within one folder: this file takes the other's name, and the
+				// other takes the one this file had.
+				await rename(occupant, passing(occupant));
+				await rename(file, newPath);
+				await rename(occupant, from);
+			} else {
+				// Across folders: each keeps its own name and takes the other's
+				// folder. The occupant's new home has to be free for it.
+				const home = join(parentOf(from), occupant.name);
+				const blocker = app.vault.getAbstractFileByPath(home);
+				if (blocker && blocker !== file) {
+					new Notice(t("noticeAlreadyExists", { path: home }));
+					return false;
+				}
+				await rename(occupant, passing(occupant));
+				await rename(file, newPath);
+				await rename(occupant, home);
+			}
+		} catch (err) {
+			new Notice(t("noticeRenameFailed", { error: (err as Error).message }));
+			return false;
+		}
+		return true;
+	}
+
+	/**
 	 * Rename/move mode's single commit point: moves/renames the current
 	 * file to an absolute vault path, creating missing parent folders.
 	 * Refuses to clobber anything that already exists there.
@@ -5429,17 +5494,19 @@ export class PathBreadcrumb {
 
 		const existing = this.plugin.app.vault.getAbstractFileByPath(newPath);
 		if (existing && existing !== this.file) {
-			new Notice(t("noticeAlreadyExists", { path: newPath }));
-			return;
-		}
-
-		try {
-			const parentPath = newPath.substring(0, newPath.lastIndexOf("/"));
-			await this.ensureFolderExists(parentPath);
-			await this.plugin.app.fileManager.renameFile(this.file, newPath);
-		} catch (err) {
-			new Notice(t("noticeRenameFailed", { error: (err as Error).message }));
-			return;
+			// Something is in the way. Asked rather than refused: the way
+			// through it is usually one of three things, all of them a step
+			// away from here and a detour from anywhere else.
+			if (!(await this.moveThroughCollision(this.file, existing, newPath))) return;
+		} else {
+			try {
+				const parentPath = newPath.substring(0, newPath.lastIndexOf("/"));
+				await this.ensureFolderExists(parentPath);
+				await this.plugin.app.fileManager.renameFile(this.file, newPath);
+			} catch (err) {
+				new Notice(t("noticeRenameFailed", { error: (err as Error).message }));
+				return;
+			}
 		}
 
 		// The note is where you sent it, and the tree is where you look for
