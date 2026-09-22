@@ -1484,5 +1484,31 @@ test(":graph typed inside a folder opens the graph of that folder, and at the ro
 	await page.evaluate(`app.workspace.getLeavesOfType("graph").forEach((l) => l.detach()); return true;`);
 });
 
+test("the list of a right-hand pane opens under its own field, not the left pane's", async () => {
+	const LONG = "Schemes/2026/" + "A name long enough to run past the window edge ".repeat(4).trim() + ".md";
+	const r = JSON.parse(await page.evaluate(`
+		document.querySelector(".lure-path-input")?.blur();
+		document.body.click();
+		${PAUSE(300)}
+		const long = await app.vault.create(${JSON.stringify(LONG)}, "");
+		const note = app.vault.getAbstractFileByPath(${JSON.stringify(NOTE)});
+		await app.workspace.getLeaf(false).openFile(note);
+		const right = app.workspace.getLeaf("split", "vertical");
+		await right.openFile(note);
+		app.workspace.setActiveLeaf(right, { focus: true });
+		${PAUSE(600)}
+		app.commands.executeCommandById("lure:focus-path-bar");
+		${PAUSE(600)}
+		const input = right.view.containerEl.querySelector(".lure-path-input");
+		const pop = document.querySelector(".lure-suggest-popover");
+		const out = { input: input?.getBoundingClientRect().left, pop: pop?.isConnected ? pop.getBoundingClientRect().left : null };
+		input?.blur();
+		right.detach();
+		await app.fileManager.trashFile(long);
+		return JSON.stringify(out);`));
+	expect("the list is open", r.pop, (v) => typeof v === "number");
+	expect("aligned with the field it belongs to", Math.abs(r.pop - r.input), (v) => v <= 2);
+});
+
 await run();
 

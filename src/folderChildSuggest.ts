@@ -405,14 +405,30 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 
 	/** Showing a list, changed or not, goes through here; the field's colour is read off it. */
 	open(): void {
+		// Capped before Obsidian places the list, and placed again once the
+		// names are cut: placed at its uncut width, a list in a right-hand
+		// pane ran past the window's edge, was pushed left to fit — under
+		// the left pane — and stayed there after `fitRows` narrowed it,
+		// until the next keystroke placed it again.
+		this.capWidth();
 		super.open();
 		this.fitRows();
+		const self = this as unknown as { lastRect?: DOMRect; reposition?: (rect: DOMRect) => void };
+		if (self.lastRect) self.reposition?.(self.lastRect);
 		this.onListed?.();
 	}
 
+	/** No wider than the path bar the list hangs from. */
+	private capWidth(): void {
+		const popover = (this as unknown as { suggestEl?: HTMLElement }).suggestEl;
+		const bar = this.dragKeepFocusEl.closest(".view-header-title-container");
+		if (!popover || !bar) return;
+		popover.style.setProperty("--lure-suggest-max", `${Math.round(bar.getBoundingClientRect().width)}px`);
+	}
+
 	/**
-	 * Keeps the list no wider than the path bar it hangs from, and shortens
-	 * the names that do not fit by the path bar's own rule.
+	 * Shortens the names that do not fit a list capped to the path bar's
+	 * width (`capWidth`), by the path bar's own rule.
 	 *
 	 * A list as wide as its longest name ran off across the note — one long
 	 * file name was enough — and cut at its end, the name lost exactly the
@@ -422,11 +438,8 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 	 * away.
 	 */
 	private fitRows(): void {
-		const popover = (this as unknown as { suggestEl?: HTMLElement }).suggestEl;
-		const bar = this.dragKeepFocusEl.closest(".view-header-title-container");
 		const list = this.list();
-		if (!popover || !bar || !list) return;
-		popover.style.setProperty("--lure-suggest-max", `${Math.round(bar.getBoundingClientRect().width)}px`);
+		if (!list) return;
 		const values = list.values;
 		const rows = list.suggestions;
 		if (!Array.isArray(values) || !rows) return;
