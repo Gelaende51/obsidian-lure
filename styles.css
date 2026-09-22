@@ -1141,8 +1141,67 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 	display: block;
 	flex: 0 1 auto;
 	overflow: hidden;
+	/* `pre`, not `nowrap`: a name split into parts can be split at a space,
+	   and `nowrap` strips a space at either end of a box — so `development
+	   guidelines` cut between its words read as one word. Names hold no
+	   line breaks, so `pre` never wraps either. */
+	white-space: pre;
+	/* Clipped at the pixel, not a letter at a time: the text slides under
+	   the `…` beside it (`.lure-name-ell`), so the row never steps. */
+	text-overflow: clip;
+}
+
+/* A clipped part fades out toward the edge it is clipped at, and its `…`
+   stands in the faded strip. A mask rather than a background overlay, so it
+   works over whatever the header is painted with — a theme's colour, the
+   hover highlight, a translucent window. */
+.lure-name-lead.is-clipped,
+.lure-name-trail.is-clipped {
+	/* Exactly the width of the `…` in this part's font, written by
+	   `markClipped`; the text fades out over the quarter-em before it. */
+	-webkit-mask-image: linear-gradient(to left, transparent 0, transparent var(--lure-ell-w, 0.8em), #000 calc(var(--lure-ell-w, 0.8em) + 0.25em));
+	mask-image: linear-gradient(to left, transparent 0, transparent var(--lure-ell-w, 0.8em), #000 calc(var(--lure-ell-w, 0.8em) + 0.25em));
+}
+
+.lure-name-back.is-clipped {
+	-webkit-mask-image: linear-gradient(to right, transparent 0, transparent var(--lure-ell-w, 0.8em), #000 calc(var(--lure-ell-w, 0.8em) + 0.25em));
+	mask-image: linear-gradient(to right, transparent 0, transparent var(--lure-ell-w, 0.8em), #000 calc(var(--lure-ell-w, 0.8em) + 0.25em));
+}
+
+/* The `…` itself: no width of its own, so showing it moves nothing, and
+   drawn over the neighbouring part's faded edge — to its left when it
+   follows a part clipped at its end, to its right when it precedes one
+   clipped at its start. */
+.lure-name-ell {
+	position: relative;
+	flex: 0 0 0;
+	width: 0;
+	overflow: visible;
 	white-space: nowrap;
-	text-overflow: ellipsis;
+}
+
+.lure-name-ell.is-clipped::before {
+	content: "…";
+	position: absolute;
+	inset-inline-end: 0;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.lure-name-ell-before.is-clipped::before {
+	inset-inline-end: auto;
+	inset-inline-start: 0;
+}
+
+/* Held open, a name is whole again: no fade and no `…`, whatever the last
+   fit had marked. */
+.lure-name-open .is-clipped {
+	-webkit-mask-image: none;
+	mask-image: none;
+}
+
+.lure-name-open .lure-name-ell.is-clipped::before {
+	content: none;
 }
 
 /* The part that never gives way: the closing of a name whose neighbours
@@ -1151,7 +1210,7 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
    really ends. */
 .lure-name-pinned {
 	flex: 0 0 auto;
-	white-space: nowrap;
+	white-space: pre;
 }
 
 /* Clipped at its start instead of its end, for a name whose neighbours all

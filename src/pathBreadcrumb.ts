@@ -223,6 +223,14 @@ const NAME_TRAIL_CLASS = "lure-name-trail";
 const NAME_BACK_CLASS = "lure-name-back";
 /** On a part that never gives way — a pinned extension, or a name already at its floor. */
 const NAME_PINNED_CLASS = "lure-name-pinned";
+/**
+ * The `…` of a clipped part, as an element of its own beside it: no width,
+ * so showing it moves nothing, and drawn over the edge where the part's text
+ * fades out. See `markClipped`.
+ */
+const NAME_ELLIPSIS_CLASS = "lure-name-ell";
+/** On a part whose text runs past its box, and on the `…` that goes with it. */
+const CLIPPED_CLASS = "is-clipped";
 /** On the segment whose name is being shown in full because it is hovered or open. */
 const NAME_OPEN_CLASS = "lure-name-open";
 /** On a name held at no width by a setting rather than by the row running out of room. */
@@ -3651,7 +3659,7 @@ export class PathBreadcrumb {
 	private settleGeometry(container: HTMLElement, segments: readonly FittableSegment[]): void {
 		this.spendAir(container);
 		this.floorBoxes();
-		this.tightenClipped(segments);
+		this.markClipped(segments);
 	}
 
 	/**
@@ -3710,6 +3718,14 @@ export class PathBreadcrumb {
 		const settle = (): void => {
 			if (floorPx > 0) setFloor(el, `${floorPx.toFixed(2)}px`);
 		};
+		// Where a part gives way, its `…` stands: after one clipped at its
+		// end, before one clipped at its start.
+		const ellipsis = (before = false): void => {
+			el.createSpan({
+				cls: before ? `${NAME_ELLIPSIS_CLASS} ${NAME_ELLIPSIS_CLASS}-before` : NAME_ELLIPSIS_CLASS,
+				attr: { "aria-hidden": "true" },
+			});
+		};
 
 		// The opening segment is the one allowed to disappear altogether: its
 		// icon stays behind and goes on saying where the row begins. So it is
@@ -3721,6 +3737,7 @@ export class PathBreadcrumb {
 		// floor means "ask the contents", which would answer with a width.
 		if (stage === "root") {
 			put(full, NAME_LEAD_CLASS, "");
+			ellipsis();
 			setFloor(el, "0px");
 			return;
 		}
@@ -3749,10 +3766,12 @@ export class PathBreadcrumb {
 		}
 		if (cut.shape === "tail") {
 			put(full, NAME_LEAD_CLASS, cutName(full, keep, cut));
+			ellipsis();
 			settle();
 			return;
 		}
 		if (cut.shape === "head") {
+			ellipsis(true);
 			put(full, `${NAME_TRAIL_CLASS} ${NAME_BACK_CLASS}`, cutName(full, keep, cut));
 			settle();
 			return;
@@ -3761,12 +3780,14 @@ export class PathBreadcrumb {
 			// Both ends are shared, so both go. The opening is clipped from its
 			// start and the shared ending from its end, which leaves the part
 			// that differs standing between two ellipses.
+			ellipsis(true);
 			put(
 				full.slice(0, cut.span.end),
 				`${NAME_LEAD_CLASS} ${NAME_BACK_CLASS}`,
 				ELLIPSIS + full.slice(cut.span.start, cut.span.end),
 			);
 			put(full.slice(cut.span.end), NAME_TRAIL_CLASS, ELLIPSIS);
+			ellipsis();
 			settle();
 			return;
 		}
@@ -3777,10 +3798,12 @@ export class PathBreadcrumb {
 		const back = keep - front;
 		if (back <= 0) {
 			put(full, NAME_LEAD_CLASS, cutName(full, keep, cut));
+			ellipsis();
 			settle();
 			return;
 		}
 		put(full.slice(0, full.length - back), NAME_LEAD_CLASS, full.slice(0, front) + ELLIPSIS);
+		ellipsis();
 		put(full.slice(full.length - back), `${NAME_TRAIL_CLASS} ${NAME_PINNED_CLASS}`);
 		settle();
 	}
@@ -3941,91 +3964,37 @@ export class PathBreadcrumb {
 	}
 
 	/**
-	 * Takes the empty strip off the end of every clipped name.
+	 * Marks every part whose text runs past its box, and shows its `…`.
 	 *
-	 * `text-overflow` fills a box with whole glyphs and then the `…`, and
-	 * stops at the last one that fits — so the box is nearly always a little
-	 * wider than what was drawn into it, by anything up to the width of the
-	 * character it could not fit. On screen that is a gap between the `…` and
-	 * the delimiter after it, which reads as padding nobody asked for and
-	 * which got wider the tighter the row was squeezed.
+	 * The browser's own `text-overflow` drew whole letters and then the `…`,
+	 * so a name gave way a letter at a time: the box shrank smoothly and what
+	 * was drawn in it jumped, and capping the box at what was drawn (to take
+	 * away the strip that left) made the box jump too — and everything after
+	 * it on the row with it. Now the text is clipped at the pixel and slides
+	 * under a `…` that fades it out, so nothing on the row moves in steps.
 	 *
-	 * There is no way to ask CSS for "as wide as what you drew", so the run
-	 * is worked out here — a binary search over the prefix (or, for a name
-	 * clipped at its start, the suffix), measured in the part's own font —
-	 * and the box capped at exactly that. The box is read as a fraction
-	 * rather than as `clientWidth`, which rounds down: a part floored at
-	 * 30.45px reports a box of 30, so the very run its floor was measured
-	 * from no longer fit the box the floor had made for it.
-	 *
-	 * Only ever narrower, and only on parts that are already clipped, so
-	 * nothing that fits can be made to stop fitting. The room it gives back
-	 * goes to the file name's box, which is the only thing on the row that
-	 * grows.
+	 * The `…` is a sibling of no width, not part of the text, so showing it
+	 * changes no layout either; it only needs to know whether there is
+	 * anything under it, which is what this reads. A fraction of a pixel of
+	 * overflow is not worth a `…`.
 	 */
-	private tightenClipped(segments: readonly FittableSegment[]): void {
-		// Twice. Capping one part hands its leftover width back to the row,
-		// which moves every other part a little — so a cap worked out against
-		// the first layout can be a pixel or two out by the time the row has
-		// settled. The second pass measures what actually happened. It cannot
-		// run away: a cap only ever narrows a box, and only ever to something
-		// the box was already drawing.
-		this.tightenOnce(segments);
-		this.tightenOnce(segments);
-	}
-
-	private tightenOnce(segments: readonly FittableSegment[]): void {
+	private markClipped(segments: readonly FittableSegment[]): void {
 		for (const segment of segments) {
-			// What the name will occupy once its parts are capped. The box
-			// around them has to come down by the same amount or the strip
-			// simply moves: a part capped inside a crumb that keeps its width
-			// leaves the empty pixels between the crumb's edge and the
-			// delimiter instead of between the `…` and the crumb's edge,
-			// which looks exactly the same.
-			let occupied = 0;
 			for (const part of Array.from(segment.el.children)) {
 				if (!part.instanceOf(HTMLElement)) continue;
-				if (part.scrollWidth <= part.clientWidth + 1) {
-					occupied += part.getBoundingClientRect().width;
-					continue;
+				if (!part.hasClass(NAME_LEAD_CLASS) && !part.hasClass(NAME_TRAIL_CLASS)) continue;
+				// The `…` is as wide as it is drawn in this part's font, and the
+				// fade makes exactly that much room for it. A part narrower
+				// than one `…` is gone rather than clipped — the vault's name
+				// squeezed to nothing beside its icon — and shows none.
+				const ell = textWidth(ELLIPSIS, part);
+				const clipped = part.scrollWidth > part.clientWidth;
+				part.toggleClass(CLIPPED_CLASS, clipped);
+				part.setCssProps({ "--lure-ell-w": `${ell.toFixed(2)}px` });
+				const mark = part.hasClass(NAME_BACK_CLASS) ? part.previousElementSibling : part.nextElementSibling;
+				if (mark?.hasClass(NAME_ELLIPSIS_CLASS)) {
+					mark.toggleClass(CLIPPED_CLASS, clipped && part.clientWidth >= ell);
 				}
-				const text = part.textContent ?? "";
-				const fromStart = part.hasClass(NAME_BACK_CLASS);
-				// Fractional, and with half a pixel of grace. `clientWidth`
-				// is rounded down to whole pixels, and a box floored at
-				// 30.45px reports 30 — so the very run the floor was measured
-				// from stopped fitting the box the floor had made for it, and
-				// the part sat at its floor drawing one character less.
-				const box = part.getBoundingClientRect().width + 0.5;
-				const runOf = (keep: number): string =>
-					fromStart
-						? ELLIPSIS + text.slice(text.length - keep)
-						: text.slice(0, keep) + ELLIPSIS;
-				let drawn = 0;
-				let low = 0;
-				let high = text.length;
-				while (low < high) {
-					const mid = Math.ceil((low + high) / 2);
-					const width = textWidth(runOf(mid), part);
-					if (width <= box) {
-						drawn = width;
-						low = mid;
-					} else {
-						high = mid - 1;
-					}
-				}
-				// Never wider than the box it is capping: a cap above the
-				// current width does nothing except go stale the moment the
-				// row moves under it.
-				if (drawn > 0 && drawn < box) {
-					setTight(part, `${drawn.toFixed(2)}px`);
-					occupied += drawn;
-				} else {
-					occupied += part.getBoundingClientRect().width;
-				}
-			}
-			if (occupied > 0 && occupied < segment.el.getBoundingClientRect().width) {
-				setTight(segment.el, `${occupied.toFixed(2)}px`);
 			}
 		}
 	}
