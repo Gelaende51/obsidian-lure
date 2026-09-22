@@ -9,6 +9,32 @@
 
 Varje utgåva av Lure, nyast först. Det som har landat sedan den senaste utgåvan ligger under *Ej släppt*. Versionerna bär inget `v`-prefix, i linje med utgåvetaggarna.
 
+## Ej publicerad
+
+### Tillagt
+
+- **Ett upptaget namn frågar i stället för att vägra.** Att flytta eller byta namn till ett namn som redan finns öppnar en dialog som visar båda filerna med sin fulla sökväg. Du kan byta namn på den som är i vägen och fortsätta, byta plats med den (mellan mappar: var och en behåller sitt namn och tar den andras mapp), eller byta namn med den (inom en mapp). Avbryt flyttar ingenting. Varje knapp säger vad den kommer att göra när du pekar på den.
+- **`:graph` inuti en mapp öppnar den mappens graf** — grafen filtrerad till `path:"that/folder"`, precis som dess egen sökruta skulle göra. Vid valvets rot är det hela grafen, som förut.
+- **En mapp som redan har namnet är röd** i listan medan du flyttar, och det är en fil med det namnet också, så konflikten syns innan du väljer.
+
+### Ändrat
+
+- **Förslaget är alltid det Tabb skulle skriva.** Där namnen slutar stämma överens erbjuder fältet steget mot det första av dem — förut erbjöd det ingenting där, och Tabb skrev ändå något.
+- **Listan följer markören**, eller början av en markering: den listar mappen som den punkten är i, filtrerad efter bokstäverna framför den. I början av ett namn är det hela mappen.
+- **Att peka på en rad visar den som förslaget** — det du skrivit förblir ditt och resten av namnet markeras — och att flytta pekaren bort från listan ger tillbaka förslaget.
+- **→ tar en bokstav av förslaget** i stället för hela det; <kbd>End</kbd> tar fortfarande hela.
+- **F2 i ett öppet fält gör om det till ett namnbyte där det står**, och behåller texten, markören och markeringen, och **Fokusera sökvägsfältet** tar bort namnbytet igen på samma sätt.
+- **Allt annat som trycks eller klickas mellan tryckningarna startar F2- och Fokusera sökvägsfältet-cyklarna om.**
+- **Mappar är feta i listan**, så en mapps egen anteckning behöver inte längre vara grå för att sticka ut: den är lila som vilken annan anteckning som helst.
+- **Listan är aldrig bredare än sökvägsfältet.** Ett namn som inte får plats förkortas på samma sätt som sökvägsfältet förkortar ett, och visas helt vid hovring.
+- **PageUp och PageDown flyttar med de rader Obsidians egna listor visar**, från fältet också, och håller markeringen synlig.
+- **Listan visar upp till 1 000 poster** innan den bara räknar resten, i stället för 100.
+- **Förkortade namn glider i stället för att hoppa.** Ett namn som ger vika klipps vid pixeln och tonas bort under sitt `…`, så att inget efter det på raden rör sig i steg medan en flik ändrar storlek.
+
+### Rättat
+
+- Ett mellanslag där ett förkortat namn delades — `development guidelines` — föll bort, så de två orden flöt ihop.
+
 ## 1.4.0 — 2026-09-19[^1.4.0]
 
 ### Tillagt

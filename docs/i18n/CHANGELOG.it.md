@@ -9,6 +9,32 @@
 
 Ogni release di Lure, dalla più recente. Ciò che è arrivato dopo l'ultima release sta sotto *Non rilasciato*. Le versioni non hanno il prefisso `v`, come i tag delle release.
 
+## Non rilasciato
+
+### Aggiunto
+
+- **Un nome già in uso chiede invece di rifiutare.** Spostare o rinominare su un nome già presente apre una finestra di dialogo che mostra entrambi i file con il loro percorso completo. Puoi rinominare quello di intralcio e proseguire, scambiare il posto con lui (tra cartelle: ciascuno mantiene il proprio nome e prende la cartella dell'altro), oppure scambiare i nomi con lui (all'interno di una stessa cartella). Annullare non sposta nulla. Ogni pulsante dice cosa farà non appena lo indichi.
+- **`:graph` dentro una cartella apre il grafo di quella cartella** — il grafo filtrato per `path:"that/folder"`, come farebbe il suo stesso campo di ricerca. Nella radice del vault resta il grafo intero, come prima.
+- **Una cartella che contiene già il nome appare rossa** nel menu a discesa durante lo spostamento, e così pure un file con quel nome, in modo che il conflitto sia visibile prima della scelta.
+
+### Modificato
+
+- **La proposta è sempre ciò che Tab scriverebbe.** Dove i nomi smettono di concordare, il campo propone il passo verso il primo di essi — prima non proponeva nulla lì, e Tab scriveva comunque qualcosa.
+- **Il menu a discesa segue il cursore**, o l'inizio di una selezione: elenca la cartella in cui si trova quel punto, filtrata dalle lettere che lo precedono. All'inizio di un nome è la cartella intera.
+- **Puntare una riga la mostra come proposta** — quello che hai scritto resta tuo e il resto del nome viene evidenziato — e togliere il puntatore dall'elenco riporta la proposta.
+- **→ prende una lettera della proposta** anziché tutta intera; <kbd>Fine</kbd> la prende ancora per intero.
+- **F2 in un campo aperto lo trasforma in un rinomina sul posto**, mantenendo il testo, il cursore e la selezione, e **Attiva la barra del percorso** toglie il rinomina allo stesso modo.
+- **Qualsiasi altro tasto premuto o clic effettuato tra una pressione e l'altra riavvia il ciclo di F2 e Attiva la barra del percorso.**
+- **Le cartelle sono in grassetto nel menu a discesa**, così la nota propria di una cartella non deve più essere grigia per distinguersi: è viola come qualsiasi altra nota.
+- **Il menu a discesa non è mai più largo della barra del percorso.** Un nome che non ci sta viene accorciato come la barra del percorso accorcia un nome, e mostrato per intero al passaggio del cursore.
+- **PaginaSu e PaginaGiù si spostano in base alle righe che i menu a discesa di Obsidian stesso mostrano**, anche dal campo, e mantengono la selezione in vista.
+- **Il menu a discesa mostra fino a 1.000 voci** prima di contare il resto, invece di 100.
+- **I nomi accorciati scivolano invece di saltare.** Un nome che cede viene tagliato al pixel e sfuma sotto i suoi `…`, così nulla dopo di lui sulla riga si muove a scatti mentre un riquadro viene ridimensionato.
+
+### Corretto
+
+- Uno spazio nel punto in cui un nome accorciato veniva spezzato — `development guidelines` — andava perso, facendo attaccare le due parole.
+
 ## 1.4.0 — 2026-09-19[^1.4.0]
 
 ### Aggiunto

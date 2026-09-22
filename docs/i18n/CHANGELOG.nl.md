@@ -9,6 +9,32 @@
 
 Elke release van Lure, de nieuwste eerst. Wat er sinds de laatste release is geland staat onder *Niet uitgebracht*. Versies dragen geen `v`-voorvoegsel, net als de release-tags.
 
+## Niet uitgebracht
+
+### Toegevoegd
+
+- **Een naam die al in gebruik is, vraagt in plaats van te weigeren.** Verplaatsen of hernoemen naar een naam die er al is, opent een dialoogvenster dat beide bestanden met hun volledige pad toont. Je kunt degene die in de weg staat hernoemen en doorgaan, met hem van plaats wisselen (over mappen heen: allebei houden hun naam en krijgen de map van de ander), of van naam met hem wisselen (binnen één map). Annuleren verplaatst niets. Elke knop zegt wat hij zal doen zodra je hem aanwijst.
+- **`:graph` in een map opent de graaf van die map** — de graaf gefilterd op `path:"that/folder"`, zoals het eigen zoekvak dat zou doen. In de hoofdmap van de kluis is het de hele graaf, zoals voorheen.
+- **Een map die de naam al heeft, is rood** in de lijst tijdens het verplaatsen, en zo ook een bestand met die naam, zodat het conflict te zien is voordat je kiest.
+
+### Gewijzigd
+
+- **Het aanbod is altijd wat Tab zou schrijven.** Waar de namen elkaar niet meer volgen, biedt het veld de stap richting de eerste van hen aan — voorheen bood het daar niets aan, en typte Tab er toch iets.
+- **De lijst volgt de cursor**, of het begin van een selectie: ze toont de map waar dat punt in staat, gefilterd op de letters ervoor. Aan het begin van een naam is dat de hele map.
+- **Een rij aanwijzen toont haar als het aanbod** — wat je typte blijft van jou en de rest van de naam wordt gemarkeerd — en de muisaanwijzer van de lijst halen brengt het aanbod terug.
+- **→ neemt één letter van het aanbod** in plaats van alles; <kbd>End</kbd> neemt het nog steeds helemaal.
+- **F2 in een geopend veld maakt er een hernoeming van, ter plekke**, met behoud van de tekst, de cursor en de selectie, en **Focus op de padbalk** haalt de hernoeming er op dezelfde manier weer af.
+- **Iets anders indrukken of aanklikken tussen de drukken door begint de cyclus van F2 en Focus op de padbalk opnieuw.**
+- **Mappen staan vet in de lijst**, dus de eigen notitie van een map hoeft niet langer grijs te zijn om zich te onderscheiden: ze is paars, zoals elke andere notitie.
+- **De lijst is nooit breder dan de padbalk.** Een naam die niet past, wordt ingekort zoals de padbalk er een inkort, en volledig getoond bij het aanwijzen.
+- **PageUp en PageDown verplaatsen per rij, zoals Obsidians eigen lijsten die tonen**, ook vanuit het veld, en houden de selectie in beeld.
+- **De lijst toont tot 1000 items** voordat ze de rest telt, in plaats van 100.
+- **Ingekorte namen schuiven in plaats van te springen.** Een naam die wijkt, wordt tot op de pixel afgeknot en vervaagt onder zijn `…`, zodat niets erna op de rij met sprongen beweegt terwijl een deelvenster van grootte verandert.
+
+### Opgelost
+
+- Een spatie waar een ingekorte naam werd gesplitst — `development guidelines` — verdween, waardoor de twee woorden aan elkaar kwamen.
+
 ## 1.4.0 — 2026-09-19[^1.4.0]
 
 ### Toegevoegd

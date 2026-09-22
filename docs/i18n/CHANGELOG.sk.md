@@ -8,6 +8,32 @@
 
 Každé vydanie pluginu Lure, od najnovšieho. Čo pribudlo od posledného vydania, nájdeš pod *Nevydané*. Verzie nemajú predponu `v`, rovnako ako značky vydaní.
 
+## Nevydané
+
+### Pridané
+
+- **Obsadený názov sa opýta, namiesto toho, aby odmietol.** Presun alebo premenovanie na názov, ktorý už existuje, otvorí dialóg zobrazujúci oba súbory podľa ich celej cesty. Môžeš premenovať ten, čo je v ceste, a pokračovať, vymeniť si s ním miesta (naprieč priečinkami: každý si ponechá svoj názov a prevezme priečinok toho druhého), alebo si s ním vymeniť názvy (v rámci jedného priečinka). Zrušenie nič nepresunie. Každé tlačidlo hovorí, čo urobí, keď naň ukážeš.
+- **`:graph` vnútri priečinka otvorí graf tohto priečinka** — graf filtrovaný na `path:"that/folder"`, tak, ako by to urobilo jeho vlastné vyhľadávacie pole. V koreni trezora je to stále celý graf, ako predtým.
+- **Priečinok, ktorý už daný názov obsahuje, je v zozname počas presunu červený**, a rovnako aj súbor s takým názvom, takže konflikt sa ukáže ešte pred výberom.
+
+### Zmenené
+
+- **Ponuka je vždy to, čo by napísal Tab.** Tam, kde sa názvy prestanú zhodovať, pole ponúka krok smerom k prvému z nich — predtým tam nič neponúkalo a Tab aj tak niečo napísal.
+- **Zoznam sleduje kurzor**, alebo začiatok výberu: uvádza priečinok, v ktorom sa ten bod nachádza, filtrovaný podľa písmen pred ním. Na začiatku názvu je to celý priečinok.
+- **Ukázanie na riadok ho zobrazí ako ponuku** — čo si napísal, zostáva tvoje a zvyšok názvu je označený — a presunutie ukazovateľa mimo zoznamu ponuku vráti späť.
+- **→ vezme jedno písmeno ponuky** namiesto celej; <kbd>End</kbd> ju stále vezme celú.
+- **F2 v otvorenom poli ho zmení na premenovanie tam, kde stojí**, pričom zachová text, kurzor aj výber, a **Zamerať lištu cesty** z neho premenovanie tým istým spôsobom zase odoberie.
+- **Čokoľvek iné stlačené alebo kliknuté medzi stlačeniami spustí cyklus F2 a Zamerať lištu cesty odznova.**
+- **Priečinky sú v zozname tučné**, takže vlastná poznámka priečinka už nemusí byť sivá, aby sa odlíšila: je fialová ako každá iná poznámka.
+- **Zoznam nie je širší ako lišta cesty.** Názov, ktorý sa tam nezmestí, sa skráti tak, ako lišta cesty skracuje svoj vlastný, a pri ukázaní naň sa zobrazí celý.
+- **PageUp a PageDown sa pohybujú po riadkoch, aké ukazujú vlastné zoznamy Obsidianu**, aj z poľa, a udržujú výber v dohľade.
+- **Zoznam zobrazuje až 1 000 položiek**, kým začne počítať zvyšok, namiesto 100.
+- **Skrátené názvy sa posúvajú plynulo, nie skokom.** Názov, ktorý ustupuje, sa oreže na pixel a stráca sa pod svojimi `…`, takže nič za ním v riadku sa nehýbe po krokoch, kým sa mení veľkosť panela.
+
+### Opravené
+
+- Medzera tam, kde bol skrátený názov rozdelený — `development guidelines` — bola vynechaná, čím sa dve slová spojili dokopy.
+
 ## 1.4.0 — 2026-09-19[^1.4.0]
 
 ### Pridané

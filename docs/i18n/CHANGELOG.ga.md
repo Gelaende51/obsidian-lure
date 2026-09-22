@@ -8,6 +8,32 @@
 
 Gach eisiúint de Lure, an ceann is nuaí ar dtús. Tá a bhfuil tagtha isteach ó bhí an eisiúint dheireanach ann faoi *Gan eisiúint*. Níl réimír `v` ar na leaganacha, ar aon dul leis na clibeanna eisiúna.
 
+## Neamheisithe
+
+### Curtha leis
+
+- **Fiafraíonn ainm atá glactha cheana in ionad é a dhiúltú.** Nuair a bhogtar nó a athainmnítear go dtí ainm atá ann cheana, osclaítear dialóg a thaispeánann an dá chomhad lena gconair iomlán. Is féidir leat an ceann atá sa bhealach a athainmniú agus leanúint ar aghaidh, áiteanna a mhalartú leis (idir fhillteáin: coimeádann gach ceann a ainm féin agus glacann sé fillteán an chinn eile), nó ainmneacha a mhalartú leis (laistigh d'aon fhillteán amháin). Ní bhogann Cealaigh dada. Insíonn gach cnaipe cad a dhéanfaidh sé nuair a dhíríonn tú air.
+- **Osclaíonn `:graph` laistigh d'fhillteán graf an fhillteáin sin** — an graf scagtha go `path:"that/folder"`, mar a dhéanfadh a bhosca cuardaigh féin. Ag fréamh an taisceadáin is é an graf iomlán é, mar a bhí.
+- **Fillteán a bhfuil an t-ainm sin aige cheana bíonn sé dearg** sa liosta agus tú ag bogadh, agus mar an gcéanna do chomhad den ainm sin, ionas go bhfeictear an coinbhleacht sula roghnaíonn tú.
+
+### Athraithe
+
+- **Is é atá sa tairiscint i gcónaí an méid a scríobhfadh Tab.** San áit nach réitíonn na hainmneacha níos mó, tairgeann an réimse an chéim i dtreo an chéad cheann acu — roimhe seo, ní thairgeadh sé faic ann, agus scríobhadh Tab rud éigin mar sin féin.
+- **Leanann an liosta an cúrsóir**, nó tús roghnaithe: liostaíonn sé an fillteán ina bhfuil an pointe sin, scagtha de réir na litreacha atá roimhe. Ag tús ainm is é sin an fillteán ar fad.
+- **Nuair a dhíríonn tú ar ró taispeántar é mar an tairiscint** — fanann an méid a chlóscríobh tú féin duit féin, agus marcáiltear an chuid eile den ainm — agus nuair a bhogtar an pointeoir den liosta, filleann an tairiscint roimhe sin.
+- **Tógann → litir amháin den tairiscint** in ionad an iomláin; tógann <kbd>End</kbd> fós é ina iomláine.
+- **Iompaíonn F2 i réimse oscailte é ina athainmniú san áit ina bhfuil sé**, ag coimeád an téacs, an chúrsóra agus an roghnaithe, agus baineann **Fócas ar an mbarra conaire** an t-athainmniú de sa dóigh chéanna.
+- **Aon rud eile a bhrúitear nó a chliceáiltear idir na brúnna, tosaíonn sé timthriall F2 agus Fócas ar an mbarra conaire arís.**
+- **Tá na fillteáin trom sa liosta**, mar sin ní gá a thuilleadh go mbeadh nóta fillteáin féin liath chun seasamh amach: tá sé corcra ar nós aon nóta eile.
+- **Níl an liosta níos leithne ná an barra conaire.** Giorraítear ainm nach n-oireann ar an mbealach a ghiorraíonn an barra conaire ceann, agus taispeántar ina iomláine é ar ainliú.
+- **Bogann PageUp agus PageDown de réir na rónna a thaispeánann liostaí féin Obsidian**, ón réimse freisin, agus coimeádann siad an roghnú le feiceáil.
+- **Taispeánann an liosta suas le 1,000 iontráil** sula gcuntar sé an chuid eile, in ionad 100.
+- **Sleamhnaíonn ainmneacha giorraithe in ionad léim.** Gearrtar ainm atá ag géilleadh ag an bpicteilín agus céimníonn sé faoina `…`, ionas nach mbogann aon rud ina dhiaidh sa ró de chéimeanna fad is atá pána á athmhéadú.
+
+### Deisithe
+
+- Cailleadh spás san áit ar scoilteadh ainm giorraithe — `development guidelines` — rud a chuir an dá fhocal le chéile.
+
 ## 1.4.0 — 2026-09-19[^1.4.0]
 
 ### Curtha leis

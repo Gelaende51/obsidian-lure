@@ -9,6 +9,32 @@
 
 Każde wydanie Lure, od najnowszego. To, co pojawiło się od ostatniego wydania, znajduje się pod nagłówkiem *Niewydane*. Wersje nie mają przedrostka `v`, zgodnie ze znacznikami wydań.
 
+## Niewydane
+
+### Dodano
+
+- **Zajęta nazwa pyta zamiast odmawiać.** Przenoszenie lub zmiana nazwy na nazwę, która już tam jest, otwiera okno dialogowe pokazujące oba pliki z pełną ścieżką. Możesz zmienić nazwę tego, który stoi na drodze, i kontynuować, zamienić się z nim miejscami (między folderami: każdy zachowuje swoją nazwę i przejmuje folder drugiego), albo zamienić się z nim nazwami (w obrębie jednego folderu). Anulowanie niczego nie przenosi. Każdy przycisk mówi, co zrobi, gdy na niego wskażesz.
+- **`:graph` wewnątrz folderu otwiera graf tego folderu** — graf odfiltrowany do `path:"that/folder"`, tak jak zrobiłoby to jego własne pole wyszukiwania. W katalogu głównym skarbca to nadal cały graf, jak wcześniej.
+- **Folder, który już ma tę nazwę, jest czerwony** na liście podczas przenoszenia, podobnie jak plik o tej nazwie, więc konflikt widać, zanim wybierzesz.
+
+### Zmieniono
+
+- **Podpowiedź to zawsze to, co wpisałby Tab.** Tam, gdzie nazwy przestają się zgadzać, pole podpowiada krok w stronę pierwszej z nich — wcześniej nic tam nie podpowiadało, a Tab i tak coś wpisywał.
+- **Lista podąża za kursorem**, albo za początkiem zaznaczenia: pokazuje folder, w którym ten punkt się znajduje, odfiltrowany przez litery przed nim. Na początku nazwy to cały folder.
+- **Wskazanie wiersza pokazuje go jako podpowiedź** — to, co wpisałeś, zostaje twoje, a reszta nazwy jest zaznaczona — a zabranie wskaźnika z listy przywraca poprzednią podpowiedź.
+- **→ bierze jedną literę podpowiedzi** zamiast całej; <kbd>End</kbd> nadal bierze ją w całości.
+- **F2 w otwartym polu zamienia je w zmianę nazwy w miejscu, w którym stoi**, zachowując tekst, kursor i zaznaczenie, a **Ustaw fokus na pasku ścieżki** w ten sam sposób zdejmuje z niego zmianę nazwy.
+- **Cokolwiek innego naciśnięte lub kliknięte między naciśnięciami zaczyna cykle F2 i Ustaw fokus na pasku ścieżki od nowa.**
+- **Foldery są pogrubione na liście**, więc własna notatka folderu nie musi już być szara, by się wyróżniać: jest fioletowa jak każda inna notatka.
+- **Lista nie jest szersza niż pasek ścieżki.** Nazwa, która się nie mieści, jest skracana tak samo, jak pasek ścieżki skraca swoją, i pokazywana w całości po najechaniu.
+- **PageUp i PageDown przesuwają o tyle wierszy, ile pokazują własne listy Obsidiana**, także z poziomu pola, i utrzymują zaznaczenie w polu widzenia.
+- **Lista pokazuje do 1000 pozycji**, zanim zacznie liczyć resztę, zamiast 100.
+- **Skrócone nazwy się przesuwają, zamiast skakać.** Nazwa, która ustępuje, jest przycinana co do piksela i zanika pod swoim `…`, więc nic za nią w wierszu nie porusza się skokowo, gdy panel zmienia rozmiar.
+
+### Naprawiono
+
+- Spacja w miejscu, gdzie dzielona była skrócona nazwa — `development guidelines` — znikała, sklejając oba słowa.
+
 ## 1.4.0 — 2026-09-19[^1.4.0]
 
 ### Dodano

@@ -8,6 +8,32 @@
 
 Setiap keluaran Lure, yang terbaharu dahulu. Apa yang telah mendarat sejak keluaran terakhir ada di bawah *Belum dikeluarkan*. Versi tidak membawa awalan `v`, sepadan dengan tag keluarannya.
 
+## Belum Dikeluarkan
+
+### Ditambah
+
+- **Nama yang sudah digunakan akan bertanya dan bukan menolak.** Memindah atau menamakan semula kepada nama yang sudah ada membuka dialog yang memaparkan kedua-dua fail dengan laluan penuhnya. Anda boleh menamakan semula fail yang menghalang lalu meneruskan, bertukar tempat dengannya (merentas folder: masing-masing kekal dengan namanya dan mengambil folder yang lain), atau bertukar nama dengannya (dalam satu folder). Batal tidak memindahkan apa-apa. Setiap butang menyatakan apa yang akan dilakukannya apabila anda menuding kepadanya.
+- **`:graph` di dalam sebuah folder membuka graf folder itu** — graf yang ditapis dengan `path:"that/folder"`, seperti yang akan dibuat oleh kotak carian folder itu sendiri. Pada akar bilik kebal, ia tetap graf keseluruhan, seperti sebelum ini.
+- **Folder yang sudah memiliki nama itu berwarna merah** dalam senarai lungsur semasa memindahkan, begitu juga fail dengan nama itu, supaya perlanggaran itu kelihatan sebelum anda memilih.
+
+### Diubah
+
+- **Tawaran sentiasa apa yang akan ditulis oleh Tab.** Di titik nama-nama berhenti sepadan, medan itu menawarkan langkah ke arah yang pertama daripada nama-nama itu — sebelum ini, di situ tiada apa-apa ditawarkan sedangkan Tab tetap menulis sesuatu.
+- **Senarai lungsur mengikut kursor**, atau permulaan sesuatu pilihan: ia menyenaraikan folder tempat titik itu berada, ditapis mengikut huruf di hadapannya. Pada permulaan sesuatu nama, itu ialah keseluruhan folder.
+- **Menuding pada satu baris memaparkannya sebagai tawaran** — apa yang anda taip kekal milik anda dan baki nama itu ditanda — dan mengalihkan penuding daripada senarai itu memulangkan tawaran semula.
+- **→ mengambil satu huruf daripada tawaran** dan bukan semuanya; <kbd>End</kbd> masih mengambilnya sepenuhnya.
+- **F2 pada medan yang terbuka menukarnya menjadi tukar nama di tempat ia berdiri**, mengekalkan teks, kursor dan pilihan, dan **Fokus pada bar laluan** mengembalikan tukar nama itu dengan cara yang sama.
+- **Apa-apa lain yang ditekan atau diklik antara kedua-dua tekanan itu memulakan semula kitaran F2 dan Fokus pada bar laluan.**
+- **Folder ditebalkan dalam senarai lungsur**, jadi nota milik sesebuah folder tidak lagi perlu berwarna kelabu untuk tampil berbeza: ia berwarna ungu seperti nota lain.
+- **Senarai lungsur tidak lebih lebar daripada bar laluan.** Nama yang tidak muat dipendekkan dengan cara yang sama seperti bar laluan memendekkannya, dan dipaparkan sepenuhnya apabila ditudingi.
+- **PageUp dan PageDown bergerak mengikut baris yang dipaparkan senarai lungsur bawaan Obsidian**, daripada medan itu juga, dan mengekalkan pilihan itu kelihatan.
+- **Senarai lungsur memaparkan sehingga 1,000 entri** sebelum ia mengira bakinya, dan bukan 100.
+- **Nama yang dipendekkan meluncur, bukan melompat.** Nama yang mengalah dipotong tepat pada piksel dan pudar di bawah `…`-nya, jadi tiada apa-apa selepasnya pada baris itu bergerak berperingkat semasa panel diubah saiz.
+
+### Dibaiki
+
+- Ruang di tempat nama yang dipendekkan terpisah — `development guidelines` — tergugur, menyatukan kedua-dua perkataan itu.
+
 ## 1.4.0 — 2026-09-19[^1.4.0]
 
 ### Ditambah

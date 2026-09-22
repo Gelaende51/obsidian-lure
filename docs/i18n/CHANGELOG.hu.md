@@ -9,6 +9,32 @@
 
 A Lure minden kiadása, a legújabbal kezdve. Ami a legutóbbi kiadás óta került be, a *Kiadatlan* szakaszban található. A verziószámok elé nem kerül `v` előtag, így megegyeznek a kiadási címkékkel.
 
+## Kiadatlan
+
+### Hozzáadva
+
+- **A foglalt név megkérdez, ahelyett hogy elutasítana.** Ha olyan névre helyezel át vagy nevezel át, amely már foglalt, egy párbeszédablak nyílik, amely mindkét fájlt a teljes útvonalával mutatja. Átnevezheted az útban lévőt és folytathatod, helyet cserélhetsz vele (mappák között: mindkettő megtartja a nevét, és átveszi a másik mappáját), vagy nevet cserélhetsz vele (egy mappán belül). A mégse semmit sem mozgat. Minden gomb megmondja, mit fog tenni, amikor rámutatsz.
+- **A `:graph` egy mappán belül annak a mappának a gráfját nyitja meg** — a `path:"that/folder"` szűrővel ellátott gráfot, ahogyan a saját keresőmezője is tenné. A széf gyökerén ez továbbra is a teljes gráf, mint eddig.
+- **Az a mappa, amely már tartalmazza a nevet, pirossal jelenik meg** a legördülő listában áthelyezés közben, csakúgy mint az azonos nevű fájl, így az ütközés már a választás előtt látszik.
+
+### Módosítva
+
+- **A felajánlott érték mindig az, amit a <kbd>Tab</kbd> beírna.** Ahol a nevek megegyezése megszakad, a mező a köztük lévő elsőhöz vezető lépést ajánlja fel — korábban ott semmit sem ajánlott fel, és a <kbd>Tab</kbd> mégis beírt valamit.
+- **A legördülő lista a kurzort követi**, vagy a kijelölés kezdetét: azt a mappát listázza, amelyben az a pont van, az előtte álló betűkkel szűrve. Egy név elején ez a teljes mappa.
+- **Egy sorra mutatva az megjelenik felajánlásként** — amit begépeltél, az a tiéd marad, a név többi része pedig ki van jelölve —, és ha lekerül róla a mutató, az ajánlat visszatér.
+- **A → az ajánlat egyetlen betűjét veszi át**, nem az egészet; az <kbd>End</kbd> továbbra is egészben veszi át.
+- **Az F2 egy nyitott mezőben helyben átnevezéssé alakítja azt**, megtartva a szöveget, a kurzort és a kijelölést, és **Az útvonalsáv fókuszálása** ugyanígy veszi le róla az átnevezést.
+- **Bármi más, amit a két lenyomás között megnyomsz vagy kattintasz, újraindítja az F2 és Az útvonalsáv fókuszálása körforgását.**
+- **A mappák félkövérek a legördülő listában**, így egy mappa saját jegyzetének már nem kell szürkének lennie, hogy kitűnjön: lila, mint bármely másik jegyzet.
+- **A legördülő lista nem szélesebb az útvonalsávnál.** A be nem férő nevet ugyanúgy lerövidíti, ahogyan az útvonalsáv is lerövidít egyet, és rámutatva teljes egészében megjelenik.
+- **A PageUp és a PageDown az Obsidian saját legördülő listái által mutatott sorokkal lép**, a mezőből is, és a kijelölést szem előtt tartja.
+- **A legördülő lista akár 1000 bejegyzést is megjelenít**, mielőtt megszámolná a többit, a korábbi 100 helyett.
+- **A lerövidített nevek csúsznak, nem ugranak.** Az engedő név pixelre pontosan levágódik, és a `…` alatt tűnik el, így a sorban utána semmi sem mozog lépésekben, amíg egy panel átméreteződik.
+
+### Javítva
+
+- Egy szóköz, ahol egy lerövidített nevet elvágtak — `development guidelines` — kimaradt, összeragasztva a két szót.
+
 ## 1.4.0 — 2026-09-19[^1.4.0]
 
 ### Hozzáadva

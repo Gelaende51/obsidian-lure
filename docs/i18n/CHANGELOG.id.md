@@ -8,6 +8,32 @@
 
 Setiap rilis Lure, yang terbaru lebih dulu. Apa yang sudah mendarat sejak rilis terakhir ada di bawah *Belum dirilis*. Versi tidak memakai awalan `v`, sesuai dengan tanda rilisnya.
 
+## Belum Dirilis
+
+### Ditambahkan
+
+- **Nama yang sudah dipakai akan bertanya, bukan menolak.** Memindahkan atau mengganti nama ke nama yang sudah ada membuka dialog yang menampilkan kedua berkas dengan jalur lengkapnya. Anda dapat mengganti nama berkas yang menghalangi lalu melanjutkan, bertukar tempat dengannya (lintas folder: masing-masing tetap dengan namanya dan menempati folder yang lain), atau bertukar nama dengannya (dalam satu folder). Batal tidak memindahkan apa pun. Setiap tombol menyatakan apa yang akan dilakukannya saat Anda mengarahkan penunjuk ke sana.
+- **`:graph` di dalam sebuah folder membuka graf folder itu** — graf yang disaring dengan `path:"that/folder"`, seperti yang akan dibuat kotak pencariannya sendiri. Di akar vault, ia tetap graf keseluruhan, seperti sebelumnya.
+- **Folder yang sudah memiliki nama itu berwarna merah** di menu tarik-turun saat memindahkan, begitu pula berkas dengan nama itu, sehingga benturan terlihat sebelum Anda memilih.
+
+### Diubah
+
+- **Tawaran selalu berupa apa yang akan ditulis Tab.** Di titik nama-nama berhenti sama, bidang menawarkan langkah menuju yang pertama dari nama-nama itu — sebelumnya, di sana tidak menawarkan apa-apa padahal Tab tetap menulis sesuatu.
+- **Menu tarik-turun mengikuti kursor**, atau awal sebuah pilihan: ia mencantumkan folder tempat titik itu berada, disaring oleh huruf di depannya. Di awal sebuah nama, itu adalah seluruh folder.
+- **Menunjuk sebuah baris menampilkannya sebagai tawaran** — apa yang Anda ketik tetap milik Anda dan sisa nama itu ditandai — dan menjauhkan penunjuk dari daftar mengembalikan tawaran semula.
+- **→ mengambil satu huruf dari tawaran** alih-alih semuanya; <kbd>End</kbd> tetap mengambilnya utuh.
+- **F2 pada bidang yang terbuka mengubahnya menjadi ganti nama di tempatnya berdiri**, mempertahankan teks, kursor, dan pilihan, dan **Fokus ke bilah jalur** mengembalikan ganti nama itu dengan cara yang sama.
+- **Apa pun lain yang ditekan atau diklik di antara kedua penekanan itu memulai lagi siklus F2 dan Fokus ke bilah jalur.**
+- **Folder ditebalkan di menu tarik-turun**, sehingga catatan milik sebuah folder tidak perlu lagi berwarna kelabu untuk tampil beda: ia ungu seperti catatan lainnya.
+- **Menu tarik-turun tidak lebih lebar dari bilah jalur.** Nama yang tidak muat dipendekkan dengan cara yang sama seperti bilah jalur memendekkannya, dan ditampilkan utuh saat diarahkan penunjuk.
+- **PageUp dan PageDown berpindah menurut baris yang ditampilkan menu tarik-turun bawaan Obsidian**, dari bidang juga, dan menjaga pilihan tetap terlihat.
+- **Menu tarik-turun menampilkan hingga 1.000 entri** sebelum menghitung sisanya, alih-alih 100.
+- **Nama yang dipendekkan meluncur, bukan meloncat.** Nama yang mengalah dipotong tepat di piksel dan memudar di bawah `…`-nya, sehingga tidak ada apa pun setelahnya di baris itu bergerak berjenjang selagi panel diubah ukurannya.
+
+### Diperbaiki
+
+- Sebuah spasi di tempat nama yang dipendekkan terpotong — `development guidelines` — hilang, membuat dua kata itu menyatu.
+
 ## 1.4.0 — 2026-09-19[^1.4.0]
 
 ### Ditambahkan

@@ -9,6 +9,32 @@
 
 Todas las versiones de Lure, de la más reciente a la más antigua. Lo que ha entrado desde la última versión está bajo *Sin publicar*. Los números de versión no llevan el prefijo `v`, igual que las etiquetas de publicación.
 
+## Sin publicar
+
+### Añadido
+
+- **Un nombre ya utilizado pregunta en lugar de rechazar.** Mover o renombrar a un nombre que ya existe abre un diálogo que muestra ambos archivos con su ruta completa. Puedes renombrar el que está en el camino y continuar, intercambiar el lugar con él (entre carpetas: cada uno conserva su nombre y toma la carpeta del otro), o intercambiar nombres con él (dentro de una misma carpeta). Cancelar no mueve nada. Cada botón indica lo que hará en cuanto lo señalas.
+- **`:graph` dentro de una carpeta abre el grafo de esa carpeta** — el grafo filtrado por `path:"that/folder"`, tal como lo haría su propio cuadro de búsqueda. En la raíz de la bóveda sigue siendo el grafo completo, como antes.
+- **Una carpeta que ya contiene el nombre aparece en rojo** en el desplegable mientras mueves, y también un archivo con ese nombre, de modo que el conflicto se ve antes de elegir.
+
+### Cambiado
+
+- **La propuesta es siempre lo que Tab escribiría.** Donde los nombres dejan de coincidir, el campo propone el paso hacia el primero de ellos — antes no proponía nada ahí, y aun así Tab escribía algo.
+- **El desplegable sigue al cursor**, o al inicio de una selección: lista la carpeta en la que está ese punto, filtrada por las letras que lo preceden. Al principio de un nombre, es la carpeta entera.
+- **Señalar una fila la muestra como la propuesta** — lo que escribiste sigue siendo tuyo y el resto del nombre queda marcado — y quitar el puntero de la lista devuelve la propuesta.
+- **→ toma una letra de la propuesta** en lugar de todas; <kbd>Fin</kbd> sigue tomándola entera.
+- **F2 en un campo abierto lo convierte en un renombrado justo donde está**, conservando el texto, el cursor y la selección, y **Enfocar la barra de ruta** le retira el renombrado de la misma manera.
+- **Cualquier otra tecla pulsada o clic realizado entre una pulsación y otra reinicia el ciclo de F2 y Enfocar la barra de ruta.**
+- **Las carpetas aparecen en negrita en el desplegable**, así que la nota propia de una carpeta ya no necesita ser gris para distinguirse: es morada como cualquier otra nota.
+- **El desplegable nunca es más ancho que la barra de ruta.** Un nombre que no cabe se acorta como la barra de ruta acorta uno, y se muestra completo al pasar el cursor por encima.
+- **Re Pág y Av Pág se mueven según las filas que muestran los propios desplegables de Obsidian**, también desde el campo, y mantienen la selección a la vista.
+- **El desplegable muestra hasta 1000 entradas** antes de contar el resto, en lugar de 100.
+- **Los nombres acortados se deslizan en vez de saltar.** Un nombre que cede se recorta al píxel y se desvanece bajo sus `…`, de modo que nada después de él en la fila se mueve a saltos mientras se redimensiona un panel.
+
+### Corregido
+
+- Se perdía un espacio en el punto donde se dividía un nombre acortado — `development guidelines` —, uniendo las dos palabras.
+
 ## 1.4.0 — 2026-09-19[^1.4.0]
 
 ### Añadido

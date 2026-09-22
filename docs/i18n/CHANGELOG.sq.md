@@ -9,6 +9,32 @@
 
 Çdo publikim i Lure, më i riu i pari. Ajo që ka ardhur që nga publikimi i fundit ndodhet nën *Të papublikuara*. Versionet nuk kanë prapashtesën `v`, njësoj si etiketat e publikimeve.
 
+## Pa lëshuar
+
+### Të shtuara
+
+- **Një emër i zënë pyet, në vend që të refuzojë.** Zhvendosja ose riemërtimi drejt një emri që është aty tashmë hap një dialog që tregon të dy skedarët sipas shtegut të tyre të plotë. Mund ta riemërtosh atë që është në rrugë dhe të vazhdosh, të këmbesh vende me të (nëpër dosje: secili ruan emrin e vet dhe merr dosjen e tjetrit), ose të këmbesh emra me të (brenda një dosjeje). Anulimi nuk zhvendos asgjë. Çdo buton thotë çfarë do të bëjë kur e tregon me kursorin.
+- **`:graph` brenda një dosjeje hap grafikun e asaj dosjeje** — grafikun e filtruar te `path:"that/folder"`, ashtu si do ta bënte kutia e vet e kërkimit. Në rrënjën e kasafortës mbetet i gjithë grafiku, si më parë.
+- **Një dosje që tashmë mban emrin bëhet e kuqe** në listë gjatë zhvendosjes, dhe kështu bëhet edhe një skedar me atë emër, kështu që përplasja shfaqet para se të zgjedhësh.
+
+### Të ndryshuara
+
+- **Oferta është gjithmonë ajo që do të shkruante Tab.** Aty ku emrat pushojnë së pajtuari, fusha ofron hapin drejt të parit prej tyre — më parë, atje nuk ofrohej asgjë dhe Tab shkruante diçka sido që të ishte.
+- **Lista ndjek kursorin**, ose fillimin e një përzgjedhjeje: liston dosjen ku ndodhet ai pikë, e filtruar sipas shkronjave para tij. Në fillim të një emri, kjo është e gjithë dosja.
+- **Kur tregon një rresht, ai shfaqet si oferta** — ajo që shkrove mbetet jotja dhe pjesa tjetër e emrit shënohet — dhe largimi i kursorit nga lista e sjell ofertën përsëri.
+- **→ merr një shkronjë të vetme të ofertës** në vend të gjithës; <kbd>End</kbd> ende e merr të tërën.
+- **F2 në një fushë të hapur e kthen atë në riemërtim aty ku ndodhet**, duke ruajtur tekstin, kursorin dhe përzgjedhjen, dhe **Fokuso shiritin e shtegut** ia heq riemërtimin po në të njëjtën mënyrë.
+- **Çdo gjë tjetër e shtypur ose e klikuar mes shtypjeve nis nga fillimi ciklin e F2 dhe Fokuso shiritin e shtegut.**
+- **Dosjet janë me shkronja të trasha në listë**, kështu që shënimi i vetë dosjes nuk ka më nevojë të jetë gri për t'u dalluar: është vjollcë si çdo shënim tjetër.
+- **Lista nuk është më e gjerë se shiriti i shtegut.** Një emër që nuk përshtatet shkurtohet ashtu si shiriti i shtegut shkurton të vetin, dhe shfaqet i plotë kur i vë kursorin sipër.
+- **PageUp dhe PageDown lëvizin sipas rreshtave që tregojnë vetë listat rënëse të Obsidian-it**, edhe nga fusha, dhe mbajnë përzgjedhjen brenda shikimit.
+- **Lista tregon deri në 1000 zëra** para se të numërojë pjesën tjetër, në vend të 100.
+- **Emrat e shkurtuar rrëshqasin në vend që të kërcejnë.** Një emër që po jep vend pritet saktësisht te pikseli dhe zbehet nën `…`-in e vet, kështu që asgjë pas tij në rresht nuk lëviz me hapa ndërsa një panel ndryshon madhësi.
+
+### Të ndrequra
+
+- Një hapësirë ku një emër i shkurtuar ishte ndarë — `development guidelines` — u hodh tej, duke i bashkuar dy fjalët së bashku.
+
 ## 1.4.0 — 2026-09-19[^1.4.0]
 
 ### Të shtuara

@@ -9,6 +9,32 @@
 
 Jede Veröffentlichung von Lure, die neueste zuerst. Was seit der letzten Veröffentlichung dazugekommen ist, steht unter *Unveröffentlicht*. Versionen tragen kein `v` davor, passend zu den Release-Tags.
 
+## Unveröffentlicht
+
+### Hinzugefügt
+
+- **Ein bereits vergebener Name fragt nach, statt abzulehnen.** Wird beim Verschieben oder Umbenennen ein Name gewählt, der schon vorhanden ist, öffnet sich ein Dialog, der beide Dateien mit ihrem vollständigen Pfad zeigt. Du kannst die Datei im Weg umbenennen und fortfahren, mit ihr die Plätze tauschen (über Ordner hinweg: jede behält ihren Namen und übernimmt den Ordner der anderen), oder mit ihr die Namen tauschen (innerhalb eines Ordners). Abbrechen verschiebt nichts. Jede Schaltfläche sagt, was sie tun wird, sobald du darauf zeigst.
+- **`:graph` innerhalb eines Ordners öffnet den Graphen dieses Ordners** — den Graphen, gefiltert nach `path:"that/folder"`, so wie es das eigene Suchfeld täte. In der Vault-Wurzel bleibt es wie zuvor der gesamte Graph.
+- **Ein Ordner, der den Namen bereits enthält, ist rot** im Dropdown während des Verschiebens, und ebenso eine Datei mit diesem Namen, sodass die Kollision schon vor der Auswahl sichtbar ist.
+
+### Geändert
+
+- **Das Angebot ist stets das, was Tab schreiben würde.** Sobald die Namen nicht mehr übereinstimmen, bietet das Feld den Schritt zum ersten von ihnen an — vorher bot es dort gar nichts an, und Tab schrieb trotzdem etwas.
+- **Das Dropdown folgt dem Cursor**, oder dem Anfang einer Auswahl: Es listet den Ordner, in dem sich dieser Punkt befindet, gefiltert nach den Buchstaben davor. Am Anfang eines Namens ist das der ganze Ordner.
+- **Zeigst du auf eine Zeile, wird sie als Angebot angezeigt** — was du getippt hast, bleibt deins, und der Rest des Namens wird markiert — und nimmst du den Zeiger von der Liste, kehrt das Angebot zurück.
+- **→ übernimmt einen Buchstaben des Angebots**, statt es ganz zu übernehmen; <kbd>Ende</kbd> übernimmt es weiterhin ganz.
+- **F2 verwandelt ein offenes Feld an Ort und Stelle in ein Umbenennen**, unter Beibehaltung von Text, Cursor und Auswahl, und **Pfadleiste fokussieren** nimmt das Umbenennen auf demselben Weg wieder zurück.
+- **Alles andere, was zwischen den Tastendrücken gedrückt oder geklickt wird, beginnt den Zyklus von F2 und Pfadleiste fokussieren neu.**
+- **Ordner erscheinen im Dropdown fett**, sodass die Notiz eines Ordners nicht mehr grau sein muss, um sich abzuheben: Sie ist nun violett wie jede andere Notiz.
+- **Das Dropdown ist nie breiter als die Pfadleiste.** Ein Name, der nicht hineinpasst, wird so gekürzt, wie die Pfadleiste selbst einen Namen kürzt, und beim Zeigen ganz angezeigt.
+- **Bild-auf/Bild-ab bewegen sich um die Zeilen, die Obsidians eigene Dropdowns zeigen**, auch vom Feld aus, und halten die Auswahl im Blick.
+- **Das Dropdown zeigt bis zu 1.000 Einträge**, bevor es den Rest zählt, statt 100.
+- **Gekürzte Namen gleiten, statt zu springen.** Ein Name, der weicht, wird pixelgenau abgeschnitten und verblasst unter seinem `…`, sodass sich nichts danach in der Zeile schrittweise bewegt, während ein Bereich in der Größe verändert wird.
+
+### Behoben
+
+- Ein Leerzeichen an der Stelle, an der ein gekürzter Name geteilt wurde — `development guidelines` — ging verloren, wodurch die beiden Wörter zusammenliefen.
+
 ## 1.4.0 — 2026-09-19[^1.4.0]
 
 ### Hinzugefügt

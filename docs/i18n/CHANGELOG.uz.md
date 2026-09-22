@@ -9,6 +9,32 @@
 
 Lure'ning har bir relizi, eng yangisi birinchi. Oxirgi relizdan beri qo‘shilganlar *Chiqarilmagan* bo‘limida. Versiyalar reliz teglariga mos ravishda `v` prefiksisiz yoziladi.
 
+## Chiqarilmagan
+
+### Qo‘shildi
+
+- **Band nom rad etish o‘rniga so‘raydi.** Allaqachon mavjud nomga ko‘chirish yoki qayta nomlash ikkala faylni to‘liq yo‘li bilan ko‘rsatadigan dialog oynasini ochadi. Yo‘lda turganini qayta nomlab davom etishingiz, u bilan o‘rin almashtirishingiz (papkalar bo‘ylab: har biri o‘z nomini saqlaydi va boshqasining papkasiga o‘tadi), yoki u bilan nom almashtirishingiz mumkin (bitta papka ichida). Bekor qilish hech narsani ko‘chirmaydi. Har bir tugma unga ishora qilganingizda nima qilishini aytadi.
+- **Papka ichidagi `:graph` o‘sha papkaning grafini ochadi** — o‘z qidiruv maydonida `path:"that/folder"` bilan filtrlangan graf, xuddi u yerga yozilgandek. Ombor ildizida esa u yana butun graf bo‘ladi.
+- **Bu nomni allaqachon o‘zida saqlagan papka** ko‘chirish paytida ro‘yxatda qizil bo‘ladi, xuddi shu nomdagi fayl ham shunday, shuning uchun to‘qnashuv tanlashdan oldin ko‘rinadi.
+
+### O‘zgartirildi
+
+- **Taklif doim Tab yozadigan narsa bo‘ladi.** Nomlar mos kelishni to‘xtatgan joyda, maydon ulardan birinchisi tomon qadamni taklif qiladi — avval u yerda hech narsa taklif qilinmasdi, lekin Tab baribir biror narsa yozardi.
+- **Ro‘yxat kursorga ergashadi**, yoki belgilashning boshiga: u shu nuqta joylashgan papkani, undan oldingi harflar bilan filtrlab ro‘yxatga oladi. Nom boshida bu butun papka bo‘ladi.
+- **Qatorga ishora qilish uni taklif sifatida ko‘rsatadi** — yozganingiz o‘zingizniki bo‘lib qoladi, nomning qolgan qismi esa belgilanadi — sichqonchani ro‘yxatdan olib ketish esa taklifni qaytaradi.
+- **→ taklifning bitta harfini oladi**, hammasini emas; <kbd>End</kbd> hamon uni butunlay oladi.
+- **Ochiq maydonda F2 uni o‘sha joyda qayta nomlashga aylantiradi**, matnni, kursorni va belgilashni saqlab qolgan holda, **Yo‘l paneliga fokus** esa xuddi shu tarzda uni qayta nomlashdan qaytaradi.
+- **F2 va Yo‘l paneliga fokus bosishlari orasida bosilgan yoki bosilgan boshqa har qanday narsa siklni qaytadan boshlaydi.**
+- **Papkalar ro‘yxatda qalin harflar bilan yoziladi**, shuning uchun papkaning o‘z qaydi ajralib turish uchun kulrang bo‘lishi shart emas: u boshqa har qanday qayd kabi binafsha rangda.
+- **Ro‘yxat yo‘l panelidan kengroq emas.** Sig‘maydigan nom yo‘l paneli nomni qisqartiradigan usulda qisqartiriladi va sichqonchani ustiga olib borganda to‘liq ko‘rsatiladi.
+- **PageUp va PageDown Obsidian'ning o‘z ro‘yxatlari ko‘rsatadigan qatorlar bo‘ylab harakatlanadi**, maydondan ham, va belgilashni ko‘rinishda saqlaydi.
+- **Ro‘yxat 1 000 tagacha yozuvni ko‘rsatadi**, qolganini sanashdan oldin, 100 o‘rniga.
+- **Qisqartirilgan nomlar sakrash o‘rniga sirg‘aladi.** Joy bo‘shatayotgan nom piksel darajasida kesiladi va o‘z `…`si ostida so‘nadi, shuning uchun panel o‘lchami o‘zgartirilayotganda qatorda undan keyingi hech narsa qadamlab harakatlanmaydi.
+
+### Tuzatildi
+
+- Qisqartirilgan nom bo‘lingan joydagi bo‘shliq — `development guidelines` — tushirib qoldirilar edi, natijada ikki so‘z birlashib qolardi.
+
 ## 1.4.0 — 2026-09-19[^1.4.0]
 
 ### Qo‘shildi

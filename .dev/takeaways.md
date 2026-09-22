@@ -2458,3 +2458,43 @@ Two smaller ones of the same shape: a reading taken between a resize and the
 two readings agree — and a double-click assembled with 400ms plus a round trip
 between its presses falls outside the double-click interval whenever the
 machine is busy, which is to say in a full run and never alone.
+
+## Obsidian's suggestion list pages with handlers bound at construction
+
+`AbstractInputSuggest` registers PageUp and PageDown in its popover scope as
+functions *bound* to the list's own `pageUp`/`pageDown` when the list is made.
+Replacing those methods on the instance changes nothing; the scope's `keys`
+entries hold the originals. The entries themselves have to be given a new
+`func` (undocumented, guarded). Two more reasons not to use the originals as
+they stand:
+
+- `rowHeight` reads `suggestions[selectedItem].clientHeight`, so with nothing
+  selected (index −1, which this plugin uses as "back in the field") it throws
+  and the key does nothing at all.
+- `numVisibleItems` divides the container's height by that row, so a popover
+  whose `max-height` has been lifted pages by a whole window of rows.
+
+Also: `showSuggestions` calls `open()` after *every* `setSuggestions`, not only
+the first, so `open()` is a reliable hook for anything that has to run after
+the rows are in the DOM (measuring them, for one). Obsidian's default
+`.suggestion-container` `max-height` is 300px, readable off a probe element.
+Candidate feature request: expose a page size and a "no selection" state.
+
+## `white-space: nowrap` strips a space at the edge of a box
+
+A name split into two block boxes at a space — the middle cut splitting
+`development guidelines` between its words — lost the space: `nowrap` still
+collapses and strips white space at the start and end of each box's line. The
+two words read as one. `white-space: pre` keeps it and, for text with no line
+breaks, never wraps either.
+
+## `text-overflow` cannot be continuous
+
+`text-overflow: ellipsis` draws whole glyphs and then the `…`, so as a box
+shrinks smoothly what is drawn in it steps a letter at a time, and the box is
+always wider than what it drew. Capping the box at the drawn width removes the
+gap but makes the box step too, and everything after it on a flex row steps
+with it. Clipping at the pixel (`text-overflow: clip`), fading the edge with a
+`mask-image`, and drawing the `…` from a zero-width sibling over the fade
+gives a row where nothing moves in steps: the ellipsis changes no layout, and
+a mask works over any background a theme paints.

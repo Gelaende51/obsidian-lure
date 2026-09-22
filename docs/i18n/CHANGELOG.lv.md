@@ -8,6 +8,32 @@
 
 Katrs Lure laidiens, jaunākais pirmais. Tas, kas ienācis kopš pēdējā laidiena, ir sadaļā *Neizdots*. Versijām nav `v` priedēkļa, tāpat kā laidienu tagiem.
 
+## Neizlaists
+
+### Pievienots
+
+- **Aizņemts nosaukums vaicā, nevis atsakās.** Pārvietošana vai pārdēvēšana uz nosaukumu, kas jau tur ir, atver dialogu, kas parāda abus failus pēc to pilnā ceļa. Vari pārdēvēt to, kas ir ceļā, un turpināt, apmainīties ar to vietām (starp mapēm: katrs patur savu nosaukumu un pārņem otra mapi), vai apmainīties ar to nosaukumiem (vienas mapes robežās). Atcelšana neko nepārvieto. Katra poga saka, ko tā darīs, kad uz to norādi.
+- **`:graph` mapes iekšpusē atver šīs mapes grafu** — grafu, filtrētu pēc `path:"that/folder"`, gluži kā to darītu tā pati meklēšanas lauciņš. Glabātavas saknē tas joprojām ir viss grafs, kā agrāk.
+- **Mape, kurā nosaukums jau ir, sarakstā ir sarkana** pārvietošanas laikā, tāpat kā fails ar šo nosaukumu, tāpēc konflikts parādās vēl pirms izvēles.
+
+### Mainīts
+
+- **Piedāvājums vienmēr ir tas, ko uzrakstītu Tab.** Tur, kur nosaukumi vairs nesakrīt, lauks piedāvā soli pretī pirmajam no tiem — agrāk tur nekas netika piedāvāts, un Tab tik un tā kaut ko uzrakstīja.
+- **Saraksts seko kursoram**, vai izvēles sākumam: tas uzskaita mapi, kurā šis punkts atrodas, filtrētu pēc burtiem tā priekšā. Nosaukuma sākumā tā ir visa mape.
+- **Norādot uz rindu, tā tiek parādīta kā piedāvājums** — tas, ko ierakstīji, paliek tavs, un pārējā nosaukuma daļa ir iezīmēta — un rādītāja aizvešana no saraksta atgriež piedāvājumu atpakaļ.
+- **→ paņem vienu piedāvājuma burtu**, nevis visu; <kbd>End</kbd> joprojām paņem to visu.
+- **F2 atvērtā laukā to pārvērš pārdēvēšanā turpat, kur tas atrodas**, saglabājot tekstu, kursoru un iezīmējumu, un **Fokusēt ceļa joslu** tāpat to no pārdēvēšanas atgriež atpakaļ.
+- **Jebkas cits, kas nospiests vai noklikšķināts starp nospiešanām, sāk F2 un Fokusēt ceļa joslu ciklu no jauna.**
+- **Mapes sarakstā ir treknrakstā**, tāpēc mapes pašas piezīmei vairs nav jābūt pelēkai, lai izceltos: tā ir violeta, tāpat kā jebkura cita piezīme.
+- **Saraksts nav platāks par ceļa joslu.** Nosaukums, kas neietilpst, tiek saīsināts tāpat, kā ceļa josla saīsina savu, un uzrādīts pilnībā, uzturot rādītāju virsū.
+- **PageUp un PageDown pārvietojas pa rindām, kādas rāda Obsidian pašas nolaižamās izvēlnes**, arī no lauka, un notur iezīmējumu redzamībā.
+- **Saraksts rāda līdz pat 1000 ierakstiem**, pirms tas sāk skaitīt pārējos, nevis 100.
+- **Saīsināti nosaukumi slīd, nevis lec.** Nosaukums, kas piekāpjas, tiek nogriezts pie paša pikseļa un izgaist zem sava `…`, tāpēc nekas aiz tā rindā nepārvietojas soļos, kamēr panelis tiek mainīts izmērā.
+
+### Labots
+
+- Atstarpe, kur saīsināts nosaukums bija sadalīts — `development guidelines` — tika pazaudēta, saplūdinot abus vārdus kopā.
+
 ## 1.4.0 — 2026-09-19[^1.4.0]
 
 ### Pievienots

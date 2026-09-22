@@ -9,6 +9,32 @@
 
 Hver utgivelse av Lure, den nyeste først. Det som har kommet inn siden forrige utgivelse, står under *Ikke utgitt*. Versjonene har ingen `v` foran seg, slik som utgivelsesmerkene.
 
+## Ikke utgitt
+
+### Lagt til
+
+- **Et navn som allerede er i bruk, spør i stedet for å avvise.** Å flytte eller gi nytt navn til noe med et navn som allerede finnes, åpner en dialog som viser begge filene med hele stien sin. Du kan gi nytt navn til den som er i veien og fortsette, bytte plass med den (på tvers av mapper: hver beholder sitt navn og tar den andres mappe), eller bytte navn med den (innenfor én mappe). Avbryt flytter ingenting. Hver knapp forteller hva den vil gjøre når du peker på den.
+- **`:graph` inne i en mappe åpner den mappens graf** — grafen filtrert til `path:"that/folder"`, slik dens egen søkeboks ville gjort. I hvelvroten er det fortsatt hele grafen, som før.
+- **En mappe som allerede har navnet, er rød** i nedtrekkslisten mens du flytter, og det samme gjelder en fil med det navnet, slik at kollisjonen vises før du velger.
+
+### Endret
+
+- **Tilbudet er alltid det Tab ville skrevet.** Der navnene slutter å stemme overens, tilbyr feltet steget mot det første av dem — før tilbød det ingenting der, og Tab skrev noe likevel.
+- **Nedtrekkslisten følger markøren**, eller starten av en markering: den lister opp mappen punktet er i, filtrert etter bokstavene foran det. Ved starten av et navn er det hele mappen.
+- **Å peke på en rad viser den som tilbudet** — det du skrev, forblir ditt, og resten av navnet er merket — og å flytte pekeren av listen bringer tilbudet tilbake.
+- **→ tar én bokstav av tilbudet** i stedet for hele; <kbd>End</kbd> tar det fortsatt helt.
+- **F2 i et åpent felt gjør det til en gi-nytt-navn der det står**, og beholder teksten, markøren og merkingen, og **Fokuser på stilinjen** tar navneendringen tilbake av det på samme måte.
+- **Alt annet som trykkes eller klikkes mellom trykkene, starter runden av F2 og Fokuser på stilinjen på nytt.**
+- **Mapper er fet i nedtrekkslisten**, så en mappes eget notat ikke lenger trenger å være grått for å skille seg ut: det er lilla som ethvert annet notat.
+- **Nedtrekkslisten er ikke bredere enn stilinjen.** Et navn som ikke passer, forkortes på samme måte som stilinjen forkorter ett, og vises helt ved hover.
+- **PageUp og PageDown flytter etter radene Obsidians egne nedtrekkslister viser**, også fra feltet, og holder merkingen i syne.
+- **Nedtrekkslisten viser opptil 1 000 oppføringer**, før den teller resten, i stedet for 100.
+- **Forkortede navn glir i stedet for å hoppe.** Et navn som viker, klippes ved pikselen og toner ut under sin `…`, slik at ingenting etter det i raden flytter seg i trinn mens et panel endrer størrelse.
+
+### Rettet
+
+- Et mellomrom der et forkortet navn ble delt — `development guidelines` — falt bort, slik at de to ordene rant sammen.
+
 ## 1.4.0 — 2026-09-19[^1.4.0]
 
 ### Lagt til

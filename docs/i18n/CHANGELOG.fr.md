@@ -8,6 +8,32 @@
 
 Toutes les versions de Lure, de la plus récente à la plus ancienne. Ce qui a été ajouté depuis la dernière version figure sous *Non publié*. Les numéros de version ne portent pas de préfixe `v`, comme les étiquettes de publication.
 
+## Non publié
+
+### Ajouté
+
+- **Un nom déjà pris pose une question plutôt que de refuser.** Déplacer ou renommer vers un nom déjà présent ouvre une boîte de dialogue montrant les deux fichiers avec leur chemin complet. Vous pouvez renommer celui qui fait obstacle et continuer, échanger sa place avec lui (entre dossiers : chacun garde son nom et prend le dossier de l'autre), ou échanger les noms avec lui (au sein d'un même dossier). Annuler ne déplace rien. Chaque bouton indique ce qu'il fera lorsque vous le pointez.
+- **`:graph` à l'intérieur d'un dossier ouvre le graphe de ce dossier** — le graphe filtré par `path:"that/folder"`, comme le ferait son propre champ de recherche. À la racine du coffre, c'est le graphe entier, comme avant.
+- **Un dossier qui contient déjà le nom est rouge** dans le menu déroulant pendant un déplacement, tout comme un fichier portant ce nom, afin que le conflit apparaisse avant même le choix.
+
+### Modifié
+
+- **La proposition est toujours ce que Tab écrirait.** Là où les noms cessent de concorder, le champ propose le pas vers le premier d'entre eux — auparavant, il ne proposait rien à cet endroit, et Tab écrivait quand même quelque chose.
+- **Le menu déroulant suit le curseur**, ou le début d'une sélection : il liste le dossier où se trouve ce point, filtré par les lettres qui le précèdent. Au début d'un nom, c'est le dossier entier.
+- **Pointer une ligne l'affiche comme la proposition** — ce que vous avez tapé reste le vôtre et le reste du nom est marqué — et retirer le pointeur de la liste ramène la proposition.
+- **→ prend une lettre de la proposition** plutôt que la totalité ; <kbd>Fin</kbd> la prend toujours entière.
+- **F2 dans un champ ouvert le transforme en renommage sur place**, en conservant le texte, le curseur et la sélection, et **Placer le focus sur la barre de chemin** lui retire le renommage de la même façon.
+- **Tout ce qui est pressé ou cliqué entre les deux relance le cycle de F2 et de Placer le focus sur la barre de chemin.**
+- **Les dossiers sont en gras dans le menu déroulant**, si bien que la note propre à un dossier n'a plus besoin d'être grise pour se distinguer : elle est violette comme toute autre note.
+- **Le menu déroulant n'est jamais plus large que la barre de chemin.** Un nom qui n'y tient pas est raccourci comme la barre de chemin raccourcit un nom, et s'affiche en entier au survol.
+- **Page précédente et Page suivante se déplacent selon les lignes que les propres menus déroulants d'Obsidian affichent**, y compris depuis le champ, et gardent la sélection visible.
+- **Le menu déroulant affiche jusqu'à 1 000 entrées** avant de compter le reste, au lieu de 100.
+- **Les noms raccourcis glissent au lieu de sauter.** Un nom qui cède est coupé au pixel près et s'estompe sous ses `…`, si bien que rien après lui sur la ligne ne se déplace par à-coups pendant le redimensionnement d'un panneau.
+
+### Corrigé
+
+- Un espace était perdu à l'endroit où un nom raccourci était coupé — `development guidelines` — collant les deux mots.
+
 ## 1.4.0 — 2026-09-19[^1.4.0]
 
 ### Ajouté

@@ -4,6 +4,32 @@
 
 Every release of Lure, newest first. What has landed since the last release is under *Unreleased*. Versions carry no `v` prefix, matching the release tags.
 
+## Unreleased
+
+### Added
+
+- **A taken name asks instead of refusing.** Moving or renaming onto a name that is already there opens a dialog showing both files by their whole path. You can rename the one in the way and carry on, trade places with it (across folders: each keeps its name and takes the other's folder), or trade names with it (within one folder). Cancel moves nothing. Every button says what it will do when you point at it.
+- **`:graph` inside a folder opens that folder's graph** — the graph filtered to `path:"that/folder"` in its own search box, as though typed there. At the vault root it is the whole graph again.
+- **A folder that already holds the name is red** in the dropdown while moving, and so is a file of that name, so the collision shows before you choose.
+
+### Changed
+
+- **The offer is always what Tab would write.** Where the names stop agreeing, the field offers the step toward the first of them — before, it offered nothing there and Tab wrote something anyway.
+- **The dropdown follows the caret**, or the start of a selection: it lists the folder that point is in, filtered by the letters in front of it. At the start of a name that is the whole folder.
+- **Pointing at a row shows it as the offer** — what you typed stays yours and the rest of the name is marked — and moving the pointer off the list brings the offer back.
+- **→ takes one letter of the offer** rather than all of it; <kbd>End</kbd> still takes it whole.
+- **F2 in an open field turns it into a rename where it stands**, keeping the text, the caret and the selection, and **Focus the path bar** takes the rename back off it the same way.
+- **Anything else pressed or clicked between the presses starts the F2 and Focus the path bar cycles over.**
+- **Folders are bold in the dropdown**, so a folder's own note no longer needs to be grey to stand apart: it is purple like any other note.
+- **The dropdown is no wider than the path bar.** A name that does not fit is shortened the way the path bar shortens one, and shown whole on hover.
+- **PageUp and PageDown move by the rows Obsidian's own dropdowns show**, from the field too, and keep the selection in sight.
+- **The dropdown shows up to 1,000 entries** before it counts the rest, instead of 100.
+- **Shortened names slide instead of jump.** A name giving way is clipped at the pixel and fades under its `…`, so nothing after it on the row moves in steps while a pane is resized.
+
+### Fixed
+
+- A space where a shortened name was split — `development guidelines` — was dropped, running the two words together.
+
 ## 1.4.0 — 2026-09-19[^1.4.0]
 
 ### Added

@@ -9,6 +9,32 @@
 
 Fiecare versiune a Lure, cea mai nouă prima. Ce a apărut de la ultima versiune se află sub *Nelansate*. Versiunile nu poartă prefixul `v`, la fel ca etichetele de lansare.
 
+## Nepublicat
+
+### Adăugat
+
+- **Un nume deja ocupat întreabă în loc să refuze.** Mutarea sau redenumirea către un nume care există deja deschide un dialog ce arată ambele fișiere după calea lor completă. Poți redenumi fișierul care stă în cale și continua, poți schimba locul cu el (între dosare: fiecare își păstrează numele și primește dosarul celuilalt), sau poți schimba numele cu el (în același dosar). Anularea nu mută nimic. Fiecare buton spune ce va face atunci când îl indici.
+- **`:graph` dintr-un dosar deschide graful acelui dosar** — graful filtrat la `path:"that/folder"`, așa cum ar face propria lui casetă de căutare. La rădăcina seifului rămâne graful întreg, ca înainte.
+- **Un dosar care are deja numele devine roșu** în listă în timpul mutării, la fel și un fișier cu acel nume, așa că suprapunerea se vede înainte de a alege.
+
+### Modificat
+
+- **Oferta este întotdeauna ce ar scrie <kbd>Tab</kbd>.** Acolo unde numele încetează să coincidă, câmpul oferă pasul spre primul dintre ele — înainte, nu oferea nimic acolo și <kbd>Tab</kbd> scria totuși ceva.
+- **Lista urmărește cursorul**, sau începutul unei selecții: listează dosarul în care se află acel punct, filtrat după literele dinaintea lui. La începutul unui nume, acela este dosarul întreg.
+- **Indicarea unui rând îl arată drept ofertă** — ce ai scris rămâne al tău, iar restul numelui este marcat — iar luarea indicatorului de pe listă aduce oferta înapoi.
+- **→ preia o literă din ofertă**, nu toată; <kbd>End</kbd> tot o preia întreagă.
+- **F2 într-un câmp deschis îl transformă într-o redenumire chiar acolo**, păstrând textul, cursorul și selecția, iar **Focalizează bara de cale** scoate redenumirea de pe el la fel.
+- **Orice altceva apăsat sau clic între apăsări reia ciclul F2 și Focalizează bara de cale de la capăt.**
+- **Dosarele sunt îngroșate în listă**, așa că notița proprie a unui dosar nu mai trebuie să fie gri ca să se distingă: e mov ca orice altă notiță.
+- **Lista nu e mai lată decât bara de cale.** Un nume care nu încape este scurtat la fel cum bara de cale scurtează unul, și arătat întreg la trecerea peste el.
+- **PageUp și PageDown se mișcă pe rândurile pe care le arată listele proprii ale Obsidian**, și din câmp, și păstrează selecția în vedere.
+- **Lista arată până la 1.000 de intrări** înainte să le numere pe restul, în loc de 100.
+- **Numele scurtate alunecă în loc să sară.** Un nume care cedează este retezat la pixel și se estompează sub `…`-ul lui, așa că nimic după el pe rând nu se mișcă în trepte cât timp un panou este redimensionat.
+
+### Corectat
+
+- Un spațiu unde un nume scurtat era despărțit — `development guidelines` — a fost pierdut, lipind cele două cuvinte.
+
 ## 1.4.0 — 2026-09-19[^1.4.0]
 
 ### Adăugat
