@@ -868,21 +868,7 @@ export class PathBreadcrumb {
 			// the padlock again: the permission never outlives the thing it
 			// was opened for, and there is one control to learn instead of
 			// two with an order between them.
-			if (this.renameMode && this.pointsOutsideVault()) {
-				this.renameMode = false;
-				this.lockExternalWrites();
-				this.updateRenameModeStyling();
-				this.syncOpenInputToRenameMode();
-				this.insertRenameButton();
-				return;
-			}
-			this.renameMode = !this.renameMode;
-			this.updateRenameModeStyling();
-			// Deliberately keeps any open input/chip trail alive: the toggle
-			// changes what committing *does*, not what has been typed, so
-			// deciding mid-path to move rather than navigate (or the other
-			// way round) shouldn't cost the path already entered.
-			this.syncOpenInputToRenameMode();
+			this.setRenameMode(!this.renameMode);
 		});
 
 		// The same slot as the rename toggle, because it gates exactly what
@@ -2636,6 +2622,15 @@ export class PathBreadcrumb {
 	 * the caller can fall back to its usual behaviour.
 	 */
 	advanceRenameSelection(): boolean {
+		// The field is open for editing, not for renaming: the key turns it
+		// into a rename where it stands — the same thing the button does —
+		// rather than starting over on the name and throwing away what has
+		// been typed, where the caret is and what is marked.
+		if (this.inputEl && !this.renameMode) {
+			if (!this.file && this.externalPath === null) return false;
+			if (!this.askForPadlockFirst()) this.setRenameMode(true);
+			return true;
+		}
 		// The last rung hands the key back to the inline title instead of
 		// wrapping, so the cycle is heading, name, name with extension, the
 		// path from the vault, the path from the system root, and round to the
@@ -2963,6 +2958,26 @@ export class PathBreadcrumb {
 		if (selectionStart !== null && selectionEnd !== null) {
 			inputEl.setSelectionRange(selectionStart, selectionEnd);
 		}
+	}
+
+	/**
+	 * Turns rename/move on or off without touching the field: the toggle
+	 * changes what committing *does*, not what has been typed, so deciding
+	 * mid-path to move rather than navigate (or the other way round)
+	 * shouldn't cost the path already entered.
+	 */
+	private setRenameMode(on: boolean): void {
+		if (on === this.renameMode) return;
+		// Outside the vault the press that leaves rename mode is the press
+		// that shuts the padlock again: the permission never outlives the
+		// thing it was opened for, and there is one control to learn instead
+		// of two with an order between them.
+		const shutPadlock = !on && this.pointsOutsideVault();
+		this.renameMode = on;
+		if (shutPadlock) this.lockExternalWrites();
+		this.updateRenameModeStyling();
+		this.syncOpenInputToRenameMode();
+		if (shutPadlock) this.insertRenameButton();
 	}
 
 	/** Leaves rename/move mode, discarding any browsing session that was under way. */
@@ -8681,12 +8696,34 @@ export class PathBreadcrumb {
 		// the key back to the note rather than lapping. It used to open on the
 		// whole path and lap forever, so the one key that reached the row
 		// could never leave it again.
+		// Renaming: the key that opens the field for editing takes the rename
+		// back off it, keeping everything in the field — F2's counterpart.
+		if (this.inputEl && this.renameMode) {
+			this.setRenameMode(false);
+			return;
+		}
 		if (this.inputEl) {
 			this.pressLikeTab(() => this.dismissEditing());
 			return;
 		}
 		if (this.startAtLap()) return;
 		this.startLadderAt(0);
+	}
+
+	/**
+	 * Forgets where the focus and rename keys are in their cycle, so the next
+	 * press starts it over. Anything else pressed or clicked in between means
+	 * the keys are no longer being walked, and picking the walk up again
+	 * several edits later landed somewhere nobody remembered asking for.
+	 */
+	forgetCycle(): void {
+		this.lapArmedFor = null;
+		if (this.tabStage === null) return;
+		this.tabStage = null;
+		this.tabTargetPath = null;
+		this.tabTrail = [];
+		this.tabGivenBack = null;
+		this.tabLadderStart = null;
 	}
 
 	/**

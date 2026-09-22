@@ -281,6 +281,92 @@ test("at the top: the alternation is untouched — inline title, then path bar",
 	expect("the path bar takes the second", second.activeEl, (v) => typeof v === "string" && v.includes("lure-path-input"));
 });
 
+/** The open field and whether the row is renaming, as one reading. */
+const field = async () => JSON.parse(await page.evaluate(`
+	const input = document.querySelector(".lure-path-input");
+	return JSON.stringify({
+		focused: document.activeElement === input && input !== null,
+		value: input?.value ?? null,
+		selection: input ? [input.selectionStart, input.selectionEnd] : null,
+		renaming: document.querySelector(".workspace-leaf.mod-active .lure-rename-btn")?.classList.contains("is-active") ?? null,
+	});
+`));
+
+/** Opens the field the way the focus command does, not for renaming. */
+const focusCommand = async () => {
+	await page.evaluate(`app.commands.executeCommandById("lure:focus-path-bar"); ${PAUSE(500)} return true;`);
+};
+
+test("F2 in an open field turns it into a rename where it stands", async () => {
+	await page.evaluate(arrange(0));
+	await focusCommand();
+	await focusCommand();
+	// Somewhere the ladder would never put it: a caret in the middle, and a
+	// value nobody would get back by starting over.
+	await page.evaluate(`
+		const input = document.querySelector(".lure-path-input");
+		input.focus();
+		input.setSelectionRange(3, 7);
+		return true;
+	`);
+	const before = await field();
+	expect("the field is open for editing", [before.focused, before.renaming], [true, false]);
+	await pressKey(page, "F2");
+	await page.evaluate(PAUSE(500) + "return true;");
+	const after = await field();
+	expect("the row is renaming now", after.renaming, true);
+	expect("with the same text", after.value, before.value);
+	expect("and the same marked stretch", after.selection, [3, 7]);
+	expect("still in the field", after.focused, true);
+});
+
+test("the focus key takes the rename off an open field and keeps the field", async () => {
+	await page.evaluate(arrange(0));
+	await pressKey(page, "F2");
+	await page.evaluate(PAUSE(600) + "return true;");
+	await pressKey(page, "F2");
+	await page.evaluate(PAUSE(600) + "return true;");
+	const before = await field();
+	expect("renaming in the path bar", [before.focused, before.renaming], [true, true]);
+	await focusCommand();
+	const after = await field();
+	expect("no longer renaming", after.renaming, false);
+	expect("the text stays", after.value, before.value);
+	expect("and so does the selection", after.selection, before.selection);
+});
+
+test("anything else pressed between the keys starts their cycle over", async () => {
+	await page.evaluate(arrange(0));
+	await pressKey(page, "F2");
+	await page.evaluate(PAUSE(600) + "return true;");
+	expect("the heading takes the first press", (await look()).activeEl, "inline-title");
+	// A key that does nothing to the title's text: the cycle is over all the
+	// same, because the user did something else in between.
+	await pressKey(page, "ArrowRight");
+	await page.evaluate(PAUSE(200) + "return true;");
+	await pressKey(page, "F2");
+	await page.evaluate(PAUSE(600) + "return true;");
+	expect("so the next press is the heading's again, not the path bar's", (await look()).activeEl, "inline-title");
+});
+
+test("a click between the keys starts their cycle over too", async () => {
+	await page.evaluate(arrange(0));
+	await pressKey(page, "F2");
+	await page.evaluate(PAUSE(600) + "return true;");
+	await page.evaluate(`
+		const r = document.querySelector(".workspace-leaf.mod-active .inline-title").getBoundingClientRect();
+		return JSON.stringify([r.x + 4, r.y + r.height / 2]);
+	`).then(async (xy) => {
+		const [x, y] = JSON.parse(xy);
+		for (const type of ["mousePressed", "mouseReleased"])
+			await page.send("Input.dispatchMouseEvent", { type, x, y, button: "left", clickCount: 1 });
+	});
+	await page.evaluate(PAUSE(300) + "return true;");
+	await pressKey(page, "F2");
+	await page.evaluate(PAUSE(600) + "return true;");
+	expect("the next press is the heading's again", (await look()).activeEl, "inline-title");
+});
+
 async function reset() {
 	await reloadPlugin(page);
 	await buildFixture();

@@ -31,7 +31,10 @@ const RENAME_DIALOG_SELECTOR = ".modal.mod-file-rename";
 const RENAME_DIALOG_TIMEOUT_MS = 500;
 const RENAME_DIALOG_POLL_MS = 25;
 
-type CheckCallback = NonNullable<Command["checkCallback"]>;
+/** Keys that only ever begin a chord; pressing one is not yet doing anything. */
+const MODIFIER_KEYS = new Set(["Control", "Shift", "Alt", "Meta", "AltGraph", "CapsLock"]);
+
+type CheckCallback =NonNullable<Command["checkCallback"]>;
 
 /** Obsidian writes the platform-agnostic modifier as "Mod"; this is what it means here. */
 function modKey(): string {
@@ -66,6 +69,38 @@ export default class BreadcrumbPathPlugin extends Plugin {
 		// the whole switch, and putting the feature back is uncommenting it.
 		// this.registerNavLockMenu();
 		this.app.workspace.onLayoutReady(() => this.patchRenameCommand());
+		this.registerCycleReset();
+	}
+
+	/**
+	 * Starts the focus and rename keys' cycles over whenever anything else is
+	 * pressed or clicked.
+	 *
+	 * On the document, in the capture phase, so no handler further in can
+	 * keep it from being seen. Obsidian runs hotkeys from its own capture
+	 * listener on `window`, which comes first — so by the time a key of the
+	 * cycle reaches this one its step has already been taken, and it is
+	 * recognised and left alone. Tab walks the same ladder and is left alone
+	 * for the same reason, and a modifier on its own is only the start of a
+	 * chord.
+	 */
+	private registerCycleReset(): void {
+		const forget = (): void => {
+			this.useHeaderRename = false;
+			this.manager.forgetCycles();
+		};
+		this.registerDomEvent(
+			document,
+			"keydown",
+			(evt) => {
+				if (MODIFIER_KEYS.has(evt.key) || evt.key === "Tab") return;
+				if (this.isCommandHotkey(RENAME_COMMAND_ID, evt)) return;
+				if (this.isCommandHotkey(`${this.manifest.id}:focus-path-bar`, evt)) return;
+				forget();
+			},
+			{ capture: true },
+		);
+		this.registerDomEvent(document, "pointerdown", forget, { capture: true });
 	}
 
 	onunload(): void {
@@ -292,9 +327,13 @@ export default class BreadcrumbPathPlugin extends Plugin {
 	 * command still on its default is found in `defaultKeys`.
 	 */
 	private isRenameHotkey(evt: KeyboardEvent): boolean {
+		return this.isCommandHotkey(RENAME_COMMAND_ID, evt);
+	}
+
+	/** Whether this event is one of the keys bound to a command, by the same tables. */
+	private isCommandHotkey(id: string, evt: KeyboardEvent): boolean {
 		const manager = this.app.hotkeyManager;
-		const bindings: Hotkey[] =
-			manager?.customKeys?.[RENAME_COMMAND_ID] ?? manager?.defaultKeys?.[RENAME_COMMAND_ID] ?? [];
+		const bindings: Hotkey[] = manager?.customKeys?.[id] ?? manager?.defaultKeys?.[id] ?? [];
 		return bindings.some((binding) => {
 			if (binding.key.toLowerCase() !== evt.key.toLowerCase()) return false;
 			const wanted = new Set(binding.modifiers.map((m) => (m === "Mod" ? modKey() : m)));

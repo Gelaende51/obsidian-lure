@@ -187,6 +187,11 @@ export class BreadcrumbManager {
 		return this.instances.get(leaf) ?? null;
 	}
 
+	/** Starts every bar's focus/rename key cycle over. */
+	forgetCycles(): void {
+		for (const instance of this.instances.values()) instance.forgetCycle();
+	}
+
 	/** Re-renders every tracked breadcrumb, e.g. after a settings change. */
 	refreshAll(): void {
 		for (const instance of this.instances.values()) {
