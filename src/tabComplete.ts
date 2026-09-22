@@ -156,6 +156,21 @@ export function planOffer(typed: string, candidates: readonly TabCandidate[]): s
 }
 
 /**
+ * The names that begin exactly as typed, ahead of those that only match
+ * without regard to case, each group in its own order.
+ *
+ * Matching ignores case, so `Test` and `test` both answer `tes` — and on a
+ * filesystem that tells them apart both can exist. The first name is the
+ * one the agreement is spelled after and the one a press walks toward, so
+ * the one spelled the way it was typed is the one meant.
+ */
+function spelledAsTypedFirst(typed: string, candidates: readonly TabCandidate[]): readonly TabCandidate[] {
+	const exact = candidates.filter((candidate) => candidate.label.startsWith(typed));
+	if (!exact.length || exact.length === candidates.length) return candidates;
+	return [...exact, ...candidates.filter((candidate) => !candidate.label.startsWith(typed))];
+}
+
+/**
  * The whole rule, as one decision.
  *
  * `candidates` are the children whose names start with `typed` — the caller
@@ -176,6 +191,7 @@ export function planTab(
 	replacing: string = typed,
 ): TabAction {
 	if (!candidates.length) return { kind: "ladder", path: null };
+	candidates = spelledAsTypedFirst(typed, candidates);
 
 	if (candidates.length === 1) {
 		const only = candidates[0];

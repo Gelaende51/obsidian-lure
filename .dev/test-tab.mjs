@@ -1510,5 +1510,27 @@ test("the list of a right-hand pane opens under its own field, not the left pane
 	expect("aligned with the field it belongs to", Math.abs(r.pop - r.input), (v) => v <= 2);
 });
 
+test("the offer ignores case, spells the name as it is, and prefers the spelling typed", async () => {
+	const upper = `${PREFIX}zCase`, lower = `${PREFIX}zcase`;
+	await page.evaluate(`for (const f of ${JSON.stringify([upper, lower])}) if (!app.vault.getAbstractFileByPath(f)) await app.vault.createFolder(f); return true;`);
+	try {
+		await armAtRoot();
+		await type(`${PREFIX}zC`);
+		expect("typed in capitals, the capital one", [(await look()).value, (await look()).selected], [upper, "ase"]);
+		await armAtRoot();
+		await type(`${PREFIX}zc`);
+		expect("typed in small letters, the small one", [(await look()).value, (await look()).selected], [lower, "ase"]);
+		await armAtRoot();
+		await type(`${PREFIX}ZCA`);
+		const loud = await look();
+		expect("typed in neither, a name that is there, spelled as it is", [upper, lower].includes(loud.value), true);
+		expect("with the rest offered", loud.selected, "se");
+		await type("X");
+		expect("typing on keeps the letters as they were typed", (await look()).value, `${PREFIX}ZCAX`);
+	} finally {
+		await page.evaluate(`for (const f of ${JSON.stringify([upper, lower])}) { const e = app.vault.getAbstractFileByPath(f); if (e) await app.fileManager.trashFile(e); } return true;`);
+	}
+});
+
 await run();
 

@@ -775,7 +775,7 @@ export class PathBreadcrumb {
 	 * writes: the letters you typed are yours while you type, but a path has
 	 * to be spelled the way the disk spells it.
 	 */
-	private suggested: { start: number; end: number; prefix: string; agreed: boolean } | null = null;
+	private suggested: { start: number; end: number; prefix: string; typed: string; agreed: boolean } | null = null;
 	/** Whether an offer stood in the field when a row began previewing, so leaving the list puts it back. */
 	private offerBeforePreview = false;
 	/** Set while an IME is composing, when writing into the field would break the composition. */
@@ -6456,12 +6456,16 @@ export class PathBreadcrumb {
 		if (!whole) return;
 		const add = whole.slice(query.length);
 
-		input.value = input.value.slice(0, caret) + add + input.value.slice(caret);
+		// Spelled the way the name is, typed letters included: `TES` offered
+		// as `TESt` shows a name that is not there. Taking the offer back
+		// gives the letters back as they were typed.
+		input.value = input.value.slice(0, bounds.start) + whole + input.value.slice(caret);
 		input.setSelectionRange(caret, caret + add.length);
 		this.suggested = {
 			start: caret,
 			end: caret + add.length,
 			prefix: whole,
+			typed: query,
 			// Whether the names all agree this far, or the offer is a step
 			// toward the first of several. Only agreement lets the press that
 			// takes it carry on past it; a step is a choice, and taking it is
@@ -6516,7 +6520,9 @@ export class PathBreadcrumb {
 			const caret = start + run.prefix.length;
 			input.setSelectionRange(caret, caret);
 		} else {
-			input.value = value.slice(0, run.start) + value.slice(run.end);
+			this.suggested = run;
+			input.value = this.typedFieldValue();
+			this.suggested = null;
 			input.setSelectionRange(run.start, run.start);
 		}
 		this.suggestQueryOverride = queryAtCaret(input);
@@ -7149,7 +7155,25 @@ export class PathBreadcrumb {
 		const input = this.inputEl;
 		if (!input) return "";
 		const run = this.suggested;
-		return run ? input.value.slice(0, run.start) + input.value.slice(run.end) : input.value;
+		if (!run) return input.value;
+		const start = segmentBoundsAtCaret(input.value, run.start).start;
+		return input.value.slice(0, start) + run.typed + input.value.slice(start + run.typed.length, run.start) + input.value.slice(run.end);
+	}
+
+	/**
+	 * Gives the letters typed before the offer back their own spelling,
+	 * leaving the offered run and the selection where they are.
+	 */
+	private unspellOffer(): void {
+		const run = this.suggested;
+		const input = this.inputEl;
+		if (!run || !input) return;
+		const start = segmentBoundsAtCaret(input.value, run.start).start;
+		const end = start + run.typed.length;
+		if (input.value.slice(start, end) === run.typed) return;
+		const [from, to, direction] = [input.selectionStart, input.selectionEnd, input.selectionDirection];
+		input.value = input.value.slice(0, start) + run.typed + input.value.slice(end);
+		input.setSelectionRange(from, to, direction ?? undefined);
 	}
 
 	/** Where autocomplete/typed-path resolution should be scoped to right now. */
@@ -7926,7 +7950,12 @@ export class PathBreadcrumb {
 			autoSize();
 		};
 
+		// An edit made while an offer stands is made to what was typed: the
+		// offer spells the typed letters the way the name does, and typing
+		// on past it must not keep that spelling for a name of your own.
+		const onBeforeInput = () => this.unspellOffer();
 		inputEl.addEventListener("keydown", onKeydown);
+		inputEl.addEventListener("beforeinput", onBeforeInput);
 		inputEl.addEventListener("input", onInput);
 		// Writing into the field mid-composition tears the composition up,
 		// which is every keystroke of Japanese, Korean or Chinese input.
@@ -7936,6 +7965,7 @@ export class PathBreadcrumb {
 		window.addEventListener("keydown", onEscapeCapture, true);
 		this.editCleanup = () => {
 			inputEl.removeEventListener("keydown", onKeydown);
+			inputEl.removeEventListener("beforeinput", onBeforeInput);
 			inputEl.removeEventListener("input", onInput);
 			inputEl.removeEventListener("compositionstart", onCompositionStart);
 			inputEl.removeEventListener("compositionend", onCompositionEnd);
