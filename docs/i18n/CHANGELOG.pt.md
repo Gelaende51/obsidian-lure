@@ -12,18 +12,19 @@ Todas as versões do Lure, da mais recente para a mais antiga. O que chegou desd
 
 ### Adicionado
 
-- **Um nome já ocupado pergunta em vez de recusar.** Mover ou renomear para um nome que já existe ali abre uma caixa de diálogo que mostra os dois ficheiros pelo caminho completo. Pode renomear o que está no caminho e continuar, trocar de lugar com ele (entre pastas: cada um mantém o seu nome e fica com a pasta do outro), ou trocar de nome com ele (dentro da mesma pasta). Cancelar não move nada. Cada botão diz o que vai fazer quando aponta para ele. Escolher um nome já ocupado na lista pergunta o mesmo, tal como arrastar um ficheiro para uma pasta que já tenha esse nome. O nome no campo de mudança de nome da caixa de diálogo fica vermelho enquanto estiver ocupado.
+- **Um nome já ocupado pergunta em vez de recusar.** Mover ou renomear para um nome que já existe ali abre uma caixa de diálogo que mostra os dois ficheiros pelo caminho completo. Pode renomear o que está no caminho e continuar, trocar de lugar com ele (vai para onde o seu ficheiro estava, com o nome antigo do seu ficheiro), ou trocar de nome com ele (fica onde está e fica com o nome antigo do seu ficheiro). Entre pastas, ambas são oferecidas; dentro de uma pasta as duas são a mesma coisa, por isso só é oferecida a troca de nomes. Cancelar não move nada. Cada botão diz o que vai fazer quando aponta para ele. Escolher um nome já ocupado na lista pergunta o mesmo, tal como arrastar um ficheiro para uma pasta que já tenha esse nome. O nome no campo de mudança de nome da caixa de diálogo fica vermelho enquanto estiver ocupado.
 - **`:graph` dentro de uma pasta abre o grafo dessa pasta** — o grafo filtrado por `path:"that/folder"`, tal como a sua própria caixa de pesquisa faria. Na raiz do cofre é o grafo inteiro, como antes.
 - **Uma pasta que já tem esse nome fica vermelha** na lista ao mover, tal como um ficheiro com esse nome, para que o conflito apareça antes de escolher.
 
 ### Alterado
 
-- **A oferta é sempre o que o Tab escreveria.** Onde os nomes deixam de concordar, o campo oferece o passo em direção ao primeiro deles — antes, não oferecia nada ali e o Tab escrevia algo na mesma.
+- **A oferta é sempre o que o Tab escreveria.** Onde os nomes deixam de concordar, o campo oferece o passo em direção ao primeiro deles, sendo a linha para a qual o Tab iria que decide isso; escrever por cima de um nome mantém a sua extensão no lugar, e a oferta aparece antes dela; uma pasta em que acabou de entrar oferece o seu primeiro passo. Antes, havia situações em que nada era oferecido e o Tab escrevia algo na mesma. O sublinhado da lista acompanha a oferta à medida que muda, e o Tab numa linha para a qual navegou com as setas aceita essa linha, e não a que está ao lado.
 - **A oferta ignora maiúsculas e minúsculas.** Escrever `sch` oferece `Schemes`, escrito como o nome está; desfazer a oferta devolve as suas letras tal como as escreveu. Onde existem `Test` e `test`, é oferecido o que está escrito como escreveu.
 - **Depois de premir Tab, o passo seguinte é oferecido de imediato**, tal como depois de escrever uma letra.
 - **A lista segue o cursor**, ou o início de uma seleção: mostra a pasta em que esse ponto está, filtrada pelas letras que o antecedem. No início de um nome, essa é a pasta inteira.
 - **Apontar para uma linha mostra-a como a oferta** — o que escreveu continua seu e o resto do nome fica marcado — e afastar o ponteiro da lista traz a oferta de volta.
 - **→ aceita uma letra da oferta** em vez de a aceitar inteira; <kbd>End</kbd> continua a aceitá-la por completo.
+- **Backspace antes de uma extensão deixada sozinha sobe um nível de pasta**, tal como acontece num campo vazio; a extensão isolada desaparece.
 - **O F2 num campo aberto transforma-o numa mudança de nome onde está**, mantendo o texto, o cursor e a seleção, e **Focar a barra de caminho** tira-lhe a mudança de nome do mesmo modo.
 - **Qualquer outra coisa premida ou clicada entre as pressões recomeça os ciclos do F2 e do Focar a barra de caminho.**
 - **As pastas aparecem a negrito na lista**, por isso a nota de uma pasta já não precisa de ser cinzenta para se distinguir: é roxa como qualquer outra nota.

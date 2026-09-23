@@ -12,22 +12,23 @@ Todas as versões do Lure, da mais recente para a mais antiga. O que entrou desd
 
 ### Adicionado
 
-- **Um nome já em uso pergunta em vez de recusar.** Mover ou renomear para um nome que já existe ali abre uma caixa de diálogo mostrando os dois arquivos pelo caminho completo. Você pode renomear o que está no caminho e continuar, trocar de lugar com ele (entre pastas: cada um mantém seu nome e fica com a pasta do outro), ou trocar de nome com ele (dentro de uma mesma pasta). Cancelar não move nada. Cada botão diz o que vai fazer quando você aponta para ele. Escolher um nome já em uso na lista pergunta a mesma coisa, assim como arrastar um arquivo para uma pasta que já tenha esse nome. O nome no campo de mudança de nome da caixa de diálogo fica vermelho enquanto estiver em uso.
+- **Um nome já em uso pergunta em vez de recusar.** Mover ou renomear para um nome que já existe ali abre uma caixa de diálogo mostrando os dois arquivos pelo caminho completo. Você pode renomear o que está no caminho e continuar, trocar de lugar com ele (ele vai para onde seu arquivo estava, com o nome antigo do seu arquivo), ou trocar de nome com ele (ele fica onde está e fica com o nome antigo do seu arquivo). Entre pastas, as duas opções são oferecidas; dentro de uma mesma pasta elas são a mesma coisa, então só a troca de nomes é oferecida. Cancelar não move nada. Cada botão diz o que vai fazer quando você aponta para ele. Escolher um nome já em uso na lista pergunta a mesma coisa, assim como arrastar um arquivo para uma pasta que já tenha esse nome. O nome no campo de mudança de nome da caixa de diálogo fica vermelho enquanto estiver em uso.
 - **`:graph` dentro de uma pasta abre o grafo dessa pasta** — o grafo filtrado por `path:"that/folder"`, como a própria caixa de pesquisa faria. Na raiz do cofre é o grafo inteiro, como antes.
 - **Uma pasta que já tem esse nome fica vermelha** na lista ao mover, assim como um arquivo com esse nome, para que o conflito apareça antes de você escolher.
 
 ### Alterado
 
-- **A sugestão é sempre o que o Tab escreveria.** Onde os nomes deixam de coincidir, o campo sugere o passo em direção ao primeiro deles — antes, ele não sugeria nada ali, e o Tab escrevia algo assim mesmo.
+- **A sugestão é sempre o que o Tab escreveria.** Onde os nomes deixam de coincidir, o campo sugere o passo em direção ao primeiro deles, sendo a linha para a qual o Tab iria que decide isso; digitar por cima de um nome mantém a extensão no lugar, e a sugestão aparece antes dela; uma pasta em que você acabou de entrar sugere seu primeiro passo. Antes, havia situações em que nada era sugerido, e o Tab escrevia algo assim mesmo. O sublinhado da lista acompanha a sugestão à medida que ela muda, e o Tab em uma linha para a qual você navegou com as setas aceita essa linha, e não a que está ao lado.
 - **A sugestão ignora maiúsculas e minúsculas.** Digitar `sch` sugere `Schemes`, escrito do jeito que o nome está; desfazer a sugestão devolve suas letras do jeito que você as digitou. Onde existem `Test` e `test`, é sugerido o que está escrito do jeito que você digitou.
 - **Depois de pressionar Tab, o próximo passo é sugerido na hora**, assim como depois de digitar uma letra.
 - **A lista segue o cursor**, ou o início de uma seleção: ela lista a pasta em que esse ponto está, filtrada pelas letras à frente dele. No início de um nome, essa é a pasta inteira.
 - **Apontar para uma linha a mostra como a sugestão** — o que você digitou continua seu e o restante do nome fica marcado — e tirar o ponteiro da lista traz a sugestão de volta.
 - **→ pega uma letra da sugestão** em vez de pegá-la inteira; <kbd>End</kbd> continua pegando-a por completo.
+- **Backspace antes de uma extensão deixada sozinha sobe um nível de pasta**, assim como acontece em um campo vazio; a extensão isolada desaparece.
 - **O F2 em um campo aberto o transforma em uma mudança de nome onde ele está**, mantendo o texto, o cursor e a seleção, e **Focar a barra de caminho** tira a mudança de nome dele do mesmo jeito.
 - **Qualquer outra coisa pressionada ou clicada entre as pressões reinicia os ciclos do F2 e do Focar a barra de caminho.**
 - **As pastas aparecem em negrito na lista**, então a nota de uma pasta não precisa mais ser cinza para se destacar: ela é roxa como qualquer outra nota.
-- **A lista nunca é mais larga que a barra de caminho.** Um nome que não cabe é encurtado do mesmo jeito que a barra de caminho encurta um, e é mostrado por completo ao passar o mouse.
+- **A lista nunca é mais larga que a barra de caminho.** Um nome que não cabe é encurtado do jeito que a barra de caminho encurta um, e é mostrado por completo ao passar o mouse.
 - **PageUp e PageDown rolam a lista pelo que ela mostra**, também a partir do campo, e a linha selecionada mantém seu lugar na tela. <kbd>Home</kbd> e <kbd>End</kbd> trazem a primeira e a última linha à vista.
 - **A lista mostra até 1.000 entradas** antes de contar o resto, em vez de 100.
 - **As pastas cedem espaço, a mais longa primeiro.** Quando falta espaço, o nome de pasta mais longo encurta até o comprimento do próximo mais longo, depois os dois juntos, e assim por diante, cada um parando em seu limite mínimo. Antes, todas as pastas encurtavam ao mesmo tempo, proporcionalmente ao seu comprimento.

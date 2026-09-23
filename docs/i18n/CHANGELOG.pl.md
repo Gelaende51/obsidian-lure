@@ -13,18 +13,19 @@ Każde wydanie Lure, od najnowszego. To, co pojawiło się od ostatniego wydania
 
 ### Dodano
 
-- **Zajęta nazwa pyta zamiast odmawiać.** Przenoszenie lub zmiana nazwy na nazwę, która już tam jest, otwiera okno dialogowe pokazujące oba pliki z pełną ścieżką. Możesz zmienić nazwę tego, który stoi na drodze, i kontynuować, zamienić się z nim miejscami (między folderami: każdy zachowuje swoją nazwę i przejmuje folder drugiego), albo zamienić się z nim nazwami (w obrębie jednego folderu). Anulowanie niczego nie przenosi. Każdy przycisk mówi, co zrobi, gdy na niego wskażesz. Wybranie zajętej nazwy z listy pyta o to samo, podobnie jak przeciągnięcie pliku na folder, który już ma tę nazwę. Nazwa w polu zmiany nazwy okna dialogowego jest czerwona, dopóki jest zajęta.
+- **Zajęta nazwa pyta zamiast odmawiać.** Przenoszenie lub zmiana nazwy na nazwę, która już tam jest, otwiera okno dialogowe pokazujące oba pliki z pełną ścieżką. Możesz zmienić nazwę tego, który stoi na drodze, i kontynuować, zamienić się z nim miejscami (trafia tam, skąd pochodził twój plik, pod starą nazwą twojego pliku), albo zamienić się z nim nazwami (zostaje tam, gdzie jest, i przejmuje starą nazwę twojego pliku). Między folderami dostępne są obie opcje; w obrębie jednego folderu obie są tym samym, więc dostępna jest tylko zamiana nazw. Anulowanie niczego nie przenosi. Każdy przycisk mówi, co zrobi, gdy na niego wskażesz. Wybranie zajętej nazwy z listy pyta o to samo, podobnie jak przeciągnięcie pliku na folder, który już ma tę nazwę. Nazwa w polu zmiany nazwy okna dialogowego jest czerwona, dopóki jest zajęta.
 - **`:graph` wewnątrz folderu otwiera graf tego folderu** — graf odfiltrowany do `path:"that/folder"`, tak jak zrobiłoby to jego własne pole wyszukiwania. W katalogu głównym skarbca to nadal cały graf, jak wcześniej.
 - **Folder, który już ma tę nazwę, jest czerwony** na liście podczas przenoszenia, podobnie jak plik o tej nazwie, więc konflikt widać, zanim wybierzesz.
 
 ### Zmieniono
 
-- **Podpowiedź to zawsze to, co wpisałby Tab.** Tam, gdzie nazwy przestają się zgadzać, pole podpowiada krok w stronę pierwszej z nich — wcześniej nic tam nie podpowiadało, a Tab i tak coś wpisywał.
+- **Podpowiedź to zawsze to, co wpisałby Tab.** Tam, gdzie nazwy przestają się zgadzać, pole podpowiada krok w stronę pierwszej z nich, a decyduje o tym wiersz, do którego zmierzałby Tab; wpisywanie na nazwie pozostawia jej rozszerzenie na miejscu, a podpowiedź pojawia się przed nim; folder, do którego właśnie wszedłeś, podpowiada swój pierwszy krok. Wcześniej zdarzały się sytuacje, w których nic nie było podpowiadane, a Tab i tak coś wpisywał. Podkreślenie na liście podąża za podpowiedzią, gdy ta się zmienia, a Tab na wierszu, do którego przeszedłeś strzałkami, wybiera ten wiersz, a nie sąsiedni.
 - **Podpowiedź ignoruje wielkość liter.** Wpisanie `sch` podpowiada `Schemes`, zapisane tak, jak jest nazwa; cofnięcie podpowiedzi oddaje twoje litery takie, jakie wpisałeś. Tam, gdzie istnieją zarówno `Test`, jak i `test`, podpowiadana jest ta, która jest zapisana tak, jak wpisałeś.
 - **Po naciśnięciu Tab kolejny krok jest podpowiadany od razu**, tak samo jak po wpisaniu litery.
 - **Lista podąża za kursorem**, albo za początkiem zaznaczenia: pokazuje folder, w którym ten punkt się znajduje, odfiltrowany przez litery przed nim. Na początku nazwy to cały folder.
 - **Wskazanie wiersza pokazuje go jako podpowiedź** — to, co wpisałeś, zostaje twoje, a reszta nazwy jest zaznaczona — a zabranie wskaźnika z listy przywraca poprzednią podpowiedź.
 - **→ bierze jedną literę podpowiedzi** zamiast całej; <kbd>End</kbd> nadal bierze ją w całości.
+- **Backspace przed rozszerzeniem, które zostało samo, przechodzi o poziom wyżej**, tak jak w pustym polu; samotne rozszerzenie znika.
 - **F2 w otwartym polu zamienia je w zmianę nazwy w miejscu, w którym stoi**, zachowując tekst, kursor i zaznaczenie, a **Ustaw fokus na pasku ścieżki** w ten sam sposób zdejmuje z niego zmianę nazwy.
 - **Cokolwiek innego naciśnięte lub kliknięte między naciśnięciami zaczyna cykle F2 i Ustaw fokus na pasku ścieżki od nowa.**
 - **Foldery są pogrubione na liście**, więc własna notatka folderu nie musi już być szara, by się wyróżniać: jest fioletowa jak każda inna notatka.

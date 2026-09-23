@@ -8,18 +8,19 @@ Every release of Lure, newest first. What has landed since the last release is u
 
 ### Added
 
-- **A taken name asks instead of refusing.** Moving or renaming onto a name that is already there opens a dialog showing both files by their whole path. You can rename the one in the way and carry on, trade places with it (across folders: each keeps its name and takes the other's folder), or trade names with it (within one folder). Cancel moves nothing. Every button says what it will do when you point at it. Picking a taken name from the dropdown asks the same, and so does dropping a file onto a folder that already holds its name. The name in the dialog's rename field is red while it is taken.
+- **A taken name asks instead of refusing.** Moving or renaming onto a name that is already there opens a dialog showing both files by their whole path. You can rename the one in the way and carry on, trade places with it (it goes where your file came from, under your file's old name), or trade names with it (it stays where it is and takes your file's old name). Across folders both are offered; within one folder the two are the same, so only the trade of names is. Cancel moves nothing. Every button says what it will do when you point at it. Picking a taken name from the dropdown asks the same, and so does dropping a file onto a folder that already holds its name. The name in the dialog's rename field is red while it is taken.
 - **`:graph` inside a folder opens that folder's graph** — the graph filtered to `path:"that/folder"` in its own search box, as though typed there. At the vault root it is the whole graph again.
 - **A folder that already holds the name is red** in the dropdown while moving, and so is a file of that name, so the collision shows before you choose.
 
 ### Changed
 
-- **The offer is always what Tab would write.** Where the names stop agreeing, the field offers the step toward the first of them — before, it offered nothing there and Tab wrote something anyway.
+- **The offer is always what Tab would write.** Where the names stop agreeing, the field offers the step toward the first of them, and the row Tab would head for decides it; typing over a name leaves its extension standing and is offered in front of it; a folder just stepped into offers its first step. Before, there were states where nothing was offered and Tab wrote something anyway. The dropdown's underline follows the offer as it changes, and Tab on a row you arrowed to takes that row rather than the one beside it.
 - **Offers ignore case.** Typing `sch` offers `Schemes`, spelled the way the name is; taking the offer back gives your letters back as you typed them. Where `Test` and `test` both exist, the one spelled the way you typed is offered.
 - **After a press of Tab the next step is offered straight away**, as after a typed letter.
 - **The dropdown follows the caret**, or the start of a selection: it lists the folder that point is in, filtered by the letters in front of it. At the start of a name that is the whole folder.
 - **Pointing at a row shows it as the offer** — what you typed stays yours and the rest of the name is marked — and moving the pointer off the list brings the offer back.
 - **→ takes one letter of the offer** rather than all of it; <kbd>End</kbd> still takes it whole.
+- **Backspace before an extension left on its own steps up a folder**, as it does in an empty field; the lone extension goes.
 - **F2 in an open field turns it into a rename where it stands**, keeping the text, the caret and the selection, and **Focus the path bar** takes the rename back off it the same way.
 - **Anything else pressed or clicked between the presses starts the F2 and Focus the path bar cycles over.**
 - **Folders are bold in the dropdown**, so a folder's own note no longer needs to be grey to stand apart: it is purple like any other note.
