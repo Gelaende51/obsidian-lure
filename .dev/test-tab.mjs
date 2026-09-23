@@ -1683,5 +1683,16 @@ test("a press of Tab that takes the offer filters the list by what the field now
 	}
 });
 
+test("where the leading rows part, the branch the offer takes is marked apart from the others", async () => {
+	await armAtRoot();
+	await type(`${PREFIX}alp`);
+	const offered = async () => JSON.parse(await page.evaluate(`return JSON.stringify([...document.querySelectorAll(".suggestion-item.lure-suggest-offered")]
+		.map((e) => e.querySelector(".lure-suggest-label")?.textContent));`));
+	expect("the rows the offer heads for", await offered(), [`${PREFIX}alpha-one`, `${PREFIX}alpha-two`]);
+	// Taken, the two agree on as far as `alpha-`, and the next offer parts them again.
+	await tab();
+	expect("follows the offer to the next fork", await offered(), [`${PREFIX}alpha-one`]);
+});
+
 await run();
 

@@ -469,8 +469,22 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			labelEl.empty();
 			labelEl.removeClass("is-cut");
 			this.writeLabel(labelEl, value.label);
+			row.toggleClass("lure-suggest-offered", this.onOfferedBranch(value));
 		});
 		this.fitRows();
+	}
+
+	/**
+	 * A leading row on the branch the offer takes, where the leading rows
+	 * part: typed `te` over `test1`, `test2`, `text1` and `text2`, the offer
+	 * is `test` and those two rows are the ones it heads for. Where every
+	 * leading row agrees the offer is all of them, and nothing is singled out.
+	 */
+	private onOfferedBranch(value: PathSuggestion): boolean {
+		const offer = this.lastOffer;
+		if (!value.leading || value.agreed || !offer) return false;
+		if (offer.prefix.length <= offer.typedLength) return false;
+		return value.label.toLowerCase().startsWith(offer.prefix.toLowerCase());
 	}
 
 	/** Showing a list, changed or not, goes through here; the field's colour is read off it. */
@@ -1195,6 +1209,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		if (value.current) el.addClass("lure-suggest-current");
 		if (value.leading) el.addClass("lure-suggest-leading");
 		if (value.agreed) el.addClass("lure-suggest-agreed");
+		el.toggleClass("lure-suggest-offered", this.onOfferedBranch(value));
 
 		if (value.icon) {
 			const iconEl = el.createSpan({ cls: "lure-suggest-icon" });

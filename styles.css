@@ -666,7 +666,8 @@
    whole run of them — drawn past the row's own bottom margin into the next,
    and positioned, so it takes no width from the row and moves no text.
    Blue when the run of them goes on agreeing past what was typed: there is
-   a base Tab would complete. */
+   a base Tab would complete. Where they part instead, green on the branch
+   the offer takes (below). */
 .suggestion-item.lure-suggest-leading {
 	position: relative;
 }
@@ -683,6 +684,12 @@
 
 .suggestion-item.lure-suggest-leading.lure-suggest-agreed::before {
 	background-color: var(--color-blue);
+}
+
+/* Where the leading rows part, the branch the offer heads down is green:
+   the rows Tab is about to walk toward, apart from the other ways on. */
+.suggestion-item.lure-suggest-leading.lure-suggest-offered::before {
+	background-color: var(--color-green);
 }
 
 /* Read-only external file view
