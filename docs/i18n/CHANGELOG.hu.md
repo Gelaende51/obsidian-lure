@@ -1,4 +1,4 @@
-<!-- A CHANGELOG.md fordítása — állapot: 2cbb237 commit.
+<!-- A CHANGELOG.md fordítása — állapot: 2739cf0 commit.
      Gépi fordítás (Claude Opus 5), anyanyelvi lektorálás nélkül.
      A javításokat szívesen fogadjuk; az irányadó változat az angol
      CHANGELOG. -->

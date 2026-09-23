@@ -1,4 +1,4 @@
-<!-- Preklad CHANGELOG.md — stav: commit 2cbb237.
+<!-- Preklad CHANGELOG.md — stav: commit 2739cf0.
      Strojový preklad (Claude Opus 5), neskontrolovaný rodenými hovoriacimi.
      Opravy sú vítané; rozhodujúcou verziou je anglický CHANGELOG. -->
 

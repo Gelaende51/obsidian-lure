@@ -1,4 +1,4 @@
-<!-- Traducció de CHANGELOG.md — estat: commit 2cbb237.
+<!-- Traducció de CHANGELOG.md — estat: commit 2739cf0.
      Traducció automàtica (Claude Opus 5), no revisada per parlants nadius.
      Les correccions són benvingudes; el CHANGELOG en anglès és la versió
      de referència. -->

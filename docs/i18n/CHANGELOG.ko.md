@@ -1,4 +1,4 @@
-<!-- CHANGELOG.md 번역 — 기준 커밋: 2cbb237.
+<!-- CHANGELOG.md 번역 — 기준 커밋: 2739cf0.
      기계 번역(Claude Opus 5)이며 원어민 검수를 거치지 않았습니다.
      수정 제안을 환영합니다. 기준이 되는 것은 영어판 CHANGELOG입니다. -->
 

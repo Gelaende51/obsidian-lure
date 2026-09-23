@@ -1,4 +1,4 @@
-<!-- CHANGELOG.md 的翻译 — 对应提交：2cbb237。
+<!-- CHANGELOG.md 的翻译 — 对应提交：2739cf0。
      机器翻译（Claude Opus 5），未经母语者校订。欢迎指出错误；以英文
      CHANGELOG 为准。 -->
 
