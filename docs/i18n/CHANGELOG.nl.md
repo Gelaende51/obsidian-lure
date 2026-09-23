@@ -9,7 +9,7 @@
 
 Elke release van Lure, de nieuwste eerst. Wat er sinds de laatste release is geland staat onder *Niet uitgebracht*. Versies dragen geen `v`-voorvoegsel, net als de release-tags.
 
-## Niet uitgebracht
+## 1.5.0 — 2026-09-23[^1.5.0]
 
 ### Toegevoegd
 
@@ -212,6 +212,7 @@ Eerste release. Vervangt de bestandsnaam in de kopbalk van een notitie door een 
 - **Buiten de kluis** (standaard uit): de kluisnaam opent je andere kluizen, je persoonlijke map, de hoofdmap van het bestandssysteem en aangekoppelde schijven. Daarbuiten wordt er niets geschreven tot je het ontgrendelt, en een notitie kan alleen uit de kluis worden gekopieerd, nooit verplaatst.
 - **45 talen.**
 
+[^1.5.0]: Wijzigingen sinds 1.4.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: Wijzigingen sinds 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Wijzigingen sinds 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Wijzigingen sinds 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>

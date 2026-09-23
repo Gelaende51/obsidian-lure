@@ -8,7 +8,7 @@
 
 Todas as versões do Lure, da mais recente para a mais antiga. O que chegou desde a última versão está em *Por lançar*. Os números de versão não levam prefixo `v`, tal como as etiquetas das versões.
 
-## Não lançado
+## 1.5.0 — 2026-09-23[^1.5.0]
 
 ### Adicionado
 
@@ -211,6 +211,7 @@ Primeira versão. Substitui o nome do ficheiro no cabeçalho de uma nota por um 
 - **Fora do cofre** (desativado por predefinição): o nome do cofre abre os seus outros cofres, a pasta pessoal, a raiz do sistema de ficheiros e as unidades montadas. Nada lá fora é escrito enquanto não o desbloquear, e uma nota só pode ser copiada para fora do cofre, nunca movida.
 - **45 idiomas.**
 
+[^1.5.0]: Alterações desde 1.4.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: Alterações desde 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Alterações desde 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Alterações desde 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>

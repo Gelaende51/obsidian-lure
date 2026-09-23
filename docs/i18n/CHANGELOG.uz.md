@@ -9,7 +9,7 @@
 
 Lure'ning har bir relizi, eng yangisi birinchi. Oxirgi relizdan beri qo‘shilganlar *Chiqarilmagan* bo‘limida. Versiyalar reliz teglariga mos ravishda `v` prefiksisiz yoziladi.
 
-## Chiqarilmagan
+## 1.5.0 — 2026-09-23[^1.5.0]
 
 ### Qo‘shildi
 
@@ -212,6 +212,7 @@ Birinchi reliz. Qayd sarlavhasidagi fayl nomini ombordagi yo‘lning bosiladigan
 - **Ombordan tashqarida** (sukut bo‘yicha o‘chiq): ombor nomi boshqa omborlaringiz, uy papkasi, fayl tizimi ildizi va ulangan disklarni ochadi. U yerda qulfdan chiqarmaguningizcha hech narsa yozilmaydi, qaydni esa ombordan faqat nusxalab chiqarish mumkin, hech qachon ko‘chirib emas.
 - **45 til.**
 
+[^1.5.0]: 1.4.0 dan beri o‘zgarishlar: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: 1.3.0 dan beri o‘zgarishlar: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: 1.2.0 dan beri o‘zgarishlar: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: 1.1.2 dan beri o‘zgarishlar: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>

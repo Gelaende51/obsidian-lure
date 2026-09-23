@@ -8,7 +8,7 @@
 
 Katrs Lure laidiens, jaunākais pirmais. Tas, kas ienācis kopš pēdējā laidiena, ir sadaļā *Neizdots*. Versijām nav `v` priedēkļa, tāpat kā laidienu tagiem.
 
-## Neizlaists
+## 1.5.0 — 2026-09-23[^1.5.0]
 
 ### Pievienots
 
@@ -211,6 +211,7 @@ Pirmais laidiens. Aizstāj faila nosaukumu piezīmes galvenē ar uzklikšķinām
 - **Ārpus glabātavas** (pēc noklusējuma izslēgts): glabātavas nosaukums atver tavas pārējās glabātavas, mājas mapi, failu sistēmas sakni un pievienotos diskus. Tur ārā nekas netiek rakstīts, kamēr to neatslēdz, un piezīmi no glabātavas var tikai izkopēt, nekad pārvietot.
 - **45 valodas.**
 
+[^1.5.0]: Izmaiņas kopš 1.4.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: Izmaiņas kopš 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Izmaiņas kopš 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Izmaiņas kopš 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>

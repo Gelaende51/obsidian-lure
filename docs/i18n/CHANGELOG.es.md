@@ -9,7 +9,7 @@
 
 Todas las versiones de Lure, de la más reciente a la más antigua. Lo que ha entrado desde la última versión está bajo *Sin publicar*. Los números de versión no llevan el prefijo `v`, igual que las etiquetas de publicación.
 
-## Sin publicar
+## 1.5.0 — 2026-09-23[^1.5.0]
 
 ### Añadido
 
@@ -212,6 +212,7 @@ Primera versión. Sustituye el nombre de archivo del encabezado de una nota por 
 - **Fuera de la bóveda** (desactivado por defecto): el nombre de la bóveda abre tus otras bóvedas, tu carpeta personal, la raíz del sistema de archivos y las unidades montadas. Ahí fuera no se escribe nada hasta que lo desbloquees, y una nota solo se puede copiar fuera de la bóveda, nunca mover.
 - **45 idiomas.**
 
+[^1.5.0]: Cambios desde 1.4.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: Cambios desde 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Cambios desde 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Cambios desde 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>

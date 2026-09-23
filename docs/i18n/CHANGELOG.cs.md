@@ -8,7 +8,7 @@
 
 Každé vydání pluginu Lure, od nejnovějšího. Co přibylo od posledního vydání, najdete pod *Nevydáno*. Verze nemají předponu `v`, stejně jako značky vydání.
 
-## Nevydáno
+## 1.5.0 — 2026-09-23[^1.5.0]
 
 ### Přidáno
 
@@ -211,6 +211,7 @@ První vydání. Nahrazuje název souboru v záhlaví poznámky klikatelnou, upr
 - **Mimo trezor** (ve výchozím stavu vypnuto): název trezoru otevírá vaše další trezory, domovskou složku, kořen souborového systému a připojené jednotky. Nic se tam nezapíše, dokud to neodemknete, a poznámku lze z trezoru jen zkopírovat, nikdy přesunout.
 - **45 jazyků.**
 
+[^1.5.0]: Změny od 1.4.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: Změny od 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Změny od 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Změny od 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>

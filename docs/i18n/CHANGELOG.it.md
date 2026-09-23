@@ -9,7 +9,7 @@
 
 Ogni release di Lure, dalla più recente. Ciò che è arrivato dopo l'ultima release sta sotto *Non rilasciato*. Le versioni non hanno il prefisso `v`, come i tag delle release.
 
-## Non rilasciato
+## 1.5.0 — 2026-09-23[^1.5.0]
 
 ### Aggiunto
 
@@ -212,6 +212,7 @@ Prima release. Sostituisce il nome del file nell'intestazione di una nota con un
 - **Fuori dal vault** (disattivato di default): il nome del vault apre gli altri vault, la cartella home, la radice del file system e le unità montate. Nulla là fuori viene scritto finché non lo sblocchi, e una nota può solo essere copiata fuori dal vault, mai spostata.
 - **45 lingue.**
 
+[^1.5.0]: Modifiche dopo la 1.4.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: Modifiche dopo la 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Modifiche dopo la 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
 [^1.2.0]: Modifiche dopo la 1.1.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.1.2...1.2.0>
