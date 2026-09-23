@@ -12,18 +12,20 @@ Katrs Lure laidiens, jaunākais pirmais. Tas, kas ienācis kopš pēdējā laidi
 
 ### Pievienots
 
-- **Aizņemts nosaukums vaicā, nevis atsakās.** Pārvietošana vai pārdēvēšana uz nosaukumu, kas jau tur ir, atver dialogu, kas parāda abus failus pēc to pilnā ceļa. Vari pārdēvēt to, kas ir ceļā, un turpināt, apmainīties ar to vietām (starp mapēm: katrs patur savu nosaukumu un pārņem otra mapi), vai apmainīties ar to nosaukumiem (vienas mapes robežās). Atcelšana neko nepārvieto. Katra poga saka, ko tā darīs, kad uz to norādi. To pašu jautā arī aizņemta nosaukuma izvēle no saraksta, tāpat kā faila nomešana uz mapi, kurā šis nosaukums jau ir. Nosaukums dialoga pārdēvēšanas laukā ir sarkans, kamēr tas ir aizņemts.
+- **Aizņemts nosaukums vaicā, nevis atsakās.** Pārvietošana vai pārdēvēšana uz nosaukumu, kas jau tur ir, atver dialogu ar diviem ceļiem, kurus vari rediģēt: kur nonāk tavs fails, un kur nonāk fails, kas ir ceļā, sarkans, kamēr tas vēl ir aizņemts. Katrs ceļš arī ir attēlots tāpat, kā to attēlo ceļa josla, ar atšķirīgajām daļām iekrāsotām un saīsinātām pēdējām. Abiem laukiem ir saraksts; otrajā ir parastie izejas veidi — samainīt vietas (tas nonāk tava faila vecajā mapē), samainīt nosaukumus (tas paliek un pārņem tava faila veco nosaukumu), samainīt abus (tas pārņem tava faila veco ceļu), `-1`, `-bak` un `-old` pie sava paša nosaukuma, kā arī abi nosaukumi, kādi failiem bija. Izejas veids, kura ceļš ir aizņemts, ir pelēks. Izvēle no saraksta tikai aizpilda lauku; Piemērot pārvieto abus, kopā ar saitēm, un Atcelt neko nepārvieto. To pašu jautā arī aizņemta nosaukuma izvēle no saraksta, tāpat kā faila nomešana uz mapi, kurā šis nosaukums jau ir.
 - **`:graph` mapes iekšpusē atver šīs mapes grafu** — grafu, filtrētu pēc `path:"that/folder"`, gluži kā to darītu tā pati meklēšanas lauciņš. Glabātavas saknē tas joprojām ir viss grafs, kā agrāk.
 - **Mape, kurā nosaukums jau ir, sarakstā ir sarkana** pārvietošanas laikā, tāpat kā fails ar šo nosaukumu, tāpēc konflikts parādās vēl pirms izvēles.
 
 ### Mainīts
 
-- **Piedāvājums vienmēr ir tas, ko uzrakstītu Tab.** Tur, kur nosaukumi vairs nesakrīt, lauks piedāvā soli pretī pirmajam no tiem — agrāk tur nekas netika piedāvāts, un Tab tik un tā kaut ko uzrakstīja.
+- **Piedāvājums vienmēr ir tas, ko uzrakstītu Tab.** Tur, kur nosaukumi vairs nesakrīt, lauks piedāvā soli pretī pirmajam no tiem, un to nosaka rinda, uz kuru dotos Tab; rakstīšana virs nosaukuma atstāj tā paplašinājumu stāvam un piedāvā to tā priekšā; mape, kurā tikko ieiets, piedāvā savu pirmo soli. Agrāk bija stāvokļi, kuros nekas netika piedāvāts, un Tab tik un tā kaut ko uzrakstīja. Saraksta pasvītrojums seko piedāvājumam, tam mainoties, un Tab uz rindas, pie kuras nonāci ar bultiņām, paņem tieši šo rindu, nevis kaimiņu rindu.
 - **Piedāvājumi ignorē reģistru.** Ierakstot `sch`, tiek piedāvāts `Schemes`, uzrakstīts tā, kā ir pats nosaukums; piedāvājuma atņemšana atpakaļ atdod tavus burtus tā, kā tos ierakstīji. Kur pastāv gan `Test`, gan `test`, tiek piedāvāts tas, kas uzrakstīts tieši tā, kā tu rakstīji.
 - **Pēc Tab nospiešanas nākamais solis tiek piedāvāts uzreiz**, tāpat kā pēc ierakstīta burta.
+- **Nosaukumi, kas sākas ar to, ko ierakstīji, sarakstā ir pirmie**, iezīmēti ar līniju gar malu — zilu, kur tie sakrīt vairāk nekā ierakstītais, zaļu tajā zarā, kurā dodas piedāvājums, kur tie atšķiras — pirms tiem nosaukumiem, kas ierakstīto tikai satur. Katram no tiem ir pasvītrots solis, ko <kbd>Tab</kbd> spertu pretī tam, nevis tikai tas, kas tiek piedāvāts.
 - **Saraksts seko kursoram**, vai izvēles sākumam: tas uzskaita mapi, kurā šis punkts atrodas, filtrētu pēc burtiem tā priekšā. Nosaukuma sākumā tā ir visa mape.
 - **Norādot uz rindu, tā tiek parādīta kā piedāvājums** — tas, ko ierakstīji, paliek tavs, un pārējā nosaukuma daļa ir iezīmēta — un rādītāja aizvešana no saraksta atgriež piedāvājumu atpakaļ.
 - **→ paņem vienu piedāvājuma burtu**, nevis visu; <kbd>End</kbd> joprojām paņem to visu.
+- **Atpakaļatkāpe pirms paplašinājuma, kas palicis viens, ceļ vienu mapes līmeni augstāk**, tāpat kā tukšā laukā; vientuļais paplašinājums pazūd.
 - **F2 atvērtā laukā to pārvērš pārdēvēšanā turpat, kur tas atrodas**, saglabājot tekstu, kursoru un iezīmējumu, un **Fokusēt ceļa joslu** tāpat to no pārdēvēšanas atgriež atpakaļ.
 - **Jebkas cits, kas nospiests vai noklikšķināts starp nospiešanām, sāk F2 un Fokusēt ceļa joslu ciklu no jauna.**
 - **Mapes sarakstā ir treknrakstā**, tāpēc mapes pašas piezīmei vairs nav jābūt pelēkai, lai izceltos: tā ir violeta, tāpat kā jebkura cita piezīme.

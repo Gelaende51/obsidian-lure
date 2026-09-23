@@ -12,18 +12,20 @@ Každé vydanie pluginu Lure, od najnovšieho. Čo pribudlo od posledného vydan
 
 ### Pridané
 
-- **Obsadený názov sa opýta, namiesto toho, aby odmietol.** Presun alebo premenovanie na názov, ktorý už existuje, otvorí dialóg zobrazujúci oba súbory podľa ich celej cesty. Môžeš premenovať ten, čo je v ceste, a pokračovať, vymeniť si s ním miesta (naprieč priečinkami: každý si ponechá svoj názov a prevezme priečinok toho druhého), alebo si s ním vymeniť názvy (v rámci jedného priečinka). Zrušenie nič nepresunie. Každé tlačidlo hovorí, čo urobí, keď naň ukážeš. Výber obsadeného názvu zo zoznamu sa opýta to isté, a rovnako aj pustenie súboru na priečinok, ktorý už daný názov obsahuje. Názov v poli na premenovanie v dialógu je červený, kým je obsadený.
+- **Obsadený názov sa opýta, namiesto toho, aby odmietol.** Presun alebo premenovanie na názov, ktorý už existuje, otvorí dialóg s dvoma cestami, ktoré môžeš upraviť: kam pôjde tvoj súbor a kam pôjde súbor, čo je v ceste, červený, kým je stále obsadený. Každá cesta je zobrazená rovnako, ako ju kreslí lišta cesty, s časťami, ktoré sa líšia, zafarbenými a skrátenými ako poslednými. Obidve polia majú zoznam; ten druhý ponúka obvyklé spôsoby, ako sa vyhnúť konfliktu — vymeniť miesta (ide do pôvodného priečinka tvojho súboru), vymeniť názvy (ostane a prevezme pôvodný názov tvojho súboru), vymeniť oboje (prevezme pôvodnú cestu tvojho súboru), `-1`, `-bak` a `-old` popri jeho vlastnom názve, a oba názvy, ktoré súbory mali. Spôsob, ktorého cesta je obsadená, je sivý. Výber položky iba vyplní pole; Použiť presunie oba, aj s odkazmi, a Zrušiť nič nepresunie. Výber obsadeného názvu zo zoznamu sa opýta to isté, a rovnako aj pustenie súboru na priečinok, ktorý už daný názov obsahuje.
 - **`:graph` vnútri priečinka otvorí graf tohto priečinka** — graf filtrovaný na `path:"that/folder"`, tak, ako by to urobilo jeho vlastné vyhľadávacie pole. V koreni trezora je to stále celý graf, ako predtým.
 - **Priečinok, ktorý už daný názov obsahuje, je v zozname počas presunu červený**, a rovnako aj súbor s takým názvom, takže konflikt sa ukáže ešte pred výberom.
 
 ### Zmenené
 
-- **Ponuka je vždy to, čo by napísal Tab.** Tam, kde sa názvy prestanú zhodovať, pole ponúka krok smerom k prvému z nich — predtým tam nič neponúkalo a Tab aj tak niečo napísal.
+- **Ponuka je vždy to, čo by napísal Tab.** Tam, kde sa názvy prestanú zhodovať, pole ponúka krok smerom k prvému z nich, a rozhoduje o tom riadok, na ktorý by Tab smeroval; písanie cez názov ponechá jeho príponu stáť a ponúkne sa pred ňou; priečinok, do ktorého sa práve vstúpilo, ponúka svoj prvý krok. Predtým existovali stavy, keď sa nič neponúkalo a Tab aj tak niečo napísal. Podčiarknutie v zozname sleduje ponuku, ako sa mení, a Tab na riadku, ku ktorému si sa dostal šípkami, vezme ten riadok, nie ten vedľa neho.
 - **Ponuky ignorujú veľkosť písmen.** Napísanie `sch` ponúkne `Schemes`, napísané tak, ako znie názov; vzatie ponuky späť vráti tvoje písmená tak, ako si ich napísal. Tam, kde existuje aj `Test`, aj `test`, sa ponúkne ten, ktorý je napísaný presne tak, ako si písal.
 - **Po stlačení Tab sa hneď ponúkne ďalší krok**, tak ako po napísanom písmene.
+- **Názvy, ktoré začínajú tým, čo si napísal, sú v zozname prvé**, označené čiarou na okraji — modrou tam, kde zdieľajú viac, než si napísal, zelenou na vetve, ktorou sa uberá ponuka tam, kde sa rozchádzajú — pred názvami, ktoré to len obsahujú. Každý z nich podčiarkuje krok, ktorý by k nemu urobil <kbd>Tab</kbd>, nielen ten, ktorý je ponúknutý.
 - **Zoznam sleduje kurzor**, alebo začiatok výberu: uvádza priečinok, v ktorom sa ten bod nachádza, filtrovaný podľa písmen pred ním. Na začiatku názvu je to celý priečinok.
 - **Ukázanie na riadok ho zobrazí ako ponuku** — čo si napísal, zostáva tvoje a zvyšok názvu je označený — a presunutie ukazovateľa mimo zoznamu ponuku vráti späť.
 - **→ vezme jedno písmeno ponuky** namiesto celej; <kbd>End</kbd> ju stále vezme celú.
+- **Backspace pred osamotenou príponou vystúpi o priečinok vyššie**, tak ako to robí v prázdnom poli; osamotená prípona zmizne.
 - **F2 v otvorenom poli ho zmení na premenovanie tam, kde stojí**, pričom zachová text, kurzor aj výber, a **Zamerať lištu cesty** z neho premenovanie tým istým spôsobom zase odoberie.
 - **Čokoľvek iné stlačené alebo kliknuté medzi stlačeniami spustí cyklus F2 a Zamerať lištu cesty odznova.**
 - **Priečinky sú v zozname tučné**, takže vlastná poznámka priečinka už nemusí byť sivá, aby sa odlíšila: je fialová ako každá iná poznámka.

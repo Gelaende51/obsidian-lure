@@ -13,18 +13,20 @@ Varje utgåva av Lure, nyast först. Det som har landat sedan den senaste utgåv
 
 ### Tillagt
 
-- **Ett upptaget namn frågar i stället för att vägra.** Att flytta eller byta namn till ett namn som redan finns öppnar en dialog som visar båda filerna med sin fulla sökväg. Du kan byta namn på den som är i vägen och fortsätta, byta plats med den (mellan mappar: var och en behåller sitt namn och tar den andras mapp), eller byta namn med den (inom en mapp). Avbryt flyttar ingenting. Varje knapp säger vad den kommer att göra när du pekar på den. Att välja ett upptaget namn i listan frågar likadant, och det gör att släppa en fil på en mapp som redan har namnet också. Namnet i dialogens namnbytesfält är rött medan det är upptaget.
+- **Ett upptaget namn frågar i stället för att vägra.** Att flytta eller byta namn till ett namn som redan finns öppnar en dialog med två redigerbara sökvägar: dit din fil går, och dit filen i vägen går, röd medan den fortfarande är upptagen. Varje sökväg ritas också på samma sätt som sökvägsfältet ritar en, med de delar som skiljer sig färgade och förkortade sist. Båda fälten har en lista; den andra innehåller de vanliga vägarna ut — byt plats (den går till din fils gamla mapp), byt namn (den stannar och tar din fils gamla namn), byt båda (den tar din fils gamla sökväg), `-1`, `-bak` och `-old` bredvid sitt eget namn, samt de två namn filerna hade. En väg ut vars sökväg är upptagen är gråtonad. Att välja en fyller bara fältet; Verkställ flyttar båda, länkar och allt, och Avbryt flyttar ingenting. Att välja ett upptaget namn i listan frågar likadant, och det gör att släppa en fil på en mapp som redan har namnet också.
 - **`:graph` inuti en mapp öppnar den mappens graf** — grafen filtrerad till `path:"that/folder"`, precis som dess egen sökruta skulle göra. Vid valvets rot är det hela grafen, som förut.
 - **En mapp som redan har namnet är röd** i listan medan du flyttar, och det är en fil med det namnet också, så konflikten syns innan du väljer.
 
 ### Ändrat
 
-- **Förslaget är alltid det Tabb skulle skriva.** Där namnen slutar stämma överens erbjuder fältet steget mot det första av dem — förut erbjöd det ingenting där, och Tabb skrev ändå något.
+- **Förslaget är alltid det Tabb skulle skriva.** Där namnen slutar stämma överens erbjuder fältet steget mot det första av dem, och raden Tabb skulle gå mot avgör vilket; att skriva över ett namn lämnar dess filändelse stående och den erbjuds framför den; en mapp du precis klivit in i erbjuder sitt första steg. Förut fanns tillstånd där ingenting erbjöds och Tabb ändå skrev något. Listans understrykning följer förslaget medan det ändras, och Tabb på en rad du pilat till tar den raden i stället för den bredvid.
 - **Förslag bryr sig inte om skiftläge.** Att skriva `sch` erbjuder `Schemes`, stavat som namnet självt; tar du tillbaka förslaget får du dina bokstäver tillbaka som du skrev dem. Där både `Test` och `test` finns erbjuds den som är stavad som du skrev.
 - **Efter en tryckning på Tabb erbjuds nästa steg direkt**, som efter en skriven bokstav.
+- **Namn som börjar med det du skrivit kommer först i listan**, markerade med en linje längs kanten — blå där de delar mer än det du skrev, grön på den gren förslaget tar där de skiljs — före namnen som bara innehåller det. Var och en av dem understryker steget <kbd>Tabb</kbd> skulle ta mot den, inte bara det som erbjuds.
 - **Listan följer markören**, eller början av en markering: den listar mappen som den punkten är i, filtrerad efter bokstäverna framför den. I början av ett namn är det hela mappen.
 - **Att peka på en rad visar den som förslaget** — det du skrivit förblir ditt och resten av namnet markeras — och att flytta pekaren bort från listan ger tillbaka förslaget.
 - **→ tar en bokstav av förslaget** i stället för hela det; <kbd>End</kbd> tar fortfarande hela.
+- **Backsteg före en filändelse som blivit ensam kliver upp en mapp**, precis som i ett tomt fält; den ensamma filändelsen försvinner.
 - **F2 i ett öppet fält gör om det till ett namnbyte där det står**, och behåller texten, markören och markeringen, och **Fokusera sökvägsfältet** tar bort namnbytet igen på samma sätt.
 - **Allt annat som trycks eller klickas mellan tryckningarna startar F2- och Fokusera sökvägsfältet-cyklarna om.**
 - **Mappar är feta i listan**, så en mapps egen anteckning behöver inte längre vara grå för att sticka ut: den är lila som vilken annan anteckning som helst.

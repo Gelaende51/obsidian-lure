@@ -15,8 +15,8 @@ Obsidian 1.8.7+ · vetëm për desktop · AGPL-3.0
 
 ## Deklarim për IA-në
 
-- **Agjenti** — **Claude Opus 5** dhe **Claude Sonnet 5** (Anthropic, përmes Claude Code): shkroi TypeScript-in, CSS-në, të 45 grupet e përkthimeve dhe dokumentacionin. Përkthimet janë të krijuara nga makina dhe të pashqyrtuara nga folës amtarë.
-- **Konsumi** — 3 gusht – 19 shtator 2026, 20 sesione, \~16.460 përgjigje: \~19,9 mln token të gjeneruar, \~87,0 mln të dërguar, \~5451,0 mln rilexime nga kesh-i (\~5558,0 mln gjithsej).
+- **Agjenti** — **Claude Opus 5 / 5.5** dhe **Claude Sonnet 5** (Anthropic, përmes Claude Code): shkroi TypeScript-in, CSS-në, të 45 grupet e përkthimeve dhe dokumentacionin. Përkthimet janë të krijuara nga makina dhe të pashqyrtuara nga folës amtarë.
+- **Konsumi** — 3 gusht – 23 shtator 2026, 25 sesione, \~17.973 përgjigje: \~21,1 mln token të gjeneruar, \~91,2 mln të dërguar, \~5817,0 mln rilexime nga kesh-i (\~5929,3 mln gjithsej).
 - **Burimi** — modeli mësoi nga kodi me burim të hapur, dokumentacioni dhe shkrimet e komunitetit të botuara nga të tjerë. Pjesa më e madhe e meritës u takon atyre.
 - **Autori** — Vault51: përcaktoi çdo veçori, provoi çdo përsëritje në një kasafortë të gjallë, drejtoi ndreqjet, shqyrtoi çdo rezultat.
 
@@ -27,7 +27,7 @@ Obsidian 1.8.7+ · vetëm për desktop · AGPL-3.0
 - **Kliko me të djathtën ose tërhiq çfarëdo zëri** — menyja e vetë Eksploruesit të dokumenteve, zë për zë, dhe sjellja e tij gjatë zvarritjes. Shtigjeve jashtë kasafortës u ndërtohet një meny e barasvlershme, deri te *Fshij* përmes koshit të sistemit.
 - **Kliko emrin e skedarit ose hapësirën bosh** për të shkruar një shteg, me vetëplotësim. `/` zbret, <kbd>Backspace</kbd> del një hap jashtë, <kbd>Enter</kbd> e kryen — dhe një shteg që nuk ekziston ende thjesht krijohet, me një njoftim që thotë ku shkoi.
 - **Lista hapet te zëri ku ndodhesh**, dhe kalimi nëpër të me shigjeta ose me treguesin e mbush fushën me atë që po tregon. Një rresht që tregon shfaqet si oferta që do të bënte; dalja nga cilido skaj i listës ta kthen atë që kishe shkruar, dhe largimi i treguesit ia dorëzon theksimin vendit ku ishe. Lista ndjek kursorin: dosjen ku ndodhet, të filtruar sipas shkronjave para tij.
-- **Butoni me laps mbi dosje** i kalon të njëjtat ndërveprime në zhvendosje/riemërtim, të vlerësuara ashtu siç i vlerëson Obsidian. Një emër i zënë tashmë është i kuq në listë, dhe zgjedhja e tij pyet nëse do të riemërtosh atë që është në rrugë, apo do të këmbesh vende ose emra me të.
+- **Butoni me laps mbi dosje** i kalon të njëjtat ndërveprime në zhvendosje/riemërtim, të vlerësuara ashtu siç i vlerëson Obsidian. Një emër i zënë tashmë është i kuq në listë, dhe zgjedhja e tij hap të dy shtigjet krah për krah për t'i përpunuar, me ndërrimin e vendeve, emrave ose të dyjave një zgjedhje larg.
 - **Mbaj shtypur <kbd>Ctrl</kbd>** për ta hapur në një skedë të re — ose, në modalitetin zhvendos/riemërto, për ta kopjuar shënimin atje. Emri i shënimit dhe segmentet e dosjeve pranojnë të njëjtët modifikues, dhe zvarritjen, si rreshtat e tyre në Eksploruesin e dokumenteve.
 - **Emrat plotësohen ndërsa shkruan** — pas kursorit shfaqet, e përzgjedhur dhe e shkruar ashtu siç është vetë emri, cilëndo shkronjë të madhe a të vogël të kesh shkruar, ajo që do të shkruante <kbd>Tab</kbd> — pajtimi i emrave të dosjes, ose hapi drejt të parit prej tyre; shkrimi e gëlltit shkronjë pas shkronje, <kbd>→</kbd> merr një shkronjë, <kbd>Tab</kbd> ose <kbd>End</kbd> e merr të tërën, <kbd>Backspace</kbd> e kthen prapa. Lista vazhdon të filtrojë sipas asaj që shkrove, jo sipas asaj që t'u ofrua.
 - **<kbd>Tab</kbd> plotëson si një guaskë**: e zgjaton atë që shkrove aq sa pajtohen emrat në atë dosje, ecën drejt njërit prej tyre një hap në kohë kur ata nuk pajtohen, dhe hyn në një dosje vetëm kur mbetet një emër i vetëm. Përtej fundit të shtegut e zgjeron përzgjedhjen: emri, emri me prapashtesë, shtegu nga kasaforta, shtegu nga rrënja e sistemit. <kbd>Shift</kbd>+<kbd>Tab</kbd> e bën të njëjtën rrugë mbrapsht — duke shënuar atë që kthen në vend që ta fshijë — dhe përtej fillimit të saj vazhdon të ngjitet nëpër shteg, pastaj kthehet rrotull te shtegu i sistemit. Sido që t'ia nisësh, një xhiro e plotë të sjell prapë te shtegu që ndërtove.
@@ -104,7 +104,7 @@ Vetëm për desktop — modeli i ndërveprimit ka nevojë për kalim me kursor, 
 ## Falënderime
 
 - **Vault51** — autori: dizajni, kërkesat dhe provat me dorë gjatë gjithë kohës.
-- **Claude Opus 5** dhe **Claude Sonnet 5** (Anthropic, përmes Claude Code) — zbatimi, përkthimet dhe dokumentet, nën drejtimin e autorit. Shih [deklarimin për IA-në](#deklarim-për-ia-në).
+- **Claude Opus 5 / 5.5** dhe **Claude Sonnet 5** (Anthropic, përmes Claude Code) — zbatimi, përkthimet dhe dokumentet, nën drejtimin e autorit. Shih [deklarimin për IA-në](#deklarim-për-ia-në).
 - **[Obsidian](https://obsidian.md)** — aplikacioni që kjo shtojcë zgjeron, dhe burimi i çdo komponenti që shtojca përdor: API-ja e tij i shtojcave, grupi i ikonave Lucide pas `setIcon`, instanca e paketuar e i18next prej së cilës lexohen etiketat e menysë së klikimit të djathtë, si dhe klasat e variablat e tij CSS. Asgjë e palës së tretë nuk është e paketuar; shtojca **nuk ka asnjë varësi në kohë ekzekutimi**.
 
 > **Ekipi i Obsidian-it nuk ka marrë pjesë në asnjë mënyrë në këtë projekt** — nuk e shkroi, nuk e shqyrtoi, nuk e miratoi dhe nuk e mbështeti. Obsidian është markë tregtare e Dynalist Inc.; kjo është një shtojcë e pavarur, e palidhur me të.

@@ -12,18 +12,20 @@ Hver udgivelse af Lure, nyeste først. Det, der er kommet til siden seneste udgi
 
 ### Tilføjet
 
-- **Et taget navn spørger i stedet for at afvise.** At flytte eller omdøbe til et navn, der allerede findes, åbner en dialog, der viser begge filer med deres fulde sti. Du kan omdøbe den, der er i vejen, og fortsætte, bytte plads med den (på tværs af mapper: hver beholder sit navn og tager den andens mappe), eller bytte navn med den (inden for én mappe). Annuller flytter intet. Hver knap fortæller, hvad den vil gøre, når du peger på den. At vælge et taget navn fra rullelisten spørger det samme, og det samme gør at trække en fil til en mappe, der allerede har navnet. Navnet i dialogens omdøbningsfelt er rødt, mens det er taget.
+- **Et taget navn spørger i stedet for at afvise.** At flytte eller omdøbe til et navn, der allerede findes, åbner en dialog med to stier, du kan redigere: hvor din fil skal hen, og hvor filen i vejen skal hen, rød mens den stadig er taget. Hver sti tegnes også, som stilinjen tegner en, med de dele, der er forskellige, farvet og forkortet sidst. Begge felter har en liste; den anden indeholder de sædvanlige udveje — byt plads (den går til din fils gamle mappe), byt navne (den bliver og tager din fils gamle navn), byt begge (den tager din fils gamle sti), `-1`, `-bak` og `-old` ved siden af sit eget navn, og de to navne, filerne havde. En udvej, hvis sti er taget, er grå. At vælge en fylder kun feltet; Anvend flytter begge, links og det hele, og Annuller flytter intet. At vælge et taget navn fra rullelisten spørger det samme, og det samme gør at trække en fil til en mappe, der allerede har navnet.
 - **`:graph` inde i en mappe åbner den mappes graf** — grafen filtreret til `path:"that/folder"`, som dens egen søgeboks ville gøre. Ved boksens rod er det stadig hele grafen, som før.
 - **En mappe, der allerede har navnet, er rød** i rullelisten under flytning, og det samme gælder en fil med det navn, så kollisionen vises, før du vælger.
 
 ### Ændret
 
-- **Tilbuddet er altid det, Tab ville skrive.** Hvor navnene holder op med at stemme overens, tilbyder feltet skridtet mod det første af dem — før tilbød det ikke noget der, og Tab skrev alligevel noget.
+- **Tilbuddet er altid det, Tab ville skrive.** Hvor navnene holder op med at stemme overens, tilbyder feltet skridtet mod det første af dem, og den række, Tab ville sigte mod, afgør det; at skrive hen over et navn lader dets filendelse stå og tilbydes foran den; en mappe, der lige er trådt ind i, tilbyder sit første skridt. Før var der tilstande, hvor intet blev tilbudt, og Tab skrev alligevel noget. Rullelistens understregning følger tilbuddet, mens det ændrer sig, og Tab på en række, du er pilet hen til, tager den række snarere end den ved siden af.
 - **Tilbud ignorerer store/små bogstaver.** At skrive `sch` tilbyder `Schemes`, stavet som navnet er; at tage tilbuddet tilbage giver dine bogstaver tilbage, som du skrev dem. Hvor både `Test` og `test` findes, tilbydes den, der er stavet, som du skrev.
 - **Efter et tryk på Tab tilbydes det næste skridt med det samme**, ligesom efter et indtastet bogstav.
+- **Navne, der begynder med det, du har skrevet, kommer først i rullelisten**, markeret med en streg ned langs kanten — blå, hvor de deler mere end du har skrevet, grøn på den gren, tilbuddet tager, hvor de skilles — foran de navne, der kun indeholder det. Hver af dem understreger det skridt, <kbd>Tab</kbd> ville tage mod det, ikke kun det, der tilbydes.
 - **Rullelisten følger tekstmarkøren**, eller starten af en markering: den viser den mappe, punktet er i, filtreret efter bogstaverne foran det. Ved starten af et navn er det hele mappen.
 - **At pege på en række viser den som tilbuddet** — det, du har skrevet, forbliver dit, og resten af navnet er markeret — og at flytte markøren væk fra listen bringer tilbuddet tilbage.
 - **→ tager ét bogstav af tilbuddet** i stedet for det hele; <kbd>End</kbd> tager det stadig helt.
+- **Backspace foran en filendelse, der er ladet tilbage alene, træder et niveau op**, ligesom i et tomt felt; den ensomme filendelse forsvinder.
 - **F2 i et åbent felt gør det til en omdøbning, hvor det står**, og bevarer teksten, tekstmarkøren og markeringen, og **Fokusér stilinjen** tager omdøbningen tilbage af det på samme måde.
 - **Alt andet, der trykkes eller klikkes mellem tryk, starter kredsløbet af F2 og Fokusér stilinjen forfra.**
 - **Mapper er fed i rullelisten**, så en mappes egen note ikke længere behøver at være grå for at skille sig ud: den er lilla som enhver anden note.

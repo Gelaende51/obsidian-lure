@@ -13,18 +13,20 @@ Hver utgivelse av Lure, den nyeste først. Det som har kommet inn siden forrige 
 
 ### Lagt til
 
-- **Et navn som allerede er i bruk, spør i stedet for å avvise.** Å flytte eller gi nytt navn til noe med et navn som allerede finnes, åpner en dialog som viser begge filene med hele stien sin. Du kan gi nytt navn til den som er i veien og fortsette, bytte plass med den (på tvers av mapper: hver beholder sitt navn og tar den andres mappe), eller bytte navn med den (innenfor én mappe). Avbryt flytter ingenting. Hver knapp forteller hva den vil gjøre når du peker på den. Å velge et navn som allerede er i bruk fra nedtrekkslisten spør det samme, og det samme gjør det å slippe en fil på en mappe som allerede har navnet. Navnet i dialogens felt for å gi nytt navn er rødt mens det er opptatt.
+- **Et navn som allerede er i bruk, spør i stedet for å avvise.** Å flytte eller gi nytt navn til noe med et navn som allerede finnes, åpner en dialog med to stier du kan redigere: hvor filen din skal, og hvor filen i veien skal, rød mens den fortsatt er tatt. Hver sti er også tegnet slik stilinjen tegner en, med delene som skiller seg farget og forkortet sist. Begge felt har en liste; den andre har de vanlige veiene ut — bytt plass (den går til filens gamle mappe), bytt navn (den blir og tar filens gamle navn), bytt begge (den tar filens gamle sti), `-1`, `-bak` og `-old` ved siden av sitt eget navn, og de to navnene filene hadde. En vei ut hvis sti er tatt, er grået. Å velge en fyller bare feltet; Bruk flytter begge, lenker og alt, og Avbryt flytter ingenting. Å velge et navn som allerede er i bruk fra nedtrekkslisten spør det samme, og det samme gjør det å slippe en fil på en mappe som allerede har navnet.
 - **`:graph` inne i en mappe åpner den mappens graf** — grafen filtrert til `path:"that/folder"`, slik dens egen søkeboks ville gjort. I hvelvroten er det fortsatt hele grafen, som før.
 - **En mappe som allerede har navnet, er rød** i nedtrekkslisten mens du flytter, og det samme gjelder en fil med det navnet, slik at kollisjonen vises før du velger.
 
 ### Endret
 
-- **Tilbudet er alltid det Tab ville skrevet.** Der navnene slutter å stemme overens, tilbyr feltet steget mot det første av dem — før tilbød det ingenting der, og Tab skrev noe likevel.
+- **Tilbudet er alltid det Tab ville skrevet.** Der navnene slutter å stemme overens, tilbyr feltet steget mot det første av dem, og raden Tab ville gått til, avgjør det; å skrive over et navn lar filendelsen stå og tilbys foran den; en mappe man nettopp steg inn i tilbyr sitt første steg. Før fantes tilstander der ingenting ble tilbudt, og Tab skrev noe likevel. Nedtrekkslistens understreking følger tilbudet mens det endres, og Tab på en rad du har pilet deg til, tar den raden, ikke den ved siden av.
 - **Tilbudet ignorerer store og små bokstaver.** Å skrive `sch` tilbyr `Schemes`, stavet slik navnet er; å ta tilbudet tilbake gir bokstavene dine tilbake slik du skrev dem. Der både `Test` og `test` finnes, tilbys den som er stavet slik du skrev.
 - **Etter et trykk på Tab tilbys neste steg med det samme**, som etter en skrevet bokstav.
+- **Navn som begynner med det du skrev, kommer først i nedtrekkslisten**, merket med en linje ned kanten — blå der de deler mer enn du skrev, grønn på grenen tilbudet tar der de skiller seg — foran navnene som bare inneholder det. Hvert av dem understreker steget <kbd>Tab</kbd> ville tatt mot det, ikke bare det som tilbys.
 - **Nedtrekkslisten følger markøren**, eller starten av en markering: den lister opp mappen punktet er i, filtrert etter bokstavene foran det. Ved starten av et navn er det hele mappen.
 - **Å peke på en rad viser den som tilbudet** — det du skrev, forblir ditt, og resten av navnet er merket — og å flytte pekeren av listen bringer tilbudet tilbake.
 - **→ tar én bokstav av tilbudet** i stedet for hele; <kbd>End</kbd> tar det fortsatt helt.
+- **Rettetast før en filendelse som står alene, går ett nivå opp**, som i et tomt felt; den alenestående filendelsen forsvinner.
 - **F2 i et åpent felt gjør det til en gi-nytt-navn der det står**, og beholder teksten, markøren og merkingen, og **Fokuser på stilinjen** tar navneendringen tilbake av det på samme måte.
 - **Alt annet som trykkes eller klikkes mellom trykkene, starter runden av F2 og Fokuser på stilinjen på nytt.**
 - **Mapper er fet i nedtrekkslisten**, så en mappes eget notat ikke lenger trenger å være grått for å skille seg ut: det er lilla som ethvert annet notat.

@@ -15,8 +15,8 @@ Obsidian 1.8.7+ · alleen desktop · AGPL-3.0
 
 ## AI-verantwoording
 
-- **Agent** — **Claude Opus 5** en **Claude Sonnet 5** (Anthropic, via Claude Code): schreef de TypeScript, de CSS, alle 45 vertaalsets en de documentatie. De vertalingen zijn machinaal gemaakt en niet nagekeken door moedertaalsprekers.
-- **Verbruik** — 3 augustus – 19 september 2026, 20 sessies, \~16.460 antwoorden: \~19,9 mln. tokens gegenereerd, \~87,0 mln. verzonden, \~5451,0 mln. herlezingen uit de cache (\~5558,0 mln. in totaal).
+- **Agent** — **Claude Opus 5 / 5.5** en **Claude Sonnet 5** (Anthropic, via Claude Code): schreef de TypeScript, de CSS, alle 45 vertaalsets en de documentatie. De vertalingen zijn machinaal gemaakt en niet nagekeken door moedertaalsprekers.
+- **Verbruik** — 3 augustus – 23 september 2026, 25 sessies, \~17.973 antwoorden: \~21,1 mln. tokens gegenereerd, \~91,2 mln. verzonden, \~5817,0 mln. herlezingen uit de cache (\~5929,3 mln. in totaal).
 - **Herkomst** — het model heeft geleerd van opensourcecode, documentatie en teksten van de gemeenschap die anderen hebben gepubliceerd. De meeste eer komt hun toe.
 - **Auteur** — Vault51: bepaalde elke functie, testte elke versie in een echte kluis, stuurde de correcties aan en las alle resultaten na.
 
@@ -27,7 +27,7 @@ Obsidian 1.8.7+ · alleen desktop · AGPL-3.0
 - **Rechtsklik of sleep elk item** — het contextmenu van de bestandsverkenner zelf, item voor item, en haar sleepgedrag. Voor paden buiten de kluis is een gelijkwaardig menu gebouwd, tot en met *Verwijderen* via de systeemprullenbak.
 - **Klik op de bestandsnaam of op lege ruimte** om een pad te typen, met automatisch aanvullen. `/` daalt af, <kbd>Backspace</kbd> gaat een niveau omhoog, <kbd>Enter</kbd> bevestigt — en een pad dat er nog niet is wordt eenvoudigweg aangemaakt, met een melding die zegt waar het terechtkwam.
 - **De lijst opent op het item waar je staat**, en er met de pijltjes of de muis doorheen gaan vult het veld met waar je op wijst. Een rij die je aanwijst, wordt getoond als het aanbod dat ze zou doen; voorbij een van beide uiteinden van de lijst krijg je terug wat je had getypt, en de muisaanwijzer eraf halen geeft de markering terug aan waar je was. De lijst volgt de cursor: de map waarin die zich bevindt, gefilterd op de letters ervoor.
-- **De potlood-mapknop** zet dezelfde interacties om naar verplaatsen/hernoemen, met dezelfde controles die Obsidian zelf doet. Een naam die al in gebruik is, staat rood in de lijst, en die kiezen vraagt of je degene die in de weg staat wilt hernoemen, of van plaats of van naam met hem wilt wisselen.
+- **De potlood-mapknop** zet dezelfde interacties om naar verplaatsen/hernoemen, met dezelfde controles die Obsidian zelf doet. Een naam die al in gebruik is, staat rood in de lijst, en die kiezen opent beide paden naast elkaar om te bewerken, met plaatsen, namen of beide omwisselen een keuze verderop.
 - **Houd <kbd>Ctrl</kbd> ingedrukt** om in een nieuw tabblad te openen — of, in verplaats-/hernoemmodus, om de notitie daarheen te kopiëren. De naam van de notitie en de mapsegmenten nemen dezelfde toetsencombinaties aan, en slepen, net als hun rijen in de bestandsverkenner.
 - **Namen vullen zichzelf aan terwijl je typt** — wat <kbd>Tab</kbd> zou schrijven verschijnt achter de cursor, geselecteerd en gespeld zoals de naam is, ongeacht de hoofdletters die je typte — de overeenkomst van de namen in de map, of de stap richting de eerste van hen; typen slikt het letter voor letter in, <kbd>→</kbd> neemt één letter, <kbd>Tab</kbd> of <kbd>End</kbd> neemt het heel, <kbd>Backspace</kbd> geeft het terug. De lijst blijft filteren op wat je typte, niet op wat werd aangeboden.
 - **<kbd>Tab</kbd> vult aan zoals een shell**: het verlengt wat je typte tot zover de namen in die map overeenkomen, loopt stap voor stap naar een van hen toe waar ze dat niet doen, en stapt een map pas in zodra er één naam over is. Voorbij het einde van het pad verbreedt het in plaats daarvan de selectie: naam, naam met extensie, pad vanaf de kluis, pad vanaf de systeemwortel. <kbd>Shift</kbd>+<kbd>Tab</kbd> loopt dezelfde weg terug — en markeert wat het teruggeeft in plaats van het te wissen — en gaat voorbij het begin verder het pad op, om daarna rond te lopen naar het systeempad. Welke kant je ook op gaat, een ronde komt uit bij het pad dat je hebt gebouwd.
@@ -104,7 +104,7 @@ Alleen desktop — het interactiemodel heeft hover, precieze kliks en een toetse
 ## Met dank aan
 
 - **Vault51** — auteur: ontwerp, eisen en handmatig testen van begin tot eind.
-- **Claude Opus 5** en **Claude Sonnet 5** (Anthropic, via Claude Code) — implementatie, vertalingen en documentatie, onder leiding van de auteur. Zie [AI-verantwoording](#ai-verantwoording).
+- **Claude Opus 5 / 5.5** en **Claude Sonnet 5** (Anthropic, via Claude Code) — implementatie, vertalingen en documentatie, onder leiding van de auteur. Zie [AI-verantwoording](#ai-verantwoording).
 - **[Obsidian](https://obsidian.md)** — de applicatie die dit uitbreidt, en de bron van elk onderdeel dat de plugin gebruikt: de plugin-API, de Lucide-pictogrammenset achter `setIcon`, de meegeleverde i18next-instantie waaruit de labels van het contextmenu worden gelezen, en de eigen CSS-klassen en -variabelen. Er wordt niets van derden meegeleverd; de plugin heeft **geen runtime-afhankelijkheden**.
 
 > **Het Obsidian-team heeft op geen enkele manier aan dit project meegewerkt** — het heeft dit niet geschreven, nagekeken, onderschreven of ondersteund. Obsidian is een handelsmerk van Dynalist Inc.; dit is een onafhankelijke, niet-gelieerde plugin.

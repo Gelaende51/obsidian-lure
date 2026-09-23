@@ -13,26 +13,33 @@ Lure'ning har bir relizi, eng yangisi birinchi. Oxirgi relizdan beri qo‘shilga
 
 ### Qo‘shildi
 
-- **Band nom rad etish o‘rniga so‘raydi.** Allaqachon mavjud nomga ko‘chirish yoki qayta nomlash ikkala faylni to‘liq yo‘li bilan ko‘rsatadigan dialog oynasini ochadi. Yo‘lda turganini qayta nomlab davom etishingiz, u bilan o‘rin almashtirishingiz (papkalar bo‘ylab: har biri o‘z nomini saqlaydi va boshqasining papkasiga o‘tadi), yoki u bilan nom almashtirishingiz mumkin (bitta papka ichida). Bekor qilish hech narsani ko‘chirmaydi. Har bir tugma unga ishora qilganingizda nima qilishini aytadi.
+- **Band nom rad etish o‘rniga so‘raydi.** Allaqachon mavjud nomga ko‘chirish yoki qayta nomlash ikkita yo‘lni tahrirlash imkonini beruvchi dialog oynasini ochadi: faylingiz qayerga borishi va yo‘lda turgan fayl qayerga borishi, u hali band bo‘lsa qizil. Har bir yo‘l ham yo‘l panelidagi kabi chiziladi: farq qiladigan qismlari rangli va oxirida qisqartiriladi. Ikkala maydonda ham ro‘yxat bor; ikkinchisi odatiy chiqish yo‘llarini o‘z ichiga oladi — o‘rin almashtirish (u faylingizning eski papkasiga boradi), nom almashtirish (o‘z joyida qoladi va faylingizning eski nomini oladi), ikkalasini almashtirish (u faylingizning eski yo‘lini oladi), `-1`, `-bak` va `-old` o‘z nomi yonida, hamda fayllarning ega bo‘lgan ikki nomi. Yo‘li band bo‘lgan chiqish yo‘li kulrang qilinadi. Birini tanlash faqat maydonni to‘ldiradi; Qo‘llash ikkalasini ham, havolalari bilan birga, ko‘chiradi, Bekor qilish esa hech narsani ko‘chirmaydi. Ro‘yxatdan band nomni tanlash ham xuddi shuni so‘raydi, xuddi shunday faylni nomi allaqachon mavjud papka ustiga tortib tashlash ham.
 - **Papka ichidagi `:graph` o‘sha papkaning grafini ochadi** — o‘z qidiruv maydonida `path:"that/folder"` bilan filtrlangan graf, xuddi u yerga yozilgandek. Ombor ildizida esa u yana butun graf bo‘ladi.
 - **Bu nomni allaqachon o‘zida saqlagan papka** ko‘chirish paytida ro‘yxatda qizil bo‘ladi, xuddi shu nomdagi fayl ham shunday, shuning uchun to‘qnashuv tanlashdan oldin ko‘rinadi.
 
 ### O‘zgartirildi
 
-- **Taklif doim Tab yozadigan narsa bo‘ladi.** Nomlar mos kelishni to‘xtatgan joyda, maydon ulardan birinchisi tomon qadamni taklif qiladi — avval u yerda hech narsa taklif qilinmasdi, lekin Tab baribir biror narsa yozardi.
+- **Taklif doim Tab yozadigan narsa bo‘ladi.** Nomlar mos kelishni to‘xtatgan joyda, maydon ulardan birinchisi tomon qadamni taklif qiladi, va Tab qaysi qatorga borishini shu belgilaydi; nom ustidan yozish uning kengaytmasini o‘z joyida qoldiradi va uni oldida taklif qiladi; endigina kirilgan papka esa o‘zining birinchi qadamini taklif qiladi. Avval, ba'zi holatlarda hech narsa taklif qilinmasdi, lekin Tab baribir biror narsa yozardi. Ro‘yxatdagi tagi chizig‘i taklif o‘zgarganda unga ergashadi, va strelkalar bilan borilgan qatordagi Tab yonidagi qator o‘rniga o‘sha qatorni oladi.
+- **Takliflar katta-kichik harfga e'tibor bermaydi.** `sch` yozish nom yozilgan tarzda `Schemes`ni taklif qiladi; taklifni qaytarib olish esa harflaringizni siz yozgan holicha qaytaradi. `Test` va `test` ikkalasi ham mavjud bo‘lgan joyda, siz yozgan tarzda yozilgani taklif qilinadi.
+- **Tab bosilgandan keyin keyingi qadam darhol taklif qilinadi**, xuddi harf yozilgandagi kabi.
+- **Siz yozgan narsa bilan boshlanadigan nomlar ro‘yxatda birinchi turadi**, chetida chiziq bilan belgilangan — faqat siz yozgandan ko‘proq mos kelsa ko‘k, taklif ajraladigan tarmoqda esa yashil — faqat uni o‘z ichiga oladiganlardan oldin. Ularning har biri faqat taklif qilingan qadamnigina emas, <kbd>Tab</kbd> unga qarab boradigan qadamni ham tagiga chizadi.
 - **Ro‘yxat kursorga ergashadi**, yoki belgilashning boshiga: u shu nuqta joylashgan papkani, undan oldingi harflar bilan filtrlab ro‘yxatga oladi. Nom boshida bu butun papka bo‘ladi.
 - **Qatorga ishora qilish uni taklif sifatida ko‘rsatadi** — yozganingiz o‘zingizniki bo‘lib qoladi, nomning qolgan qismi esa belgilanadi — sichqonchani ro‘yxatdan olib ketish esa taklifni qaytaradi.
 - **→ taklifning bitta harfini oladi**, hammasini emas; <kbd>End</kbd> hamon uni butunlay oladi.
+- **Kengaytma yolg‘iz qolganda undan oldin bosilgan Backspace papkani bir pog‘ona chiqaradi**, xuddi bo‘sh maydonda bo‘lgani kabi; yolg‘iz kengaytma yo‘qoladi.
 - **Ochiq maydonda F2 uni o‘sha joyda qayta nomlashga aylantiradi**, matnni, kursorni va belgilashni saqlab qolgan holda, **Yo‘l paneliga fokus** esa xuddi shu tarzda uni qayta nomlashdan qaytaradi.
 - **F2 va Yo‘l paneliga fokus bosishlari orasida bosilgan yoki bosilgan boshqa har qanday narsa siklni qaytadan boshlaydi.**
 - **Papkalar ro‘yxatda qalin harflar bilan yoziladi**, shuning uchun papkaning o‘z qaydi ajralib turish uchun kulrang bo‘lishi shart emas: u boshqa har qanday qayd kabi binafsha rangda.
 - **Ro‘yxat yo‘l panelidan kengroq emas.** Sig‘maydigan nom yo‘l paneli nomni qisqartiradigan usulda qisqartiriladi va sichqonchani ustiga olib borganda to‘liq ko‘rsatiladi.
-- **PageUp va PageDown Obsidian'ning o‘z ro‘yxatlari ko‘rsatadigan qatorlar bo‘ylab harakatlanadi**, maydondan ham, va belgilashni ko‘rinishda saqlaydi.
+- **PageUp va PageDown ro‘yxatni ko‘rsatayotgan narsasi bo‘yicha aylantiradi**, maydondan ham, va belgilangan qator ekrandagi joyini saqlaydi. <kbd>Home</kbd> va <kbd>End</kbd> birinchi va oxirgi qatorni ko‘rinishga olib keladi.
 - **Ro‘yxat 1 000 tagacha yozuvni ko‘rsatadi**, qolganini sanashdan oldin, 100 o‘rniga.
+- **Papkalar birinchi navbatda eng uzuni bo‘lib joy bo‘shatadi.** Joy yetmasa, eng uzun papka nomi keyingi eng uzuniga teng bo‘lguncha qisqaradi, so‘ng ikkalasi birga, va hokazo, har biri o‘z eng past chegarasida to‘xtaydi. Avval, har bir papka o‘z uzunligiga mutanosib holda bir vaqtda qisqarardi.
 - **Qisqartirilgan nomlar sakrash o‘rniga sirg‘aladi.** Joy bo‘shatayotgan nom piksel darajasida kesiladi va o‘z `…`si ostida so‘nadi, shuning uchun panel o‘lchami o‘zgartirilayotganda qatorda undan keyingi hech narsa qadamlab harakatlanmaydi.
 
 ### Tuzatildi
 
+- O‘ng tomondagi panelda ro‘yxat birinchi harf yozilmaguncha chap panel ostida ochilar edi.
+- Kursorni ro‘yxatdan olib ketish taklifni qaytarardi, ammo uning rangini qaytarmasdi.
 - Qisqartirilgan nom bo‘lingan joydagi bo‘shliq — `development guidelines` — tushirib qoldirilar edi, natijada ikki so‘z birlashib qolardi.
 
 ## 1.4.0 — 2026-09-19[^1.4.0]

@@ -14,8 +14,8 @@ Obsidian 1.8.7+ · komputer meja sahaja · AGPL-3.0
 
 ## Pendedahan AI
 
-- **Ejen** — **Claude Opus 5** dan **Claude Sonnet 5** (Anthropic, melalui Claude Code): menulis TypeScript, CSS, kesemua 45 set terjemahan dan dokumentasi. Terjemahan dihasilkan mesin dan belum disemak penutur jati.
-- **Penggunaan** — 3 Ogos – 19 September 2026, 20 sesi, \~16,460 balasan: \~19.9 juta token dijana, \~87.0 juta dihantar, \~5451.0 juta bacaan semula daripada cache (\~5558.0 juta kesemuanya).
+- **Ejen** — **Claude Opus 5 / 5.5** dan **Claude Sonnet 5** (Anthropic, melalui Claude Code): menulis TypeScript, CSS, kesemua 45 set terjemahan dan dokumentasi. Terjemahan dihasilkan mesin dan belum disemak penutur jati.
+- **Penggunaan** — 3 Ogos – 23 September 2026, 25 sesi, \~17,973 balasan: \~21.1 juta token dijana, \~91.2 juta dihantar, \~5817.0 juta bacaan semula daripada cache (\~5929.3 juta kesemuanya).
 - **Hulu** — model belajar daripada kod sumber terbuka, dokumentasi dan tulisan komuniti yang diterbitkan orang lain. Sebahagian besar kreditnya milik mereka.
 - **Penulis** — Vault51: menetapkan setiap ciri, mencuba setiap versi dalam bilik kebal sebenar, mengarahkan pembetulan, menyemak semua hasilnya.
 
@@ -103,7 +103,7 @@ Komputer meja sahaja — model interaksinya memerlukan tuding tetikus, klik yang
 ## Penghargaan
 
 - **Vault51** — penulis: reka bentuk, keperluan, dan ujian manual dari mula hingga akhir.
-- **Claude Opus 5** dan **Claude Sonnet 5** (Anthropic, melalui Claude Code) — pelaksanaan, terjemahan dan dokumentasi, di bawah arahan penulis. Lihat [pendedahan AI](#pendedahan-ai).
+- **Claude Opus 5 / 5.5** dan **Claude Sonnet 5** (Anthropic, melalui Claude Code) — pelaksanaan, terjemahan dan dokumentasi, di bawah arahan penulis. Lihat [pendedahan AI](#pendedahan-ai).
 - **[Obsidian](https://obsidian.md)** — aplikasi yang diperluas oleh ini, dan sumber setiap komponen yang digunakan plugin: API plugin-nya, set ikon Lucide di sebalik `setIcon`, tika i18next terbina tempat label menu konteks dibaca, serta kelas dan pemboleh ubah CSS-nya sendiri. Tiada apa-apa daripada pihak ketiga dibungkus sekali; plugin ini **tiada kebergantungan masa jalan**.
 
 > **Pasukan Obsidian tidak menyertai projek ini dalam apa cara sekalipun** — mereka tidak menulis, menyemak, mengesahkan mahupun menyokongnya. Obsidian ialah tanda dagangan Dynalist Inc.; ini plugin bebas yang tiada kaitan.

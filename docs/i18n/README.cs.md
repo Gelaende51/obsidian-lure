@@ -14,8 +14,8 @@ Obsidian 1.8.7+ · pouze počítač · AGPL-3.0
 
 ## Prohlášení o AI
 
-- **Agent** — **Claude Opus 5** a **Claude Sonnet 5** (Anthropic, přes Claude Code): napsal TypeScript, CSS, všech 45 sad překladů a dokumentaci. Překlady vznikly strojově a rodilí mluvčí je nekontrolovali.
-- **Spotřeba** — 3. srpna – 19. září 2026, 20 sezení, \~16 460 odpovědí: \~19,9 mil. vygenerovaných tokenů, \~87,0 mil. odeslaných, \~5451,0 mil. opětovných čtení z mezipaměti (\~5558,0 mil. celkem).
+- **Agent** — **Claude Opus 5 / 5.5** a **Claude Sonnet 5** (Anthropic, přes Claude Code): napsal TypeScript, CSS, všech 45 sad překladů a dokumentaci. Překlady vznikly strojově a rodilí mluvčí je nekontrolovali.
+- **Spotřeba** — 3. srpna – 23. září 2026, 25 sezení, \~17 973 odpovědí: \~21,1 mil. vygenerovaných tokenů, \~91,2 mil. odeslaných, \~5817,0 mil. opětovných čtení z mezipaměti (\~5929,3 mil. celkem).
 - **Zdroj** — model se učil z otevřeného kódu, dokumentace a textů komunity, které zveřejnili jiní. Většina zásluh patří tam.
 - **Autor** — Vault51: určil každou funkci, každou verzi vyzkoušel ve skutečném trezoru, řídil opravy, prošel všechny výstupy.
 
@@ -26,7 +26,7 @@ Obsidian 1.8.7+ · pouze počítač · AGPL-3.0
 - **Pravé kliknutí nebo přetažení kterékoli položky** — kontextová nabídka samotného Průzkumníka souborů, položka po položce, i jeho chování při přetahování. Cesty mimo trezor dostanou rovnocennou nabídku vytvořenou přímo pro ně, až po *Smazat* přes systémový koš.
 - **Kliknutí na název souboru nebo na prázdné místo** umožní napsat cestu, s doplňováním. `/` sestupuje, <kbd>Backspace</kbd> vystoupí o úroveň výš, <kbd>Enter</kbd> potvrdí — a cesta, která ještě neexistuje, se jednoduše vytvoří, s oznámením, kam se uložila.
 - **Seznam se otevře na položce, ve které stojíte**, a procházení šipkami nebo ukazatelem vyplní pole tím, na co ukazujete. Řádek, na který ukazujete, se zobrazí jako nabídka, kterou by udělal; když z kteréhokoli konce seznamu vyjedete, vrátí se to, co jste napsali, a když z něj ukazatel odtáhnete, zvýraznění se vrátí tam, kde jste byli. Seznam sleduje kurzor: složku, ve které leží, filtrovanou podle písmen před ním.
-- **Tlačítko tužky na složce** přepne stejné interakce na přesun/přejmenování, se stejnými kontrolami, jaké dělá sám Obsidian. Už obsazený název je v seznamu červený a jeho výběr se zeptá, zda přejmenovat to, co je v cestě, nebo si s ním prohodit místa či jména.
+- **Tlačítko tužky na složce** přepne stejné interakce na přesun/přejmenování, se stejnými kontrolami, jaké dělá sám Obsidian. Už obsazený název je v seznamu červený a jeho výběr otevře obě cesty vedle sebe k úpravě, s prohozením míst, názvů nebo obojího na jeden výběr.
 - **Podržte <kbd>Ctrl</kbd>** pro otevření na nové kartě — nebo, v režimu přesunu/přejmenování, pro zkopírování poznámky tam místo jejího přesunutí. Název poznámky i segmenty složek přijímají stejné modifikátory a dají se přetáhnout, stejně jako jejich řádky v Průzkumníku souborů.
 - **Názvy se doplňují při psaní** — to, co by napsal <kbd>Tab</kbd>, se objeví za kurzorem, označené a napsané tak, jak je napsaný samotný název, ať jste psali jakkoli — shoda názvů ve složce, nebo krok k prvnímu z nich; psaní ji polyká písmeno po písmenu, <kbd>→</kbd> vezme jedno písmeno, <kbd>Tab</kbd> nebo <kbd>End</kbd> ji vezme celou, <kbd>Backspace</kbd> ji vrátí. Seznam dál filtruje podle toho, co jste napsali, ne podle toho, co bylo nabídnuto.
 - **<kbd>Tab</kbd> doplňuje jako shell**: prodlouží napsané tak daleko, jak se názvy v dané složce shodují, když se neshodují, postupuje k jednomu z nich krok za krokem, a do složky vstoupí, teprve když zbude jediný název. Za koncem cesty místo toho rozšíří výběr: název, název s příponou, cesta od trezoru, cesta od kořene systému. <kbd>Shift</kbd>+<kbd>Tab</kbd> jde toutéž cestou zpět — co vrací, označí, místo aby to smazal — a za jejím začátkem pokračuje nahoru po cestě a pak přeskočí na systémovou cestu. Oběma směry vás celé kolo přivede zpět k cestě, kterou jste sestavili.
@@ -103,7 +103,7 @@ Pouze počítač — model ovládání potřebuje najetí myší, přesná klikn
 ## Poděkování
 
 - **Vault51** — autor: návrh, požadavky a ruční testování po celou dobu.
-- **Claude Opus 5** a **Claude Sonnet 5** (Anthropic, přes Claude Code) — implementace, překlady a dokumentace, pod vedením autora. Viz [prohlášení o AI](#prohlášení-o-ai).
+- **Claude Opus 5 / 5.5** a **Claude Sonnet 5** (Anthropic, přes Claude Code) — implementace, překlady a dokumentace, pod vedením autora. Viz [prohlášení o AI](#prohlášení-o-ai).
 - **[Obsidian](https://obsidian.md)** — aplikace, kterou plugin rozšiřuje, a zdroj každé součásti, kterou používá: její API pro pluginy, sada ikon Lucide za `setIcon`, přibalená instance i18next, ze které se čtou popisky kontextové nabídky, a její vlastní CSS třídy a proměnné. Nic cizího se nepřibaluje; plugin **nemá žádné běhové závislosti**.
 
 > **Tým Obsidianu se na tomto projektu nijak nepodílel** — nenapsal ho, neprošel, nepodpořil ani nepodporuje. Obsidian je ochranná známka společnosti Dynalist Inc.; tohle je nezávislý, nespřízněný plugin.

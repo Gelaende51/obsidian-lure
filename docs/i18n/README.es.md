@@ -15,8 +15,8 @@ Obsidian 1.8.7+ · solo escritorio · AGPL-3.0
 
 ## Divulgación sobre IA
 
-- **Agente** — **Claude Opus 5** y **Claude Sonnet 5** (Anthropic, mediante Claude Code): escribió el TypeScript, el CSS, los 45 juegos de traducciones y la documentación. Las traducciones son automáticas y no han sido revisadas por hablantes nativos.
-- **Consumo** — del 3 de agosto al 19 de septiembre de 2026, 20 sesiones, \~16.460 respuestas: \~19,9 M de tokens generados, \~87,0 M enviados, \~5451,0 M de relecturas en caché (\~5558,0 M en total).
+- **Agente** — **Claude Opus 5 / 5.5** y **Claude Sonnet 5** (Anthropic, mediante Claude Code): escribió el TypeScript, el CSS, los 45 juegos de traducciones y la documentación. Las traducciones son automáticas y no han sido revisadas por hablantes nativos.
+- **Consumo** — del 3 de agosto al 23 de septiembre de 2026, 25 sesiones, \~17.973 respuestas: \~21,1 M de tokens generados, \~91,2 M enviados, \~5817,0 M de relecturas en caché (\~5929,3 M en total).
 - **Origen** — el modelo aprendió de código abierto, documentación y escritos de la comunidad publicados por otras personas. La mayor parte del mérito es suya.
 - **Autor** — Vault51: definió cada función, probó cada iteración en una bóveda real, dirigió las correcciones y revisó todos los resultados.
 
@@ -27,7 +27,7 @@ Obsidian 1.8.7+ · solo escritorio · AGPL-3.0
 - **Clic derecho o arrastrar cualquier entrada** — el menú contextual del propio Explorador de archivos, entrada por entrada, y su mismo comportamiento de arrastre. Las rutas fuera de la bóveda reciben un menú equivalente hecho para ellas, hasta *Eliminar*, que pasa por la papelera del sistema.
 - **Clic en el nombre del archivo o en el espacio vacío** para escribir una ruta, con autocompletado. `/` desciende, <kbd>Retroceso</kbd> sube un nivel, <kbd>Intro</kbd> confirma — y una ruta que todavía no existe simplemente se crea, con un aviso que dice dónde ha ido a parar.
 - **El desplegable se abre en la entrada donde estás**, y recorrerlo con las flechas o el puntero rellena el campo con aquello a lo que apuntas. Una fila que señalas se muestra como la propuesta que haría; salir por cualquiera de los extremos de la lista te devuelve lo que habías escrito, y retirar el puntero de ella devuelve el resaltado a donde estabas. La lista sigue al cursor: la carpeta en la que está, filtrada por las letras que lo preceden.
-- **El botón de lápiz sobre carpeta** cambia las mismas interacciones a mover/renombrar, con las mismas validaciones que aplica Obsidian. Un nombre ya utilizado aparece en rojo en la lista, y elegirlo pregunta si renombrar lo que está en el camino, o intercambiar el lugar o los nombres con él.
+- **El botón de lápiz sobre carpeta** cambia las mismas interacciones a mover/renombrar, con las mismas validaciones que aplica Obsidian. Un nombre ya utilizado aparece en rojo en la lista, y elegirlo abre ambas rutas una junto a otra para editarlas, con intercambiar lugares, nombres o ambos a un clic.
 - **Mantén <kbd>Ctrl</kbd>** para abrir en una pestaña nueva — o, en modo mover/renombrar, para copiar la nota allí en lugar de moverla. El nombre de la nota y los segmentos de carpeta admiten los mismos modificadores, y el mismo arrastre, que sus filas en el Explorador de archivos.
 - **Los nombres se completan mientras escribes** — lo que <kbd>Tab</kbd> escribiría aparece tras el cursor, seleccionado y escrito tal como está el nombre, sea cual sea la mayúscula o minúscula que tecleaste — la coincidencia de los nombres de la carpeta, o el paso hacia el primero de ellos; al escribir te la vas comiendo letra a letra, <kbd>→</kbd> toma una letra, <kbd>Tab</kbd> o <kbd>Fin</kbd> la toma entera, <kbd>Retroceso</kbd> la devuelve. El desplegable sigue filtrando por lo que escribiste, no por lo que se te ofreció.
 - **<kbd>Tab</kbd> completa como un intérprete de comandos**: extiende lo escrito hasta donde coinciden los nombres de esa carpeta, avanza paso a paso hacia uno de ellos cuando no coinciden, y solo entra en una carpeta cuando queda un único nombre. Pasado el final de la ruta amplía la selección: nombre, nombre con extensión, ruta desde la bóveda, ruta desde la raíz del sistema. <kbd>Mayús</kbd>+<kbd>Tab</kbd> recorre el mismo camino al revés — marcando lo que devuelve en vez de borrarlo — y, pasado el principio, sigue subiendo por la ruta y luego da la vuelta hasta la ruta del sistema. En un sentido o en otro, una vuelta completa te trae de regreso a la ruta que construiste.
@@ -104,7 +104,7 @@ Solo escritorio — el modelo de interacción necesita pasar el puntero por enci
 ## Créditos
 
 - **Vault51** — autor: diseño, requisitos y pruebas manuales de principio a fin.
-- **Claude Opus 5** y **Claude Sonnet 5** (Anthropic, mediante Claude Code) — implementación, traducciones y documentación, bajo la dirección del autor. Véase [divulgación sobre IA](#divulgación-sobre-ia).
+- **Claude Opus 5 / 5.5** y **Claude Sonnet 5** (Anthropic, mediante Claude Code) — implementación, traducciones y documentación, bajo la dirección del autor. Véase [divulgación sobre IA](#divulgación-sobre-ia).
 - **[Obsidian](https://obsidian.md)** — la aplicación que esto extiende, y el origen de cada componente que usa el plugin: su API de plugins, el juego de iconos Lucide que hay detrás de `setIcon`, la instancia de i18next incluida de la que se leen las etiquetas del menú contextual, y sus propias clases y variables CSS. No se incluye nada de terceros; el plugin **no tiene dependencias en tiempo de ejecución**.
 
 > **El equipo de Obsidian no ha participado en este proyecto de ninguna manera** — no lo ha escrito, revisado, respaldado ni apoyado. Obsidian es una marca registrada de Dynalist Inc.; este es un plugin independiente y sin vinculación alguna.

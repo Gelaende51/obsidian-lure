@@ -15,8 +15,8 @@ Obsidian 1.8.7+ · només escriptori · AGPL-3.0
 
 ## Divulgació sobre la IA
 
-- **Agent** — **Claude Opus 5** i **Claude Sonnet 5** (Anthropic, mitjançant Claude Code): va escriure el TypeScript, el CSS, els 45 jocs de traduccions i la documentació. Les traduccions són automàtiques i no han estat revisades per parlants nadius.
-- **Consum** — del 3 d'agost al 19 de setembre de 2026, 20 sessions, \~16.460 respostes: \~19,9 M de tokens generats, \~87,0 M enviats, \~5451,0 M de relectures de la memòria cau (\~5558,0 M en total).
+- **Agent** — **Claude Opus 5 / 5.5** i **Claude Sonnet 5** (Anthropic, mitjançant Claude Code): va escriure el TypeScript, el CSS, els 45 jocs de traduccions i la documentació. Les traduccions són automàtiques i no han estat revisades per parlants nadius.
+- **Consum** — del 3 d'agost al 23 de setembre de 2026, 25 sessions, \~17.973 respostes: \~21,1 M de tokens generats, \~91,2 M enviats, \~5817,0 M de relectures de la memòria cau (\~5929,3 M en total).
 - **Origen** — el model ho ha après de codi obert, documentació i escrits de la comunitat publicats per altres. La major part del mèrit és seva.
 - **Autor** — Vault51: va definir cada funció, va provar cada iteració en un cofre real, va dirigir les correccions i va revisar tots els resultats.
 
@@ -27,7 +27,7 @@ Obsidian 1.8.7+ · només escriptori · AGPL-3.0
 - **Clic dret o arrossega qualsevol entrada** — el mateix menú contextual de l'Explorador de fitxers, entrada per entrada, i el seu comportament d'arrossegament. Els camins de fora del cofre tenen un menú equivalent fet a mida, fins a *Suprimeix* passant per la paperera del sistema.
 - **Clica el nom del fitxer o l'espai buit** per escriure un camí, amb compleció automàtica. `/` baixa, <kbd>Retrocés</kbd> puja un nivell, <kbd>Retorn</kbd> confirma — i un camí que encara no existeix simplement es crea, amb un avís que diu on ha anat a parar.
 - **El desplegable s'obre a l'entrada on ets**, i recórrer-lo amb les fletxes o el punter omple el camp amb allò que assenyales. Una fila que assenyales es mostra com l'oferta que faria; sortir per qualsevol dels extrems de la llista et torna el que havies escrit, i treure'n el punter retorna el ressaltat on eres. El desplegable segueix el cursor: la carpeta en què és, filtrada per les lletres que el precedeixen.
-- **El botó de llapis sobre carpeta** passa les mateixes interaccions a moure/reanomenar, amb les mateixes comprovacions que fa Obsidian. Un nom ja agafat es mostra en vermell a la llista, i triar-lo pregunta si vols canviar el nom del que hi ha al mig, o intercanviar-hi els llocs o els noms.
+- **El botó de llapis sobre carpeta** passa les mateixes interaccions a moure/reanomenar, amb les mateixes comprovacions que fa Obsidian. Un nom ja agafat es mostra en vermell a la llista, i triar-lo obre els dos camins un al costat de l'altre per editar-los, amb intercanviar llocs, noms o tots dos a un clic.
 - **Mantén <kbd>Ctrl</kbd>** per obrir en una pestanya nova — o, en mode moure/reanomenar, per copiar-hi la nota en lloc de moure-la. El nom de la nota i els segments de carpeta accepten els mateixos modificadors, i l'arrossegament, igual que les seves files a l'Explorador de fitxers.
 - **Els noms es completen mentre escrius** — el que escriuria <kbd>Tab</kbd> apareix després del cursor, seleccionat i escrit tal com és el nom, sigui quina sigui la caixa que hagis escrit — la coincidència dels noms de la carpeta, o el pas cap al primer d'ells; en escriure te'l vas menjant lletra a lletra, <kbd>→</kbd> en pren una lletra, <kbd>Tab</kbd> o <kbd>Fi</kbd> el pren sencer, <kbd>Retrocés</kbd> el retira. El desplegable continua filtrant pel que has escrit, no pel que se t'ha ofert.
 - **<kbd>Tab</kbd> completa com un intèrpret d'ordres**: allarga el que has escrit fins on coincideixen els noms d'aquella carpeta, avança cap a un d'ells pas a pas quan no coincideixen, i entra en una carpeta només quan en queda un sol nom. Passat el final del camí, eixampla la selecció: nom, nom amb extensió, camí des del cofre, camí des de l'arrel del sistema. <kbd>Maj</kbd>+<kbd>Tab</kbd> refà el mateix camí a l'inrevés — marcant el que retorna en lloc d'esborrar-ho — i, passat el principi, continua pujant pel camí i després torna a començar pel camí del sistema. En tots dos sentits, una volta sencera et retorna al camí que havies construït.
@@ -104,7 +104,7 @@ Només escriptori — el model d'interacció necessita passar-hi el ratolí per 
 ## Crèdits
 
 - **Vault51** — autor: disseny, requisits i proves manuals de cap a cap.
-- **Claude Opus 5** i **Claude Sonnet 5** (Anthropic, mitjançant Claude Code) — implementació, traduccions i documentació, sota la direcció de l'autor. Vegeu [divulgació sobre la IA](#divulgació-sobre-la-ia).
+- **Claude Opus 5 / 5.5** i **Claude Sonnet 5** (Anthropic, mitjançant Claude Code) — implementació, traduccions i documentació, sota la direcció de l'autor. Vegeu [divulgació sobre la IA](#divulgació-sobre-la-ia).
 - **[Obsidian](https://obsidian.md)** — l'aplicació que això amplia, i l'origen de cada component que fa servir el connector: la seva API de connectors, el joc d'icones Lucide que hi ha darrere de `setIcon`, la instància d'i18next inclosa d'on es llegeixen les etiquetes del menú contextual, i les seves pròpies classes i variables CSS. No s'hi inclou res de tercers; el connector **no té cap dependència en temps d'execució**.
 
 > **L'equip d'Obsidian no ha participat en aquest projecte de cap manera** — no l'ha escrit, revisat, avalat ni donat suport. Obsidian és una marca registrada de Dynalist Inc.; aquest és un connector independent i sense cap vinculació.

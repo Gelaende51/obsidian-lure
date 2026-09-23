@@ -15,8 +15,8 @@ Obsidian 1.8.7+ · chỉ trên máy tính · AGPL-3.0
 
 ## Công bố về AI
 
-- **Tác nhân** — **Claude Opus 5** và **Claude Sonnet 5** (Anthropic, qua Claude Code): viết mã TypeScript, CSS, toàn bộ 45 bộ bản dịch và tài liệu. Các bản dịch do máy tạo ra và chưa được người bản ngữ hiệu đính.
-- **Mức dùng** — 3/8 – 19/9/2026, 20 phiên, \~16.460 phản hồi: \~19,9 triệu token được sinh ra, \~87,0 triệu token được gửi đi, \~5.451,0 triệu token đọc lại từ bộ nhớ đệm (tổng cộng \~5.558,0 triệu).
+- **Tác nhân** — **Claude Opus 5 / 5.5** và **Claude Sonnet 5** (Anthropic, qua Claude Code): viết mã TypeScript, CSS, toàn bộ 45 bộ bản dịch và tài liệu. Các bản dịch do máy tạo ra và chưa được người bản ngữ hiệu đính.
+- **Mức dùng** — 3/8 – 23/9/2026, 25 phiên, \~17.973 phản hồi: \~21,1 triệu token được sinh ra, \~91,2 triệu token được gửi đi, \~5.817,0 triệu token đọc lại từ bộ nhớ đệm (tổng cộng \~5.929,3 triệu).
 - **Nguồn cội** — mô hình đã học từ mã nguồn mở, tài liệu và bài viết cộng đồng do người khác công bố. Phần lớn công lao thuộc về họ.
 - **Tác giả** — Vault51: đặt ra mọi tính năng, thử nghiệm từng phiên bản trong một kho thật, chỉ đạo các bản sửa, duyệt toàn bộ đầu ra.
 
@@ -104,7 +104,7 @@ Chỉ trên máy tính — mô hình tương tác cần rê chuột, bấm chín
 ## Ghi công
 
 - **Vault51** — tác giả: thiết kế, yêu cầu và thử nghiệm thủ công xuyên suốt.
-- **Claude Opus 5** và **Claude Sonnet 5** (Anthropic, qua Claude Code) — hiện thực, bản dịch và tài liệu, dưới sự chỉ đạo của tác giả. Xem [công bố về AI](#công-bố-về-ai).
+- **Claude Opus 5 / 5.5** và **Claude Sonnet 5** (Anthropic, qua Claude Code) — hiện thực, bản dịch và tài liệu, dưới sự chỉ đạo của tác giả. Xem [công bố về AI](#công-bố-về-ai).
 - **[Obsidian](https://obsidian.md)** — ứng dụng mà plugin này mở rộng, và là nguồn của mọi thành phần plugin sử dụng: API plugin của nó, bộ biểu tượng Lucide đứng sau `setIcon`, phiên bản i18next đi kèm mà các nhãn menu ngữ cảnh được đọc từ đó, cùng các lớp và biến CSS của chính nó. Không có thành phần bên thứ ba nào được đóng gói kèm; plugin **không có phụ thuộc lúc chạy**.
 
 > **Đội ngũ Obsidian không tham gia dự án này dưới bất kỳ hình thức nào** — họ không viết, duyệt, tán thành hay hỗ trợ nó. Obsidian là nhãn hiệu của Dynalist Inc.; đây là một plugin độc lập, không có liên kết với họ.

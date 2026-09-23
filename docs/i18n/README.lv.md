@@ -14,8 +14,8 @@ Obsidian 1.8.7+ · tikai datoram · AGPL-3.0
 
 ## Paziņojums par MI
 
-- **Aģents** — **Claude Opus 5** un **Claude Sonnet 5** (Anthropic, caur Claude Code): uzrakstīja TypeScript kodu, CSS, visus 45 tulkojumu komplektus un dokumentāciju. Tulkojumi ir mašīnas veidoti, un dzimtās valodas runātāji tos nav pārlasījuši.
-- **Patēriņš** — 2026. gada 3. augusts – 19. septembris, 20 sesijas, \~16 460 atbildes: \~19,9 milj. ģenerētu marķieru, \~87,0 milj. nosūtītu, \~5451,0 milj. atkārtotu nolasījumu no kešatmiņas (\~5558,0 milj. kopā).
+- **Aģents** — **Claude Opus 5 / 5.5** un **Claude Sonnet 5** (Anthropic, caur Claude Code): uzrakstīja TypeScript kodu, CSS, visus 45 tulkojumu komplektus un dokumentāciju. Tulkojumi ir mašīnas veidoti, un dzimtās valodas runātāji tos nav pārlasījuši.
+- **Patēriņš** — 2026. gada 3. augusts – 23. septembris, 25 sesijas, \~17 973 atbildes: \~21,1 milj. ģenerētu marķieru, \~91,2 milj. nosūtītu, \~5817,0 milj. atkārtotu nolasījumu no kešatmiņas (\~5929,3 milj. kopā).
 - **Pirmavots** — modelis mācījās no atvērtā pirmkoda, dokumentācijas un kopienas rakstiem, ko publicējuši citi. Lielākā daļa nopelnu pieder tiem.
 - **Autors** — Vault51: noteica katru funkciju, izmēģināja katru versiju īstā glabātavā, vadīja labojumus, pārskatīja visus rezultātus.
 
@@ -26,7 +26,7 @@ Obsidian 1.8.7+ · tikai datoram · AGPL-3.0
 - **Uzklikšķini ar labo pogu vai velc jebkuru ierakstu** — paša Failu pārlūka konteksta izvēlne, ieraksts pēc ieraksta, un tā vilkšanas uzvedība. Ceļiem ārpus glabātavas ir tiem veidota līdzvērtīga izvēlne, līdz pat *Dzēst* caur sistēmas atkritni.
 - **Uzklikšķini uz faila nosaukuma vai tukšas vietas**, lai ierakstītu ceļu, ar papildināšanu. `/` nolaižas dziļāk, <kbd>Atpakaļatkāpe</kbd> paceļas vienu līmeni augstāk, <kbd>Enter</kbd> apstiprina — un ceļš, kāda vēl nav, vienkārši tiek izveidots, ar paziņojumu, kur tas nonāca.
 - **Saraksts atveras pie ieraksta, kurā atrodies**, un pārvietošanās pa to ar bultiņām vai rādītāju aizpilda lauku ar to, uz ko norādi. Rinda, uz kuru norādi, tiek parādīta kā piedāvājums, ko tā dotu; aiz jebkura saraksta gala tas atdod to, ko biji ierakstījis, bet, aizvedot rādītāju prom, iezīmējums atgriežas tur, kur biji. Saraksts seko kursoram: mapei, kurā tas atrodas, filtrētai pēc burtiem tā priekšā.
-- **Zīmuļa poga uz mapes** pārslēdz tās pašas darbības uz pārvietošanas/pārdēvēšanas režīmu, ar tādām pašām pārbaudēm, kādas veic pats Obsidian. Nosaukums, kas jau ir aizņemts, sarakstā ir sarkans, un tā izvēle jautā, vai pārdēvēt to, kas ir ceļā, vai apmainīties ar to vietām vai nosaukumiem.
+- **Zīmuļa poga uz mapes** pārslēdz tās pašas darbības uz pārvietošanas/pārdēvēšanas režīmu, ar tādām pašām pārbaudēm, kādas veic pats Obsidian. Nosaukums, kas jau ir aizņemts, sarakstā ir sarkans, un tā izvēle atver abus ceļus vienu blakus otram rediģēšanai, kur vietu, nosaukumu vai abu samaiņa ir vien izvēle.
 - **Turi <kbd>Ctrl</kbd>**, lai atvērtu jaunā cilnē — vai, pārvietošanas/pārdēvēšanas režīmā, lai piezīmi tur nokopētu. Piezīmes nosaukums un mapju posmi pieņem tos pašus modifikatorus un vilkšanu, gluži kā to rindas Failu pārlūkā.
 - **Nosaukumi papildinās rakstīšanas gaitā** — aiz kursora parādās, iezīmēts un uzrakstīts tā, kā ir pats nosaukums, lai kādā reģistrā tu rakstītu, tas, ko uzrakstītu <kbd>Tab</kbd> — mapes nosaukumu sakritība vai solis pretī pirmajam no tiem; rakstīšana to aprij burtu pa burtam, <kbd>→</kbd> paņem vienu burtu, <kbd>Tab</kbd> vai <kbd>End</kbd> paņem to visu, <kbd>Atpakaļatkāpe</kbd> to atdod atpakaļ. Saraksts turpina filtrēt pēc tā, ko ierakstīji, nevis pēc tā, kas tika piedāvāts.
 - **<kbd>Tab</kbd> papildina kā čaula**: tas pagarina ierakstīto tik tālu, cik šīs mapes nosaukumi sakrīt, iet pretī vienam no tiem soli pa solim, kad tie nesakrīt, un ieiet mapē tikai tad, kad palicis viens nosaukums. Aiz ceļa gala tas tā vietā paplašina iezīmējumu: nosaukums, nosaukums ar paplašinājumu, ceļš no glabātavas, ceļš no sistēmas saknes. <kbd>Shift</kbd>+<kbd>Tab</kbd> iet to pašu ceļu atpakaļ — atdodamo iezīmējot, nevis dzēšot — un aiz ceļa sākuma turpina kāpt pa ceļu augšup, tad apgriežas atpakaļ uz sistēmas ceļu. Lai uz kuru pusi ietu, aplis atgriežas pie ceļa, ko biji uzbūvējis.
@@ -103,7 +103,7 @@ Tikai datoram — mijiedarbības veidam vajadzīga peles novietošana virsū, pr
 ## Pateicības
 
 - **Vault51** — autors: iecere, prasības un manuāla testēšana visu laiku.
-- **Claude Opus 5** un **Claude Sonnet 5** (Anthropic, caur Claude Code) — realizācija, tulkojumi un dokumentācija, autora vadībā. Sk. [paziņojums par MI](#paziņojums-par-mi).
+- **Claude Opus 5 / 5.5** un **Claude Sonnet 5** (Anthropic, caur Claude Code) — realizācija, tulkojumi un dokumentācija, autora vadībā. Sk. [paziņojums par MI](#paziņojums-par-mi).
 - **[Obsidian](https://obsidian.md)** — lietotne, ko šis paplašina, un katras spraudņa izmantotās sastāvdaļas avots: tās spraudņu API, Lucide ikonu komplekts aiz `setIcon`, komplektā iekļautais i18next eksemplārs, no kura tiek nolasīti konteksta izvēlnes uzraksti, kā arī tās pašas CSS klases un mainīgie. Nekas no trešajām pusēm netiek iekļauts; spraudnim **nav izpildlaika atkarību**.
 
 > **Obsidian komanda šajā projektā nav piedalījusies nekādā veidā** — viņi to nav rakstījuši, pārlasījuši, atbalstījuši vai apstiprinājuši. Obsidian ir Dynalist Inc. preču zīme; šis ir neatkarīgs, nesaistīts spraudnis.

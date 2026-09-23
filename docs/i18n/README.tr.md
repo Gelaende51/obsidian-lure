@@ -15,8 +15,8 @@ Obsidian 1.8.7+ · yalnızca masaüstü · AGPL-3.0
 
 ## Yapay zekâ bildirimi
 
-- **Aracı** — **Claude Opus 5** ve **Claude Sonnet 5** (Anthropic, Claude Code üzerinden): TypeScript kodunu, CSS'i, 45 çeviri setinin tamamını ve belgeleri yazdı. Çeviriler makine tarafından üretilmiştir ve ana dili konuşanlarca gözden geçirilmemiştir.
-- **Tüketim** — 3 Ağustos – 19 Eylül 2026, 20 oturum, \~16.460 yanıt: \~19,9 M token üretildi, \~87,0 M gönderildi, \~5.451,0 M önbellekten yeniden okundu (toplam \~5.558,0 M).
+- **Aracı** — **Claude Opus 5 / 5.5** ve **Claude Sonnet 5** (Anthropic, Claude Code üzerinden): TypeScript kodunu, CSS'i, 45 çeviri setinin tamamını ve belgeleri yazdı. Çeviriler makine tarafından üretilmiştir ve ana dili konuşanlarca gözden geçirilmemiştir.
+- **Tüketim** — 3 Ağustos – 23 Eylül 2026, 25 oturum, \~17.973 yanıt: \~21,1 M token üretildi, \~91,2 M gönderildi, \~5.817,0 M önbellekten yeniden okundu (toplam \~5.929,3 M).
 - **Kaynak** — model, başkalarının yayımladığı açık kaynak kodlardan, belgelerden ve topluluk yazılarından öğrendi. Emeğin büyük kısmı onlara aittir.
 - **Yazar** — Vault51: her özelliği tanımladı, her yinelemeyi gerçek bir kasada test etti, düzeltmeleri yönlendirdi, tüm çıktıyı gözden geçirdi.
 
@@ -27,7 +27,7 @@ Obsidian 1.8.7+ · yalnızca masaüstü · AGPL-3.0
 - **Herhangi bir girdiye sağ tıklayın veya onu sürükleyin** — Dosya Gezgini'nin kendi bağlam menüsü, girdisi girdisine, ve kendi sürükleme davranışı. Kasa dışındaki yollar için eşdeğer bir menü kurulur; sistem çöp kutusunu kullanan *Sil* komutuna kadar.
 - **Dosya adına veya boş alana tıklayın** ve otomatik tamamlamayla bir yol yazın. `/` içeri iner, <kbd>Backspace</kbd> bir düzey dışarı çıkar, <kbd>Enter</kbd> onaylar — henüz var olmayan bir yol ise doğrudan oluşturulur ve nereye gittiğini söyleyen bir bildirim çıkar.
 - **Açılır liste, bulunduğunuz girdinin üzerinde açılır**; ok tuşlarıyla ya da fareyle üzerinde gezinmek, işaret ettiğiniz şeyi alana doldurur. İşaret ettiğiniz bir satır, yapacağı öneri olarak gösterilir; listenin iki ucundan birinin dışına çıkmak yazdığınızı geri getirir; işaretçiyi listeden çekmek ise vurguyu bulunduğunuz yere geri verir. Liste imleci izler: noktanın içinde bulunduğu klasörü, önündeki harflerle süzülmüş şekilde listeler.
-- **Klasör üzerindeki kalem düğmesi**, aynı etkileşimleri taşıma/yeniden adlandırmaya çevirir; doğrulama Obsidian'ın yaptığı gibi yapılır. Zaten alınmış bir ad listede kırmızı görünür ve onu seçmek, yolda olanı yeniden mi adlandıracağınızı yoksa onunla yer mi yoksa ad mı değiştireceğinizi sorar.
+- **Klasör üzerindeki kalem düğmesi**, aynı etkileşimleri taşıma/yeniden adlandırmaya çevirir; doğrulama Obsidian'ın yaptığı gibi yapılır. Zaten alınmış bir ad listede kırmızı görünür ve onu seçmek, düzenlemek üzere her iki yolu da yan yana açar; yerleri, adları ya da ikisini birden değiştirmek bir seçim uzağınızdadır.
 - **<kbd>Ctrl</kbd> tuşunu basılı tutun**; yeni sekmede açılır — taşıma/yeniden adlandırma modundaysa not oraya taşınmak yerine kopyalanır. Notun adı ve klasör parçaları, Dosya Gezgini'ndeki satırları gibi aynı değiştirici tuşları kabul eder ve sürüklenebilir.
 - **Adlar yazarken kendini tamamlar** — <kbd>Tab</kbd>'ın yazacağı şey imlecin ardında, seçili olarak ve adın yazıldığı şekliyle, hangi büyük/küçük harfle yazdığınıza bakılmaksızın belirir — klasördeki adların ortak olduğu kısım, ya da ilkine doğru olan adım; yazdıkça harf harf yutulur, <kbd>→</kbd> bir harfini alır, <kbd>Tab</kbd> veya <kbd>End</kbd> tamamını alır, <kbd>Backspace</kbd> geri çeker. Açılır liste, önerilene göre değil, yazdığınıza göre süzmeye devam eder.
 - **<kbd>Tab</kbd> bir kabuk gibi tamamlar**: yazdığınızı o klasördeki adların uyuştuğu yere kadar uzatır, uyuşmadıklarında birine doğru adım adım ilerler ve bir klasöre ancak tek bir ad kaldığında girer. Yolun sonunu geçince bunun yerine seçimi genişletir: ad, uzantılı ad, kasadan itibaren yol, sistem kökünden itibaren yol. <kbd>Shift</kbd>+<kbd>Tab</kbd> aynı yolu geriye doğru yürür — geri verdiğini silmek yerine işaretler — ve başlangıcı geçince yol boyunca yukarı çıkmaya devam eder, ardından sistem yoluna döner. Hangi yönde gidilirse gidilsin, tam bir tur sizi oluşturduğunuz yola geri getirir.
@@ -104,7 +104,7 @@ Yalnızca masaüstü — etkileşim modeli fareyle üzerine gelmeyi, hassas tık
 ## Teşekkürler
 
 - **Vault51** — yazar: tasarım, gereksinimler ve baştan sona elle test.
-- **Claude Opus 5** ve **Claude Sonnet 5** (Anthropic, Claude Code üzerinden) — yazarın yönlendirmesiyle uygulama, çeviriler ve belgeler. Bkz. [Yapay zekâ bildirimi](#yapay-zekâ-bildirimi).
+- **Claude Opus 5 / 5.5** ve **Claude Sonnet 5** (Anthropic, Claude Code üzerinden) — yazarın yönlendirmesiyle uygulama, çeviriler ve belgeler. Bkz. [Yapay zekâ bildirimi](#yapay-zekâ-bildirimi).
 - **[Obsidian](https://obsidian.md)** — bu eklentinin genişlettiği uygulama ve eklentinin kullandığı her bileşenin kaynağı: eklenti API'si, `setIcon` arkasındaki Lucide simge seti, bağlam menüsü etiketlerinin okunduğu paketle gelen i18next örneği ve kendi CSS sınıfları ile değişkenleri. Üçüncü taraflara ait hiçbir şey paketlenmez; eklentinin **hiçbir çalışma zamanı bağımlılığı yoktur**.
 
 > **Obsidian ekibi bu projeye hiçbir şekilde katılmamıştır** — projeyi yazmamış, gözden geçirmemiş, onaylamamış veya desteklememiştir. Obsidian, Dynalist Inc.'in ticari markasıdır; bu, bağımsız ve hiçbir kuruluşla bağlantısı olmayan bir eklentidir.

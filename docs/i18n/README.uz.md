@@ -15,8 +15,8 @@ Obsidian 1.8.7+ · faqat kompyuter versiyasi · AGPL-3.0
 
 ## Sun'iy intellekt haqida ma'lumot
 
-- **Agent** — **Claude Opus 5** va **Claude Sonnet 5** (Anthropic, Claude Code orqali): TypeScript kodini, CSS'ni, barcha 45 ta tarjima to‘plamini va hujjatlarni yozgan. Tarjimalar mashina tomonidan yaratilgan va ona tili egalari tomonidan tekshirilmagan.
-- **Sarf** — 2026-yil 3-avgust – 19-sentabr, 20 ta seans, \~16 460 ta javob: \~19,9 mln token yaratilgan, \~87,0 mln yuborilgan, \~5 451,0 mln keshdan qayta o‘qilgan (jami \~5 558,0 mln).
+- **Agent** — **Claude Opus 5 / 5.5** va **Claude Sonnet 5** (Anthropic, Claude Code orqali): TypeScript kodini, CSS'ni, barcha 45 ta tarjima to‘plamini va hujjatlarni yozgan. Tarjimalar mashina tomonidan yaratilgan va ona tili egalari tomonidan tekshirilmagan.
+- **Sarf** — 2026-yil 3-avgust – 23-sentabr, 25 ta seans, \~17 973 ta javob: \~21,1 mln token yaratilgan, \~91,2 mln yuborilgan, \~5 817,0 mln keshdan qayta o‘qilgan (jami \~5 929,3 mln).
 - **Manba** — model boshqalar e'lon qilgan ochiq manbali kod, hujjatlar va hamjamiyat yozuvlaridan o‘rgangan. Asosiy xizmat o‘shalarga tegishli.
 - **Muallif** — Vault51: har bir imkoniyatni belgilagan, har bir iteratsiyani jonli omborda sinab ko‘rgan, tuzatishlarni yo‘naltirgan va barcha natijani ko‘rib chiqqan.
 
@@ -27,9 +27,9 @@ Obsidian 1.8.7+ · faqat kompyuter versiyasi · AGPL-3.0
 - **Istalgan yozuvni o‘ng tugma bilan bosing yoki torting** — Fayl menejerining o‘z kontekst menyusi, bandma-band, va uning sudrash xatti-harakati. Ombordan tashqaridagi yo‘llar uchun ham xuddi shunday menyu quriladi — tizim savati orqali ishlaydigan *O‘chirish* bandigacha.
 - **Fayl nomiga yoki bo‘sh joyga bosing** va avtomatik to‘ldirish yordamida yo‘l yozing. `/` ichkariga kiradi, <kbd>Backspace</kbd> bir pog‘ona chiqadi, <kbd>Enter</kbd> tasdiqlaydi — hali mavjud bo‘lmagan yo‘l esa shunchaki yaratiladi va u qayerga joylashgani haqida bildirishnoma chiqadi.
 - **Ro‘yxat siz turgan yozuv ustida ochiladi**, strelkalar yoki sichqoncha bilan u bo‘ylab yurganingizda maydon siz ko‘rsatayotgan narsa bilan to‘ladi. Ishora qilgan qatoringiz u beradigan taklif sifatida ko‘rsatiladi; ro‘yxatning istalgan chetidan chiqib ketsangiz, yozganingiz qaytadi; kursorni ro‘yxatdan olib ketsangiz, belgilash siz turgan joyga qaytadi. Ro‘yxat kursorga ergashadi: u joylashgan papkani, undan oldingi harflar bilan filtrlab.
-- **Papkadagi qalam tugmasi** xuddi shu amallarni ko‘chirish/nom o‘zgartirishga o‘tkazadi; tekshiruv Obsidian'dagidek bajariladi. Allaqachon band bo‘lgan nom ro‘yxatda qizil bo‘ladi, uni tanlash esa yo‘lda turganini qayta nomlashmi, u bilan o‘rin yoki nom almashtirishmi so‘raydi.
+- **Papkadagi qalam tugmasi** xuddi shu amallarni ko‘chirish/nom o‘zgartirishga o‘tkazadi; tekshiruv Obsidian'dagidek bajariladi. Allaqachon band bo‘lgan nom ro‘yxatda qizil bo‘ladi, uni tanlash esa ikkala yo‘lni ham yonma-yon tahrirlash uchun ochadi, o‘rin, nom yoki ikkalasini almashtirish bir tanlov narida.
 - **<kbd>Ctrl</kbd> ni bosib turing** — yangi tabda ochiladi, ko‘chirish/nom o‘zgartirish rejimida esa qayd u yerga ko‘chirilish o‘rniga nusxalanadi. Qayd nomi va papka bo‘laklari Fayl menejeridagi qatorlari kabi xuddi shu modifikator klavishlarni qabul qiladi va sudraladi.
-- **Nomlar yozayotganingizda o‘zini to‘ldiradi** — <kbd>Tab</kbd> yozadigan narsa kursordan keyin belgilangan holda paydo bo‘ladi — papkadagi nomlarning mosligi, yoki ulardan birinchisi tomon qadam; yozganingiz sari u harfma-harf yutiladi, <kbd>→</kbd> bitta harfni oladi, <kbd>Tab</kbd> yoki <kbd>End</kbd> uni butunlay qabul qiladi, <kbd>Backspace</kbd> esa qaytarib oladi. Ro‘yxat taklif qilingan narsaga emas, siz yozganingizga qarab saralashda davom etadi.
+- **Nomlar yozayotganingizda o‘zini to‘ldiradi** — <kbd>Tab</kbd> yozadigan narsa kursordan keyin belgilangan holda, nom yozilgan tarzda, siz yozgan katta-kichik harfdan qat'i nazar, paydo bo‘ladi — papkadagi nomlarning mosligi, yoki ulardan birinchisi tomon qadam; yozganingiz sari u harfma-harf yutiladi, <kbd>→</kbd> bitta harfni oladi, <kbd>Tab</kbd> yoki <kbd>End</kbd> uni butunlay qabul qiladi, <kbd>Backspace</kbd> esa qaytarib oladi. Ro‘yxat taklif qilingan narsaga emas, siz yozganingizga qarab saralashda davom etadi.
 - **<kbd>Tab</kbd> qobiq kabi to‘ldiradi**: u yozganingizni o‘sha papkadagi nomlar mos kelgan joygacha davom ettiradi, mos kelmasa ulardan biri tomon bir qadamdan yuradi va faqat bitta nom qolgandagina papkaga kiradi. Yo‘l oxiridan o‘tgach esa belgilashni kengaytiradi: nom, kengaytmali nom, ombordan boshlangan yo‘l, tizim ildizidan boshlangan yo‘l. <kbd>Shift</kbd>+<kbd>Tab</kbd> xuddi shu yo‘lni teskari yuradi — qaytarganini o‘chirmay, belgilab qo‘yadi — boshidan o‘tgach esa yo‘l bo‘ylab yuqoriga chiqishda davom etadi, so‘ng aylanib tizim yo‘liga keladi. Qaysi tomonga bo‘lmasin, to‘liq aylana siz tuzgan yo‘lga qaytaradi.
 - **Nusxa olish uchun o‘ng tugma** — nom uchun ikki marta, undan o‘ngdagi hamma narsa uchun uch marta, bo‘sh joyda esa butun yo‘l yoki tizim yo‘li uchun.
 - **Qaydni qatordagi papka ustiga torting** — u havolalari bilan birga o‘sha yerga ko‘chadi. Manzil allaqachon ekranda, shuning uchun fayl daraxti bo‘ylab sayohat o‘rniga bitta sudrash kifoya. Ildiz uchun ombor nomi ham ishlaydi. Belgilangan bir nechta element birgalikda ko‘chadi, taklif qilinganni qabul qila olmaydigan papka esa keyinroq xato bermaydi — oldindan hech narsa ko‘rsatmaydi.
@@ -48,7 +48,7 @@ Obsidian 1.8.7+ · faqat kompyuter versiyasi · AGPL-3.0
 
 ![Ko‘chirish/nom o‘zgartirish rejimidagi o‘sha ro‘yxat: joriy fayl nomi tepada qadalgan, uning ostida qo‘shni papkalar, mavjud qaydlar esa kulrang](../images/dropdown.png)
 
-*Ko‘chirish/nom o‘zgartirish rejimida xuddi shu ro‘yxat boshqacha takliflar beradi: qaydni nomini o‘zgartirmay ko‘chirish uchun uning joriy nomi tepada qadalgan, ichiga ko‘chirish mumkin bo‘lgan papkalar ko‘rsatiladi, band nomlar esa hech narsa tasodifan ustidan yozilmasligi uchun kulrang.*
+*Ko‘chirish/nom o‘zgartirish rejimida xuddi shu ro‘yxat boshqacha takliflar beradi: qaydni nomini o‘zgartirmay ko‘chirish uchun uning joriy nomi tepada qadalgan, ichiga ko‘chirish mumkin bo‘lgan papkalar ko‘rsatiladi, band nomlar esa qizil; ulardan birini tanlash yo‘lda turgan fayl bilan nima qilish kerakligini so‘raydi.*
 
 → [To‘liq foydalanish qo‘llanmasi](usage.uz.md)
 
@@ -104,7 +104,7 @@ Faqat kompyuter versiyasi — o‘zaro ta'sir modeli kursorni olib borish, aniq 
 ## Minnatdorchilik
 
 - **Vault51** — muallif: dizayn, talablar va butun jarayon davomida qo‘lda sinov.
-- **Claude Opus 5** va **Claude Sonnet 5** (Anthropic, Claude Code orqali) — muallif rahbarligida amalga oshirish, tarjimalar va hujjatlar. [Sun'iy intellekt haqida ma'lumot](#suniy-intellekt-haqida-malumot) bo‘limiga qarang.
+- **Claude Opus 5 / 5.5** va **Claude Sonnet 5** (Anthropic, Claude Code orqali) — muallif rahbarligida amalga oshirish, tarjimalar va hujjatlar. [Sun'iy intellekt haqida ma'lumot](#suniy-intellekt-haqida-malumot) bo‘limiga qarang.
 - **[Obsidian](https://obsidian.md)** — bu plagin kengaytiradigan ilova va plagin foydalanadigan har bir komponentning manbai: uning plagin API'si, `setIcon` ortidagi Lucide belgilar to‘plami, kontekst menyusi yorliqlari o‘qiladigan ichki i18next nusxasi hamda uning o‘z CSS klasslari va o‘zgaruvchilari. Uchinchi tomonning hech qanday kodi qo‘shib qadoqlanmagan; plaginning **ishlash vaqtidagi bog‘liqliklari yo‘q**.
 
 > **Obsidian jamoasi bu loyihada hech qanday tarzda ishtirok etmagan** — ular uni yozmagan, ko‘rib chiqmagan, ma'qullamagan yoki qo‘llab-quvvatlamagan. Obsidian — Dynalist Inc. kompaniyasining savdo belgisi; bu mustaqil, unga aloqasi bo‘lmagan plagin.

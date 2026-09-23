@@ -14,8 +14,8 @@ Obsidian 1.8.7+ · hanya desktop · AGPL-3.0
 
 ## Pengungkapan AI
 
-- **Agen** — **Claude Opus 5** dan **Claude Sonnet 5** (Anthropic, lewat Claude Code): menulis TypeScript, CSS, seluruh 45 set terjemahan, dan dokumentasinya. Terjemahan dibuat mesin dan belum ditinjau penutur asli.
-- **Pemakaian** — 3 Agustus – 19 September 2026, 20 sesi, \~16.460 balasan: \~19,9 juta token dihasilkan, \~87,0 juta dikirim, \~5451,0 juta pembacaan ulang dari singgahan (\~5558,0 juta total).
+- **Agen** — **Claude Opus 5 / 5.5** dan **Claude Sonnet 5** (Anthropic, lewat Claude Code): menulis TypeScript, CSS, seluruh 45 set terjemahan, dan dokumentasinya. Terjemahan dibuat mesin dan belum ditinjau penutur asli.
+- **Pemakaian** — 3 Agustus – 23 September 2026, 25 sesi, \~17.973 balasan: \~21,1 juta token dihasilkan, \~91,2 juta dikirim, \~5817,0 juta pembacaan ulang dari singgahan (\~5929,3 juta total).
 - **Hulu** — model belajar dari kode sumber terbuka, dokumentasi, dan tulisan komunitas yang diterbitkan orang lain. Sebagian besar kreditnya milik mereka.
 - **Penulis** — Vault51: menentukan setiap fitur, mencoba tiap versi di vault sungguhan, mengarahkan perbaikan, meninjau seluruh hasilnya.
 
@@ -103,7 +103,7 @@ Hanya desktop — model interaksinya menuntut arahan tetikus, klik yang tepat, d
 ## Penghargaan
 
 - **Vault51** — penulis: rancangan, kebutuhan, dan pengujian manual dari awal sampai akhir.
-- **Claude Opus 5** dan **Claude Sonnet 5** (Anthropic, lewat Claude Code) — penerapan, terjemahan, dan dokumentasi, di bawah arahan penulis. Lihat [pengungkapan AI](#pengungkapan-ai).
+- **Claude Opus 5 / 5.5** dan **Claude Sonnet 5** (Anthropic, lewat Claude Code) — penerapan, terjemahan, dan dokumentasi, di bawah arahan penulis. Lihat [pengungkapan AI](#pengungkapan-ai).
 - **[Obsidian](https://obsidian.md)** — aplikasi yang diperluas ini, sekaligus sumber setiap komponen yang dipakai plugin: API plugin-nya, set ikon Lucide di balik `setIcon`, instans i18next bawaan tempat label menu konteks dibaca, serta kelas dan variabel CSS-nya sendiri. Tak ada apa pun dari pihak ketiga yang ikut dibundel; plugin ini **tanpa dependensi saat berjalan**.
 
 > **Tim Obsidian sama sekali tidak ikut serta dalam proyek ini** — mereka tidak menulis, meninjau, mendukung, maupun menyokongnya. Obsidian adalah merek dagang Dynalist Inc.; ini plugin mandiri yang tak berafiliasi.

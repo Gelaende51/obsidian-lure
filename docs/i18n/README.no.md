@@ -19,8 +19,8 @@ Obsidian 1.8.7+ · kun datamaskin · AGPL-3.0
 
 ## AI-erklæring
 
-- **Agent** — **Claude Opus 5** og **Claude Sonnet 5** (Anthropic, via Claude Code): skrev TypeScript-koden, CSS-en, alle 45 oversettelsessettene og dokumentasjonen. Oversettelsene er laget maskinelt og ikke gjennomlest av morsmålsbrukere.
-- **Forbruk** — 3. august – 19. september 2026, 20 økter, \~16 460 svar: \~19,9 mill. genererte tokens, \~87,0 mill. sendte, \~5451,0 mill. gjenlesinger fra hurtiglageret (\~5558,0 mill. totalt).
+- **Agent** — **Claude Opus 5 / 5.5** og **Claude Sonnet 5** (Anthropic, via Claude Code): skrev TypeScript-koden, CSS-en, alle 45 oversettelsessettene og dokumentasjonen. Oversettelsene er laget maskinelt og ikke gjennomlest av morsmålsbrukere.
+- **Forbruk** — 3. august – 23. september 2026, 25 økter, \~17 973 svar: \~21,1 mill. genererte tokens, \~91,2 mill. sendte, \~5817,0 mill. gjenlesinger fra hurtiglageret (\~5929,3 mill. totalt).
 - **Opphav** — modellen har lært av åpen kildekode, dokumentasjon og fellesskapstekster utgitt av andre. Mesteparten av æren tilfaller dem.
 - **Forfatter** — Vault51: fastsatte hver funksjon, prøvde hver utgave i et ekte hvelv, styrte rettelsene og leste gjennom alle resultater.
 
@@ -108,7 +108,7 @@ Kun datamaskin — samspillsmodellen trenger å holde musen over, presise klikk 
 ## Takk til
 
 - **Vault51** — forfatter: utforming, krav og manuell utprøving hele veien.
-- **Claude Opus 5** og **Claude Sonnet 5** (Anthropic, via Claude Code) — implementering, oversettelser og dokumentasjon, under forfatterens ledelse. Se [AI-erklæring](#ai-erklæring).
+- **Claude Opus 5 / 5.5** og **Claude Sonnet 5** (Anthropic, via Claude Code) — implementering, oversettelser og dokumentasjon, under forfatterens ledelse. Se [AI-erklæring](#ai-erklæring).
 - **[Obsidian](https://obsidian.md)** — programmet dette utvider, og kilden til hver eneste bestanddel tillegget bruker: plugin-API-et, ikonsettet Lucide bak `setIcon`, den medfølgende i18next-instansen som etikettene i hurtigmenyen leses fra, og de egne CSS-klassene og -variablene. Ingenting fra tredjepart følger med; tillegget har **ingen avhengigheter ved kjøring**.
 
 > **Obsidian-teamet har ikke deltatt i dette prosjektet på noen måte** — de har ikke skrevet, lest gjennom, gått god for eller støttet det. Obsidian er et varemerke som tilhører Dynalist Inc.; dette er et uavhengig, ikke-tilknyttet tillegg.

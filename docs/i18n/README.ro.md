@@ -15,8 +15,8 @@ Obsidian 1.8.7+ · doar desktop · AGPL-3.0
 
 ## Divulgare privind IA
 
-- **Agent** — **Claude Opus 5** și **Claude Sonnet 5** (Anthropic, prin Claude Code): au scris codul TypeScript, CSS-ul, toate cele 45 de seturi de traduceri și documentația. Traducerile sunt generate automat și nerevizuite de vorbitori nativi.
-- **Consum** — 3 aug. – 19 sept. 2026, 20 de sesiuni, ~16.460 de răspunsuri: ~19,9 M de jetoane generate, ~87,0 M trimise, ~5451,0 M recitiri din cache (~5558,0 M în total).
+- **Agent** — **Claude Opus 5 / 5.5** și **Claude Sonnet 5** (Anthropic, prin Claude Code): au scris codul TypeScript, CSS-ul, toate cele 45 de seturi de traduceri și documentația. Traducerile sunt generate automat și nerevizuite de vorbitori nativi.
+- **Consum** — 3 aug. – 23 sept. 2026, 25 de sesiuni, ~17.973 de răspunsuri: ~21,1 M de jetoane generate, ~91,2 M trimise, ~5817,0 M recitiri din cache (~5929,3 M în total).
 - **Amonte** — modelul a învățat din cod open source, documentație și scrieri ale comunității publicate de alții. Cea mai mare parte a meritului le revine lor.
 - **Autor** — Vault51: a specificat fiecare funcție, a testat fiecare iterație într-un seif real, a coordonat corecturile, a revizuit tot ce a rezultat.
 
@@ -27,7 +27,7 @@ Obsidian 1.8.7+ · doar desktop · AGPL-3.0
 - **Clic dreapta sau trage orice intrare** — meniul contextual propriu al Exploratorului de fișiere, intrare cu intrare, și comportamentul lui la tragere. Pentru căile din afara seifului se construiește un meniu echivalent, până la *Șterge* prin coșul de gunoi al sistemului.
 - **Clic pe numele fișierului sau pe spațiul gol** pentru a scrie o cale, cu autocompletare. `/` coboară, <kbd>Backspace</kbd> iese un nivel, <kbd>Enter</kbd> confirmă — iar o cale care încă nu există este pur și simplu creată, cu o notificare care spune unde a ajuns.
 - **Lista se deschide pe intrarea în care te afli**, iar parcurgerea ei cu săgețile sau cu indicatorul umple câmpul cu ceea ce arăți. Un rând pe care îl indici este arătat drept oferta pe care ar face-o; ieșirea pe la oricare capăt al listei îți dă înapoi ce scriseseși, iar luarea indicatorului de pe ea predă evidențierea înapoi acolo unde erai. Lista urmărește cursorul: dosarul în care se află, filtrat după literele dinaintea lui.
-- **Butonul cu creion pe dosar** comută aceleași interacțiuni pe mutare/redenumire, validate așa cum validează Obsidian. Un nume deja ocupat este roșu în listă, iar alegerea lui întreabă dacă vrei să redenumești ce stă în cale, să schimbi locul, sau să schimbi numele cu el.
+- **Butonul cu creion pe dosar** comută aceleași interacțiuni pe mutare/redenumire, validate așa cum validează Obsidian. Un nume deja ocupat este roșu în listă, iar alegerea lui deschide ambele căi alăturate, editabile, cu schimbarea locurilor, a numelor sau a amândurora la o alegere distanță.
 - **Ține <kbd>Ctrl</kbd>** pentru a deschide într-o filă nouă — sau, în modul mutare/redenumire, pentru a copia notița acolo. Numele notiței și segmentele de dosar acceptă aceiași modificatori și aceeași tragere ca rândurile lor din Exploratorul de fișiere.
 - **Numele se completează pe măsură ce scrii** — ce ar scrie <kbd>Tab</kbd> apare după cursor, selectat și scris așa cum este numele, indiferent ce literă mare sau mică ai tastat — coincidența numelor din dosar, sau pasul spre primul dintre ele; scrisul o înghite literă cu literă, <kbd>→</kbd> preia o literă, <kbd>Tab</kbd> sau <kbd>End</kbd> o preia întreagă, <kbd>Backspace</kbd> o ia înapoi. Lista continuă să filtreze după ce ai scris tu, nu după ce ți s-a oferit.
 - **<kbd>Tab</kbd> completează ca un shell**: extinde ce ai scris atât cât coincid numele din acel dosar, înaintează spre unul dintre ele câte un pas atunci când nu coincid și intră într-un dosar abia după ce a rămas un singur nume. Dincolo de capătul căii lărgește în schimb selecția: nume, nume cu extensie, cale din seif, cale de la rădăcina sistemului. <kbd>Shift</kbd>+<kbd>Tab</kbd> parcurge același drum înapoi — marcând ce restituie, în loc să șteargă — iar dincolo de începutul lui urcă mai departe pe cale, apoi se întoarce în buclă la calea de sistem. În oricare sens, un tur complet te aduce înapoi la calea pe care ai construit-o.
@@ -104,7 +104,7 @@ Doar desktop — modelul de interacțiune are nevoie de hover, de clicuri precis
 ## Mulțumiri
 
 - **Vault51** — autor: design, cerințe și testare manuală pe tot parcursul.
-- **Claude Opus 5** și **Claude Sonnet 5** (Anthropic, prin Claude Code) — implementare, traduceri și documentație, sub îndrumarea autorului. Vezi [divulgarea privind IA](#divulgare-privind-ia).
+- **Claude Opus 5 / 5.5** și **Claude Sonnet 5** (Anthropic, prin Claude Code) — implementare, traduceri și documentație, sub îndrumarea autorului. Vezi [divulgarea privind IA](#divulgare-privind-ia).
 - **[Obsidian](https://obsidian.md)** — aplicația pe care o extinde și sursa fiecărei componente folosite de plugin: API-ul său pentru pluginuri, setul de pictograme Lucide din spatele lui `setIcon`, instanța i18next inclusă din care sunt citite etichetele meniului contextual și propriile clase și variabile CSS. Nu este inclus nimic de la terți; pluginul **nu are dependențe de execuție**.
 
 > **Echipa Obsidian nu a participat în niciun fel la acest proiect** — nu l-a scris, nu l-a revizuit, nu l-a aprobat și nu îl susține. Obsidian este marcă înregistrată a Dynalist Inc.; acesta este un plugin independent și neafiliat.

@@ -10,8 +10,8 @@ Obsidian 1.8.7+ · desktop only · AGPL-3.0
 
 ## AI disclosure
 
-- **Agent** — **Claude Opus 5** and **Claude Sonnet 5** (Anthropic, via Claude Code): wrote the TypeScript, the CSS, all 45 translation sets and the documentation. Translations are machine-generated and unreviewed by native speakers.
-- **Usage** — 3 Aug – 19 Sep 2026, 20 sessions, \~16,460 responses: \~19.9 M tokens generated, \~87.0 M sent, \~5451.0 M cached re-reads (\~5558.0 M total).
+- **Agent** — **Claude Opus 5 / 5.5** and **Claude Sonnet 5** (Anthropic, via Claude Code): wrote the TypeScript, the CSS, all 45 translation sets and the documentation. Translations are machine-generated and unreviewed by native speakers.
+- **Usage** — 3 Aug – 23 Sep 2026, 25 sessions, \~17,973 responses: \~21.1 M tokens generated, \~91.2 M sent, \~5817.0 M cached re-reads (\~5929.3 M total).
 - **Upstream** — the model learned from open source code, documentation and community writing published by others. Most of the credit goes there.
 - **Author** — Vault51: specified every feature, tested each iteration in a live vault, directed the fixes, reviewed all output.
 
@@ -99,7 +99,7 @@ Desktop only — the interaction model needs hover, precise clicks and a keyboar
 ## Credits
 
 - **Vault51** — author: design, requirements, and manual testing throughout.
-- **Claude Opus 5** and **Claude Sonnet 5** (Anthropic, via Claude Code) — implementation, translations and docs, under the author's direction. See [AI disclosure](#ai-disclosure).
+- **Claude Opus 5 / 5.5** and **Claude Sonnet 5** (Anthropic, via Claude Code) — implementation, translations and docs, under the author's direction. See [AI disclosure](#ai-disclosure).
 - **[Obsidian](https://obsidian.md)** — the application this extends, and the source of every component the plugin uses: its plugin API, the Lucide icon set behind `setIcon`, the bundled i18next instance the context-menu labels are read from, and its own CSS classes and variables. Nothing third-party is bundled; the plugin has **no runtime dependencies**.
 
 > **The Obsidian team did not participate in this project in any way** — they did not write, review, endorse or support it. Obsidian is a trademark of Dynalist Inc.; this is an independent, unaffiliated plugin.

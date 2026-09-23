@@ -15,8 +15,8 @@ Obsidian 1.8.7+ · vain työpöytä · AGPL-3.0
 
 ## Tekoälyilmoitus
 
-- **Agentti** — **Claude Opus 5** ja **Claude Sonnet 5** (Anthropic, Claude Coden kautta): kirjoitti TypeScriptin, CSS:n, kaikki 45 käännösjoukkoa ja dokumentaation. Käännökset ovat koneellisia, eivätkä äidinkieliset puhujat ole niitä tarkastaneet.
-- **Kulutus** — 3. elokuuta – 19. syyskuuta 2026, 20 istuntoa, \~16 460 vastausta: \~19,9 milj. tuotettua tokenia, \~87,0 milj. lähetettyä, \~5451,0 milj. uudelleenlukua välimuistista (\~5558,0 milj. yhteensä).
+- **Agentti** — **Claude Opus 5 / 5.5** ja **Claude Sonnet 5** (Anthropic, Claude Coden kautta): kirjoitti TypeScriptin, CSS:n, kaikki 45 käännösjoukkoa ja dokumentaation. Käännökset ovat koneellisia, eivätkä äidinkieliset puhujat ole niitä tarkastaneet.
+- **Kulutus** — 3. elokuuta – 23. syyskuuta 2026, 25 istuntoa, \~17 973 vastausta: \~21,1 milj. tuotettua tokenia, \~91,2 milj. lähetettyä, \~5817,0 milj. uudelleenlukua välimuistista (\~5929,3 milj. yhteensä).
 - **Lähde** — malli oppi avoimesta lähdekoodista, dokumentaatiosta ja yhteisön kirjoituksista, jotka muut ovat julkaisseet. Suurin osa ansiosta kuuluu sinne.
 - **Tekijä** — Vault51: määritteli jokaisen ominaisuuden, kokeili jokaista versiota oikeassa holvissa, ohjasi korjaukset ja luki kaikki tulokset läpi.
 
@@ -27,7 +27,7 @@ Obsidian 1.8.7+ · vain työpöytä · AGPL-3.0
 - **Napsauta mitä tahansa kohtaa hiiren oikealla tai raahaa sitä** — Tiedostot-paneelin oma pikavalikko kohta kohdalta, ja sen raahauskäytös. Holvin ulkopuolisille poluille rakennetaan vastaava valikko, aina *Poista*-kohtaan asti, joka kulkee järjestelmän roskakorin kautta.
 - **Napsauta tiedostonimeä tai tyhjää tilaa** kirjoittaaksesi polun, täydennyksen kanssa. `/` laskeutuu alaspäin, <kbd>Askelpalautin</kbd> nousee tason ylöspäin, <kbd>Enter</kbd> vahvistaa — ja polku, jota ei vielä ole, yksinkertaisesti luodaan, ja ilmoitus kertoo, minne se päätyi.
 - **Luettelo avautuu siihen kohtaan, jossa olet**, ja sen selaaminen nuolinäppäimillä tai osoittimella täyttää kentän sillä, mitä osoitat. Rivi, jota osoitat, näytetään tarjouksena, jonka se tekisi; luettelon kummankin pään ohi siirtyminen palauttaa kirjoittamasi tekstin, ja osoittimen vieminen pois luettelosta palauttaa korostuksen sinne, missä olit. Luettelo seuraa kohdistinta: kansiota, jossa piste sijaitsee, suodatettuna sen edessä olevilla kirjaimilla.
-- **Kansion kynäpainike** vaihtaa samat toiminnot siirto-/nimeämistilaan, samoilla tarkistuksilla kuin Obsidian itse tekee. Jo varattu nimi näkyy punaisena luettelossa, ja sen valitseminen kysyy, nimetäänkö tiellä oleva uudelleen vai vaihdetaanko sen kanssa paikkaa tai nimeä.
+- **Kansion kynäpainike** vaihtaa samat toiminnot siirto-/nimeämistilaan, samoilla tarkistuksilla kuin Obsidian itse tekee. Jo varattu nimi näkyy punaisena luettelossa, ja sen valitseminen avaa molemmat polut muokattaviksi rinnakkain, paikkojen, nimien tai molempien vaihtaminen valinnan päässä.
 - **Pidä <kbd>Ctrl</kbd> pohjassa** avataksesi uudessa välilehdessä — tai siirto-/nimeämistilassa kopioidaksesi muistiinpanon sinne siirtämisen sijaan. Muistiinpanon nimi ja kansio-osat ottavat vastaan samat muokkausnäppäimet ja raahauksen kuin niiden rivit Tiedostot-paneelissa.
 - **Nimet täydentyvät kirjoittaessa** — se, minkä <kbd>Sarkain</kbd> kirjoittaisi, ilmestyy kohdistimen jälkeen valittuna ja kirjoitettuna niin kuin nimi on kirjoitettu, käyttämästäsi kirjainkoosta riippumatta — kansion nimien yhtenevä osa, tai askel kohti ensimmäistä niistä; kirjoittaminen nielee sen kirjain kirjaimelta, <kbd>→</kbd> ottaa yhden kirjaimen, <kbd>Sarkain</kbd> tai <kbd>End</kbd> ottaa sen kokonaan, <kbd>Askelpalautin</kbd> ottaa sen takaisin. Luettelo suodattaa edelleen sen mukaan, mitä kirjoitit, eikä sen mukaan, mitä tarjottiin.
 - **<kbd>Sarkain</kbd> täydentää kuin komentotulkki**: se jatkaa kirjoittamaasi niin pitkälle kuin kansion nimet ovat yhtenevät, etenee askel kerrallaan kohti yhtä niistä, kun ne eroavat, ja astuu kansioon vasta, kun vain yksi nimi on jäljellä. Polun lopun jälkeen se sen sijaan laajentaa valintaa: nimi, nimi päätteineen, polku holvista, polku järjestelmän juuresta. <kbd>Vaihto</kbd>+<kbd>Sarkain</kbd> kulkee saman tien takaperin — merkiten palauttamansa sen sijaan, että poistaisi sen — ja alun ohi jatkaa polkua ylöspäin ja kiertää sitten järjestelmäpolkuun. Kumpaan suuntaan tahansa kierros palaa lopulta rakentamaasi polkuun.
@@ -104,7 +104,7 @@ Vain työpöytä — vuorovaikutusmalli tarvitsee osoittimen viemistä kohteen p
 ## Kiitokset
 
 - **Vault51** — tekijä: suunnittelu, vaatimukset ja käsin testaus koko matkan.
-- **Claude Opus 5** ja **Claude Sonnet 5** (Anthropic, Claude Coden kautta) — toteutus, käännökset ja dokumentaatio, tekijän johdolla. Katso [tekoälyilmoitus](#tekoälyilmoitus).
+- **Claude Opus 5 / 5.5** ja **Claude Sonnet 5** (Anthropic, Claude Coden kautta) — toteutus, käännökset ja dokumentaatio, tekijän johdolla. Katso [tekoälyilmoitus](#tekoälyilmoitus).
 - **[Obsidian](https://obsidian.md)** — sovellus, jota tämä laajentaa, ja jokaisen lisäosan käyttämän osan lähde: sen lisäosarajapinta, `setIcon`-kutsun takana oleva Lucide-kuvakejoukko, mukana tuleva i18next-esiintymä, josta pikavalikon tekstit luetaan, sekä sen omat CSS-luokat ja -muuttujat. Mitään kolmannen osapuolen koodia ei paketoida mukaan; lisäosalla **ei ole ajonaikaisia riippuvuuksia**.
 
 > **Obsidianin tiimi ei ole osallistunut tähän projektiin millään tavalla** — he eivät ole kirjoittaneet, tarkastaneet, hyväksyneet eivätkä tukeneet sitä. Obsidian on Dynalist Inc:n tavaramerkki; tämä on itsenäinen, riippumaton lisäosa.

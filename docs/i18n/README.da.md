@@ -14,8 +14,8 @@ Obsidian 1.8.7+ · kun computer · AGPL-3.0
 
 ## AI-oplysning
 
-- **Agent** — **Claude Opus 5** og **Claude Sonnet 5** (Anthropic, via Claude Code): skrev TypeScript-koden, CSS'en, alle 45 oversættelsessæt og dokumentationen. Oversættelserne er lavet maskinelt og ikke gennemlæst af modersmålstalere.
-- **Forbrug** — 3. august–19. september 2026, 20 sessioner, \~16.460 svar: \~19,9 mio. genererede tokens, \~87,0 mio. sendte, \~5451,0 mio. genlæsninger fra cachen (\~5558,0 mio. i alt).
+- **Agent** — **Claude Opus 5 / 5.5** og **Claude Sonnet 5** (Anthropic, via Claude Code): skrev TypeScript-koden, CSS'en, alle 45 oversættelsessæt og dokumentationen. Oversættelserne er lavet maskinelt og ikke gennemlæst af modersmålstalere.
+- **Forbrug** — 3. august–23. september 2026, 25 sessioner, \~17.973 svar: \~21,1 mio. genererede tokens, \~91,2 mio. sendte, \~5817,0 mio. genlæsninger fra cachen (\~5929,3 mio. i alt).
 - **Ophav** — modellen har lært af open source-kode, dokumentation og fællesskabstekster udgivet af andre. Størstedelen af æren tilfalder dem.
 - **Forfatter** — Vault51: fastlagde hver funktion, prøvede hver udgave i en rigtig boks, styrede rettelserne og læste alle resultater igennem.
 
@@ -26,7 +26,7 @@ Obsidian 1.8.7+ · kun computer · AGPL-3.0
 - **Højreklik eller træk en hvilken som helst post** — Filers egen genvejsmenu, punkt for punkt, og dens trækadfærd. Stier uden for boksen får en tilsvarende menu bygget til dem, helt ned til *Slet* via systemets papirkurv.
 - **Klik på filnavnet eller på tom plads** for at skrive en sti, med autofuldførelse. `/` går ned, <kbd>Backspace</kbd> går et niveau op, <kbd>Enter</kbd> bekræfter — og en sti, der ikke findes endnu, bliver ganske enkelt oprettet, med en meddelelse om, hvor den havnede.
 - **Listen åbner på den post, du står i**, og at gå gennem den med piletasterne eller markøren fylder feltet med det, du peger på. En række, du peger på, vises som det tilbud, den ville give; går du forbi en af listens ender, får du det tilbage, du havde skrevet, og fjerner du markøren fra listen, vender fremhævningen tilbage til der, hvor du var. Listen følger tekstmarkøren: den mappe, den er i, filtreret efter bogstaverne foran den.
-- **Blyant-mappe-knappen** stiller de samme handlinger om til flyt/omdøb, med de samme kontroller, som Obsidian selv laver. Et navn, der allerede er taget, er rødt i listen, og at vælge det spørger, om du vil omdøbe det, der er i vejen, eller bytte plads eller navn med det.
+- **Blyant-mappe-knappen** stiller de samme handlinger om til flyt/omdøb, med de samme kontroller, som Obsidian selv laver. Et navn, der allerede er taget, er rødt i listen, og at vælge det åbner begge stier side om side til redigering, med bytte af plads, navn eller begge dele et valg væk.
 - **Hold <kbd>Ctrl</kbd>** for at åbne i en ny fane — eller, i flyt/omdøb-tilstand, for at kopiere noten derhen i stedet. Notens navn og mappesegmenterne tager de samme modifikatortaster og kan trækkes, ligesom deres rækker i Filer.
 - **Navne fuldfører sig selv, mens du skriver** — det, <kbd>Tab</kbd> ville skrive, vises efter tekstmarkøren, markeret og stavet, som navnet er, uanset hvilken bogstavstørrelse du skrev — overensstemmelsen mellem mappens navne, eller skridtet mod det første af dem; når du skriver videre, sluges den bogstav for bogstav, <kbd>→</kbd> tager ét bogstav, <kbd>Tab</kbd> eller <kbd>End</kbd> tager den hel, <kbd>Backspace</kbd> tager den tilbage. Listen bliver ved med at filtrere efter det, du skrev, ikke efter det, der blev tilbudt.
 - **<kbd>Tab</kbd> fuldfører som en shell**: den forlænger det, du skrev, så langt navnene i mappen stemmer overens, går et skridt ad gangen mod et af dem, når de ikke gør, og træder først ind i en mappe, når der kun er ét navn tilbage. Forbi stiens ende udvider den i stedet markeringen: navn, navn med endelse, sti fra boksen, sti fra systemroden. <kbd>Skift</kbd>+<kbd>Tab</kbd> går samme vej baglæns — og markerer det, den giver tilbage, i stedet for at slette det — og fortsætter forbi begyndelsen op ad stien, hvorefter den slår om til systemstien. Uanset retning fører en hel runde tilbage til den sti, du byggede.
@@ -103,7 +103,7 @@ Kun computer — interaktionsmodellen har brug for at holde musen over, præcise
 ## Tak til
 
 - **Vault51** — forfatter: udformning, krav og manuel afprøvning hele vejen.
-- **Claude Opus 5** og **Claude Sonnet 5** (Anthropic, via Claude Code) — implementering, oversættelser og dokumentation, under forfatterens ledelse. Se [AI-oplysning](#ai-oplysning).
+- **Claude Opus 5 / 5.5** og **Claude Sonnet 5** (Anthropic, via Claude Code) — implementering, oversættelser og dokumentation, under forfatterens ledelse. Se [AI-oplysning](#ai-oplysning).
 - **[Obsidian](https://obsidian.md)** — programmet, dette udvider, og kilden til hver eneste bestanddel, pluginet bruger: dets plugin-API, ikonsættet Lucide bag `setIcon`, den medfølgende i18next-instans, som genvejsmenuens etiketter læses fra, og dets egne CSS-klasser og -variabler. Intet fra tredjepart følger med; pluginet har **ingen afhængigheder ved kørsel**.
 
 > **Obsidian-holdet har ikke deltaget i dette projekt på nogen måde** — de har ikke skrevet, gennemlæst, godkendt eller støttet det. Obsidian er et varemærke tilhørende Dynalist Inc.; dette er et uafhængigt, ikke-tilknyttet plugin.

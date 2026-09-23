@@ -14,8 +14,8 @@ Obsidian 1.8.7+ · deasc amháin · AGPL-3.0
 
 ## Nochtadh faoin IS
 
-- **Gníomhaire** — **Claude Opus 5** agus **Claude Sonnet 5** (Anthropic, trí Claude Code): scríobh sé an TypeScript, an CSS, na 45 sraith aistriúcháin ar fad agus an doiciméadú. Is aistriúcháin mheaisín iad agus níor léigh cainteoirí dúchais iad.
-- **Úsáid** — 3 Lúnasa – 19 Meán Fómhair 2026, 20 seisiún, \~16,460 freagra: \~19.9 milliún ceadchomhartha ginte, \~87.0 milliún seolta, \~5451.0 milliún athléamh ón taisce (\~5558.0 milliún san iomlán).
+- **Gníomhaire** — **Claude Opus 5 / 5.5** agus **Claude Sonnet 5** (Anthropic, trí Claude Code): scríobh sé an TypeScript, an CSS, na 45 sraith aistriúcháin ar fad agus an doiciméadú. Is aistriúcháin mheaisín iad agus níor léigh cainteoirí dúchais iad.
+- **Úsáid** — 3 Lúnasa – 23 Meán Fómhair 2026, 25 seisiún, \~17,973 freagra: \~21.1 milliún ceadchomhartha ginte, \~91.2 milliún seolta, \~5817.0 milliún athléamh ón taisce (\~5929.3 milliún san iomlán).
 - **Foinse** — d'fhoghlaim an múnla ó chód foinse oscailte, ó dhoiciméadú agus ó scríbhinní pobail a d'fhoilsigh daoine eile. Is leo formhór an chreidiúna.
 - **Údar** — Vault51: shocraigh sé gach gné, thriail sé gach leagan i dtaisceadán fíor, stiúir sé na ceartúcháin, léigh sé gach toradh.
 
@@ -103,7 +103,7 @@ Deasc amháin — teastaíonn ainliú luiche, cliceálacha cruinne agus méarchl
 ## Buíochas
 
 - **Vault51** — údar: dearadh, riachtanais, agus tástáil de láimh ó thús deireadh.
-- **Claude Opus 5** agus **Claude Sonnet 5** (Anthropic, trí Claude Code) — cur i bhfeidhm, aistriúcháin agus doiciméadú, faoi stiúir an údair. Féach [nochtadh faoin IS](#nochtadh-faoin-is).
+- **Claude Opus 5 / 5.5** agus **Claude Sonnet 5** (Anthropic, trí Claude Code) — cur i bhfeidhm, aistriúcháin agus doiciméadú, faoi stiúir an údair. Féach [nochtadh faoin IS](#nochtadh-faoin-is).
 - **[Obsidian](https://obsidian.md)** — an feidhmchlár a leathnaíonn sé seo, agus foinse gach comhpháirte a úsáideann an breiseán: a API breiseán, an tsraith deilbhíní Lucide taobh thiar de `setIcon`, an t-ásc i18next atá pacáistithe leis as a léitear lipéid an roghchláir chomhthéacs, agus a aicmí agus a athróga CSS féin. Ní phacáistítear aon rud ó thríú páirtí; níl **aon spleáchais ama rite** ag an mbreiseán.
 
 > **Níor ghlac foireann Obsidian páirt sa tionscadal seo ar bhealach ar bith** — níor scríobh, níor léigh, níor mhol agus níor thacaigh siad leis. Is trádmharc de chuid Dynalist Inc. é Obsidian; is breiseán neamhspleách gan cheangal é seo.

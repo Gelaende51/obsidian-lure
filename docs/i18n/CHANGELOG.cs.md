@@ -12,18 +12,20 @@ Každé vydání pluginu Lure, od nejnovějšího. Co přibylo od posledního vy
 
 ### Přidáno
 
-- **Obsazený název místo odmítnutí zeptá.** Přesun nebo přejmenování na název, který už existuje, otevře dialog, který ukáže oba soubory podle jejich celé cesty. Můžete přejmenovat ten, co je v cestě, a pokračovat, prohodit se s ním místa (mezi složkami: každý si nechá své jméno a dostane složku toho druhého), nebo si s ním prohodit jména (v rámci jedné složky). Zrušení nic nepřesune. Každé tlačítko řekne, co udělá, když na něj ukážete. Výběr obsazeného názvu ze seznamu se zeptá stejně, a totéž udělá i přetažení souboru na složku, která už tento název obsahuje. Název v poli přejmenování dialogu je červený, dokud je obsazený.
+- **Obsazený název místo odmítnutí zeptá.** Přesun nebo přejmenování na název, který už existuje, otevře dialog se dvěma cestami, které lze upravit: kam se přesune váš soubor a kam se přesune soubor, co je v cestě, červená, dokud je stále obsazená. Každá cesta je nakreslená stejně, jako ji kreslí lišta cesty, s odlišnými částmi obarvenými a zkrácenými jako poslední. Obě pole mají seznam; ten druhý obsahuje obvyklé způsoby, jak z toho ven — prohodit místa (přesune se do staré složky vašeho souboru), prohodit názvy (zůstane a dostane starý název vašeho souboru), prohodit obojí (dostane starou cestu vašeho souboru), `-1`, `-bak` a `-old` vedle svého vlastního názvu, a oba názvy, které soubory měly. Způsob, jehož cesta je obsazená, je zešedlý. Výběr jen vyplní pole; Použít přesune oba, s odkazy se vším všudy, a Zrušit nic nepřesune. Výběr obsazeného názvu ze seznamu se zeptá stejně, a totéž udělá i přetažení souboru na složku, která už tento název obsahuje.
 - **`:graph` uvnitř složky otevře graf té složky** — graf filtrovaný na `path:"that/folder"`, tak jak by to udělalo její vlastní vyhledávací pole. V kořeni trezoru je to pořád celý graf, jako dřív.
 - **Složka, která už tento název obsahuje, je v seznamu červená** při přesunu, a stejně tak i soubor toho jména, takže je konflikt vidět ještě před výběrem.
 
 ### Změněno
 
-- **Nabídka je vždy to, co by napsal Tab.** Tam, kde se názvy přestanou shodovat, pole nabídne krok k prvnímu z nich — dřív tam nenabízelo nic, a Tab přesto něco napsal.
+- **Nabídka je vždy to, co by napsal Tab.** Tam, kde se názvy přestanou shodovat, pole nabídne krok k prvnímu z nich, a rozhoduje o tom řádek, ke kterému by mířil Tab; přepsání názvu ponechá jeho příponu stát a nabídne se před ní; složka, do které jste právě vstoupili, nabídne svůj první krok. Dřív existovaly stavy, kdy se nenabízelo nic, a Tab přesto něco napsal. Podtržení v seznamu sleduje nabídku, jak se mění, a Tab na řádku, ke kterému jste se dostali šipkami, vezme ten řádek, ne ten vedle něj.
 - **Nabídka nerozlišuje velikost písmen.** Napsání `sch` nabídne `Schemes`, napsané tak, jak je napsaný samotný název; když nabídku vezmete zpět, dostanete svá písmena zpátky tak, jak jste je napsali. Tam, kde existuje `Test` i `test`, se nabídne to, které je napsané tak, jak jste psali vy.
 - **Po stisku Tab se další krok nabídne hned**, stejně jako po napsaném písmenu.
+- **Názvy, které začínají tím, co jste napsali, jsou v seznamu první**, označené čárou po okraji — modrou tam, kde se shodují na víc, než jste napsali, zelenou na větvi, kterou se dává nabídka — před názvy, které to jen obsahují. Každý z nich podtrhává krok, který by k němu udělal <kbd>Tab</kbd>, ne jen ten, který je nabídnutý.
 - **Seznam sleduje kurzor**, nebo začátek výběru: vypisuje složku, ve které tento bod leží, filtrovanou podle písmen před ním. Na začátku názvu je to celá složka.
 - **Ukázání na řádek ho zobrazí jako nabídku** — to, co jste napsali, zůstává vaše a zbytek názvu je označený — a odjetí ukazatele ze seznamu vrátí předchozí nabídku.
 - **→ vezme jedno písmeno nabídky**, ne celou; <kbd>End</kbd> ji pořád vezme celou.
+- **Backspace před příponou, která zůstane sama, vystoupí o úroveň výš**, stejně jako v prázdném poli; osamocená přípona zmizí.
 - **F2 v otevřeném poli ho na místě promění v přejmenování**, zachová text, kurzor i výběr, a **Zaměřit lištu cesty** stejným způsobem přejmenování zase sejme.
 - **Cokoli jiného stisknuté nebo kliknuté mezi stisky začne cykly F2 a Zaměřit lištu cesty znovu.**
 - **Složky jsou v seznamu tučně**, takže vlastní poznámka složky už nemusí být šedá, aby se odlišila: je fialová jako kterákoli jiná poznámka.

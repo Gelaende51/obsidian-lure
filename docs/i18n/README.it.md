@@ -15,8 +15,8 @@ Obsidian 1.8.7+ · solo desktop · AGPL-3.0
 
 ## Divulgazione sull'IA
 
-- **Agente** — **Claude Opus 5** e **Claude Sonnet 5** (Anthropic, tramite Claude Code): ha scritto il TypeScript, il CSS, tutti i 45 set di traduzioni e la documentazione. Le traduzioni sono generate automaticamente e non sono state riviste da madrelingua.
-- **Consumo** — 3 agosto – 19 settembre 2026, 20 sessioni, \~16.460 risposte: \~19,9 M di token generati, \~87,0 M inviati, \~5451,0 M di riletture dalla cache (\~5558,0 M in totale).
+- **Agente** — **Claude Opus 5 / 5.5** e **Claude Sonnet 5** (Anthropic, tramite Claude Code): ha scritto il TypeScript, il CSS, tutti i 45 set di traduzioni e la documentazione. Le traduzioni sono generate automaticamente e non sono state riviste da madrelingua.
+- **Consumo** — 3 agosto – 23 settembre 2026, 25 sessioni, \~17.973 risposte: \~21,1 M di token generati, \~91,2 M inviati, \~5817,0 M di riletture dalla cache (\~5929,3 M in totale).
 - **A monte** — il modello ha imparato da codice open source, documentazione e scritti della comunità pubblicati da altri. Gran parte del merito è loro.
 - **Autore** — Vault51: ha definito ogni funzione, provato ogni versione in un vault reale, indirizzato le correzioni e riletto tutti i risultati.
 
@@ -27,7 +27,7 @@ Obsidian 1.8.7+ · solo desktop · AGPL-3.0
 - **Clic destro o trascinamento su qualsiasi voce** — il menu contestuale di Esplora file stesso, voce per voce, e il suo comportamento di trascinamento. Per i percorsi fuori dal vault è stato costruito un menu equivalente, fino a *Elimina* passando per il cestino di sistema.
 - **Clic sul nome del file o sullo spazio vuoto** per digitare un percorso, con completamento automatico. `/` scende, <kbd>Backspace</kbd> risale di un livello, <kbd>Invio</kbd> conferma — e un percorso che non esiste ancora viene semplicemente creato, con un avviso che dice dove è finito.
 - **Il menu a discesa si apre sulla voce in cui ti trovi**, e percorrerlo con le frecce o col puntatore riempie il campo con ciò che stai indicando. Una riga che indichi viene mostrata come la proposta che farebbe; uscire dall'una o dall'altra estremità dell'elenco ti restituisce quello che avevi scritto, e togliere il puntatore dall'elenco rimanda l'evidenziazione dov'eri. L'elenco segue il cursore: la cartella in cui si trova, filtrata dalle lettere che lo precedono.
-- **Il pulsante matita su cartella** porta le stesse interazioni in modalità sposta/rinomina, con le stesse verifiche che fa Obsidian. Un nome già in uso appare rosso nell'elenco, e sceglierlo chiede se rinominare ciò che è di intralcio, oppure scambiare il posto o i nomi con lui.
+- **Il pulsante matita su cartella** porta le stesse interazioni in modalità sposta/rinomina, con le stesse verifiche che fa Obsidian. Un nome già in uso appare rosso nell'elenco, e sceglierlo apre entrambi i percorsi affiancati da modificare, con lo scambio di posti, nomi o entrambi a portata di scelta.
 - **Tieni premuto <kbd>Ctrl</kbd>** per aprire in una nuova scheda — oppure, in modalità sposta/rinomina, per copiarvi la nota anziché spostarla. Il nome della nota e i segmenti di cartella accettano gli stessi modificatori, e lo stesso trascinamento, delle righe corrispondenti in Esplora file.
 - **I nomi si completano mentre scrivi** — ciò che <kbd>Tab</kbd> scriverebbe compare dopo il cursore, selezionato e scritto come lo è il nome, qualunque sia la maiuscola o minuscola digitata — la concordanza dei nomi della cartella, o il passo verso il primo di essi; scrivendo la si consuma lettera per lettera, <kbd>→</kbd> ne prende una lettera, <kbd>Tab</kbd> o <kbd>Fine</kbd> la prende intera, <kbd>Backspace</kbd> la restituisce. Il menu a discesa continua a filtrare in base a ciò che hai scritto, non a ciò che ti è stato proposto.
 - **<kbd>Tab</kbd> completa come una shell**: estende quanto hai scritto fin dove i nomi di quella cartella concordano, avanza verso uno di essi un passo alla volta quando non concordano, ed entra in una cartella soltanto quando ne resta un nome solo. Oltre la fine del percorso allarga invece la selezione: nome, nome con estensione, percorso dal vault, percorso dalla radice del sistema. <kbd>Maiusc</kbd>+<kbd>Tab</kbd> ripercorre la stessa strada all'indietro — segnando ciò che restituisce anziché cancellarlo — e oltre l'inizio prosegue risalendo il percorso, per poi tornare in cerchio al percorso di sistema. In entrambi i versi, un giro completo riporta al percorso che avevi costruito.
@@ -104,7 +104,7 @@ Solo desktop — il modello di interazione richiede il passaggio del mouse, clic
 ## Riconoscimenti
 
 - **Vault51** — autore: progettazione, requisiti e prove manuali dall'inizio alla fine.
-- **Claude Opus 5** e **Claude Sonnet 5** (Anthropic, tramite Claude Code) — implementazione, traduzioni e documentazione, sotto la direzione dell'autore. Vedi [divulgazione sull'IA](#divulgazione-sullia).
+- **Claude Opus 5 / 5.5** e **Claude Sonnet 5** (Anthropic, tramite Claude Code) — implementazione, traduzioni e documentazione, sotto la direzione dell'autore. Vedi [divulgazione sull'IA](#divulgazione-sullia).
 - **[Obsidian](https://obsidian.md)** — l'applicazione che questo estende, e l'origine di ogni componente che il plugin usa: la sua API per i plugin, il set di icone Lucide dietro `setIcon`, l'istanza di i18next inclusa da cui vengono lette le etichette del menu contestuale, e le sue classi e variabili CSS. Non viene incluso nulla di terze parti; il plugin **non ha dipendenze a runtime**.
 
 > **Il team di Obsidian non ha partecipato in alcun modo a questo progetto** — non l'ha scritto, riletto, approvato né sostenuto. Obsidian è un marchio registrato di Dynalist Inc.; questo è un plugin indipendente e non affiliato.

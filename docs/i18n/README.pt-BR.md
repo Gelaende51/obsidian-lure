@@ -14,8 +14,8 @@ Obsidian 1.8.7+ · somente desktop · AGPL-3.0
 
 ## Divulgação sobre IA
 
-- **Agente** — **Claude Opus 5** e **Claude Sonnet 5** (Anthropic, via Claude Code): escreveram o TypeScript, o CSS, todos os 45 conjuntos de tradução e a documentação. As traduções são geradas automaticamente e não foram revisadas por falantes nativos.
-- **Consumo** — 3 de ago. a 19 de set. de 2026, 20 sessões, \~16.460 respostas: \~19,9 milhões de tokens gerados, \~87,0 milhões enviados, \~5.451,0 milhões de releituras em cache (\~5.558,0 milhões no total).
+- **Agente** — **Claude Opus 5 / 5.5** e **Claude Sonnet 5** (Anthropic, via Claude Code): escreveram o TypeScript, o CSS, todos os 45 conjuntos de tradução e a documentação. As traduções são geradas automaticamente e não foram revisadas por falantes nativos.
+- **Consumo** — 3 de ago. a 23 de set. de 2026, 25 sessões, \~17.973 respostas: \~21,1 milhões de tokens gerados, \~91,2 milhões enviados, \~5.817,0 milhões de releituras em cache (\~5.929,3 milhões no total).
 - **Origem** — o modelo aprendeu com código aberto, documentação e textos da comunidade publicados por outras pessoas. A maior parte do crédito é delas.
 - **Autor** — Vault51: especificou cada funcionalidade, testou cada iteração em um cofre real, orientou as correções e revisou todo o resultado.
 
@@ -26,7 +26,7 @@ Obsidian 1.8.7+ · somente desktop · AGPL-3.0
 - **Clique com o botão direito ou arraste qualquer entrada** — o próprio menu de contexto do Explorador de arquivos, item por item, e o mesmo comportamento ao arrastar. Caminhos fora do cofre recebem um menu equivalente feito para eles, incluindo *Excluir*, que passa pela lixeira do sistema.
 - **Clique no nome do arquivo ou no espaço vazio** para digitar um caminho, com preenchimento automático. `/` desce, <kbd>Backspace</kbd> sobe um nível, <kbd>Enter</kbd> confirma — e um caminho que ainda não existe é simplesmente criado, com um aviso dizendo onde ele foi parar.
 - **A lista abre na entrada onde você está**, e percorrê-la com as setas ou passando o mouse preenche o campo com aquilo para que você está apontando. Uma linha que você aponta é mostrada como a sugestão que ela faria; sair por qualquer uma das pontas da lista devolve o que você tinha digitado, e tirar o ponteiro de cima dela devolve o destaque para onde você estava. A lista segue o cursor: a pasta em que ele está, filtrada pelas letras à frente dele.
-- **O botão de lápis sobre pasta** faz as mesmas interações moverem/renomearem, com a mesma validação que o Obsidian usa. Um nome já em uso fica vermelho na lista, e escolhê-lo pergunta se você quer renomear o que está no caminho, trocar de lugar ou trocar de nome com ele.
+- **O botão de lápis sobre pasta** faz as mesmas interações moverem/renomearem, com a mesma validação que o Obsidian usa. Um nome já em uso fica vermelho na lista, e escolhê-lo abre os dois caminhos lado a lado para editar, com trocar de lugares, de nomes ou tudo a uma escolha de distância.
 - **Segure <kbd>Ctrl</kbd>** para abrir em uma nova aba — ou, no modo mover/renomear, para copiar a nota para lá em vez de movê-la. O nome da nota e os segmentos de pasta aceitam os mesmos modificadores, e o arrastar, que as linhas correspondentes do Explorador de arquivos.
 - **Os nomes se completam enquanto você digita** — o que o <kbd>Tab</kbd> escreveria aparece depois do cursor, selecionado e escrito do jeito que o nome está, não importando a capitalização que você digitou — a coincidência dos nomes da pasta, ou o passo em direção ao primeiro deles; digitar vai consumindo-o letra por letra, <kbd>→</kbd> aceita uma letra, <kbd>Tab</kbd> ou <kbd>End</kbd> aceita tudo de uma vez, <kbd>Backspace</kbd> desfaz. A lista continua filtrando pelo que você digitou, não pelo que foi sugerido.
 - **<kbd>Tab</kbd> completa como um shell**: estende o que você digitou até onde os nomes daquela pasta coincidem, avança em direção a um deles um passo por vez quando não coincidem, e só entra em uma pasta quando resta um único nome. Depois do fim do caminho, ele amplia a seleção: nome, nome com extensão, caminho a partir do cofre, caminho a partir da raiz do sistema. <kbd>Shift</kbd>+<kbd>Tab</kbd> faz o mesmo percurso ao contrário — marcando o que devolve em vez de apagar — e, depois do início, continua subindo pelo caminho e então dá a volta até o caminho do sistema. Em qualquer direção, uma volta completa retorna ao caminho que você montou.
@@ -103,7 +103,7 @@ Somente desktop — o modelo de interação precisa de passar o mouse, cliques p
 ## Créditos
 
 - **Vault51** — autor: design, requisitos e testes manuais do começo ao fim.
-- **Claude Opus 5** e **Claude Sonnet 5** (Anthropic, via Claude Code) — implementação, traduções e documentação, sob a direção do autor. Veja [Divulgação sobre IA](#divulgação-sobre-ia).
+- **Claude Opus 5 / 5.5** e **Claude Sonnet 5** (Anthropic, via Claude Code) — implementação, traduções e documentação, sob a direção do autor. Veja [Divulgação sobre IA](#divulgação-sobre-ia).
 - **[Obsidian](https://obsidian.md)** — o aplicativo que este plugin estende, e a origem de todos os componentes que ele usa: sua API de plugins, o conjunto de ícones Lucide por trás de `setIcon`, a instância embutida do i18next de onde vêm os rótulos do menu de contexto, e suas próprias classes e variáveis CSS. Nada de terceiros é empacotado; o plugin **não tem dependências em tempo de execução**.
 
 > **A equipe do Obsidian não participou deste projeto de forma alguma** — não o escreveu, revisou, endossou nem apoiou. Obsidian é uma marca registrada da Dynalist Inc.; este é um plugin independente e sem vínculo com ela.

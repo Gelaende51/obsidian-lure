@@ -15,8 +15,8 @@ Obsidian 1.8.7+ · tylko komputer · AGPL-3.0
 
 ## Ujawnienie użycia SI
 
-- **Agent** — **Claude Opus 5** i **Claude Sonnet 5** (Anthropic, przez Claude Code): napisał TypeScript, CSS, wszystkie 45 zestawów tłumaczeń i dokumentację. Tłumaczenia powstały maszynowo i nie były sprawdzane przez native speakerów.
-- **Zużycie** — 3 sierpnia – 19 września 2026, 20 sesji, \~16 460 odpowiedzi: \~19,9 mln wygenerowanych tokenów, \~87,0 mln wysłanych, \~5451,0 mln odczytów z pamięci podręcznej (\~5558,0 mln łącznie).
+- **Agent** — **Claude Opus 5 / 5.5** i **Claude Sonnet 5** (Anthropic, przez Claude Code): napisał TypeScript, CSS, wszystkie 45 zestawów tłumaczeń i dokumentację. Tłumaczenia powstały maszynowo i nie były sprawdzane przez native speakerów.
+- **Zużycie** — 3 sierpnia – 23 września 2026, 25 sesji, \~17 973 odpowiedzi: \~21,1 mln wygenerowanych tokenów, \~91,2 mln wysłanych, \~5817,0 mln odczytów z pamięci podręcznej (\~5929,3 mln łącznie).
 - **Źródło** — model nauczył się z otwartego kodu, dokumentacji i tekstów społeczności opublikowanych przez innych. Większość zasługi należy do nich.
 - **Autor** — Vault51: określił każdą funkcję, przetestował każdą wersję w prawdziwym skarbcu, pokierował poprawkami, przejrzał wszystkie wyniki.
 
@@ -27,7 +27,7 @@ Obsidian 1.8.7+ · tylko komputer · AGPL-3.0
 - **Prawy przycisk myszy lub przeciągnięcie dowolnej pozycji** — własne menu kontekstowe Eksploratora plików, pozycja po pozycji, i jego zachowanie przy przeciąganiu. Ścieżki poza skarbcem dostają zbudowane dla nich równoważne menu, aż po *Usuń* przez kosz systemowy.
 - **Kliknięcie nazwy pliku lub pustego miejsca** pozwala wpisać ścieżkę, z autouzupełnianiem. `/` schodzi w dół, <kbd>Backspace</kbd> wychodzi poziom wyżej, <kbd>Enter</kbd> zatwierdza — a ścieżka, której jeszcze nie ma, zostaje po prostu utworzona, z powiadomieniem mówiącym, gdzie trafiła.
 - **Lista otwiera się na pozycji, w której stoisz**, a przechodzenie po niej strzałkami lub wskaźnikiem wypełnia pole tym, co wskazujesz. Wiersz, który wskazujesz, jest pokazywany jako podpowiedź, którą by dał; wyjście za którykolwiek z końców listy oddaje to, co wpisałeś, a zabranie z niej wskaźnika zwraca podświetlenie tam, gdzie byłeś. Lista podąża za kursorem: folder, w którym się znajduje, odfiltrowany przez litery przed nim.
-- **Przycisk z ołówkiem na folderze** przełącza te same interakcje na przenoszenie/zmianę nazwy, ze sprawdzeniami takimi, jakie robi sam Obsidian. Nazwa, która jest już zajęta, jest czerwona na liście, a jej wybranie pyta, czy zmienić nazwę temu, co stoi na drodze, czy zamienić się z nim miejscami albo nazwami.
+- **Przycisk z ołówkiem na folderze** przełącza te same interakcje na przenoszenie/zmianę nazwy, ze sprawdzeniami takimi, jakie robi sam Obsidian. Nazwa, która jest już zajęta, jest czerwona na liście, a jej wybranie otwiera obie ścieżki obok siebie do edycji, z zamianą miejsc, nazw albo obu o jeden wybór.
 - **Przytrzymaj <kbd>Ctrl</kbd>**, aby otworzyć w nowej karcie — albo, w trybie przenoszenia/zmiany nazwy, aby skopiować tam notatkę zamiast ją przenosić. Nazwa notatki i segmenty folderów przyjmują te same modyfikatory i to samo przeciąganie co ich wiersze w Eksploratorze plików.
 - **Nazwy uzupełniają się w trakcie pisania** — to, co wpisałby <kbd>Tab</kbd>, pojawia się za kursorem, zaznaczone i zapisane tak, jak jest nazwa, niezależnie od wielkości liter, które wpisałeś — zgodność nazw w folderze, albo krok w stronę pierwszej z nich; pisanie pochłania to litera po literze, <kbd>→</kbd> bierze jedną literę, <kbd>Tab</kbd> lub <kbd>End</kbd> bierze to w całości, <kbd>Backspace</kbd> to oddaje. Lista nadal filtruje według tego, co wpisałeś, a nie według tego, co jej podpowiedziano.
 - **<kbd>Tab</kbd> uzupełnia jak powłoka**: przedłuża wpisane tak daleko, jak zgadzają się nazwy w tym folderze, a gdy się nie zgadzają, idzie w stronę jednej z nich krok po kroku i wchodzi do folderu dopiero wtedy, gdy zostanie jedna nazwa. Za końcem ścieżki poszerza natomiast zaznaczenie: nazwa, nazwa z rozszerzeniem, ścieżka od skarbca, ścieżka od katalogu głównego systemu. <kbd>Shift</kbd>+<kbd>Tab</kbd> idzie tą samą drogą wstecz — zaznaczając to, co oddaje, zamiast to usuwać — a za jej początkiem wspina się dalej w górę ścieżki, po czym zawraca do ścieżki systemowej. W którąkolwiek stronę, pełne okrążenie wraca do ścieżki, którą zbudowałeś.
@@ -104,7 +104,7 @@ Tylko komputer — model interakcji potrzebuje najeżdżania kursorem, precyzyjn
 ## Podziękowania
 
 - **Vault51** — autor: projekt, wymagania i testy ręczne przez cały czas.
-- **Claude Opus 5** i **Claude Sonnet 5** (Anthropic, przez Claude Code) — implementacja, tłumaczenia i dokumentacja, pod kierunkiem autora. Zobacz [ujawnienie użycia SI](#ujawnienie-użycia-si).
+- **Claude Opus 5 / 5.5** i **Claude Sonnet 5** (Anthropic, przez Claude Code) — implementacja, tłumaczenia i dokumentacja, pod kierunkiem autora. Zobacz [ujawnienie użycia SI](#ujawnienie-użycia-si).
 - **[Obsidian](https://obsidian.md)** — aplikacja, którą to rozszerza, i źródło każdego komponentu używanego przez wtyczkę: jej API wtyczek, zestaw ikon Lucide stojący za `setIcon`, dołączona instancja i18next, z której czytane są etykiety menu kontekstowego, oraz jej własne klasy i zmienne CSS. Nic obcego nie jest dołączane; wtyczka **nie ma zależności w czasie działania**.
 
 > **Zespół Obsidiana nie brał w tym projekcie żadnego udziału** — nie napisał go, nie sprawdził, nie poparł ani nie wspiera. Obsidian jest znakiem towarowym Dynalist Inc.; to niezależna, niepowiązana wtyczka.

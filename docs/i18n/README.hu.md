@@ -15,8 +15,8 @@ Obsidian 1.8.7+ · csak asztali gépen · AGPL-3.0
 
 ## MI-nyilatkozat
 
-- **Ügynök** — **Claude Opus 5** és **Claude Sonnet 5** (Anthropic, a Claude Code-on keresztül): megírta a TypeScript kódot, a CSS-t, mind a 45 fordításkészletet és a dokumentációt. A fordítások gépiek, anyanyelvi lektorálás nélkül.
-- **Fogyasztás** — 2026. augusztus 3. – szeptember 19., 20 munkamenet, \~16460 válasz: \~19,9 M előállított token, \~87,0 M elküldött, \~5451,0 M újraolvasás a gyorsítótárból (összesen \~5558,0 M).
+- **Ügynök** — **Claude Opus 5 / 5.5** és **Claude Sonnet 5** (Anthropic, a Claude Code-on keresztül): megírta a TypeScript kódot, a CSS-t, mind a 45 fordításkészletet és a dokumentációt. A fordítások gépiek, anyanyelvi lektorálás nélkül.
+- **Fogyasztás** — 2026. augusztus 3. – szeptember 23., 25 munkamenet, \~17973 válasz: \~21,1 M előállított token, \~91,2 M elküldött, \~5817,0 M újraolvasás a gyorsítótárból (összesen \~5929,3 M).
 - **Forrás** — a modell nyílt forráskódú kódból, dokumentációból és mások által közzétett közösségi írásokból tanult. Az érdem nagyobb része őket illeti.
 - **Szerző** — Vault51: meghatározott minden funkciót, valódi széfben próbálta ki az egyes változatokat, irányította a javításokat, átnézte az összes eredményt.
 
@@ -27,7 +27,7 @@ Obsidian 1.8.7+ · csak asztali gépen · AGPL-3.0
 - **Kattints jobb gombbal bármelyik bejegyzésre, vagy húzd el** — a Fájlkezelő saját helyi menüjét kapod, tételről tételre, és a húzás is úgy viselkedik, mint ott. A széfen kívüli útvonalakhoz egyenértékű, rájuk szabott menü készül, egészen a *Törlés* tételig, amely a rendszer kukáján keresztül töröl.
 - **Kattints a fájlnévre vagy az üres helyre**, és beírhatsz egy útvonalat, automatikus kiegészítéssel. A `/` egy szinttel lejjebb lép, a <kbd>Backspace</kbd> kilép, az <kbd>Enter</kbd> jóváhagy — a még nem létező útvonal pedig egyszerűen létrejön, és egy értesítés megmondja, hová került.
 - **A lista azon a bejegyzésen nyílik meg, amelyikben állsz**, és ha nyilakkal vagy az egérrel végigmész rajta, a mező azzal telik meg, amire éppen mutatsz. Az a sor, amelyre rámutatsz, felajánlásként jelenik meg; ha a lista bármelyik végén túllépsz, visszakapod, amit begépeltél, ha pedig leveszed róla a mutatót, a kiemelés visszatér oda, ahol voltál. A lista a kurzort követi: azt a mappát, amelyben az van, az előtte álló betűkkel szűrve.
-- **A ceruzás mappa gomb** ugyanezeket a műveleteket áthelyezésre/átnevezésre kapcsolja, ugyanazokkal az ellenőrzésekkel, amelyeket az Obsidian is végez. A már foglalt név pirossal jelenik meg a listában, és a kiválasztása megkérdezi, hogy nevezd át az útban lévőt, cseréljetek helyet, vagy cseréljetek nevet vele.
+- **A ceruzás mappa gomb** ugyanezeket a műveleteket áthelyezésre/átnevezésre kapcsolja, ugyanazokkal az ellenőrzésekkel, amelyeket az Obsidian is végez. A már foglalt név pirossal jelenik meg a listában, és a kiválasztása megnyitja mindkét útvonalat egymás mellett szerkesztésre, egy kiválasztásnyira a helyek, a nevek vagy mindkettő cseréjétől.
 - **Tartsd nyomva a <kbd>Ctrl</kbd> billentyűt**, hogy új lapon nyíljon meg — vagy áthelyezés/átnevezés módban, hogy a jegyzetet áthelyezés helyett oda másold. A jegyzet neve és a mappaszakaszok ugyanazokat a módosítóbillentyűket fogadják, és ugyanúgy húzhatók, mint a Fájlkezelőben lévő soraik.
 - **A nevek gépelés közben kiegészülnek** — az jelenik meg a kurzor mögött, kijelölve és úgy írva, ahogyan a név van, bármilyen kis- vagy nagybetűvel gépelted is, amit a <kbd>Tab</kbd> beírna — a mappa neveinek egyezése, vagy a köztük lévő elsőhöz vezető lépés; a gépelés betűről betűre elnyeli, a <kbd>→</kbd> egy betűt vesz át belőle, a <kbd>Tab</kbd> vagy az <kbd>End</kbd> egészben elfogadja, a <kbd>Backspace</kbd> visszavonja. A lista továbbra is aszerint szűr, amit te gépeltél, nem aszerint, amit felajánlott.
 - **A <kbd>Tab</kbd> úgy egészít ki, mint egy parancsértelmező**: addig nyújtja a begépeltet, ameddig a mappa nevei egyeznek; ahol eltérnek, lépésenként halad az egyikük felé, és csak akkor lép be egy mappába, ha már egyetlen név maradt. Az útvonal végén túl inkább a kijelölést tágítja: név, név kiterjesztéssel, útvonal a széftől, útvonal a rendszer gyökerétől. A <kbd>Shift</kbd>+<kbd>Tab</kbd> ugyanezt az utat járja be visszafelé — amit visszaad, azt kijelöli, nem törli —, az elején túl pedig tovább halad fölfelé az útvonalon, majd körbefordul a rendszerbeli útvonalra. Bármelyik irányba indulsz, egy teljes kör után visszaérsz az általad összerakott útvonalhoz.
@@ -104,7 +104,7 @@ Csak asztali gépen — a kezelési mód rámutatást, pontos kattintásokat és
 ## Köszönet
 
 - **Vault51** — szerző: tervezés, követelmények és kézi tesztelés az elejétől a végéig.
-- **Claude Opus 5** és **Claude Sonnet 5** (Anthropic, a Claude Code-on keresztül) — megvalósítás, fordítások és dokumentáció, a szerző irányításával. Lásd [MI-nyilatkozat](#mi-nyilatkozat).
+- **Claude Opus 5 / 5.5** és **Claude Sonnet 5** (Anthropic, a Claude Code-on keresztül) — megvalósítás, fordítások és dokumentáció, a szerző irányításával. Lásd [MI-nyilatkozat](#mi-nyilatkozat).
 - **[Obsidian](https://obsidian.md)** — az alkalmazás, amelyet ez kiegészít, és minden olyan alkotórész forrása, amelyet a bővítmény használ: a bővítmény-API, a `setIcon` mögötti Lucide ikonkészlet, a mellékelt i18next példány, amelyből a helyi menü feliratai származnak, valamint a saját CSS-osztályai és -változói. Semmi harmadik féltől származó nincs becsomagolva; a bővítménynek **nincs futásidejű függősége**.
 
 > **Az Obsidian csapata semmilyen módon nem vett részt ebben a projektben** — nem írták, nem nézték át, nem támogatták és nem álltak mögé. Az Obsidian a Dynalist Inc. védjegye; ez egy független, nem kapcsolódó bővítmény.

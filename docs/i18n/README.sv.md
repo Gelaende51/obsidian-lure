@@ -15,8 +15,8 @@ Obsidian 1.8.7+ · endast dator · AGPL-3.0
 
 ## AI-redovisning
 
-- **Agent** — **Claude Opus 5** och **Claude Sonnet 5** (Anthropic, via Claude Code): skrev TypeScript-koden, CSS:en, alla 45 översättningsuppsättningar och dokumentationen. Översättningarna är maskingenererade och inte granskade av modersmålstalare.
-- **Förbrukning** — 3 aug – 19 sep 2026, 20 sessioner, \~16 460 svar: \~19,9 M genererade token, \~87,0 M skickade, \~5451,0 M cachade omläsningar (\~5558,0 M totalt).
+- **Agent** — **Claude Opus 5 / 5.5** och **Claude Sonnet 5** (Anthropic, via Claude Code): skrev TypeScript-koden, CSS:en, alla 45 översättningsuppsättningar och dokumentationen. Översättningarna är maskingenererade och inte granskade av modersmålstalare.
+- **Förbrukning** — 3 aug – 23 sep 2026, 25 sessioner, \~17 973 svar: \~21,1 M genererade token, \~91,2 M skickade, \~5817,0 M cachade omläsningar (\~5929,3 M totalt).
 - **Ursprung** — modellen har lärt sig av öppen källkod, dokumentation och gemenskapstexter som andra har publicerat. Det mesta av förtjänsten ligger där.
 - **Författare** — Vault51: angav varje funktion, testade varje iteration i ett levande valv, ledde rättningarna, granskade all utdata.
 
@@ -27,7 +27,7 @@ Obsidian 1.8.7+ · endast dator · AGPL-3.0
 - **Högerklicka eller dra vilken post som helst** — Filutforskarens egen snabbmeny, post för post, och dess dragbeteende. Sökvägar utanför valvet får en motsvarande meny byggd åt sig, ända ner till *Ta bort* via systemets papperskorg.
 - **Klicka på filnamnet eller på tom yta** för att skriva en sökväg, med automatisk komplettering. `/` går nedåt, <kbd>Backsteg</kbd> går ut, <kbd>Retur</kbd> bekräftar — och en sökväg som ännu inte finns skapas helt enkelt, med ett meddelande om var den hamnade.
 - **Listan öppnas på posten du står i**, och när du pilar eller hovrar genom den fylls fältet med det du pekar på. En rad du pekar på visas som förslaget den skulle ge; går du ut genom någon av listans ändar får du tillbaka det du hade skrivit, och tar du bort pekaren från den lämnas markeringen tillbaka dit du var. Listan följer markören: mappen den befinner sig i, filtrerad efter bokstäverna framför den.
-- **Pennknappen på mapp** växlar samma interaktioner till flytta/byt namn, validerat så som Obsidian validerar. Ett namn som redan är upptaget är rött i listan, och att välja det frågar om du vill byta namn på det som är i vägen, eller byta plats eller namn med det.
+- **Pennknappen på mapp** växlar samma interaktioner till flytta/byt namn, validerat så som Obsidian validerar. Ett namn som redan är upptaget är rött i listan, och att välja det öppnar båda sökvägarna sida vid sida för redigering, med att byta plats, namn eller båda ett val bort.
 - **Håll <kbd>Ctrl</kbd>** för att öppna i en ny flik — eller, i flytt-/namnbytesläge, för att kopiera anteckningen dit i stället. Anteckningens namn och mappsegmenten tar emot samma modifierare, och dragning, som sina rader i Filutforskaren.
 - **Namn fyller i sig själva medan du skriver** — det <kbd>Tabb</kbd> skulle skriva dyker upp efter markören, markerat och stavat som namnet självt, oavsett vilket skiftläge du skrev — det mappens namn är överens om, eller steget mot det första av dem; när du skriver sväljs det bokstav för bokstav, <kbd>→</kbd> tar en bokstav, <kbd>Tabb</kbd> eller <kbd>End</kbd> tar det helt, <kbd>Backsteg</kbd> tar tillbaka det. Listan fortsätter att filtrera på det du skrev, inte på det som erbjöds.
 - **<kbd>Tabb</kbd> kompletterar som ett skal**: den förlänger det du skrivit så långt namnen i den mappen är överens, går ett steg i taget mot ett av dem när de inte är det, och stiger in i en mapp först när bara ett namn återstår. Bortom sökvägens slut vidgar den i stället markeringen: namn, namn med filändelse, sökväg från valvet, sökväg från systemets rot. <kbd>Skift</kbd>+<kbd>Tabb</kbd> går samma väg baklänges — och markerar det den lämnar tillbaka i stället för att radera det — och bortom början fortsätter den uppåt i sökvägen och rundar sedan till systemsökvägen. Åt vilket håll du än går kommer ett varv tillbaka till sökvägen du byggde.
@@ -104,7 +104,7 @@ Endast dator — interaktionsmodellen behöver hovring, precisa klick och ett ta
 ## Tack till
 
 - **Vault51** — författare: design, krav och manuell testning hela vägen.
-- **Claude Opus 5** och **Claude Sonnet 5** (Anthropic, via Claude Code) — implementation, översättningar och dokumentation, under författarens ledning. Se [AI-redovisning](#ai-redovisning).
+- **Claude Opus 5 / 5.5** och **Claude Sonnet 5** (Anthropic, via Claude Code) — implementation, översättningar och dokumentation, under författarens ledning. Se [AI-redovisning](#ai-redovisning).
 - **[Obsidian](https://obsidian.md)** — programmet som det här bygger vidare på, och källan till varje komponent tillägget använder: dess plugin-API, Lucide-ikonuppsättningen bakom `setIcon`, den medföljande i18next-instans som snabbmenyernas etiketter läses ur, och dess egna CSS-klasser och variabler. Ingenting från tredje part paketeras; tillägget har **inga körtidsberoenden**.
 
 > **Obsidian-teamet har inte deltagit i det här projektet på något sätt** — de har inte skrivit, granskat, rekommenderat eller stöttat det. Obsidian är ett varumärke som tillhör Dynalist Inc.; det här är ett oberoende, icke anslutet tillägg.
