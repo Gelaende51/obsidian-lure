@@ -13,13 +13,15 @@ Varje utgåva av Lure, nyast först. Det som har landat sedan den senaste utgåv
 
 ### Tillagt
 
-- **Ett upptaget namn frågar i stället för att vägra.** Att flytta eller byta namn till ett namn som redan finns öppnar en dialog som visar båda filerna med sin fulla sökväg. Du kan byta namn på den som är i vägen och fortsätta, byta plats med den (mellan mappar: var och en behåller sitt namn och tar den andras mapp), eller byta namn med den (inom en mapp). Avbryt flyttar ingenting. Varje knapp säger vad den kommer att göra när du pekar på den.
+- **Ett upptaget namn frågar i stället för att vägra.** Att flytta eller byta namn till ett namn som redan finns öppnar en dialog som visar båda filerna med sin fulla sökväg. Du kan byta namn på den som är i vägen och fortsätta, byta plats med den (mellan mappar: var och en behåller sitt namn och tar den andras mapp), eller byta namn med den (inom en mapp). Avbryt flyttar ingenting. Varje knapp säger vad den kommer att göra när du pekar på den. Att välja ett upptaget namn i listan frågar likadant, och det gör att släppa en fil på en mapp som redan har namnet också. Namnet i dialogens namnbytesfält är rött medan det är upptaget.
 - **`:graph` inuti en mapp öppnar den mappens graf** — grafen filtrerad till `path:"that/folder"`, precis som dess egen sökruta skulle göra. Vid valvets rot är det hela grafen, som förut.
 - **En mapp som redan har namnet är röd** i listan medan du flyttar, och det är en fil med det namnet också, så konflikten syns innan du väljer.
 
 ### Ändrat
 
 - **Förslaget är alltid det Tabb skulle skriva.** Där namnen slutar stämma överens erbjuder fältet steget mot det första av dem — förut erbjöd det ingenting där, och Tabb skrev ändå något.
+- **Förslag bryr sig inte om skiftläge.** Att skriva `sch` erbjuder `Schemes`, stavat som namnet självt; tar du tillbaka förslaget får du dina bokstäver tillbaka som du skrev dem. Där både `Test` och `test` finns erbjuds den som är stavad som du skrev.
+- **Efter en tryckning på Tabb erbjuds nästa steg direkt**, som efter en skriven bokstav.
 - **Listan följer markören**, eller början av en markering: den listar mappen som den punkten är i, filtrerad efter bokstäverna framför den. I början av ett namn är det hela mappen.
 - **Att peka på en rad visar den som förslaget** — det du skrivit förblir ditt och resten av namnet markeras — och att flytta pekaren bort från listan ger tillbaka förslaget.
 - **→ tar en bokstav av förslaget** i stället för hela det; <kbd>End</kbd> tar fortfarande hela.
@@ -27,12 +29,15 @@ Varje utgåva av Lure, nyast först. Det som har landat sedan den senaste utgåv
 - **Allt annat som trycks eller klickas mellan tryckningarna startar F2- och Fokusera sökvägsfältet-cyklarna om.**
 - **Mappar är feta i listan**, så en mapps egen anteckning behöver inte längre vara grå för att sticka ut: den är lila som vilken annan anteckning som helst.
 - **Listan är aldrig bredare än sökvägsfältet.** Ett namn som inte får plats förkortas på samma sätt som sökvägsfältet förkortar ett, och visas helt vid hovring.
-- **PageUp och PageDown flyttar med de rader Obsidians egna listor visar**, från fältet också, och håller markeringen synlig.
+- **PageUp och PageDown rullar listan med det den visar**, från fältet också, och den markerade raden behåller sin plats på skärmen. <kbd>Home</kbd> och <kbd>End</kbd> tar fram den första och sista raden.
 - **Listan visar upp till 1 000 poster** innan den bara räknar resten, i stället för 100.
+- **Mappar ger vika i tur och ordning, längst först.** När utrymmet inte räcker förkortas det längsta mappnamnet till längden av nästa längsta, sedan förkortas båda tillsammans, och så vidare, var och en stannar vid sitt golv. Förut förkortades alla mappar samtidigt, i proportion till sin längd.
 - **Förkortade namn glider i stället för att hoppa.** Ett namn som ger vika klipps vid pixeln och tonas bort under sitt `…`, så att inget efter det på raden rör sig i steg medan en flik ändrar storlek.
 
 ### Rättat
 
+- I en högerpanel öppnades listan under den vänstra panelen tills första bokstaven skrevs.
+- Att flytta pekaren bort från listan gav tillbaka förslaget men inte dess färg.
 - Ett mellanslag där ett förkortat namn delades — `development guidelines` — föll bort, så de två orden flöt ihop.
 
 ## 1.4.0 — 2026-09-19[^1.4.0]

@@ -12,13 +12,15 @@ Katrs Lure laidiens, jaunākais pirmais. Tas, kas ienācis kopš pēdējā laidi
 
 ### Pievienots
 
-- **Aizņemts nosaukums vaicā, nevis atsakās.** Pārvietošana vai pārdēvēšana uz nosaukumu, kas jau tur ir, atver dialogu, kas parāda abus failus pēc to pilnā ceļa. Vari pārdēvēt to, kas ir ceļā, un turpināt, apmainīties ar to vietām (starp mapēm: katrs patur savu nosaukumu un pārņem otra mapi), vai apmainīties ar to nosaukumiem (vienas mapes robežās). Atcelšana neko nepārvieto. Katra poga saka, ko tā darīs, kad uz to norādi.
+- **Aizņemts nosaukums vaicā, nevis atsakās.** Pārvietošana vai pārdēvēšana uz nosaukumu, kas jau tur ir, atver dialogu, kas parāda abus failus pēc to pilnā ceļa. Vari pārdēvēt to, kas ir ceļā, un turpināt, apmainīties ar to vietām (starp mapēm: katrs patur savu nosaukumu un pārņem otra mapi), vai apmainīties ar to nosaukumiem (vienas mapes robežās). Atcelšana neko nepārvieto. Katra poga saka, ko tā darīs, kad uz to norādi. To pašu jautā arī aizņemta nosaukuma izvēle no saraksta, tāpat kā faila nomešana uz mapi, kurā šis nosaukums jau ir. Nosaukums dialoga pārdēvēšanas laukā ir sarkans, kamēr tas ir aizņemts.
 - **`:graph` mapes iekšpusē atver šīs mapes grafu** — grafu, filtrētu pēc `path:"that/folder"`, gluži kā to darītu tā pati meklēšanas lauciņš. Glabātavas saknē tas joprojām ir viss grafs, kā agrāk.
 - **Mape, kurā nosaukums jau ir, sarakstā ir sarkana** pārvietošanas laikā, tāpat kā fails ar šo nosaukumu, tāpēc konflikts parādās vēl pirms izvēles.
 
 ### Mainīts
 
 - **Piedāvājums vienmēr ir tas, ko uzrakstītu Tab.** Tur, kur nosaukumi vairs nesakrīt, lauks piedāvā soli pretī pirmajam no tiem — agrāk tur nekas netika piedāvāts, un Tab tik un tā kaut ko uzrakstīja.
+- **Piedāvājumi ignorē reģistru.** Ierakstot `sch`, tiek piedāvāts `Schemes`, uzrakstīts tā, kā ir pats nosaukums; piedāvājuma atņemšana atpakaļ atdod tavus burtus tā, kā tos ierakstīji. Kur pastāv gan `Test`, gan `test`, tiek piedāvāts tas, kas uzrakstīts tieši tā, kā tu rakstīji.
+- **Pēc Tab nospiešanas nākamais solis tiek piedāvāts uzreiz**, tāpat kā pēc ierakstīta burta.
 - **Saraksts seko kursoram**, vai izvēles sākumam: tas uzskaita mapi, kurā šis punkts atrodas, filtrētu pēc burtiem tā priekšā. Nosaukuma sākumā tā ir visa mape.
 - **Norādot uz rindu, tā tiek parādīta kā piedāvājums** — tas, ko ierakstīji, paliek tavs, un pārējā nosaukuma daļa ir iezīmēta — un rādītāja aizvešana no saraksta atgriež piedāvājumu atpakaļ.
 - **→ paņem vienu piedāvājuma burtu**, nevis visu; <kbd>End</kbd> joprojām paņem to visu.
@@ -26,12 +28,15 @@ Katrs Lure laidiens, jaunākais pirmais. Tas, kas ienācis kopš pēdējā laidi
 - **Jebkas cits, kas nospiests vai noklikšķināts starp nospiešanām, sāk F2 un Fokusēt ceļa joslu ciklu no jauna.**
 - **Mapes sarakstā ir treknrakstā**, tāpēc mapes pašas piezīmei vairs nav jābūt pelēkai, lai izceltos: tā ir violeta, tāpat kā jebkura cita piezīme.
 - **Saraksts nav platāks par ceļa joslu.** Nosaukums, kas neietilpst, tiek saīsināts tāpat, kā ceļa josla saīsina savu, un uzrādīts pilnībā, uzturot rādītāju virsū.
-- **PageUp un PageDown pārvietojas pa rindām, kādas rāda Obsidian pašas nolaižamās izvēlnes**, arī no lauka, un notur iezīmējumu redzamībā.
+- **PageUp un PageDown ritina sarakstu par tik, cik tas rāda**, arī no lauka, un iezīmētā rinda notur savu vietu ekrānā. <kbd>Home</kbd> un <kbd>End</kbd> ienes redzamībā pirmo un pēdējo rindu.
 - **Saraksts rāda līdz pat 1000 ierakstiem**, pirms tas sāk skaitīt pārējos, nevis 100.
+- **Mapes piekāpjas garākā pirmā.** Kad vietas trūkst, garākais mapes nosaukums saīsinās līdz nākamā garākā garumam, tad abi kopā, un tā tālāk, katrs apstājoties pie savas apakšējās robežas. Agrāk visas mapes saīsinājās vienlaikus, proporcionāli savam garumam.
 - **Saīsināti nosaukumi slīd, nevis lec.** Nosaukums, kas piekāpjas, tiek nogriezts pie paša pikseļa un izgaist zem sava `…`, tāpēc nekas aiz tā rindā nepārvietojas soļos, kamēr panelis tiek mainīts izmērā.
 
 ### Labots
 
+- Labās puses panelī saraksts atvērās zem kreisā paneļa, kamēr netika ierakstīts pirmais burts.
+- Rādītāja aizvešana no saraksta atgrieza piedāvājumu, bet ne tā krāsu.
 - Atstarpe, kur saīsināts nosaukums bija sadalīts — `development guidelines` — tika pazaudēta, saplūdinot abus vārdus kopā.
 
 ## 1.4.0 — 2026-09-19[^1.4.0]

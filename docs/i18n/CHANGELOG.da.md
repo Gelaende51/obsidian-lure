@@ -12,13 +12,15 @@ Hver udgivelse af Lure, nyeste først. Det, der er kommet til siden seneste udgi
 
 ### Tilføjet
 
-- **Et taget navn spørger i stedet for at afvise.** At flytte eller omdøbe til et navn, der allerede findes, åbner en dialog, der viser begge filer med deres fulde sti. Du kan omdøbe den, der er i vejen, og fortsætte, bytte plads med den (på tværs af mapper: hver beholder sit navn og tager den andens mappe), eller bytte navn med den (inden for én mappe). Annuller flytter intet. Hver knap fortæller, hvad den vil gøre, når du peger på den.
+- **Et taget navn spørger i stedet for at afvise.** At flytte eller omdøbe til et navn, der allerede findes, åbner en dialog, der viser begge filer med deres fulde sti. Du kan omdøbe den, der er i vejen, og fortsætte, bytte plads med den (på tværs af mapper: hver beholder sit navn og tager den andens mappe), eller bytte navn med den (inden for én mappe). Annuller flytter intet. Hver knap fortæller, hvad den vil gøre, når du peger på den. At vælge et taget navn fra rullelisten spørger det samme, og det samme gør at trække en fil til en mappe, der allerede har navnet. Navnet i dialogens omdøbningsfelt er rødt, mens det er taget.
 - **`:graph` inde i en mappe åbner den mappes graf** — grafen filtreret til `path:"that/folder"`, som dens egen søgeboks ville gøre. Ved boksens rod er det stadig hele grafen, som før.
 - **En mappe, der allerede har navnet, er rød** i rullelisten under flytning, og det samme gælder en fil med det navn, så kollisionen vises, før du vælger.
 
 ### Ændret
 
 - **Tilbuddet er altid det, Tab ville skrive.** Hvor navnene holder op med at stemme overens, tilbyder feltet skridtet mod det første af dem — før tilbød det ikke noget der, og Tab skrev alligevel noget.
+- **Tilbud ignorerer store/små bogstaver.** At skrive `sch` tilbyder `Schemes`, stavet som navnet er; at tage tilbuddet tilbage giver dine bogstaver tilbage, som du skrev dem. Hvor både `Test` og `test` findes, tilbydes den, der er stavet, som du skrev.
+- **Efter et tryk på Tab tilbydes det næste skridt med det samme**, ligesom efter et indtastet bogstav.
 - **Rullelisten følger tekstmarkøren**, eller starten af en markering: den viser den mappe, punktet er i, filtreret efter bogstaverne foran det. Ved starten af et navn er det hele mappen.
 - **At pege på en række viser den som tilbuddet** — det, du har skrevet, forbliver dit, og resten af navnet er markeret — og at flytte markøren væk fra listen bringer tilbuddet tilbage.
 - **→ tager ét bogstav af tilbuddet** i stedet for det hele; <kbd>End</kbd> tager det stadig helt.
@@ -26,12 +28,15 @@ Hver udgivelse af Lure, nyeste først. Det, der er kommet til siden seneste udgi
 - **Alt andet, der trykkes eller klikkes mellem tryk, starter kredsløbet af F2 og Fokusér stilinjen forfra.**
 - **Mapper er fed i rullelisten**, så en mappes egen note ikke længere behøver at være grå for at skille sig ud: den er lilla som enhver anden note.
 - **Rullelisten er ikke bredere end stilinjen.** Et navn, der ikke passer, forkortes på samme måde, som stilinjen forkorter et, og vises helt ved hover.
-- **PageUp og PageDown flytter efter de rækker, Obsidians egne rullelister viser**, også fra feltet, og holder markeringen i syne.
+- **PageUp og PageDown ruller rullelisten efter det, den viser**, også fra feltet, og den markerede række beholder sin plads på skærmen. <kbd>Home</kbd> og <kbd>End</kbd> bringer den første og sidste række i syne.
 - **Rullelisten viser op til 1.000 poster**, før den tæller resten, i stedet for 100.
+- **Mapper viger længst først.** Er der ikke plads nok, forkortes det længste mappenavn til det næstlængstes længde, så begge sammen, og så videre, hver standsende ved sin nedre grænse. Før blev alle mapper forkortet på én gang i forhold til deres længde.
 - **Forkortede navne glider i stedet for at hoppe.** Et navn, der viger, beskæres ved pixlen og toner ud under sin `…`, så intet efter det i rækken flytter sig i spring, mens en rude ændrer størrelse.
 
 ### Rettet
 
+- I en rude til højre åbnede rullelisten under den venstre rude, indtil det første bogstav blev skrevet.
+- At flytte markøren væk fra rullelisten bragte tilbuddet tilbage, men ikke dets farve.
 - Et mellemrum, hvor et forkortet navn blev delt — `development guidelines` — blev droppet, så de to ord løb sammen.
 
 ## 1.4.0 — 2026-09-19[^1.4.0]

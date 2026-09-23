@@ -13,13 +13,15 @@ Fiecare versiune a Lure, cea mai nouă prima. Ce a apărut de la ultima versiune
 
 ### Adăugat
 
-- **Un nume deja ocupat întreabă în loc să refuze.** Mutarea sau redenumirea către un nume care există deja deschide un dialog ce arată ambele fișiere după calea lor completă. Poți redenumi fișierul care stă în cale și continua, poți schimba locul cu el (între dosare: fiecare își păstrează numele și primește dosarul celuilalt), sau poți schimba numele cu el (în același dosar). Anularea nu mută nimic. Fiecare buton spune ce va face atunci când îl indici.
+- **Un nume deja ocupat întreabă în loc să refuze.** Mutarea sau redenumirea către un nume care există deja deschide un dialog ce arată ambele fișiere după calea lor completă. Poți redenumi fișierul care stă în cale și continua, poți schimba locul cu el (între dosare: fiecare își păstrează numele și primește dosarul celuilalt), sau poți schimba numele cu el (în același dosar). Anularea nu mută nimic. Fiecare buton spune ce va face atunci când îl indici. Alegerea unui nume ocupat din listă întreabă același lucru, la fel și plasarea unui fișier peste un dosar care are deja acel nume. Numele din câmpul de redenumire al dialogului este roșu cât timp e ocupat.
 - **`:graph` dintr-un dosar deschide graful acelui dosar** — graful filtrat la `path:"that/folder"`, așa cum ar face propria lui casetă de căutare. La rădăcina seifului rămâne graful întreg, ca înainte.
 - **Un dosar care are deja numele devine roșu** în listă în timpul mutării, la fel și un fișier cu acel nume, așa că suprapunerea se vede înainte de a alege.
 
 ### Modificat
 
 - **Oferta este întotdeauna ce ar scrie <kbd>Tab</kbd>.** Acolo unde numele încetează să coincidă, câmpul oferă pasul spre primul dintre ele — înainte, nu oferea nimic acolo și <kbd>Tab</kbd> scria totuși ceva.
+- **Ofertele ignoră starea literelor mari/mici.** Scrierea lui `sch` oferă `Schemes`, scris așa cum e numele; anularea ofertei îți dă înapoi literele exact cum le-ai scris. Acolo unde există atât `Test`, cât și `test`, este oferit cel scris exact cum ai tastat tu.
+- **După o apăsare de Tab pasul următor este oferit imediat**, la fel ca după o literă tastată.
 - **Lista urmărește cursorul**, sau începutul unei selecții: listează dosarul în care se află acel punct, filtrat după literele dinaintea lui. La începutul unui nume, acela este dosarul întreg.
 - **Indicarea unui rând îl arată drept ofertă** — ce ai scris rămâne al tău, iar restul numelui este marcat — iar luarea indicatorului de pe listă aduce oferta înapoi.
 - **→ preia o literă din ofertă**, nu toată; <kbd>End</kbd> tot o preia întreagă.
@@ -27,12 +29,15 @@ Fiecare versiune a Lure, cea mai nouă prima. Ce a apărut de la ultima versiune
 - **Orice altceva apăsat sau clic între apăsări reia ciclul F2 și Focalizează bara de cale de la capăt.**
 - **Dosarele sunt îngroșate în listă**, așa că notița proprie a unui dosar nu mai trebuie să fie gri ca să se distingă: e mov ca orice altă notiță.
 - **Lista nu e mai lată decât bara de cale.** Un nume care nu încape este scurtat la fel cum bara de cale scurtează unul, și arătat întreg la trecerea peste el.
-- **PageUp și PageDown se mișcă pe rândurile pe care le arată listele proprii ale Obsidian**, și din câmp, și păstrează selecția în vedere.
+- **PageUp și PageDown derulează lista cu cât arată ea**, și din câmp, iar rândul selectat își păstrează locul pe ecran. <kbd>Home</kbd> și <kbd>End</kbd> aduc în vedere primul și ultimul rând.
 - **Lista arată până la 1.000 de intrări** înainte să le numere pe restul, în loc de 100.
+- **Dosarele cedează cel mai lung primul.** Când spațiul e insuficient, cel mai lung nume de dosar se scurtează la lungimea următorului ca mărime, apoi amândouă împreună, și tot așa, fiecare oprindu-se la pragul lui minim. Înainte, toate dosarele se scurtau deodată, proporțional cu lungimea lor.
 - **Numele scurtate alunecă în loc să sară.** Un nume care cedează este retezat la pixel și se estompează sub `…`-ul lui, așa că nimic după el pe rând nu se mișcă în trepte cât timp un panou este redimensionat.
 
 ### Corectat
 
+- Într-un panou din dreapta, lista se deschidea sub panoul din stânga până la scrierea primei litere.
+- Luarea indicatorului de pe listă aducea oferta înapoi, dar nu și culoarea ei.
 - Un spațiu unde un nume scurtat era despărțit — `development guidelines` — a fost pierdut, lipind cele două cuvinte.
 
 ## 1.4.0 — 2026-09-19[^1.4.0]

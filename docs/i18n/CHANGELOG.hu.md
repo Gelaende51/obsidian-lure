@@ -13,13 +13,15 @@ A Lure minden kiadása, a legújabbal kezdve. Ami a legutóbbi kiadás óta ker�
 
 ### Hozzáadva
 
-- **A foglalt név megkérdez, ahelyett hogy elutasítana.** Ha olyan névre helyezel át vagy nevezel át, amely már foglalt, egy párbeszédablak nyílik, amely mindkét fájlt a teljes útvonalával mutatja. Átnevezheted az útban lévőt és folytathatod, helyet cserélhetsz vele (mappák között: mindkettő megtartja a nevét, és átveszi a másik mappáját), vagy nevet cserélhetsz vele (egy mappán belül). A mégse semmit sem mozgat. Minden gomb megmondja, mit fog tenni, amikor rámutatsz.
+- **A foglalt név megkérdez, ahelyett hogy elutasítana.** Ha olyan névre helyezel át vagy nevezel át, amely már foglalt, egy párbeszédablak nyílik, amely mindkét fájlt a teljes útvonalával mutatja. Átnevezheted az útban lévőt és folytathatod, helyet cserélhetsz vele (mappák között: mindkettő megtartja a nevét, és átveszi a másik mappáját), vagy nevet cserélhetsz vele (egy mappán belül). A mégse semmit sem mozgat. Minden gomb megmondja, mit fog tenni, amikor rámutatsz. A legördülő listából egy foglalt név kiválasztása ugyanezt kérdezi, csakúgy mint ha egy fájlt egy már ezt a nevet tartalmazó mappára húzol. A párbeszédablak átnevezés mezőjében a név piros, amíg foglalt.
 - **A `:graph` egy mappán belül annak a mappának a gráfját nyitja meg** — a `path:"that/folder"` szűrővel ellátott gráfot, ahogyan a saját keresőmezője is tenné. A széf gyökerén ez továbbra is a teljes gráf, mint eddig.
 - **Az a mappa, amely már tartalmazza a nevet, pirossal jelenik meg** a legördülő listában áthelyezés közben, csakúgy mint az azonos nevű fájl, így az ütközés már a választás előtt látszik.
 
 ### Módosítva
 
 - **A felajánlott érték mindig az, amit a <kbd>Tab</kbd> beírna.** Ahol a nevek megegyezése megszakad, a mező a köztük lévő elsőhöz vezető lépést ajánlja fel — korábban ott semmit sem ajánlott fel, és a <kbd>Tab</kbd> mégis beírt valamit.
+- **A felajánlások nem különböztetik meg a kis- és nagybetűket.** A `sch` beírása a `Schemes`-t ajánlja fel, úgy írva, ahogyan a név van; az ajánlat visszavonása a te betűidet adja vissza úgy, ahogyan begépelted. Ahol mind a `Test`, mind a `test` létezik, az jelenik meg felajánlásként, amelyet úgy írtál, ahogyan begépelted.
+- **Egy Tab lenyomása után a következő lépés azonnal felajánlásra kerül**, csakúgy mint egy begépelt betű után.
 - **A legördülő lista a kurzort követi**, vagy a kijelölés kezdetét: azt a mappát listázza, amelyben az a pont van, az előtte álló betűkkel szűrve. Egy név elején ez a teljes mappa.
 - **Egy sorra mutatva az megjelenik felajánlásként** — amit begépeltél, az a tiéd marad, a név többi része pedig ki van jelölve —, és ha lekerül róla a mutató, az ajánlat visszatér.
 - **A → az ajánlat egyetlen betűjét veszi át**, nem az egészet; az <kbd>End</kbd> továbbra is egészben veszi át.
@@ -27,12 +29,15 @@ A Lure minden kiadása, a legújabbal kezdve. Ami a legutóbbi kiadás óta ker�
 - **Bármi más, amit a két lenyomás között megnyomsz vagy kattintasz, újraindítja az F2 és Az útvonalsáv fókuszálása körforgását.**
 - **A mappák félkövérek a legördülő listában**, így egy mappa saját jegyzetének már nem kell szürkének lennie, hogy kitűnjön: lila, mint bármely másik jegyzet.
 - **A legördülő lista nem szélesebb az útvonalsávnál.** A be nem férő nevet ugyanúgy lerövidíti, ahogyan az útvonalsáv is lerövidít egyet, és rámutatva teljes egészében megjelenik.
-- **A PageUp és a PageDown az Obsidian saját legördülő listái által mutatott sorokkal lép**, a mezőből is, és a kijelölést szem előtt tartja.
+- **A PageUp és a PageDown a legördülő listát azzal görgeti, amennyit az mutat**, a mezőből is, és a kijelölt sor megtartja a helyét a képernyőn. A <kbd>Home</kbd> és az <kbd>End</kbd> az első és az utolsó sort hozza láthatóvá.
 - **A legördülő lista akár 1000 bejegyzést is megjelenít**, mielőtt megszámolná a többit, a korábbi 100 helyett.
+- **A mappák a leghosszabb sorrendjében engednek.** Ha kevés a hely, a leghosszabb mappanév a következő leghosszabbnak a hosszára rövidül, majd mindkettő együtt, és így tovább, mindegyik a saját alsó határánál megállva. Korábban minden mappa egyszerre rövidült, a hosszával arányosan.
 - **A lerövidített nevek csúsznak, nem ugranak.** Az engedő név pixelre pontosan levágódik, és a `…` alatt tűnik el, így a sorban utána semmi sem mozog lépésekben, amíg egy panel átméreteződik.
 
 ### Javítva
 
+- Egy jobb oldali panelen a legördülő lista a bal oldali panel alatt nyílt meg, amíg az első betűt be nem gépelték.
+- Ha a mutató lekerült a legördülő listáról, az ajánlat visszatért, de a színe nem.
 - Egy szóköz, ahol egy lerövidített nevet elvágtak — `development guidelines` — kimaradt, összeragasztva a két szót.
 
 ## 1.4.0 — 2026-09-19[^1.4.0]

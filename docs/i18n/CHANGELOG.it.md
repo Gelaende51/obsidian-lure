@@ -13,13 +13,15 @@ Ogni release di Lure, dalla più recente. Ciò che è arrivato dopo l'ultima rel
 
 ### Aggiunto
 
-- **Un nome già in uso chiede invece di rifiutare.** Spostare o rinominare su un nome già presente apre una finestra di dialogo che mostra entrambi i file con il loro percorso completo. Puoi rinominare quello di intralcio e proseguire, scambiare il posto con lui (tra cartelle: ciascuno mantiene il proprio nome e prende la cartella dell'altro), oppure scambiare i nomi con lui (all'interno di una stessa cartella). Annullare non sposta nulla. Ogni pulsante dice cosa farà non appena lo indichi.
+- **Un nome già in uso chiede invece di rifiutare.** Spostare o rinominare su un nome già presente apre una finestra di dialogo che mostra entrambi i file con il loro percorso completo. Puoi rinominare quello di intralcio e proseguire, scambiare il posto con lui (tra cartelle: ciascuno mantiene il proprio nome e prende la cartella dell'altro), oppure scambiare i nomi con lui (all'interno di una stessa cartella). Annullare non sposta nulla. Ogni pulsante dice cosa farà non appena lo indichi. Scegliere dall'elenco un nome già in uso chiede la stessa cosa, così come trascinare un file su una cartella che già contiene il suo nome. Il nome nel campo di rinomina della finestra di dialogo è rosso finché è occupato.
 - **`:graph` dentro una cartella apre il grafo di quella cartella** — il grafo filtrato per `path:"that/folder"`, come farebbe il suo stesso campo di ricerca. Nella radice del vault resta il grafo intero, come prima.
 - **Una cartella che contiene già il nome appare rossa** nel menu a discesa durante lo spostamento, e così pure un file con quel nome, in modo che il conflitto sia visibile prima della scelta.
 
 ### Modificato
 
 - **La proposta è sempre ciò che Tab scriverebbe.** Dove i nomi smettono di concordare, il campo propone il passo verso il primo di essi — prima non proponeva nulla lì, e Tab scriveva comunque qualcosa.
+- **Le proposte ignorano maiuscole e minuscole.** Digitando `sch` viene proposto `Schemes`, scritto come lo è il nome; riprendendo la proposta ricevi indietro le tue lettere come le hai digitate. Dove esistono sia `Test` che `test`, viene proposto quello scritto come hai digitato tu.
+- **Dopo una pressione di Tab, il passo successivo viene proposto subito**, come dopo una lettera digitata.
 - **Il menu a discesa segue il cursore**, o l'inizio di una selezione: elenca la cartella in cui si trova quel punto, filtrata dalle lettere che lo precedono. All'inizio di un nome è la cartella intera.
 - **Puntare una riga la mostra come proposta** — quello che hai scritto resta tuo e il resto del nome viene evidenziato — e togliere il puntatore dall'elenco riporta la proposta.
 - **→ prende una lettera della proposta** anziché tutta intera; <kbd>Fine</kbd> la prende ancora per intero.
@@ -27,12 +29,15 @@ Ogni release di Lure, dalla più recente. Ciò che è arrivato dopo l'ultima rel
 - **Qualsiasi altro tasto premuto o clic effettuato tra una pressione e l'altra riavvia il ciclo di F2 e Attiva la barra del percorso.**
 - **Le cartelle sono in grassetto nel menu a discesa**, così la nota propria di una cartella non deve più essere grigia per distinguersi: è viola come qualsiasi altra nota.
 - **Il menu a discesa non è mai più largo della barra del percorso.** Un nome che non ci sta viene accorciato come la barra del percorso accorcia un nome, e mostrato per intero al passaggio del cursore.
-- **PaginaSu e PaginaGiù si spostano in base alle righe che i menu a discesa di Obsidian stesso mostrano**, anche dal campo, e mantengono la selezione in vista.
+- **PaginaSu e PaginaGiù scorrono il menu a discesa in base a ciò che mostra**, anche dal campo, e la riga selezionata mantiene la sua posizione sullo schermo. <kbd>Home</kbd> e <kbd>Fine</kbd> portano in vista la prima e l'ultima riga.
 - **Il menu a discesa mostra fino a 1.000 voci** prima di contare il resto, invece di 100.
+- **Le cartelle cedono prima le più lunghe.** Quando lo spazio scarseggia, il nome di cartella più lungo si accorcia fino alla lunghezza del successivo più lungo, poi entrambi insieme, e così via, ciascuno fermandosi al proprio limite minimo. Prima, tutte le cartelle si accorciavano contemporaneamente in proporzione alla loro lunghezza.
 - **I nomi accorciati scivolano invece di saltare.** Un nome che cede viene tagliato al pixel e sfuma sotto i suoi `…`, così nulla dopo di lui sulla riga si muove a scatti mentre un riquadro viene ridimensionato.
 
 ### Corretto
 
+- In un riquadro a destra, il menu a discesa si apriva sotto il riquadro a sinistra finché non veniva digitata la prima lettera.
+- Togliere il puntatore dal menu a discesa riportava la proposta, ma non il suo colore.
 - Uno spazio nel punto in cui un nome accorciato veniva spezzato — `development guidelines` — andava perso, facendo attaccare le due parole.
 
 ## 1.4.0 — 2026-09-19[^1.4.0]

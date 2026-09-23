@@ -12,13 +12,15 @@ Setiap rilis Lure, yang terbaru lebih dulu. Apa yang sudah mendarat sejak rilis 
 
 ### Ditambahkan
 
-- **Nama yang sudah dipakai akan bertanya, bukan menolak.** Memindahkan atau mengganti nama ke nama yang sudah ada membuka dialog yang menampilkan kedua berkas dengan jalur lengkapnya. Anda dapat mengganti nama berkas yang menghalangi lalu melanjutkan, bertukar tempat dengannya (lintas folder: masing-masing tetap dengan namanya dan menempati folder yang lain), atau bertukar nama dengannya (dalam satu folder). Batal tidak memindahkan apa pun. Setiap tombol menyatakan apa yang akan dilakukannya saat Anda mengarahkan penunjuk ke sana.
+- **Nama yang sudah dipakai akan bertanya, bukan menolak.** Memindahkan atau mengganti nama ke nama yang sudah ada membuka dialog yang menampilkan kedua berkas dengan jalur lengkapnya. Anda dapat mengganti nama berkas yang menghalangi lalu melanjutkan, bertukar tempat dengannya (lintas folder: masing-masing tetap dengan namanya dan menempati folder yang lain), atau bertukar nama dengannya (dalam satu folder). Batal tidak memindahkan apa pun. Setiap tombol menyatakan apa yang akan dilakukannya saat Anda mengarahkan penunjuk ke sana. Memilih nama yang sudah dipakai dari menu tarik-turun menanyakan hal yang sama, begitu pula menjatuhkan sebuah berkas ke folder yang sudah memiliki nama itu. Nama pada bidang ganti nama di dialog itu berwarna merah selama nama itu masih dipakai.
 - **`:graph` di dalam sebuah folder membuka graf folder itu** — graf yang disaring dengan `path:"that/folder"`, seperti yang akan dibuat kotak pencariannya sendiri. Di akar vault, ia tetap graf keseluruhan, seperti sebelumnya.
 - **Folder yang sudah memiliki nama itu berwarna merah** di menu tarik-turun saat memindahkan, begitu pula berkas dengan nama itu, sehingga benturan terlihat sebelum Anda memilih.
 
 ### Diubah
 
 - **Tawaran selalu berupa apa yang akan ditulis Tab.** Di titik nama-nama berhenti sama, bidang menawarkan langkah menuju yang pertama dari nama-nama itu — sebelumnya, di sana tidak menawarkan apa-apa padahal Tab tetap menulis sesuatu.
+- **Tawaran mengabaikan besar-kecil huruf.** Mengetik `sch` menawarkan `Schemes`, dieja sebagaimana nama itu ditulis; mengambil kembali tawaran itu mengembalikan huruf Anda persis seperti yang Anda ketik. Ketika `Test` dan `test` sama-sama ada, yang dieja sesuai dengan cara Anda mengetik itulah yang ditawarkan.
+- **Setelah menekan Tab, langkah berikutnya langsung ditawarkan**, seperti setelah mengetik sebuah huruf.
 - **Menu tarik-turun mengikuti kursor**, atau awal sebuah pilihan: ia mencantumkan folder tempat titik itu berada, disaring oleh huruf di depannya. Di awal sebuah nama, itu adalah seluruh folder.
 - **Menunjuk sebuah baris menampilkannya sebagai tawaran** — apa yang Anda ketik tetap milik Anda dan sisa nama itu ditandai — dan menjauhkan penunjuk dari daftar mengembalikan tawaran semula.
 - **→ mengambil satu huruf dari tawaran** alih-alih semuanya; <kbd>End</kbd> tetap mengambilnya utuh.
@@ -26,12 +28,15 @@ Setiap rilis Lure, yang terbaru lebih dulu. Apa yang sudah mendarat sejak rilis 
 - **Apa pun lain yang ditekan atau diklik di antara kedua penekanan itu memulai lagi siklus F2 dan Fokus ke bilah jalur.**
 - **Folder ditebalkan di menu tarik-turun**, sehingga catatan milik sebuah folder tidak perlu lagi berwarna kelabu untuk tampil beda: ia ungu seperti catatan lainnya.
 - **Menu tarik-turun tidak lebih lebar dari bilah jalur.** Nama yang tidak muat dipendekkan dengan cara yang sama seperti bilah jalur memendekkannya, dan ditampilkan utuh saat diarahkan penunjuk.
-- **PageUp dan PageDown berpindah menurut baris yang ditampilkan menu tarik-turun bawaan Obsidian**, dari bidang juga, dan menjaga pilihan tetap terlihat.
+- **PageUp dan PageDown menggulir menu tarik-turun sebesar apa yang ditampilkannya**, dari bidang juga, dan baris terpilih menjaga posisinya di layar. <kbd>Home</kbd> dan <kbd>End</kbd> membawa baris pertama dan terakhir ke dalam pandangan.
 - **Menu tarik-turun menampilkan hingga 1.000 entri** sebelum menghitung sisanya, alih-alih 100.
+- **Folder mengalah dari yang terpanjang lebih dulu.** Ketika ruang kurang, nama folder terpanjang memendek hingga sepanjang nama terpanjang berikutnya, lalu keduanya bersama-sama, dan seterusnya, masing-masing berhenti pada batas terendahnya. Sebelumnya, semua folder memendek serentak sebanding dengan panjangnya.
 - **Nama yang dipendekkan meluncur, bukan meloncat.** Nama yang mengalah dipotong tepat di piksel dan memudar di bawah `…`-nya, sehingga tidak ada apa pun setelahnya di baris itu bergerak berjenjang selagi panel diubah ukurannya.
 
 ### Diperbaiki
 
+- Di panel sebelah kanan, menu tarik-turun terbuka di bawah panel sebelah kiri sampai huruf pertama diketik.
+- Menjauhkan penunjuk dari menu tarik-turun mengembalikan tawaran tetapi bukan warnanya.
 - Sebuah spasi di tempat nama yang dipendekkan terpotong — `development guidelines` — hilang, membuat dua kata itu menyatu.
 
 ## 1.4.0 — 2026-09-19[^1.4.0]

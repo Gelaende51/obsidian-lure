@@ -13,13 +13,15 @@ Mọi bản phát hành của Lure, mới nhất ở trên cùng. Những gì đ
 
 ### Đã thêm
 
-- **Một tên đã được dùng sẽ hỏi thay vì từ chối.** Di chuyển hoặc đổi tên tới một tên đã có sẵn sẽ mở một hộp thoại hiển thị cả hai tệp theo đường dẫn đầy đủ của chúng. Bạn có thể đổi tên tệp đang chắn đường rồi tiếp tục, đổi chỗ với nó (giữa các thư mục: mỗi tệp giữ nguyên tên và nhận thư mục của tệp kia), hoặc đổi tên cho nhau (trong cùng một thư mục). Hủy thì không di chuyển gì cả. Mỗi nút đều cho biết nó sẽ làm gì khi bạn trỏ vào.
+- **Một tên đã được dùng sẽ hỏi thay vì từ chối.** Di chuyển hoặc đổi tên tới một tên đã có sẵn sẽ mở một hộp thoại hiển thị cả hai tệp theo đường dẫn đầy đủ của chúng. Bạn có thể đổi tên tệp đang chắn đường rồi tiếp tục, đổi chỗ với nó (giữa các thư mục: mỗi tệp giữ nguyên tên và nhận thư mục của tệp kia), hoặc đổi tên cho nhau (trong cùng một thư mục). Hủy thì không di chuyển gì cả. Mỗi nút đều cho biết nó sẽ làm gì khi bạn trỏ vào. Chọn một tên đã bị dùng từ danh sách thả xuống cũng hỏi như vậy, và thả một tệp vào thư mục đã có sẵn tên đó cũng thế. Tên trong ô đổi tên của hộp thoại có màu đỏ khi nó đang bị dùng.
 - **`:graph` bên trong một thư mục sẽ mở đồ thị của thư mục đó** — đồ thị được lọc theo `path:"that/folder"`, như chính ô tìm kiếm của thư mục đó sẽ tạo ra. Tại gốc kho, nó vẫn là toàn bộ đồ thị, như trước đây.
 - **Một thư mục đã có sẵn tên đó sẽ hiện màu đỏ** trong danh sách thả xuống khi đang di chuyển, và một tệp mang tên đó cũng vậy, để va chạm hiện ra trước khi bạn chọn.
 
 ### Đã thay đổi
 
 - **Gợi ý luôn là thứ mà Tab sẽ viết.** Ở chỗ các tên không còn trùng nhau nữa, trường nhập gợi ý bước tiến về phía cái đầu tiên trong số chúng — trước đây, ở đó nó không gợi ý gì trong khi Tab vẫn cứ viết một cái gì đó.
+- **Gợi ý bỏ qua chữ hoa chữ thường.** Gõ `sch` sẽ gợi ý `Schemes`, được viết đúng theo cách tên đó được viết; lấy lại gợi ý sẽ trả lại các chữ cái của bạn đúng như bạn đã gõ. Khi cả `Test` và `test` đều tồn tại, cái được viết đúng theo cách bạn gõ sẽ được gợi ý.
+- **Sau khi nhấn Tab, bước tiếp theo được gợi ý ngay lập tức**, như sau khi gõ một chữ cái.
 - **Danh sách thả xuống đi theo con trỏ nhập**, hoặc điểm bắt đầu của một vùng chọn: nó liệt kê thư mục chứa điểm đó, được lọc theo các chữ cái đứng trước nó. Ở đầu một tên, đó là cả thư mục.
 - **Trỏ vào một hàng sẽ hiển thị nó như gợi ý** — những gì bạn đã gõ vẫn là của bạn và phần còn lại của tên được đánh dấu — và rời con trỏ khỏi danh sách sẽ đưa gợi ý trở lại.
 - **→ lấy một chữ cái của gợi ý** thay vì lấy trọn nó; <kbd>End</kbd> vẫn lấy trọn.
@@ -27,12 +29,15 @@ Mọi bản phát hành của Lure, mới nhất ở trên cùng. Những gì đ
 - **Bất kỳ thứ gì khác được nhấn hoặc bấm giữa hai lần nhấn đó sẽ khởi động lại vòng lặp F2 và Tập trung vào thanh đường dẫn.**
 - **Thư mục được in đậm trong danh sách thả xuống**, nên ghi chú của riêng một thư mục không còn cần màu xám để nổi bật nữa: nó có màu tím như bất kỳ ghi chú nào khác.
 - **Danh sách thả xuống không rộng hơn thanh đường dẫn.** Một tên không vừa sẽ được rút ngắn theo cách mà thanh đường dẫn rút ngắn một tên, và hiện đầy đủ khi di chuột qua.
-- **PageUp và PageDown di chuyển theo các hàng mà danh sách thả xuống riêng của Obsidian hiển thị**, kể cả từ ô nhập, và giữ vùng chọn trong tầm nhìn.
+- **PageUp và PageDown cuộn danh sách thả xuống theo những gì nó hiển thị**, kể cả từ ô nhập, và hàng được chọn giữ nguyên vị trí trên màn hình. <kbd>Home</kbd> và <kbd>End</kbd> đưa hàng đầu tiên và cuối cùng vào tầm nhìn.
 - **Danh sách thả xuống hiển thị tới 1.000 mục** trước khi đếm phần còn lại, thay vì 100.
+- **Thư mục nhường chỗ, dài nhất trước.** Khi thiếu chỗ, tên thư mục dài nhất rút ngắn xuống bằng độ dài của tên dài kế tiếp, rồi cả hai cùng rút ngắn tiếp, và cứ thế, mỗi tên dừng lại ở giới hạn riêng của nó. Trước đây, mọi thư mục rút ngắn cùng lúc theo tỷ lệ với độ dài của chúng.
 - **Tên bị rút ngắn trượt thay vì nhảy.** Một tên nhường chỗ bị cắt đúng tại pixel và mờ dần dưới `…` của nó, nên không có gì sau nó trên hàng di chuyển theo từng bước khi một khung được đổi kích thước.
 
 ### Đã sửa
 
+- Ở một ngăn bên phải, danh sách thả xuống mở ra bên dưới ngăn bên trái cho đến khi chữ cái đầu tiên được gõ.
+- Rời con trỏ khỏi danh sách thả xuống đưa gợi ý trở lại nhưng không đưa lại màu của nó.
 - Một khoảng trắng ở chỗ một tên bị rút ngắn tách ra — `development guidelines` — đã bị mất, khiến hai từ dính liền vào nhau.
 
 ## 1.4.0 — 2026-09-19[^1.4.0]

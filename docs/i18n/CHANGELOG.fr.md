@@ -12,13 +12,15 @@ Toutes les versions de Lure, de la plus récente à la plus ancienne. Ce qui a �
 
 ### Ajouté
 
-- **Un nom déjà pris pose une question plutôt que de refuser.** Déplacer ou renommer vers un nom déjà présent ouvre une boîte de dialogue montrant les deux fichiers avec leur chemin complet. Vous pouvez renommer celui qui fait obstacle et continuer, échanger sa place avec lui (entre dossiers : chacun garde son nom et prend le dossier de l'autre), ou échanger les noms avec lui (au sein d'un même dossier). Annuler ne déplace rien. Chaque bouton indique ce qu'il fera lorsque vous le pointez.
+- **Un nom déjà pris pose une question plutôt que de refuser.** Déplacer ou renommer vers un nom déjà présent ouvre une boîte de dialogue montrant les deux fichiers avec leur chemin complet. Vous pouvez renommer celui qui fait obstacle et continuer, échanger sa place avec lui (entre dossiers : chacun garde son nom et prend le dossier de l'autre), ou échanger les noms avec lui (au sein d'un même dossier). Annuler ne déplace rien. Chaque bouton indique ce qu'il fera lorsque vous le pointez. Choisir un nom déjà pris dans le menu déroulant pose la même question, tout comme déposer un fichier sur un dossier qui contient déjà son nom. Le nom dans le champ de renommage de la boîte de dialogue est rouge tant qu'il est pris.
 - **`:graph` à l'intérieur d'un dossier ouvre le graphe de ce dossier** — le graphe filtré par `path:"that/folder"`, comme le ferait son propre champ de recherche. À la racine du coffre, c'est le graphe entier, comme avant.
 - **Un dossier qui contient déjà le nom est rouge** dans le menu déroulant pendant un déplacement, tout comme un fichier portant ce nom, afin que le conflit apparaisse avant même le choix.
 
 ### Modifié
 
 - **La proposition est toujours ce que Tab écrirait.** Là où les noms cessent de concorder, le champ propose le pas vers le premier d'entre eux — auparavant, il ne proposait rien à cet endroit, et Tab écrivait quand même quelque chose.
+- **Les propositions ignorent la casse.** Taper `sch` propose `Schemes`, orthographié comme le nom l'est ; reprendre la proposition vous rend vos lettres telles que vous les avez tapées. Là où `Test` et `test` existent tous deux, celui dont l'orthographe correspond à ce que vous avez tapé est proposé.
+- **Après une pression de Tab, le pas suivant est proposé aussitôt**, comme après une lettre tapée.
 - **Le menu déroulant suit le curseur**, ou le début d'une sélection : il liste le dossier où se trouve ce point, filtré par les lettres qui le précèdent. Au début d'un nom, c'est le dossier entier.
 - **Pointer une ligne l'affiche comme la proposition** — ce que vous avez tapé reste le vôtre et le reste du nom est marqué — et retirer le pointeur de la liste ramène la proposition.
 - **→ prend une lettre de la proposition** plutôt que la totalité ; <kbd>Fin</kbd> la prend toujours entière.
@@ -26,12 +28,15 @@ Toutes les versions de Lure, de la plus récente à la plus ancienne. Ce qui a �
 - **Tout ce qui est pressé ou cliqué entre les deux relance le cycle de F2 et de Placer le focus sur la barre de chemin.**
 - **Les dossiers sont en gras dans le menu déroulant**, si bien que la note propre à un dossier n'a plus besoin d'être grise pour se distinguer : elle est violette comme toute autre note.
 - **Le menu déroulant n'est jamais plus large que la barre de chemin.** Un nom qui n'y tient pas est raccourci comme la barre de chemin raccourcit un nom, et s'affiche en entier au survol.
-- **Page précédente et Page suivante se déplacent selon les lignes que les propres menus déroulants d'Obsidian affichent**, y compris depuis le champ, et gardent la sélection visible.
+- **Page précédente et Page suivante font défiler le menu déroulant selon ce qu'il affiche**, y compris depuis le champ, et la ligne sélectionnée garde sa place à l'écran. <kbd>Début</kbd> et <kbd>Fin</kbd> amènent la première et la dernière ligne en vue.
 - **Le menu déroulant affiche jusqu'à 1 000 entrées** avant de compter le reste, au lieu de 100.
+- **Les dossiers cèdent d'abord les plus longs.** Faute de place, le nom de dossier le plus long se raccourcit à la longueur du suivant, puis les deux ensemble, et ainsi de suite, chacun s'arrêtant à son plancher. Auparavant, chaque dossier se raccourcissait simultanément en proportion de sa longueur.
 - **Les noms raccourcis glissent au lieu de sauter.** Un nom qui cède est coupé au pixel près et s'estompe sous ses `…`, si bien que rien après lui sur la ligne ne se déplace par à-coups pendant le redimensionnement d'un panneau.
 
 ### Corrigé
 
+- Dans un panneau de droite, le menu déroulant s'ouvrait sous le panneau de gauche jusqu'à la frappe de la première lettre.
+- Retirer le pointeur du menu déroulant ramenait la proposition, mais pas sa couleur.
 - Un espace était perdu à l'endroit où un nom raccourci était coupé — `development guidelines` — collant les deux mots.
 
 ## 1.4.0 — 2026-09-19[^1.4.0]

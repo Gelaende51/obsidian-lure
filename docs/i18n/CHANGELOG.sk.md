@@ -12,13 +12,15 @@ Každé vydanie pluginu Lure, od najnovšieho. Čo pribudlo od posledného vydan
 
 ### Pridané
 
-- **Obsadený názov sa opýta, namiesto toho, aby odmietol.** Presun alebo premenovanie na názov, ktorý už existuje, otvorí dialóg zobrazujúci oba súbory podľa ich celej cesty. Môžeš premenovať ten, čo je v ceste, a pokračovať, vymeniť si s ním miesta (naprieč priečinkami: každý si ponechá svoj názov a prevezme priečinok toho druhého), alebo si s ním vymeniť názvy (v rámci jedného priečinka). Zrušenie nič nepresunie. Každé tlačidlo hovorí, čo urobí, keď naň ukážeš.
+- **Obsadený názov sa opýta, namiesto toho, aby odmietol.** Presun alebo premenovanie na názov, ktorý už existuje, otvorí dialóg zobrazujúci oba súbory podľa ich celej cesty. Môžeš premenovať ten, čo je v ceste, a pokračovať, vymeniť si s ním miesta (naprieč priečinkami: každý si ponechá svoj názov a prevezme priečinok toho druhého), alebo si s ním vymeniť názvy (v rámci jedného priečinka). Zrušenie nič nepresunie. Každé tlačidlo hovorí, čo urobí, keď naň ukážeš. Výber obsadeného názvu zo zoznamu sa opýta to isté, a rovnako aj pustenie súboru na priečinok, ktorý už daný názov obsahuje. Názov v poli na premenovanie v dialógu je červený, kým je obsadený.
 - **`:graph` vnútri priečinka otvorí graf tohto priečinka** — graf filtrovaný na `path:"that/folder"`, tak, ako by to urobilo jeho vlastné vyhľadávacie pole. V koreni trezora je to stále celý graf, ako predtým.
 - **Priečinok, ktorý už daný názov obsahuje, je v zozname počas presunu červený**, a rovnako aj súbor s takým názvom, takže konflikt sa ukáže ešte pred výberom.
 
 ### Zmenené
 
 - **Ponuka je vždy to, čo by napísal Tab.** Tam, kde sa názvy prestanú zhodovať, pole ponúka krok smerom k prvému z nich — predtým tam nič neponúkalo a Tab aj tak niečo napísal.
+- **Ponuky ignorujú veľkosť písmen.** Napísanie `sch` ponúkne `Schemes`, napísané tak, ako znie názov; vzatie ponuky späť vráti tvoje písmená tak, ako si ich napísal. Tam, kde existuje aj `Test`, aj `test`, sa ponúkne ten, ktorý je napísaný presne tak, ako si písal.
+- **Po stlačení Tab sa hneď ponúkne ďalší krok**, tak ako po napísanom písmene.
 - **Zoznam sleduje kurzor**, alebo začiatok výberu: uvádza priečinok, v ktorom sa ten bod nachádza, filtrovaný podľa písmen pred ním. Na začiatku názvu je to celý priečinok.
 - **Ukázanie na riadok ho zobrazí ako ponuku** — čo si napísal, zostáva tvoje a zvyšok názvu je označený — a presunutie ukazovateľa mimo zoznamu ponuku vráti späť.
 - **→ vezme jedno písmeno ponuky** namiesto celej; <kbd>End</kbd> ju stále vezme celú.
@@ -26,12 +28,15 @@ Každé vydanie pluginu Lure, od najnovšieho. Čo pribudlo od posledného vydan
 - **Čokoľvek iné stlačené alebo kliknuté medzi stlačeniami spustí cyklus F2 a Zamerať lištu cesty odznova.**
 - **Priečinky sú v zozname tučné**, takže vlastná poznámka priečinka už nemusí byť sivá, aby sa odlíšila: je fialová ako každá iná poznámka.
 - **Zoznam nie je širší ako lišta cesty.** Názov, ktorý sa tam nezmestí, sa skráti tak, ako lišta cesty skracuje svoj vlastný, a pri ukázaní naň sa zobrazí celý.
-- **PageUp a PageDown sa pohybujú po riadkoch, aké ukazujú vlastné zoznamy Obsidianu**, aj z poľa, a udržujú výber v dohľade.
+- **PageUp a PageDown posúvajú zoznam o toľko, koľko ukazuje**, aj z poľa, a vybraný riadok si udrží svoje miesto na obrazovke. <kbd>Home</kbd> a <kbd>End</kbd> privedú do zorného poľa prvý a posledný riadok.
 - **Zoznam zobrazuje až 1 000 položiek**, kým začne počítať zvyšok, namiesto 100.
+- **Priečinky ustupujú najdlhšie ako prvé.** Keď nie je dosť miesta, najdlhší názov priečinka sa skráti na dĺžku ďalšieho najdlhšieho, potom sa skrátia oba spolu, a tak ďalej, každý sa zastaví na svojom dolnom limite. Predtým sa všetky priečinky skracovali naraz, úmerne svojej dĺžke.
 - **Skrátené názvy sa posúvajú plynulo, nie skokom.** Názov, ktorý ustupuje, sa oreže na pixel a stráca sa pod svojimi `…`, takže nič za ním v riadku sa nehýbe po krokoch, kým sa mení veľkosť panela.
 
 ### Opravené
 
+- V pravom paneli sa zoznam otváral pod ľavým panelom, kým nebolo napísané prvé písmeno.
+- Presunutie ukazovateľa mimo zoznamu vrátilo ponuku späť, ale nie jej farbu.
 - Medzera tam, kde bol skrátený názov rozdelený — `development guidelines` — bola vynechaná, čím sa dve slová spojili dokopy.
 
 ## 1.4.0 — 2026-09-19[^1.4.0]

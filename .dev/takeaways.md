@@ -2498,3 +2498,50 @@ with it. Clipping at the pixel (`text-overflow: clip`), fading the edge with a
 `mask-image`, and drawing the `…` from a zero-width sibling over the fade
 gives a row where nothing moves in steps: the ellipsis changes no layout, and
 a mask works over any background a theme paints.
+
+## A popover is placed at the width it has when `open()` runs
+
+`AbstractInputSuggest.open()` places the popover from the field's rect with
+`preventOverlap`, so a popover wider than the room to the window's right edge
+is pushed left to fit. Narrowing it afterwards (here, capping it to the path
+bar in `open()`) does not place it again: in a right-hand pane the list stood
+under the left pane until the next keystroke re-opened it. Set anything that
+changes the popover's width before `super.open()`, and call
+`reposition(lastRect)` after changing it.
+
+## Obsidian's reposition resets the list's scroll
+
+`autoReposition` is a capture listener for `scroll` on the whole document, so
+the list's *own* scroll fires it. When the field's rect has changed since the
+last placement (a row previewed into the field widens it), it places the
+popover again, and the list inside comes back scrolled to the top. PageDown,
+End or any scroll that follows a preview therefore lost the selection a frame
+after bringing it into view. Keeping `containerEl.scrollTop` across
+`reposition` fixes it. Candidate bug report: repositioning should not reset
+the scroll position of the suggestion list.
+
+## The popover's scope binds Home and End too, and neither scrolls
+
+Besides PageUp/PageDown (see above), the scope holds `Home` and `End`
+handlers that call `setSelectedItem(0 | last)`; like the paging ones they are
+bound at construction, so replacing `entry.func` in `scope.keys` is the only
+way to change them.
+
+## Flexbox cannot level items down
+
+`flex-shrink` shares the overflow out in proportion to shrink factor × base
+size, so items with the same factor all lose the same *fraction* of their
+width. "The longest gives way until it is as short as the next, then both" is
+water-filling, which no combination of flex factors produces. It takes one
+computed cap `L` with each item at `max(floor, min(natural, L))`, found by
+halving since the total grows with `L`; taking flexbox's own total for the
+group as the target keeps the order between groups (vault name, folders,
+file name) to flexbox.
+
+## `beforeinput` is where an inline completion can be undone
+
+An inline offer that respells the typed letters (so `TES` shows as `test`)
+must give them back before the user's next edit lands, or typing past the
+offer keeps the respelling. Rewriting `input.value` in a `beforeinput`
+listener and restoring the selection range lets the browser apply the edit
+to the original letters.

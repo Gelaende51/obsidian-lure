@@ -13,13 +13,15 @@ Cada versió de Lure, de la més nova a la més antiga. El que ha arribat des de
 
 ### Afegit
 
-- **Un nom ja agafat pregunta en lloc de refusar.** Moure o canviar el nom cap a un nom que ja hi és obre un diàleg que mostra els dos fitxers pel seu camí sencer. Pots canviar el nom del que hi ha al mig i continuar, intercanviar-hi els llocs (entre carpetes: cadascun conserva el seu nom i pren la carpeta de l'altre), o intercanviar-hi els noms (dins d'una mateixa carpeta). Cancel·lar no mou res. Cada botó diu què farà quan hi apuntes.
+- **Un nom ja agafat pregunta en lloc de refusar.** Moure o canviar el nom cap a un nom que ja hi és obre un diàleg que mostra els dos fitxers pel seu camí sencer. Pots canviar el nom del que hi ha al mig i continuar, intercanviar-hi els llocs (entre carpetes: cadascun conserva el seu nom i pren la carpeta de l'altre), o intercanviar-hi els noms (dins d'una mateixa carpeta). Cancel·lar no mou res. Cada botó diu què farà quan hi apuntes. Triar un nom ja agafat des del desplegable pregunta el mateix, i també arrossegar un fitxer cap a una carpeta que ja té aquell nom. El nom al camp de canvi de nom del diàleg es mostra en vermell mentre estigui agafat.
 - **`:graph` dins d'una carpeta obre el graf d'aquella carpeta** — el graf filtrat a `path:"that/folder"`, tal com faria el seu propi quadre de cerca. A l'arrel del cofre segueix sent el graf sencer, com abans.
 - **Una carpeta que ja té el nom es mostra en vermell** al desplegable mentre mous, i també un fitxer amb aquell nom, de manera que el conflicte es veu abans de triar.
 
 ### Canviat
 
 - **L'oferta és sempre el que escriuria <kbd>Tab</kbd>.** On els noms deixen de coincidir, el camp ofereix el pas cap al primer d'ells — abans, no oferia res allà i el <kbd>Tab</kbd> escrivia alguna cosa igualment.
+- **Les ofertes ignoren majúscules i minúscules.** Escriure `sch` ofereix `Schemes`, escrit tal com és el nom; desfer l'oferta et torna les teves lletres tal com les havies escrit. On existeixen tant `Test` com `test`, s'ofereix el que està escrit tal com tu ho has escrit.
+- **Després de prémer <kbd>Tab</kbd> el pas següent s'ofereix immediatament**, igual que després d'escriure una lletra.
 - **El desplegable segueix el cursor**, o l'inici d'una selecció: llista la carpeta en què és aquell punt, filtrada per les lletres que el precedeixen. A l'inici d'un nom, això és la carpeta sencera.
 - **Assenyalar una fila la mostra com a oferta** — el que has escrit continua sent teu i la resta del nom queda marcada — i treure el punter de la llista fa tornar l'oferta.
 - **→ pren una lletra de l'oferta**, no tota; <kbd>Fi</kbd> encara la pren sencera.
@@ -27,12 +29,15 @@ Cada versió de Lure, de la més nova a la més antiga. El que ha arribat des de
 - **Qualsevol altra cosa premuda o clicada entre les dues pulsacions torna a començar el cicle de <kbd>F2</kbd> i Enfoca la barra de camí.**
 - **Les carpetes són en negreta al desplegable**, de manera que la nota pròpia d'una carpeta ja no necessita ser grisa per distingir-se: és lila com qualsevol altra nota.
 - **El desplegable no és més ample que la barra de camí.** Un nom que no hi cap s'escurça de la mateixa manera que l'escurça la barra de camí, i es mostra sencer en passar-hi per sobre.
-- **<kbd>RePàg</kbd> i <kbd>AvPàg</kbd> es mouen per les files que mostren els mateixos desplegables d'Obsidian**, també des del camp, i mantenen la selecció a la vista.
+- **<kbd>RePàg</kbd> i <kbd>AvPàg</kbd> desplacen el desplegable pel que mostra**, també des del camp, i la fila seleccionada manté el seu lloc a la pantalla. <kbd>Inici</kbd> i <kbd>Fi</kbd> porten a la vista la primera i l'última fila.
 - **El desplegable mostra fins a 1.000 entrades** abans de comptar la resta, en lloc de 100.
+- **Les carpetes cedeixen primer les més llargues.** Quan falta espai, el nom de carpeta més llarg s'escurça fins a la longitud del següent més llarg, després tots dos junts, i així successivament, cadascun aturant-se al seu mínim. Abans, totes les carpetes s'escurçaven alhora en proporció a la seva longitud.
 - **Els noms escurçats llisquen en lloc de saltar.** Un nom que cedeix es retalla al píxel i s'esvaeix sota els seus `…`, de manera que res del que hi ha després a la fila es mou a bots mentre es redimensiona un panell.
 
 ### Corregit
 
+- En un panell de la dreta, el desplegable s'obria sota el panell de l'esquerra fins que s'escrivia la primera lletra.
+- Treure el punter del desplegable feia tornar l'oferta però no el seu color.
 - Es va perdre un espai on s'havia partit un nom escurçat — `development guidelines` — de manera que les dues paraules quedaven enganxades.
 
 ## 1.4.0 — 2026-09-19[^1.4.0]

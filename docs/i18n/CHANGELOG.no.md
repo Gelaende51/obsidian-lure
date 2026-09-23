@@ -13,13 +13,15 @@ Hver utgivelse av Lure, den nyeste først. Det som har kommet inn siden forrige 
 
 ### Lagt til
 
-- **Et navn som allerede er i bruk, spør i stedet for å avvise.** Å flytte eller gi nytt navn til noe med et navn som allerede finnes, åpner en dialog som viser begge filene med hele stien sin. Du kan gi nytt navn til den som er i veien og fortsette, bytte plass med den (på tvers av mapper: hver beholder sitt navn og tar den andres mappe), eller bytte navn med den (innenfor én mappe). Avbryt flytter ingenting. Hver knapp forteller hva den vil gjøre når du peker på den.
+- **Et navn som allerede er i bruk, spør i stedet for å avvise.** Å flytte eller gi nytt navn til noe med et navn som allerede finnes, åpner en dialog som viser begge filene med hele stien sin. Du kan gi nytt navn til den som er i veien og fortsette, bytte plass med den (på tvers av mapper: hver beholder sitt navn og tar den andres mappe), eller bytte navn med den (innenfor én mappe). Avbryt flytter ingenting. Hver knapp forteller hva den vil gjøre når du peker på den. Å velge et navn som allerede er i bruk fra nedtrekkslisten spør det samme, og det samme gjør det å slippe en fil på en mappe som allerede har navnet. Navnet i dialogens felt for å gi nytt navn er rødt mens det er opptatt.
 - **`:graph` inne i en mappe åpner den mappens graf** — grafen filtrert til `path:"that/folder"`, slik dens egen søkeboks ville gjort. I hvelvroten er det fortsatt hele grafen, som før.
 - **En mappe som allerede har navnet, er rød** i nedtrekkslisten mens du flytter, og det samme gjelder en fil med det navnet, slik at kollisjonen vises før du velger.
 
 ### Endret
 
 - **Tilbudet er alltid det Tab ville skrevet.** Der navnene slutter å stemme overens, tilbyr feltet steget mot det første av dem — før tilbød det ingenting der, og Tab skrev noe likevel.
+- **Tilbudet ignorerer store og små bokstaver.** Å skrive `sch` tilbyr `Schemes`, stavet slik navnet er; å ta tilbudet tilbake gir bokstavene dine tilbake slik du skrev dem. Der både `Test` og `test` finnes, tilbys den som er stavet slik du skrev.
+- **Etter et trykk på Tab tilbys neste steg med det samme**, som etter en skrevet bokstav.
 - **Nedtrekkslisten følger markøren**, eller starten av en markering: den lister opp mappen punktet er i, filtrert etter bokstavene foran det. Ved starten av et navn er det hele mappen.
 - **Å peke på en rad viser den som tilbudet** — det du skrev, forblir ditt, og resten av navnet er merket — og å flytte pekeren av listen bringer tilbudet tilbake.
 - **→ tar én bokstav av tilbudet** i stedet for hele; <kbd>End</kbd> tar det fortsatt helt.
@@ -27,12 +29,15 @@ Hver utgivelse av Lure, den nyeste først. Det som har kommet inn siden forrige 
 - **Alt annet som trykkes eller klikkes mellom trykkene, starter runden av F2 og Fokuser på stilinjen på nytt.**
 - **Mapper er fet i nedtrekkslisten**, så en mappes eget notat ikke lenger trenger å være grått for å skille seg ut: det er lilla som ethvert annet notat.
 - **Nedtrekkslisten er ikke bredere enn stilinjen.** Et navn som ikke passer, forkortes på samme måte som stilinjen forkorter ett, og vises helt ved hover.
-- **PageUp og PageDown flytter etter radene Obsidians egne nedtrekkslister viser**, også fra feltet, og holder merkingen i syne.
+- **PageUp og PageDown ruller nedtrekkslisten etter det den viser**, også fra feltet, og den merkede raden beholder plassen sin på skjermen. <kbd>Home</kbd> og <kbd>End</kbd> bringer den første og siste raden i syne.
 - **Nedtrekkslisten viser opptil 1 000 oppføringer**, før den teller resten, i stedet for 100.
+- **Mapper viker lengst først.** Når plassen blir knapp, forkortes det lengste mappenavnet til lengden på det nest lengste, så begge sammen, og så videre, hver med sin egen nedre grense. Før ble alle mapper forkortet samtidig i forhold til lengden sin.
 - **Forkortede navn glir i stedet for å hoppe.** Et navn som viker, klippes ved pikselen og toner ut under sin `…`, slik at ingenting etter det i raden flytter seg i trinn mens et panel endrer størrelse.
 
 ### Rettet
 
+- I en rute til høyre åpnet nedtrekkslisten under den venstre ruten, helt til den første bokstaven ble skrevet.
+- Å flytte pekeren bort fra nedtrekkslisten brakte tilbudet tilbake, men ikke fargen dens.
 - Et mellomrom der et forkortet navn ble delt — `development guidelines` — falt bort, slik at de to ordene rant sammen.
 
 ## 1.4.0 — 2026-09-19[^1.4.0]

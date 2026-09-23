@@ -12,13 +12,15 @@ Gach eisiúint de Lure, an ceann is nuaí ar dtús. Tá a bhfuil tagtha isteach 
 
 ### Curtha leis
 
-- **Fiafraíonn ainm atá glactha cheana in ionad é a dhiúltú.** Nuair a bhogtar nó a athainmnítear go dtí ainm atá ann cheana, osclaítear dialóg a thaispeánann an dá chomhad lena gconair iomlán. Is féidir leat an ceann atá sa bhealach a athainmniú agus leanúint ar aghaidh, áiteanna a mhalartú leis (idir fhillteáin: coimeádann gach ceann a ainm féin agus glacann sé fillteán an chinn eile), nó ainmneacha a mhalartú leis (laistigh d'aon fhillteán amháin). Ní bhogann Cealaigh dada. Insíonn gach cnaipe cad a dhéanfaidh sé nuair a dhíríonn tú air.
+- **Fiafraíonn ainm atá glactha cheana in ionad é a dhiúltú.** Nuair a bhogtar nó a athainmnítear go dtí ainm atá ann cheana, osclaítear dialóg a thaispeánann an dá chomhad lena gconair iomlán. Is féidir leat an ceann atá sa bhealach a athainmniú agus leanúint ar aghaidh, áiteanna a mhalartú leis (idir fhillteáin: coimeádann gach ceann a ainm féin agus glacann sé fillteán an chinn eile), nó ainmneacha a mhalartú leis (laistigh d'aon fhillteán amháin). Ní bhogann Cealaigh dada. Insíonn gach cnaipe cad a dhéanfaidh sé nuair a dhíríonn tú air. Fiafraíonn roghnú ainm atá glactha cheana ón liosta an rud céanna, agus mar an gcéanna maidir le comhad a tharraingt isteach ar fhillteán a bhfuil an t-ainm sin aige cheana. Bíonn an t-ainm i réimse athainmnithe na dialóige dearg fad atá sé glactha.
 - **Osclaíonn `:graph` laistigh d'fhillteán graf an fhillteáin sin** — an graf scagtha go `path:"that/folder"`, mar a dhéanfadh a bhosca cuardaigh féin. Ag fréamh an taisceadáin is é an graf iomlán é, mar a bhí.
 - **Fillteán a bhfuil an t-ainm sin aige cheana bíonn sé dearg** sa liosta agus tú ag bogadh, agus mar an gcéanna do chomhad den ainm sin, ionas go bhfeictear an coinbhleacht sula roghnaíonn tú.
 
 ### Athraithe
 
 - **Is é atá sa tairiscint i gcónaí an méid a scríobhfadh Tab.** San áit nach réitíonn na hainmneacha níos mó, tairgeann an réimse an chéim i dtreo an chéad cheann acu — roimhe seo, ní thairgeadh sé faic ann, agus scríobhadh Tab rud éigin mar sin féin.
+- **Ní chuireann na tairiscintí cás san áireamh.** Tairgeann clóscríobh `sch` an t-ainm `Schemes`, litrithe mar atá an t-ainm; má thógann tú an tairiscint ar ais tugtar do litreacha féin ar ais duit mar a chlóscríobh tú iad. Áit a bhfuil `Test` agus `test` araon ann, tairgtear an ceann atá litrithe mar a chlóscríobh tú.
+- **I ndiaidh brú ar Tab tairgtear an chéad chéim eile láithreach**, mar a tharlaíonn i ndiaidh litir chlóscríofa.
 - **Leanann an liosta an cúrsóir**, nó tús roghnaithe: liostaíonn sé an fillteán ina bhfuil an pointe sin, scagtha de réir na litreacha atá roimhe. Ag tús ainm is é sin an fillteán ar fad.
 - **Nuair a dhíríonn tú ar ró taispeántar é mar an tairiscint** — fanann an méid a chlóscríobh tú féin duit féin, agus marcáiltear an chuid eile den ainm — agus nuair a bhogtar an pointeoir den liosta, filleann an tairiscint roimhe sin.
 - **Tógann → litir amháin den tairiscint** in ionad an iomláin; tógann <kbd>End</kbd> fós é ina iomláine.
@@ -26,12 +28,15 @@ Gach eisiúint de Lure, an ceann is nuaí ar dtús. Tá a bhfuil tagtha isteach 
 - **Aon rud eile a bhrúitear nó a chliceáiltear idir na brúnna, tosaíonn sé timthriall F2 agus Fócas ar an mbarra conaire arís.**
 - **Tá na fillteáin trom sa liosta**, mar sin ní gá a thuilleadh go mbeadh nóta fillteáin féin liath chun seasamh amach: tá sé corcra ar nós aon nóta eile.
 - **Níl an liosta níos leithne ná an barra conaire.** Giorraítear ainm nach n-oireann ar an mbealach a ghiorraíonn an barra conaire ceann, agus taispeántar ina iomláine é ar ainliú.
-- **Bogann PageUp agus PageDown de réir na rónna a thaispeánann liostaí féin Obsidian**, ón réimse freisin, agus coimeádann siad an roghnú le feiceáil.
+- **Scrollaíonn PageUp agus PageDown an liosta de réir an méid a thaispeánann sé**, ón réimse freisin, agus coimeádann an ró roghnaithe a áit féin ar an scáileán. Tugann <kbd>Home</kbd> agus <kbd>End</kbd> an chéad ró agus an ró deiridh isteach i radharc.
 - **Taispeánann an liosta suas le 1,000 iontráil** sula gcuntar sé an chuid eile, in ionad 100.
+- **Géilleann na fillteáin is faide ar dtús.** Nuair a bhíonn easpa spáis, giorraítear ainm an fhillteáin is faide go dtí fad an chéad cheann eile is faide, ansin an bheirt le chéile, agus mar sin de, gach ceann ag stopadh ag a íosmhéid féin. Roimhe seo, ghiorraigh gach fillteán ag an am céanna i gcomhréir lena fhad féin.
 - **Sleamhnaíonn ainmneacha giorraithe in ionad léim.** Gearrtar ainm atá ag géilleadh ag an bpicteilín agus céimníonn sé faoina `…`, ionas nach mbogann aon rud ina dhiaidh sa ró de chéimeanna fad is atá pána á athmhéadú.
 
 ### Deisithe
 
+- I bpána ar thaobh na láimhe deise d'osclaíodh an liosta faoin bpána clé go dtí gur clóscríobhadh an chéad litir.
+- Nuair a bhogadh an pointeoir den liosta, thagadh an tairiscint ar ais ach ní thagadh a dath.
 - Cailleadh spás san áit ar scoilteadh ainm giorraithe — `development guidelines` — rud a chuir an dá fhocal le chéile.
 
 ## 1.4.0 — 2026-09-19[^1.4.0]

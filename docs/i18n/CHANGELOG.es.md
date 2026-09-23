@@ -13,13 +13,15 @@ Todas las versiones de Lure, de la más reciente a la más antigua. Lo que ha en
 
 ### Añadido
 
-- **Un nombre ya utilizado pregunta en lugar de rechazar.** Mover o renombrar a un nombre que ya existe abre un diálogo que muestra ambos archivos con su ruta completa. Puedes renombrar el que está en el camino y continuar, intercambiar el lugar con él (entre carpetas: cada uno conserva su nombre y toma la carpeta del otro), o intercambiar nombres con él (dentro de una misma carpeta). Cancelar no mueve nada. Cada botón indica lo que hará en cuanto lo señalas.
+- **Un nombre ya utilizado pregunta en lugar de rechazar.** Mover o renombrar a un nombre que ya existe abre un diálogo que muestra ambos archivos con su ruta completa. Puedes renombrar el que está en el camino y continuar, intercambiar el lugar con él (entre carpetas: cada uno conserva su nombre y toma la carpeta del otro), o intercambiar nombres con él (dentro de una misma carpeta). Cancelar no mueve nada. Cada botón indica lo que hará en cuanto lo señalas. Elegir un nombre ya utilizado en el desplegable pregunta lo mismo, igual que soltar un archivo sobre una carpeta que ya contiene su nombre. El nombre en el campo de renombrado del diálogo aparece en rojo mientras está ocupado.
 - **`:graph` dentro de una carpeta abre el grafo de esa carpeta** — el grafo filtrado por `path:"that/folder"`, tal como lo haría su propio cuadro de búsqueda. En la raíz de la bóveda sigue siendo el grafo completo, como antes.
 - **Una carpeta que ya contiene el nombre aparece en rojo** en el desplegable mientras mueves, y también un archivo con ese nombre, de modo que el conflicto se ve antes de elegir.
 
 ### Cambiado
 
 - **La propuesta es siempre lo que Tab escribiría.** Donde los nombres dejan de coincidir, el campo propone el paso hacia el primero de ellos — antes no proponía nada ahí, y aun así Tab escribía algo.
+- **Las propuestas ignoran mayúsculas y minúsculas.** Escribir `sch` propone `Schemes`, tal como está escrito el nombre; al devolver la propuesta recuperas tus letras tal como las escribiste. Donde existen tanto `Test` como `test`, se propone el que coincide con lo que escribiste.
+- **Tras pulsar Tab, el siguiente paso se propone de inmediato**, igual que tras escribir una letra.
 - **El desplegable sigue al cursor**, o al inicio de una selección: lista la carpeta en la que está ese punto, filtrada por las letras que lo preceden. Al principio de un nombre, es la carpeta entera.
 - **Señalar una fila la muestra como la propuesta** — lo que escribiste sigue siendo tuyo y el resto del nombre queda marcado — y quitar el puntero de la lista devuelve la propuesta.
 - **→ toma una letra de la propuesta** en lugar de todas; <kbd>Fin</kbd> sigue tomándola entera.
@@ -27,12 +29,15 @@ Todas las versiones de Lure, de la más reciente a la más antigua. Lo que ha en
 - **Cualquier otra tecla pulsada o clic realizado entre una pulsación y otra reinicia el ciclo de F2 y Enfocar la barra de ruta.**
 - **Las carpetas aparecen en negrita en el desplegable**, así que la nota propia de una carpeta ya no necesita ser gris para distinguirse: es morada como cualquier otra nota.
 - **El desplegable nunca es más ancho que la barra de ruta.** Un nombre que no cabe se acorta como la barra de ruta acorta uno, y se muestra completo al pasar el cursor por encima.
-- **Re Pág y Av Pág se mueven según las filas que muestran los propios desplegables de Obsidian**, también desde el campo, y mantienen la selección a la vista.
+- **Re Pág y Av Pág desplazan el desplegable según lo que muestra**, también desde el campo, y la fila seleccionada mantiene su lugar en la pantalla. <kbd>Inicio</kbd> y <kbd>Fin</kbd> traen a la vista la primera y la última fila.
 - **El desplegable muestra hasta 1000 entradas** antes de contar el resto, en lugar de 100.
+- **Las carpetas ceden primero las más largas.** Cuando falta espacio, el nombre de carpeta más largo se acorta hasta la longitud del siguiente más largo, luego ambos juntos, y así sucesivamente, cada uno deteniéndose en su límite mínimo. Antes, todas las carpetas se acortaban a la vez en proporción a su longitud.
 - **Los nombres acortados se deslizan en vez de saltar.** Un nombre que cede se recorta al píxel y se desvanece bajo sus `…`, de modo que nada después de él en la fila se mueve a saltos mientras se redimensiona un panel.
 
 ### Corregido
 
+- En un panel derecho, el desplegable se abría bajo el panel izquierdo hasta que se escribía la primera letra.
+- Retirar el puntero del desplegable devolvía la propuesta, pero no su color.
 - Se perdía un espacio en el punto donde se dividía un nombre acortado — `development guidelines` —, uniendo las dos palabras.
 
 ## 1.4.0 — 2026-09-19[^1.4.0]

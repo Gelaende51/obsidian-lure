@@ -12,13 +12,15 @@ Todas as versões do Lure, da mais recente para a mais antiga. O que chegou desd
 
 ### Adicionado
 
-- **Um nome já ocupado pergunta em vez de recusar.** Mover ou renomear para um nome que já existe ali abre uma caixa de diálogo que mostra os dois ficheiros pelo caminho completo. Pode renomear o que está no caminho e continuar, trocar de lugar com ele (entre pastas: cada um mantém o seu nome e fica com a pasta do outro), ou trocar de nome com ele (dentro da mesma pasta). Cancelar não move nada. Cada botão diz o que vai fazer quando aponta para ele.
+- **Um nome já ocupado pergunta em vez de recusar.** Mover ou renomear para um nome que já existe ali abre uma caixa de diálogo que mostra os dois ficheiros pelo caminho completo. Pode renomear o que está no caminho e continuar, trocar de lugar com ele (entre pastas: cada um mantém o seu nome e fica com a pasta do outro), ou trocar de nome com ele (dentro da mesma pasta). Cancelar não move nada. Cada botão diz o que vai fazer quando aponta para ele. Escolher um nome já ocupado na lista pergunta o mesmo, tal como arrastar um ficheiro para uma pasta que já tenha esse nome. O nome no campo de mudança de nome da caixa de diálogo fica vermelho enquanto estiver ocupado.
 - **`:graph` dentro de uma pasta abre o grafo dessa pasta** — o grafo filtrado por `path:"that/folder"`, tal como a sua própria caixa de pesquisa faria. Na raiz do cofre é o grafo inteiro, como antes.
 - **Uma pasta que já tem esse nome fica vermelha** na lista ao mover, tal como um ficheiro com esse nome, para que o conflito apareça antes de escolher.
 
 ### Alterado
 
 - **A oferta é sempre o que o Tab escreveria.** Onde os nomes deixam de concordar, o campo oferece o passo em direção ao primeiro deles — antes, não oferecia nada ali e o Tab escrevia algo na mesma.
+- **A oferta ignora maiúsculas e minúsculas.** Escrever `sch` oferece `Schemes`, escrito como o nome está; desfazer a oferta devolve as suas letras tal como as escreveu. Onde existem `Test` e `test`, é oferecido o que está escrito como escreveu.
+- **Depois de premir Tab, o passo seguinte é oferecido de imediato**, tal como depois de escrever uma letra.
 - **A lista segue o cursor**, ou o início de uma seleção: mostra a pasta em que esse ponto está, filtrada pelas letras que o antecedem. No início de um nome, essa é a pasta inteira.
 - **Apontar para uma linha mostra-a como a oferta** — o que escreveu continua seu e o resto do nome fica marcado — e afastar o ponteiro da lista traz a oferta de volta.
 - **→ aceita uma letra da oferta** em vez de a aceitar inteira; <kbd>End</kbd> continua a aceitá-la por completo.
@@ -26,12 +28,15 @@ Todas as versões do Lure, da mais recente para a mais antiga. O que chegou desd
 - **Qualquer outra coisa premida ou clicada entre as pressões recomeça os ciclos do F2 e do Focar a barra de caminho.**
 - **As pastas aparecem a negrito na lista**, por isso a nota de uma pasta já não precisa de ser cinzenta para se distinguir: é roxa como qualquer outra nota.
 - **A lista nunca é mais larga do que a barra de caminho.** Um nome que não caiba é encurtado da mesma forma que a barra de caminho encurta um, e mostrado por inteiro ao passar o rato.
-- **PageUp e PageDown avançam pelas linhas que as próprias listas do Obsidian mostram**, também a partir do campo, e mantêm a seleção à vista.
+- **PageUp e PageDown deslocam a lista pelo que ela mostra**, também a partir do campo, e a linha selecionada mantém o seu lugar no ecrã. <kbd>Home</kbd> e <kbd>End</kbd> trazem a primeira e a última linha à vista.
 - **A lista mostra até 1000 entradas** antes de contar o resto, em vez de 100.
+- **As pastas cedem espaço, a mais longa primeiro.** Quando falta espaço, o nome de pasta mais longo encurta até ao comprimento do seguinte mais longo, depois os dois juntos, e assim sucessivamente, cada um parando no seu limite mínimo. Antes, todas as pastas encurtavam ao mesmo tempo, proporcionalmente ao seu comprimento.
 - **Os nomes encurtados deslizam em vez de saltar.** Um nome que cede é cortado ao pixel e esbate-se sob o seu `…`, de modo que nada depois dele na linha se move aos saltos enquanto um painel é redimensionado.
 
 ### Corrigido
 
+- Num painel à direita, a lista abria por baixo do painel esquerdo até se escrever a primeira letra.
+- Afastar o ponteiro da lista trazia a oferta de volta, mas não a sua cor.
 - Um espaço onde um nome encurtado era dividido — `development guidelines` — desaparecia, colando as duas palavras.
 
 ## 1.4.0 — 2026-09-19[^1.4.0]

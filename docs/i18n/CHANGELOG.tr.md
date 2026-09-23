@@ -13,13 +13,15 @@ Lure'un her sürümü, en yenisi en üstte. Son sürümden bu yana gelenler *Yay
 
 ### Eklenenler
 
-- **Alınmış bir ad reddetmek yerine sorar.** Zaten var olan bir ada taşıma veya yeniden adlandırma yapmak, her iki dosyayı da tam yollarıyla gösteren bir iletişim kutusu açar. Yolda olanı yeniden adlandırıp devam edebilir, onunla yer değiştirebilirsiniz (klasörler arasında: her biri kendi adını korur ve diğerinin klasörünü alır) ya da onunla ad değiştirebilirsiniz (tek bir klasör içinde). İptal hiçbir şeyi taşımaz. Her düğme, üzerine geldiğinizde ne yapacağını söyler.
+- **Alınmış bir ad reddetmek yerine sorar.** Zaten var olan bir ada taşıma veya yeniden adlandırma yapmak, her iki dosyayı da tam yollarıyla gösteren bir iletişim kutusu açar. Yolda olanı yeniden adlandırıp devam edebilir, onunla yer değiştirebilirsiniz (klasörler arasında: her biri kendi adını korur ve diğerinin klasörünü alır) ya da onunla ad değiştirebilirsiniz (tek bir klasör içinde). İptal hiçbir şeyi taşımaz. Her düğme, üzerine geldiğinizde ne yapacağını söyler. Açılır listeden alınmış bir adı seçmek de aynısını sorar, aynı şekilde bir dosyayı zaten o adı taşıyan bir klasöre bırakmak da. İletişim kutusundaki yeniden adlandırma alanındaki ad, alınmışken kırmızıdır.
 - **Bir klasörün içindeki `:graph`, o klasörün grafiğini açar** — kendi arama kutusunun yapacağı gibi `path:"that/folder"` ile süzülmüş grafik. Kasa kökünde bu hâlâ tüm grafiktir, öncekigibi.
 - **Adı zaten taşıyan bir klasör kırmızı görünür** açılır listede taşıma sırasında, aynı şekilde o adı taşıyan bir dosya da; böylece çakışma siz seçmeden önce görünür.
 
 ### Değişenler
 
 - **Öneri her zaman Tab'ın yazacağı şeydir.** Adların uyuşması durduğu noktada, alan ilkine doğru olan adımı önerir — önce orada hiçbir şey önermiyordu ve Tab yine de bir şey yazıyordu.
+- **Öneriler büyük/küçük harfe duyarsızdır.** `sch` yazmak, adın yazıldığı şekliyle `Schemes` önerir; öneriyi geri almak harflerinizi tam yazdığınız gibi geri verir. Hem `Test` hem de `test` var olduğunda, sizin yazdığınız şekilde yazılmış olan önerilir.
+- **Tab'a basıldıktan sonra bir sonraki adım hemen önerilir**, tıpkı bir harf yazıldıktan sonra olduğu gibi.
 - **Açılır liste imleci izler**, ya da bir seçimin başlangıcını: noktanın içinde bulunduğu klasörü, önündeki harflerle süzülmüş şekilde listeler. Bir adın başında bu, klasörün tamamıdır.
 - **Bir satırı işaret etmek onu öneri olarak gösterir** — yazdığınız sizin kalır ve adın geri kalanı işaretlenir — ve işaretçiyi listeden çekmek öneriyi geri getirir.
 - **→ önerinin tamamı yerine bir harfini alır**; <kbd>End</kbd> hâlâ tamamını alır.
@@ -27,12 +29,15 @@ Lure'un her sürümü, en yenisi en üstte. Son sürümden bu yana gelenler *Yay
 - **Basışlar arasında başka bir şeye basmak veya tıklamak, F2 ve Yol çubuğuna odaklan döngüsünü baştan başlatır.**
 - **Klasörler açılır listede kalın yazılır**, böylece bir klasörün kendi notunun ayrışmak için artık gri olmasına gerek kalmaz: diğer her not gibi mor renktedir.
 - **Açılır liste, yol çubuğundan daha geniş değildir.** Sığmayan bir ad, yol çubuğunun bir adı kısalttığı şekilde kısaltılır ve üzerine gelindiğinde tam olarak gösterilir.
-- **PageUp ve PageDown, Obsidian'ın kendi açılır listelerinin gösterdiği satırlara göre hareket eder**, alandan da, ve seçimi görünür tutar.
+- **PageUp ve PageDown, açılır listeyi gösterdiği kadar kaydırır**, alandan da, ve seçili satır ekrandaki yerini korur. <kbd>Home</kbd> ve <kbd>End</kbd>, ilk ve son satırı görünüme getirir.
 - **Açılır liste, gerisini saymadan önce 1.000'e kadar girdi gösterir**, 100 yerine.
+- **Klasörler önce en uzun olandan yer açar.** Yer daraldığında, en uzun klasör adı bir sonraki en uzun olanın uzunluğuna kısalır, ardından ikisi birlikte, ve bu böyle sürer; her biri kendi tabanında durur. Önceden tüm klasörler uzunluklarıyla orantılı olarak aynı anda kısalıyordu.
 - **Kısaltılmış adlar sıçramak yerine kayar.** Yerini bırakan bir ad piksel düzeyinde kırpılır ve kendi `…` işaretinin altında solar, böylece bir bölme yeniden boyutlandırılırken satırdaki sonrasında hiçbir şey adım adım hareket etmez.
 
 ### Düzeltilenler
 
+- Sağdaki bir bölmede, ilk harf yazılana kadar açılır liste sol bölmenin altında açılıyordu.
+- İşaretçiyi açılır listenin dışına çekmek öneriyi geri getiriyordu ama rengini getirmiyordu.
 - Kısaltılmış bir adın bölündüğü yerdeki bir boşluk — `development guidelines` — düşürülmüş, iki kelimeyi birleştirmişti.
 
 ## 1.4.0 — 2026-09-19[^1.4.0]

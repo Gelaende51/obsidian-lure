@@ -13,13 +13,15 @@ Kaikki Luren julkaisut, uusin ensin. Se, mikä on valmistunut viimeisimmän julk
 
 ### Lisätty
 
-- **Varattu nimi kysyy sen sijaan, että se kieltäytyisi.** Siirtäminen tai uudelleennimeäminen nimelle, joka on jo olemassa, avaa valintaikkunan, joka näyttää molemmat tiedostot koko poluillaan. Voit nimetä tiellä olevan uudelleen ja jatkaa, vaihtaa paikkaa sen kanssa (kansioiden välillä: kumpikin säilyttää nimensä ja saa toisen kansion), tai vaihtaa nimen sen kanssa (saman kansion sisällä). Peruuta ei siirrä mitään. Jokainen painike kertoo, mitä se tekee, kun osoitat sitä.
+- **Varattu nimi kysyy sen sijaan, että se kieltäytyisi.** Siirtäminen tai uudelleennimeäminen nimelle, joka on jo olemassa, avaa valintaikkunan, joka näyttää molemmat tiedostot koko poluillaan. Voit nimetä tiellä olevan uudelleen ja jatkaa, vaihtaa paikkaa sen kanssa (kansioiden välillä: kumpikin säilyttää nimensä ja saa toisen kansion), tai vaihtaa nimen sen kanssa (saman kansion sisällä). Peruuta ei siirrä mitään. Jokainen painike kertoo, mitä se tekee, kun osoitat sitä. Varatun nimen valitseminen alasvetoluettelosta kysyy samaa, samoin tiedoston pudottaminen kansioon, jolla jo on kyseinen nimi. Valintaikkunan uudelleennimeämiskentässä nimi on punainen, kun se on varattu.
 - **`:graph` kansion sisällä avaa kyseisen kansion graafin** — graafin suodatettuna arvoon `path:"that/folder"`, kuten sen oma hakukenttä tekisi. Holvin juuressa se on edelleen koko graafi, kuten ennenkin.
 - **Kansio, jolla on jo nimi, näkyy punaisena** alasvetoluettelossa siirron aikana, samoin sen niminen tiedosto, joten törmäys näkyy ennen kuin valitset.
 
 ### Muutettu
 
 - **Tarjous on aina se, minkä Sarkain kirjoittaisi.** Kohdassa, jossa nimet lakkaavat olemasta yhteneviä, kenttä tarjoaa askeleen kohti ensimmäistä niistä — ennen se ei tarjonnut siinä mitään, ja Sarkain kirjoitti silti jotain.
+- **Tarjoukset eivät välitä kirjainkoosta.** Kirjoittaminen `sch` tarjoaa `Schemes`-nimeä, kirjoitettuna niin kuin nimi on kirjoitettu; tarjouksen ottaminen takaisin palauttaa kirjaimesi juuri sellaisina kuin kirjoitit ne. Jos sekä `Test` että `test` ovat olemassa, tarjotaan se, joka on kirjoitettu samalla tavalla kuin sinä kirjoitit.
+- **Sarkaimen painalluksen jälkeen seuraava askel tarjotaan heti**, kuten kirjoitetun kirjaimen jälkeen.
 - **Alasvetoluettelo seuraa kohdistinta**, tai valinnan alkua: se listaa kansion, jossa piste sijaitsee, suodatettuna sen edessä olevilla kirjaimilla. Nimen alussa se on koko kansio.
 - **Rivin osoittaminen näyttää sen tarjouksena** — kirjoittamasi pysyy sinun, ja loppu nimestä on merkitty — ja osoittimen siirtäminen pois listalta tuo tarjouksen takaisin.
 - **→ ottaa yhden kirjaimen tarjouksesta** kokonaisen sijaan; <kbd>End</kbd> ottaa sen yhä kokonaan.
@@ -27,12 +29,15 @@ Kaikki Luren julkaisut, uusin ensin. Se, mikä on valmistunut viimeisimmän julk
 - **Mikä tahansa muu painettu tai napsautettu asia painallusten välillä käynnistää F2:n ja Kohdista polkupalkkiin -kierron alusta.**
 - **Kansiot ovat lihavoituja alasvetoluettelossa**, joten kansion oman muistiinpanon ei enää tarvitse olla harmaa erottuakseen: se on violetti kuten mikä tahansa muu muistiinpano.
 - **Alasvetoluettelo ei ole polkupalkkia leveämpi.** Nimi, joka ei mahdu, lyhennetään samalla tavalla kuin polkupalkki lyhentää sellaisen, ja näytetään kokonaan viedessä osoittimen sen päälle.
-- **PageUp ja PageDown liikkuvat Obsidianin omien alasvetoluetteloiden näyttämien rivien mukaan**, myös kentästä, ja pitävät valinnan näkyvissä.
+- **PageUp ja PageDown vierittävät alasvetoluetteloa sen näyttämän verran**, myös kentästä, ja valittu rivi pysyy paikallaan näytöllä. <kbd>Home</kbd> ja <kbd>End</kbd> tuovat ensimmäisen ja viimeisen rivin näkyviin.
 - **Alasvetoluettelo näyttää jopa 1 000 kohdetta**, ennen kuin se laskee loput, aiemman 100:n sijaan.
+- **Kansiot väistävät pisimmästä alkaen.** Kun tila loppuu, pisin kansion nimi lyhenee seuraavaksi pisimmän pituuteen, sitten molemmat yhdessä, ja niin edelleen, kukin pysähtyen omaan alarajaansa. Aiemmin kaikki kansiot lyhenivät kerralla suhteessa pituuteensa.
 - **Lyhennetyt nimet liukuvat hyppäämisen sijaan.** Väistyvä nimi leikataan pikselin tarkkuudella ja häivytetään sen `…`-merkin alle, joten mikään sen jälkeen rivillä ei liiku askelin, kun ruutua muutetaan kooltaan.
 
 ### Korjattu
 
+- Oikeanpuoleisessa ruudussa alasvetoluettelo avautui vasemman ruudun alle, kunnes ensimmäinen kirjain kirjoitettiin.
+- Osoittimen siirtäminen pois alasvetoluettelosta toi tarjouksen takaisin, mutta ei sen väriä.
 - Välilyönti, jossa lyhennetty nimi katkaistiin — `development guidelines` — putosi pois, jolloin kaksi sanaa sulautui yhteen.
 
 ## 1.4.0 — 2026-09-19[^1.4.0]

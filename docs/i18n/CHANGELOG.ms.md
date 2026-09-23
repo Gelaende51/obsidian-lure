@@ -12,13 +12,15 @@ Setiap keluaran Lure, yang terbaharu dahulu. Apa yang telah mendarat sejak kelua
 
 ### Ditambah
 
-- **Nama yang sudah digunakan akan bertanya dan bukan menolak.** Memindah atau menamakan semula kepada nama yang sudah ada membuka dialog yang memaparkan kedua-dua fail dengan laluan penuhnya. Anda boleh menamakan semula fail yang menghalang lalu meneruskan, bertukar tempat dengannya (merentas folder: masing-masing kekal dengan namanya dan mengambil folder yang lain), atau bertukar nama dengannya (dalam satu folder). Batal tidak memindahkan apa-apa. Setiap butang menyatakan apa yang akan dilakukannya apabila anda menuding kepadanya.
+- **Nama yang sudah digunakan akan bertanya dan bukan menolak.** Memindah atau menamakan semula kepada nama yang sudah ada membuka dialog yang memaparkan kedua-dua fail dengan laluan penuhnya. Anda boleh menamakan semula fail yang menghalang lalu meneruskan, bertukar tempat dengannya (merentas folder: masing-masing kekal dengan namanya dan mengambil folder yang lain), atau bertukar nama dengannya (dalam satu folder). Batal tidak memindahkan apa-apa. Setiap butang menyatakan apa yang akan dilakukannya apabila anda menuding kepadanya. Memilih nama yang sudah digunakan daripada senarai lungsur turut bertanya perkara yang sama, begitu juga menjatuhkan fail ke atas folder yang sudah mempunyai nama itu. Nama pada medan tukar nama dalam dialog itu berwarna merah selagi ia masih diambil.
 - **`:graph` di dalam sebuah folder membuka graf folder itu** — graf yang ditapis dengan `path:"that/folder"`, seperti yang akan dibuat oleh kotak carian folder itu sendiri. Pada akar bilik kebal, ia tetap graf keseluruhan, seperti sebelum ini.
 - **Folder yang sudah memiliki nama itu berwarna merah** dalam senarai lungsur semasa memindahkan, begitu juga fail dengan nama itu, supaya perlanggaran itu kelihatan sebelum anda memilih.
 
 ### Diubah
 
 - **Tawaran sentiasa apa yang akan ditulis oleh Tab.** Di titik nama-nama berhenti sepadan, medan itu menawarkan langkah ke arah yang pertama daripada nama-nama itu — sebelum ini, di situ tiada apa-apa ditawarkan sedangkan Tab tetap menulis sesuatu.
+- **Tawaran mengabaikan huruf besar-kecil.** Menaip `sch` menawarkan `Schemes`, dieja sebagaimana nama itu ditulis; mengambil semula tawaran itu memulangkan huruf anda persis seperti yang anda taip. Apabila `Test` dan `test` sama-sama wujud, yang dieja mengikut cara anda menaip itulah yang ditawarkan.
+- **Selepas menekan Tab, langkah seterusnya terus ditawarkan**, seperti selepas menaip sehuruf.
 - **Senarai lungsur mengikut kursor**, atau permulaan sesuatu pilihan: ia menyenaraikan folder tempat titik itu berada, ditapis mengikut huruf di hadapannya. Pada permulaan sesuatu nama, itu ialah keseluruhan folder.
 - **Menuding pada satu baris memaparkannya sebagai tawaran** — apa yang anda taip kekal milik anda dan baki nama itu ditanda — dan mengalihkan penuding daripada senarai itu memulangkan tawaran semula.
 - **→ mengambil satu huruf daripada tawaran** dan bukan semuanya; <kbd>End</kbd> masih mengambilnya sepenuhnya.
@@ -26,12 +28,15 @@ Setiap keluaran Lure, yang terbaharu dahulu. Apa yang telah mendarat sejak kelua
 - **Apa-apa lain yang ditekan atau diklik antara kedua-dua tekanan itu memulakan semula kitaran F2 dan Fokus pada bar laluan.**
 - **Folder ditebalkan dalam senarai lungsur**, jadi nota milik sesebuah folder tidak lagi perlu berwarna kelabu untuk tampil berbeza: ia berwarna ungu seperti nota lain.
 - **Senarai lungsur tidak lebih lebar daripada bar laluan.** Nama yang tidak muat dipendekkan dengan cara yang sama seperti bar laluan memendekkannya, dan dipaparkan sepenuhnya apabila ditudingi.
-- **PageUp dan PageDown bergerak mengikut baris yang dipaparkan senarai lungsur bawaan Obsidian**, daripada medan itu juga, dan mengekalkan pilihan itu kelihatan.
+- **PageUp dan PageDown menatal senarai lungsur mengikut apa yang dipaparkannya**, daripada medan itu juga, dan baris terpilih mengekalkan kedudukannya di skrin. <kbd>Home</kbd> dan <kbd>End</kbd> membawa baris pertama dan terakhir ke dalam pandangan.
 - **Senarai lungsur memaparkan sehingga 1,000 entri** sebelum ia mengira bakinya, dan bukan 100.
+- **Folder mengalah bermula daripada yang terpanjang.** Apabila ruang tidak mencukupi, nama folder terpanjang memendek kepada panjang nama terpanjang seterusnya, kemudian kedua-duanya bersama, dan seterusnya, masing-masing berhenti pada tahap minimumnya. Sebelum ini, semua folder memendek serentak mengikut nisbah panjangnya.
 - **Nama yang dipendekkan meluncur, bukan melompat.** Nama yang mengalah dipotong tepat pada piksel dan pudar di bawah `…`-nya, jadi tiada apa-apa selepasnya pada baris itu bergerak berperingkat semasa panel diubah saiz.
 
 ### Dibaiki
 
+- Dalam panel sebelah kanan, senarai lungsur terbuka di bawah panel sebelah kiri sehingga huruf pertama ditaip.
+- Mengalihkan penuding daripada senarai lungsur memulangkan tawaran itu tetapi bukan warnanya.
 - Ruang di tempat nama yang dipendekkan terpisah — `development guidelines` — tergugur, menyatukan kedua-dua perkataan itu.
 
 ## 1.4.0 — 2026-09-19[^1.4.0]

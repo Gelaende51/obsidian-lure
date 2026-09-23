@@ -12,13 +12,15 @@ Každé vydání pluginu Lure, od nejnovějšího. Co přibylo od posledního vy
 
 ### Přidáno
 
-- **Obsazený název místo odmítnutí zeptá.** Přesun nebo přejmenování na název, který už existuje, otevře dialog, který ukáže oba soubory podle jejich celé cesty. Můžete přejmenovat ten, co je v cestě, a pokračovat, prohodit se s ním místa (mezi složkami: každý si nechá své jméno a dostane složku toho druhého), nebo si s ním prohodit jména (v rámci jedné složky). Zrušení nic nepřesune. Každé tlačítko řekne, co udělá, když na něj ukážete.
+- **Obsazený název místo odmítnutí zeptá.** Přesun nebo přejmenování na název, který už existuje, otevře dialog, který ukáže oba soubory podle jejich celé cesty. Můžete přejmenovat ten, co je v cestě, a pokračovat, prohodit se s ním místa (mezi složkami: každý si nechá své jméno a dostane složku toho druhého), nebo si s ním prohodit jména (v rámci jedné složky). Zrušení nic nepřesune. Každé tlačítko řekne, co udělá, když na něj ukážete. Výběr obsazeného názvu ze seznamu se zeptá stejně, a totéž udělá i přetažení souboru na složku, která už tento název obsahuje. Název v poli přejmenování dialogu je červený, dokud je obsazený.
 - **`:graph` uvnitř složky otevře graf té složky** — graf filtrovaný na `path:"that/folder"`, tak jak by to udělalo její vlastní vyhledávací pole. V kořeni trezoru je to pořád celý graf, jako dřív.
 - **Složka, která už tento název obsahuje, je v seznamu červená** při přesunu, a stejně tak i soubor toho jména, takže je konflikt vidět ještě před výběrem.
 
 ### Změněno
 
 - **Nabídka je vždy to, co by napsal Tab.** Tam, kde se názvy přestanou shodovat, pole nabídne krok k prvnímu z nich — dřív tam nenabízelo nic, a Tab přesto něco napsal.
+- **Nabídka nerozlišuje velikost písmen.** Napsání `sch` nabídne `Schemes`, napsané tak, jak je napsaný samotný název; když nabídku vezmete zpět, dostanete svá písmena zpátky tak, jak jste je napsali. Tam, kde existuje `Test` i `test`, se nabídne to, které je napsané tak, jak jste psali vy.
+- **Po stisku Tab se další krok nabídne hned**, stejně jako po napsaném písmenu.
 - **Seznam sleduje kurzor**, nebo začátek výběru: vypisuje složku, ve které tento bod leží, filtrovanou podle písmen před ním. Na začátku názvu je to celá složka.
 - **Ukázání na řádek ho zobrazí jako nabídku** — to, co jste napsali, zůstává vaše a zbytek názvu je označený — a odjetí ukazatele ze seznamu vrátí předchozí nabídku.
 - **→ vezme jedno písmeno nabídky**, ne celou; <kbd>End</kbd> ji pořád vezme celou.
@@ -26,12 +28,15 @@ Každé vydání pluginu Lure, od nejnovějšího. Co přibylo od posledního vy
 - **Cokoli jiného stisknuté nebo kliknuté mezi stisky začne cykly F2 a Zaměřit lištu cesty znovu.**
 - **Složky jsou v seznamu tučně**, takže vlastní poznámka složky už nemusí být šedá, aby se odlišila: je fialová jako kterákoli jiná poznámka.
 - **Seznam není širší než lišta cesty.** Název, který se nevejde, se zkrátí stejně, jako ho zkracuje lišta cesty, a při najetí se ukáže celý.
-- **PageUp a PageDown se posouvají o tolik řádků, kolik jich ukazují vlastní seznamy Obsidianu**, i z pole, a udržují výběr na očích.
+- **PageUp a PageDown posouvají seznam o to, co ukazuje**, i z pole, a vybraný řádek si udrží místo na obrazovce. <kbd>Home</kbd> a <kbd>End</kbd> ukážou první a poslední řádek.
 - **Seznam ukazuje až 1000 položek**, než zbytek jen spočítá, místo 100.
+- **Složky ustupují v pořadí od nejdelší.** Když nezbývá místo, nejdelší název složky se zkrátí na délku dalšího nejdelšího, pak se zkrátí oba společně, a tak dál, každý se zastaví na svém minimu. Dřív se všechny složky zkracovaly najednou, úměrně své délce.
 - **Zkrácené názvy kloužou, ne skáčou.** Název, který ustupuje, se ořízne na pixel a zmizí pod svým `…`, takže při změně velikosti panelu se nic za ním v řádku nehýbe skokem.
 
 ### Opraveno
 
+- V pravém panelu se seznam otevíral pod levým panelem, dokud nebylo napsáno první písmeno.
+- Odjetí ukazatele ze seznamu vrátilo nabídku, ale ne její barvu.
 - Mezera v místě, kde se rozdělil zkrácený název — `development guidelines` — se ztrácela, takže se obě slova slila v jedno.
 
 ## 1.4.0 — 2026-09-19[^1.4.0]
