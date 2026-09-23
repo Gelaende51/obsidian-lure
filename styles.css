@@ -662,10 +662,27 @@
 }
 
 /* A name that begins with what was typed, listed ahead of the names that
-   only contain it: a bar down its left edge, drawn as an inset shadow so it
-   takes no width from the row and moves no text. */
+   only contain it: a bar down its left edge, one unbroken line down the
+   whole run of them — drawn past the row's own bottom margin into the next,
+   and positioned, so it takes no width from the row and moves no text.
+   Blue when the run of them goes on agreeing past what was typed: there is
+   a base Tab would complete. */
 .suggestion-item.lure-suggest-leading {
-	box-shadow: inset 3px 0 0 var(--interactive-accent);
+	position: relative;
+}
+
+.suggestion-item.lure-suggest-leading::before {
+	content: "";
+	position: absolute;
+	inset-inline-start: 0;
+	top: 0;
+	bottom: -1px;
+	width: 3px;
+	background-color: var(--interactive-accent);
+}
+
+.suggestion-item.lure-suggest-leading.lure-suggest-agreed::before {
+	background-color: var(--color-blue);
 }
 
 /* Read-only external file view

@@ -1647,6 +1647,11 @@ test("names that begin with what was typed come first, marked, ahead of names th
 		expect("the leading names first", names.slice(0, 3), [`${PREFIX}alpha-one`, `${PREFIX}alpha-two`, `${PREFIX}alpine`]);
 		expect("then the one that only contains it", names.includes(inside) && names.indexOf(inside) > 2, true);
 		expect("the leading ones are marked, the other is not", rows.filter((r) => r[1]).map((r) => r[0]), names.slice(0, 3));
+		// `alp` leads to alpha-one, alpha-two and alpine, which share nothing more.
+		const agreed = () => page.evaluate(`return document.querySelectorAll(".suggestion-item.lure-suggest-agreed").length;`);
+		expect("not as agreeing: they part right after what was typed", await agreed(), 0);
+		await type("h");
+		expect("typed on to where two agree further, they are", await agreed(), 2);
 	} finally {
 		await page.evaluate(`const f = app.vault.getAbstractFileByPath(${JSON.stringify(inside)}); if (f) await app.fileManager.trashFile(f); return true;`);
 	}

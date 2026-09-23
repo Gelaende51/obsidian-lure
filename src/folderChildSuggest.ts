@@ -1,5 +1,5 @@
 import { AbstractInputSuggest, App, Modifier, Scope, TAbstractFile, TFile, TFolder, UserEvent, setIcon, setTooltip } from "obsidian";
-import { stepToward } from "./tabComplete";
+import { commonPrefix, stepToward } from "./tabComplete";
 import { agreementWith, chooseCut, cutName, readableMinimum } from "./pathFit";
 import { wireNativeFileItem } from "./nativeFileItem";
 import { SystemLocation, applyIcon, iconFor } from "./systemLocations";
@@ -44,8 +44,10 @@ export interface PathSuggestion {
 	 * arrive with, so choosing this folder for it would collide. Red.
 	 */
 	taken?: boolean;
-	/** Its name begins with what was typed, while others only contain it. Listed first, and marked. */
+	/** Its name begins with what was typed. Listed first, and marked. */
 	leading?: boolean;
+	/** Leading, and the leading names all go on agreeing past what was typed: there is a base to complete. */
+	agreed?: boolean;
 }
 
 export interface SuggestContext {
@@ -169,17 +171,22 @@ interface SuggestionList {
  * but a name that starts that way is the one Tab and the offer are about,
  * and it was sorted in among the rest wherever its folder or its letter
  * put it. Only the names get this treatment: the pinned name to keep in
- * rename mode stays on top. Marked only while some rows are not leading,
- * since marking every row says nothing.
+ * rename mode stays on top. The leading names are marked, and marked as
+ * agreeing when they go on sharing more than was typed — a base Tab would
+ * complete.
  */
 function leadingFirst(rows: PathSuggestion[], query: string): PathSuggestion[] {
 	if (!query) return rows;
 	const ranked = (row: PathSuggestion) => row.kind === "folder" || row.kind === "file" || row.kind === "page";
 	const leads = (row: PathSuggestion) => ranked(row) && row.label.toLowerCase().startsWith(query);
 	const leading = rows.filter(leads);
+	if (!leading.length) return rows;
+	const agreed = commonPrefix(leading.map((row) => row.label)).length > query.length;
+	for (const row of leading) {
+		row.leading = true;
+		row.agreed = agreed;
+	}
 	const inside = rows.filter((row) => ranked(row) && !leads(row));
-	if (!leading.length || !inside.length) return rows;
-	for (const row of leading) row.leading = true;
 	const pinned = rows.filter((row) => !ranked(row));
 	return [...pinned, ...leading, ...inside];
 }
@@ -1183,6 +1190,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		if (value.taken) el.addClass("lure-suggest-taken");
 		if (value.current) el.addClass("lure-suggest-current");
 		if (value.leading) el.addClass("lure-suggest-leading");
+		if (value.agreed) el.addClass("lure-suggest-agreed");
 
 		if (value.icon) {
 			const iconEl = el.createSpan({ cls: "lure-suggest-icon" });
