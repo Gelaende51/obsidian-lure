@@ -1572,5 +1572,20 @@ test("leaving the list brings the offer's colour back with it", async () => {
 	}
 });
 
+test("Backspace before an extension left on its own steps up a folder, as in an empty field", async () => {
+	await armed();
+	// Clicking the name marks its stem; deleting it leaves `.md` behind.
+	await pressKey(page, "Backspace");
+	await page.evaluate(PAUSE(300) + "return true;");
+	const left = await look();
+	expect("the extension is what is left", left.value, ".md");
+	await page.evaluate(`const i = document.querySelector(".lure-path-input"); i.setSelectionRange(0, 0); return true;`);
+	await pressKey(page, "Backspace");
+	await page.evaluate(PAUSE(500) + "return true;");
+	const up = await look();
+	expect("the folder's name is back in the field", up.value, "2026");
+	expect("and the extension went with the name", up.value.includes(".md"), false);
+});
+
 await run();
 

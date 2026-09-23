@@ -6075,6 +6075,17 @@ export class PathBreadcrumb {
 	 * that chip is dropped and its name reopened for editing, cursor at
 	 * the end, so a mistyped folder can be corrected in place.
 	 */
+	/**
+	 * Whether Backspace has nothing left to delete in front of the caret
+	 * but an extension: the field is empty, or holds only `.md` with the
+	 * caret before it and nothing selected.
+	 */
+	private fieldHoldsNoName(inputEl: HTMLInputElement): boolean {
+		if (inputEl.value === "") return true;
+		if (inputEl.selectionStart !== 0 || inputEl.selectionEnd !== 0) return false;
+		return /^\.[^./\\\s]+$/.test(inputEl.value);
+	}
+
 	private stepOutOfFolder(mark = false): boolean {
 		// Read before anything moves: stepping out tears the field down, and
 		// what it was holding is what has to survive the move.
@@ -7745,8 +7756,11 @@ export class PathBreadcrumb {
 			} else if (evt.key === "Escape") {
 				evt.preventDefault();
 				this.cancelNavigation();
-			} else if (evt.key === "Backspace" && inputEl.value === "") {
+			} else if (evt.key === "Backspace" && this.fieldHoldsNoName(inputEl)) {
 				evt.preventDefault();
+				// An extension with no name in front of it is what deleting
+				// a name leaves behind, not something to carry up a folder.
+				if (inputEl.value !== "") inputEl.value = "";
 				this.stepOutOfFolder();
 			} else if (evt.key === "Tab") {
 				evt.preventDefault();
