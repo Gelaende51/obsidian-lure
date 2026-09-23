@@ -99,7 +99,7 @@ export function commonPrefix(names: readonly string[]): string {
  * make Tab a very slow way of typing. Stopping at the next ambiguity is the
  * middle: everything that is still not a decision gets made for you.
  */
-function stepToward(typed: string, names: readonly string[], toward: string): string {
+export function stepToward(typed: string, names: readonly string[], toward: string): string {
 	const next = toward[typed.length];
 	if (next === undefined) return typed;
 	const branch = names.filter((name) => name[typed.length]?.toLowerCase() === next.toLowerCase());

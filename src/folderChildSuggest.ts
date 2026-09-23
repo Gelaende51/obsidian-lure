@@ -1,4 +1,5 @@
 import { AbstractInputSuggest, App, Modifier, Scope, TAbstractFile, TFile, TFolder, UserEvent, setIcon, setTooltip } from "obsidian";
+import { stepToward } from "./tabComplete";
 import { agreementWith, chooseCut, cutName, readableMinimum } from "./pathFit";
 import { wireNativeFileItem } from "./nativeFileItem";
 import { SystemLocation, applyIcon, iconFor } from "./systemLocations";
@@ -337,6 +338,8 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 	private lastQuery = "";
 	/** What the field was offering when the listing was built — the run to underline in each row. */
 	private lastOffer: { typedLength: number; prefix: string } | null = null;
+	/** Every name the list holds, which is what each row's own next step is worked out among. */
+	private listedLabels: string[] = [];
 	/**
 	 * The row the list is on when the pointer is not what put it there, and
 	 * whether that row had written itself into the field.
@@ -854,9 +857,9 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		// Substring rather than prefix: the dropdown doubles as a search of
 		// the folder, and finding "Weekly kickoff" by typing "kick" is most
 		// of what that is for. Tab is the one that needs a prefix.
-		return this.capped(
-			leadingFirst(this.buildSuggestions(context, (name) => !q || name.toLowerCase().includes(q)), q),
-		);
+		const rows = leadingFirst(this.buildSuggestions(context, (name) => !q || name.toLowerCase().includes(q)), q);
+		this.listedLabels = rows.filter((row) => row.kind !== "more").map((row) => row.label);
+		return this.capped(rows);
 	}
 
 	/**
@@ -1120,10 +1123,21 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		// of what was typed to the end of the opening every candidate shares.
 		// Only on the rows the offer is actually about — a row that matched
 		// somewhere in the middle of its name is not one of them.
+		// Not only the row the offer heads for: every row that begins with
+		// what was typed shows the step Tab would take toward *it*, so the
+		// other ways on from a fork are as visible as the one offered. The
+		// row the offer is about gets the offer itself by the same rule.
 		const offer = this.lastOffer;
+		const typed = offer ? offer.prefix.slice(0, offer.typedLength) : "";
+		const leads = (name: string) => name.toLowerCase().startsWith(typed.toLowerCase());
 		const offered =
-			offer && label.toLowerCase().startsWith(offer.prefix.toLowerCase())
-				? { start: offer.typedLength, end: offer.prefix.length }
+			offer && leads(label)
+				? {
+						start: offer.typedLength,
+						end: label.toLowerCase().startsWith(offer.prefix.toLowerCase())
+							? offer.prefix.length
+							: stepToward(typed, this.listedLabels.filter(leads), label).length,
+					}
 				: null;
 
 		if (at < 0 && !offered) {

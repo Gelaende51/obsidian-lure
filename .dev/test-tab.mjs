@@ -1597,7 +1597,8 @@ test("what is marked is what Tab writes, and the list underlines the same", asyn
 	const check = async (name) => {
 		const before = await state();
 		if (before.marked) {
-			expect(`${name}: the list underlines what is marked`, before.under.length > 0 && before.under.every((u) => u === before.marked), true);
+			// The rows beside it underline steps of their own; the offer is among them.
+			expect(`${name}: the list underlines what is marked`, before.under.includes(before.marked), true);
 		}
 		await tab();
 		const after = await state();
@@ -1649,6 +1650,16 @@ test("names that begin with what was typed come first, marked, ahead of names th
 	} finally {
 		await page.evaluate(`const f = app.vault.getAbstractFileByPath(${JSON.stringify(inside)}); if (f) await app.fileManager.trashFile(f); return true;`);
 	}
+});
+
+test("every row that begins with what was typed underlines its own next step", async () => {
+	await armAtRoot();
+	await type(`${PREFIX}alp`);
+	const under = JSON.parse(await page.evaluate(`return JSON.stringify(Object.fromEntries([...document.querySelectorAll(".suggestion-item")].map((e) => [
+		e.querySelector(".lure-suggest-label")?.textContent, [...e.querySelectorAll(".lure-suggest-offer")].map((u) => u.textContent).join("")])));`));
+	expect("the offered row shows the offer", under[`${PREFIX}alpha-one`], "ha-");
+	expect("its twin the same step", under[`${PREFIX}alpha-two`], "ha-");
+	expect("and the other way on shows its own", under[`${PREFIX}alpine`], "ine");
 });
 
 await run();
