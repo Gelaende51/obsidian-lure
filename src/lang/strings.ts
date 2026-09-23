@@ -77,6 +77,7 @@ export const EN = {
 	collisionSwapPlaces: "Swap places",
 	collisionSwapNames: "Swap names",
 	collisionSwapBoth: "Swap both",
+	collisionStay: "Stay where it is",
 	collisionApply: "Apply",
 	collisionApplyTip: "Moves both files to the paths in the fields. Links follow each file.",
 	collisionCancelTip: "Nothing is moved or renamed.",

@@ -1,5 +1,6 @@
 import { AbstractInputSuggest, App, Modal, TAbstractFile, TFolder, setTooltip } from "obsidian";
 import { t } from "./lang";
+import { agreementWith, chooseCut, cutName, readableMinimum } from "./pathFit";
 
 /**
  * What to do about a move or rename that lands on a name already taken.
@@ -9,10 +10,11 @@ import { t } from "./lang";
  * back, type the path again. The usual reason a name is taken is that the
  * file there is the one being replaced or reorganised, so the dialog lays
  * both files out side by side instead: where the moving file goes, and where
- * the one in the way goes, each an editable path. The second field's list
- * holds the usual answers — trading places, names or both, or a name beside
- * its own — and picking one only fills the field, so both paths can be read
- * before anything moves. Apply moves both; Cancel moves nothing.
+ * the one in the way goes, each an editable path. Each field's list holds
+ * the usual answers — for the one in the way, trading places, names or both,
+ * or a name beside its own — and picking one only fills the field, so both
+ * paths can be read before anything moves. Apply moves both; Cancel moves
+ * nothing.
  */
 export interface CollisionPaths {
 	/** Where the moving file goes. */
@@ -35,12 +37,19 @@ interface CollisionOptions {
 const parentOf = (path: string): string => path.slice(0, Math.max(0, path.lastIndexOf("/")));
 const join = (folder: string, name: string): string => (folder ? `${folder}/${name}` : name);
 const nameOf = (path: string): string => path.slice(path.lastIndexOf("/") + 1);
+const tidy = (path: string): string => path.trim().replace(/^\/+|\/+$/g, "");
 
 /** A name split before its extension; a folder, or a dot-file, has none. */
-function stemOf(item: TAbstractFile): { stem: string; ext: string } {
-	const dot = item.name.lastIndexOf(".");
-	if (item instanceof TFolder || dot <= 0) return { stem: item.name, ext: "" };
-	return { stem: item.name.slice(0, dot), ext: item.name.slice(dot) };
+function splitName(name: string, folder: boolean): { stem: string; ext: string } {
+	const dot = name.lastIndexOf(".");
+	if (folder || dot <= 0) return { stem: name, ext: "" };
+	return { stem: name.slice(0, dot), ext: name.slice(dot) };
+}
+
+/** `-1`, `-bak` and `-old` beside a name, in its own folder. */
+function besides(path: string, folder: boolean): string[] {
+	const { stem, ext } = splitName(nameOf(path), folder);
+	return ["-1", "-bak", "-old"].map((suffix) => join(parentOf(path), `${stem}${suffix}${ext}`));
 }
 
 interface PathIdea {
@@ -49,40 +58,113 @@ interface PathIdea {
 	path: string;
 }
 
-/**
- * Where the file in the way could go, in the order they are usually wanted:
- * the three trades, then names beside its own, then the two names the files
- * had. The same path is listed once, under the first idea that reaches it —
- * within one folder, swapping names and swapping both are one move.
- */
-function occupantIdeas(from: string, occupant: TAbstractFile): PathIdea[] {
-	const here = parentOf(occupant.path);
-	const { stem, ext } = stemOf(occupant);
-	const ideas: PathIdea[] = [
-		{ label: t("collisionSwapPlaces"), path: join(parentOf(from), occupant.name) },
-		{ label: t("collisionSwapNames"), path: join(here, nameOf(from)) },
-		{ label: t("collisionSwapBoth"), path: from },
-		...["-1", "-bak", "-old"].map((suffix) => ({ label: null, path: join(here, `${stem}${suffix}${ext}`) })),
-		{ label: null, path: join(here, nameOf(from)) },
-		{ label: null, path: occupant.path },
-	];
+/** The same path once, under the first idea that reaches it. */
+function distinct(ideas: PathIdea[]): PathIdea[] {
 	const seen = new Set<string>();
 	return ideas.filter((idea) => {
-		// Trading with itself is not a trade: across folders between two
-		// files of one name, swapping names lands where it already is.
-		if (idea.label && idea.path === occupant.path) return false;
 		if (seen.has(idea.path)) return false;
 		seen.add(idea.path);
 		return true;
 	});
 }
 
-/** The ideas as a list under the occupant's field. Picking one fills the field; nothing moves. */
+/**
+ * Where the file in the way could go, in the order they are usually wanted:
+ * the three trades, then names beside its own, then the two names the files
+ * had. Within one folder, swapping names and swapping both are one move.
+ */
+function occupantIdeas(from: string, occupant: TAbstractFile): PathIdea[] {
+	const here = parentOf(occupant.path);
+	return distinct([
+		// Trading with itself is not a trade: across folders between two
+		// files of one name, swapping names lands where it already is.
+		...[
+			{ label: t("collisionSwapPlaces"), path: join(parentOf(from), occupant.name) },
+			{ label: t("collisionSwapNames"), path: join(here, nameOf(from)) },
+			{ label: t("collisionSwapBoth"), path: from },
+		].filter((idea) => idea.path !== occupant.path),
+		...besides(occupant.path, occupant instanceof TFolder).map((path) => ({ label: null, path })),
+		{ label: null, path: join(here, nameOf(from)) },
+		{ label: null, path: occupant.path },
+	]);
+}
+
+/**
+ * Where the moving file could go instead: where it was asked to, nowhere,
+ * its own name there, or names beside that. Staying comes before its own
+ * name there, which is the same path within one folder and should be
+ * listed under what it means.
+ */
+function movingIdeas(from: string, moving: TAbstractFile, target: string): PathIdea[] {
+	return distinct([
+		{ label: null, path: target },
+		{ label: t("collisionStay"), path: from },
+		{ label: null, path: join(parentOf(target), nameOf(from)) },
+		...besides(target, moving instanceof TFolder).map((path) => ({ label: null, path })),
+	]);
+}
+
+/** Names no longer than this are never shortened. */
+const SHORT_NAME = 6;
+
+/**
+ * A path drawn the way the path bar draws one: a segment at a time, each
+ * shortened in its middle when the line runs out of room, and the marked
+ * segments — the ones that differ — given way last.
+ */
+function drawPath(el: HTMLElement, path: string, marked: (index: number, part: string) => boolean): void {
+	el.empty();
+	el.addClass("lure-collision-path");
+	path.split("/").forEach((part, index) => {
+		if (index > 0) el.createSpan({ cls: "lure-collision-sep", text: "/" });
+		const segment = el.createSpan({ cls: "lure-collision-seg", text: part });
+		segment.dataset.full = part;
+		if (marked(index, part)) segment.addClass("is-marked");
+		// A name this short loses more than it saves: cut, `zz394` is `z…4`.
+		if (part.length <= SHORT_NAME) segment.addClass("is-short");
+	});
+	el.setAttr("aria-label", path);
+}
+
+/** Shortens every segment that does not fit, by the path bar's rule, to the longest cut that still fits. */
+function fitPath(el: HTMLElement): void {
+	const segments = Array.from(el.querySelectorAll<HTMLElement>(".lure-collision-seg"));
+	for (const segment of segments) segment.setText(segment.dataset.full ?? "");
+	const names = segments.map((segment) => segment.dataset.full ?? "");
+	segments.forEach((segment, index) => {
+		if (segment.scrollWidth <= segment.clientWidth + 1) return;
+		const full = names[index] ?? "";
+		const stage = index === segments.length - 1 ? "name" : "folder";
+		const cut = chooseCut(full, agreementWith(full, names.filter((_, other) => other !== index)), readableMinimum(stage));
+		let low = Math.min(cut.floor, full.length);
+		let high = full.length - 1;
+		while (low < high) {
+			const keep = Math.ceil((low + high) / 2);
+			segment.setText(cutName(full, keep, cut));
+			if (segment.scrollWidth <= segment.clientWidth + 1) low = keep;
+			else high = keep - 1;
+		}
+		segment.setText(cutName(full, low, cut));
+	});
+}
+
+/** Segment by segment, which parts of a path are not the same as in another. */
+const differsFrom =
+	(other: string) =>
+	(index: number, part: string): boolean =>
+		other.split("/")[index] !== part;
+
+/**
+ * The ideas as a list under a field. Picking one fills the field; nothing
+ * moves. An idea whose path is taken, as the other field stands, is greyed
+ * and cannot be picked.
+ */
 class IdeaSuggest extends AbstractInputSuggest<PathIdea> {
 	constructor(
 		app: App,
 		private input: HTMLInputElement,
 		private ideas: PathIdea[],
+		private free: (path: string) => boolean,
 		private picked: () => void,
 	) {
 		super(app, input);
@@ -94,11 +176,24 @@ class IdeaSuggest extends AbstractInputSuggest<PathIdea> {
 
 	renderSuggestion(idea: PathIdea, el: HTMLElement): void {
 		el.addClass("lure-collision-idea");
+		if (!this.free(idea.path)) el.addClass("is-unavailable");
 		if (idea.label) el.createSpan({ cls: "lure-collision-idea-label", text: idea.label });
-		el.createEl("code", { text: idea.path });
+		drawPath(el.createSpan(), idea.path, differsFrom(tidy(this.input.value)));
+	}
+
+	/** No wider than its field, and every path in it fitted to that. */
+	open(): void {
+		const popover = (this as unknown as { suggestEl?: HTMLElement }).suggestEl;
+		popover?.setCssProps({ "--lure-idea-max": `${Math.round(this.input.getBoundingClientRect().width)}px` });
+		popover?.addClass("lure-collision-ideas");
+		super.open();
+		popover?.querySelectorAll<HTMLElement>(".lure-collision-path").forEach(fitPath);
+		const self = this as unknown as { lastRect?: DOMRect; reposition?: (rect: DOMRect) => void };
+		if (self.lastRect) self.reposition?.(self.lastRect);
 	}
 
 	selectSuggestion(idea: PathIdea): void {
+		if (!this.free(idea.path)) return;
 		this.input.value = idea.path;
 		this.close();
 		this.picked();
@@ -123,56 +218,74 @@ class CollisionModal extends Modal {
 
 	onOpen(): void {
 		const { contentEl } = this;
-		const { moving, occupant, target } = this.options;
+		const { moving, occupant, target, exists } = this.options;
 		const from = moving.path;
 		this.modalEl.addClass("lure-collision-modal");
 		this.titleEl.setText(t("collisionTitle"));
 		contentEl.createEl("p", { text: t("collisionBody", { name: occupant.name }) });
 
-		// Both files by their whole path, each over the field that says where
-		// it goes: a dialog that moves two similarly named files must never
-		// leave room to wonder which field is which.
+		// Both files by their whole path, the segments where the two differ
+		// marked; under each, where it is going, marked where that differs
+		// from where it was; and under that the field that says so. A dialog
+		// that moves two similarly named files must never leave room to
+		// wonder which is which.
 		const files = contentEl.createDiv({ cls: "lure-collision-files" });
-		const row = (label: string, path: string, cls: string, value: string): HTMLInputElement => {
-			const block = files.createDiv({ cls: `lure-collision-file ${cls}` });
-			const head = block.createDiv({ cls: "lure-collision-head" });
+		const block = (label: string, path: string, other: string, cls: string, value: string) => {
+			const box = files.createDiv({ cls: `lure-collision-file ${cls}` });
+			const head = box.createDiv({ cls: "lure-collision-head" });
 			head.createSpan({ cls: "lure-collision-role", text: label });
-			head.createEl("code", { text: path });
-			const input = block.createEl("input", { type: "text", cls: "lure-prompt-input" });
+			const original = head.createDiv();
+			drawPath(original, path, differsFrom(other));
+			const to = box.createDiv({ cls: "lure-collision-head is-destination" });
+			to.createSpan({ cls: "lure-collision-role", text: "→" });
+			const destination = to.createDiv();
+			const input = box.createEl("input", { type: "text", cls: "lure-prompt-input" });
 			input.value = value;
-			return input;
+			return { input, original, destination, path };
 		};
-		const movingInput = row(t("collisionMoving"), from, "is-moving", target);
-		const occupantInput = row(t("collisionOccupant"), occupant.path, "is-occupant", occupant.path);
+		const movingBox = block(t("collisionMoving"), from, occupant.path, "is-moving", target);
+		const occupantBox = block(t("collisionOccupant"), occupant.path, from, "is-occupant", occupant.path);
+		const movingInput = movingBox.input;
+		const occupantInput = occupantBox.input;
 		contentEl.createEl("p", { cls: "lure-collision-hint", text: t("collisionHint") });
 		const error = contentEl.createDiv({ cls: "lure-collision-error" });
 
+		// Whether a path is free for one of the two files, as the other's
+		// field stands: nothing is there, or what is there is this file
+		// itself, or the other file, which is moving away — and the other is
+		// not headed there too.
+		const freeFor =
+			(self: string, other: string, otherTo: () => string) =>
+			(path: string): boolean => {
+				const elsewhere = tidy(otherTo());
+				if (path === elsewhere) return false;
+				return !exists(path) || path === self || (path === other && elsewhere !== other);
+			};
+		const movingFree = freeFor(from, occupant.path, () => occupantInput.value);
+		const occupantFree = freeFor(occupant.path, from, () => movingInput.value);
+
 		// What is wrong with the two paths as they stand, and in which field.
-		// A path is free if nothing is there, or if what is there is one of
-		// the two files and is itself moving away.
 		const judge = (): { field: HTMLInputElement | null; message: string } => {
-			const to = movingInput.value.trim().replace(/^\/+|\/+$/g, "");
-			const away = occupantInput.value.trim().replace(/^\/+|\/+$/g, "");
-			const vacated = (path: string, self: string, other: string, otherTo: string) =>
-				path === self || (path === other && otherTo !== other);
+			const to = tidy(movingInput.value);
+			const away = tidy(occupantInput.value);
 			if (!to) return { field: movingInput, message: t("msgEmpty") };
 			if (!away) return { field: occupantInput, message: t("msgEmpty") };
 			if (to === away) return { field: occupantInput, message: t("collisionSamePath") };
-			if (this.options.exists(to) && !vacated(to, from, occupant.path, away)) {
-				return { field: movingInput, message: t("collisionPathTaken", { path: to }) };
-			}
-			if (this.options.exists(away) && !vacated(away, occupant.path, from, to)) {
-				return { field: occupantInput, message: t("collisionPathTaken", { path: away }) };
-			}
+			if (!movingFree(to)) return { field: movingInput, message: t("collisionPathTaken", { path: to }) };
+			if (!occupantFree(away)) return { field: occupantInput, message: t("collisionPathTaken", { path: away }) };
 			return { field: null, message: "" };
 		};
 		// Red while a path is taken, the way the path bar marks a taken name —
 		// the occupant's own path included, as long as the moving file is
-		// headed there.
+		// headed there. The destination lines follow the fields.
 		const paint = (): void => {
 			const { field } = judge();
-			movingInput.toggleClass("is-taken", field === movingInput);
-			occupantInput.toggleClass("is-taken", field === occupantInput);
+			for (const box of [movingBox, occupantBox]) {
+				box.input.toggleClass("is-taken", field === box.input);
+				box.destination.toggleClass("is-taken", field === box.input);
+				drawPath(box.destination, tidy(box.input.value), differsFrom(box.path));
+				fitPath(box.destination);
+			}
 			error.setText("");
 		};
 		const apply = (): void => {
@@ -181,13 +294,11 @@ class CollisionModal extends Modal {
 				error.setText(message);
 				return;
 			}
-			this.settle({
-				moving: movingInput.value.trim().replace(/^\/+|\/+$/g, ""),
-				occupant: occupantInput.value.trim().replace(/^\/+|\/+$/g, ""),
-			});
+			this.settle({ moving: tidy(movingInput.value), occupant: tidy(occupantInput.value) });
 		};
 
-		new IdeaSuggest(this.app, occupantInput, occupantIdeas(from, occupant), paint);
+		new IdeaSuggest(this.app, movingInput, movingIdeas(from, moving, target), movingFree, paint);
+		new IdeaSuggest(this.app, occupantInput, occupantIdeas(from, occupant), occupantFree, paint);
 		for (const input of [movingInput, occupantInput]) {
 			input.addEventListener("input", paint);
 			input.addEventListener("keydown", (evt) => {
@@ -196,7 +307,6 @@ class CollisionModal extends Modal {
 				apply();
 			});
 		}
-		paint();
 
 		const buttons = contentEl.createDiv({ cls: "lure-modal-buttons" });
 		const button = (text: string, tip: string, cls?: string): HTMLButtonElement => {
@@ -208,12 +318,16 @@ class CollisionModal extends Modal {
 		button(t("collisionApply"), t("collisionApplyTip"), "mod-cta").addEventListener("click", apply);
 
 		// The occupant's name without its extension, which is what a way out
-		// almost always changes — and the field whose list holds the ideas,
+		// almost always changes — and the field whose list holds the trades,
 		// opened straight away. A tick later: the modal takes focus for
-		// itself as it opens, and the list only opens for a focused field.
-		const { stem } = stemOf(occupant);
+		// itself as it opens, the lines can only be fitted once laid out, and
+		// a list only opens for a focused field.
+		const { stem } = splitName(occupant.name, occupant instanceof TFolder);
 		const start = occupant.path.length - occupant.name.length;
 		window.setTimeout(() => {
+			fitPath(movingBox.original);
+			fitPath(occupantBox.original);
+			paint();
 			occupantInput.focus();
 			occupantInput.setSelectionRange(start, start + stem.length);
 			occupantInput.dispatchEvent(new Event("input"));

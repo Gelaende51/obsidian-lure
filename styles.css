@@ -1371,9 +1371,15 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 }
 
 /* The collision dialog. Both files by their whole path, each with what it
-   is to this move in front of it and the field saying where it goes below —
-   the one in the way marked in the accent colour, so there is no reading
-   the dialog as being about the file you are moving. */
+   is to this move in front of it, where it is going under that, and the
+   field saying so below — the one in the way marked in the accent colour,
+   so there is no reading the dialog as being about the file you are moving.
+   Wider than Obsidian's usual dialog: it holds two paths side by side with
+   their labels, and a path cut short is the thing it exists to avoid. */
+.modal.lure-collision-modal {
+	width: min(var(--dialog-max-width, 90vw), 760px);
+}
+
 .lure-collision-files {
 	display: grid;
 	gap: var(--size-4-3);
@@ -1393,18 +1399,79 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 	min-width: 0;
 }
 
+.lure-collision-head > div {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
 .lure-collision-hint {
 	margin-block: 0;
 	color: var(--text-muted);
 	font-size: var(--font-ui-small);
 }
 
-/* A way out in the second field's list: what it is called, then the path
-   it leads to, which is what picking it writes into the field. */
+/* A path drawn as the path bar draws one: segment by segment on one line,
+   each giving way in its middle when the line runs out of room — the ones
+   that differ last, since they are what the line is there to show. */
+.lure-collision-path {
+	display: flex;
+	min-width: 0;
+	overflow: hidden;
+	font-family: var(--font-monospace);
+	white-space: pre;
+}
+
+.lure-collision-seg {
+	flex: 0 1000 auto;
+	min-width: 1.5em;
+	overflow: hidden;
+	white-space: pre;
+}
+
+.lure-collision-seg.is-marked {
+	flex-shrink: 1;
+	color: var(--text-accent);
+	font-weight: var(--font-semibold, 600);
+}
+
+.lure-collision-seg.is-short {
+	flex-shrink: 0;
+}
+
+.lure-collision-sep {
+	flex: 0 0 auto;
+	color: var(--text-faint);
+}
+
+/* Where a file is going: what differs from where it was in blue, and the
+   whole line red while that path is taken. */
+.lure-collision-head.is-destination .lure-collision-seg.is-marked {
+	color: var(--color-blue);
+}
+
+.lure-collision-head.is-destination .is-taken .lure-collision-seg {
+	color: var(--text-error);
+}
+
+/* A way out in a field's list: what it is called, then the path it leads
+   to, which is what picking it writes into the field. As wide as the field
+   at most, with the path fitted to it. Greyed where that path is taken, as
+   the other field stands. */
+.lure-collision-ideas {
+	max-width: var(--lure-idea-max, none);
+}
+
 .lure-collision-idea {
 	display: flex;
 	gap: var(--size-4-2);
 	align-items: baseline;
+	min-width: 0;
+}
+
+.lure-collision-idea > span:last-child {
+	flex: 1 1 auto;
+	min-width: 0;
+	color: var(--text-muted);
 }
 
 .lure-collision-idea-label {
@@ -1412,13 +1479,9 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 	font-weight: var(--font-semibold, 600);
 }
 
-.lure-collision-idea code {
-	overflow-wrap: anywhere;
-	color: var(--text-muted);
-}
-
-.lure-collision-file code {
-	overflow-wrap: anywhere;
+.lure-collision-idea.is-unavailable {
+	opacity: 0.45;
+	cursor: default;
 }
 
 .lure-collision-role {
@@ -1427,8 +1490,7 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 	color: var(--text-muted);
 }
 
-.lure-collision-file.is-occupant .lure-collision-role,
-.lure-collision-file.is-occupant code {
+.lure-collision-file.is-occupant > .lure-collision-head:first-child .lure-collision-role {
 	color: var(--text-accent);
 }
 

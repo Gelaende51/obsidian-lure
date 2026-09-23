@@ -561,6 +561,35 @@ test("two paths that would collide are refused, and say why", async () => {
 	expect("and cancelling moves nothing", [await body(NOTE), await body(taken)], ["note", "occupant"]);
 });
 
+test("both fields have a list, and a way out that is taken is greyed and cannot be picked", async () => {
+	const taken = `${FIXTURE}/Taken.md`;
+	await makeTaken(taken);
+	await makeTaken(`${FIXTURE}/Taken-1.md`);
+	await collide(taken, {
+		apply: false,
+		whileOpen: async () => {
+			const state = JSON.parse(await page.evaluate(`
+				const rows = [...document.querySelectorAll(".lure-collision-idea")];
+				const one = rows.find((e) => e.getAttribute("aria-label") === null && e.textContent.endsWith("Taken-1.md"));
+				one?.click();
+				${PAUSE(300)}
+				const field = document.querySelectorAll(".lure-collision-modal input")[1].value;
+				document.querySelectorAll(".lure-collision-modal input")[0].focus();
+				document.querySelectorAll(".lure-collision-modal input")[0].dispatchEvent(new Event("input"));
+				${PAUSE(400)}
+				return JSON.stringify({
+					greyed: one?.classList.contains("is-unavailable") ?? null,
+					field,
+					moving: [...document.querySelectorAll(".lure-collision-idea")].map((e) => e.textContent),
+				});`));
+			expect("the taken way out is greyed", state.greyed, true);
+			expect("and picking it changes nothing", state.field, taken);
+			expect("the moving file's field has its own list, staying put included", state.moving, (v) => v.some((x) => x.startsWith("Stay where it is")));
+		},
+	});
+	await page.evaluate(`[...document.querySelectorAll(".lure-collision-modal button")].find((b) => b.textContent === "Cancel")?.click(); ${PAUSE(400)} return true;`);
+});
+
 async function reset() {
 	await reloadPlugin(page);
 	// From nothing: the collision cases leave files behind them that the next
