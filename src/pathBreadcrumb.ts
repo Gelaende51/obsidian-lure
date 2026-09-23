@@ -5477,6 +5477,7 @@ export class PathBreadcrumb {
 			moving: file,
 			occupant,
 			sameFolder,
+			movingName: file.name,
 			isFree: (name) => app.vault.getAbstractFileByPath(join(parentOf(occupant.path), name)) === null,
 		});
 		if (!choice) return false;
@@ -5494,24 +5495,21 @@ export class PathBreadcrumb {
 				await rename(occupant, join(parentOf(occupant.path), choice.name));
 				await this.ensureFolderExists(parentOf(newPath));
 				await rename(file, newPath);
-			} else if (choice.kind === "swap-names") {
-				// Within one folder: this file takes the other's name, and the
-				// other takes the one this file had.
-				await rename(occupant, passing(occupant));
-				await rename(file, newPath);
-				await rename(occupant, from);
 			} else {
-				// Across folders: each keeps its own name and takes the other's
-				// folder. The occupant's new home has to be free for it.
-				const home = join(parentOf(from), occupant.name);
-				const blocker = app.vault.getAbstractFileByPath(home);
+				// The one in the way takes the moving file's old name — where
+				// the moving file came from when trading places, in its own
+				// folder when trading names. Within one folder those are the
+				// same path.
+				const into = choice.kind === "swap-places" ? parentOf(from) : parentOf(occupant.path);
+				const to = join(into, file.name);
+				const blocker = app.vault.getAbstractFileByPath(to);
 				if (blocker && blocker !== file) {
-					new Notice(t("noticeAlreadyExists", { path: home }));
+					new Notice(t("noticeAlreadyExists", { path: to }));
 					return false;
 				}
 				await rename(occupant, passing(occupant));
 				await rename(file, newPath);
-				await rename(occupant, home);
+				await rename(occupant, to);
 			}
 		} catch (err) {
 			new Notice(t("noticeRenameFailed", { error: (err as Error).message }));

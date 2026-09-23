@@ -11,12 +11,12 @@ import { t } from "./lang";
  * the ways through it in place: rename the file in the way first, or trade
  * places with it, or trade names with it. Cancel drops the whole move.
  *
- * Which trade is offered depends on the move. Across folders the two files
- * can swap places — each keeps its name and takes the other's folder. Within
- * one folder that would be the same as not moving at all, and swapping
- * *names* is what is meant; across folders swapping names would leave both
- * files where they were, which a move did not ask for. So exactly one of
- * the two is offered, never both.
+ * Two trades, and which are offered depends on the move. Swapping places:
+ * the file in the way goes where the moving file came from, under the name
+ * it had. Swapping names: it stays where it is and takes the moving file's
+ * old name. Within one folder the two are the same thing, so only the swap
+ * of names is offered; across folders between two files of one name,
+ * swapping names changes nothing, so only the swap of places is.
  */
 export type CollisionChoice =
 	| { kind: "rename-occupant"; name: string }
@@ -30,6 +30,8 @@ interface CollisionOptions {
 	occupant: TAbstractFile;
 	/** Whether the destination is in the moving file's own folder — a rename rather than a move. */
 	sameFolder: boolean;
+	/** The moving file's name before the move, which the one in the way takes in a trade. */
+	movingName: string;
 	/** Whether a name is free in the occupant's folder, for the rename field. */
 	isFree: (name: string) => boolean;
 }
@@ -108,15 +110,19 @@ class CollisionModal extends Modal {
 			return el;
 		};
 		button(t("cancel"), t("collisionCancelTip")).addEventListener("click", () => this.settle(null));
-		if (sameFolder) {
-			button(t("collisionSwapNames"), t("collisionSwapNamesTip", { a: moving.name, b: occupant.name }))
-				.addEventListener("click", () => this.settle({ kind: "swap-names" }));
-		} else {
+		const { movingName } = this.options;
+		if (!sameFolder) {
 			const home = moving.parent?.path ?? "/";
 			button(
 				t("collisionSwapPlaces"),
-				t("collisionSwapPlacesTip", { name: occupant.name, folder: home === "/" ? "/" : home }),
+				t("collisionSwapPlacesTip", { name: occupant.name, folder: home, moving: movingName }),
 			).addEventListener("click", () => this.settle({ kind: "swap-places" }));
+		}
+		if (sameFolder || movingName !== occupant.name) {
+			button(
+				t("collisionSwapNames"),
+				t(sameFolder ? "collisionSwapNamesTip" : "collisionSwapNamesAcrossTip", { a: movingName, b: occupant.name }),
+			).addEventListener("click", () => this.settle({ kind: "swap-names" }));
 		}
 		button(t("collisionRenameCta"), t("collisionRenameTip", { name: occupant.name }), "mod-cta")
 			.addEventListener("click", rename);

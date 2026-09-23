@@ -490,7 +490,7 @@ test("a taken name in the same folder: the two can swap names, and cannot swap p
 	expect("and the other has the note's", await body(NOTE), "occupant");
 });
 
-test("a taken name in another folder: the two can swap places, and cannot swap names", async () => {
+test("a taken name of the same name in another folder: the two can swap places, and swapping names means nothing", async () => {
 	const other = `${FIXTURE}/Elsewhere`;
 	const taken = `${other}/Scrolling note.md`;
 	await page.evaluate(`
@@ -502,6 +502,27 @@ test("a taken name in another folder: the two can swap places, and cannot swap n
 	expect("the note is over there", await body(taken), "note");
 	expect("and the other one is here", await body(NOTE), "occupant");
 });
+
+for (const [button, occupantAt] of [
+	["Swap places", NOTE],
+	["Swap names", `${FIXTURE}/Elsewhere/Scrolling note.md`],
+]) {
+	test(`a different taken name in another folder: both trades are offered, and "${button}" does what it says`, async () => {
+		const other = `${FIXTURE}/Elsewhere`;
+		const taken = `${other}/Other.md`;
+		await page.evaluate(`
+			if (!app.vault.getAbstractFileByPath(${JSON.stringify(other)})) await app.vault.createFolder(${JSON.stringify(other)});
+			if (!app.vault.getAbstractFileByPath(${JSON.stringify(taken)})) await app.vault.create(${JSON.stringify(taken)}, "occupant");
+			return true;`);
+		const buttons = await collide(taken, button);
+		expect("both trades are offered", [buttons.includes("Swap places"), buttons.includes("Swap names")], [true, true]);
+		expect("the note has the name it asked for", await body(taken), "note");
+		expect("the other one has the note's old name, where the trade puts it", await body(occupantAt), "occupant");
+		expect("and nothing is left behind", await page.evaluate(
+			`return app.vault.getFiles().filter((f) => f.path.startsWith(${JSON.stringify(FIXTURE)})).map((f) => f.path).sort().join(",");`),
+			[taken, occupantAt].sort().join(","));
+	});
+}
 
 async function reset() {
 	await reloadPlugin(page);
