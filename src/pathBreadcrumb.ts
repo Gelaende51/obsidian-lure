@@ -8159,6 +8159,13 @@ export class PathBreadcrumb {
 			// field as it was.
 			if (this.offerBeforePreview) this.offerSuggestion(input);
 			this.offerBeforePreview = false;
+			// The colour is the text's, and the text is back: nothing else
+			// repaints it, since the list itself has not changed. Once the
+			// list has let go of the row: this runs while it still holds it,
+			// and the colour would be read off the row just left.
+			queueMicrotask(() => {
+				if (this.inputEl === input) this.paintCreateHint(input);
+			});
 			this.autoSizeInput?.();
 			return;
 		}

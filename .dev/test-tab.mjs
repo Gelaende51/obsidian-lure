@@ -1536,5 +1536,35 @@ test("the offer ignores case, spells the name as it is, and prefers the spelling
 	}
 });
 
+test("leaving the list brings the offer's colour back with it", async () => {
+	// A note that only contains what is typed, so it is listed below the
+	// folders the offer comes from and wears a colour of its own.
+	const other = `Z${PREFIX}alp.md`;
+	await page.evaluate(`if (!app.vault.getAbstractFileByPath(${JSON.stringify(other)})) await app.vault.create(${JSON.stringify(other)}, ""); return true;`);
+	try {
+		await armAtRoot();
+		await type(`${PREFIX}alp`);
+		const tint = () => page.evaluate(`
+			const input = document.querySelector(".lure-path-input");
+			return JSON.stringify([input.dataset.lureTint ?? null, input.classList.contains("lure-will-create")]);`);
+		const before = await tint();
+		const xy = JSON.parse(await page.evaluate(`
+			const row = [...document.querySelectorAll(".suggestion-item")]
+				.find((e) => e.querySelector(".lure-suggest-label")?.textContent === ${JSON.stringify(other)});
+			const r = row.getBoundingClientRect();
+			return JSON.stringify([r.x + 10, r.y + r.height / 2]);`));
+		await page.send("Input.dispatchMouseEvent", { type: "mouseMoved", x: xy[0], y: xy[1] });
+		await page.evaluate(PAUSE(300) + "return true;");
+		const pointed = await tint();
+		await page.send("Input.dispatchMouseEvent", { type: "mouseMoved", x: 5, y: 900 });
+		await page.evaluate(PAUSE(400) + "return true;");
+		expect("pointing at the note showed another colour", pointed !== before, true);
+		expect("the offer is back", (await look()).selected, "ha-");
+		expect("and its colour with it", await tint(), before);
+	} finally {
+		await page.evaluate(`const f = app.vault.getAbstractFileByPath(${JSON.stringify(other)}); if (f) await app.fileManager.trashFile(f); return true;`);
+	}
+});
+
 await run();
 
