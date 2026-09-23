@@ -31,7 +31,7 @@ import {
 	levelCap,
 	readableMinimum,
 } from "./pathFit";
-import { commonPrefix, planOffer, planTab } from "./tabComplete";
+import { commonPrefix, planTab } from "./tabComplete";
 import { FolderChildSuggest, MODIFIED_ENTER, guardFieldKeys, pageLabel, PathSuggestion } from "./folderChildSuggest";
 import { ExternalChild, PATH_SEP, externalJoin, externalParent, externalSegments, isExternalFile, isExternalFolder, listExternalChildren } from "./externalFs";
 import {
@@ -333,6 +333,15 @@ interface TabStep {
 }
 
 /** A row segment the fitter may shorten, tied to the element showing it. */
+/** An offer standing in the field: the marked run, and what taking it writes. */
+interface OfferedRun {
+	start: number;
+	end: number;
+	prefix: string;
+	typed: string;
+	agreed: boolean;
+}
+
 interface FittableSegment {
 	el: HTMLElement;
 	full: string;
@@ -776,7 +785,17 @@ export class PathBreadcrumb {
 	 * writes: the letters you typed are yours while you type, but a path has
 	 * to be spelled the way the disk spells it.
 	 */
-	private suggested: { start: number; end: number; prefix: string; typed: string; agreed: boolean } | null = null;
+	private offered: OfferedRun | null = null;
+	private get suggested(): OfferedRun | null {
+		return this.offered;
+	}
+	/** Set only whole, so the list's underline can follow every change of offer. */
+	private set suggested(run: OfferedRun | null) {
+		this.offered = run;
+		this.suggest?.showOffer(
+			run ? { typedLength: run.prefix.length - (run.end - run.start), prefix: run.prefix } : null,
+		);
+	}
 	/** Whether an offer stood in the field when a row began previewing, so leaving the list puts it back. */
 	private offerBeforePreview = false;
 	/** Set while an IME is composing, when writing into the field would break the composition. */
@@ -6233,6 +6252,11 @@ export class PathBreadcrumb {
 		// that name rather than for whatever sorts first.
 		const marked = this.suggest?.highlighted() ?? null;
 		const target = candidates.find((candidate) => candidate.path === marked?.path) ?? null;
+		// A row previewed into the field is what the field shows as the
+		// press's answer, so the press takes that row and nothing beside it:
+		// arrowing to `testfolder` and pressing Tab walked on to
+		// `testfolder2`, the next name it opens.
+		if (this.preview && target) candidates.splice(0, candidates.length, target);
 
 		// What a write would replace: the segment as it stands, extension and
 		// all. `typed` is only what it was matched by.
@@ -6276,6 +6300,7 @@ export class PathBreadcrumb {
 			// in by a click is recorded exactly as one reached by a press —
 			// unless taking the offer has already recorded this press.
 			this.descendCarrying(action.path, this.restAfterEditedSegment(), resuming, !took);
+			if (this.inputEl) this.offerSuggestion(this.inputEl);
 			return;
 		}
 		if (took) {
@@ -6485,41 +6510,57 @@ export class PathBreadcrumb {
 		if (this.composing) return;
 		// Nothing is offered into a selection, or from the middle of a name:
 		// what is offered goes *after* what you are typing, and there has to
-		// be a caret at the end of it for it to go after.
+		// be a caret at the end of it for it to go after — or before the
+		// extension typing over a name's stem leaves standing.
 		const caret = input.selectionStart ?? 0;
 		if (caret !== (input.selectionEnd ?? 0)) return;
 		const bounds = segmentBoundsAtCaret(input.value, caret);
-		if (caret !== bounds.end) return;
+		const tail = input.value.slice(caret, bounds.end);
+		if (tail && !/^\.[^./\\\s]+$/.test(tail)) return;
 
-		const query = input.value.slice(bounds.start, bounds.end);
-		if (!query) return;
+		const query = input.value.slice(bounds.start, caret);
+		const segment = input.value.slice(bounds.start, bounds.end);
 		const rows = this.suggest?.completions(query) ?? [];
 		const candidates = rows.map((row) => ({
 			label: row.label,
 			path: row.path,
 			folder: row.kind === "folder",
 		}));
-		// Exactly what Tab would write here, so the offer and the key never
-		// disagree about what comes next.
-		const whole = planOffer(query, candidates);
-		if (!whole) return;
-		const add = whole.slice(query.length);
+		// Exactly what Tab would do here — the same names, the same row it
+		// would walk toward, the same text it would replace — so the offer
+		// and the key never disagree about what comes next.
+		const marked = this.suggest?.highlighted() ?? null;
+		const target = candidates.find((candidate) => candidate.path === marked?.path) ?? null;
+		const action = planTab(query, candidates, target, segment);
+		const whole =
+			action.kind === "write"
+				? action.text
+				: action.kind === "descend"
+					? (candidates.find((candidate) => candidate.path === action.path)?.label ?? "")
+					: "";
+		// What goes between the caret and the extension after it. A write
+		// that does not end the way the field does cannot be shown there.
+		const sameText = (a: string, b: string) => a.toLowerCase() === b.toLowerCase();
+		if (tail && !sameText(whole.slice(-tail.length), tail)) return;
+		const core = whole.slice(0, whole.length - tail.length);
+		if (core.length <= query.length || !sameText(core.slice(0, query.length), query)) return;
+		const add = core.slice(query.length);
 
 		// Spelled the way the name is, typed letters included: `TES` offered
 		// as `TESt` shows a name that is not there. Taking the offer back
 		// gives the letters back as they were typed.
-		input.value = input.value.slice(0, bounds.start) + whole + input.value.slice(caret);
+		input.value = input.value.slice(0, bounds.start) + core + input.value.slice(caret);
 		input.setSelectionRange(caret, caret + add.length);
 		this.suggested = {
 			start: caret,
 			end: caret + add.length,
-			prefix: whole,
+			prefix: core,
 			typed: query,
 			// Whether the names all agree this far, or the offer is a step
 			// toward the first of several. Only agreement lets the press that
 			// takes it carry on past it; a step is a choice, and taking it is
 			// the whole of the press.
-			agreed: whole.length <= commonPrefix(candidates.map((candidate) => candidate.label)).length,
+			agreed: core.length <= commonPrefix(candidates.map((candidate) => candidate.label)).length,
 		};
 	}
 
@@ -7730,8 +7771,10 @@ export class PathBreadcrumb {
 				}
 				if (key === "Enter" || key === "/") {
 					// Taken, and then the press goes on meaning what it has
-					// always meant.
-					this.settleSuggestion(true);
+					// always meant — unless nothing was typed for it: an offer
+					// in an empty field is the next press of Tab shown, not a
+					// name anybody chose, and Enter must not commit it.
+					this.settleSuggestion(this.suggested.typed !== "");
 				} else if (key === "Tab" && !evt.shiftKey) {
 					// Left standing: the completion below takes it, so that
 					// it can record where the field stood beforehand and

@@ -1262,7 +1262,12 @@ test("dropdown: renaming a note keeps the list, extension and all", async () => 
 	await page.send("Input.insertText", { text: "a" });
 	await page.evaluate(PAUSE(400) + "return true;");
 	const typed = await page.evaluate(dropdownState);
-	expect("the extension survived", typed.field, "a.md");
+	// What stands in the field once the offer before the extension is left out.
+	const typedPart = await page.evaluate(`
+		const input = document.querySelector(".view-header-title-container input");
+		return input.value.slice(0, input.selectionStart) + input.value.slice(input.selectionEnd);`);
+	expect("the extension survived", typedPart, "a.md");
+	expect("and the name it leads to is offered before it", typed.field, "aside.md");
 	expect("the list is still up", typed.rows.length > 0, true);
 	expect("filtered by the stem alone", typed.rows, (v) => Array.isArray(v) && v.includes("aside.md"));
 

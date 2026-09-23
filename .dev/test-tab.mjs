@@ -1587,5 +1587,51 @@ test("Backspace before an extension left on its own steps up a folder, as in an 
 	expect("and the extension went with the name", up.value.includes(".md"), false);
 });
 
+test("what is marked is what Tab writes, and the list underlines the same", async () => {
+	const state = async () => JSON.parse(await page.evaluate(`
+		const i = document.querySelector(".lure-path-input");
+		const marked = i.value.slice(i.selectionStart, i.selectionEnd);
+		const under = [...document.querySelectorAll(".suggestion-item .lure-suggest-offer")].map((e) => e.textContent);
+		return JSON.stringify({ value: i.value, marked, under,
+			chips: [...document.querySelectorAll(".lure-browse-chip")].map((c) => c.textContent) });`));
+	const check = async (name) => {
+		const before = await state();
+		if (before.marked) {
+			expect(`${name}: the list underlines what is marked`, before.under.length > 0 && before.under.every((u) => u === before.marked), true);
+		}
+		await tab();
+		const after = await state();
+		const wrote = after.chips.length > before.chips.length ? "(stepped in)" : after.value.slice(0, after.value.length - after.marked.length);
+		if (before.marked) {
+			// Either the marked text is now written, or the press stepped into what it named.
+			expect(`${name}: Tab wrote what was marked`, wrote === "(stepped in)" || wrote === before.value, true);
+		} else {
+			expect(`${name}: with nothing marked Tab writes nothing`, wrote === "(stepped in)" || wrote === before.value || after.marked !== "", true);
+		}
+		return after;
+	};
+	await armAtRoot();
+	await type(`${PREFIX}a`);
+	await check("typed");
+	await check("after one press");
+	await check("after two presses");
+
+	// Typing over a name's stem leaves its extension after the caret.
+	await armed();
+	await type("Ca");
+	expect("an offer before the extension", (await look()).selected, (v) => v.length > 0);
+	await check("before an extension");
+
+	// A row arrowed to is taken as it stands, not walked past.
+	await armAtRoot();
+	await type(`${PREFIX}sho`);
+	await page.evaluate(focusField);
+	await pressKey(page, "ArrowDown");
+	await page.evaluate(PAUSE(400) + "return true;");
+	expect("the first row is previewed", (await look()).value, `${PREFIX}short`);
+	await tab();
+	expect("Tab steps into that row, not the one beside it", (await look()).chips, (v) => v.includes(`${PREFIX}short`) && !v.includes(`${PREFIX}short2026`));
+});
+
 await run();
 

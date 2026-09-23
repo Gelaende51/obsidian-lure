@@ -408,6 +408,32 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		guardFieldKeys(this.scope);
 	}
 
+	/**
+	 * Underlines the offer on the rows already drawn. The offer changes
+	 * without the list being rebuilt — a press of Tab, a letter taken with
+	 * the arrow, an offer taken back or put back — and an underline read
+	 * only when the list was built was left showing the offer before.
+	 */
+	showOffer(offer: { typedLength: number; prefix: string } | null): void {
+		const same = (a: typeof offer, b: typeof offer) =>
+			a === b || (!!a && !!b && a.typedLength === b.typedLength && a.prefix === b.prefix);
+		if (same(this.lastOffer, offer)) return;
+		this.lastOffer = offer;
+		const list = this.list();
+		const values = list?.values;
+		const rows = list?.suggestions;
+		if (!Array.isArray(values) || !rows) return;
+		rows.forEach((row, index) => {
+			const value = values[index];
+			const labelEl = row.querySelector<HTMLElement>(".lure-suggest-label");
+			if (!value || value.kind === "more" || !labelEl) return;
+			labelEl.empty();
+			labelEl.removeClass("is-cut");
+			this.writeLabel(labelEl, value.label);
+		});
+		this.fitRows();
+	}
+
 	/** Showing a list, changed or not, goes through here; the field's colour is read off it. */
 	open(): void {
 		// Capped before Obsidian places the list, and placed again once the
