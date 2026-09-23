@@ -661,6 +661,13 @@
 	font-weight: var(--font-bold, 700);
 }
 
+/* A name that begins with what was typed, listed ahead of the names that
+   only contain it: a bar down its left edge, drawn as an inset shadow so it
+   takes no width from the row and moves no text. */
+.suggestion-item.lure-suggest-leading {
+	box-shadow: inset 3px 0 0 var(--interactive-accent);
+}
+
 /* Read-only external file view
    --------------------------- */
 /* A quiet status line, not a warning block: the header bar already shows

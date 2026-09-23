@@ -43,6 +43,8 @@ export interface PathSuggestion {
 	 * arrive with, so choosing this folder for it would collide. Red.
 	 */
 	taken?: boolean;
+	/** Its name begins with what was typed, while others only contain it. Listed first, and marked. */
+	leading?: boolean;
 }
 
 export interface SuggestContext {
@@ -156,6 +158,29 @@ interface SuggestionList {
 	useSelectedItem(evt: unknown): void;
 	/** The rendered rows, in the same order as `values`. */
 	suggestions?: HTMLElement[];
+}
+
+/**
+ * The names that begin with what was typed, ahead of those that only
+ * contain it, each group in the order it was listed in.
+ *
+ * The dropdown searches inside names, so `kick` finds `Weekly kickoff` —
+ * but a name that starts that way is the one Tab and the offer are about,
+ * and it was sorted in among the rest wherever its folder or its letter
+ * put it. Only the names get this treatment: the pinned name to keep in
+ * rename mode stays on top. Marked only while some rows are not leading,
+ * since marking every row says nothing.
+ */
+function leadingFirst(rows: PathSuggestion[], query: string): PathSuggestion[] {
+	if (!query) return rows;
+	const ranked = (row: PathSuggestion) => row.kind === "folder" || row.kind === "file" || row.kind === "page";
+	const leads = (row: PathSuggestion) => ranked(row) && row.label.toLowerCase().startsWith(query);
+	const leading = rows.filter(leads);
+	const inside = rows.filter((row) => ranked(row) && !leads(row));
+	if (!leading.length || !inside.length) return rows;
+	for (const row of leading) row.leading = true;
+	const pinned = rows.filter((row) => !ranked(row));
+	return [...pinned, ...leading, ...inside];
 }
 
 /** What a page is when a row cannot be measured. */
@@ -830,7 +855,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		// the folder, and finding "Weekly kickoff" by typing "kick" is most
 		// of what that is for. Tab is the one that needs a prefix.
 		return this.capped(
-			this.buildSuggestions(context, (name) => !q || name.toLowerCase().includes(q)),
+			leadingFirst(this.buildSuggestions(context, (name) => !q || name.toLowerCase().includes(q)), q),
 		);
 	}
 
@@ -1143,6 +1168,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		if (value.warn) el.addClass("lure-suggest-warn");
 		if (value.taken) el.addClass("lure-suggest-taken");
 		if (value.current) el.addClass("lure-suggest-current");
+		if (value.leading) el.addClass("lure-suggest-leading");
 
 		if (value.icon) {
 			const iconEl = el.createSpan({ cls: "lure-suggest-icon" });

@@ -1633,5 +1633,23 @@ test("what is marked is what Tab writes, and the list underlines the same", asyn
 	expect("Tab steps into that row, not the one beside it", (await look()).chips, (v) => v.includes(`${PREFIX}short`) && !v.includes(`${PREFIX}short2026`));
 });
 
+test("names that begin with what was typed come first, marked, ahead of names that only contain it", async () => {
+	// Sorts ahead of every fixture folder, and only contains what is typed.
+	const inside = `A${PREFIX}alp-inside`;
+	await page.evaluate(`if (!app.vault.getAbstractFileByPath(${JSON.stringify(inside)})) await app.vault.createFolder(${JSON.stringify(inside)}); return true;`);
+	try {
+		await armAtRoot();
+		await type(`${PREFIX}alp`);
+		const rows = JSON.parse(await page.evaluate(`return JSON.stringify([...document.querySelectorAll(".suggestion-item")].map((e) => [
+			e.querySelector(".lure-suggest-label")?.textContent, e.classList.contains("lure-suggest-leading")]));`));
+		const names = rows.map((r) => r[0]);
+		expect("the leading names first", names.slice(0, 3), [`${PREFIX}alpha-one`, `${PREFIX}alpha-two`, `${PREFIX}alpine`]);
+		expect("then the one that only contains it", names.includes(inside) && names.indexOf(inside) > 2, true);
+		expect("the leading ones are marked, the other is not", rows.filter((r) => r[1]).map((r) => r[0]), names.slice(0, 3));
+	} finally {
+		await page.evaluate(`const f = app.vault.getAbstractFileByPath(${JSON.stringify(inside)}); if (f) await app.fileManager.trashFile(f); return true;`);
+	}
+});
+
 await run();
 
