@@ -21,7 +21,7 @@ const bundle = await build({
 	logLevel: "silent",
 });
 const source = bundle.outputFiles[0].text;
-const { agreementWith, chooseCut, cutName, readableMinimum, ELLIPSIS } = await import(
+const { agreementWith, chooseCut, cutName, levelCap, readableMinimum, ELLIPSIS } = await import(
 	`data:text/javascript;base64,${Buffer.from(source).toString("base64")}`
 );
 
@@ -226,6 +226,20 @@ test("a floor never asks for more of a name than it has", () => {
 	}
 });
 
+test("folders give way longest first, then level down together, each stopping at its floor", () => {
+	const shown = (folders, total) => {
+		const cap = levelCap(folders, total);
+		return folders.map(({ natural, floor }) => Math.round(Math.max(floor, Math.min(natural, cap))));
+	};
+	const three = [{ natural: 300, floor: 40 }, { natural: 200, floor: 40 }, { natural: 100, floor: 40 }];
+	expect("room for all of them: nothing is touched", shown(three, 600), [300, 200, 100]);
+	expect("a little short: only the longest gives", shown(three, 550), [250, 200, 100]);
+	expect("down to the next: the two give together", shown(three, 400), [150, 150, 100]);
+	expect("down to the shortest: all three together", shown(three, 240), [80, 80, 80]);
+	expect("at their floors, none gives further", shown(three, 100), [40, 40, 40]);
+	const floored = [{ natural: 300, floor: 120 }, { natural: 200, floor: 40 }];
+	expect("a high floor stops its folder and the other carries on", shown(floored, 200), [120, 80]);
+});
 
 await run();
 

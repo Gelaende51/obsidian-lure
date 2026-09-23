@@ -28,6 +28,7 @@ import {
 	agreementWith,
 	chooseCut,
 	cutName,
+	levelCap,
 	readableMinimum,
 } from "./pathFit";
 import { commonPrefix, planOffer, planTab } from "./tabComplete";
@@ -3562,8 +3563,11 @@ export class PathBreadcrumb {
 			spent = true;
 		}
 
-		if (spent) {
-			this.settleGeometry(container, segments);
+		if (spent) this.settleGeometry(container, segments);
+		// Folders give way longest first, levelling down together, rather
+		// than all at once in proportion to their width.
+		const levelled = this.levelFolders(segments);
+		if (spent || levelled) {
 			clipped = segments.map((segment) =>
 				Array.from(segment.el.children).some((part) => part.scrollWidth > part.clientWidth + 1),
 			);
@@ -3635,6 +3639,36 @@ export class PathBreadcrumb {
 		const here = popover.getBoundingClientRect().left;
 		const shift = Math.min(Math.max(row.left - here, 0), Math.max(row.right - here, 0));
 		if (shift !== 0) popover.setCssProps({ [POPOVER_SHIFT_VAR]: `${shift.toFixed(2)}px` });
+	}
+
+	/**
+	 * Holds every folder to one width, sharing out what flexbox took from
+	 * them between the longest first. Returns whether anything was capped.
+	 *
+	 * The total is flexbox's own answer — how much the folders have to give
+	 * after the opening segment has given all it can, and before the file's
+	 * name gives any — so only who gives it changes. Worked out from the
+	 * names' full widths each time, so the row still slides a pixel at a
+	 * time as the pane is resized.
+	 */
+	private levelFolders(segments: readonly FittableSegment[]): boolean {
+		const folders = segments
+			.filter((segment) => segment.stage === "folder")
+			.map(({ el }) => ({
+				el,
+				// A part clipped by overflow still reports its whole width.
+				natural: Array.from(el.children).reduce((sum, part) => sum + part.scrollWidth, 0),
+				floor: parseFloat(el.style.getPropertyValue(FLOOR_VAR)) || 0,
+				width: el.getBoundingClientRect().width,
+			}));
+		if (folders.length < 2 || folders.every(({ width, natural }) => width >= natural - 0.5)) return false;
+		const total = folders.reduce((sum, { width }) => sum + width, 0);
+		const cap = levelCap(folders, total);
+		for (const { el, natural, floor } of folders) {
+			setTight(el, `${Math.max(floor, Math.min(natural, cap)).toFixed(2)}px`);
+		}
+		this.markClipped(segments);
+		return true;
 	}
 
 	/**

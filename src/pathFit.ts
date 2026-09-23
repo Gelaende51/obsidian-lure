@@ -286,3 +286,28 @@ export function readableMinimum(stage: FitStage): number {
 export function cutAlone(full: string, stage: FitStage): NameCut {
 	return chooseCut(full, ALONE, readableMinimum(stage));
 }
+
+/**
+ * The one width every folder is held to, so that together they take up
+ * `total`: each shows `max(floor, min(natural, cap))`.
+ *
+ * Longest first: the longest name gives way until it is as short as the
+ * next, then the two together, and so on — each stopping at its floor, and
+ * a name already shorter than the cap never touched. Flexbox shares
+ * shrinking out in proportion to width, which shortens every folder at
+ * once; this is the level it leaves instead.
+ */
+export function levelCap(folders: readonly { natural: number; floor: number }[], total: number): number {
+	const taken = (cap: number): number =>
+		folders.reduce((sum, { natural, floor }) => sum + Math.max(floor, Math.min(natural, cap)), 0);
+	let low = 0;
+	let high = Math.max(0, ...folders.map(({ natural }) => natural));
+	if (taken(high) <= total) return high;
+	// Taken grows with the cap, so halving finds it to well under a pixel.
+	for (let step = 0; step < 40; step++) {
+		const mid = (low + high) / 2;
+		if (taken(mid) > total) high = mid;
+		else low = mid;
+	}
+	return low;
+}
