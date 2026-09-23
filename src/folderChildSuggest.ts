@@ -158,23 +158,7 @@ interface SuggestionList {
 	suggestions?: HTMLElement[];
 }
 
-/**
- * How many rows PageUp and PageDown move by: what Obsidian's own dropdowns
- * show at their default height. This list is as tall as the window (see
- * `.lure-suggest-popover`), so paging by what fits on screen would jump by
- * forty rows on a large monitor — more than the eye can follow — where
- * every other list in the app pages by a familiar handful.
- */
-function pageRows(list: SuggestionList): number {
-	const probe = document.body.createDiv({ cls: "suggestion-container" });
-	const height = parseFloat(getComputedStyle(probe).maxHeight);
-	probe.remove();
-	const row = list.suggestions?.[0]?.getBoundingClientRect().height ?? 0;
-	if (!(height > 0) || !(row > 0)) return DEFAULT_PAGE_ROWS;
-	return Math.max(1, Math.floor(height / row));
-}
-
-/** What a page is when neither the default height nor a row can be measured. */
+/** What a page is when a row cannot be measured. */
 const DEFAULT_PAGE_ROWS = 9;
 
 /**
@@ -376,6 +360,27 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		// As tall as the window lets it be — see `.lure-suggest-popover`.
 		(this as unknown as { suggestEl?: HTMLElement }).suggestEl?.addClass(POPOVER_CLASS);
 		this.takeModifiedEnter();
+		this.keepScrollWhenPlaced();
+	}
+
+	/**
+	 * Keeps the list scrolled where it was when Obsidian places it again.
+	 *
+	 * A row previewed into the field widens it, and Obsidian re-places the
+	 * list on the next scroll it hears — the list's own, as it follows the
+	 * selection — which put it back at the top: PageDown and End took the
+	 * selection out of sight a moment after bringing it into view.
+	 */
+	private keepScrollWhenPlaced(): void {
+		const self = this as unknown as { reposition?: (rect: DOMRect) => void };
+		const place = self.reposition?.bind(this);
+		if (!place) return;
+		self.reposition = (rect: DOMRect) => {
+			const scroller = this.list()?.containerEl;
+			const top = scroller?.scrollTop ?? 0;
+			place(rect);
+			if (scroller && scroller.scrollTop !== top) scroller.scrollTop = top;
+		};
 	}
 
 	/**
@@ -606,27 +611,53 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			useSelected(evt);
 		};
 
-		// Paging from the field (nothing selected) lands on the last row of
-		// the first page, as though the selection had been just above the
-		// list. Obsidian's own paging measures the *selected* row, so with
-		// nothing selected it had nothing to measure and did nothing; and it
-		// pages by what the container shows, which here is the window.
+		// A page is what the list shows, and the list scrolls by one: the row
+		// that was selected keeps its place on screen and the selection moves
+		// to the row that comes to stand there. Paging from the field
+		// (nothing selected) lands on the last row in sight, as though the
+		// selection had been just above the list. Obsidian's own paging
+		// measures the *selected* row, so with nothing selected it did
+		// nothing; and it moved the selection without scrolling in step, so
+		// a few presses took it out of sight.
 		const page = (direction: 1 | -1) => (evt: KeyboardEvent): false => {
 			if (evt.isComposing) return false;
 			const values = list.values;
 			const count = Array.isArray(values) ? values.length : 0;
-			if (count === 0) return false;
-			const rows = pageRows(list);
+			const scroller = list.containerEl;
+			if (count === 0 || !scroller) return false;
+			const rowAt = (index: number) => list.suggestions?.[index];
+			const box = scroller.getBoundingClientRect();
+			const top = box.top;
+			// Counted rather than divided: the list's padding would make the
+			// last row of a divided page only nearly in sight.
+			const inSight = (list.suggestions ?? [])
+				.map((row, index) => ({ rect: row.getBoundingClientRect(), index }))
+				.filter(({ rect }) => rect.top >= box.top - 1 && rect.bottom <= box.bottom + 1)
+				.map(({ index }) => index);
+			const rows = inSight.length || DEFAULT_PAGE_ROWS;
 			const from = list.selectedItem;
-			const to =
-				from < 0
-					? direction > 0
-						? Math.min(count - 1, rows - 1)
-						: 0
-					: Math.max(0, Math.min(count - 1, from + direction * rows));
+			if (from < 0) {
+				list.setSelectedItem(direction > 0 ? (inSight[inSight.length - 1] ?? Math.min(count - 1, rows - 1)) : 0, evt);
+				rowAt(list.selectedItem)?.scrollIntoView({ block: "nearest" });
+				return false;
+			}
+			const standing = (rowAt(from)?.getBoundingClientRect().top ?? top) - top;
+			const to = Math.max(0, Math.min(count - 1, from + direction * rows));
 			list.setSelectedItem(to, evt);
-			// Kept in sight, whichever way the page went and however the list
-			// had been scrolled by the wheel in the meantime.
+			const row = rowAt(to);
+			if (row) scroller.scrollTop += row.getBoundingClientRect().top - top - standing;
+			// Where the list cannot scroll any further the row moves instead,
+			// and is kept in sight.
+			row?.scrollIntoView({ block: "nearest" });
+			return false;
+		};
+		// The first and last rows, brought into sight: Obsidian's own Home
+		// and End moved the selection and left the list where it was.
+		const end = (last: boolean) => (evt: KeyboardEvent): false => {
+			if (evt.isComposing) return false;
+			const count = Array.isArray(list.values) ? list.values.length : 0;
+			if (count === 0) return false;
+			list.setSelectedItem(last ? count - 1 : 0, evt);
 			list.suggestions?.[list.selectedItem]?.scrollIntoView({ block: "nearest" });
 			return false;
 		};
@@ -638,6 +669,8 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		for (const entry of Array.isArray(keys) ? keys : []) {
 			if (entry.key === "PageDown") entry.func = page(1);
 			if (entry.key === "PageUp") entry.func = page(-1);
+			if (entry.key === "Home") entry.func = end(false);
+			if (entry.key === "End") entry.func = end(true);
 		}
 
 		// Hovering a row previews it, so taking the pointer off the list has

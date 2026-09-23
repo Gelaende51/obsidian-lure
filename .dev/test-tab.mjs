@@ -1423,34 +1423,40 @@ test("pointing at a row shows it as the offer, and leaving brings the offer back
 	expect("the offer is back", [back.value, back.selected], [`${PREFIX}alp`, "lp"]);
 });
 
-test("PageDown moves by a page of Obsidian's usual height and keeps the row in sight", async () => {
-	await armAtRoot();
-	const r = JSON.parse(await page.evaluate(`
-		const c = document.querySelector(".lure-suggest-popover");
-		const rows = [...c.querySelectorAll(".suggestion-item")];
-		const probe = document.body.createDiv({ cls: "suggestion-container" });
-		const page = Math.floor(parseFloat(getComputedStyle(probe).maxHeight) / rows[0].getBoundingClientRect().height);
-		probe.remove();
-		return JSON.stringify({ count: rows.length, page });`));
-	if (r.count < r.page * 2 + 1) skipCase(`the vault root lists ${r.count} rows, fewer than two pages`);
-	const selected = async () => JSON.parse(await page.evaluate(`
-		const c = document.querySelector(".lure-suggest-popover");
-		const rows = [...c.querySelectorAll(".suggestion-item")];
-		const i = rows.findIndex((e) => e.classList.contains("is-selected"));
-		const b = c.getBoundingClientRect(), s = rows[i]?.getBoundingClientRect();
-		return JSON.stringify({ i, seen: s ? s.top >= b.top - 1 && s.bottom <= b.bottom + 1 : false });`));
-	await pressKey(page, "PageDown");
-	await page.evaluate(PAUSE(250) + "return true;");
-	const first = await selected();
-	expect("from the field, onto the last row of the first page", first.i, r.page - 1);
-	await pressKey(page, "PageDown");
-	await page.evaluate(PAUSE(250) + "return true;");
-	const second = await selected();
-	expect("then a page further", second.i, 2 * r.page - 1);
-	expect("in sight", second.seen, true);
-	await pressKey(page, "PageUp");
-	await page.evaluate(PAUSE(250) + "return true;");
-	expect("and back by a page", (await selected()).i, r.page - 1);
+test("PageDown scrolls the list by what it shows, keeping the row where it stands, and Home and End stay in sight", async () => {
+	// Enough rows for three pages on a tall window, taken out again after.
+	const filler = Array.from({ length: 90 }, (_, n) => `Z${PREFIX}page-${String(n).padStart(2, "0")}.md`);
+	await page.evaluate(`for (const f of ${JSON.stringify(filler)}) if (!app.vault.getAbstractFileByPath(f)) await app.vault.create(f, ""); return true;`);
+	try {
+		await armAtRoot();
+		const state = async () => JSON.parse(await page.evaluate(`
+			const c = document.querySelector(".lure-suggest-popover .suggestion");
+			const rows = [...c.querySelectorAll(".suggestion-item")];
+			const i = rows.findIndex((e) => e.classList.contains("is-selected"));
+			const b = c.getBoundingClientRect(), s = rows[i]?.getBoundingClientRect();
+			return JSON.stringify({ i, count: rows.length, scroll: c.scrollTop,
+				page: rows.filter((e) => { const r = e.getBoundingClientRect(); return r.top >= b.top - 1 && r.bottom <= b.bottom + 1; }).length,
+				at: s ? Math.round(s.top - b.top) : null, seen: s ? s.top >= b.top - 1 && s.bottom <= b.bottom + 1 : false });`));
+		const key = async (k) => { await pressKey(page, k); await page.evaluate(PAUSE(250) + "return true;"); return state(); };
+		const r = await state();
+		if (r.count < r.page * 2 + 2) skipCase(`the vault root lists ${r.count} rows, fewer than two pages of ${r.page}`);
+		const first = await key("PageDown");
+		expect("from the field, onto the last row in sight", first.i, r.page - 1);
+		expect("in sight", first.seen, true);
+		const standing = await key("ArrowUp");
+		const second = await key("PageDown");
+		expect("then a page further", second.i, standing.i + r.page);
+		expect("standing where the row before it stood", second.at, (v) => Math.abs(v - standing.at) <= 1);
+		const back = await key("PageUp");
+		expect("and back by a page, in the same place", [back.i, Math.abs(back.at - standing.at) <= 1], [standing.i, true]);
+		const last = await key("End");
+		expect("End takes the last row", last.i, r.count - 1);
+		expect("and shows it", last.seen, true);
+		const top = await key("Home");
+		expect("Home takes the first", [top.i, top.seen], [0, true]);
+	} finally {
+		await page.evaluate(`for (const f of ${JSON.stringify(filler)}) { const e = app.vault.getAbstractFileByPath(f); if (e) await app.vault.delete(e); } return true;`);
+	}
 });
 
 test("folders are bold in the list, and a folder's note is a note like any other", async () => {
