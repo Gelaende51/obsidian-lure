@@ -5476,30 +5476,27 @@ export class PathBreadcrumb {
 	}
 
 	/**
-	 * Finishes a move or rename whose destination is taken, the way the
-	 * dialog is told to: rename what is in the way and carry on, or trade
-	 * places, or trade names with it. Returns whether the file was moved;
-	 * cancelling the dialog moves nothing.
+	 * Finishes a move or rename whose destination is taken, to the two paths
+	 * the dialog settles on: one for the moving file, one for the file in the
+	 * way. Returns whether the moving file was moved; cancelling moves
+	 * nothing.
 	 *
 	 * Every step goes through `fileManager.renameFile`, so links follow each
-	 * file at every step. A swap needs a third name to pass through — two
-	 * files cannot hold one name even for an instant — and that name is
-	 * given back before this returns.
+	 * file at every step. A trade needs a third name to pass through — two
+	 * files cannot hold one path even for an instant — so the file in the way
+	 * steps aside to a passing name first, and on to its own path last.
 	 */
 	private async moveThroughCollision(file: TAbstractFile, occupant: TAbstractFile, newPath: string): Promise<boolean> {
 		const app = this.plugin.app;
 		const parentOf = (path: string): string => path.slice(0, Math.max(0, path.lastIndexOf("/")));
 		const join = (folder: string, name: string): string => (folder ? `${folder}/${name}` : name);
-		const from = file.path;
-		const sameFolder = parentOf(from) === parentOf(newPath);
-		const choice = await askAboutCollision(app, {
+		const paths = await askAboutCollision(app, {
 			moving: file,
 			occupant,
-			sameFolder,
-			movingName: file.name,
-			isFree: (name) => app.vault.getAbstractFileByPath(join(parentOf(occupant.path), name)) === null,
+			target: newPath,
+			exists: (path) => app.vault.getAbstractFileByPath(path) !== null,
 		});
-		if (!choice) return false;
+		if (!paths) return false;
 
 		const rename = (item: TAbstractFile, to: string) => app.fileManager.renameFile(item, to);
 		const passing = (item: TAbstractFile): string => {
@@ -5510,25 +5507,13 @@ export class PathBreadcrumb {
 			}
 		};
 		try {
-			if (choice.kind === "rename-occupant") {
-				await rename(occupant, join(parentOf(occupant.path), choice.name));
-				await this.ensureFolderExists(parentOf(newPath));
-				await rename(file, newPath);
-			} else {
-				// The one in the way takes the moving file's old name — where
-				// the moving file came from when trading places, in its own
-				// folder when trading names. Within one folder those are the
-				// same path.
-				const into = choice.kind === "swap-places" ? parentOf(from) : parentOf(occupant.path);
-				const to = join(into, file.name);
-				const blocker = app.vault.getAbstractFileByPath(to);
-				if (blocker && blocker !== file) {
-					new Notice(t("noticeAlreadyExists", { path: to }));
-					return false;
-				}
-				await rename(occupant, passing(occupant));
-				await rename(file, newPath);
-				await rename(occupant, to);
+			const occupantMoves = paths.occupant !== occupant.path;
+			if (occupantMoves) await rename(occupant, passing(occupant));
+			await this.ensureFolderExists(parentOf(paths.moving));
+			if (paths.moving !== file.path) await rename(file, paths.moving);
+			if (occupantMoves) {
+				await this.ensureFolderExists(parentOf(paths.occupant));
+				await rename(occupant, paths.occupant);
 			}
 		} catch (err) {
 			new Notice(t("noticeRenameFailed", { error: (err as Error).message }));
@@ -5536,6 +5521,7 @@ export class PathBreadcrumb {
 		}
 		return true;
 	}
+
 
 	/**
 	 * A rename committed while the panes are coupled.

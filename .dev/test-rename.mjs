@@ -397,9 +397,11 @@ test("moving: a folder that already holds the name is red in the list", async ()
 
 /**
  * Renames the fixture note onto a taken name through the path bar, and
- * answers the dialog with the button whose label is given.
+ * answers the dialog: picks the entry of the second field's list with the
+ * given label, or writes the given paths into the fields, then applies.
+ * Returns the labelled entries the list offered.
  */
-async function collide(typedPath, button, fieldText = null, whileOpen = null) {
+async function collide(typedPath, { idea = null, moving = null, occupant = null, whileOpen = null, apply = true } = {}) {
 	await page.evaluate(arrange(0));
 	await pressKey(page, "F2");
 	await page.evaluate(PAUSE(500) + "return true;");
@@ -417,20 +419,32 @@ async function collide(typedPath, button, fieldText = null, whileOpen = null) {
 	await pressKey(page, "Delete");
 	await pressKey(page, "Enter");
 	await page.evaluate(PAUSE(800) + "return true;");
-	const buttons = JSON.parse(await page.evaluate(`return JSON.stringify(
-		[...document.querySelectorAll(".lure-collision-modal button")].map((b) => b.textContent));`));
+	const ideas = JSON.parse(await page.evaluate(`return JSON.stringify(
+		[...document.querySelectorAll(".lure-collision-idea .lure-collision-idea-label")].map((e) => e.textContent));`));
 	if (whileOpen) await whileOpen();
-	if (fieldText !== null) {
+	if (idea !== null) {
 		await page.evaluate(`
-			const input = document.querySelector(".lure-collision-modal input");
-			input.value = ${JSON.stringify(fieldText)};
+			const row = [...document.querySelectorAll(".lure-collision-idea")]
+				.find((e) => e.querySelector(".lure-collision-idea-label")?.textContent === ${JSON.stringify(idea)});
+			row?.click();
+			${PAUSE(300)}
 			return true;`);
 	}
-	await page.evaluate(`
-		[...document.querySelectorAll(".lure-collision-modal button")].find((b) => b.textContent === ${JSON.stringify(button)})?.click();
-		${PAUSE(1200)}
-		return true;`);
-	return buttons;
+	for (const [index, value] of [[0, moving], [1, occupant]]) {
+		if (value === null) continue;
+		await page.evaluate(`
+			const input = document.querySelectorAll(".lure-collision-modal input")[${index}];
+			input.value = ${JSON.stringify(value)};
+			input.dispatchEvent(new Event("input"));
+			return true;`);
+	}
+	if (apply) {
+		await page.evaluate(`
+			document.querySelector(".lure-collision-modal button.mod-cta")?.click();
+			${PAUSE(1200)}
+			return true;`);
+	}
+	return ideas;
 }
 
 const exists = (path) => page.evaluate(`return !!app.vault.getAbstractFileByPath(${JSON.stringify(path)});`);
@@ -440,24 +454,33 @@ const body = (path) => page.evaluate(`
 	if (!file) return "missing";
 	const text = await app.vault.read(file);
 	return text.startsWith("# Scrolling note") ? "note" : text.slice(0, 40);`);
+const fixtureFiles = () => page.evaluate(
+	`return app.vault.getFiles().filter((f) => f.path.startsWith(${JSON.stringify(FIXTURE)} + "/")).map((f) => f.path).sort().join(",");`);
+const makeTaken = (taken) => page.evaluate(`
+	const folder = ${JSON.stringify(taken)}.split("/").slice(0, -1).join("/");
+	if (!app.vault.getAbstractFileByPath(folder)) await app.vault.createFolder(folder);
+	if (!app.vault.getAbstractFileByPath(${JSON.stringify(taken)})) await app.vault.create(${JSON.stringify(taken)}, "occupant");
+	return true;`);
 
-test("a taken name: renaming what is in the way lets the rename through", async () => {
+test("a taken name: the one in the way can be sent anywhere by its path, red while that is taken", async () => {
 	const taken = `${FIXTURE}/Taken.md`;
-	await page.evaluate(`if (!app.vault.getAbstractFileByPath(${JSON.stringify(taken)})) await app.vault.create(${JSON.stringify(taken)}, "occupant"); return true;`);
-	await collide(taken, "Rename it and continue", "Taken before.md", async () => {
-		const red = () => page.evaluate(`return document.querySelector(".lure-collision-modal input")?.classList.contains("is-taken") ?? null;`);
-		expect("the field opens on the taken name, in red", await red(), true);
-		await page.evaluate(`const i = document.querySelector(".lure-collision-modal input"); i.value = "Taken before.md"; i.dispatchEvent(new Event("input")); return true;`);
-		expect("and a free name is not red", await red(), false);
+	await makeTaken(taken);
+	await collide(taken, {
+		occupant: `${FIXTURE}/Taken before.md`,
+		whileOpen: async () => {
+			const red = () => page.evaluate(`return document.querySelectorAll(".lure-collision-modal input")[1]?.classList.contains("is-taken") ?? null;`);
+			expect("its field opens on its own path, in red", await red(), true);
+			await page.evaluate(`const i = document.querySelectorAll(".lure-collision-modal input")[1]; i.value = ${JSON.stringify(`${FIXTURE}/Taken before.md`)}; i.dispatchEvent(new Event("input")); return true;`);
+			expect("and a free path is not red", await red(), false);
+		},
 	});
-	expect("the one in the way has its new name", await exists(`${FIXTURE}/Taken before.md`), true);
-	expect("and it is still itself", await body(`${FIXTURE}/Taken before.md`), "occupant");
+	expect("the one in the way has its new name", await body(`${FIXTURE}/Taken before.md`), "occupant");
 	expect("the note has the name it asked for", await body(taken), "note");
 });
 
 test("a taken name picked from the list asks what to do about it", async () => {
 	const taken = `${FIXTURE}/Taken.md`;
-	await page.evaluate(`if (!app.vault.getAbstractFileByPath(${JSON.stringify(taken)})) await app.vault.create(${JSON.stringify(taken)}, "occupant"); return true;`);
+	await makeTaken(taken);
 	await page.evaluate(arrange(0));
 	await pressKey(page, "F2");
 	await page.evaluate(PAUSE(500) + "return true;");
@@ -475,61 +498,80 @@ test("a taken name picked from the list asks what to do about it", async () => {
 		return document.querySelector(".lure-collision-modal")?.textContent ?? "no dialog";`);
 	expect("the dialog asks about the file in the way", picked, (v) => v.includes("Taken.md") && v !== "no row");
 	await page.evaluate(`
-		[...document.querySelectorAll(".lure-collision-modal button")].find((b) => b.textContent === "Swap names")?.click();
+		[...document.querySelectorAll(".lure-collision-idea")].find((e) => e.textContent.startsWith("Swap names"))?.click();
+		${PAUSE(300)}
+		document.querySelector(".lure-collision-modal button.mod-cta")?.click();
 		${PAUSE(1200)}
 		return true;`);
 	expect("and does what was chosen", await body(taken), "note");
 });
 
-test("a taken name in the same folder: the two can swap names, and cannot swap places", async () => {
+test("a taken name in the same folder: one trade, swapping names, and names beside its own", async () => {
 	const taken = `${FIXTURE}/Taken.md`;
-	await page.evaluate(`if (!app.vault.getAbstractFileByPath(${JSON.stringify(taken)})) await app.vault.create(${JSON.stringify(taken)}, "occupant"); return true;`);
-	const buttons = await collide(taken, "Swap names");
-	expect("only the trade that means something here is offered", [buttons.includes("Swap names"), buttons.includes("Swap places")], [true, false]);
+	await makeTaken(taken);
+	const ideas = await collide(taken, { idea: "Swap names" });
+	expect("the trades that mean something here", ideas, ["Swap names"]);
 	expect("the note has the taken name", await body(taken), "note");
 	expect("and the other has the note's", await body(NOTE), "occupant");
 });
 
-test("a taken name of the same name in another folder: the two can swap places, and swapping names means nothing", async () => {
-	const other = `${FIXTURE}/Elsewhere`;
-	const taken = `${other}/Scrolling note.md`;
-	await page.evaluate(`
-		if (!app.vault.getAbstractFileByPath(${JSON.stringify(other)})) await app.vault.createFolder(${JSON.stringify(other)});
-		if (!app.vault.getAbstractFileByPath(${JSON.stringify(taken)})) await app.vault.create(${JSON.stringify(taken)}, "occupant");
-		return true;`);
-	const buttons = await collide(taken, "Swap places");
-	expect("only the trade that means something here is offered", [buttons.includes("Swap places"), buttons.includes("Swap names")], [true, false]);
+test("a taken name of the same name in another folder: one trade, swapping places", async () => {
+	const taken = `${FIXTURE}/Elsewhere/Scrolling note.md`;
+	await makeTaken(taken);
+	const ideas = await collide(taken, { idea: "Swap places" });
+	expect("the trades that mean something here", ideas, ["Swap places"]);
 	expect("the note is over there", await body(taken), "note");
 	expect("and the other one is here", await body(NOTE), "occupant");
 });
 
-for (const [button, occupantAt] of [
-	["Swap places", NOTE],
+for (const [idea, occupantAt] of [
+	["Swap places", `${FIXTURE}/Other.md`],
 	["Swap names", `${FIXTURE}/Elsewhere/Scrolling note.md`],
+	["Swap both", NOTE],
 ]) {
-	test(`a different taken name in another folder: both trades are offered, and "${button}" does what it says`, async () => {
-		const other = `${FIXTURE}/Elsewhere`;
-		const taken = `${other}/Other.md`;
-		await page.evaluate(`
-			if (!app.vault.getAbstractFileByPath(${JSON.stringify(other)})) await app.vault.createFolder(${JSON.stringify(other)});
-			if (!app.vault.getAbstractFileByPath(${JSON.stringify(taken)})) await app.vault.create(${JSON.stringify(taken)}, "occupant");
-			return true;`);
-		const buttons = await collide(taken, button);
-		expect("both trades are offered", [buttons.includes("Swap places"), buttons.includes("Swap names")], [true, true]);
+	test(`a different taken name in another folder: all three trades, and "${idea}" does what it says`, async () => {
+		const taken = `${FIXTURE}/Elsewhere/Other.md`;
+		await makeTaken(taken);
+		const ideas = await collide(taken, { idea });
+		expect("all three trades are offered", ideas, ["Swap places", "Swap names", "Swap both"]);
 		expect("the note has the name it asked for", await body(taken), "note");
-		expect("the other one has the note's old name, where the trade puts it", await body(occupantAt), "occupant");
-		expect("and nothing is left behind", await page.evaluate(
-			`return app.vault.getFiles().filter((f) => f.path.startsWith(${JSON.stringify(FIXTURE)})).map((f) => f.path).sort().join(",");`),
-			[taken, occupantAt].sort().join(","));
+		expect("the other one is where the trade puts it", await body(occupantAt), "occupant");
+		expect("and nothing is left behind", await fixtureFiles(), [taken, occupantAt].sort().join(","));
 	});
 }
+
+test("the moving file's own path can be changed instead, leaving the one in the way alone", async () => {
+	const taken = `${FIXTURE}/Taken.md`;
+	await makeTaken(taken);
+	await collide(taken, { moving: `${FIXTURE}/Fresh.md` });
+	expect("the note went where the field says", await body(`${FIXTURE}/Fresh.md`), "note");
+	expect("and the other stayed", await body(taken), "occupant");
+});
+
+test("two paths that would collide are refused, and say why", async () => {
+	const taken = `${FIXTURE}/Taken.md`;
+	await makeTaken(taken);
+	await collide(taken, { apply: false });
+	const refused = await page.evaluate(`
+		document.querySelector(".lure-collision-modal button.mod-cta")?.click();
+		${PAUSE(400)}
+		return JSON.stringify({ open: !!document.querySelector(".lure-collision-modal"), said: document.querySelector(".lure-collision-error")?.textContent ?? "" });`);
+	expect("both left on one path: the dialog stays, with a reason", JSON.parse(refused), (v) => v.open && v.said.length > 0);
+	await page.evaluate(`[...document.querySelectorAll(".lure-collision-modal button")].find((b) => b.textContent === "Cancel")?.click(); ${PAUSE(400)} return true;`);
+	expect("and cancelling moves nothing", [await body(NOTE), await body(taken)], ["note", "occupant"]);
+});
 
 async function reset() {
 	await reloadPlugin(page);
 	// From nothing: the collision cases leave files behind them that the next
 	// case would otherwise find already in its way.
 	await page.evaluate(`
-		document.querySelector(".lure-collision-modal")?.closest(".modal-container")?.querySelector(".modal-close-button")?.click();
+		// Cancelled rather than closed by its corner button, which this
+		// Obsidian does not draw on every modal: left open, the dialog
+		// would sit over every case after the one that failed.
+		for (const modal of document.querySelectorAll(".lure-collision-modal")) {
+			[...modal.querySelectorAll("button")].find((b) => b.textContent === "Cancel")?.click();
+		}
 		const folder = app.vault.getAbstractFileByPath(${JSON.stringify(FIXTURE)});
 		if (folder) await app.vault.delete(folder, true);
 		return true;

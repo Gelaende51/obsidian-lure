@@ -1353,21 +1353,51 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 	font-weight: var(--font-normal, 400);
 }
 
-/* The collision dialog. Both files by their whole path, one to a line, each
-   with what it is to this move in front of it — the one that the rename
-   field acts on marked in the accent colour, so there is no reading the
-   dialog as being about the file you are moving. */
+/* The collision dialog. Both files by their whole path, each with what it
+   is to this move in front of it and the field saying where it goes below —
+   the one in the way marked in the accent colour, so there is no reading
+   the dialog as being about the file you are moving. */
 .lure-collision-files {
 	display: grid;
-	gap: var(--size-4-1);
-	margin-block: var(--size-4-2) var(--size-4-4);
+	gap: var(--size-4-3);
+	margin-block: var(--size-4-2) var(--size-4-2);
 }
 
 .lure-collision-file {
+	display: grid;
+	gap: var(--size-4-1);
+	min-width: 0;
+}
+
+.lure-collision-head {
 	display: flex;
 	gap: var(--size-4-2);
 	align-items: baseline;
 	min-width: 0;
+}
+
+.lure-collision-hint {
+	margin-block: 0;
+	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+}
+
+/* A way out in the second field's list: what it is called, then the path
+   it leads to, which is what picking it writes into the field. */
+.lure-collision-idea {
+	display: flex;
+	gap: var(--size-4-2);
+	align-items: baseline;
+}
+
+.lure-collision-idea-label {
+	flex: 0 0 auto;
+	font-weight: var(--font-semibold, 600);
+}
+
+.lure-collision-idea code {
+	overflow-wrap: anywhere;
+	color: var(--text-muted);
 }
 
 .lure-collision-file code {
