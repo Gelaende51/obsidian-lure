@@ -151,6 +151,9 @@ const field = `
 	return JSON.stringify({
 		value: input ? input.value : null,
 		selected: input ? input.value.slice(input.selectionStart, input.selectionEnd) : null,
+		// What the field holds without the run it has marked: after a press
+		// of Tab, the text the press wrote, with the next offer left out.
+		typed: input ? input.value.slice(0, input.selectionStart) + input.value.slice(input.selectionEnd) : null,
 		chips: [...document.querySelectorAll(".lure-browse-chip")].map((c) => c.textContent),
 		rows: [...document.querySelectorAll(".suggestion-item .lure-suggest-label")].map((e) => e.textContent),
 	});
@@ -240,11 +243,11 @@ test("Tab stops where the names stop agreeing", async () => {
 	// press answering it, and picking whichever name sorts first.
 	await tab();
 	const s = await look();
-	expect("the press takes it and stops at the fork", s.value, `${PREFIX}alp`);
+	expect("the press takes it and stops at the fork", s.typed, `${PREFIX}alp`);
 	expect("and stepped into nothing", s.chips, (v) => Array.isArray(v) && !v.some((c) => c.startsWith(PREFIX)));
-	// The caret sits after the completion, ready to be typed on: this is text
-	// you asked for, not a suggestion to type over.
-	expect("nothing left selected", s.selected, "");
+	// What the next press would write is offered after it, as it is after a
+	// typed letter.
+	expect("the next step is offered", s.selected, "ha-");
 });
 
 test("a further press walks toward one name, a step at a time", async () => {
@@ -253,13 +256,13 @@ test("a further press walks toward one name, a step at a time", async () => {
 	expect("the shared opening arrives with the typing", (await look()).value, `${PREFIX}alp`);
 
 	await tab();
-	expect("the press takes it and stops", (await look()).value, `${PREFIX}alp`);
+	expect("the press takes it and stops", (await look()).typed, `${PREFIX}alp`);
 
 	await tab();
-	expect("one branch further", (await look()).value, `${PREFIX}alpha-`);
+	expect("one branch further", (await look()).typed, `${PREFIX}alpha-`);
 
 	await tab();
-	expect("and to the whole name", (await look()).value, `${PREFIX}alpha-one`);
+	expect("and to the whole name", (await look()).typed, `${PREFIX}alpha-one`);
 
 	await tab();
 	const s = await look();
@@ -307,7 +310,7 @@ test("the field is respelled the way the folder spells it", async () => {
 	await tab();
 	// Same length, different case: what ends up in the field has to be the
 	// path that exists, not the one that was typed.
-	expect("case taken from the names", (await look()).value, `${PREFIX}alp`);
+	expect("case taken from the names", (await look()).typed, `${PREFIX}alp`);
 });
 
 test("the row the list opens on is the one Tab walks toward", async () => {
@@ -607,8 +610,9 @@ test("Shift+Tab walks back out the way Tab walked in", async () => {
 	expect("the name is still there", one.value, `${PREFIX}alpha-one`);
 	expect("with the last step marked", one.selected, "one");
 
+	// Each step comes back as it stood, the offer of the time included.
 	await back();
-	expect("a branch further back", (await look()).selected, "ha-one");
+	expect("a branch further back", (await look()).selected, "ha-");
 
 	// The press that took the offer is a step like any other, and comes back
 	// marked exactly as the offer was.
@@ -1345,8 +1349,8 @@ test("taking an offer stops at the fork, and never chooses past it", async () =>
 
 	await tab();
 	const taken = await look();
-	expect("the press takes it", taken.value, `${PREFIX}alp`);
-	expect("leaving nothing marked", taken.selected, "");
+	expect("the press takes it", taken.typed, `${PREFIX}alp`);
+	expect("offering the next step", taken.selected, "ha-");
 	expect("no name chosen for you", taken.chips, (v) => Array.isArray(v) && v.length === 0);
 	expect("and all of them still on offer", taken.rows, (v) =>
 		Array.isArray(v) && v.filter((r) => r.startsWith(`${PREFIX}alp`)).length === 3);
@@ -1354,7 +1358,7 @@ test("taking an offer stops at the fork, and never chooses past it", async () =>
 	// Typing past the fork is one way on; the press after is the other, and
 	// that one is a deliberate second ask.
 	await tab();
-	expect("a further press walks toward one of them", (await look()).value, `${PREFIX}alpha-`);
+	expect("a further press walks toward one of them", (await look()).typed, `${PREFIX}alpha-`);
 });
 
 const teardown = `
@@ -1392,7 +1396,7 @@ test("Tab takes a standing offer and stops there", async () => {
 	expect("a step toward the first name is offered", (await look()).selected, "ha-");
 	await tab();
 	const s = await look();
-	expect("the press wrote exactly what was offered", s.value, `${PREFIX}alpha-`);
+	expect("the press wrote exactly what was offered", s.typed, `${PREFIX}alpha-`);
 	expect("and stepped into nothing", s.chips, (v) => Array.isArray(v) && !v.some((c) => c.startsWith(PREFIX)));
 });
 

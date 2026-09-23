@@ -6157,10 +6157,11 @@ export class PathBreadcrumb {
 		// a step toward the first of several, it was a choice, and taking it
 		// is the whole press.
 		const tookWalksOn = this.suggested?.agreed ?? false;
-		const tookStep = took ? this.trailStep(false) : null;
+		const tookStep = took ? this.trailStep(true) : null;
 		if (took) this.settleSuggestion(true);
 		if (took && !tookWalksOn) {
 			if (tookStep) this.tabTrail.push(tookStep);
+			this.offerSuggestion(input);
 			return;
 		}
 
@@ -6239,7 +6240,9 @@ export class PathBreadcrumb {
 			// just taken all of it. Where they stop agreeing is a question
 			// for you: walking on toward one of them would be the press
 			// answering it, and picking the name that happens to sort first.
-			// Arrow to one, or type past the fork.
+			// Arrow to one, or type past the fork — or take the next offer,
+			// which is that question asked where it can be seen.
+			this.offerSuggestion(input);
 			return;
 		}
 		// A press that only writes into the field moves the row nowhere, so
@@ -6257,6 +6260,9 @@ export class PathBreadcrumb {
 			return;
 		}
 		this.writeSegment(input, bounds, action.text);
+		// What the next press would write is shown after this one, as it is
+		// after a typed letter.
+		this.offerSuggestion(input);
 	}
 
 	/**
