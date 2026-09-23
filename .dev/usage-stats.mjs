@@ -10,6 +10,14 @@
  *
  *   node .dev/usage-stats.mjs          # rewrite the line
  *   node .dev/usage-stats.mjs --check  # exit 1 if it is out of date
+ *   node .dev/usage-stats.mjs --since-published   # add to the published line
+ *
+ * `--since-published` is for when transcripts have gone: Claude Code cleans
+ * up old ones, and a recount then comes out *lower* than what was already
+ * published, which would state less than was really used. It takes the
+ * line as last committed as a floor and adds only what was recorded after
+ * the commit that wrote it — responses and tokens after that moment, and
+ * sessions that began after it.
  *
  * Transcripts live outside the repo, under ~/.claude/projects/<slug>/, so
  * only someone with this machine's history can refresh the numbers. That is
@@ -52,6 +60,19 @@ if (!dir || !existsSync(dir)) {
 	process.exit(2);
 }
 
+/** The published line and the moment it was committed, for `--since-published`. */
+const sincePublished = process.argv.includes("--since-published");
+let cutoff = null;
+if (sincePublished) {
+	const { execSync } = await import("node:child_process");
+	const at = execSync(`git log -1 --format=%cI -G"^- \\*\\*Usage\\*\\*" -- README.md`, { cwd: root }).toString().trim();
+	if (!at) {
+		console.error("No commit wrote the usage line; nothing to add to.");
+		process.exit(2);
+	}
+	cutoff = new Date(at);
+}
+
 const totals = { output: 0, input: 0, cacheWrite: 0, cacheRead: 0 };
 const models = new Map();
 let responses = 0;
@@ -59,7 +80,9 @@ let first = null;
 let last = null;
 
 const files = readdirSync(dir).filter((f) => f.endsWith(".jsonl"));
+let newSessions = 0;
 for (const file of files) {
+	let began = null;
 	const stream = createInterface({ input: createReadStream(join(dir, file)), crlfDelay: Infinity });
 	for await (const line of stream) {
 		if (!line.trim()) continue;
@@ -73,9 +96,11 @@ for (const file of files) {
 		const model = row?.message?.model;
 		if (row?.timestamp) {
 			const at = new Date(row.timestamp);
+			if (!began || at < began) began = at;
+			if (cutoff && at <= cutoff) continue;
 			if (!first || at < first) first = at;
 			if (!last || at > last) last = at;
-		}
+		} else if (cutoff) continue;
 		if (!usage || !model || model === "<synthetic>") continue;
 		responses++;
 		models.set(model, (models.get(model) ?? 0) + 1);
@@ -84,6 +109,7 @@ for (const file of files) {
 		totals.cacheWrite += usage.cache_creation_input_tokens ?? 0;
 		totals.cacheRead += usage.cache_read_input_tokens ?? 0;
 	}
+	if (began && (!cutoff || began > cutoff)) newSessions++;
 }
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -99,10 +125,41 @@ function range(a, b) {
 	return `${a.getDate()} ${MONTHS[a.getMonth()]} – ${b.getDate()} ${tail}`;
 }
 
+const readme = join(root, "README.md");
+const text = readFileSync(readme, "utf8");
+const pattern = /^- \*\*Usage\*\* — .*$/m;
+if (!pattern.test(text)) {
+	console.error("No '- **Usage** — ' line in README.md; not guessing where it belongs.");
+	process.exit(2);
+}
+const current = text.match(pattern)[0];
+
+// On top of the published line: its figures are the floor, and its first
+// date is where the range still begins.
+let base = { output: 0, sent: 0, cacheRead: 0, responses: 0, sessions: 0 };
+if (sincePublished) {
+	const number = (re) => Number((current.match(re)?.[1] ?? "0").replace(/,/g, ""));
+	base = {
+		output: number(/~([\d.]+) M tokens generated/) * 1e6,
+		sent: number(/~([\d.]+) M sent/) * 1e6,
+		cacheRead: number(/~([\d.]+) M cached/) * 1e6,
+		responses: number(/~([\d,]+) responses/),
+		sessions: number(/, (\d+) sessions/) || WORDS.indexOf(current.match(/, (\w+) sessions/)?.[1] ?? ""),
+	};
+	const opened = current.match(/— (\d+) (\w{3})(?: (\d{4}))? –/);
+	if (opened) {
+		const year = opened[3] ?? String((last ?? new Date()).getFullYear());
+		first = new Date(`${opened[1]} ${opened[2]} ${year}`);
+	}
+	responses += base.responses;
+}
+
 const millions = (n) => `${(n / 1e6).toFixed(1)} M`;
-const sent = totals.input + totals.cacheWrite;
+totals.output += base.output;
+totals.cacheRead += base.cacheRead;
+const sent = totals.input + totals.cacheWrite + base.sent;
 const all = totals.output + sent + totals.cacheRead;
-const sessions = files.length;
+const sessions = sincePublished ? base.sessions + newSessions : files.length;
 const sessionWord = sessions < WORDS.length ? WORDS[sessions] : String(sessions);
 
 // Escaped tildes, not bare ones. Markdown — GitHub's and the community
@@ -115,15 +172,6 @@ const line =
 	`\\~${responses.toLocaleString("en-US")} responses: \\~${millions(totals.output)} tokens generated, ` +
 	`\\~${millions(sent)} sent, \\~${millions(totals.cacheRead)} cached re-reads (\\~${millions(all)} total).`;
 
-const readme = join(root, "README.md");
-const text = readFileSync(readme, "utf8");
-const pattern = /^- \*\*Usage\*\* — .*$/m;
-if (!pattern.test(text)) {
-	console.error("No '- **Usage** — ' line in README.md; not guessing where it belongs.");
-	process.exit(2);
-}
-
-const current = text.match(pattern)[0];
 if (process.argv.includes("--check")) {
 	if (current === line) {
 		console.log("usage line is current");
