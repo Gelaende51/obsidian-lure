@@ -590,6 +590,26 @@ test("both fields have a list, and a way out that is taken is greyed and cannot 
 	await page.evaluate(`[...document.querySelectorAll(".lure-collision-modal button")].find((b) => b.textContent === "Cancel")?.click(); ${PAUSE(400)} return true;`);
 });
 
+test("renaming: the rows that begin with what was typed are on top, the name to keep among them", async () => {
+	await makeTaken(`${FIXTURE}/Scroll other.md`);
+	await makeTaken(`${FIXTURE}/A scroll inside.md`);
+	await page.evaluate(arrange(0));
+	await pressKey(page, "F2");
+	await page.evaluate(PAUSE(500) + "return true;");
+	await pressKey(page, "F2");
+	await page.evaluate(PAUSE(600) + "return true;");
+	await page.evaluate(`document.querySelector(".lure-path-input").select(); return true;`);
+	await page.send("Input.insertText", { text: "Scr" });
+	await page.evaluate(PAUSE(500) + "return true;");
+	const rows = JSON.parse(await page.evaluate(`return JSON.stringify([...document.querySelectorAll(".suggestion-item")].map((e) => [
+		e.querySelector(".lure-suggest-label")?.textContent, e.classList.contains("lure-suggest-leading")]));`));
+	const firstInside = rows.findIndex((r) => !r[1]);
+	expect("every marked row comes before every unmarked one", firstInside === -1 || rows.slice(firstInside).every((r) => !r[1]), true);
+	expect("the name to keep is among them, marked", rows.find((r) => r[0] === "Scrolling note.md")?.[1], true);
+	expect("the one that only contains it is after them", rows.at(-1)?.[0], "A scroll inside.md");
+	await pressKey(page, "Escape");
+});
+
 async function reset() {
 	await reloadPlugin(page);
 	// From nothing: the collision cases leave files behind them that the next

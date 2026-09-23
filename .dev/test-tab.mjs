@@ -1667,5 +1667,21 @@ test("every row that begins with what was typed underlines its own next step", a
 	expect("and the other way on shows its own", under[`${PREFIX}alpine`], "ine");
 });
 
+test("a press of Tab that takes the offer filters the list by what the field now holds", async () => {
+	const inside = `Z${PREFIX}alp.md`;
+	await page.evaluate(`if (!app.vault.getAbstractFileByPath(${JSON.stringify(inside)})) await app.vault.create(${JSON.stringify(inside)}, ""); return true;`);
+	try {
+		await armAtRoot();
+		await type(`${PREFIX}alp`);
+		expect("before the press, a name that only contains it is listed", (await look()).rows.includes(inside), true);
+		await tab();
+		const after = await look();
+		expect("the offer was taken", after.typed, `${PREFIX}alpha-`);
+		expect("and the list answers it", after.rows, (v) => v.length > 0 && v.every((r) => r.toLowerCase().includes(`${PREFIX}alpha-`.toLowerCase())));
+	} finally {
+		await page.evaluate(`const f = app.vault.getAbstractFileByPath(${JSON.stringify(inside)}); if (f) await app.fileManager.trashFile(f); return true;`);
+	}
+});
+
 await run();
 

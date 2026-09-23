@@ -6209,7 +6209,7 @@ export class PathBreadcrumb {
 		if (took) this.settleSuggestion(true);
 		if (took && !tookWalksOn) {
 			if (tookStep) this.tabTrail.push(tookStep);
-			this.offerSuggestion(input);
+			this.relistAfterTab(input);
 			return;
 		}
 
@@ -6296,7 +6296,7 @@ export class PathBreadcrumb {
 			// answering it, and picking the name that happens to sort first.
 			// Arrow to one, or type past the fork — or take the next offer,
 			// which is that question asked where it can be seen.
-			this.offerSuggestion(input);
+			this.relistAfterTab(input);
 			return;
 		}
 		// A press that only writes into the field moves the row nowhere, so
@@ -6548,6 +6548,20 @@ export class PathBreadcrumb {
 			// the whole of the press.
 			agreed: core.length <= commonPrefix(candidates.map((candidate) => candidate.label)).length,
 		};
+	}
+
+	/**
+	 * After a press of Tab that only took the offer: the list is filtered by
+	 * what the field now holds, as it is after a letter is typed, and the
+	 * next step is offered. Taking an offer writes nothing through the
+	 * field's input, so without this the list went on showing the names
+	 * that matched before the press.
+	 */
+	private relistAfterTab(input: HTMLInputElement): void {
+		// Untrusted, so the field re-lists without taking this for typing,
+		// which would empty the trail of the press just made.
+		input.dispatchEvent(new Event("input"));
+		this.offerSuggestion(input);
 	}
 
 	/**

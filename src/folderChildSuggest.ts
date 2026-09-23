@@ -170,25 +170,29 @@ interface SuggestionList {
  * The dropdown searches inside names, so `kick` finds `Weekly kickoff` —
  * but a name that starts that way is the one Tab and the offer are about,
  * and it was sorted in among the rest wherever its folder or its letter
- * put it. Only the names get this treatment: the pinned name to keep in
- * rename mode stays on top. The leading names are marked, and marked as
+ * put it. The leading names are always on top — the pinned name to keep
+ * in rename mode among them when it leads, below them when it does not.
+ * The leading names are marked, and marked as
  * agreeing when they go on sharing more than was typed — a base Tab would
  * complete.
  */
 function leadingFirst(rows: PathSuggestion[], query: string): PathSuggestion[] {
 	if (!query) return rows;
 	const ranked = (row: PathSuggestion) => row.kind === "folder" || row.kind === "file" || row.kind === "page";
-	const leads = (row: PathSuggestion) => ranked(row) && row.label.toLowerCase().startsWith(query);
+	const leads = (row: PathSuggestion) =>
+		(ranked(row) || row.kind === "keep-name") && row.label.toLowerCase().startsWith(query);
 	const leading = rows.filter(leads);
 	if (!leading.length) return rows;
-	const agreed = commonPrefix(leading.map((row) => row.label)).length > query.length;
+	// Agreement is Tab's, and Tab completes among the names only.
+	const agreed = commonPrefix(leading.filter(ranked).map((row) => row.label)).length > query.length;
 	for (const row of leading) {
 		row.leading = true;
 		row.agreed = agreed;
 	}
-	const inside = rows.filter((row) => ranked(row) && !leads(row));
-	const pinned = rows.filter((row) => !ranked(row));
-	return [...pinned, ...leading, ...inside];
+	// The leading names on top, the name to keep among them when it leads
+	// too; what is pinned but does not lead comes after them.
+	const rest = rows.filter((row) => !leads(row));
+	return [...leading, ...rest.filter((row) => !ranked(row)), ...rest.filter(ranked)];
 }
 
 /** What a page is when a row cannot be measured. */
