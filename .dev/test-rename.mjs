@@ -399,7 +399,7 @@ test("moving: a folder that already holds the name is red in the list", async ()
  * Renames the fixture note onto a taken name through the path bar, and
  * answers the dialog with the button whose label is given.
  */
-async function collide(typedPath, button, fieldText = null) {
+async function collide(typedPath, button, fieldText = null, whileOpen = null) {
 	await page.evaluate(arrange(0));
 	await pressKey(page, "F2");
 	await page.evaluate(PAUSE(500) + "return true;");
@@ -419,6 +419,7 @@ async function collide(typedPath, button, fieldText = null) {
 	await page.evaluate(PAUSE(800) + "return true;");
 	const buttons = JSON.parse(await page.evaluate(`return JSON.stringify(
 		[...document.querySelectorAll(".lure-collision-modal button")].map((b) => b.textContent));`));
+	if (whileOpen) await whileOpen();
 	if (fieldText !== null) {
 		await page.evaluate(`
 			const input = document.querySelector(".lure-collision-modal input");
@@ -443,7 +444,12 @@ const body = (path) => page.evaluate(`
 test("a taken name: renaming what is in the way lets the rename through", async () => {
 	const taken = `${FIXTURE}/Taken.md`;
 	await page.evaluate(`if (!app.vault.getAbstractFileByPath(${JSON.stringify(taken)})) await app.vault.create(${JSON.stringify(taken)}, "occupant"); return true;`);
-	await collide(taken, "Rename it and continue", "Taken before.md");
+	await collide(taken, "Rename it and continue", "Taken before.md", async () => {
+		const red = () => page.evaluate(`return document.querySelector(".lure-collision-modal input")?.classList.contains("is-taken") ?? null;`);
+		expect("the field opens on the taken name, in red", await red(), true);
+		await page.evaluate(`const i = document.querySelector(".lure-collision-modal input"); i.value = "Taken before.md"; i.dispatchEvent(new Event("input")); return true;`);
+		expect("and a free name is not red", await red(), false);
+	});
 	expect("the one in the way has its new name", await exists(`${FIXTURE}/Taken before.md`), true);
 	expect("and it is still itself", await body(`${FIXTURE}/Taken before.md`), "occupant");
 	expect("the note has the name it asked for", await body(taken), "note");

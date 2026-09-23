@@ -1382,6 +1382,10 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 	width: 100%;
 }
 
+.lure-collision-modal .lure-prompt-input.is-taken {
+	color: var(--text-error);
+}
+
 .lure-collision-error {
 	min-height: 1.5em;
 	color: var(--text-error);

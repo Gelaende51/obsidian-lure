@@ -83,7 +83,18 @@ class CollisionModal extends Modal {
 			}
 			this.settle({ kind: "rename-occupant", name });
 		};
-		input.addEventListener("input", () => error.setText(""));
+		// Red while the name in the field is taken, the way the path bar
+		// marks a taken name — the one it opens with included, since that is
+		// the name of the file in the way.
+		const paint = (): void => {
+			const name = input.value.trim();
+			input.toggleClass("is-taken", name !== "" && !this.options.isFree(name));
+		};
+		paint();
+		input.addEventListener("input", () => {
+			error.setText("");
+			paint();
+		});
 		input.addEventListener("keydown", (evt) => {
 			if (evt.key !== "Enter" || evt.isComposing) return;
 			evt.preventDefault();
