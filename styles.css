@@ -229,6 +229,17 @@
 	border-radius: var(--radius-s);
 }
 
+/* Anywhere on the header but a folder, Obsidian answers a dragged file with
+   "Open in this tab" and highlights the whole header — with an `::after`
+   drawn over all of it, which takes the pointer. A hand drag enters the
+   header somewhere before it reaches a folder, so from then on every position
+   hit the overlay rather than the folder under it and the move was never
+   offered. The overlay only paints; letting the pointer through keeps
+   Obsidian's answer on the bare header and gives the folders theirs. */
+.view-header.is-highlighted::after {
+	pointer-events: none;
+}
+
 /* The vault root is a jump target rather than a path segment: it opens
    the locations dropdown, so it keeps the pointer even when the swap
    setting takes it away from the folder names beside it. Qualified up to

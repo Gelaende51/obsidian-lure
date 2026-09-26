@@ -292,6 +292,25 @@ test("a note dragged onto a folder is still a move, and is not taken as content"
 	expect("and nothing is held", s.held, null);
 });
 
+test("a folder still takes the pointer while Obsidian highlights the header", async () => {
+	// A hand drag enters the header somewhere, and anywhere but on a folder
+	// Obsidian answers "Open in this tab" by highlighting the whole header —
+	// with an `::after` drawn over all of it. Unless that lets the pointer
+	// through, every later position hits the header rather than the folder
+	// under it, and the move is never offered. A drag dispatched straight at
+	// a segment, as the test above does, never raises the highlight at all.
+	const hit = await page.evaluate(`
+		const el = ${TARGETS.folder};
+		if (!el) return "no folder";
+		const header = el.closest(".view-header");
+		const at = el.getBoundingClientRect();
+		header.classList.add("is-highlighted");
+		const under = document.elementFromPoint(at.x + at.width / 2, at.y + at.height / 2);
+		header.classList.remove("is-highlighted");
+		return el.contains(under) ? "the folder" : String(under?.className || under);`);
+	expect("the point over the folder hits the folder", hit, "the folder");
+});
+
 test("Escape lets go of a drop the field was still holding", async () => {
 	await page.evaluate(dropOn("folder", TEXT_PAYLOAD));
 	const held = JSON.parse(await page.evaluate(rowState));
