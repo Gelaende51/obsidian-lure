@@ -292,6 +292,30 @@ test("a note dragged onto a folder is still a move, and is not taken as content"
 	expect("and nothing is held", s.held, null);
 });
 
+test("a note dropped onto a folder that already holds its name asks what to do", async () => {
+	// Refused at the hover, the drop fell through to the header, where
+	// Obsidian answers every dragged file with "Open in this tab" — so a note
+	// meant for the folder opened instead. It asks the way a typed move does.
+	await page.evaluate(`
+		if (!app.vault.getAbstractFileByPath("${ROOT}/leaf.md")) await app.vault.create("${ROOT}/leaf.md", "the one moving\\n");
+		${PAUSE(300)}
+		return true;`);
+	const payload = `app.dragManager.draggable = { type: "file", file: app.vault.getAbstractFileByPath("${ROOT}/leaf.md") };`;
+	await page.evaluate(dropOn("folder", payload));
+	const dialog = await page.evaluate(`return document.querySelector(".lure-collision-modal")?.textContent ?? null;`);
+	expect("the collision dialog asks", dialog, (v) => typeof v === "string" && v.includes("leaf.md"));
+	await page.evaluate(`
+		[...document.querySelectorAll(".lure-collision-modal button")].find((b) => b.textContent === "Cancel")?.click();
+		${PAUSE(500)}
+		return true;`);
+	const both = await page.evaluate(`
+		const r = [!!app.vault.getAbstractFileByPath("${ROOT}/leaf.md"), !!app.vault.getAbstractFileByPath("${ROOT}/inner/leaf.md")].join();
+		const f = app.vault.getAbstractFileByPath("${ROOT}/leaf.md");
+		if (f) await app.vault.delete(f);
+		return r;`);
+	expect("and Cancel moves nothing", both, "true,true");
+});
+
 test("a folder still takes the pointer while Obsidian highlights the header", async () => {
 	// A hand drag enters the header somewhere, and anywhere but on a folder
 	// Obsidian answers "Open in this tab" by highlighting the whole header —

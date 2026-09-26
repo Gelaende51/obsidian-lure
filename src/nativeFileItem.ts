@@ -201,7 +201,7 @@ export function makeDropTarget(
 			// All of them or none. A partial move that quietly skips the two it
 			// could not take is worse than a refusal you can see — and what is
 			// offered has to be what happens, or the hover is a lie.
-			if (!moving.every((file) => canMoveInto(file, folder))) return null;
+			if (!moving.every((file) => canMoveInto(file, folder, !!onTaken))) return null;
 			// A selection holding both a folder and something inside it: moving
 			// the folder takes the child with it, and the second move would then
 			// be looking for a path that no longer exists. Refused rather than
@@ -269,13 +269,16 @@ function draggedFiles(app: App, draggable: unknown): TAbstractFile[] {
  * - **A folder into itself, or into its own descendant.** There would be
  *   nowhere left for it to come from; the filesystem refuses this too, but
  *   later and less kindly.
- * - **Onto a name already taken.** Nothing here overwrites, ever.
+ * - **Onto a name already taken** — unless `takenAsks`, where the drop goes
+ *   on to ask what to do about the file in the way. Nothing here overwrites,
+ *   ever; and refused, a drop falls through to the header, where Obsidian
+ *   answers every dragged file with *Open in this tab*.
  */
-function canMoveInto(moving: TAbstractFile, folder: TFolder): boolean {
+function canMoveInto(moving: TAbstractFile, folder: TFolder, takenAsks = false): boolean {
 	if (moving === folder) return false;
 	if (moving.parent?.path === folder.path) return false;
 	if (moving instanceof TFolder && isInside(folder, moving)) return false;
-	return !folder.children.some((child) => child.name === moving.name);
+	return takenAsks || !folder.children.some((child) => child.name === moving.name);
 }
 
 /** Whether `file` sits below any *other* member of the same selection. */

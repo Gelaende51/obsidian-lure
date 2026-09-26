@@ -9,6 +9,7 @@ Every release of Lure, newest first. What has landed since the last release is u
 ### Fixed
 
 - **A note dropped from the File Explorer onto a folder in the path bar opened in the tab instead of moving there.** A hand drag enters the header before it reaches a folder, and Obsidian's highlight for *Open in this tab* then lay over the whole header, folders included, so no folder was ever reached.
+- **A note dropped onto a folder that already holds its name opened in the tab** instead of asking what to do about the file in the way, as 1.5.0 said it would. It now opens the same dialog as picking a taken name.
 
 ## 1.5.0 — 2026-09-23[^1.5.0]
 

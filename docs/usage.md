@@ -603,15 +603,21 @@ quietly skipping the rest.
 Links follow the note, exactly as they do when it is moved from the File
 Explorer or by typing a path.
 
-A folder that **could not take the drop shows nothing at all** — no label, no
-highlight — rather than offering something that would then fail. Four cases:
+A folder that **could not take the drop offers nothing of its own** — no
+*Move into* label, no highlight on the folder — rather than offering something
+that would then fail; Obsidian's own answer for the header, *Open in this tab*,
+is what stands there instead. Three cases:
 
 - the folder the file is **already in**, since it is already there;
-- a **name already taken** in that folder, because nothing here overwrites;
 - a folder dropped **into itself or into its own descendant**, which would
   leave it nowhere to have come from;
 - a selection holding **a folder and something inside it**, since moving the
   folder takes the child with it.
+
+A folder that already holds a **file of the same name** takes the drop and asks
+what to do about the one in the way, with the same dialog as a taken name typed
+or picked — see [A name that is taken](#a-name-that-is-taken). Nothing here
+overwrites.
 
 Only folders **inside your vault** take drops. While the row is pointing
 outside the vault its segments decline, because taking a note out of the vault
@@ -785,7 +791,8 @@ The first list offers where your file was going, **Stay where it is**, its own
 name in the target folder, and `-1`, `-bak` and `-old` beside it. A way out whose path is taken is greyed and
 cannot be picked. Picking one **only fills the field** — you can still edit it —
 and **Apply** moves both, links and all; **Cancel** moves nothing. Picking a
-taken name from the dropdown asks the same.
+taken name from the dropdown asks the same, and so does dropping a note onto a
+folder that already holds its name.
 
 ## One key for both renames
 
