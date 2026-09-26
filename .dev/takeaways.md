@@ -2545,3 +2545,18 @@ must give them back before the user's next edit lands, or typing past the
 offer keeps the respelling. Rewriting `input.value` in a `beforeinput`
 listener and restoring the selection range lets the browser apply the edit
 to the original letters.
+
+## Obsidian's header highlight covers every drop target inside the header
+
+Dragging a file over a pane's `.view-header`, Obsidian answers *Open in this tab*
+and adds `is-highlighted`, whose rule draws `.view-header.is-highlighted::after`
+— absolutely positioned, the full size of the header. That pseudo-element takes
+the pointer, so once the highlight is up every `dragover` targets the header
+itself and no drop target inside it (our folder segments) ever sees an event.
+A hand drag always enters the header on a bare spot first, so the folders were
+unreachable in practice, while synthetic events dispatched straight at a
+segment — and a CDP drag that jumped onto one — worked, because the highlight
+never came up. `pointer-events: none` on the `::after` fixes it without
+touching Obsidian's own answer. To reproduce by script, drive a real drag
+(`Input.setInterceptDrags` + `Input.dispatchDragEvent`) that crosses the bare
+header before the target. Worth a report upstream: the overlay only paints.
