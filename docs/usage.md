@@ -118,7 +118,9 @@ scrolling sideways instead, which is the reading that wins while it applies.
 The list is **as tall as the window lets it be**. Obsidian caps its suggestion
 lists at 300 pixels whatever lies below them; this one runs to the bottom of the
 window, stopping a few pixels short of the edge, and scrolls only once the folder
-holds more than that.
+holds more than that. It is **no wider than the path bar**: a name that does
+not fit is shortened the way the row shortens one, and shown whole when you
+point at it.
 
 Moving through the list **puts what you are pointing at into the field**, by
 arrow key or by hovering — in place of the segment you were editing, with the
@@ -185,17 +187,18 @@ Menu wording comes from Obsidian's own translations, so it matches the rest of t
 - **<kbd>Ctrl</kbd>+click the empty space** to open this note again in a tab of its own, flashed in the File Explorer so the second tab is not mistaken for the first. On the **vault name**, <kbd>Ctrl</kbd>+click or middle-click opens a tab holding nothing, standing at the vault root with the list already showing — somewhere to type a path from scratch.
 - Typing while a breadcrumb trail is showing converts the trailing segment into a small input with live autocomplete scoped to the current folder.
 - **A path from the filesystem root can be typed.** `/` in front of an empty field opens one rather than completing a rung, every slash after it belongs to it, and `~` is your home folder. While the field holds such a path the dropdown lists the machine rather than the vault, and the row's opening segment steps aside — what is in the field starts at the root and says so. With *Access external files* off the list stands empty instead, because <kbd>Enter</kbd> would refuse the path anyway.
-- **A page can be typed, not only picked.** `:graph`, `:search`, or whatever your plugins register — the labels the [vault root's listing](#a-pane-with-no-file) offers. Typing a colon anywhere summons them, since no name may contain one, and <kbd>Enter</kbd> opens that view in this pane. <kbd>Tab</kbd> finishes the name as it finishes a folder's — and takes with it whatever else the field held, since a page is in no folder and nothing lives under one. Clicking the label on such a pane opens the field already holding it.
-- **What the names agree on is offered as you type.** Where every child that starts with what you have typed goes on agreeing for a while, that agreement appears after the caret, selected. Type those letters and it is swallowed one at a time; type anything else and it is gone. <kbd>Tab</kbd> or <kbd>→</kbd> takes it, <kbd>Backspace</kbd> takes it back without touching a letter you typed, and nothing is offered again until you type — so there is always a way out of a name you did not want. What the dropdown lists is filtered by what **you** typed, never by what was offered.
-- In the field the offered part is simply **selected**. The list is where it is spelled out: each row shows the part of it that **matched what you typed in bold**, wherever in the name it matched — `kick` finds `Weekly kickoff` and says so — and, on the rows the offer is about, the part **taking it would add is underlined**.
+- **A page can be typed, not only picked.** `:graph`, `:search`, or whatever your plugins register — the labels the [vault root's listing](#a-pane-with-no-file) offers. Typing a colon anywhere summons them, since no name may contain one, and <kbd>Enter</kbd> opens that view in this pane. `:graph` typed **inside a folder** opens that folder's graph — the graph filtered to `path:"that/folder"` in its own search box, as though typed there; at the vault root it is the whole graph. <kbd>Tab</kbd> finishes the name as it finishes a folder's — and takes with it whatever else the field held, since a page is in no folder and nothing lives under one. Clicking the label on such a pane opens the field already holding it.
+- **What <kbd>Tab</kbd> would write is offered as you type.** Where every child that starts with what you have typed goes on agreeing for a while, that agreement appears after the caret, selected; where they stop agreeing, the step toward the first of them does — or toward the row you arrowed to, since that is the one <kbd>Tab</kbd> would head for. Typing over a name leaves its extension standing and offers in front of it, and a folder just stepped into offers its first step, so there is no state in which nothing is offered and <kbd>Tab</kbd> writes something anyway. Type those letters and it is swallowed one at a time; type anything else and it is gone. <kbd>Tab</kbd> or <kbd>End</kbd> takes it whole, <kbd>→</kbd> takes one letter of it, <kbd>Backspace</kbd> takes it back without touching a letter you typed, and nothing is offered again until you type — so there is always a way out of a name you did not want. After a press of <kbd>Tab</kbd> the next step is offered straight away, as after a typed letter. What the dropdown lists is filtered by what **you** typed, never by what was offered.
+- **Offers ignore case.** `sch` offers `Schemes`, spelled the way the name is; taking the offer back gives your letters back as you typed them. Where `Test` and `test` both exist, the one spelled the way you typed is offered.
+- In the field the offered part is simply **selected**. The list is where it is spelled out: each row shows the part of it that **matched what you typed in bold**, wherever in the name it matched — `kick` finds `Weekly kickoff` and says so. **Names that begin with what you typed come first**, ahead of the ones that only contain it, and are marked with a line down their edge: **blue** where they share more than you typed, so <kbd>Tab</kbd> has something to add for all of them, and **green** on the branch the offer takes where they part — `te` with `test1`, `test2`, `text1` and `text2` offers `te`+`st`, so the two `test` rows are green and the two `text` rows keep the plain line. Each of them **underlines the step <kbd>Tab</kbd> would take toward it**, not only the one that is offered, and the underline follows the offer as it changes.
 - **Typing lets go of the highlighted row.** The list opens on the entry you are standing in, but the moment you type it is about somewhere else, and a highlight nobody put there reads as a choice already made.
 - The offer is only ever text in front of you: the letters you typed stay spelled the way you typed them while you type, and taking the offer rewrites the name the way the folder spells it, because a path has to match the disk. `sk` + <kbd>Tab</kbd> reaches `Skyline`, not `skyline`.
-- **The field wears the colour of what it names**, the same colour as its row in the dropdown: purple for a note, grey for a folder's note, orange for a file Obsidian has no view for, blue for the note you are on. The row it takes the colour from is the one named exactly what you typed, or failing that the highlighted one, or failing that the first your typing still leads to.
-- **The field goes red once nothing answers to what is in it** — no file, no folder, and no row of the dropdown still leading to it. From there <kbd>Enter</kbd> makes what is in the field rather than opening it, and the red says so before you commit. It never appears for a web address, which is not a place on this machine to go looking for. The **whole** field is coloured rather than only the part that is missing: a text field cannot colour half of its own contents. In move/rename mode the field keeps its own red instead, for a name that is illegal — there, a name nothing answers to is the point. That a name is **already taken** is said by <kbd>Enter</kbd>, which refuses the rename and names the file in the way: every name typed toward `Notes.md` passes through names that may be files of their own, so flagging it letter by letter warned about a name nobody had asked for yet.
+- **The field wears the colour of what it names**, the same colour as its row in the dropdown: purple for a note, a folder's own note included, orange for anything that is not a note, blue for the note you are on. The row it takes the colour from is the one named exactly what you typed, or failing that the highlighted one, or failing that the first your typing still leads to.
+- **The field goes red once nothing answers to what is in it** — no file, no folder, and no row of the dropdown still leading to it. From there <kbd>Enter</kbd> makes what is in the field rather than opening it, and the red says so before you commit. It never appears for a web address, which is not a place on this machine to go looking for. The **whole** field is coloured rather than only the part that is missing: a text field cannot colour half of its own contents. In move/rename mode the field keeps its own red instead, for a name that is illegal — there, a name nothing answers to is the point. That a name is **already taken** is taken up when you commit it, with a dialog asking what should happen to the file in the way — see [A name that is taken](#a-name-that-is-taken): every name typed toward `Notes.md` passes through names that may be files of their own, so flagging it letter by letter warned about a name nobody had asked for yet.
 - `/` commits the segment you are typing and descends into it, keeping whatever is behind it — the same thing <kbd>Tab</kbd> does when it steps in.
-- <kbd>Backspace</kbd> in an empty input steps back out to the parent folder, reopening its name with the cursor at the end.
+- <kbd>Backspace</kbd> in an empty input steps back out to the parent folder, reopening its name with the cursor at the end. So does <kbd>Backspace</kbd> in front of an extension left on its own — a field holding nothing but `.md` names nothing — and the lone extension goes with it.
 - **Clicking a folder while a field is open widens it to the whole path after that folder**, with the folder's own name selected — the same thing clicking it would have done from the row, and everything the field was holding is kept. What is in the field is the row's tail while it is open, so a folder clicked further up hands back the path the session has walked rather than the one the note started at.
-- **Arrowing off the front of the field brings the folder before it in**, as though the whole path were one line of text. With the caret at the very start, <kbd>←</kbd> takes that folder into the field and lands at the end of its name, <kbd>Ctrl</kbd>+<kbd>←</kbd> lands at the start of it, and <kbd>Home</kbd> takes in every folder up to the vault root — or up to the place you picked, outside the vault — at once. Hold <kbd>Shift</kbd> and the selection stretches over what came in. On macOS the word jump is <kbd>Option</kbd>+<kbd>←</kbd> and <kbd>Cmd</kbd>+<kbd>←</kbd> is <kbd>Home</kbd>. Anywhere but the front these are ordinary text keys. **While the dropdown is showing, <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>PgUp</kbd> and <kbd>PgDn</kbd> belong to it** — first row, last row, a page up, a page down — and reach the text only once it has closed; <kbd>Shift</kbd>+<kbd>Home</kbd> takes in every folder with the list open as well.
+- **Arrowing off the front of the field brings the folder before it in**, as though the whole path were one line of text. With the caret at the very start, <kbd>←</kbd> takes that folder into the field and lands at the end of its name, <kbd>Ctrl</kbd>+<kbd>←</kbd> lands at the start of it, and <kbd>Home</kbd> takes in every folder up to the vault root — or up to the place you picked, outside the vault — at once. Hold <kbd>Shift</kbd> and the selection stretches over what came in. On macOS the word jump is <kbd>Option</kbd>+<kbd>←</kbd> and <kbd>Cmd</kbd>+<kbd>←</kbd> is <kbd>Home</kbd>. Anywhere but the front these are ordinary text keys. **While the dropdown is showing, <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>PgUp</kbd> and <kbd>PgDn</kbd> belong to it** — first row, last row, a page up, a page down, a page being what the list shows, with the highlighted row keeping its place on screen — and reach the text only once it has closed; <kbd>Shift</kbd>+<kbd>Home</kbd> takes in every folder with the list open as well.
 - **The list follows the caret.** Pick out a different part of the path — drag over it, click into it, or arrow along — and the dropdown lists *that* folder's children, not the one the field was opened on. The folder is counted from the chips plus whatever of the field lies in front of the caret, so clicking into `Notes.md` in a field holding `2026/Notes.md` lists what is in `2026`. Pointing at a row writes it into the segment the caret is in, and taking the pointer off the list gives you your text and your selection back, exactly as they were.
 - **Sweeping a selection out of the field** and letting go somewhere else does not close it. A press that begins in the field belongs to the edit however far it travels; only a press that *begins* outside is a click away.
 - <kbd>Enter</kbd> commits — and when the field names nothing at all, as in an empty folder where there was never anything to complete, it says *No file selected* and stays open rather than closing as though something had been chosen. <kbd>Esc</kbd> or a click elsewhere cancels back to the file's real path. One press of <kbd>Esc</kbd> is enough: it closes the dropdown, leaves the field and hands focus back to the note, rather than taking one press per layer.
@@ -313,7 +316,7 @@ A **file** never holds a folder up that way. A folder beside a note of its own n
 
 Two smaller things that follow: what lands in the field is spelled the way the folder spells it, so `sk` becomes `Sketches`; and only the name being typed is replaced, so a path with more to the right of it keeps that.
 
-With a name offered as you type, <kbd>Tab</kbd> **takes the offer and stops at the fork.** Where the names stop agreeing is a question only you can answer, and a press that walked on would be answering it by picking whichever name sorts first — so arrow to the one you want, or type past the fork. Only where the offer leaves *one* name is there no fork, and then the same press steps into it. The press after the fork still walks toward a name a branch at a time, as it always did: that one is a deliberate second ask.
+With a name offered as you type, <kbd>Tab</kbd> **writes exactly the offer**: the offer is always what the press would write, and the dropdown's underline and green line say the same thing, so what you see after the caret is what you get. Where the names stop agreeing, that is the step toward the first of them — or toward the row you arrowed to, which <kbd>Tab</kbd> takes rather than the one beside it — so arrow to the one you want, or type past the fork, before you press. Only where the offer leaves *one* name does the same press step into it.
 
 Arriving at the file's name **is** the first rung — no press is spent parking the caret at the end of a name it is about to mark. From there the presses stop moving along the path and start widening what is selected:
 
@@ -652,15 +655,17 @@ least likely to need:
 2. **Then the file's extension**, if you have it turned on — the same three
    characters on nearly every file in a vault. It goes whole rather than being
    shortened: half an extension says nothing that no extension doesn't.
-3. **Then the folders**, the longest paying most. Room is taken in proportion
-   to how much a name has, so one very long folder gives up far more than the
-   short names beside it.
+3. **Then the folders, longest first.** The longest folder name shortens to
+   the length of the next longest, then both together, and so on, each
+   stopping at its floor — so one very long folder gives up everything it has
+   over the others before a short name beside it loses a letter.
 4. **The file's own name last**, and it keeps about six characters. It is what
    the header is for.
 
 Room is given up **continuously**, in fractions of a pixel rather than a letter
-at a time, so a pane dragged slowly narrows the row smoothly instead of making
-it step and jump. Before any letter goes, the air around the delimiters is
+at a time: a name giving way is clipped at the pixel and fades under its `…`,
+so a pane dragged slowly narrows the row smoothly and nothing after it moves in
+steps. Before any letter goes, the air around the delimiters is
 spent — it is the row's only spacing and it costs no information at all — and a
 shortened name ends where the delimiter begins, with no strip of empty box
 between the two.
@@ -674,7 +679,6 @@ thing that never gives way — it is text being edited, not a name being fitted.
 Nothing is cut past what tells it apart from its neighbours: `Projects2025` and
 `Projects2026` in the same folder come down to `…025` and `…026` rather than to
 a prefix that would make them the same word, while `Reports` beside `Receipts`
-can come down to `Rep…`. On top of that a folder keeps about three characters
 can come down to `Rep…`. On top of that every name keeps a **readable width** —
 about four letters' worth for a folder and six for a file name, measured in the
 font the row is actually drawn in rather than counted. Four narrow letters and
@@ -742,15 +746,13 @@ name is turned off or has been squeezed away.
 | | When | What it means |
 | --- | --- | --- |
 | **Red** ring on the path bar | The row points outside your vault | Obsidian cannot open what's there as a note, and nothing out there is written until you open the padlock. |
-| **Orange** ring on the path bar, orange entries in the dropdown | The file is a text type Obsidian has no view for | A caution. Obsidian would hand it to your desktop's default application; the plugin shows it instead. |
+| **Orange** ring on the path bar | The file is a text type Obsidian has no view for | A caution. Obsidian would hand it to your desktop's default application; the plugin shows it instead. |
 | **Red** text in the open field | Nothing is at that path yet | <kbd>Enter</kbd> will make it rather than open it. Not a warning so much as a statement of what the next keystroke does — see [Typing a path](#typing-a-path). |
 | **Red** padlock in place of the rename toggle | The row points outside your vault and writing there is still locked | The same red as the ring, for the same reason: it marks a refusal. Pressing it allows writing here and hands the slot back to the toggle — see [Writing outside the vault](#writing-outside-the-vault). |
 
 The **two rings are independent, and both can hold at once** — an external `.json` is outside your vault *and* a type Obsidian has no editor for. In the viewer they appear as separate lines, each stating only its own fact. On the path bar, red wins where both apply, since two rings would only be noise. The red *text* is a third thing entirely: it is about what is being typed, not about where the row points, so it can appear inside either ring or neither.
 
-The orange tier is deliberately narrow. Registered types (Markdown, canvas, images, PDF, audio, video) are handled properly and get nothing. Binary files get nothing either — you are not going to edit a `.zip` into a mess by accident. What is left is exactly the hazard: a `.json`, `.css` or `.log` that **Show all file types** has made visible.
-
-Red wins where both would apply; two rings at once would only be noise.
+The orange tier is deliberately narrow. Registered types (Markdown, canvas, images, PDF, audio, video) are handled properly and get nothing. Binary files get nothing either — you are not going to edit a `.zip` into a mess by accident. What is left is exactly the hazard: a `.json`, `.css` or `.log` that **Show all file types** has made visible. The dropdown is broader on purpose: there, everything that is not a note is orange — see [how dropdown entries are tinted](#how-dropdown-entries-are-tinted).
 
 ## Move/rename mode
 
@@ -759,9 +761,31 @@ The pencil button at the far right of the header — next to the view-mode butto
 While renaming:
 
 - The current filename is pinned into every folder's dropdown, so moving a note without renaming it is a single click.
-- Names already taken in the target folder are greyed out but still selectable.
-- Input is validated live against Obsidian's own rename rules — same character sets, same messages, same red tooltip you get when renaming in the file tree — so an illegal or conflicting name is flagged as you type and can't be committed.
+- Names already taken in the target folder are **red** — a folder that already holds the name, and a file of that name — so the collision shows before you choose. They can still be picked: see below.
+- Input is validated live against Obsidian's own rename rules — same character sets, same messages, same red tooltip you get when renaming in the file tree — so an illegal name is flagged as you type and can't be committed.
 - Clicking outside the header bar, or the header losing focus, ends rename mode.
+
+### A name that is taken
+
+Moving or renaming onto a name that is already there **asks instead of
+refusing.** A dialog opens with two paths you can edit: where your file goes,
+and where the file in the way goes — red while that is still taken. Each path is
+also drawn the way the path bar draws one, with the parts that differ coloured
+and shortened last, so a long path still shows what changes.
+
+Both fields have a list. The second holds the usual ways out:
+
+- **Swap places** — it goes to your file's old folder, under its own name.
+- **Swap names** — it stays where it is and takes your file's old name.
+- **Swap both** — it takes your file's old path.
+- `-1`, `-bak` and `-old` beside its own name.
+- The two names the files had.
+
+The first list offers where your file was going, **Stay where it is**, its own
+name in the target folder, and `-1`, `-bak` and `-old` beside it. A way out whose path is taken is greyed and
+cannot be picked. Picking one **only fills the field** — you can still edit it —
+and **Apply** moves both, links and all; **Cancel** moves nothing. Picking a
+taken name from the dropdown asks the same.
 
 ## One key for both renames
 
@@ -785,6 +809,12 @@ The **Focus the path bar** command does the same inside the field — whatever
 <kbd>Tab</kbd> would — and where <kbd>Tab</kbd> would lap, it hands the cursor back
 to the note instead. Its next press is the lap: the vault root, first folder marked.
 
+**In a field that is already open**, the key turns it into a rename where it
+stands — keeping the text, the caret and the selection — and **Focus the path
+bar** takes the rename back off it the same way. **Anything else** pressed or
+clicked between the presses starts either cycle over, so a press after you have
+been editing never lands on a rung left over from before.
+
 Outside the vault the key works too — there is no inline title out there, so the
 first press goes straight to the path bar.
 
@@ -795,19 +825,23 @@ This works by wrapping the `workspace:edit-file-title` command rather than grabb
 | Colour | Means |
 | --- | --- |
 | **Purple** | A note (`.md`, `.markdown`) — what Obsidian will open as a note, picked out of a folder of mixed contents |
-| **Grey** | A folder's own note, where a folder-note plugin is running — it stands for its folder more than for itself |
 | **Orange** | Not a note — anything Obsidian will not open as one, from a PDF to a `.txt`, and the `:page` entries with them. A folder of mixed contents is read for the notes in it, and one colour for everything else says that faster than a caution on a few of them; see [the warning colours](#the-warning-colours) |
 | **Muted** | Outside your vault, so the vault's own handling doesn't apply |
-| **Blue** | The note you're on. Browsing, that's its own entry; in rename/move mode the *keep this name* entry stands in its place — the same note either way |
-| **Blue** | Where you already are: this bar's own note, and the folder the path bar is standing on |
-| **Greyed** | Rename/move mode only: the name is taken. Still selectable — picking one fills the input, where validation flags the conflict |
+| **Blue**, bold | Where you already are: this bar's own note, and the folder the path bar is standing on. In rename/move mode the *keep this name* entry stands in the note's place — the same note either way |
+| **Red** | Rename/move mode only: the name is taken. Still selectable — picking one asks what to do about the file in the way; see [A name that is taken](#a-name-that-is-taken) |
+
+**Folders are bold**, so a folder's own note needs no colour of its own to
+stand apart from its folder: it is purple like any other note. A **line down
+a row's edge** marks the names that begin with what you typed — blue where
+they agree further, green on the branch the offer takes; see
+[Typing a path](#typing-a-path).
 
 The field takes the same colours for what it names — see [Typing a path](#typing-a-path).
 
 ## Visibility rules
 
 - Files with unsupported extensions appear in the dropdowns only if Obsidian's **Detect all file extensions** setting is on — **inside the vault**. Outside it the setting does not apply: it governs what the vault indexes, and nothing out there is in the vault, so a `.txt` beside your notes is listed either way.
-- The dropdown shows at most 100 entries — Obsidian's own limit. When a folder has more, the last row says how many were left out; keep typing to narrow the list.
+- The dropdown shows up to 1,000 entries, ten times Obsidian's own limit. When a folder has more, the last row says how many were left out; keep typing to narrow the list.
 - Dot-files and dot-folders appear only if this plugin's **Show dot files** setting is on.
 - **Overwrite protection works identically regardless of visibility** — a hidden file still blocks you from overwriting it.
 
@@ -837,11 +871,12 @@ appear in a real name, where an apostrophe very much can.
 | Go back up one level while typing | <kbd>Backspace</kbd> in the empty input |
 | Bring the folders before the field into it | <kbd>←</kbd> at its start for one; <kbd>Shift</kbd>+<kbd>Home</kbd>, or <kbd>Home</kbd> with the dropdown closed, for all of them |
 | Move or rename the open note | Click the pencil, then browse or type as above |
+| Move onto a name that is taken | Commit it anyway: the dialog lets you swap places, names or both, or give the file in the way another name |
 | Move without renaming | Pencil → click into the target folder → pick the pinned current filename |
 | Rename in place | <kbd>F2</kbd> twice (first press goes to the inline title, second to the header) |
 | Jump to another vault, home or a drive | Click the vault name |
 | Open a file from outside the vault | Vault name → pick a location → browse → pick the file (read-only until *Edit as text*) |
-| Complete the name being typed | <kbd>Tab</kbd> |
+| Complete the name being typed | <kbd>Tab</kbd>, or <kbd>End</kbd> for what is offered; <kbd>→</kbd> takes one letter of it |
 | Step into it, once one name is left | <kbd>Tab</kbd> again |
 | Take back a step, or leave the folder | <kbd>Shift</kbd>+<kbd>Tab</kbd> |
 | Grab the whole path, or the system path | <kbd>Tab</kbd> past the end, or click four times |
