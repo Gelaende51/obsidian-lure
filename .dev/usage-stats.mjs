@@ -1,122 +1,118 @@
 #!/usr/bin/env node
 /**
- * Recomputes the AI-disclosure usage line in README.md from the actual
- * Claude Code session transcripts for this project.
- *
- * The figures are a factual claim on a public page, and hand-written ones
- * go stale the moment another session runs — this session found the README
- * still quoting totals from five days and several sessions earlier. Run it
- * before a release, or whenever the disclosure is worth trusting:
+ * Recomputes the AI-disclosure usage line in README.md from what this machine
+ * recorded of the work on this project.
  *
  *   node .dev/usage-stats.mjs          # rewrite the line
  *   node .dev/usage-stats.mjs --check  # exit 1 if it is out of date
- *   node .dev/usage-stats.mjs --since-published   # add to the published line
  *
- * `--since-published` is for when transcripts have gone: Claude Code cleans
- * up old ones, and a recount then comes out *lower* than what was already
- * published, which would state less than was really used. It takes the
- * line as last committed as a floor and adds only what was recorded after
- * the commit that wrote it — responses and tokens after that moment, and
- * sessions that began after it.
+ * The figures are a factual claim on a public page, so they are counted, not
+ * written by hand. What is counted, all through ~/building_stuff/scripts/
+ * token-cost.mjs:
  *
- * Transcripts live outside the repo, under ~/.claude/projects/<slug>/, so
- * only someone with this machine's history can refresh the numbers. That is
- * the point: nobody else can honestly restate them.
+ * - **Sessions** — Claude Code transcripts under ~/.claude/projects/<slug>/,
+ *   and the subagents' under <session>/subagents/. A response is counted once:
+ *   Claude Code writes a row per content block and repeats the whole usage on
+ *   every one, so counting rows — which this script did until 1.5.1 — counted
+ *   a response with thinking, text and three tool calls five times.
+ * - **Headless runs** — `claude -p` jobs (the translations) keep no transcript.
+ *   Their runners log each run's usage with headless-log.mjs; they are shown
+ *   as their own clause, since they are a different kind of work.
  *
- * The figure can never be exact. Writing it is itself part of a session, so
+ * What cannot be counted any more. Claude Code deleted transcripts older than
+ * 30 days until 2026-09-23, so everything up to the 1.4.0 line is known only
+ * from that published line — and it counted rows. ANCHOR holds it; it is scaled
+ * down by the ratio of responses to rows (per figure) measured on the
+ * transcripts of the same period that survive, and everything after it is
+ * counted exactly. The headless runs of 1.4.0 and 1.5.0 were never logged and
+ * are not in the figure: it is a floor for them.
+ *
+ * The figure can never be exact: writing it is itself part of a session, so
  * the committed line always trails reality by the turns that committed it —
  * and `--check` reports stale for as long as a session is open against this
  * project. Both are why every number carries a "~". Run it as the last step
- * before a release and take the snapshot; don't chase the last few thousand
- * tokens, and don't wire it into `npm run build`, where it would fail for
- * anyone who doesn't have this machine's history.
+ * before a release; don't wire it into `npm run build`, where it would fail
+ * for anyone who doesn't have this machine's history.
  */
 
-import { createReadStream, readFileSync, writeFileSync, readdirSync, existsSync } from "fs";
-import { createInterface } from "readline";
+import { readFileSync, writeFileSync, existsSync } from "fs";
 import { join, resolve, dirname } from "path";
 import { homedir } from "os";
-import { fileURLToPath } from "url";
+import { fileURLToPath, pathToFileURL } from "url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-
-/**
- * Claude Code names each project's transcript folder after its path with
- * every non-alphanumeric character replaced by "-" — separators, spaces and
- * underscores alike. Rather than encode that guess, normalise both sides and
- * match, so a change to the scheme shows up as "not found" instead of
- * silently reporting zero.
- */
-const normalise = (s) => s.replace(/[^A-Za-z0-9]+/g, "-").toLowerCase();
-const projects = join(homedir(), ".claude", "projects");
-const wanted = normalise(root);
-const match = existsSync(projects)
-	? readdirSync(projects).find((name) => normalise(name) === wanted)
-	: undefined;
-const dir = match ? join(projects, match) : undefined;
-
-if (!dir || !existsSync(dir)) {
-	console.error(`No transcript folder for ${root} under ${projects}.`);
+const MODULE = join(homedir(), "building_stuff", "scripts", "token-cost.mjs");
+if (!existsSync(MODULE)) {
+	console.error(`${MODULE} is missing: it reads and prices the transcripts.`);
 	process.exit(2);
 }
+const { responses } = await import(pathToFileURL(MODULE).href);
 
-/** The published line and the moment it was committed, for `--since-published`. */
-const sincePublished = process.argv.includes("--since-published");
-let cutoff = null;
-if (sincePublished) {
-	const { execSync } = await import("node:child_process");
-	const at = execSync(`git log -1 --format=%cI -G"^- \\*\\*Usage\\*\\*" -- README.md`, { cwd: root }).toString().trim();
-	if (!at) {
-		console.error("No commit wrote the usage line; nothing to add to.");
-		process.exit(2);
+/**
+ * The line as published with 1.4.0, when every transcript since 3 Aug still
+ * existed — counted in rows, not responses.
+ */
+const ANCHOR = {
+	at: new Date("2026-09-19T00:45:16+02:00"),
+	first: new Date("2026-08-03T12:00:00+02:00"),
+	sessions: 20,
+	responses: 16460,
+	output: 19.9e6,
+	sent: 87.0e6,
+	read: 5451.0e6,
+};
+
+/** Claude Code's folder for this project: every non-alphanumeric character becomes "-". */
+const normalise = (s) => s.replace(/[^A-Za-z0-9]+/g, "-").toLowerCase();
+const mine = (folder) => normalise(folder) === normalise(root);
+
+const zero = () => ({ responses: 0, output: 0, sent: 0, read: 0 });
+const add = (acc, r, times = 1) => {
+	acc.responses += times;
+	acc.output += r.tokens.output * times;
+	acc.sent += (r.tokens.input + r.tokens.write1h + r.tokens.write5m) * times;
+	acc.read += r.tokens.read * times;
+};
+const before = { rows: zero(), once: zero() }; // top-level transcripts up to the anchor
+const after = zero(); // everything recorded in sessions after the anchor, and subagents at any time
+const headless = zero();
+const headlessRuns = new Set();
+const sessionsAfter = new Set();
+const sessionStart = new Map();
+let last = ANCHOR.at;
+
+for await (const r of responses({ projects: mine })) {
+	if (r.source === "headless") {
+		add(headless, r);
+		headlessRuns.add(r.session);
+		if (r.at > last) last = r.at;
+		continue;
 	}
-	cutoff = new Date(at);
-}
-
-const totals = { output: 0, input: 0, cacheWrite: 0, cacheRead: 0 };
-const models = new Map();
-let responses = 0;
-let first = null;
-let last = null;
-
-const files = readdirSync(dir).filter((f) => f.endsWith(".jsonl"));
-let newSessions = 0;
-for (const file of files) {
-	let began = null;
-	const stream = createInterface({ input: createReadStream(join(dir, file)), crlfDelay: Infinity });
-	for await (const line of stream) {
-		if (!line.trim()) continue;
-		let row;
-		try {
-			row = JSON.parse(line);
-		} catch {
-			continue; // a truncated final line in a live session is normal
-		}
-		const usage = row?.message?.usage;
-		const model = row?.message?.model;
-		if (row?.timestamp) {
-			const at = new Date(row.timestamp);
-			if (!began || at < began) began = at;
-			if (cutoff && at <= cutoff) continue;
-			if (!first || at < first) first = at;
-			if (!last || at > last) last = at;
-		} else if (cutoff) continue;
-		if (!usage || !model || model === "<synthetic>") continue;
-		responses++;
-		models.set(model, (models.get(model) ?? 0) + 1);
-		totals.output += usage.output_tokens ?? 0;
-		totals.input += usage.input_tokens ?? 0;
-		totals.cacheWrite += usage.cache_creation_input_tokens ?? 0;
-		totals.cacheRead += usage.cache_read_input_tokens ?? 0;
+	const sub = r.file.includes("/subagents/");
+	if (!sub) {
+		const s = sessionStart.get(r.session);
+		if (!s || r.at < s) sessionStart.set(r.session, r.at);
 	}
-	if (began && (!cutoff || began > cutoff)) newSessions++;
+	if (r.at > last) last = r.at;
+	if (!sub && r.at <= ANCHOR.at) {
+		add(before.rows, r, r.rows);
+		add(before.once, r);
+	} else add(after, r);
 }
+for (const [session, at] of sessionStart) if (at > ANCHOR.at) sessionsAfter.add(session);
+
+// The anchor, scaled from rows to responses by what the surviving transcripts
+// of the same period say about each figure.
+const ratio = (k) => (before.rows[k] ? before.once[k] / before.rows[k] : 1);
+const total = {
+	responses: ANCHOR.responses * ratio("responses") + after.responses,
+	output: ANCHOR.output * ratio("output") + after.output,
+	sent: ANCHOR.sent * ratio("sent") + after.sent,
+	read: ANCHOR.read * ratio("read") + after.read,
+};
+const sessions = ANCHOR.sessions + sessionsAfter.size;
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
-	"ten", "eleven", "twelve"];
-
-/** "3–10 Aug 2026", collapsing to one date when a project ran in a single day. */
 function range(a, b) {
 	const sameMonth = a.getMonth() === b.getMonth() && a.getFullYear() === b.getFullYear();
 	const tail = `${MONTHS[b.getMonth()]} ${b.getFullYear()}`;
@@ -124,6 +120,20 @@ function range(a, b) {
 	if (sameMonth) return `${a.getDate()}–${b.getDate()} ${tail}`;
 	return `${a.getDate()} ${MONTHS[a.getMonth()]} – ${b.getDate()} ${tail}`;
 }
+const M = (n) => `${(n / 1e6).toFixed(1)} M`;
+const round = (n) => Math.round(n / 10) * 10;
+
+// Escaped tildes, not bare ones. Markdown — GitHub's and the community
+// site's alike — reads a *single* tilde as a strikethrough delimiter, so five
+// approximation signs on one line pair up and strike the text between the
+// first and the last. `\~` renders as `~`.
+let line =
+	`- **Usage** — ${range(ANCHOR.first, last)}, ${sessions} sessions, ` +
+	`\\~${round(total.responses).toLocaleString("en-US")} responses: \\~${M(total.output)} tokens generated, ` +
+	`\\~${M(total.sent)} sent, \\~${M(total.read)} cached re-reads (\\~${M(total.output + total.sent + total.read)} total)`;
+if (headlessRuns.size) {
+	line += `; plus ${headlessRuns.size} headless translation runs: \\~${M(headless.output)} generated, \\~${M(headless.sent + headless.read)} sent.`;
+} else line += ".";
 
 const readme = join(root, "README.md");
 const text = readFileSync(readme, "utf8");
@@ -134,56 +144,19 @@ if (!pattern.test(text)) {
 }
 const current = text.match(pattern)[0];
 
-// On top of the published line: its figures are the floor, and its first
-// date is where the range still begins.
-let base = { output: 0, sent: 0, cacheRead: 0, responses: 0, sessions: 0 };
-if (sincePublished) {
-	const number = (re) => Number((current.match(re)?.[1] ?? "0").replace(/,/g, ""));
-	base = {
-		output: number(/~([\d.]+) M tokens generated/) * 1e6,
-		sent: number(/~([\d.]+) M sent/) * 1e6,
-		cacheRead: number(/~([\d.]+) M cached/) * 1e6,
-		responses: number(/~([\d,]+) responses/),
-		sessions: number(/, (\d+) sessions/) || WORDS.indexOf(current.match(/, (\w+) sessions/)?.[1] ?? ""),
-	};
-	const opened = current.match(/— (\d+) (\w{3})(?: (\d{4}))? –/);
-	if (opened) {
-		const year = opened[3] ?? String((last ?? new Date()).getFullYear());
-		first = new Date(`${opened[1]} ${opened[2]} ${year}`);
-	}
-	responses += base.responses;
-}
-
-const millions = (n) => `${(n / 1e6).toFixed(1)} M`;
-totals.output += base.output;
-totals.cacheRead += base.cacheRead;
-const sent = totals.input + totals.cacheWrite + base.sent;
-const all = totals.output + sent + totals.cacheRead;
-const sessions = sincePublished ? base.sessions + newSessions : files.length;
-const sessionWord = sessions < WORDS.length ? WORDS[sessions] : String(sessions);
-
-// Escaped tildes, not bare ones. Markdown — GitHub's and the community
-// site's alike — reads a *single* tilde as a strikethrough delimiter, so five
-// approximation signs on one line pair up and strike the text between the
-// first and the last. The disclosure rendered as a correction of itself on
-// the plugin's public page until this was escaped. `\~` renders as `~`.
-const line =
-	`- **Usage** — ${range(first, last)}, ${sessionWord} sessions, ` +
-	`\\~${responses.toLocaleString("en-US")} responses: \\~${millions(totals.output)} tokens generated, ` +
-	`\\~${millions(sent)} sent, \\~${millions(totals.cacheRead)} cached re-reads (\\~${millions(all)} total).`;
-
 if (process.argv.includes("--check")) {
-	if (current === line) {
-		console.log("usage line is current");
-		process.exit(0);
-	}
+	if (current === line) { console.log("usage line is current"); process.exit(0); }
 	console.error(`usage line is stale\n  is:     ${current}\n  should: ${line}`);
 	process.exit(1);
 }
 
 writeFileSync(readme, text.replace(pattern, line));
 console.log(line);
+const pctOf = (k) => `${Math.round(ratio(k) * 100)} %`;
 console.log(
-	`\n(${responses.toLocaleString("en-US")} responses across ${sessions} sessions: ` +
-		[...models.entries()].map(([m, n]) => `${m} ${n.toLocaleString("en-US")}`).join(", ") + ")",
+	`\nThe 1.4.0 line counted rows: kept ${pctOf("responses")} of its responses, ${pctOf("output")} of its output, ` +
+		`${pctOf("sent")} of what was sent and ${pctOf("read")} of the cache reads, as measured on ` +
+		`${before.once.responses.toLocaleString("en-US")} surviving responses of that period.` +
+		`\nSince then: ${after.responses.toLocaleString("en-US")} responses in ${sessionsAfter.size} sessions and their subagents; ` +
+		`${headlessRuns.size} headless runs logged.`,
 );

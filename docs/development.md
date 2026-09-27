@@ -399,7 +399,12 @@ node .dev/usage-stats.mjs --check  # exit 1 if it is out of date
 npm run build
 ```
 
-It reads this machine's Claude Code transcripts under `~/.claude/projects/`, which are deliberately outside the repo — nobody without that history can honestly restate the numbers, and a fork should replace the disclosure with its own rather than inherit these.
+It reads this machine's Claude Code transcripts under `~/.claude/projects/`, which are deliberately outside the repo — nobody without that history can honestly restate the numbers, and a fork should replace the disclosure with its own rather than inherit these. The reading and pricing live in `~/building_stuff/scripts/token-cost.mjs`, shared with the quota script:
+
+- **A response is counted once.** Claude Code writes a transcript row per content block and repeats the response's whole usage on each; counting rows, as this did until 1.5.1, overstated output about 2.9× and responses about 1.9×.
+- **Subagents count.** Their transcripts sit in `<session>/subagents/`.
+- **Headless runs count, as their own clause.** `claude -p --no-session-persistence` keeps no transcript, so a runner has to log each run: `node ~/building_stuff/scripts/headless-log.mjs --project "$PWD" --job <name> out.json` after the job writes its JSON. Runs that were not logged are not in the figure.
+- **Up to 1.4.0 the figure is scaled, not counted.** Transcripts older than 30 days were deleted before retention was raised, so that period is the line published with 1.4.0, scaled from rows to responses by the ratio the surviving transcripts of the same time show (`ANCHOR` in the script).
 
 `usage-stats.mjs` rewrites the English line only. The translated READMEs carry the same figures (`- **Verbrauch** —`, `- **Consommation** —`), so update those by hand in the same pass — they are the one part of a translation that goes stale on a schedule rather than when the prose changes.
 

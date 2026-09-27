@@ -2560,3 +2560,23 @@ never came up. `pointer-events: none` on the `::after` fixes it without
 touching Obsidian's own answer. To reproduce by script, drive a real drag
 (`Input.setInterceptDrags` + `Input.dispatchDragEvent`) that crosses the bare
 header before the target. Worth a report upstream: the overlay only paints.
+
+## Claude Code transcripts repeat a response's usage on every row
+
+A transcript row is written per content block — thinking, text, each tool
+call — and every row of one response carries that response's full `usage`.
+Summing rows counted a typical response two to five times: the AI disclosure
+overstated output about 2.9× and responses about 1.9× until 1.5.1. Count per
+`(message.id, requestId)`. Subagent transcripts live one level down, in
+`<session>/subagents/`, and headless `claude -p` runs leave no transcript at
+all. Rows are written as each response completes, so a turn still running is
+in the transcript up to its last finished call.
+
+## The usage limits weigh models differently, even per list-price dollar
+
+Fitted on readings of 2026-09-27: within a model, list price (output 5×
+input, cache write 2×, cache read 0.1× or less) explains the rises far better
+than the harness's token count; across models it does not — one list-price
+dollar of Opus 5.5 moved the 5-hour window about a quarter as far as one of
+Sonnet 5. `~/building_stuff/scripts/claude-usage.mjs --calibrate` refits this
+from the logged readings; the factors will move as readings accumulate.
