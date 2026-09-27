@@ -1,4 +1,4 @@
-<!-- Tradução de README.md — estado: commit d8e8398.
+<!-- Tradução de README.md — estado: commit efd5256.
      Tradução automática (Claude Opus 5), não revisada por falantes nativos.
      Correções são bem-vindas; o README em inglês é a versão de referência. -->
 
