@@ -30,10 +30,16 @@ PLUGINS=(
 	-p id:home-launcher
 )
 
-npx --yes obsidian-launcher@3 launch --version "$VERSION" --copy "${PLUGINS[@]}" .dev/test-vault \
-	-- --remote-debugging-port="$PORT" ${OBSIDIAN_EXTRA_ARGS:-} >"$LOG" 2>&1 &
-LAUNCHER=$!
-trap 'kill $LAUNCHER 2>/dev/null; pkill -P $LAUNCHER 2>/dev/null' EXIT
+# The installer (Electron) goes with the app: the newest for "latest", the
+# oldest that can run it for "earliest" — which is what users on each end have.
+INSTALLER="${OBSIDIAN_INSTALLER:-$([ "$VERSION" = earliest ] && echo earliest || echo latest)}"
+
+# `launch` starts Obsidian detached and returns; Obsidian is stopped on exit by
+# where it runs from — the launcher's cache — so a system Obsidian is untouched.
+CACHE="${OBSIDIAN_CACHE:-$HOME/.obsidian-cache}"
+trap 'pkill -f "$CACHE/" 2>/dev/null' EXIT
+npx --yes obsidian-launcher@3 launch --version "$VERSION" --installer "$INSTALLER" --copy "${PLUGINS[@]}" .dev/test-vault \
+	-- --remote-debugging-port="$PORT" ${OBSIDIAN_EXTRA_ARGS:-} >"$LOG" 2>&1
 
 # The port answers before the vault has loaded; wait for a page target and for
 # the plugin itself.
@@ -44,7 +50,6 @@ for _ in $(seq 1 240); do
 			break
 		fi
 	fi
-	kill -0 $LAUNCHER 2>/dev/null || break
 	sleep 1
 done
 if [ -z "${ready:-}" ]; then

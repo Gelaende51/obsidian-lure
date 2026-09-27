@@ -192,6 +192,19 @@ gh attestation verify main.js --repo Gelaende51/obsidian-lure
 
 There are no unit tests. The features here are conversations between the path bar, Obsidian's suggest popover, an `ItemView` and the filesystem, and every bug found so far has lived in the gaps between those — so the suites drive a *live* Obsidian over the DevTools protocol and assert what the user would see: what the DOM says, and what is on disk afterwards.
 
+### On GitHub's runners
+
+A suite takes the focus and runs for minutes, so they run on GitHub's runners rather than on the machine you are working at. `.github/workflows/test.yml` gives each suite a sandboxed Obsidian of its own — [obsidian-launcher](https://www.npmjs.com/package/obsidian-launcher) downloads it, installs this build and the peer plugins the compatibility suites switch on, and opens a copy of `.dev/test-vault` (the notes of the L'Éclaire demo vault) — on a virtual display, once on the manifest's `minAppVersion` and once on the latest Obsidian. It runs on every push to a branch (documentation-only pushes excepted), before every release (`release.yml` only publishes when it passes), and on demand:
+
+```bash
+.dev/test-remote.sh                     # push first; every suite, both versions, waits for the result
+.dev/test-remote.sh test-tab test-drop  # only these
+OBSIDIAN=latest .dev/test-remote.sh test-tab
+.dev/ci-run.sh test-tab                 # the same sandboxed run locally (needs a display; downloads Obsidian once)
+```
+
+A suite that exits 2 — cases it could not ask on that display — passes with a warning; the Obsidian log of a failed suite is attached to the run.
+
 ```bash
 node .dev/test-external.mjs          # outside-the-vault behaviour
 node .dev/test-external.mjs edit     # only tests whose name matches
