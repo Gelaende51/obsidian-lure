@@ -58,4 +58,5 @@ if [ -z "${ready:-}" ]; then
 	exit 1
 fi
 
+OBSIDIAN_CDP_PORT="$PORT" node .dev/ci-prepare.mjs || exit 1
 OBSIDIAN_CDP_PORT="$PORT" node ".dev/$SUITE.mjs"
