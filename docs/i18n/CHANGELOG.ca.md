@@ -9,6 +9,13 @@
 
 Cada versió de Lure, de la més nova a la més antiga. El que ha arribat des de la darrera versió és a *Sense publicar*. Les versions no porten el prefix `v`, igual que les etiquetes de les versions.
 
+## 1.5.1 — 2026-09-27[^1.5.1]
+
+### Corregit
+
+- **Una nota arrossegada des de l'Explorador de fitxers cap a una carpeta de la barra de camí s'obria a la pestanya en lloc de moure-s'hi.** Un arrossegament amb la mà entra a la capçalera abans d'arribar a una carpeta, i el ressaltat d'Obsidian per a *Obre en aquesta pestanya* llavors quedava per sobre de tota la capçalera, carpetes incloses, de manera que mai s'arribava a cap carpeta.
+- **Una nota arrossegada cap a una carpeta que ja té el seu nom s'obria a la pestanya** en lloc de preguntar què fer amb el fitxer que hi és al mig, tal com deia la 1.5.0 que faria. Ara obre el mateix diàleg que en triar un nom ja agafat.
+
 ## 1.5.0 — 2026-09-23[^1.5.0]
 
 ### Afegit
@@ -212,6 +219,7 @@ Primera versió. Substitueix el nom del fitxer a la capçalera d'una nota per un
 - **Fora del cofre** (desactivat per defecte): el nom del cofre obre els teus altres cofres, la carpeta personal, l'arrel del sistema de fitxers i les unitats muntades. No s'hi escriu res fins que ho desbloquegis, i una nota només es pot copiar fora del cofre, mai moure.
 - **45 idiomes.**
 
+[^1.5.1]: Canvis des de la 1.5.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: Canvis des de la 1.4.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: Canvis des de la 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Canvis des de la 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>

@@ -8,6 +8,13 @@
 
 Katrs Lure laidiens, jaunākais pirmais. Tas, kas ienācis kopš pēdējā laidiena, ir sadaļā *Neizdots*. Versijām nav `v` priedēkļa, tāpat kā laidienu tagiem.
 
+## 1.5.1 — 2026-09-27[^1.5.1]
+
+### Labots
+
+- **Piezīme, kas nomesta no File Explorer uz mapi ceļa joslā, atvērās cilnē, nevis pārvietojās uz turieni.** Vilkšana ar roku ieiet galvenē, pirms tā sasniedz mapi, un Obsidian izcēlums *Open in this tab* tad pārklāja visu galveni, ieskaitot mapes, tāpēc neviena mape nekad netika sasniegta.
+- **Piezīme, kas nomesta uz mapi, kurā tās nosaukums jau ir, atvērās cilnē** tā vietā, lai vaicātu, ko darīt ar failu, kas ir ceļā, kā to solīja 1.5.0. Tagad tas atver to pašu dialogu, kas parādās, izvēloties aizņemtu nosaukumu.
+
 ## 1.5.0 — 2026-09-23[^1.5.0]
 
 ### Pievienots
@@ -211,6 +218,7 @@ Pirmais laidiens. Aizstāj faila nosaukumu piezīmes galvenē ar uzklikšķinām
 - **Ārpus glabātavas** (pēc noklusējuma izslēgts): glabātavas nosaukums atver tavas pārējās glabātavas, mājas mapi, failu sistēmas sakni un pievienotos diskus. Tur ārā nekas netiek rakstīts, kamēr to neatslēdz, un piezīmi no glabātavas var tikai izkopēt, nekad pārvietot.
 - **45 valodas.**
 
+[^1.5.1]: Izmaiņas kopš 1.5.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: Izmaiņas kopš 1.4.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: Izmaiņas kopš 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Izmaiņas kopš 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>

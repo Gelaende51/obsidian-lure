@@ -9,6 +9,13 @@
 
 Çdo publikim i Lure, më i riu i pari. Ajo që ka ardhur që nga publikimi i fundit ndodhet nën *Të papublikuara*. Versionet nuk kanë prapashtesën `v`, njësoj si etiketat e publikimeve.
 
+## 1.5.1 — 2026-09-27[^1.5.1]
+
+### Të ndrequra
+
+- **Një shënim i lëshuar nga File Explorer mbi një dosje në shiritin e shtegut u hap në skedë në vend që të zhvendosej atje.** Një tërheqje me dorë hyn në krye para se të arrijë një dosje, dhe theksimi i Obsidian-it për *Open in this tab* mbulonte pastaj gjithë krerën, dosjet përfshirë, kështu që asnjë dosje nuk arrihej kurrë.
+- **Një shënim i lëshuar mbi një dosje që tashmë mban emrin e tij u hap në skedë** në vend që të pyeste çfarë të bëhej me skedarin që ishte në rrugë, siç thoshte 1.5.0 se do të bënte. Tani hap të njëjtin dialog si zgjedhja e një emri të zënë.
+
 ## 1.5.0 — 2026-09-23[^1.5.0]
 
 ### Të shtuara
@@ -212,6 +219,7 @@ Publikimi i parë. E zëvendëson emrin e skedarit në kokën e një shënimi me
 - **Jashtë kasafortës** (e fikur si parazgjedhje): emri i kasafortës hap kasafortat e tua të tjera, dosjen e shtëpisë, rrënjën e sistemit të skedarëve dhe disqet e montuara. Atje jashtë nuk shkruhet asgjë derisa ta shkyçësh, dhe një shënim mund vetëm të kopjohet jashtë kasafortës, kurrë të zhvendoset.
 - **45 gjuhë.**
 
+[^1.5.1]: Ndryshimet që nga 1.5.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: Ndryshimet që nga 1.4.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: Ndryshimet që nga 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Ndryshimet që nga 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>

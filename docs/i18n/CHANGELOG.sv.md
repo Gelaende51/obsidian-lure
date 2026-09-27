@@ -9,6 +9,13 @@
 
 Varje utgåva av Lure, nyast först. Det som har landat sedan den senaste utgåvan ligger under *Ej släppt*. Versionerna bär inget `v`-prefix, i linje med utgåvetaggarna.
 
+## 1.5.1 — 2026-09-27[^1.5.1]
+
+### Rättat
+
+- **En anteckning som drogs från File Explorer till en mapp i sökvägsfältet öppnades i fliken i stället för att flyttas dit.** En handdragning når rubriken innan den når en mapp, och Obsidians markering för *Öppna i den här fliken* låg då över hela rubriken, mappar inkluderat, så ingen mapp nåddes någonsin.
+- **En anteckning som släpptes på en mapp som redan har en fil med samma namn öppnades i fliken** i stället för att fråga vad som skulle göras med filen i vägen, som 1.5.0 sade att den skulle. Den öppnar nu samma dialog som att välja ett upptaget namn.
+
 ## 1.5.0 — 2026-09-23[^1.5.0]
 
 ### Tillagt
@@ -212,6 +219,7 @@ Första utgåvan. Ersätter filnamnet i en anteckningens rubrikrad med en klickb
 - **Utanför valvet** (avstängt som standard): valvets namn öppnar dina andra valv, hemmappen, filsystemets rot och monterade enheter. Ingenting där ute skrivs förrän du låser upp det, och en anteckning kan bara kopieras ut ur valvet, aldrig flyttas.
 - **45 språk.**
 
+[^1.5.1]: Ändringar sedan 1.5.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: Ändringar sedan 1.4.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: Ändringar sedan 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Ändringar sedan 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>

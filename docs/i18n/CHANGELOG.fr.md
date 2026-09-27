@@ -8,6 +8,13 @@
 
 Toutes les versions de Lure, de la plus récente à la plus ancienne. Ce qui a été ajouté depuis la dernière version figure sous *Non publié*. Les numéros de version ne portent pas de préfixe `v`, comme les étiquettes de publication.
 
+## 1.5.1 — 2026-09-27[^1.5.1]
+
+### Corrigé
+
+- **Une note déposée depuis l'Explorateur de fichiers sur un dossier dans la barre de chemin s'ouvrait dans l'onglet au lieu d'y être déplacée.** Un glisser à la souris atteint l'en-tête avant d'atteindre un dossier, et la mise en surbrillance d'Obsidian pour *Ouvrir dans cet onglet* recouvrait alors tout l'en-tête, dossiers compris, si bien qu'aucun dossier n'était jamais atteint.
+- **Une note déposée sur un dossier qui contenait déjà son nom s'ouvrait dans l'onglet** au lieu de demander quoi faire du fichier qui fait obstacle, comme la 1.5.0 l'annonçait. Cela ouvre désormais la même boîte de dialogue que le choix d'un nom déjà pris.
+
 ## 1.5.0 — 2026-09-23[^1.5.0]
 
 ### Ajouté
@@ -210,6 +217,7 @@ Première version. Remplace le nom de fichier dans l'en-tête d'une note par un 
 - **Hors du coffre** (désactivé par défaut) : le nom du coffre ouvre vos autres coffres, votre dossier personnel, la racine du système de fichiers et les disques montés. Rien n'y est écrit tant que vous ne l'avez pas déverrouillé, et une note ne peut être que copiée hors du coffre, jamais déplacée.
 - **45 langues.**
 
+[^1.5.1]: Modifications depuis 1.5.0 : <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: Modifications depuis 1.4.0 : <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: Modifications depuis 1.3.0 : <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Modifications depuis 1.2.0 : <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>

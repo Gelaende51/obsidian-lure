@@ -9,6 +9,13 @@
 
 Kaikki Luren julkaisut, uusin ensin. Se, mikä on valmistunut viimeisimmän julkaisun jälkeen, on kohdassa *Julkaisematon*. Versionumeroissa ei ole `v`-etuliitettä, samoin kuin julkaisutunnisteissa.
 
+## 1.5.1 — 2026-09-27[^1.5.1]
+
+### Korjattu
+
+- **Tiedostoselaimesta polkupalkin kansioon pudotettu muistiinpano avautui välilehteen sen sijaan, että se olisi siirtynyt sinne.** Käden veto siirtyy ylätunnisteeseen ennen kuin se saavuttaa kansion, ja Obsidianin *Avaa tässä välilehdessä* -korostus peitti tuolloin koko ylätunnisteen, kansiot mukaan lukien, joten kansiota ei koskaan tavoitettu.
+- **Kansioon, jolla oli jo tiedoston nimi, pudotettu muistiinpano avautui välilehteen** sen sijaan, että se olisi kysynyt, mitä tielle jääneelle tiedostolle tehdään, kuten 1.5.0 lupasi. Se avaa nyt saman valintaikkunan kuin varatun nimen valitseminen.
+
 ## 1.5.0 — 2026-09-23[^1.5.0]
 
 ### Lisätty
@@ -212,6 +219,7 @@ Ensimmäinen julkaisu. Korvaa muistiinpanon otsikkorivillä olevan tiedostonimen
 - **Holvin ulkopuolella** (oletuksena pois päältä): holvin nimi avaa muut holvisi, kotikansion, tiedostojärjestelmän juuren ja liitetyt asemat. Mitään siellä ei kirjoiteta, ennen kuin avaat lukituksen, ja muistiinpanon voi vain kopioida holvista ulos, ei koskaan siirtää.
 - **45 kieltä.**
 
+[^1.5.1]: Muutokset version 1.5.0 jälkeen: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: Muutokset version 1.4.0 jälkeen: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: Muutokset version 1.3.0 jälkeen: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Muutokset version 1.2.0 jälkeen: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>

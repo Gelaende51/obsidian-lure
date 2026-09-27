@@ -9,6 +9,13 @@
 
 Fiecare versiune a Lure, cea mai nouă prima. Ce a apărut de la ultima versiune se află sub *Nelansate*. Versiunile nu poartă prefixul `v`, la fel ca etichetele de lansare.
 
+## 1.5.1 — 2026-09-27[^1.5.1]
+
+### Corectat
+
+- **O notă trasă din Explorator de fișiere peste un dosar din bara de cale se deschidea în filă în loc să se mute acolo.** O tragere cu mâna intră în antet înainte să ajungă la un dosar, iar evidențierea din Obsidian pentru *Deschide în această filă* se așeza atunci peste tot antetul, dosare incluse, așa că niciun dosar nu era vreodată atins.
+- **O notă trasă peste un dosar care are deja numele ei se deschidea în filă** în loc să întrebe ce să facă cu fișierul care stă în cale, așa cum spunea 1.5.0 că se va întâmpla. Acum deschide același dialog ca la alegerea unui nume ocupat.
+
 ## 1.5.0 — 2026-09-23[^1.5.0]
 
 ### Adăugat
@@ -212,6 +219,7 @@ Prima lansare. Înlocuiește numele fișierului din antetul unei notițe cu un t
 - **În afara seifului** (dezactivat implicit): numele seifului deschide celelalte seifuri, dosarul personal, rădăcina sistemului de fișiere și unitățile montate. Nimic de acolo nu este scris până nu deblochezi, iar o notiță poate fi doar copiată în afara seifului, niciodată mutată.
 - **45 de limbi.**
 
+[^1.5.1]: Modificări de la 1.5.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: Modificări de la 1.4.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: Modificări de la 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Modificări de la 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>

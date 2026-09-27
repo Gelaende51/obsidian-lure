@@ -9,6 +9,13 @@
 
 Mọi bản phát hành của Lure, mới nhất ở trên cùng. Những gì đã được đưa vào kể từ bản phát hành gần nhất nằm dưới mục *Chưa phát hành*. Số phiên bản không có tiền tố `v`, khớp với các thẻ phát hành.
 
+## 1.5.1 — 2026-09-27[^1.5.1]
+
+### Đã sửa
+
+- **Một ghi chú được kéo thả từ File Explorer vào một thư mục trên thanh đường dẫn lại mở trong tab đó thay vì di chuyển tới đó.** Một thao tác kéo bằng tay đi vào phần đầu trang trước khi nó chạm tới một thư mục, và phần tô sáng của Obsidian cho *Open in this tab* khi đó phủ lên toàn bộ phần đầu trang, kể cả các thư mục, nên chưa từng có thư mục nào thực sự được chạm tới.
+- **Một ghi chú được thả vào một thư mục đã có sẵn tên đó lại mở trong tab** thay vì hỏi phải làm gì với tệp đang chắn đường, như 1.5.0 đã nói sẽ làm. Giờ đây nó mở cùng hộp thoại như khi chọn một tên đã bị dùng.
+
 ## 1.5.0 — 2026-09-23[^1.5.0]
 
 ### Đã thêm
@@ -212,6 +219,7 @@ Bản phát hành đầu tiên. Thay tên tệp trên thanh tiêu đề của gh
 - **Ngoài kho** (mặc định tắt): tên kho mở ra các kho khác của bạn, thư mục home, gốc hệ thống tệp và các ổ đĩa đã gắn. Không gì ở ngoài đó được ghi cho tới khi bạn mở khóa, và một ghi chú chỉ có thể được sao chép ra khỏi kho, không bao giờ bị di chuyển.
 - **45 ngôn ngữ.**
 
+[^1.5.1]: Thay đổi kể từ 1.5.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: Thay đổi kể từ 1.4.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: Thay đổi kể từ 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Thay đổi kể từ 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>

@@ -8,6 +8,13 @@
 
 Todas as versões do Lure, da mais recente para a mais antiga. O que chegou desde a última versão está em *Por lançar*. Os números de versão não levam prefixo `v`, tal como as etiquetas das versões.
 
+## 1.5.1 — 2026-09-27[^1.5.1]
+
+### Corrigido
+
+- **Uma nota largada a partir do Explorador de Ficheiros sobre uma pasta na barra de caminho abria no separador em vez de se mover para lá.** Um arrasto de mão entra no cabeçalho antes de chegar a uma pasta, e o destaque do Obsidian para *Abrir neste separador* cobria então todo o cabeçalho, pastas incluídas, pelo que nunca se chegava a nenhuma pasta.
+- **Uma nota largada sobre uma pasta que já tinha esse nome abria no separador** em vez de perguntar o que fazer com o ficheiro que estava no caminho, como a 1.5.0 dizia que faria. Agora abre a mesma caixa de diálogo de quando se escolhe um nome já ocupado.
+
 ## 1.5.0 — 2026-09-23[^1.5.0]
 
 ### Adicionado
@@ -211,6 +218,7 @@ Primeira versão. Substitui o nome do ficheiro no cabeçalho de uma nota por um 
 - **Fora do cofre** (desativado por predefinição): o nome do cofre abre os seus outros cofres, a pasta pessoal, a raiz do sistema de ficheiros e as unidades montadas. Nada lá fora é escrito enquanto não o desbloquear, e uma nota só pode ser copiada para fora do cofre, nunca movida.
 - **45 idiomas.**
 
+[^1.5.1]: Alterações desde 1.5.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: Alterações desde 1.4.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: Alterações desde 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Alterações desde 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>

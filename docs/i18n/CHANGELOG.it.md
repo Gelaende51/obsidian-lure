@@ -9,6 +9,13 @@
 
 Ogni release di Lure, dalla più recente. Ciò che è arrivato dopo l'ultima release sta sotto *Non rilasciato*. Le versioni non hanno il prefisso `v`, come i tag delle release.
 
+## 1.5.1 — 2026-09-27[^1.5.1]
+
+### Corretto
+
+- **Una nota trascinata dall'Esplora file su una cartella nella barra del percorso si apriva nella scheda invece di spostarsi lì.** Un trascinamento con il mouse raggiunge l'intestazione prima di raggiungere una cartella, e l'evidenziazione di Obsidian per *Apri in questa scheda* copriva quindi l'intera intestazione, cartelle comprese, così da non raggiungere mai alcuna cartella.
+- **Una nota trascinata su una cartella che già conteneva il suo nome si apriva nella scheda** invece di chiedere cosa fare del file di intralcio, come annunciato dalla 1.5.0. Ora si apre la stessa finestra di dialogo che compare scegliendo un nome già in uso.
+
 ## 1.5.0 — 2026-09-23[^1.5.0]
 
 ### Aggiunto
@@ -212,6 +219,7 @@ Prima release. Sostituisce il nome del file nell'intestazione di una nota con un
 - **Fuori dal vault** (disattivato di default): il nome del vault apre gli altri vault, la cartella home, la radice del file system e le unità montate. Nulla là fuori viene scritto finché non lo sblocchi, e una nota può solo essere copiata fuori dal vault, mai spostata.
 - **45 lingue.**
 
+[^1.5.1]: Modifiche dopo la 1.5.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: Modifiche dopo la 1.4.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: Modifiche dopo la 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Modifiche dopo la 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>

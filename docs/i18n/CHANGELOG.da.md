@@ -8,6 +8,13 @@
 
 Hver udgivelse af Lure, nyeste først. Det, der er kommet til siden seneste udgivelse, står under *Ikke udgivet*. Versioner har intet `v`-præfiks, så de svarer til udgivelsesmærkerne.
 
+## 1.5.1 — 2026-09-27[^1.5.1]
+
+### Rettet
+
+- **En note, der blev trukket fra Filoversigt hen på en mappe i stilinjen, blev åbnet i fanebladet i stedet for at flytte dertil.** Et håndtræk går ind i overskriften, før det når en mappe, og Obsidians fremhævning for *Åbn i dette faneblad* lå så over hele overskriften, mapper inklusive, så ingen mappe blev nogensinde nået.
+- **En note, der blev sluppet på en mappe, som allerede havde dens navn, blev åbnet i fanebladet** i stedet for at spørge, hvad der skulle ske med filen i vejen, som 1.5.0 sagde, den ville. Den åbner nu den samme dialog som at vælge et taget navn.
+
 ## 1.5.0 — 2026-09-23[^1.5.0]
 
 ### Tilføjet
@@ -211,6 +218,7 @@ Første udgivelse. Erstatter filnavnet i en notes overskriftslinje med en klikba
 - **Uden for boksen** (slået fra som standard): boksens navn åbner dine andre bokse, hjemmemappen, filsystemets rod og tilsluttede drev. Intet derude bliver skrevet, før du låser op, og en note kan kun kopieres ud af boksen, aldrig flyttes.
 - **45 sprog.**
 
+[^1.5.1]: Ændringer siden 1.5.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: Ændringer siden 1.4.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: Ændringer siden 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Ændringer siden 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>

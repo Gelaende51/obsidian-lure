@@ -9,6 +9,13 @@
 
 Hver utgivelse av Lure, den nyeste først. Det som har kommet inn siden forrige utgivelse, står under *Ikke utgitt*. Versjonene har ingen `v` foran seg, slik som utgivelsesmerkene.
 
+## 1.5.1 — 2026-09-27[^1.5.1]
+
+### Rettet
+
+- **Et notat som ble dratt fra Filutforsker til en mappe i stilinjen, ble åpnet i fanen i stedet for å flytte dit.** Et håndtrekk går inn i overskriften før det når en mappe, og Obsidians utheving for *Åpne i denne fanen* lå da over hele overskriften, mapper inkludert, så ingen mappe ble noensinne nådd.
+- **Et notat som ble sluppet på en mappe som allerede hadde navnet dets, ble åpnet i fanen** i stedet for å spørre hva som skulle skje med filen i veien, slik 1.5.0 sa den ville. Den åpner nå den samme dialogen som å velge et navn som allerede er i bruk.
+
 ## 1.5.0 — 2026-09-23[^1.5.0]
 
 ### Lagt til
@@ -212,6 +219,7 @@ Første utgivelse. Erstatter filnavnet i overskriftslinjen til et notat med en k
 - **Utenfor hvelvet** (av som standard): hvelvnavnet åpner de andre hvelvene dine, hjemmemappen, roten av filsystemet og monterte stasjoner. Ingenting der ute skrives før du låser det opp, og et notat kan bare kopieres ut av hvelvet, aldri flyttes.
 - **45 språk.**
 
+[^1.5.1]: Endringer siden 1.5.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: Endringer siden 1.4.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: Endringer siden 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Endringer siden 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>

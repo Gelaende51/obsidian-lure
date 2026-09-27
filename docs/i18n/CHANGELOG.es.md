@@ -9,6 +9,13 @@
 
 Todas las versiones de Lure, de la más reciente a la más antigua. Lo que ha entrado desde la última versión está bajo *Sin publicar*. Los números de versión no llevan el prefijo `v`, igual que las etiquetas de publicación.
 
+## 1.5.1 — 2026-09-27[^1.5.1]
+
+### Corregido
+
+- **Una nota soltada desde el Explorador de archivos sobre una carpeta en la barra de ruta se abría en la pestaña en lugar de moverse allí.** Un arrastre con el ratón entra en la cabecera antes de llegar a una carpeta, y el resaltado de Obsidian para *Abrir en esta pestaña* cubría entonces toda la cabecera, carpetas incluidas, de modo que nunca se llegaba a ninguna carpeta.
+- **Una nota soltada sobre una carpeta que ya contenía su nombre se abría en la pestaña** en lugar de preguntar qué hacer con el archivo que estorba, como decía la 1.5.0 que haría. Ahora abre el mismo diálogo que al elegir un nombre ya utilizado.
+
 ## 1.5.0 — 2026-09-23[^1.5.0]
 
 ### Añadido
@@ -212,6 +219,7 @@ Primera versión. Sustituye el nombre de archivo del encabezado de una nota por 
 - **Fuera de la bóveda** (desactivado por defecto): el nombre de la bóveda abre tus otras bóvedas, tu carpeta personal, la raíz del sistema de archivos y las unidades montadas. Ahí fuera no se escribe nada hasta que lo desbloquees, y una nota solo se puede copiar fuera de la bóveda, nunca mover.
 - **45 idiomas.**
 
+[^1.5.1]: Cambios desde 1.5.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: Cambios desde 1.4.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: Cambios desde 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Cambios desde 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>

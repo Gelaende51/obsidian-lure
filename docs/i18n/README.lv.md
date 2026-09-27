@@ -15,7 +15,7 @@ Obsidian 1.8.7+ · tikai datoram · AGPL-3.0
 ## Paziņojums par MI
 
 - **Aģents** — **Claude Opus 5 / 5.5** un **Claude Sonnet 5** (Anthropic, caur Claude Code): uzrakstīja TypeScript kodu, CSS, visus 45 tulkojumu komplektus un dokumentāciju. Tulkojumi ir mašīnas veidoti, un dzimtās valodas runātāji tos nav pārlasījuši.
-- **Patēriņš** — 2026. gada 3. augusts – 23. septembris, 25 sesijas, \~17 973 atbildes: \~21,1 milj. ģenerētu marķieru, \~91,2 milj. nosūtītu, \~5817,0 milj. atkārtotu nolasījumu no kešatmiņas (\~5929,3 milj. kopā).
+- **Patēriņš** — 2026. gada 3. augusts – 27. septembris, 35 sesijas, \~19 096 atbildes: \~22,0 milj. ģenerētu marķieru, \~98,3 milj. nosūtītu, \~6058,1 milj. atkārtotu nolasījumu no kešatmiņas (\~6178,5 milj. kopā).
 - **Pirmavots** — modelis mācījās no atvērtā pirmkoda, dokumentācijas un kopienas rakstiem, ko publicējuši citi. Lielākā daļa nopelnu pieder tiem.
 - **Autors** — Vault51: noteica katru funkciju, izmēģināja katru versiju īstā glabātavā, vadīja labojumus, pārskatīja visus rezultātus.
 

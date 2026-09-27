@@ -9,6 +9,13 @@
 
 A Lure minden kiadása, a legújabbal kezdve. Ami a legutóbbi kiadás óta került be, a *Kiadatlan* szakaszban található. A verziószámok elé nem kerül `v` előtag, így megegyeznek a kiadási címkékkel.
 
+## 1.5.1 — 2026-09-27[^1.5.1]
+
+### Javítva
+
+- **A Fájlkezelőből egy mappára húzott jegyzet a fülön nyílt meg ahelyett, hogy oda került volna.** A kézzel történő húzás már a fejlécbe belépve érzékelhető, mielőtt elérné a mappát, és az Obsidian *Megnyitás ebben a fülben* kiemelése ekkor a teljes fejlécet lefedte, a mappákkal együtt, így soha nem sikerült elérni egyetlen mappát sem.
+- **Egy olyan mappára húzott jegyzet, amely már tartalmazza a nevét, a fülön nyílt meg** ahelyett, hogy megkérdezte volna, mi történjen az útban lévő fájllal, ahogyan azt az 1.5.0 ígérte. Mostantól ugyanaz a párbeszédablak nyílik meg, mint egy foglalt név kiválasztásakor.
+
 ## 1.5.0 — 2026-09-23[^1.5.0]
 
 ### Hozzáadva
@@ -212,6 +219,7 @@ Első kiadás. A jegyzet fejlécében lévő fájlnevet a széfbeli útvonalát 
 - **A széfen kívül** (alapból kikapcsolva): a széf neve megnyitja a többi széfedet, a saját mappádat, a fájlrendszer gyökerét és a csatolt meghajtókat. Odakint semmi sem íródik, amíg fel nem oldod, egy jegyzetet pedig csak kimásolni lehet a széfből, áthelyezni sosem.
 - **45 nyelv.**
 
+[^1.5.1]: Változások az 1.5.0 óta: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: Változások az 1.4.0 óta: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: Változások az 1.3.0 óta: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Változások az 1.2.0 óta: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>

@@ -8,6 +8,13 @@
 
 Setiap rilis Lure, yang terbaru lebih dulu. Apa yang sudah mendarat sejak rilis terakhir ada di bawah *Belum dirilis*. Versi tidak memakai awalan `v`, sesuai dengan tanda rilisnya.
 
+## 1.5.1 — 2026-09-27[^1.5.1]
+
+### Diperbaiki
+
+- **Catatan yang dijatuhkan dari File Explorer ke sebuah folder di bilah jalur malah terbuka di tab tersebut, bukannya berpindah ke sana.** Sebuah seret tangan memasuki header sebelum mencapai folder, dan sorotan Obsidian untuk *Open in this tab* saat itu melapisi seluruh header, termasuk folder, sehingga tidak ada folder yang pernah tercapai.
+- **Catatan yang dijatuhkan ke folder yang sudah memiliki namanya malah terbuka di tab** alih-alih bertanya apa yang harus dilakukan terhadap berkas yang menghalangi, sebagaimana dinyatakan oleh 1.5.0. Kini hal itu membuka dialog yang sama seperti saat memilih nama yang sudah dipakai.
+
 ## 1.5.0 — 2026-09-23[^1.5.0]
 
 ### Ditambahkan
@@ -211,6 +218,7 @@ Rilis pertama. Mengganti nama berkas di bilah judul sebuah catatan dengan jalur 
 - **Di luar vault** (mati secara bawaan): nama vault membuka vault Anda yang lain, folder rumah, akar sistem berkas, dan diska yang terpasang. Tak ada apa pun di luar sana yang ditulis sampai Anda membuka kuncinya, dan sebuah catatan hanya bisa disalin keluar dari vault, tak pernah dipindahkan.
 - **45 bahasa.**
 
+[^1.5.1]: Perubahan sejak 1.5.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: Perubahan sejak 1.4.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: Perubahan sejak 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Perubahan sejak 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>

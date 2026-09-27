@@ -9,6 +9,13 @@
 
 Lure'un her sürümü, en yenisi en üstte. Son sürümden bu yana gelenler *Yayımlanmamış* başlığı altındadır. Sürüm numaraları, sürüm etiketleriyle uyumlu olarak `v` öneki taşımaz.
 
+## 1.5.1 — 2026-09-27[^1.5.1]
+
+### Düzeltilenler
+
+- **Dosya Gezgini'nden yol çubuğundaki bir klasöre sürüklenip bırakılan bir not, oraya taşınmak yerine sekmede açıldı.** Bir el sürüklemesi bir klasöre ulaşmadan önce başlığa girer ve Obsidian'ın *Bu sekmede aç* vurgusu, o sırada klasörler dahil tüm başlığın üzerine gelir, böylece hiçbir klasöre asla ulaşılmaz.
+- **Zaten adını taşıyan bir klasöre bırakılan bir not, 1.5.0'ın söylediği gibi yolda olan dosyayla ne yapılacağını sormak yerine sekmede açıldı.** Artık alınmış bir ad seçmekle aynı iletişim kutusunu açıyor.
+
 ## 1.5.0 — 2026-09-23[^1.5.0]
 
 ### Eklenenler
@@ -212,6 +219,7 @@ Lure'un her sürümü, en yenisi en üstte. Son sürümden bu yana gelenler *Yay
 - **Kasanın dışında** (öntanımlı olarak kapalı): kasa adı diğer kasalarınızı, ev klasörünüzü, dosya sistemi kökünü ve bağlı sürücüleri açar. Siz kilidini açana kadar orada hiçbir şey yazılmaz ve bir not kasanın dışına yalnızca kopyalanabilir, asla taşınamaz.
 - **45 dil.**
 
+[^1.5.1]: 1.5.0'dan bu yana değişiklikler: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: 1.4.0'dan bu yana değişiklikler: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: 1.3.0'dan bu yana değişiklikler: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: 1.2.0'dan bu yana değişiklikler: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>

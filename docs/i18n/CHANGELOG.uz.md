@@ -9,6 +9,13 @@
 
 Lure'ning har bir relizi, eng yangisi birinchi. Oxirgi relizdan beri qo‘shilganlar *Chiqarilmagan* bo‘limida. Versiyalar reliz teglariga mos ravishda `v` prefiksisiz yoziladi.
 
+## 1.5.1 — 2026-09-27[^1.5.1]
+
+### Tuzatildi
+
+- **Fayllar ko‘rinishidan yo‘l panelidagi papka ustiga tashlangan eslatma o‘sha yerga ko‘chish o‘rniga yorliqda ochilardi.** Qo‘l bilan sudrash sarlavhaga papkaga yetib borishidan oldin kiradi, Obsidian-ning *Ushbu yorliqda ochish* uchun ajratib ko‘rsatishi esa butun sarlavhani, papkalarni ham qo‘shib, qoplab qo‘yardi, shu sababli hech qanday papkaga hech qachon yetib bo‘lmasdi.
+- **Nomi allaqachon mavjud papka ustiga tashlangan eslatma yorliqda ochilardi**, 1.5.0 aytganidek yo‘lda turgan fayl haqida nima qilish kerakligini so‘rash o‘rniga. Endi u band nomni tanlashdagi bilan bir xil dialogni ochadi.
+
 ## 1.5.0 — 2026-09-23[^1.5.0]
 
 ### Qo‘shildi
@@ -212,6 +219,7 @@ Birinchi reliz. Qayd sarlavhasidagi fayl nomini ombordagi yo‘lning bosiladigan
 - **Ombordan tashqarida** (sukut bo‘yicha o‘chiq): ombor nomi boshqa omborlaringiz, uy papkasi, fayl tizimi ildizi va ulangan disklarni ochadi. U yerda qulfdan chiqarmaguningizcha hech narsa yozilmaydi, qaydni esa ombordan faqat nusxalab chiqarish mumkin, hech qachon ko‘chirib emas.
 - **45 til.**
 
+[^1.5.1]: 1.5.0 dan beri o‘zgarishlar: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: 1.4.0 dan beri o‘zgarishlar: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: 1.3.0 dan beri o‘zgarishlar: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: 1.2.0 dan beri o‘zgarishlar: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>

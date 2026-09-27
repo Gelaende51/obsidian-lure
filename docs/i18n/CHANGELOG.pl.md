@@ -9,6 +9,13 @@
 
 Każde wydanie Lure, od najnowszego. To, co pojawiło się od ostatniego wydania, znajduje się pod nagłówkiem *Niewydane*. Wersje nie mają przedrostka `v`, zgodnie ze znacznikami wydań.
 
+## 1.5.1 — 2026-09-27[^1.5.1]
+
+### Naprawiono
+
+- **Notatka upuszczona z Eksploratora Plików na folder na pasku ścieżki otwierała się w karcie zamiast się tam przenieść.** Przeciąganie ręką wchodzi do nagłówka, zanim dotrze do folderu, a podświetlenie Obsidiana dla *Otwórz w tej karcie* obejmowało wtedy cały nagłówek, łącznie z folderami, więc żaden folder nigdy nie został osiągnięty.
+- **Notatka upuszczona na folder, który już miał tę nazwę, otwierała się w karcie** zamiast pytać, co zrobić z plikiem stojącym na drodze, jak zapowiadała wersja 1.5.0. Teraz otwiera to samo okno dialogowe, co przy wybieraniu zajętej nazwy.
+
 ## 1.5.0 — 2026-09-23[^1.5.0]
 
 ### Dodano
@@ -211,6 +218,7 @@ Pierwsze wydanie. Zastępuje nazwę pliku w nagłówku notatki klikalną, edytow
 - **Poza skarbcem** (domyślnie wyłączone): nazwa skarbca otwiera inne skarbce, katalog domowy, katalog główny systemu plików i zamontowane napędy. Nic tam na zewnątrz nie jest zapisywane, dopóki tego nie odblokujesz, a notatkę można poza skarbiec tylko skopiować, nigdy przenieść.
 - **45 języków.**
 
+[^1.5.1]: Zmiany od 1.5.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: Zmiany od 1.4.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: Zmiany od 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
 [^1.3.0]: Zmiany od 1.2.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.2.0...1.3.0>
