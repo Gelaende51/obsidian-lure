@@ -112,6 +112,7 @@ jobs:
           # Ubuntu's AppArmor keeps Electron's sandbox from starting on the
           # runner; the suites drive a throwaway vault, nothing to sandbox from.
           OBSIDIAN_EXTRA_ARGS: --no-sandbox
+          LURE_SHOTS: shots
         run: |
           set +e
           xvfb-run -a -s "-screen 0 1920x1080x24" .dev/ci-run.sh "${{ matrix.suite }}"
@@ -120,9 +121,11 @@ jobs:
           # .dev/harness.mjs) — not a failure, but not to be read as clean.
           if [ $code -eq 2 ]; then echo "::warning::${{ matrix.suite }} skipped cases it could not ask here"; exit 0; fi
           exit $code
-      - name: Keep Obsidian's log
+      - name: Keep Obsidian's log and the failure screenshots
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: obsidian-log-${{ matrix.suite }}-${{ matrix.version }}
-          path: obsidian-*.log
+          name: failures-${{ matrix.suite }}-${{ matrix.version }}
+          path: |
+            obsidian-*.log
+            shots/

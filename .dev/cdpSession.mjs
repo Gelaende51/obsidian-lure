@@ -163,7 +163,9 @@ export async function connect() {
 		}
 	}
 
-	return { send, evaluate, close: () => socket.close() };
+	const session = { send, evaluate, close: () => socket.close() };
+	globalThis.__lureSession = session; // for harness.mjs's failure screenshots
+	return session;
 }
 
 

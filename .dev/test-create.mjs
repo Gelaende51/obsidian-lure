@@ -113,6 +113,9 @@ const fieldState = `
 	probe.remove();
 	return JSON.stringify({
 		value: input ? input.value : null,
+		// What was typed: the value without the offer selected at its end,
+		// which since 1.5.0 follows every step into a folder.
+		typed: input ? (input.selectionEnd === input.value.length && input.selectionStart < input.selectionEnd ? input.value.slice(0, input.selectionStart) : input.value) : null,
 		marked: input ? input.classList.contains("lure-will-create") : null,
 		red: input ? getComputedStyle(input).color === errorColor : null,
 		errorColor,
@@ -231,12 +234,12 @@ test("a slash in front of an empty field opens a path on the machine", async () 
 	await pressKey(page, "/");
 	await page.evaluate(PAUSE(350) + "return true;");
 	const opened = JSON.parse(await page.evaluate(fieldState));
-	expect("the slash is in the field", opened.value, "/");
+	expect("the slash is in the field", opened.typed, "/");
 	await page.send("Input.insertText", { text: "home" });
 	await pressKey(page, "/");
 	await page.evaluate(PAUSE(350) + "return true;");
 	const walked = JSON.parse(await page.evaluate(fieldState));
-	expect("and so is every slash after it", walked.value, "/home/");
+	expect("and so is every slash after it", walked.typed, "/home/");
 	const row = JSON.parse(await page.evaluate(`
 		const root = app.workspace.getMostRecentLeaf().view.containerEl
 			.querySelector(".view-header-title-container");

@@ -117,6 +117,21 @@ function readArgs(argv) {
  *
  * `skip` names cases a plain run leaves out — asked for by name, they run.
  */
+/** Screenshot and header HTML of the page, named after the case. */
+async function captureFailure(name, label) {
+	try {
+		const { mkdirSync, writeFileSync } = await import("node:fs");
+		const dir = process.env.LURE_SHOTS;
+		mkdirSync(dir, { recursive: true });
+		const base = `${dir}/${name.replace(/[^\w-]+/g, "_").slice(0, 80)}`;
+		const s = globalThis.__lureSession;
+		const png = await s.send("Page.captureScreenshot", { format: "png" });
+		if (png?.result?.data || png?.data) writeFileSync(`${base}.png`, Buffer.from(png.result?.data ?? png.data, "base64"));
+		const html = await s.evaluate(`return [...document.querySelectorAll(".view-header")].map((h) => h.outerHTML).join("\\n\\n");`);
+		writeFileSync(`${base}.html`, `<!-- first failure: ${label} -->\n${html ?? ""}`);
+	} catch {}
+}
+
 export function createSuite({ reset, teardown, skip, argv = process.argv.slice(2) } = {}) {
 	const results = [];
 	const tests = [];
@@ -124,12 +139,17 @@ export function createSuite({ reset, teardown, skip, argv = process.argv.slice(2
 
 	const test = (name, fn) => tests.push({ name, fn });
 
+	// With LURE_SHOTS=<dir> (set on CI), the first failed assertion of a case
+	// saves a screenshot and the header's HTML there — the state at the
+	// moment it failed, since a run on a runner cannot be looked at live.
+	let caseName = "", shot = null;
 	const expect = (label, actual, wanted) => {
 		const ok =
 			typeof wanted === "function"
 				? wanted(actual)
 				: JSON.stringify(actual) === JSON.stringify(wanted);
 		results.push({ ok, label, actual: ok ? "" : JSON.stringify(actual) });
+		if (!ok && !shot && process.env.LURE_SHOTS && globalThis.__lureSession) shot = captureFailure(caseName, label);
 		return ok;
 	};
 
@@ -172,6 +192,8 @@ export function createSuite({ reset, teardown, skip, argv = process.argv.slice(2
 				results.push({ ok: false, label: `${name} — reset threw`, actual: err.message });
 			}
 			let why = null;
+			caseName = name;
+			shot = null;
 			if (results.length === at) {
 				try {
 					await fn();
@@ -192,6 +214,7 @@ export function createSuite({ reset, teardown, skip, argv = process.argv.slice(2
 				console.log(`– ${name}\n    SKIP  ${why}`);
 				continue;
 			}
+			if (shot) await shot;
 			const mine = results.slice(at);
 			const failed = mine.filter((r) => !r.ok);
 			console.log(`${failed.length ? "✗" : "✓"} ${name}`);

@@ -254,7 +254,7 @@ test("a path from the root is offered the machine's names, not the vault's", asy
 	const s = JSON.parse(await page.evaluate(`
 		const input = document.querySelector(".lure-path-input");
 		return JSON.stringify({
-			value: input ? input.value : null,
+			value: input ? (input.selectionEnd === input.value.length && input.selectionStart < input.selectionEnd ? input.value.slice(0, input.selectionStart) : input.value) : null, // without the offer
 			rows: [...document.querySelectorAll(".suggestion-item .lure-suggest-label")].map((e) => e.textContent),
 			vaultRoots: app.vault.getRoot().children.map((f) => f.name),
 		});

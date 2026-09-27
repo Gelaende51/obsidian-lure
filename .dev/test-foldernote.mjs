@@ -193,7 +193,8 @@ test("with the swap off the delimiter no longer answers for it", async () => {
 	expect("nothing was made", after.made, before.made);
 });
 
-test("a folder's note is grey in the list, and so is the field naming it", async () => {
+test("a folder's note is marked in the list, and purple like any note there and in the field", async () => {
+	// Grey until 1.5.0; folders are bold now, so the note needs no colour of its own.
 	await withPeer();
 	await page.evaluate(`await app.vault.create("${ROOT}/child/child.md", ""); ${PAUSE(300)} return true;`);
 	await page.evaluate(openLeaf);
@@ -211,8 +212,8 @@ test("a folder's note is grey in the list, and so is the field naming it", async
 	await page.evaluate(`document.querySelector(".lure-path-input")?.select(); return true;`);
 	await page.send("Input.insertText", { text: "child" });
 	await page.evaluate(PAUSE(400) + "return true;");
-	expect("and the field heading for it wears the same grey",
-		await page.evaluate(`return document.querySelector(".lure-path-input")?.dataset.lureTint ?? null;`), "folder-note");
+	expect("and the field heading for it is purple like any note",
+		await page.evaluate(`return document.querySelector(".lure-path-input")?.dataset.lureTint ?? null;`), "md");
 });
 
 test("a folder note opens from the delimiter however deep its folder is", async () => {

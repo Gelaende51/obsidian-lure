@@ -63,7 +63,9 @@ const TRAP = `
 	}
 	window.__lureErrs.length = 0;
 `;
-const ERRS = `window.__lureErrs.filter((e) => /lure/i.test(e))`;
+// A whole word: "Plugin failure: …" contains "lure" too, and blamed Lure
+// for a peer that failed on its own.
+const ERRS = `window.__lureErrs.filter((e) => /(^|[^a-z])lure([^a-z]|$)/i.test(e))`;
 
 const enable = (id) => `await app.plugins.enablePlugin(${JSON.stringify(id)}); ${PAUSE(1200)}`;
 const disable = (id) => `await app.plugins.disablePlugin(${JSON.stringify(id)}); ${PAUSE(500)}`;
@@ -396,14 +398,28 @@ for (let i = 0; ; i++) {
 // Only now, with the plugin definitely up: swap in whatever is on disk.
 await reloadPlugin(page);
 
-const installed = await page.evaluate(
+const present = await page.evaluate(
 	`return ${JSON.stringify(PEERS.map((p) => p.id))}.filter((id) => !!(app.plugins.manifests || {})[id]);`,
 );
+// Installed is not the same as able to run: a peer's latest release may need
+// a newer Obsidian than the one under test. Its cases cannot be asked there.
+const refused = await page.evaluate(`
+	const out = [];
+	for (const id of ${JSON.stringify(present)}) {
+		if (app.plugins.plugins[id]) continue;
+		try { await app.plugins.loadPlugin(id); } catch {}
+		if (!app.plugins.plugins[id]) out.push(id);
+		else await app.plugins.unloadPlugin(id);
+	}
+	return out;
+`);
+const installed = present.filter((id) => !refused.includes(id));
 
 console.log("\nPeers found in this vault:");
 for (const peer of PEERS) {
 	const here = installed.includes(peer.id);
-	console.log(`  ${here ? "✓" : "·"} ${peer.name} (${peer.id}) — ${here ? peer.why : "not installed"}`);
+	const why = here ? peer.why : refused.includes(peer.id) ? `does not load on Obsidian ${await page.evaluate("return window.apiVersion ?? '?';")}` : "not installed";
+	console.log(`  ${here ? "✓" : "·"} ${peer.name} (${peer.id}) — ${why}`);
 }
 
 const original = await page.evaluate(`return [...app.plugins.enabledPlugins];`);
