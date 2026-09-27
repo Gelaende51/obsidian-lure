@@ -20,7 +20,14 @@ permissions:
   attestations: write
 
 jobs:
+  # The whole suite, on both Obsidian versions, before anything is published.
+  test:
+    uses: ./.github/workflows/test.yml
+    permissions:
+      contents: read
+
   release:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

@@ -1,0 +1,128 @@
+# Runs the test suites on GitHub's runners instead of a developer's machine:
+# a suite drives a real Obsidian through its DevTools port, takes the focus,
+# and runs for minutes — and here it gets a sandboxed Obsidian of its own
+# (obsidian-launcher, see .dev/ci-run.sh) on a virtual display.
+#
+# Runs on every push to a branch, before every release (release.yml calls it),
+# and on demand: Actions → Test → Run workflow, or `.dev/test-remote.sh`.
+name: Test
+
+on:
+  push:
+    branches: ["**"]
+    # Documentation and translations cannot break a suite.
+    paths-ignore: ["docs/**", "**/*.md", "LICENSE"]
+  workflow_dispatch:
+    inputs:
+      suites:
+        description: "Suites to run, space separated (empty: all), e.g. test-tab test-drop"
+        default: ""
+      obsidian:
+        description: "Obsidian versions"
+        type: choice
+        options: [both, latest, earliest]
+        default: both
+  workflow_call:
+
+concurrency:
+  group: test-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: ${{ github.event_name == 'push' }}
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      suites: ${{ steps.plan.outputs.suites }}
+      versions: ${{ steps.plan.outputs.versions }}
+      unit: ${{ steps.plan.outputs.unit }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: plan
+        env:
+          WANT_SUITES: ${{ inputs.suites }}
+          WANT_VERSIONS: ${{ inputs.obsidian }}
+        run: |
+          # A suite needs Obsidian when it connects to one; the others only
+          # bundle the sources and run in plain Node.
+          all=$(ls .dev/test-*.mjs | xargs -n1 basename | sed 's/\.mjs$//')
+          want=${WANT_SUITES:-$all}
+          app=(); unit=()
+          for s in $want; do
+            [ -f ".dev/$s.mjs" ] || { echo "::error::no suite .dev/$s.mjs"; exit 1; }
+            if grep -q 'connect()' ".dev/$s.mjs"; then app+=("$s"); else unit+=("$s"); fi
+          done
+          case "${WANT_VERSIONS:-both}" in
+            latest) versions='["latest"]' ;;
+            earliest) versions='["earliest"]' ;;
+            *) versions='["earliest","latest"]' ;;
+          esac
+          echo "suites=$(printf '%s\n' "${app[@]}" | jq -R . | jq -sc 'map(select(. != ""))')" >> "$GITHUB_OUTPUT"
+          echo "unit=$(printf '%s\n' "${unit[@]}" | jq -R . | jq -sc 'map(select(. != ""))')" >> "$GITHUB_OUTPUT"
+          echo "versions=$versions" >> "$GITHUB_OUTPUT"
+
+  unit:
+    needs: plan
+    if: needs.plan.outputs.unit != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: ${{ fromJSON(needs.plan.outputs.unit) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: node ".dev/${{ matrix.suite }}.mjs"
+
+  obsidian:
+    needs: plan
+    if: needs.plan.outputs.suites != '[]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: ${{ fromJSON(needs.plan.outputs.suites) }}
+        version: ${{ fromJSON(needs.plan.outputs.versions) }}
+    name: ${{ matrix.suite }} (Obsidian ${{ matrix.version }})
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - name: Build the plugin
+        run: node esbuild.config.mjs production
+      - name: Cache Obsidian downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.obsidian-cache
+          key: obsidian-${{ matrix.version }}-${{ runner.os }}-${{ hashFiles('manifest.json') }}
+          restore-keys: obsidian-${{ matrix.version }}-${{ runner.os }}-
+      - name: Run ${{ matrix.suite }}
+        env:
+          OBSIDIAN_VERSION: ${{ matrix.version }}
+          # Ubuntu's AppArmor keeps Electron's sandbox from starting on the
+          # runner; the suites drive a throwaway vault, nothing to sandbox from.
+          OBSIDIAN_EXTRA_ARGS: --no-sandbox
+        run: |
+          set +e
+          xvfb-run -a -s "-screen 0 1920x1080x24" .dev/ci-run.sh "${{ matrix.suite }}"
+          code=$?
+          # 2: cases that could not be asked on this display (see Skipped in
+          # .dev/harness.mjs) — not a failure, but not to be read as clean.
+          if [ $code -eq 2 ]; then echo "::warning::${{ matrix.suite }} skipped cases it could not ask here"; exit 0; fi
+          exit $code
+      - name: Keep Obsidian's log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: obsidian-log-${{ matrix.suite }}-${{ matrix.version }}
+          path: obsidian-*.log
