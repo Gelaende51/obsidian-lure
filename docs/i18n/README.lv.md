@@ -1,4 +1,4 @@
-<!-- README.md tulkojums — stāvoklis: revīzija 99fc83e.
+<!-- README.md tulkojums — stāvoklis: revīzija d8e8398.
      Mašīntulkojums (Claude Opus 5), ko nav pārlasījuši dzimtās valodas
      runātāji. Labojumi ir gaidīti; noteicošā ir README angļu valodā. -->
 

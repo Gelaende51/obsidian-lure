@@ -1,4 +1,4 @@
-<!-- Překlad README.md — stav: commit 99fc83e.
+<!-- Překlad README.md — stav: commit d8e8398.
      Strojový překlad (Claude Opus 5), nezkontrolovaný rodilými mluvčími.
      Opravy vítány; rozhodující verzí je anglické README. -->
 
