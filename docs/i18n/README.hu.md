@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · csak asztali gépen · AGPL-3.0
 ## MI-nyilatkozat
 
 - **Ügynök** — **Claude Opus 5 / 5.5** és **Claude Sonnet 5** (Anthropic, a Claude Code-on keresztül): megírta a TypeScript kódot, a CSS-t, mind a 45 fordításkészletet és a dokumentációt. A fordítások gépiek, anyanyelvi lektorálás nélkül.
-- **Fogyasztás** — 2026. augusztus 3. – szeptember 27., 35 munkamenet, \~19096 válasz: \~22,0 M előállított token, \~98,3 M elküldött, \~6058,1 M újraolvasás a gyorsítótárból (összesen \~6178,5 M).
+- **Fogyasztás** — 2026. augusztus 3. – szeptember 27., 31 munkamenet, \~10580 válasz: \~9,6 M előállított token, \~41,8 M elküldött, \~3116,2 M újraolvasás a gyorsítótárból (összesen \~3167,6 M); plusz 420 chatmunkamenet nélküli fordítási futtatás: \~3,6 M előállított, \~3,6 M elküldött.
 - **Forrás** — a modell nyílt forráskódú kódból, dokumentációból és mások által közzétett közösségi írásokból tanult. Az érdem nagyobb része őket illeti.
 - **Szerző** — Vault51: meghatározott minden funkciót, valódi széfben próbálta ki az egyes változatokat, irányította a javításokat, átnézte az összes eredményt.
 
