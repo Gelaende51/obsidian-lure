@@ -186,7 +186,14 @@ test("with the swap off the name carries it, because the name is what opens the 
 		hovered: document.elementFromPoint(${spot?.x ?? 0}, ${spot?.y ?? 0})?.className ?? null,
 		swap: app.plugins.plugins.lure.settings.swapSegmentActions });`);
 	expect("the name made it", s.made, (v) => v.includes(`${ROOT}/child/child.md`) || JSON.parse(seen));
-	expect("and opened it", s.active, `${ROOT}/child/child.md`);
+	// Opening can trail the reveal that precedes it; wait for it, and say
+	// where everything stood if it never comes.
+	const opened = JSON.parse(await page.evaluate(`
+		for (let i = 0; i < 30 && app.workspace.getActiveFile()?.path !== "${ROOT}/child/child.md"; i++) await new Promise((r) => setTimeout(r, 100));
+		return JSON.stringify({ active: app.workspace.getActiveFile()?.path ?? null,
+			leaf: app.workspace.activeLeaf?.view?.getViewType() ?? null,
+			panes: app.workspace.getLeavesOfType("markdown").map((l) => l.view.file?.path ?? null) });`));
+	expect("and opened it", opened.active, (v) => v === `${ROOT}/child/child.md` || opened);
 });
 
 test("with the swap off the delimiter no longer answers for it", async () => {

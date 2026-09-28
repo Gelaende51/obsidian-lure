@@ -2291,7 +2291,10 @@ test("long paths: the extension goes second, straight after the vault name", asy
 			const c = app.workspace.getLeavesOfType("markdown")[0].view.containerEl
 				.querySelector(".view-header-title-container");
 			const ext = c.querySelector(".lure-filename-ext");
-			const clipped = (el) => [...el.children].some((p) => p.scrollWidth > p.clientWidth + 1);
+			// The name's own parts, not the "…" between them: collapsed to no
+			// width it still reports its glyph as scroll width on 1.8's Chromium.
+			const parts = (el) => [...el.children].filter((p) => !p.classList.contains("lure-name-ell"));
+			const clipped = (el) => parts(el).some((p) => p.scrollWidth > p.clientWidth + 1);
 			return JSON.stringify({
 				vaultName: Math.round(c.querySelector(".lure-root-name").getBoundingClientRect().width),
 				ext: ext ? !ext.classList.contains("lure-given-up") : null,
@@ -2299,7 +2302,7 @@ test("long paths: the extension goes second, straight after the vault name", asy
 				// Which part overflowed, and by how much — a pixel of rounding
 				// reads differently from a name really cut.
 				why: [...c.querySelectorAll(".view-header-title-parent .view-header-breadcrumb")].filter(clipped)
-					.map((el) => [...el.children].filter((p) => p.scrollWidth > p.clientWidth + 1)
+					.map((el) => parts(el).filter((p) => p.scrollWidth > p.clientWidth + 1)
 						.map((p) => el.textContent + ":" + p.className + ":" + p.scrollWidth + "/" + p.clientWidth).join(" ")),
 			});
 		`)));
