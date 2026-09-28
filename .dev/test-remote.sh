@@ -5,6 +5,7 @@
 #   .dev/test-remote.sh                     # every suite, both Obsidian versions
 #   .dev/test-remote.sh test-tab test-drop  # just these
 #   OBSIDIAN=latest .dev/test-remote.sh test-tab
+#   FILTER="long paths" OBSIDIAN=earliest .dev/test-remote.sh test-gestures   # only matching cases
 #
 # Tests the pushed commit: push first. Needs the gh CLI, signed in.
 set -eu
@@ -14,7 +15,7 @@ if [ -n "$(git log "origin/$branch..HEAD" 2>/dev/null)" ]; then
 	exit 1
 fi
 started=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-gh workflow run test.yml --ref "$branch" -f suites="$*" -f obsidian="${OBSIDIAN:-both}"
+gh workflow run test.yml --ref "$branch" -f suites="$*" -f obsidian="${OBSIDIAN:-both}" -f filter="${FILTER:-}"
 # The run appears a moment after the dispatch.
 for _ in $(seq 1 30); do
 	id=$(gh run list --workflow test.yml --branch "$branch" --event workflow_dispatch --limit 5 \

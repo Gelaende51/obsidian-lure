@@ -17,6 +17,9 @@ on:
       suites:
         description: "Suites to run, space separated (empty: all), e.g. test-tab test-drop"
         default: ""
+      filter:
+        description: "Only the cases whose name contains this (passed to each suite)"
+        default: ""
       obsidian:
         description: "Obsidian versions"
         type: choice
@@ -109,6 +112,7 @@ jobs:
       - name: Run ${{ matrix.suite }}
         env:
           OBSIDIAN_VERSION: ${{ matrix.version }}
+          SUITE_FILTER: ${{ inputs.filter }}
           # Ubuntu's AppArmor keeps Electron's sandbox from starting on the
           # runner; the suites drive a throwaway vault, nothing to sandbox from.
           OBSIDIAN_EXTRA_ARGS: --no-sandbox

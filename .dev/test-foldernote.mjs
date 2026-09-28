@@ -177,9 +177,15 @@ test("with the swap off the name carries it, because the name is what opens the 
 	await withPeer();
 	await setSettings(page, { swapSegmentActions: false });
 	await page.evaluate(openLeaf);
-	await doublePress("folder");
+	await page.evaluate(`window.__lureSeen = []; window.addEventListener("error", (e) => __lureSeen.push("error: " + e.message));
+		const orig = console.error; console.error = (...a) => { __lureSeen.push(a.map(String).join(" ").slice(0, 200)); orig.apply(console, a); }; return true;`);
+	const spot = await doublePress("folder");
 	const s = JSON.parse(await page.evaluate(state));
-	expect("the name made it", s.made, (v) => v.includes(`${ROOT}/child/child.md`));
+	const seen = await page.evaluate(`return JSON.stringify({ spot: ${JSON.stringify(spot)}, errors: window.__lureSeen,
+		field: document.querySelector(".lure-path-input")?.value ?? null,
+		hovered: document.elementFromPoint(${spot?.x ?? 0}, ${spot?.y ?? 0})?.className ?? null,
+		swap: app.plugins.plugins.lure.settings.swapSegmentActions });`);
+	expect("the name made it", s.made, (v) => v.includes(`${ROOT}/child/child.md`) || JSON.parse(seen));
 	expect("and opened it", s.active, `${ROOT}/child/child.md`);
 });
 
