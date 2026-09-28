@@ -158,6 +158,8 @@ jobs:
     needs: [prepare, release]
     if: always() && needs.release.result == 'success'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       TAG: ${{ needs.prepare.outputs.tag || github.ref_name }}
       COOKIE: ${{ secrets.OBSIDIAN_COMMUNITY_COOKIE }}
@@ -172,6 +174,22 @@ jobs:
           npm install --no-save --no-package-lock playwright-core@1
           node scripts/directory.mjs request "$TAG"
       - name: Wait for the directory to list it
+        id: confirm
         if: env.COOKIE != ''
         timeout-minutes: 45
         run: node scripts/directory.mjs confirm "$TAG"
+      - name: Read the release's review, compare it with the previous one and record it
+        if: env.COOKIE != ''
+        timeout-minutes: 35
+        run: node scripts/directory.mjs released "$TAG"
+      - name: Commit the recorded review
+        if: always() && env.COOKIE != '' && hashFiles(format('.github/directory-reviews/{0}.json', env.TAG)) != ''
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git pull -q --ff-only origin main
+          git add .github/directory-reviews
+          git commit -m "Record the directory's review of $TAG" && git push origin HEAD:main || true
+      - name: The listing agrees with the repository
+        if: always() && steps.confirm.outcome == 'success'
+        run: npm run -s check:listing -- --remote

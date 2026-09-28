@@ -12,6 +12,9 @@ on:
       ref:
         description: "Branch, tag or commit to scan (default: this run's commit)"
         required: false
+      release:
+        description: "Instead: re-check a published release's review against the one before, e.g. 1.5.2"
+        required: false
 
 permissions:
   contents: read
@@ -35,4 +38,5 @@ jobs:
         timeout-minutes: 35
         run: |
           npm install --no-save --no-package-lock playwright-core@1
-          node scripts/directory.mjs review "${{ inputs.ref || github.sha }}"
+          if [ -n "${{ inputs.release }}" ]; then node scripts/directory.mjs released "${{ inputs.release }}"
+          else node scripts/directory.mjs review "${{ inputs.ref || github.sha }}"; fi

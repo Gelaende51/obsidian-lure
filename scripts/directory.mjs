@@ -26,6 +26,11 @@
  * than fetching the HTML. A session that has expired lands on the login page,
  * and says so (exit 3).
  *
+ * `released` waits for the release's own review on the admin page (every
+ * section, behaviour and build included), compares it with the previous
+ * release's, records it in .github/directory-reviews/<version>.json, and
+ * fails on a Warning the previous release did not have.
+ *
  * `confirm` needs nothing: the public page renders its current version and
  * ratings without scripts. It polls until the version is the new one, then
  * reports Health and Review.
@@ -36,9 +41,9 @@ const [mode, arg] = process.argv.slice(2);
 const SITE = "https://community.obsidian.md";
 const ID = "lure";
 const ADMIN = `${SITE}/account/plugins/${ID}`;
-const ok = { review: /^[0-9a-f]{7,40}$|^[\w./-]+$/, request: /^\d+\.\d+\.\d+$/, confirm: /^\d+\.\d+\.\d+$/ };
+const ok = { released: /^\d+\.\d+\.\d+$/, review: /^[0-9a-f]{7,40}$|^[\w./-]+$/, request: /^\d+\.\d+\.\d+$/, confirm: /^\d+\.\d+\.\d+$/ };
 if (!ok[mode] || !ok[mode].test(arg ?? "")) {
-	console.error("usage: directory.mjs review <ref> | request <x.y.z> | confirm <x.y.z>");
+	console.error("usage: directory.mjs review <ref> | request|confirm|released <x.y.z>");
 	process.exit(2);
 }
 const summary = (md) => process.env.GITHUB_STEP_SUMMARY && appendFileSync(process.env.GITHUB_STEP_SUMMARY, md + "\n");
@@ -91,7 +96,40 @@ const readReviews = (page) => page.evaluate(() => [...document.querySelectorAll(
 const SEVERE = /^(Warning|Error|Fail|Critical|Danger)/i;
 const key = (f) => `${f.section} | ${f.level} | ${f.text}`;
 
-if (mode === "review") {
+if (mode === "released") {
+	const version = arg;
+	await signedIn(async (page) => {
+		let mine, prev;
+		for (let i = 0; i < 60; i++) {
+			await page.open(ADMIN);
+			const releases = (await readReviews(page)).filter((r) => /Version: \d/.test(r.head));
+			mine = releases.find((r) => r.head.includes(`Version: ${version}Commit`) || r.head.includes(`Version: ${version} `));
+			prev = releases.find((r) => r !== mine && /Completed/.test(r.head));
+			if (mine && /Completed/.test(mine.head)) break;
+			console.log(`${new Date().toISOString().slice(11, 16)} review of ${version}: ${mine?.head.match(/(Pending|Running|Queued|Failed)/i)?.[1] ?? "not listed yet"}`);
+			await sleep(30_000);
+		}
+		if (!mine || !/Completed/.test(mine.head)) { console.error(`The review of ${version} did not complete within 30 minutes.`); process.exit(1); }
+		const old = new Map((prev?.findings ?? []).map((f) => [key(f), f]));
+		const now = mine.findings.filter((f) => !/^Pass$/i.test(f.level));
+		const added = now.filter((f) => !old.has(key(f)));
+		const gone = [...old.values()].filter((f) => !/^Pass$/i.test(f.level) && !mine.findings.some((g) => key(g) === key(f)));
+		const severe = added.filter((f) => SEVERE.test(f.level));
+		const against = prev?.head.match(/Version: (\d+\.\d+\.\d+)/)?.[1] ?? "none";
+		const line = (f) => `- **${f.level}** (${f.section}): ${f.text}${f.where.length ? ` — ${f.where.join(", ")}` : ""}`;
+		const report = [
+			`**Directory review of ${version}** against ${against}: ${mine.findings.length} checks, ${now.length} findings besides passes, ${added.length} new (${severe.length} warnings or worse), ${gone.length} gone.`,
+			...(added.length ? ["", "New:", ...added.map(line)] : []),
+			...(gone.length ? ["", "Gone:", ...gone.map(line)] : []),
+		].join("\n");
+		console.log(report);
+		summary(report);
+		const { mkdirSync, writeFileSync } = await import("node:fs");
+		mkdirSync(".github/directory-reviews", { recursive: true });
+		writeFileSync(`.github/directory-reviews/${version}.json`, JSON.stringify({ version, head: mine.head, against, findings: mine.findings, added, gone }, null, "\t") + "\n");
+		if (severe.length) { console.error(`${version} brings ${severe.length} new warning(s) in the directory's review.`); process.exit(1); }
+	});
+} else if (mode === "review") {
 	const ref = arg, short = ref.slice(0, 7);
 	await signedIn(async (page) => {
 		await page.open(`${ADMIN}/review-branch`);
