@@ -8,7 +8,7 @@
 
 Toutes les versions de Lure, de la plus récente à la plus ancienne. Ce qui a été ajouté depuis la dernière version figure sous *Non publié*. Les numéros de version ne portent pas de préfixe `v`, comme les étiquettes de publication.
 
-## Non publié
+## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Corrigé
 
@@ -224,6 +224,7 @@ Première version. Remplace le nom de fichier dans l'en-tête d'une note par un 
 - **Hors du coffre** (désactivé par défaut) : le nom du coffre ouvre vos autres coffres, votre dossier personnel, la racine du système de fichiers et les disques montés. Rien n'y est écrit tant que vous ne l'avez pas déverrouillé, et une note ne peut être que copiée hors du coffre, jamais déplacée.
 - **45 langues.**
 
+[^1.5.2]: Modifications depuis 1.5.1 : <https://github.com/Gelaende51/obsidian-lure/compare/1.5.1...1.5.2>
 [^1.5.1]: Modifications depuis 1.5.0 : <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: Modifications depuis 1.4.0 : <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: Modifications depuis 1.3.0 : <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>

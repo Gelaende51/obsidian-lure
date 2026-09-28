@@ -9,7 +9,7 @@
 
 Jede Veröffentlichung von Lure, die neueste zuerst. Was seit der letzten Veröffentlichung dazugekommen ist, steht unter *Unveröffentlicht*. Versionen tragen kein `v` davor, passend zu den Release-Tags.
 
-## Unveröffentlicht
+## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Behoben
 
@@ -226,6 +226,7 @@ Erste Veröffentlichung. Ersetzt den Dateinamen in der Kopfzeile einer Notiz dur
 - **Außerhalb des Vaults** (standardmäßig aus): Der Vault-Name öffnet deine anderen Vaults, den Persönlichen Ordner, das Wurzelverzeichnis und eingehängte Laufwerke. Dort draußen wird nichts geschrieben, bevor du es freigibst, und eine Notiz kann nur aus dem Vault hinauskopiert, nie hinausverschoben werden.
 - **45 Sprachen.**
 
+[^1.5.2]: Änderungen seit 1.5.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.1...1.5.2>
 [^1.5.1]: Änderungen seit 1.5.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: Änderungen seit 1.4.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
 [^1.4.0]: Änderungen seit 1.3.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.3.0...1.4.0>
