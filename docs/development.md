@@ -203,7 +203,7 @@ OBSIDIAN=latest .dev/test-remote.sh test-tab
 .dev/ci-run.sh test-tab                 # the same sandboxed run locally (needs a display; downloads Obsidian once)
 ```
 
-A suite that exits 2 — cases it could not ask on that display — passes with a warning; the Obsidian log of a failed suite is attached to the run.
+A suite that exits 2 — cases it could not ask on that display — passes with a warning; the Obsidian log of a failed suite is attached to the run. So are a screenshot and the header's HTML at each failing case's first failed assertion (`LURE_SHOTS`), since a runner cannot be watched. `FILTER="long paths" .dev/test-remote.sh test-gestures` runs only the matching cases. `node .dev/ci-speed.mjs [run id]` appends how a run's times compare with this machine's to `.dev/test-speed.md`: a full round is ~8 minutes on the runners against ~23 here.
 
 ```bash
 node .dev/test-external.mjs          # outside-the-vault behaviour

@@ -43,3 +43,24 @@ All suites one after another here: **23:14**, with the machine taken while they 
 | test-urls | 41 | 44 s | 1:15 / 1:28 | 1:16 / 1:37 | 1.7× |
 
 All suites one after another here: **23:14**, with the machine taken while they run. On CI they run side by side: the whole run took **7:42** from start to finish (longest job 7:29), and nothing here was used. ✗ marks a job that failed; its time still counts.
+
+## Run 36365678153 — 4a15fc2, 2026-09-28 01:21 UTC
+
+| suite | assertions | here (median of last 3) | CI 1.8.7: suite / job | CI latest: suite / job | CI suite ÷ here |
+| --- | --- | --- | --- | --- | --- |
+| test-blank | — | — | 1:21 / 1:34 | 1:30 / 1:54 | — |
+| test-compat | 78 | 1:55 | 1:54 / 2:07 | 2:00 / 2:12 | 1.0× |
+| test-complete | 43 | 2 s | 0 s / 7 s | — | — |
+| test-create | 59 | 1:03 | 1:27 / 1:40 | 1:27 / 1:43 | 1.4× |
+| test-drop | 46 | 1:13 | 1:28 / 1:41 | 1:26 / 1:39 | 1.2× |
+| test-external | 173 | 1:45 | 2:26 / 2:41 | 2:26 / 2:44 | 1.4× |
+| test-fit | 70 | 1 s | 0 s / 9 s | — | — |
+| test-foldernote | 28 | 52 s | 1:43 / 1:55 | 1:40 / 1:57 | 1.9× |
+| test-gestures | 254 | 6:01 | 6:54 / 7:09 | 6:52 / 7:09 | 1.1× |
+| test-html | 22 | 20 s | 34 s / 51 s | 38 s / 52 s | 1.9× |
+| test-navlock | 41 | 1:48 | 1:21 / 1:32 | 1:22 / 1:39 | 0.8× |
+| test-rename | 75 | 2:10 | 2:11 / 2:23 | 2:12 / 2:26 | 1.0× |
+| test-tab | 342 | 5:21 | 5:05 / 5:24 | 4:57 / 5:10 | 0.9× |
+| test-urls | 41 | 44 s | 1:13 / 3:16 | 1:10 / 1:27 | 1.6× |
+
+All suites one after another here: **23:14**, with the machine taken while they run. On CI they run side by side: the whole run took **8:09** from start to finish (longest job 7:09), and nothing here was used. ✗ marks a job that failed; its time still counts.
