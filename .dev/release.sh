@@ -43,9 +43,13 @@ echo "Released $VERSION: $(gh release view "$VERSION" --json url --jq .url)"
 # The directory has no API for this: opening the page in the browser you are
 # signed in with is what queues the scan. No credentials leave that browser.
 CHECK=https://community.obsidian.md/account/plugins/lure/check-release
-if command -v xdg-open >/dev/null && [ -z "${RELEASE_NO_BROWSER:-}" ]; then
+# With the OBSIDIAN_COMMUNITY_COOKIE secret set, the workflow queued it already.
+if gh secret list | grep -q OBSIDIAN_COMMUNITY_COOKIE; then
+	echo "The workflow queued the directory's scan and waited for the listing (see the run's summary)."
+elif command -v xdg-open >/dev/null && [ -z "${RELEASE_NO_BROWSER:-}" ]; then
 	xdg-open "$CHECK" >/dev/null 2>&1 &
-	echo "Opened $CHECK — it queues the directory's scan; the review follows in ~5 min."
+	echo "Opened $CHECK — it queues the directory's scan; waiting for the listing (~5–10 min)."
+	node scripts/directory.mjs confirm "$VERSION"
 else
 	echo "Left: open $CHECK (signed in) to queue the directory's scan."
 fi

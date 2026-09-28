@@ -128,3 +128,30 @@ jobs:
             --title "$TAG" \
             --generate-notes \
             main.js manifest.json styles.css
+
+  # The community directory: queue its scan as the plugin's owner (only when
+  # the OBSIDIAN_COMMUNITY_COOKIE secret holds a signed-in session — the site
+  # has no API), then wait until the public page lists the new version and
+  # report its ratings. Without the secret both are left to .dev/release.sh,
+  # which opens the page in the maintainer's signed-in browser and waits.
+  directory:
+    needs: [prepare, release]
+    if: always() && needs.release.result == 'success'
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ needs.prepare.outputs.tag || github.ref_name }}
+      COOKIE: ${{ secrets.OBSIDIAN_COMMUNITY_COOKIE }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Queue the directory's scan
+        if: env.COOKIE != ''
+        run: |
+          npm install --no-save --no-package-lock playwright-core@1
+          node scripts/directory.mjs request "$TAG"
+      - name: Wait for the directory to list it
+        if: env.COOKIE != ''
+        timeout-minutes: 45
+        run: node scripts/directory.mjs confirm "$TAG"
