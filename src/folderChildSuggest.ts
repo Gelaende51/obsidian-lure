@@ -507,7 +507,12 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		const popover = (this as unknown as { suggestEl?: HTMLElement }).suggestEl;
 		const bar = this.dragKeepFocusEl.closest(".view-header-title-container");
 		if (!popover || !bar) return;
-		popover.style.setProperty("--lure-suggest-max", `${Math.round(bar.getBoundingClientRect().width)}px`);
+		// The list starts at the field, not at the bar's left end: capped at
+		// the whole bar's width, it reached past the bar by the folders in
+		// front of the field — past the window's edge in a right-hand pane,
+		// where Obsidian then pulled the whole list left, away from its field.
+		const room = bar.getBoundingClientRect().right - this.dragKeepFocusEl.getBoundingClientRect().left;
+		popover.style.setProperty("--lure-suggest-max", `${Math.round(Math.max(160, room))}px`);
 	}
 
 	/**

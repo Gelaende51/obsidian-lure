@@ -4,6 +4,12 @@
 
 Every release of Lure, newest first. What has landed since the last release is under *Unreleased*. Versions carry no `v` prefix, matching the release tags.
 
+## Unreleased
+
+### Fixed
+
+- **In a right-hand pane the dropdown could open away from its field**, pulled left by the width of the folders in front of the field when the window was not wide. The list now ends where the path bar ends.
+
 ## 1.5.1 — 2026-09-27[^1.5.1]
 
 ### Fixed
