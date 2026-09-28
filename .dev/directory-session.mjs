@@ -12,11 +12,14 @@
  * never the everyday one. The directory signs in through the Obsidian
  * account, so while that profile is still signed in to obsidian.md a visit
  * renews the directory's session silently: this happens headless, and the
- * new session is stored as the secret without a word. Only when the Obsidian
- * account session has run out too does it send a desktop notification and
- * open that profile's window on the login page; once signed in there, it
- * stores the session and closes the window. Nothing is typed for you: the
- * password stays with you and your password manager.
+ * new session is stored as the secret without a word. When the Obsidian
+ * account session has run out too, it signs in headless with the credentials
+ * in .personal/personal.md (section "## Obsidian Community", lines "- usr …"
+ * and "- pw …"), read here and typed into obsidian.md's form only — never
+ * printed or logged. Only when that fails (no such lines, a rejected
+ * password, a two-factor code asked for) does it send a desktop notification
+ * and open that profile's window on the login page; once signed in there, it
+ * stores the session and closes the window.
  *
  * The cookie value is piped from the browser straight into `gh secret set`;
  * it is never printed or written to disk outside the profile. A hash of the
@@ -36,6 +39,7 @@ const SECRET = "OBSIDIAN_COMMUNITY_COOKIE";
 const DATA = join(homedir(), ".local/share/lure-directory");
 const STATE = join(homedir(), ".local/state/lure-directory");
 const PROFILE = join(DATA, "profile");
+const PERSONAL = resolve(import.meta.dirname, "../.personal/personal.md");
 const UNIT = "lure-directory-session";
 const LOGIN_MINUTES = 15;
 
@@ -96,6 +100,35 @@ async function visit(context) {
 }
 const signedIn = (page) => page.url().startsWith(PAGE);
 
+/** { usr, pw } from personal.md's "## Obsidian Community" section, or null. */
+function saved() {
+	if (!existsSync(PERSONAL)) return null;
+	const found = {};
+	let inside = false;
+	for (const line of readFileSync(PERSONAL, "utf8").split("\n")) {
+		if (/^#+ /.test(line)) { inside = /^## Obsidian Community/.test(line); continue; }
+		const m = inside && line.match(/^\s*- (usr|pw) (.+?)\s*$/);
+		if (m) found[m[1]] = m[2].replace(/^`(.*)`$/, "$1");
+	}
+	return found.usr && found.pw ? found : null;
+}
+
+/** On obsidian.md's sign-in form: fills in the saved credentials. */
+async function signInWithSaved(page) {
+	const creds = saved();
+	if (!creds) { log("no saved credentials in .personal/personal.md"); return false; }
+	const email = page.locator("#labeled-input-email");
+	if (!await email.waitFor({ timeout: 15_000 }).then(() => true, () => false)) { log("no sign-in form where one was expected"); return false; }
+	await email.fill(creds.usr);
+	await page.locator("#labeled-input-password").fill(creds.pw);
+	await page.getByRole("button", { name: "Sign in", exact: true }).click();
+	await page.waitForURL((u) => u.href.startsWith(PAGE), { timeout: 45_000 }).catch(() => {});
+	if (signedIn(page)) { log("signed in with the saved credentials"); return true; }
+	const mfa = await page.locator("#labeled-input-mfa").isVisible().catch(() => false);
+	log(mfa ? "the account asks for a two-factor code" : "the saved credentials did not sign in");
+	return false;
+}
+
 async function store(context) {
 	const cookies = await context.cookies(SITE);
 	if (!cookies.length) throw new Error("no cookies for the directory after signing in");
@@ -113,17 +146,20 @@ async function store(context) {
 
 mkdirSync(PROFILE, { recursive: true });
 let context = await chromium.launchPersistentContext(PROFILE, { channel: "chrome", headless: true });
+let renewed = false;
 try {
-	if (signedIn(await visit(context))) {
+	const page = await visit(context);
+	if (signedIn(page) || await signInWithSaved(page)) {
 		await store(context);
-		process.exit(0);
+		renewed = true;
 	}
 } finally {
 	await context.close();
 }
+if (renewed) process.exit(0);
 
-// Signed out of the Obsidian account too: this needs a person.
-log("the Obsidian account session has run out; asking for a sign-in");
+// Neither the profile nor the saved credentials got in: this needs a person.
+log("could not sign in by itself; asking for a sign-in");
 notify("Lure: sign in to the Obsidian community site", `A window is open for it. The Release workflow needs the session to scan and publish releases (${LOGIN_MINUTES} minutes).`);
 context = await chromium.launchPersistentContext(PROFILE, { channel: "chrome", headless: false, viewport: null });
 try {
