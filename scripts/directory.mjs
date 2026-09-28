@@ -76,13 +76,13 @@ async function signedIn(fn) {
  * list, so a finding that only moved still matches.
  */
 const readReviews = (page) => page.evaluate(() => [...document.querySelectorAll("details")].map((d) => ({
-	head: d.querySelector("summary").innerText.replace(/\s+/g, " ").trim(),
+	head: d.querySelector("summary").textContent.replace(/\s+/g, " ").trim(),
 	findings: [...d.querySelectorAll("h4")].flatMap((h) => {
 		const ul = h.parentElement.parentElement.querySelector("ul");
 		return ul ? [...ul.children].map((li) => {
-			const cells = [...li.children].map((c) => c.innerText.trim());
-			const body = li.querySelector(".block")?.innerText.trim() ?? cells[1] ?? "";
-			const where = [...li.querySelectorAll('a[href*="/blob/"]')].map((a) => a.innerText.trim());
+			const cells = [...li.children].map((c) => c.textContent.trim());
+			const body = li.querySelector(".block")?.textContent.trim() ?? cells[1] ?? "";
+			const where = [...li.querySelectorAll('a[href*="/blob/"]')].map((a) => a.textContent.trim());
 			return { section: h.textContent.trim(), level: cells[0], text: body.replace(/\s+/g, " "), where };
 		}) : [];
 	}),
