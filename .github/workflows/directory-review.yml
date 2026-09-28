@@ -1,0 +1,38 @@
+# The community directory's "Review branch" on demand: a preview scan of any
+# branch, tag or commit, compared with the last release's review — what the
+# Release workflow's `review` job does before each release, for use during
+# development (Actions → Directory review → Run workflow, or
+# `gh workflow run directory-review.yml -f ref=<sha>`). Needs the
+# OBSIDIAN_COMMUNITY_COOKIE secret (.dev/directory-session.mjs renews it).
+name: Directory review
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branch, tag or commit to scan (default: this run's commit)"
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    env:
+      COOKIE: ${{ secrets.OBSIDIAN_COMMUNITY_COOKIE }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Fail without a session
+        if: env.COOKIE == ''
+        run: |
+          echo "OBSIDIAN_COMMUNITY_COOKIE is not set: run .dev/directory-session.mjs" >&2
+          exit 1
+      - name: Preview scan, compared with the last release
+        timeout-minutes: 35
+        run: |
+          npm install --no-save --no-package-lock playwright-core@1
+          node scripts/directory.mjs review "${{ inputs.ref || github.sha }}"
