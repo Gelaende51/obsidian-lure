@@ -1,17 +1,31 @@
-# Builds the release assets on GitHub's runners and attaches a signed
-# provenance attestation to each one, so anyone can verify that the main.js
-# they are about to load was built from this repository at this commit:
+# Releases Lure: tests it, prepares the release commit, tags it, builds the
+# assets on GitHub's runners and attaches a signed provenance attestation to
+# each one, so anyone can verify that the main.js they are about to load was
+# built from this repository at this commit:
 #
 #   gh attestation verify main.js --repo Gelaende51/obsidian-lure
 #
+# Two ways in:
+# - Actions → Release → Run workflow with a version (or `.dev/release.sh
+#   1.5.2`): the suites run, scripts/release.mjs moves the changelogs under
+#   the version and bumps the version files, the translation stamps are
+#   renewed, and the result is committed, tagged and published — all here.
+#   Translating the entries and refreshing the usage figures come first, on
+#   the maintainer's machine; the run stops if a translation is missing.
+# - Pushing a tag by hand, as before: tested, built and published as it is.
+#
 # Obsidian's installer reads manifest.json on the default branch and then
-# looks for a release tagged with exactly that version — no "v" prefix — so
-# the tag drives everything here.
+# looks for a release tagged with exactly that version — no "v" prefix.
 name: Release
 
 on:
   push:
     tags: ["[0-9]+.[0-9]+.[0-9]+"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release, e.g. 1.5.2 (no v)"
+        required: true
 
 permissions:
   contents: write
@@ -19,22 +33,73 @@ permissions:
   id-token: write
   attestations: write
 
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
-  # The whole suite, on both Obsidian versions, before anything is published.
+  # The whole suite, on both Obsidian versions, before anything is written.
   test:
     uses: ./.github/workflows/test.yml
     permissions:
       contents: read
 
-  release:
+  prepare:
+    if: github.event_name == 'workflow_dispatch'
     needs: test
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0 # the stamp script reads which commit last touched each English file
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - name: Move the changelogs under ${{ inputs.version }} and bump the version files
+        run: node scripts/release.mjs "${{ inputs.version }}"
+      - name: Build, as the release will
+        run: npm run build
+      - name: Commit, renew the changelog stamps, tag and push
+        id: tag
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md docs/i18n manifest.json package.json versions.json
+          git commit -m "Release $VERSION"
+          # A stamp names the English commit a translation reflects, so it can
+          # only be written once that commit exists.
+          npm run -s stamp -- --freshness --only CHANGELOG
+          git add docs/i18n
+          git commit -m "Claim the CHANGELOG translations current for $VERSION" || true
+          git tag -a "$VERSION" -m "Lure $VERSION"
+          git push origin HEAD:main "$VERSION"
+          echo "tag=$VERSION" >> "$GITHUB_OUTPUT"
+
+  release:
+    needs: [test, prepare]
+    # Runs after `prepare` on a dispatch, and straight after the tests on a
+    # tag pushed by hand (where `prepare` is skipped).
+    if: always() && needs.test.result == 'success' && (needs.prepare.result == 'success' || needs.prepare.result == 'skipped')
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ needs.prepare.outputs.tag || github.ref_name }}
+    steps:
+      # A tag pushed from a workflow starts no workflow of its own, so the
+      # release is built from it here.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.tag || github.ref }}
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
           cache: npm
 
       - run: npm ci
@@ -46,8 +111,8 @@ jobs:
       - name: Fail if the tag and the manifest disagree
         run: |
           manifest=$(node -p "require('./manifest.json').version")
-          if [ "$manifest" != "${GITHUB_REF_NAME}" ]; then
-            echo "tag ${GITHUB_REF_NAME} != manifest.json ${manifest}" >&2
+          if [ "$manifest" != "$TAG" ]; then
+            echo "tag $TAG != manifest.json $manifest" >&2
             exit 1
           fi
 
@@ -59,7 +124,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "${GITHUB_REF_NAME}" \
-            --title "${GITHUB_REF_NAME}" \
+          gh release create "$TAG" \
+            --title "$TAG" \
             --generate-notes \
             main.js manifest.json styles.css

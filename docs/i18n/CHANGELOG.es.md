@@ -9,6 +9,13 @@
 
 Todas las versiones de Lure, de la más reciente a la más antigua. Lo que ha entrado desde la última versión está bajo *Sin publicar*. Los números de versión no llevan el prefijo `v`, igual que las etiquetas de publicación.
 
+## Sin publicar
+
+### Corregido
+
+- **En un panel derecho, el desplegable podía abrirse lejos de su campo**, arrastrado hacia la izquierda por el ancho de las carpetas delante del campo cuando la ventana no era ancha. La lista ahora termina donde termina la barra de ruta.
+- **En Obsidian 1.8, la tecla de renombrar al pasar por el diálogo de cambio de nombre de Obsidian dejaba el cursor en la nota** en lugar de en la barra de ruta: el diálogo al cerrarse devolvía el foco después de que la barra de ruta ya lo hubiera tomado.
+
 ## 1.5.1 — 2026-09-27[^1.5.1]
 
 ### Corregido

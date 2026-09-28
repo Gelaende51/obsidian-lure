@@ -8,6 +8,13 @@
 
 Každé vydanie pluginu Lure, od najnovšieho. Čo pribudlo od posledného vydania, nájdeš pod *Nevydané*. Verzie nemajú predponu `v`, rovnako ako značky vydaní.
 
+## Nevydané
+
+### Opravené
+
+- **V pravej lište sa rozbaľovací zoznam mohol otvoriť mimo svojho poľa**, vytiahnutý doľava šírkou priečinkov pred poľom, keď okno nebolo dosť široké. Zoznam teraz končí tam, kde končí lišta cesty.
+- **V Obsidiane 1.8 kláves na premenovanie prechádzajúci cez Obsidianov dialóg na premenovanie nechal kurzor v poznámke** namiesto lišty cesty: zatvárajúci sa dialóg vrátil fokus späť potom, čo si ho lišta cesty už prevzala.
+
 ## 1.5.1 — 2026-09-27[^1.5.1]
 
 ### Opravené

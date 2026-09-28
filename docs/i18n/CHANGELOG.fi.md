@@ -9,6 +9,13 @@
 
 Kaikki Luren julkaisut, uusin ensin. Se, mikä on valmistunut viimeisimmän julkaisun jälkeen, on kohdassa *Julkaisematon*. Versionumeroissa ei ole `v`-etuliitettä, samoin kuin julkaisutunnisteissa.
 
+## Julkaisematon
+
+### Korjattu
+
+- **Oikeanpuoleisessa paneelissa alasvetoluettelo saattoi avautua irti kentästään**, vasemmalle vetämänä kenttää edeltävien kansioiden leveyden verran, kun ikkuna ei ollut leveä. Luettelo päättyy nyt siihen, mihin polkupalkki päättyy.
+- **Obsidian 1.8:ssa Obsidianin uudelleennimeämisen valintaikkunan läpi kulkenut uudelleennimeämisnäppäin jätti kohdistimen muistiinpanoon** polkupalkin sijaan: sulkeutuva valintaikkuna palautti kohdistuksen sen jälkeen, kun polkupalkki oli jo ottanut sen.
+
 ## 1.5.1 — 2026-09-27[^1.5.1]
 
 ### Korjattu

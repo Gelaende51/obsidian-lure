@@ -428,14 +428,14 @@ Two things this cannot be. It cannot be exact: writing the line is itself part o
 
 BRAT and Obsidian's own installer both read `manifest.json` on the default branch, then look for a release whose tag is **exactly** that version — no `v` prefix, no suffix. The three files must be attached as individual assets; the auto-generated source zip is not enough, because neither installer unpacks it.
 
-Pushing the tag is the whole release: `.github/workflows/release.yml` builds, verifies that the tag and `manifest.json` agree, attaches the signed provenance attestation, and publishes.
+The release runs on GitHub's runners (`.github/workflows/release.yml`). Two steps come first, on the maintainer's machine, because only it can do them: the *Unreleased* entries translated into every changelog as a pending section under its own translated "Unreleased" heading, and the AI-usage figures refreshed (`node .dev/usage-stats.mjs`) and carried into the translated READMEs. Then:
 
 ```bash
-node .dev/usage-stats.mjs                      # refresh the disclosure first
-npm run build                                  # must pass before the tag exists
-git push
-git tag -a 1.0.2 -m "Lure 1.0.2" && git push origin 1.0.2
+node scripts/release.mjs 1.5.2 --check   # everything ready? names what is missing
+.dev/release.sh 1.5.2                    # checks again, starts the workflow, waits for it
 ```
+
+The workflow runs the whole test suite on both Obsidian versions, then `scripts/release.mjs` moves every changelog's pending section under the version heading with its compare-link footnote and bumps `manifest.json`, `package.json` and `versions.json`; it builds, commits, renews the changelog stamps in a second commit, tags, pushes, and builds the release from the tag with its attestation. Pushing a tag by hand still works and releases the tree as it is (tested first). What it did by hand before is below, and is still what the script does.
 
 Move the *Unreleased* entries in `CHANGELOG.md` under a heading for the new version, with its date and a footnote holding its compare link (`## 1.3.0 — 2026-09-20[^1.3.0]`, and `[^1.3.0]: Changes since 1.2.0: <…/compare/1.2.0...1.3.0>` at the bottom, while the *Unreleased* heading and its footnote go until something lands again — the translated changelogs take the same two-line change), before tagging — the tag should point at a commit whose changelog already names it. Entries describe what a user notices, not how it was built; the commit messages carry the rest.
 

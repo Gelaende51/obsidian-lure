@@ -9,6 +9,13 @@
 
 Varje utgåva av Lure, nyast först. Det som har landat sedan den senaste utgåvan ligger under *Ej släppt*. Versionerna bär inget `v`-prefix, i linje med utgåvetaggarna.
 
+## Ej publicerad
+
+### Rättat
+
+- **I en högerpanel kunde rullgardinsmenyn öppnas bort från sitt fält**, dragen åt vänster av bredden på mapparna framför fältet när fönstret inte var brett. Listan slutar nu där sökvägsfältet slutar.
+- **I Obsidian 1.8 lämnade byt namn-tangenten, som gick genom Obsidians dialog för att byta namn, markören kvar i anteckningen** i stället för i sökvägsfältet: den stängande dialogen lämnade tillbaka fokus efter att sökvägsfältet redan tagit det.
+
 ## 1.5.1 — 2026-09-27[^1.5.1]
 
 ### Rättat

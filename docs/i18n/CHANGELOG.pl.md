@@ -9,6 +9,13 @@
 
 Każde wydanie Lure, od najnowszego. To, co pojawiło się od ostatniego wydania, znajduje się pod nagłówkiem *Niewydane*. Wersje nie mają przedrostka `v`, zgodnie ze znacznikami wydań.
 
+## Niewydane
+
+### Naprawiono
+
+- **W panelu z prawej strony lista mogła otworzyć się w oddaleniu od swojego pola**, przesunięta w lewo przez szerokość folderów stojących przed polem, gdy okno nie było szerokie. Lista teraz kończy się tam, gdzie kończy się pasek ścieżki.
+- **W Obsidianie 1.8 klawisz zmiany nazwy przechodzący przez okno dialogowe zmiany nazwy Obsidiana pozostawiał kursor w notatce** zamiast na pasku ścieżki: zamykające się okno dialogowe oddawało fokus po tym, jak pasek ścieżki już go przejął.
+
 ## 1.5.1 — 2026-09-27[^1.5.1]
 
 ### Naprawiono

@@ -9,6 +9,13 @@
 
 Elke release van Lure, de nieuwste eerst. Wat er sinds de laatste release is geland staat onder *Niet uitgebracht*. Versies dragen geen `v`-voorvoegsel, net als de release-tags.
 
+## Niet uitgebracht
+
+### Opgelost
+
+- **In een paneel aan de rechterkant kon de lijst ver van zijn veld opengaan**, naar links getrokken door de breedte van de mappen voor het veld wanneer het venster niet breed was. De lijst eindigt nu waar de padbalk eindigt.
+- **Op Obsidian 1.8 liet de hernoemtoets die door Obsidians hernoem-dialoogvenster ging, de cursor in de notitie achter** in plaats van in de padbalk: het sluitende dialoogvenster gaf de focus terug nadat de padbalk die al had overgenomen.
+
 ## 1.5.1 — 2026-09-27[^1.5.1]
 
 ### Opgelost

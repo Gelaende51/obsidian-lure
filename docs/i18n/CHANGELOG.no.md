@@ -9,6 +9,13 @@
 
 Hver utgivelse av Lure, den nyeste først. Det som har kommet inn siden forrige utgivelse, står under *Ikke utgitt*. Versjonene har ingen `v` foran seg, slik som utgivelsesmerkene.
 
+## Ikke utgitt
+
+### Rettet
+
+- **I et høyrehåndspanel kunne nedtrekkslisten åpne bort fra feltet sitt**, dratt til venstre av bredden på mappene foran feltet når vinduet ikke var bredt. Listen slutter nå der stilinjen slutter.
+- **På Obsidian 1.8 lot omdøpingstasten, som gikk gjennom Obsidians omdøpingsdialog, markøren bli igjen i notatet** i stedet for stilinjen: den lukkende dialogen ga fokuset tilbake etter at stilinjen hadde tatt det.
+
 ## 1.5.1 — 2026-09-27[^1.5.1]
 
 ### Rettet

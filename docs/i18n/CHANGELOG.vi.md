@@ -9,6 +9,13 @@
 
 Mọi bản phát hành của Lure, mới nhất ở trên cùng. Những gì đã được đưa vào kể từ bản phát hành gần nhất nằm dưới mục *Chưa phát hành*. Số phiên bản không có tiền tố `v`, khớp với các thẻ phát hành.
 
+## Chưa phát hành
+
+### Đã sửa
+
+- **Trong một khung bên phải, danh sách thả xuống có thể mở ra lệch khỏi ô của nó**, bị kéo sang trái theo bề rộng của các thư mục đứng trước ô đó khi cửa sổ không đủ rộng. Giờ đây danh sách kết thúc đúng nơi thanh đường dẫn kết thúc.
+- **Trên Obsidian 1.8, phím đổi tên đi qua hộp thoại đổi tên của Obsidian lại để lại con trỏ trong ghi chú** thay vì ở thanh đường dẫn: hộp thoại đang đóng đã trả lại tiêu điểm sau khi thanh đường dẫn đã lấy nó.
+
 ## 1.5.1 — 2026-09-27[^1.5.1]
 
 ### Đã sửa

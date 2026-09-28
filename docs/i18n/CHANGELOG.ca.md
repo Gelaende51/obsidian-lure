@@ -9,6 +9,13 @@
 
 Cada versió de Lure, de la més nova a la més antiga. El que ha arribat des de la darrera versió és a *Sense publicar*. Les versions no porten el prefix `v`, igual que les etiquetes de les versions.
 
+## Sense publicar
+
+### Corregit
+
+- **En una subfinestra dreta, el desplegable podia obrir-se lluny del seu camp**, arrossegat cap a l'esquerra per l'amplada de les carpetes que precedien el camp quan la finestra no era ampla. Ara la llista acaba on acaba la barra de camí.
+- **A l'Obsidian 1.8, la tecla de canviar el nom que passava pel diàleg de canvi de nom d'Obsidian deixava el cursor a la nota** en lloc de a la barra de camí: el diàleg en tancar-se retornava el focus després que la barra de camí ja l'hagués agafat.
+
 ## 1.5.1 — 2026-09-27[^1.5.1]
 
 ### Corregit

@@ -9,6 +9,13 @@
 
 A Lure minden kiadása, a legújabbal kezdve. Ami a legutóbbi kiadás óta került be, a *Kiadatlan* szakaszban található. A verziószámok elé nem kerül `v` előtag, így megegyeznek a kiadási címkékkel.
 
+## Kiadatlan
+
+### Javítva
+
+- **Egy jobb oldali panelen a legördülő lista a mezőjétől távol nyílhatott meg**, balra húzva a mező előtti mappák szélességével, amikor az ablak nem volt elég széles. A lista mostantól ott ér véget, ahol az útvonalsáv véget ér.
+- **Az Obsidian 1.8-on az Obsidian átnevezési párbeszédablakán áthaladó átnevezési billentyű a kurzort a jegyzetben hagyta** az útvonalsáv helyett: a bezáródó párbeszédablak azután adta vissza a fókuszt, hogy az útvonalsáv már átvette azt.
+
 ## 1.5.1 — 2026-09-27[^1.5.1]
 
 ### Javítva

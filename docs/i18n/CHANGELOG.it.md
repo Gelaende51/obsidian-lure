@@ -9,6 +9,13 @@
 
 Ogni release di Lure, dalla più recente. Ciò che è arrivato dopo l'ultima release sta sotto *Non rilasciato*. Le versioni non hanno il prefisso `v`, come i tag delle release.
 
+## Non rilasciato
+
+### Corretto
+
+- **In un riquadro a destra, il menu a discesa poteva aprirsi lontano dal proprio campo**, tirato a sinistra dalla larghezza delle cartelle che precedevano il campo quando la finestra non era ampia. L'elenco ora termina dove termina la barra del percorso.
+- **Su Obsidian 1.8, il tasto di rinomina che passava attraverso la finestra di dialogo di rinomina di Obsidian lasciava il cursore nella nota** invece che nella barra del percorso: la finestra di dialogo, chiudendosi, restituiva il focus dopo che la barra del percorso lo aveva già preso.
+
 ## 1.5.1 — 2026-09-27[^1.5.1]
 
 ### Corretto

@@ -8,6 +8,13 @@
 
 Setiap keluaran Lure, yang terbaharu dahulu. Apa yang telah mendarat sejak keluaran terakhir ada di bawah *Belum dikeluarkan*. Versi tidak membawa awalan `v`, sepadan dengan tag keluarannya.
 
+## Belum Dikeluarkan
+
+### Dibaiki
+
+- **Dalam panel sebelah kanan, senarai lungsur boleh terbuka jauh daripada medannya**, tertarik ke kiri sebanyak lebar folder-folder di hadapan medan itu apabila tetingkap tidak lebar. Senarai itu kini berakhir tepat di tempat bar laluan berakhir.
+- **Pada Obsidian 1.8, kekunci tukar nama yang melalui dialog tukar nama Obsidian meninggalkan kursor dalam nota** dan bukannya dalam bar laluan: dialog yang sedang ditutup mengembalikan fokus selepas bar laluan telah mengambilnya.
+
 ## 1.5.1 — 2026-09-27[^1.5.1]
 
 ### Dibaiki

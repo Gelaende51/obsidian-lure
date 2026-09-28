@@ -8,6 +8,13 @@
 
 Toutes les versions de Lure, de la plus récente à la plus ancienne. Ce qui a été ajouté depuis la dernière version figure sous *Non publié*. Les numéros de version ne portent pas de préfixe `v`, comme les étiquettes de publication.
 
+## Non publié
+
+### Corrigé
+
+- **Dans un panneau de droite, le menu déroulant pouvait s'ouvrir loin de son champ**, tiré vers la gauche par la largeur des dossiers précédant le champ lorsque la fenêtre n'était pas large. La liste s'arrête désormais là où s'arrête la barre de chemin.
+- **Sous Obsidian 1.8, la touche de renommage passant par la boîte de dialogue de renommage d'Obsidian laissait le curseur dans la note** au lieu de la barre de chemin : la boîte de dialogue qui se fermait rendait le focus après que la barre de chemin l'ait pris.
+
 ## 1.5.1 — 2026-09-27[^1.5.1]
 
 ### Corrigé

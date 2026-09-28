@@ -8,6 +8,13 @@
 
 Gach eisiúint de Lure, an ceann is nuaí ar dtús. Tá a bhfuil tagtha isteach ó bhí an eisiúint dheireanach ann faoi *Gan eisiúint*. Níl réimír `v` ar na leaganacha, ar aon dul leis na clibeanna eisiúna.
 
+## Neamheisithe
+
+### Deisithe
+
+- **I gcluaisín ar dheis d'fhéadfadh an t-anuas oscailt i bhfad óna réimse**, tarraingthe ar chlé ag leithead na bhfillteán os comhair an réimse nuair nach raibh an fhuinneog leathan. Críochnaíonn an liosta anois san áit a gcríochnaíonn an barra conaire.
+- **Ar Obsidian 1.8, d'fhág an eochair athainmnithe a chuaigh trí dhialóg athainmnithe Obsidian an cúrsóir sa nóta** in ionad an bharra conaire: thug an dialóg a bhí ag dúnadh an fócas ar ais tar éis don bharra conaire é a ghlacadh.
+
 ## 1.5.1 — 2026-09-27[^1.5.1]
 
 ### Deisithe

@@ -9,6 +9,13 @@
 
 Çdo publikim i Lure, më i riu i pari. Ajo që ka ardhur që nga publikimi i fundit ndodhet nën *Të papublikuara*. Versionet nuk kanë prapashtesën `v`, njësoj si etiketat e publikimeve.
 
+## Pa lëshuar
+
+### Të ndrequra
+
+- **Në një panel të djathtë, lista rënëse mund të hapej larg fushës së saj**, tërhequr majtas nga gjerësia e dosjeve para fushës, kur dritarja nuk ishte e gjerë. Lista tani përfundon aty ku përfundon shiriti i shtegut.
+- **Në Obsidian 1.8, tasti i riemërtimit që kalonte nëpër dialogun e riemërtimit të Obsidian-it linte kursorin në shënim** në vend të shiritit të shtegut: dialogu që mbyllej ia kthente fokusin mbrapsht pasi shiriti i shtegut e kishte marrë tashmë.
+
 ## 1.5.1 — 2026-09-27[^1.5.1]
 
 ### Të ndrequra

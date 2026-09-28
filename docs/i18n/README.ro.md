@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · doar desktop · AGPL-3.0
 ## Divulgare privind IA
 
 - **Agent** — **Claude Opus 5 / 5.5** și **Claude Sonnet 5** (Anthropic, prin Claude Code): au scris codul TypeScript, CSS-ul, toate cele 45 de seturi de traduceri și documentația. Traducerile sunt generate automat și nerevizuite de vorbitori nativi.
-- **Consum** — 3 aug. – 27 sept. 2026, 31 de sesiuni, ~10.580 de răspunsuri: ~9,6 M de jetoane generate, ~41,8 M trimise, ~3116,2 M recitiri din cache (~3167,6 M în total); plus 420 de rulări de traducere fără sesiune de chat: ~3,6 M generate, ~3,6 M trimise.
+- **Consum** — 3 aug. – 28 sept. 2026, 32 de sesiuni, ~10.800 de răspunsuri: ~9,7 M de jetoane generate, ~43,6 M trimise, ~3235,8 M recitiri din cache (~3289,1 M în total); plus 431 de rulări de traducere fără sesiune de chat: ~3,6 M generate, ~3,6 M trimise.
 - **Amonte** — modelul a învățat din cod open source, documentație și scrieri ale comunității publicate de alții. Cea mai mare parte a meritului le revine lor.
 - **Autor** — Vault51: a specificat fiecare funcție, a testat fiecare iterație într-un seif real, a coordonat corecturile, a revizuit tot ce a rezultat.
 

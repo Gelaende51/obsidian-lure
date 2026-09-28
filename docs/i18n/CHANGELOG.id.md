@@ -8,6 +8,13 @@
 
 Setiap rilis Lure, yang terbaru lebih dulu. Apa yang sudah mendarat sejak rilis terakhir ada di bawah *Belum dirilis*. Versi tidak memakai awalan `v`, sesuai dengan tanda rilisnya.
 
+## Belum Dirilis
+
+### Diperbaiki
+
+- **Di panel sebelah kanan, menu tarik-turun dapat terbuka jauh dari bidangnya**, tertarik ke kiri sejauh lebar folder-folder di depan bidang tersebut saat jendela tidak lebar. Daftar itu kini berakhir tepat di tempat bilah jalur berakhir.
+- **Pada Obsidian 1.8, tombol ganti nama yang melewati dialog ganti nama Obsidian membuat kursor tertinggal di catatan** alih-alih di bilah jalur: dialog yang sedang menutup mengembalikan fokus setelah bilah jalur telah mengambilnya.
+
 ## 1.5.1 — 2026-09-27[^1.5.1]
 
 ### Diperbaiki

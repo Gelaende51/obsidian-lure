@@ -9,6 +9,13 @@
 
 Fiecare versiune a Lure, cea mai nouă prima. Ce a apărut de la ultima versiune se află sub *Nelansate*. Versiunile nu poartă prefixul `v`, la fel ca etichetele de lansare.
 
+## Nepublicat
+
+### Corectat
+
+- **Într-un panou din dreapta, lista derulantă se putea deschide departe de câmpul ei**, trasă spre stânga de lățimea dosarelor din fața câmpului atunci când fereastra nu era lată. Lista se termină acum unde se termină bara de cale.
+- **Pe Obsidian 1.8, tasta de redenumire care trecea prin dialogul de redenumire al Obsidian lăsa cursorul în notă** în loc de bara de cale: dialogul, la închidere, preda focalizarea înapoi după ce bara de cale o preluase deja.
+
 ## 1.5.1 — 2026-09-27[^1.5.1]
 
 ### Corectat

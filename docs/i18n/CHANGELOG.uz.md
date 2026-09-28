@@ -9,6 +9,13 @@
 
 Lure'ning har bir relizi, eng yangisi birinchi. Oxirgi relizdan beri qo‘shilganlar *Chiqarilmagan* bo‘limida. Versiyalar reliz teglariga mos ravishda `v` prefiksisiz yoziladi.
 
+## Chiqarilmagan
+
+### Tuzatildi
+
+- **O‘ng tomondagi panelda ochiladigan ro‘yxat maydonidan uzoqda ochilishi mumkin edi**, oyna keng bo‘lmaganda maydon oldidagi papkalar kengligi hisobiga chapga tortilib. Endi ro‘yxat yo‘l paneli tugagan joyda tugaydi.
+- **Obsidian 1.8-da, Obsidian-ning nomini o‘zgartirish dialogi orqali o‘tgan nom o‘zgartirish tugmasi kursorni yo‘l paneli o‘rniga eslatmada qoldirardi**: dialog yopilganda, u fokusni yo‘l paneli allaqachon egallab bo‘lgach qaytarib berardi.
+
 ## 1.5.1 — 2026-09-27[^1.5.1]
 
 ### Tuzatildi

@@ -8,6 +8,13 @@
 
 Katrs Lure laidiens, jaunākais pirmais. Tas, kas ienācis kopš pēdējā laidiena, ir sadaļā *Neizdots*. Versijām nav `v` priedēkļa, tāpat kā laidienu tagiem.
 
+## Neizlaists
+
+### Labots
+
+- **Labās puses panelī nolaižamais saraksts varēja atvērties prom no sava lauka**, pavilkts pa kreisi mapju platuma dēļ pirms lauka, kad logs nebija plats. Saraksts tagad beidzas tur, kur beidzas ceļa josla.
+- **Obsidian 1.8 versijā pārdēvēšanas taustiņš, kas iet caur Obsidian pārdēvēšanas dialogu, atstāja kursoru piezīmē** nevis ceļa joslā: aizverošais dialogs atdeva fokusu atpakaļ pēc tam, kad ceļa josla to jau bija pārņēmusi.
+
 ## 1.5.1 — 2026-09-27[^1.5.1]
 
 ### Labots

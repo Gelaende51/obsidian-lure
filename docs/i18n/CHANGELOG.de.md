@@ -9,6 +9,13 @@
 
 Jede Veröffentlichung von Lure, die neueste zuerst. Was seit der letzten Veröffentlichung dazugekommen ist, steht unter *Unveröffentlicht*. Versionen tragen kein `v` davor, passend zu den Release-Tags.
 
+## Unveröffentlicht
+
+### Behoben
+
+- **In einem rechten Bereich konnte sich das Dropdown weg von seinem Feld öffnen**, nach links gezogen durch die Breite der Ordner vor dem Feld, wenn das Fenster nicht breit war. Die Liste endet jetzt dort, wo die Pfadleiste endet.
+- **Unter Obsidian 1.8 ließ die Umbenennen-Taste, die durch Obsidians Umbenennen-Dialog geleitet wurde, den Cursor in der Notiz zurück** statt in der Pfadleiste: Der sich schließende Dialog gab den Fokus zurück, nachdem die Pfadleiste ihn bereits übernommen hatte.
+
 ## 1.5.1 — 2026-09-27[^1.5.1]
 
 ### Behoben

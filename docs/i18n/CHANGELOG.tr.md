@@ -9,6 +9,13 @@
 
 Lure'un her sürümü, en yenisi en üstte. Son sürümden bu yana gelenler *Yayımlanmamış* başlığı altındadır. Sürüm numaraları, sürüm etiketleriyle uyumlu olarak `v` öneki taşımaz.
 
+## Yayımlanmamış
+
+### Düzeltilenler
+
+- **Sağ taraftaki bir bölmede açılır liste, alanından uzakta açılabiliyordu**, pencere geniş olmadığında alanın önündeki klasörlerin genişliği kadar sola çekilerek. Liste artık yol çubuğunun bittiği yerde bitiyor.
+- **Obsidian 1.8'de, Obsidian'ın yeniden adlandırma iletişim kutusundan geçen yeniden adlandırma tuşu, imleci yol çubuğu yerine notta bıraktı**: kapanan iletişim kutusu, yol çubuğu odağı almış olduktan sonra odağı geri verdi.
+
 ## 1.5.1 — 2026-09-27[^1.5.1]
 
 ### Düzeltilenler
