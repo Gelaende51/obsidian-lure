@@ -3,8 +3,8 @@
  * How long the suites take on GitHub's runners against this machine, appended
  * to .dev/test-speed.md so the comparison has a history.
  *
- *   node .dev/test-speed.mjs            # the latest Test run
- *   node .dev/test-speed.mjs <run id>
+ *   node .dev/ci-speed.mjs            # the latest Test run
+ *   node .dev/ci-speed.mjs <run id>
  *
  * Local times come from this machine's Claude Code transcripts: every full
  * run of a suite (`node .dev/test-x.mjs` without a name filter) is a tool call
@@ -108,7 +108,7 @@ const out = [
 	`All suites one after another here: **${fmt(localSum)}**, with the machine taken while they run. On CI they run side by side: the whole run took **${fmt(wall)}** from start to finish (longest job ${fmt(ciLongest)}), and nothing here was used. ✗ marks a job that failed; its time still counts.`,
 ];
 if (!existsSync(join(root, ".dev/test-speed.md"))) {
-	appendFileSync(join(root, ".dev/test-speed.md"), "# Test speed: GitHub's runners against this machine\n\nAppended by `node .dev/test-speed.mjs [run id]`. \"Job\" adds checkout, npm ci, the build and downloading and starting Obsidian to the suite itself.\n");
+	appendFileSync(join(root, ".dev/test-speed.md"), "# Test speed: GitHub's runners against this machine\n\nAppended by `node .dev/ci-speed.mjs [run id]`. \"Job\" adds checkout, npm ci, the build and downloading and starting Obsidian to the suite itself.\n");
 }
 appendFileSync(join(root, ".dev/test-speed.md"), out.join("\n") + "\n");
 console.log(out.join("\n"));

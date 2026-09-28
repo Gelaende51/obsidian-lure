@@ -1,6 +1,6 @@
 # Test speed: GitHub's runners against this machine
 
-Appended by `node .dev/test-speed.mjs [run id]`. "Job" adds checkout, npm ci, the build and downloading and starting Obsidian to the suite itself.
+Appended by `node .dev/ci-speed.mjs [run id]`. "Job" adds checkout, npm ci, the build and downloading and starting Obsidian to the suite itself.
 
 ## Run 36362893587 — deb1c3a, 2026-09-28 00:37 UTC
 

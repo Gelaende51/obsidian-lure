@@ -1604,7 +1604,9 @@ test("what is marked is what Tab writes, and the list underlines the same", asyn
 		const after = await state();
 		// A fresh offer after the press sits at the end and is not written yet;
 		// a rung that marks the stem in front of `.md` marks what is written.
-		const written = after.marked && after.atEnd ? after.value.slice(0, after.value.length - after.marked.length) : after.value;
+		// A mark over the whole field is a rung of the ladder, over written text.
+		const offerAfter = after.marked && after.atEnd && after.marked !== after.value;
+		const written = offerAfter ? after.value.slice(0, after.value.length - after.marked.length) : after.value;
 		const wrote = after.chips.length > before.chips.length ? "(stepped in)" : written;
 		if (before.marked) {
 			// Either the marked text is now written, or the press stepped into what it named.
