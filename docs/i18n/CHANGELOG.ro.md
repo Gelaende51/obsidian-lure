@@ -1,4 +1,4 @@
-<!-- Traducere a CHANGELOG.md — stare: commit d8e8398.
+<!-- Traducere a CHANGELOG.md — stare: commit 5e821e9.
      Traducere automată (Claude Opus 5), nerevizuită de vorbitori nativi.
      Corecturile sunt binevenite; versiunea de referință este jurnalul de
      modificări în engleză. -->
