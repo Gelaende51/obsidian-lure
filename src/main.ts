@@ -314,6 +314,20 @@ export default class BreadcrumbPathPlugin extends Plugin {
 			const breadcrumb = this.manager.getActiveBreadcrumb();
 			breadcrumb?.startHeaderRename();
 			this.useHeaderRename = false;
+			// Obsidian 1.8 hands the focus back to where it was before the
+			// dialog once the dialog has gone — after this press put it in
+			// the path bar, so the caret ended up in the note. Hold it for as
+			// long as the dialog takes to go.
+			const field = document.activeElement;
+			if (field instanceof HTMLInputElement) {
+				const until = performance.now() + 500;
+				const hold = (): void => {
+					if (!field.isConnected || performance.now() > until) return;
+					if (document.activeElement !== field) field.focus();
+					window.requestAnimationFrame(hold);
+				};
+				window.requestAnimationFrame(hold);
+			}
 		};
 
 		dialog.addEventListener("keydown", onKeyDown, true);

@@ -493,6 +493,7 @@ test("settings: the jump to Obsidian's own file-types setting reveals it, and no
 		app.setting.navigateToSearchResult = realNavigate;
 		const out = {
 			tab: true,
+			searchable: !!app.setting.searchIndex,
 			name: row?.querySelector(".setting-item-name")?.textContent ?? null,
 			above: above?.querySelector(".setting-item-name")?.textContent ?? null,
 			desc: row?.querySelector(".setting-item-description")?.textContent ?? null,
@@ -518,8 +519,10 @@ test("settings: the jump to Obsidian's own file-types setting reveals it, and no
 	expect("nothing in the row is a link", r.anchorsInRow, 0);
 	// What a click on a settings search result does: the tab, the setting
 	// scrolled into view and flashed — and nothing that reopens the window.
+	// Obsidian without a settings search (1.8.x) has no result to reveal:
+	// the tab the setting is on is the most the press can do there.
 	expect("the press reveals the setting as a search result would, and does no more", r.called,
-		[`reveal:file:${r.name}`]);
+		r.searchable ? [`reveal:file:${r.name}`] : ["openTab:file"]);
 });
 
 test("settings: the Hotkeys row opens Obsidian's hotkeys filtered to this plugin", async () => {

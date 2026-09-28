@@ -1592,7 +1592,7 @@ test("what is marked is what Tab writes, and the list underlines the same", asyn
 		const i = document.querySelector(".lure-path-input");
 		const marked = i.value.slice(i.selectionStart, i.selectionEnd);
 		const under = [...document.querySelectorAll(".suggestion-item .lure-suggest-offer")].map((e) => e.textContent);
-		return JSON.stringify({ value: i.value, marked, under,
+		return JSON.stringify({ value: i.value, marked, under, atEnd: i.selectionEnd === i.value.length,
 			chips: [...document.querySelectorAll(".lure-browse-chip")].map((c) => c.textContent) });`));
 	const check = async (name) => {
 		const before = await state();
@@ -1602,7 +1602,10 @@ test("what is marked is what Tab writes, and the list underlines the same", asyn
 		}
 		await tab();
 		const after = await state();
-		const wrote = after.chips.length > before.chips.length ? "(stepped in)" : after.value.slice(0, after.value.length - after.marked.length);
+		// A fresh offer after the press sits at the end and is not written yet;
+		// a rung that marks the stem in front of `.md` marks what is written.
+		const written = after.marked && after.atEnd ? after.value.slice(0, after.value.length - after.marked.length) : after.value;
+		const wrote = after.chips.length > before.chips.length ? "(stepped in)" : written;
 		if (before.marked) {
 			// Either the marked text is now written, or the press stepped into what it named.
 			expect(`${name}: Tab wrote what was marked`, wrote === "(stepped in)" || wrote === before.value, true);
