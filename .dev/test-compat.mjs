@@ -406,10 +406,15 @@ const present = await page.evaluate(
 const refused = await page.evaluate(`
 	const out = [];
 	for (const id of ${JSON.stringify(present)}) {
-		if (app.plugins.plugins[id]) continue;
-		try { await app.plugins.loadPlugin(id); } catch {}
-		if (!app.plugins.plugins[id]) out.push(id);
-		else await app.plugins.unloadPlugin(id);
+		// What the peer says it needs first — no side effects — then what it
+		// does when turned on, since a manifest can understate that.
+		const needs = app.plugins.manifests[id]?.minAppVersion;
+		if (needs && typeof requireApiVersion === "function" && !requireApiVersion(needs)) { out.push(id); continue; }
+		if (app.plugins.enabledPlugins.has(id)) continue;
+		let ran = false;
+		try { await app.plugins.enablePlugin(id); ran = !!app.plugins.plugins[id]?._loaded; } catch {}
+		try { await app.plugins.disablePlugin(id); } catch {}
+		if (!ran) out.push(id);
 	}
 	return out;
 `);

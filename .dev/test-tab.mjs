@@ -1608,7 +1608,7 @@ test("what is marked is what Tab writes, and the list underlines the same", asyn
 		const wrote = after.chips.length > before.chips.length ? "(stepped in)" : written;
 		if (before.marked) {
 			// Either the marked text is now written, or the press stepped into what it named.
-			expect(`${name}: Tab wrote what was marked`, wrote === "(stepped in)" || wrote === before.value, true);
+			expect(`${name}: Tab wrote what was marked`, wrote === "(stepped in)" || wrote === before.value ? true : { before, after }, true);
 		} else {
 			expect(`${name}: with nothing marked Tab writes nothing`, wrote === "(stepped in)" || wrote === before.value || after.marked !== "", true);
 		}
