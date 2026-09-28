@@ -44,9 +44,29 @@ jobs:
     permissions:
       contents: read
 
+  # The directory's "Review branch" on the commit about to be released, in
+  # parallel with the tests: fails on any Warning the last release did not
+  # have, before a commit, tag or release is made. Needs the same signed-in
+  # session as the `directory` job; without it the step is skipped.
+  review:
+    runs-on: ubuntu-latest
+    env:
+      COOKIE: ${{ secrets.OBSIDIAN_COMMUNITY_COOKIE }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Preview scan of ${{ github.sha }}, compared with the last release
+        if: env.COOKIE != ''
+        timeout-minutes: 35
+        run: |
+          npm install --no-save --no-package-lock playwright-core@1
+          node scripts/directory.mjs review "${{ github.sha }}"
+
   prepare:
     if: github.event_name == 'workflow_dispatch'
-    needs: test
+    needs: [test, review]
     runs-on: ubuntu-latest
     outputs:
       tag: ${{ steps.tag.outputs.tag }}
@@ -83,10 +103,10 @@ jobs:
           echo "tag=$VERSION" >> "$GITHUB_OUTPUT"
 
   release:
-    needs: [test, prepare]
+    needs: [test, review, prepare]
     # Runs after `prepare` on a dispatch, and straight after the tests on a
     # tag pushed by hand (where `prepare` is skipped).
-    if: always() && needs.test.result == 'success' && (needs.prepare.result == 'success' || needs.prepare.result == 'skipped')
+    if: always() && needs.test.result == 'success' && needs.review.result == 'success' && (needs.prepare.result == 'success' || needs.prepare.result == 'skipped')
     runs-on: ubuntu-latest
     env:
       TAG: ${{ needs.prepare.outputs.tag || github.ref_name }}

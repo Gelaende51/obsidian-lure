@@ -26,6 +26,10 @@ git fetch -q origin main
 [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" ] \
 	|| { echo "HEAD is not origin/main — push (or pull) first; the workflow releases origin/main" >&2; exit 1; }
 
+# The workflow's directory steps sign in with a stored session: renew it
+# first when this machine keeps one (see .dev/directory-session.mjs).
+[ -d "$HOME/.local/share/lure-directory/profile" ] && node .dev/directory-session.mjs
+
 started=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 gh workflow run release.yml --ref main -f version="$VERSION"
 for _ in $(seq 1 30); do
