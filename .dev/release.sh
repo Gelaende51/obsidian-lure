@@ -40,4 +40,12 @@ gh run watch "$id" --exit-status --interval 30
 git pull -q --ff-only origin main
 echo
 echo "Released $VERSION: $(gh release view "$VERSION" --json url --jq .url)"
-echo "Left: community.obsidian.md → account → plugins → lure → ⋯ → Check for new releases."
+# The directory has no API for this: opening the page in the browser you are
+# signed in with is what queues the scan. No credentials leave that browser.
+CHECK=https://community.obsidian.md/account/plugins/lure/check-release
+if command -v xdg-open >/dev/null && [ -z "${RELEASE_NO_BROWSER:-}" ]; then
+	xdg-open "$CHECK" >/dev/null 2>&1 &
+	echo "Opened $CHECK — it queues the directory's scan; the review follows in ~5 min."
+else
+	echo "Left: open $CHECK (signed in) to queue the directory's scan."
+fi

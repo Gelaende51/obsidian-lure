@@ -1,0 +1,15 @@
+{
+	"obsidian": "1.13.7",
+	"plugins": {
+		"breadcrumbs": "4.21.14",
+		"create-folder-notes-with-dropdown": "1.0.0",
+		"crumbs-obsidian": "0.3.1",
+		"folder-note-plugin": "0.7.3",
+		"folder-notes": "1.8.26",
+		"home-launcher": "1.2.0",
+		"nav-link-header": "2.8.0",
+		"obsidian-front-matter-title-plugin": "4.2.1",
+		"quick-explorer": "0.2.21",
+		"running-head": "2.1.1"
+	}
+}

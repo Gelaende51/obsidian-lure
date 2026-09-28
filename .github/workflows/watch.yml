@@ -1,0 +1,75 @@
+# Runs the suites when something Lure is tested against changes without a
+# commit here: a new Obsidian release, or a new release of a plugin the suites
+# install beside it (Folder notes, Quick Explorer, Breadcrumbs, …). The test
+# runs install the latest of each, so they test exactly the new versions.
+#
+# The last versions seen are in .github/upstream-versions.json; a change is
+# recorded after its test run, and a failing one opens an issue naming what
+# moved.
+name: Watch upstream
+
+on:
+  schedule:
+    - cron: "17 5 * * *" # daily, 05:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.diff.outputs.changed }}
+      changes: ${{ steps.diff.outputs.changes }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: diff
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          out=$(node scripts/upstream-versions.mjs --diff)
+          echo "changed=$(echo "$out" | jq -r .changed)" >> "$GITHUB_OUTPUT"
+          echo "changes=$(echo "$out" | jq -c .changes)" >> "$GITHUB_OUTPUT"
+          echo "$out" | jq .now > upstream-versions.json
+          echo "$out" | jq -r '.changes[]' | sed 's/^/- /' >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: upstream-versions
+          path: upstream-versions.json
+
+  test:
+    needs: check
+    if: needs.check.outputs.changed == 'true'
+    uses: ./.github/workflows/test.yml
+    permissions:
+      contents: read
+
+  record:
+    needs: [check, test]
+    if: always() && needs.check.outputs.changed == 'true' && needs.test.result != 'cancelled' && needs.test.result != 'skipped'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: upstream-versions
+      - name: Record the versions, and say so if Lure broke against them
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CHANGES: ${{ needs.check.outputs.changes }}
+          RESULT: ${{ needs.test.result }}
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          list=$(echo "$CHANGES" | jq -r '.[]' | sed 's/^/- /')
+          mv upstream-versions.json .github/upstream-versions.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/upstream-versions.json
+          git commit -m "Tested against new upstream versions: $RESULT" -m "$list"
+          git push origin HEAD:main
+          if [ "$RESULT" != "success" ]; then
+            gh issue create --title "Tests fail against new upstream versions" \
+              --body "$(printf 'The suites failed after these changed:\n\n%s\n\nRun: %s' "$list" "$RUN")"
+          fi
