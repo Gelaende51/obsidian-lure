@@ -26,3 +26,4 @@ personal.md
 # OS
 .DS_Store
 obsidian-*.log
+!.dev/test-vault/.obsidian/plugins/lure/data.json

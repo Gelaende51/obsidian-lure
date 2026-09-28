@@ -38,7 +38,10 @@ INSTALLER="${OBSIDIAN_INSTALLER:-$([ "$VERSION" = earliest ] && echo earliest ||
 # where it runs from — the launcher's cache — so a system Obsidian is untouched.
 CACHE="${OBSIDIAN_CACHE:-$HOME/.obsidian-cache}"
 trap 'pkill -f "$CACHE/" 2>/dev/null' EXIT
-npx --yes obsidian-launcher@3 launch --version "$VERSION" --installer "$INSTALLER" --copy "${PLUGINS[@]}" .dev/test-vault \
+# The copy of the vault goes under home, where a vault lives — so home
+# "contains" it, as the location cases expect.
+mkdir -p "$HOME/.cache/lure-ci"
+TMPDIR="$HOME/.cache/lure-ci" npx --yes obsidian-launcher@3 launch --version "$VERSION" --installer "$INSTALLER" --copy "${PLUGINS[@]}" .dev/test-vault \
 	-- --remote-debugging-port="$PORT" ${OBSIDIAN_EXTRA_ARGS:-} >"$LOG" 2>&1
 
 # The port answers before the vault has loaded; wait for a page target and for

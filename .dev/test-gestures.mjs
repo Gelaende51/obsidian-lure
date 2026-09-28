@@ -2877,19 +2877,22 @@ test("the field still keeps the modified keys it lives on", async () => {
 	await pressKey(page, "Escape");
 });
 
-test("a folder segment declines what it cannot take", async () => {
+test("a folder segment declines what it cannot take, and asks about a taken name", async () => {
 	// Its own parent: it is already there, so there is nothing to offer.
 	const parent = JSON.parse(await page.evaluate(dragOver("inner", `${ROOT}/inner/leaf.md`)));
 	expect("the folder it is already in offers nothing", parent.offered, false);
 
-	// A name that is taken. Nothing here overwrites, so there is nothing to
-	// offer either — and the refusal is silent, while the pointer is moving.
+	// A name that is taken is offered since 1.5.1: the drop asks what to do
+	// about the file in the way, as a taken name typed or picked does, and
+	// nothing moves until that is answered. Nothing here overwrites.
 	await page.evaluate(`await app.vault.create("${ROOT}/leaf.md", "# in the way"); ${PAUSE(300)} return true;`);
 	const taken = JSON.parse(await page.evaluate(dragOver(`${ROOT}`, `${ROOT}/inner/leaf.md`)));
-	expect("a taken name offers nothing", taken.offered, false);
+	expect("a taken name offers the move", taken.offered, true);
 	const still = JSON.parse(await page.evaluate(dropOn(`${ROOT}`, `${ROOT}/inner/leaf.md`)));
-	expect("and a drop on it changes nothing", still.tree, (v) =>
+	expect("and the drop asks first", await page.evaluate(`return !!document.querySelector(".lure-collision-modal");`), true);
+	expect("changing nothing while it asks", still.tree, (v) =>
 		v.includes(`${ROOT}/inner/leaf.md`) && v.includes(`${ROOT}/leaf.md`));
+	await page.evaluate(`[...document.querySelectorAll(".lure-collision-modal button")].find((b) => b.textContent === "Cancel")?.click(); ${PAUSE(400)} return true;`);
 });
 
 test("a folder cannot be dropped inside itself", async () => {

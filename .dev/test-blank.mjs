@@ -44,7 +44,8 @@ const state = `
 		file: leaf.view.file?.path ?? null,
 		parts: root
 			? [...root.querySelectorAll("span")]
-					.filter((el) => el.offsetParent !== null && !el.querySelector("span"))
+					// The empty "…" between a name's lead and trail (1.5.0) is no icon.
+					.filter((el) => el.offsetParent !== null && !el.querySelector("span") && !el.classList.contains("lure-name-ell"))
 					.map((el) => el.textContent || "[icon]")
 			: null,
 		titleHidden: title ? title.classList.contains("lure-native-title-hidden") : null,

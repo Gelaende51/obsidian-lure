@@ -1,0 +1,10 @@
+{
+  "language": "",
+  "alignment": "left",
+  "delimiter": "/",
+  "showVaultName": true,
+  "swapSegmentActions": true,
+  "showDotFiles": true,
+  "showFileExtension": true,
+  "accessExternalFiles": true
+}
