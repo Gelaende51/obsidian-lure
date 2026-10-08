@@ -21,13 +21,14 @@ LOG="${OBSIDIAN_LOG:-obsidian-$SUITE.log}"
 
 # The suites turn these on and off: test-compat and test-foldernote check Lure
 # beside each of them, and a start-page plugin gives the vault's delimiter
-# something to open.
+# something to open. test-keyleak turns on two that answer Tab in a note.
 PLUGINS=(
 	-p .
 	-p id:folder-notes -p id:folder-note-plugin -p id:create-folder-notes-with-dropdown
 	-p id:quick-explorer -p id:obsidian-front-matter-title-plugin -p id:nav-link-header
 	-p id:running-head -p id:crumbs-obsidian -p id:breadcrumbs
 	-p id:home-launcher
+	-p id:obsidian-outliner -p id:table-editor-obsidian
 )
 
 # The installer (Electron) goes with the app: the newest for "latest", the
