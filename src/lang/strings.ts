@@ -105,6 +105,11 @@ export const EN = {
 	dropAppended: 'Added to "{name}"',
 	/** Command palette entry; Obsidian shows it prefixed with the plugin name. */
 	commandFocusPathBar: "Focus the path bar",
+	commandFocusName: "Focus the path bar on the name",
+	commandFocusExtension: "Focus the path bar on the name with its extension",
+	commandFocusVaultPath: "Focus the path bar on the path from the vault",
+	commandFocusAbsolutePath: "Focus the path bar on the path from the system root",
+	commandFocusVault: "Focus the path bar on the vault",
 	noticeAutocompleteUnavailable: "Autocomplete unavailable: {error}",
 	suggestMore: "{count} more — keep typing to filter",
 

@@ -15,6 +15,7 @@ import { EXTERNAL_VIEW_TYPE, ExternalFileView } from "./externalFileView";
 import { BreadcrumbSettingTab } from "./settingsTab";
 import { BreadcrumbPathSettings, DEFAULT_SETTINGS } from "./settings";
 import { setLanguageOverride, t } from "./lang";
+import type { StringKey } from "./lang/strings";
 
 /** Obsidian's built-in "Rename file" command, bound to F2 by default. */
 const RENAME_COMMAND_ID = "workspace:edit-file-title";
@@ -39,6 +40,17 @@ type CheckCallback =NonNullable<Command["checkCallback"]>;
 /** Obsidian writes the platform-agnostic modifier as "Mod"; this is what it means here. */
 function modKey(): string {
 	return Platform.isMacOS ? "Meta" : "Ctrl";
+}
+
+/** One binding against one press, with the binding's modifiers already spelled for this platform. */
+function matchesBinding(binding: Hotkey, wanted: Set<string>, evt: KeyboardEvent): boolean {
+	if (binding.key.toLowerCase() !== evt.key.toLowerCase()) return false;
+	return (
+		wanted.has("Ctrl") === evt.ctrlKey &&
+		wanted.has("Shift") === evt.shiftKey &&
+		wanted.has("Alt") === evt.altKey &&
+		wanted.has("Meta") === evt.metaKey
+	);
 }
 
 export default class BreadcrumbPathPlugin extends Plugin {
@@ -96,11 +108,47 @@ export default class BreadcrumbPathPlugin extends Plugin {
 				if (MODIFIER_KEYS.has(evt.key) || evt.key === "Tab") return;
 				if (this.isCommandHotkey(RENAME_COMMAND_ID, evt)) return;
 				if (this.isCommandHotkey(`${this.manifest.id}:focus-path-bar`, evt)) return;
+				if (this.cycleKeyBackwards(evt) !== null) return;
 				forget();
 			},
 			{ capture: true },
 		);
 		this.registerDomEvent(document, "pointerdown", forget, { capture: true });
+		this.registerDomEvent(
+			document,
+			"keydown",
+			(evt) => {
+				const rename = this.cycleKeyBackwards(evt);
+				if (rename === null) return;
+				const breadcrumb = this.manager.getActiveBreadcrumb();
+				if (!breadcrumb) return;
+				evt.preventDefault();
+				evt.stopPropagation();
+				breadcrumb.retreatCycle(rename, rename ? () => this.renameInInlineTitle() : () => {});
+			},
+			{ capture: true },
+		);
+	}
+
+	/**
+	 * Shift added to the rename key or the focus key: the same cycle walked
+	 * backwards. True for the rename key, false for the focus key, null for
+	 * anything else — including a Shift chord something else is bound to,
+	 * which is left to that.
+	 */
+	private cycleKeyBackwards(evt: KeyboardEvent): boolean | null {
+		if (!evt.shiftKey) return null;
+		const rename = this.isCommandHotkey(RENAME_COMMAND_ID, evt, true);
+		if (!rename && !this.isCommandHotkey(`${this.manifest.id}:focus-path-bar`, evt, true)) return null;
+		if (this.isBoundElsewhere(evt)) return null;
+		return rename;
+	}
+
+	/** Hands the rename back to Obsidian's inline title, as the forward cycle does past its last rung. */
+	private renameInInlineTitle(): void {
+		const command = this.app.commands?.commands?.[RENAME_COMMAND_ID];
+		if (!command || !this.originalRenameCallback || !this.hasInlineTitle()) return;
+		this.originalRenameCallback.call(command, false);
 	}
 
 	onunload(): void {
@@ -142,6 +190,27 @@ export default class BreadcrumbPathPlugin extends Plugin {
 				return true;
 			},
 		});
+		// One command per rung, for a key straight to the one wanted.
+		const rungs: [string, number, StringKey][] = [
+			["focus-path-bar-name", 0, "commandFocusName"],
+			["focus-path-bar-extension", 1, "commandFocusExtension"],
+			["focus-path-bar-vault-path", 2, "commandFocusVaultPath"],
+			["focus-path-bar-absolute-path", 3, "commandFocusAbsolutePath"],
+			["focus-path-bar-vault", 4, "commandFocusVault"],
+		];
+		for (const [id, rung, name] of rungs) {
+			this.addCommand({
+				id,
+				name: t(name),
+				checkCallback: (checking: boolean) => {
+					const breadcrumb = this.manager.getActiveBreadcrumb();
+					if (!breadcrumb) return false;
+					if (rung === 4 && !this.settings.accessExternalFiles) return false;
+					if (!checking) breadcrumb.focusRung(rung);
+					return true;
+				},
+			});
+		}
 	}
 
 	/**
@@ -344,20 +413,30 @@ export default class BreadcrumbPathPlugin extends Plugin {
 		return this.isCommandHotkey(RENAME_COMMAND_ID, evt);
 	}
 
-	/** Whether this event is one of the keys bound to a command, by the same tables. */
-	private isCommandHotkey(id: string, evt: KeyboardEvent): boolean {
+	/**
+	 * Whether this event is one of the keys bound to a command, by the same
+	 * tables. `shifted` asks instead whether it is one of them with Shift
+	 * added — a binding that has no Shift of its own.
+	 */
+	private isCommandHotkey(id: string, evt: KeyboardEvent, shifted = false): boolean {
 		const manager = this.app.hotkeyManager;
 		const bindings: Hotkey[] = manager?.customKeys?.[id] ?? manager?.defaultKeys?.[id] ?? [];
 		return bindings.some((binding) => {
-			if (binding.key.toLowerCase() !== evt.key.toLowerCase()) return false;
 			const wanted = new Set(binding.modifiers.map((m) => (m === "Mod" ? modKey() : m)));
-			return (
-				wanted.has("Ctrl") === evt.ctrlKey &&
-				wanted.has("Shift") === evt.shiftKey &&
-				wanted.has("Alt") === evt.altKey &&
-				wanted.has("Meta") === evt.metaKey
-			);
+			if (shifted && wanted.has("Shift")) return false;
+			if (shifted) wanted.add("Shift");
+			return matchesBinding(binding, wanted, evt);
 		});
+	}
+
+	/** Whether any command at all is bound to exactly this press. */
+	private isBoundElsewhere(evt: KeyboardEvent): boolean {
+		const manager = this.app.hotkeyManager;
+		const ids = new Set([...Object.keys(manager?.defaultKeys ?? {}), ...Object.keys(manager?.customKeys ?? {})]);
+		for (const id of ids) {
+			if (this.isCommandHotkey(id, evt)) return true;
+		}
+		return false;
 	}
 
 	private restoreRenameCommand(): void {

@@ -31,7 +31,7 @@ import {
 	levelCap,
 	readableMinimum,
 } from "./pathFit";
-import { commonPrefix, planTab } from "./tabComplete";
+import { commonPrefix, planTab, TabCandidate } from "./tabComplete";
 import { FolderChildSuggest, MODIFIED_ENTER, guardFieldKeys, pageLabel, PathSuggestion } from "./folderChildSuggest";
 import { ExternalChild, PATH_SEP, externalJoin, externalParent, externalSegments, isExternalFile, isExternalFolder, listExternalChildren } from "./externalFs";
 import {
@@ -288,6 +288,14 @@ const WHEEL_LINE_PX = 16;
  * at the path, while this key alternates between two places to rename in.
  */
 const LAST_RENAME_RUNG = 3;
+/**
+ * The vault, as a rung after the path from the system root: the place every
+ * path is counted from, with the other places beside it. Only where places
+ * can be reached at all — see `hasVaultRung`.
+ */
+const VAULT_RUNG = 4;
+/** The press past the last rung, which laps back to the front of the path. */
+const LAP_RUNG = 5;
 /** The padlock opens and shuts again well inside half a second. */
 const PADLOCK_FLASH_MS = 250;
 /** How soon a second rename press counts as having pressed the padlock. */
@@ -311,6 +319,31 @@ const TIGHT_VAR = "--lure-tight";
  * into a folder and carrying the rest of a path along are all just "the row
  * looked like this".
  */
+/**
+ * Tab's turn through the names at a fork.
+ *
+ * Where what was typed still begins several names, a press writes one of
+ * them whole and the next press the one after it, the way a shell's menu
+ * completion goes round. The field is rebuilt from these parts on every
+ * press, so the names never pile up on each other.
+ */
+interface TabCycle {
+	/** The field in front of the name being cycled, and after it. */
+	before: string;
+	after: string;
+	/** The segment as it was before the first press, and how much of it was typed. */
+	original: string;
+	typed: number;
+	names: TabCandidate[];
+	/** The name on show, or -1 for the segment as it was. */
+	index: number;
+	/** The field as the last press left it; anything else ends the turn. */
+	shown: string;
+}
+
+/** How long a lone Alt may be held and still count as a tap. */
+const ALT_TAP_MS = 600;
+
 interface TabStep {
 	/** The folder being browsed inside the vault, null while the row stands in the file's own. */
 	folder: string | null;
@@ -746,6 +779,9 @@ export class PathBreadcrumb {
 	 * it, and is treated as text like any other.
 	 */
 	private tabGivenBack: { start: number; end: number } | null = null;
+	private tabCycle: TabCycle | null = null;
+	/** When a lone Alt went down in the field, or 0 once anything else has. */
+	private altDownAt = 0;
 	/**
 	 * The field as the ladder found it — where a lap comes back to when no
 	 * folder was walked before the rungs began.
@@ -2702,13 +2738,13 @@ export class PathBreadcrumb {
 	private pressLikeTab(leave: () => void): boolean {
 		const input = this.inputEl;
 		if (!input) return false;
-		if (this.tabStage !== null && this.tabStage >= LAST_RENAME_RUNG) {
+		if (this.tabStage !== null && this.tabStage >= this.lastRung()) {
 			const target = this.tabTargetPath;
 			leave();
 			this.lapArmedFor = target;
 			return false;
 		}
-		this.handleTabCompletion(input);
+		this.pressTab(input);
 		return true;
 	}
 
@@ -2724,7 +2760,7 @@ export class PathBreadcrumb {
 		this.tabTrail = [];
 		this.tabLadderStart = null;
 		this.tabTargetPath = armed;
-		this.tabStage = LAST_RENAME_RUNG + 1;
+		this.tabStage = LAP_RUNG;
 		this.applyLadderStage();
 		return true;
 	}
@@ -6158,7 +6194,7 @@ export class PathBreadcrumb {
 		// path is counted from. Tab sets in the one being pointed at, which
 		// is what picking it does, so the key and the pointer agree here as
 		// they do everywhere else.
-		if (this.showingLocations) {
+		if (this.showingLocations && this.tabStage === null) {
 			// Whatever the names agree on is taken first, exactly as it is
 			// anywhere else, so the press acts on the whole name rather than
 			// on the half of it that was typed.
@@ -6225,12 +6261,7 @@ export class PathBreadcrumb {
 		this.tabGivenBack = null;
 		const typed =
 			resuming && given ? input.value.slice(bounds.start, given.start) : queryAtCaret(input);
-		const rows = this.suggest?.completions(typed) ?? [];
-		const candidates = rows.map((row) => ({
-			label: row.label,
-			path: row.path,
-			folder: row.kind === "folder",
-		}));
+		const { rows, candidates } = this.tabCandidates(typed);
 
 		// Which name a press with nothing left to complete walks toward: the
 		// row the dropdown is showing as highlighted, when that row is one of
@@ -6317,6 +6348,157 @@ export class PathBreadcrumb {
 		// What the next press would write is shown after this one, as it is
 		// after a typed letter.
 		this.offerSuggestion(input);
+	}
+
+	/**
+	 * The names Tab completes against: the children of the folder being
+	 * listed that begin with what was typed.
+	 *
+	 * While a note is being moved its own name comes first. Keeping the name
+	 * is what a move almost always means, so a press in a folder of names
+	 * that share its opening heads for it rather than for whichever sorts
+	 * first — and where a name of the same spelling is already there, that
+	 * one is put first instead, so the collision is asked about rather than
+	 * walked past.
+	 */
+	private tabCandidates(query: string): { rows: PathSuggestion[]; candidates: TabCandidate[] } {
+		const rows = this.suggest?.completions(query) ?? [];
+		const candidates: TabCandidate[] = rows.map((row) => ({
+			label: row.label,
+			path: row.path,
+			folder: row.kind === "folder",
+		}));
+		const name = this.renameMode && !this.showingLocations ? (this.externalFileName ?? this.file?.name ?? null) : null;
+		if (!name || !name.toLowerCase().startsWith(query.toLowerCase())) return { rows, candidates };
+		const at = candidates.findIndex((candidate) => !candidate.folder && candidate.label === name);
+		if (at >= 0) {
+			candidates.unshift(...candidates.splice(at, 1));
+			return { rows, candidates };
+		}
+		const folder = this.currentFolderPath();
+		const path =
+			this.externalPath !== null ? externalJoin(this.externalPath, name) : folder ? `${folder}/${name}` : name;
+		candidates.unshift({ label: name, path, folder: false });
+		return { rows, candidates };
+	}
+
+	/**
+	 * Tab: at a fork, the next of the names that begin with what was typed;
+	 * anywhere else, the completion it has always been.
+	 */
+	private pressTab(input: HTMLInputElement): void {
+		if (this.turnCycle(input, 1)) return;
+		if (this.startCycle(input)) return;
+		this.handleTabCompletion(input);
+	}
+
+	/** Shift+Tab: the names the other way round while Tab is going round them, else the way back. */
+	private pressTabBack(input: HTMLInputElement): void {
+		if (this.turnCycle(input, -1)) return;
+		this.handleTabBack(input);
+	}
+
+	/**
+	 * A tap of Alt: the shell's completion — as far as the names agree, into
+	 * the one folder left, then up the rungs. A name Tab has put on show is
+	 * taken as though it had been typed, so the tap goes on from it.
+	 */
+	private pressAlt(input: HTMLInputElement): void {
+		const cycle = this.liveCycle(input);
+		this.tabCycle = null;
+		if (cycle && cycle.index >= 0) {
+			const end = input.selectionEnd ?? input.value.length;
+			input.setSelectionRange(end, end);
+			this.suggestQueryOverride = queryAtCaret(input);
+		}
+		this.handleTabCompletion(input);
+	}
+
+	/** The turn Tab is taking, if the field is still as its last press left it. */
+	private liveCycle(input: HTMLInputElement): TabCycle | null {
+		const cycle = this.tabCycle;
+		if (!cycle) return null;
+		if (cycle.shown === `${input.selectionStart ?? 0}:${input.selectionEnd ?? 0}:${input.value}`) return cycle;
+		this.tabCycle = null;
+		return null;
+	}
+
+	/**
+	 * Starts going round the names, when what was typed still begins more
+	 * than one of them.
+	 *
+	 * Only from a caret at the end of what was typed — before an extension
+	 * typing over a stem leaves standing, at most. Text that is selected is
+	 * a name already chosen, and Tab steps into it as before; so does a row
+	 * arrowed to, a run the way back marked, and the rungs.
+	 */
+	private startCycle(input: HTMLInputElement): boolean {
+		if (this.tabStage !== null || this.showingLocations || this.preview || this.composing) return false;
+		const given = this.tabGivenBack;
+		if (given && given.start === input.selectionStart && given.end === input.selectionEnd) return false;
+		const run = this.suggested;
+		const value = run ? this.typedFieldValue() : input.value;
+		const caret = run ? run.start : (input.selectionStart ?? 0);
+		if (!run && caret !== (input.selectionEnd ?? 0)) return false;
+		const bounds = segmentBoundsAtCaret(value, caret);
+		const typed = value.slice(bounds.start, caret);
+		const tail = value.slice(caret, bounds.end);
+		if (!typed || (tail && !/^\.[^./\\\s]+$/.test(tail))) return false;
+		if (this.typedPageType(typed)) return false;
+
+		const seen = new Set<string>();
+		const names = this.tabCandidates(typed).candidates.filter((candidate) => {
+			if (seen.has(candidate.label)) return false;
+			seen.add(candidate.label);
+			return true;
+		});
+		if (names.length < 2) return false;
+
+		this.settleSuggestion(false);
+		this.tabCycle = {
+			before: value.slice(0, bounds.start),
+			after: value.slice(bounds.end),
+			original: value.slice(bounds.start, bounds.end),
+			typed: typed.length,
+			names,
+			index: 0,
+			shown: "",
+		};
+		this.showCycle(input);
+		return true;
+	}
+
+	/** One step round: `by` is 1 for Tab, -1 for Shift+Tab. */
+	private turnCycle(input: HTMLInputElement, by: 1 | -1): boolean {
+		const cycle = this.liveCycle(input);
+		if (!cycle) return false;
+		// The segment as it was is one stop on the round, between the last
+		// name and the first, so going round costs nothing.
+		const stops = cycle.names.length + 1;
+		cycle.index = ((cycle.index + 1 + by + stops) % stops) - 1;
+		this.showCycle(input);
+		return true;
+	}
+
+	/**
+	 * Writes the name on show into the field, with the part Tab added
+	 * marked: typing replaces it, and Enter takes it as it stands.
+	 */
+	private showCycle(input: HTMLInputElement): void {
+		const cycle = this.tabCycle;
+		if (!cycle) return;
+		const name = cycle.index < 0 ? cycle.original : (cycle.names[cycle.index]?.label ?? cycle.original);
+		input.value = cycle.before + name + cycle.after;
+		const from = cycle.before.length + cycle.typed;
+		const to = cycle.index < 0 ? from : cycle.before.length + name.length;
+		input.setSelectionRange(from, to);
+		this.preview = null;
+		this.tabGivenBack = null;
+		// The list stays on everything the typing begins, so each name is
+		// shown among the others it is being chosen from.
+		this.suggestQueryOverride = cycle.original.slice(0, cycle.typed);
+		input.dispatchEvent(new Event("input"));
+		cycle.shown = `${input.selectionStart ?? 0}:${input.selectionEnd ?? 0}:${input.value}`;
 	}
 
 	/**
@@ -6506,12 +6688,7 @@ export class PathBreadcrumb {
 
 		const query = input.value.slice(bounds.start, caret);
 		const segment = input.value.slice(bounds.start, bounds.end);
-		const rows = this.suggest?.completions(query) ?? [];
-		const candidates = rows.map((row) => ({
-			label: row.label,
-			path: row.path,
-			folder: row.kind === "folder",
-		}));
+		const { candidates } = this.tabCandidates(query);
 		// Exactly what Tab would do here — the same names, the same row it
 		// would walk toward, the same text it would replace — so the offer
 		// and the key never disagree about what comes next.
@@ -6727,7 +6904,7 @@ export class PathBreadcrumb {
 		// furthest from it — the path from the system root. Pressing on from
 		// there narrows back down the rungs and out along the walk again, so
 		// the two directions describe one ring rather than two dead ends.
-		this.startLadderAt(3, this.standingTargetPath());
+		this.startLadderAt(this.lastRung(), this.standingTargetPath());
 	}
 
 	/**
@@ -6964,6 +7141,17 @@ export class PathBreadcrumb {
 			: { base: target.slice(0, cut), rest: target.slice(cut + 1) };
 	}
 
+	/** Whether the vault is a rung: only where its places can be reached. */
+	private hasVaultRung(): boolean {
+		if (!this.plugin.settings.accessExternalFiles) return false;
+		return this.externalPath !== null || this.vaultBasePath() !== null;
+	}
+
+	/** The rung the rename and focus keys leave from, and Shift+Tab loops round to. */
+	private lastRung(): number {
+		return this.hasVaultRung() ? VAULT_RUNG : LAST_RENAME_RUNG;
+	}
+
 	private advanceLadder(): void {
 		this.tabStage = (this.tabStage ?? 0) + 1;
 		this.applyLadderStage();
@@ -6979,6 +7167,16 @@ export class PathBreadcrumb {
 		if (target === null) {
 			this.tabStage = null;
 			return;
+		}
+
+		// The vault's rung where it has nothing to offer is no rung at all.
+		if (this.tabStage === VAULT_RUNG && !this.hasVaultRung()) this.tabStage = LAP_RUNG;
+		// Off the vault's rung, the row comes back from the places it was
+		// showing before the next rung draws itself on it.
+		if (this.tabStage !== VAULT_RUNG && this.showingLocations) {
+			this.showingLocations = false;
+			this.exitTypingInput();
+			this.render();
 		}
 
 		const external = this.externalPath !== null;
@@ -7027,6 +7225,21 @@ export class PathBreadcrumb {
 				const base = this.vaultBasePath();
 				const system = external || base === null ? target : `${base}/${target}`;
 				this.setLadderField("", system, "all");
+				return;
+			}
+			case VAULT_RUNG: {
+				// What a click on the vault's name opens: the places, with the
+				// whole path in the field and the part the vault stands for
+				// marked — so typing or picking swaps only that.
+				const base = external ? (this.externalBase?.path ?? null) : this.vaultBasePath();
+				const whole = external || base === null ? target : `${base}/${target}`;
+				const marked = base !== null && isInside(whole, base) ? base.length : "all";
+				this.exitTypingInput();
+				this.showingLocations = true;
+				this.pinRowStart();
+				this.hideNativeBreadcrumb();
+				this.render();
+				this.enterTypingMode(whole, marked, this.vaultSegmentEl);
 				return;
 			}
 			default: {
@@ -7180,6 +7393,9 @@ export class PathBreadcrumb {
 	 * which in a folder of two hundred notes is nowhere near either.
 	 */
 	private preselectPath(): string | null {
+		// Tab going round the names: the list shows the one on show.
+		const cycle = this.tabCycle;
+		if (cycle && cycle.index >= 0) return cycle.names[cycle.index]?.path ?? null;
 		// Nothing once you have typed: the row you were standing in is not
 		// what the list is about any more, and a highlight left on it reads
 		// as a choice already made — one that Enter would act on. An
@@ -7744,6 +7960,14 @@ export class PathBreadcrumb {
 		}
 
 		const onKeydown = (evt: KeyboardEvent) => {
+			// A lone Alt is Tab's completion — see `onKeyup`. Not a key that
+			// settles the offer either: the tap is about to take it.
+			if (evt.key === "Alt") {
+				const lone = !evt.repeat && !evt.ctrlKey && !evt.shiftKey && !evt.metaKey;
+				this.altDownAt = lone ? Date.now() : 0;
+				return;
+			}
+			this.altDownAt = 0;
 			// The offered run is settled before anything below looks at the
 			// field, so every handler reads a value holding only what was
 			// typed — and, where the press takes the offer, exactly what was
@@ -7807,8 +8031,8 @@ export class PathBreadcrumb {
 				this.stepOutOfFolder();
 			} else if (evt.key === "Tab") {
 				evt.preventDefault();
-				if (evt.shiftKey) this.handleTabBack(inputEl);
-				else this.handleTabCompletion(inputEl);
+				if (evt.shiftKey) this.pressTabBack(inputEl);
+				else this.pressTab(inputEl);
 			} else if (evt.key === "/") {
 				// Except where the slash is part of a scheme: "https:/" +
 				// "/" is a URL being typed, not a folder called "https:".
@@ -8049,7 +8273,27 @@ export class PathBreadcrumb {
 		// offer spells the typed letters the way the name does, and typing
 		// on past it must not keep that spelling for a name of your own.
 		const onBeforeInput = () => this.unspellOffer();
+		// Alt pressed and let go with nothing in between completes, as Tab
+		// used to: Tab itself goes round the names at a fork now, and the
+		// shell's step to where the names stop agreeing needed a key of its
+		// own. Only a tap counts — not a chord, not AltGr, and not an Alt
+		// that went down here and came up after the window lost the focus,
+		// which is what switching windows with Alt+Tab looks like from in
+		// here.
+		const onKeyup = (evt: KeyboardEvent) => {
+			if (evt.key !== "Alt") return;
+			const downAt = this.altDownAt;
+			this.altDownAt = 0;
+			if (!downAt || Date.now() - downAt > ALT_TAP_MS || !document.hasFocus()) return;
+			evt.preventDefault();
+			this.pressAlt(inputEl);
+		};
+		const onBlur = () => {
+			this.altDownAt = 0;
+		};
 		inputEl.addEventListener("keydown", onKeydown);
+		inputEl.addEventListener("keyup", onKeyup);
+		inputEl.addEventListener("blur", onBlur);
 		inputEl.addEventListener("beforeinput", onBeforeInput);
 		inputEl.addEventListener("input", onInput);
 		// Writing into the field mid-composition tears the composition up,
@@ -8060,6 +8304,10 @@ export class PathBreadcrumb {
 		window.addEventListener("keydown", onEscapeCapture, true);
 		this.editCleanup = () => {
 			inputEl.removeEventListener("keydown", onKeydown);
+			inputEl.removeEventListener("keyup", onKeyup);
+			inputEl.removeEventListener("blur", onBlur);
+			this.tabCycle = null;
+			this.altDownAt = 0;
 			inputEl.removeEventListener("beforeinput", onBeforeInput);
 			inputEl.removeEventListener("input", onInput);
 			inputEl.removeEventListener("compositionstart", onCompositionStart);
@@ -9002,6 +9250,53 @@ export class PathBreadcrumb {
 		}
 		if (this.startAtLap()) return;
 		this.startLadderAt(0);
+	}
+
+	/**
+	 * One of the rung commands: the field opened straight on that rung — the
+	 * name, the name with its extension, the path from the vault, the path
+	 * from the system root, or the vault. For navigating, as the focus
+	 * command is; the rename key turns it into a rename where it stands.
+	 * False for the vault where no place can be reached from it.
+	 */
+	focusRung(rung: number): boolean {
+		if (rung === VAULT_RUNG && !this.hasVaultRung()) return false;
+		this.lapArmedFor = null;
+		this.startLadderAt(rung, this.inputEl ? this.standingTargetPath() : null);
+		return true;
+	}
+
+	/**
+	 * Shift with the rename key or the focus key: the same cycle the other
+	 * way round. In an open field that is Shift+Tab, until the first rung,
+	 * where the cycle leaves the way it came in — `leave` hands over to the
+	 * inline title or to the note. A closed row opens on the last rung.
+	 */
+	retreatCycle(rename: boolean, leave: () => void): void {
+		const input = this.inputEl;
+		if (!input) {
+			if (rename) {
+				if (!this.file && this.externalPath === null) return;
+				if (this.askForPadlockFirst()) return;
+				this.renameMode = true;
+				this.updateRenameModeStyling();
+			}
+			this.startLadderAt(this.lastRung());
+			return;
+		}
+		// The key that does not match the field's mode switches it, as the
+		// forward press does.
+		if (rename !== this.renameMode) {
+			if (!rename) this.setRenameMode(false);
+			else if (!this.askForPadlockFirst()) this.setRenameMode(true);
+			return;
+		}
+		if (this.tabStage === 0) {
+			this.dismissEditing();
+			leave();
+			return;
+		}
+		this.pressTabBack(input);
 	}
 
 	/**
