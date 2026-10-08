@@ -2580,3 +2580,10 @@ than the harness's token count; across models it does not — one list-price
 dollar of Opus 5.5 moved the 5-hour window about a quarter as far as one of
 Sonnet 5. `~/building_stuff/scripts/claude-usage.mjs --calibrate` refits this
 from the logged readings; the factors will move as readings accumulate.
+
+## A suite that re-focuses after every press cannot see a press that moves the focus
+- `test-tab.mjs`'s `tab()` puts the focus back in the field after each key, which is right for asking what the key did to the field and blind to a key that sent the focus into the note. Two reports ("Tab caught by the editor", "typing landed in the note") were exactly that shape. `test-keyleak.mjs` reads the focus and the note text *before* anything restores either, with the Outliner and Advanced Tables plugins on, since both answer Tab in a note.
+
+## A lone Alt as a key
+- Electron delivers a bare Alt as keydown/keyup with `key === "Alt"`. A tap is: Alt down with no other modifier, no key in between, up within ~600 ms. Alt+Tab to another window shows up here as Alt down followed by the field's `blur` (the Tab goes to the window manager), so clearing the armed tap on blur is enough; `document.hasFocus()` would also have refused it under xvfb on CI.
+- The Alt keydown has to be taken before the code that settles an inline offer on any non-character key, or the tap that is meant to *take* the offer throws it away first.
