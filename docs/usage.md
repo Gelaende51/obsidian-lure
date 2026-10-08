@@ -111,8 +111,9 @@ first row. In a folder of two hundred notes the first row is nowhere near you.
 **A wheel over a name opens its list and walks it.** The first turn opens the
 same list that pressing the name opens, and every turn after moves the highlight
 a row, putting what you are pointing at into the field exactly as arrowing does —
-so a sibling can be found and taken without the keyboard. Turning off either end
-gives your text back. A row with more path than pane answers the wheel by
+so a sibling can be found and taken without the keyboard. The wheel **stops at
+the first and the last row** rather than wrapping round, as a hand on a wheel
+expects; the arrow keys still wrap. A row with more path than pane answers the wheel by
 scrolling sideways instead, which is the reading that wins while it applies.
 
 The list is **as tall as the window lets it be**. Obsidian caps its suggestion
@@ -306,6 +307,8 @@ A folder is not something Obsidian can open, so sending one to a tab does one of
 
 ## Tab: complete the name, then the path, then widen the selection
 
+**Two keys share this.** A tap of <kbd>Alt</kbd> — pressed and let go on its own — is the shell's completion described in this section. <kbd>Tab</kbd> does the same everywhere except at a fork: where what you typed still begins **several** names, each press writes the next of them whole, with the part it added marked, and the press after the last one gives back what you typed. <kbd>Shift</kbd>+<kbd>Tab</kbd> goes round the other way, the dropdown highlights the name on show, and typing replaces the marked part. A tap of <kbd>Alt</kbd> on a name Tab has put on show takes it and steps into it. Moving a note, its own name is the first one offered.
+
 <kbd>Tab</kbd> completes the way a shell does: **a press extends what you typed as far as the names in that folder agree, and stops where they disagree.** Type `Sk` where only `Sketches` starts that way and the word is finished; type `Al` where `Alpha-one`, `Alpha-two` and `Alpine` all do and you get `Alp`, because the next character is a question only you can answer.
 
 Press again without typing and it walks toward one name — the row the dropdown has highlighted, or the first — stopping at that name's next ambiguity: `Alpha-`, then `Alpha-one`. The list opens on where you already are, so in your own folder the first press heads for the note you have open rather than for whatever sorts first.
@@ -324,7 +327,8 @@ Arriving at the file's name **is** the first rung — no press is spent parking 
 2. the name with its extension
 3. the path from your vault folder
 4. the path from the system root
-5. back to the front of the path **as it now stands** — standing where the walk began, first segment marked, ready to be walked again
+5. the vault — the places open, as clicking the vault's name opens them, with the whole path in the field and the vault's part of it marked (only with *Access external files* on)
+6. back to the front of the path **as it now stands** — standing where the walk began, first segment marked, ready to be walked again
 
 A fourth click reaches that same fourth rung directly.
 
@@ -404,6 +408,8 @@ Text that opens **already selected** — what a folder click leaves behind it �
 Only explicit schemes count — a note called `100%20` is still a note. A `/` that belongs to a scheme stays literal rather than descending into a folder, so a URL can be typed by hand and not only pasted.
 
 ## A command for the keyboard
+
+Besides **Focus the path bar**, five commands open the field straight on one rung: *on the name*, *on the name with its extension*, *on the path from the vault*, *on the path from the system root* and *on the vault*. None has a key out of the box.
 
 **Focus the path bar** opens the field on the note's name and walks it the way <kbd>F2</kbd> does — the name, the name with its extension, the path from your vault, the path from the system root — and the press after that closes the field and puts the cursor back in the note. It does not rename: Enter navigates, as in any other field. It has no key of its own out of the box, because Obsidian's guidelines discourage plugins claiming one; the **Hotkeys** row at the end of this plugin's settings opens *Settings → Hotkeys* showing only its commands, so you can bind it there.
 
@@ -596,6 +602,10 @@ the cursor and the highlight are the ones the File Explorer draws.
 **The vault's name takes a drop too**, since it is the folder at the top of the
 row — the one gesture that puts a note in the vault root from here.
 
+**A folder that cannot take the drag says why** in the hover label — the note is
+already in it, a folder cannot go inside itself, or the name is already there —
+rather than letting the header behind it offer to open the file.
+
 **A whole selection can be dragged at once**, and it moves as one: if any of
 them could not be taken, the drop is refused rather than moving some and
 quietly skipping the rest.
@@ -753,6 +763,8 @@ name is turned off or has been squeezed away.
 | --- | --- | --- |
 | **Red** ring on the path bar | The row points outside your vault | Obsidian cannot open what's there as a note, and nothing out there is written until you open the padlock. |
 | **Orange** ring on the path bar | The file is a text type Obsidian has no view for | A caution. Obsidian would hand it to your desktop's default application; the plugin shows it instead. |
+| **Red** folder in the path | That folder is not there yet; <kbd>Enter</kbd> will make it along with the rest |
+| **Red** edge down the dropdown | Nothing is highlighted, and <kbd>Enter</kbd> would make the typed name rather than open one of the rows listed |
 | **Red** text in the open field | Nothing is at that path yet | <kbd>Enter</kbd> will make it rather than open it. Not a warning so much as a statement of what the next keystroke does — see [Typing a path](#typing-a-path). |
 | **Red** padlock in place of the rename toggle | The row points outside your vault and writing there is still locked | The same red as the ring, for the same reason: it marks a refusal. Pressing it allows writing here and hands the slot back to the toggle — see [Writing outside the vault](#writing-outside-the-vault). |
 
@@ -804,9 +816,9 @@ it does whatever <kbd>Tab</kbd> would do there: on the name, that is the next ru
 the name with its extension, the path from your vault folder, the path from the
 system root; with something typed, it completes it, as <kbd>Tab</kbd> does.
 
-**The cycle closes at the heading.** Five presses take you round it — the inline
+**The cycle closes at the heading.** Six presses take you round it — the inline
 title, the name, the name with its extension, the path from your vault, the path
-from the system root — and the sixth is the inline title again. That press is the only one that differs from
+from the system root, the vault (with *Access external files* on) — and the next is the inline title again. That press is the only one that differs from
 <kbd>Tab</kbd>, which laps back to the front of the path instead — and the seventh
 goes where <kbd>Tab</kbd>'s lap goes: the vault root, with the whole path in the
 field and its first folder marked. So every step <kbd>Tab</kbd> reaches, the key
@@ -825,6 +837,8 @@ been editing never lands on a rung left over from before.
 Outside the vault the key works too — there is no inline title out there, so the
 first press goes straight to the path bar.
 
+**<kbd>Shift</kbd> with either key goes round backwards**: one rung back per press, and past the name out to the inline title (the rename key) or into the note (the focus key). From a closed row it opens on the last rung. Only while nothing else is bound to that Shift chord.
+
 This works by wrapping the `workspace:edit-file-title` command rather than grabbing the key, so rebinding the hotkey and running the command from the palette both work unchanged.
 
 ## How dropdown entries are tinted
@@ -835,6 +849,7 @@ This works by wrapping the `workspace:edit-file-title` command rather than grabb
 | **Orange** | Not a note — anything Obsidian will not open as one, from a PDF to a `.txt`, and the `:page` entries with them. A folder of mixed contents is read for the notes in it, and one colour for everything else says that faster than a caution on a few of them; see [the warning colours](#the-warning-colours) |
 | **Muted** | Outside your vault, so the vault's own handling doesn't apply |
 | **Blue**, bold | Where you already are: this bar's own note, and the folder the path bar is standing on. In rename/move mode the *keep this name* entry stands in the note's place — the same note either way |
+| **Pink**, italic | A note that is linked to and not written yet, listed in the folder Obsidian would make it in. Picking it makes it |
 | **Red** | Rename/move mode only: the name is taken. Still selectable — picking one asks what to do about the file in the way; see [A name that is taken](#a-name-that-is-taken) |
 
 **Folders are bold**, so a folder's own note needs no colour of its own to
@@ -914,11 +929,12 @@ appear in a real name, where an apostrophe very much can.
 | **Language** | Obsidian default, or any of 46 | Obsidian default | Which language this plugin's own text is in. *Obsidian default* follows the language set in Appearance settings, which is what almost everyone wants. The row itself — its name, its description and *Obsidian default* — stays in English whatever is picked, because it is the way back out of a language you cannot read. Greek and Sanskrit are translated here and absent from Obsidian's own list, so this setting is the only way to reach them. |
 | **Alignment** | Left / Center / Right | Left | Where the breadcrumb sits in the header row. *Center* matches Obsidian's classic look. |
 | **Delimiter** | Any character | `/` | The separator drawn between segments. Six one-click presets (`/ > ▸ › \ •`) sit in front of the text field. |
-| **Show vault name** | On / Off | On | Whether the vault itself is the first breadcrumb segment. Turned off, that segment becomes a 🏠 icon rather than disappearing, so the path still starts somewhere clickable. |
+| **Vault segment** | Icon and name / Icon only / None | Icon and name | What the first segment of the path shows. *Icon only* keeps the name a hover away. *None* leaves the segment out; the vault is then still a rung of Tab's and the keys' cycle. Replaces *Show vault name*. |
+| **Vault icon** | Any Lucide icon name | `home` | The icon on the vault's segment and on its entry among the places. Six presets, or type a name; one that draws nothing falls back to the house. |
 | **Folder name opens the dropdown** | On / Off | On | Swaps what a folder name and the delimiter after it do — see [the table above](#the-breadcrumb). With [Folder notes](obsidian://show-plugin?id=folder-notes) the delimiter opens folder notes. Never applies in rename/move mode. |
 | **Show dot files** | On / Off | Off | Whether dot-files and dot-folders are listed in the dropdowns. Overwrite protection applies either way. |
 | **Show all file types** | — | — | Not this plugin's setting but Obsidian's, named here because it answers the same question: your vault indexes only the file types it is told to, and only what it indexes can be listed. Look for it in Obsidian's settings and turn it on to see every file; the button beside the row opens that page with the setting scrolled into view and flashed, as clicking it in the settings' own search would. Outside the vault it does not apply, since nothing out there is indexed anyway. |
-| **Show file extensions** | On / Off | Off | Whether the file's name on the row carries its extension. Off, it is left off — as Obsidian leaves it off a note's title. On, the row names the file the way the filesystem does. Either way the extension is the second thing given up when the row runs out of room, straight after the vault name. |
+| **Show file extensions** | On / Off | Off | Whether the file's name on the row carries its extension. Off, the dropdown shows each file's type in a badge at the row's end instead; pressing the badge writes the name out in the field with its extension. Off, it is left off — as Obsidian leaves it off a note's title. On, the row names the file the way the filesystem does. Either way the extension is the second thing given up when the row runs out of room, straight after the vault name. |
 | **Access external files** | On / Off | **Off** | Whether the vault name opens the locations dropdown. Off, nothing in the plugin ever looks past this vault. |
 | **Hotkeys** | button | — | Opens Obsidian's *Hotkeys* filtered to this plugin, where *Focus the path bar* can be given a key. |
 

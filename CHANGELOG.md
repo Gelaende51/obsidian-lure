@@ -4,6 +4,27 @@
 
 Every release of Lure, newest first. What has landed since the last release is under *Unreleased*. Versions carry no `v` prefix, matching the release tags.
 
+## Unreleased
+
+### Added
+
+- **Tab goes round the names at a fork.** Where what you typed still begins several names, each press writes the next one whole, with the part it added marked, and the press after the last gives back what you typed. <kbd>Shift</kbd>+<kbd>Tab</kbd> goes the other way. With one name left, Tab steps in as before.
+- **A tap of <kbd>Alt</kbd> completes** the way Tab used to: as far as the names agree, into the one folder left, then up the rungs. On a name Tab has put on show, it steps into it.
+- **The vault is a rung** after the path from the system root, for Tab, the rename key and the focus key alike: the places open with the whole path in the field and the vault's part marked. Only with *Access external files* on.
+- **A command for each rung** — the name, the name with its extension, the path from the vault, the path from the system root, the vault — to bind a key straight to the one you want.
+- **<kbd>Shift</kbd> with the rename key or the focus key walks the cycle backwards.**
+- **Notes that are linked to and not written yet are listed** in the dropdown, in pink, in the folder Obsidian would make them in. Picking one makes it.
+- **With extensions hidden, each file in the dropdown shows its type** in a badge at the row's end; pressing the badge writes the name out in the field with its extension.
+- **The vault's segment can show its icon and name, its icon alone, or nothing**, and the icon can be any Lucide icon. This replaces *Show vault name*, and a stored choice carries over.
+
+### Changed
+
+- **Moving a note, its own name comes first** for Tab and the offer, ahead of other names that start the same way.
+- **Folders in the path that are not there yet are red**, as the field is red for a name Enter would make.
+- **The dropdown has a red edge when Enter would make the typed name** while no row is highlighted, where the field itself keeps a row's colour.
+- **The wheel stops at the first and last row** of the dropdown instead of wrapping round; the arrow keys still wrap.
+- **A drop onto the path that cannot be made says why** — already in that folder, a folder into itself, a name already there — instead of letting the header behind it offer to open the file.
+
 ## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Fixed
