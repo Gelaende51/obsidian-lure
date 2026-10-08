@@ -111,6 +111,10 @@ export const EN = {
 	commandFocusAbsolutePath: "Focus the path bar on the path from the system root",
 	commandFocusVault: "Focus the path bar on the vault",
 	suggestShowExtension: "Show the extension",
+	dropRefusedIntoItself: "Can't move a folder into itself",
+	dropRefusedAlreadyThere: "Already in {folder}",
+	dropRefusedTaken: "{name} is already there",
+	dropRefusedNested: "Part of the selection is inside another part",
 	noticeAutocompleteUnavailable: "Autocomplete unavailable: {error}",
 	suggestMore: "{count} more — keep typing to filter",
 

@@ -198,15 +198,23 @@ export function makeDropTarget(
 			const at = el.dataset.lureDropPath;
 			const folder = at === undefined ? null : app.vault.getAbstractFileByPath(at);
 			if (!moving.length || !(folder instanceof TFolder)) return null;
+			// A refusal is said, on the target, in the label a drop would have
+			// carried. Declining silently let the drag fall through to the
+			// header behind the row, whose own label offered to open the file
+			// — which read as what dropping here would do.
+			const refuse = (why: string) => ({ action: why, dropEffect: "none" as const, hoverEl: el });
 			// All of them or none. A partial move that quietly skips the two it
 			// could not take is worse than a refusal you can see — and what is
 			// offered has to be what happens, or the hover is a lie.
-			if (!moving.every((file) => canMoveInto(file, folder, !!onTaken))) return null;
+			for (const file of moving) {
+				const why = refusalOf(file, folder, !!onTaken);
+				if (why) return refuse(why);
+			}
 			// A selection holding both a folder and something inside it: moving
 			// the folder takes the child with it, and the second move would then
 			// be looking for a path that no longer exists. Refused rather than
 			// half-applied, and refused at the hover so it is never offered.
-			if (moving.some((file) => nestedIn(file, moving))) return null;
+			if (moving.some((file) => nestedIn(file, moving))) return refuse(t("dropRefusedNested"));
 
 			// The hover pass is a dry run: it says what the drop would do and
 			// changes nothing. Only the drop itself acts.
@@ -274,11 +282,19 @@ function draggedFiles(app: App, draggable: unknown): TAbstractFile[] {
  *   ever; and refused, a drop falls through to the header, where Obsidian
  *   answers every dragged file with *Open in this tab*.
  */
-function canMoveInto(moving: TAbstractFile, folder: TFolder, takenAsks = false): boolean {
-	if (moving === folder) return false;
-	if (moving.parent?.path === folder.path) return false;
-	if (moving instanceof TFolder && isInside(folder, moving)) return false;
-	return takenAsks || !folder.children.some((child) => child.name === moving.name);
+/**
+ * Why `moving` cannot be dropped into `folder`, in words for the hover — or
+ * null when it can.
+ */
+function refusalOf(moving: TAbstractFile, folder: TFolder, takenAsks = false): string | null {
+	if (moving === folder || (moving instanceof TFolder && isInside(folder, moving))) {
+		return t("dropRefusedIntoItself");
+	}
+	if (moving.parent?.path === folder.path) return t("dropRefusedAlreadyThere", { folder: folder.name || "/" });
+	if (!takenAsks && folder.children.some((child) => child.name === moving.name)) {
+		return t("dropRefusedTaken", { name: moving.name });
+	}
+	return null;
 }
 
 /** Whether `file` sits below any *other* member of the same selection. */
