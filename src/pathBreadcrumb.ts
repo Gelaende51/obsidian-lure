@@ -8362,6 +8362,7 @@ export class PathBreadcrumb {
 				mayListExternal: this.plugin.settings.accessExternalFiles,
 				warnsOnOpen: (extension) => this.warnsOnOpen(extension),
 				isFolderNote: (path) => this.isFolderNote(path),
+				unresolvedIn: (folder) => (this.renameMode ? [] : this.plugin.unresolvedNotes.in(folder)),
 				pages: this.mainPaneViewTypes(),
 				queryOverride: this.suggestQueryOverride,
 				offered: this.suggested
@@ -8406,6 +8407,12 @@ export class PathBreadcrumb {
 					return;
 				}
 				const paneType = this.paneTypeFor(evt);
+				// Only linked to so far: picking it makes it, as clicking the
+				// link would, and as Enter on the typed name does.
+				if (value.unresolved) {
+					void this.handleTypedSubmit(value.label, paneType);
+					return;
+				}
 				if (value.kind === "location") {
 					this.goToLocation(value.path);
 					return;

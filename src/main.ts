@@ -11,6 +11,7 @@
 
 import { Command, Hotkey, Menu, Platform, Plugin, WorkspaceLeaf } from "obsidian";
 import { BreadcrumbManager } from "./breadcrumbManager";
+import { UnresolvedNotes } from "./unresolvedNotes";
 import { EXTERNAL_VIEW_TYPE, ExternalFileView } from "./externalFileView";
 import { BreadcrumbSettingTab } from "./settingsTab";
 import { BreadcrumbPathSettings, DEFAULT_SETTINGS } from "./settings";
@@ -56,6 +57,8 @@ function matchesBinding(binding: Hotkey, wanted: Set<string>, evt: KeyboardEvent
 export default class BreadcrumbPathPlugin extends Plugin {
 	settings: BreadcrumbPathSettings = DEFAULT_SETTINGS;
 	private manager!: BreadcrumbManager;
+	/** Linked-to notes that are not there yet, for the dropdown. */
+	unresolvedNotes!: UnresolvedNotes;
 	/** Alternates the rename command between the inline title and the header path bar. */
 	private useHeaderRename = false;
 	private originalRenameCallback: CheckCallback | null = null;
@@ -69,6 +72,13 @@ export default class BreadcrumbPathPlugin extends Plugin {
 		// gets this read-only view instead. Registered unconditionally:
 		// a leaf restored from a saved workspace has to find its view type.
 		this.registerView(EXTERNAL_VIEW_TYPE, (leaf) => new ExternalFileView(leaf, this));
+
+		this.unresolvedNotes = new UnresolvedNotes(this.app);
+		const forget = (): void => this.unresolvedNotes.invalidate();
+		this.registerEvent(this.app.metadataCache.on("resolved", forget));
+		this.registerEvent(this.app.vault.on("create", forget));
+		this.registerEvent(this.app.vault.on("rename", forget));
+		this.registerEvent(this.app.vault.on("delete", forget));
 
 		this.manager = new BreadcrumbManager(this);
 		this.manager.registerEvents();

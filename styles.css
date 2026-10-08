@@ -391,6 +391,11 @@
 	color: var(--color-purple);
 }
 
+.lure-filename input[data-lure-tint="unresolved"],
+.lure-vault-wrapper input[data-lure-tint="unresolved"] {
+	color: var(--color-pink);
+}
+
 .lure-filename input[data-lure-tint="warn"],
 .lure-vault-wrapper input[data-lure-tint="warn"] {
 	color: var(--text-warning);
@@ -621,6 +626,13 @@
    than being muted along with everything else out there. */
 .suggestion-item.lure-suggest-md .lure-suggest-label {
 	color: var(--color-purple);
+}
+
+/* A note that is linked to and not written yet: pink, apart from the red of
+   a taken name, and in italics as Obsidian draws an unresolved link. */
+.suggestion-item.lure-suggest-unresolved .lure-suggest-label {
+	color: var(--color-pink);
+	font-style: italic;
 }
 
 /* Folders in bold, so the list reads as its two kinds at a glance. That is

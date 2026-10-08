@@ -37,6 +37,8 @@ export interface PathSuggestion {
 	markdown?: boolean;
 	/** Where you already are — this bar's own note, or the folder it is standing in — tinted to say so. */
 	current?: boolean;
+	/** Linked to from some note and not there yet: picking it makes it. */
+	unresolved?: boolean;
 	/** Some folder's own note, as the running folder-note plugin defines one. */
 	folderNote?: boolean;
 	/**
@@ -108,6 +110,8 @@ export interface SuggestContext {
 	warnsOnOpen: (extension: string) => boolean;
 	/** Whether a vault file is some folder's note — tinted so it reads as the folder's, not as one more note. */
 	isFolderNote: (path: string) => boolean;
+	/** Notes linked to and not there yet that would be made in this folder. */
+	unresolvedIn: (folderPath: string) => { name: string; path: string }[];
 	/**
 	 * The pages a pane can hold that are not files: the graph, search, and
 	 * whatever views the running plugins register — a home tab, a calendar.
@@ -312,7 +316,7 @@ const POPOVER_CLASS = "lure-suggest-popover";
 const CREATES_CLASS = "lure-suggest-creates";
 
 /** The tints a row can carry, named the way the stylesheet names them. */
-export type SuggestTint = "current" | "keep-name" | "taken" | "warn" | "md" | "external";
+export type SuggestTint = "current" | "keep-name" | "taken" | "unresolved" | "warn" | "md" | "external";
 
 /**
  * The one tint a row shows.
@@ -327,6 +331,7 @@ export function tintOf(value: PathSuggestion): SuggestTint | null {
 	if (value.current) return "current";
 	if (value.kind === "keep-name") return "keep-name";
 	if (value.taken) return "taken";
+	if (value.unresolved) return "unresolved";
 	if (value.warn) return "warn";
 	if (value.markdown) return "md";
 	if (value.external) return "external";
@@ -1046,6 +1051,20 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			}
 		}
 
+		// Notes linked to from somewhere and not written yet, in the folder
+		// they would be made in — after what is really there, since picking
+		// one makes something rather than opens it.
+		for (const missing of context.unresolvedIn(folderPath)) {
+			if (!matches(missing.name)) continue;
+			suggestions.push({
+				label: missing.name,
+				kind: "file",
+				path: missing.path,
+				disabled: false,
+				unresolved: true,
+			});
+		}
+
 		// After everything the folder holds, never among it: these are not in
 		// the vault at all, and a listing that opened with them would bury the
 		// names that are.
@@ -1238,6 +1257,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		if (value.folderNote) el.addClass("lure-suggest-folder-note");
 		if (value.warn) el.addClass("lure-suggest-warn");
 		if (value.taken) el.addClass("lure-suggest-taken");
+		if (value.unresolved) el.addClass("lure-suggest-unresolved");
 		if (value.current) el.addClass("lure-suggest-current");
 		if (value.leading) el.addClass("lure-suggest-leading");
 		if (value.agreed) el.addClass("lure-suggest-agreed");
@@ -1250,8 +1270,9 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		this.writeLabel(el.createSpan({ cls: "lure-suggest-label" }), value.label);
 
 		// "keep-name" is a proposed destination that nothing exists at yet,
-		// so there is nothing to act on either way.
-		if (value.kind === "keep-name") return;
+		// so there is nothing to act on either way — and neither is a note
+		// that is only linked to.
+		if (value.kind === "keep-name" || value.unresolved) return;
 
 		// Outside the vault there is no TAbstractFile, so the File Explorer's
 		// handlers cannot be reused — these rows used to fall through here
