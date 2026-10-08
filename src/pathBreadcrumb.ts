@@ -39,6 +39,7 @@ import {
 	LOCATION_ICONS,
 	SystemLocation,
 	applyIcon,
+	vaultIcon,
 	expandHome,
 	iconFor,
 	isInside,
@@ -4451,7 +4452,9 @@ export class PathBreadcrumb {
 		// copies fought over the row and were painted over each other.
 		if (this.typedAbsolute !== null) return;
 
-		this.renderRootSegment();
+		// "None" leaves the vault's own segment out. Its delimiter stays: it
+		// is where the path starts, and it opens what it always opened.
+		if (this.plugin.settings.vaultSegment !== "none") this.renderRootSegment();
 
 		const separator = this.vaultSegmentEl.createSpan({
 			cls: "view-header-breadcrumb-separator",
@@ -4557,7 +4560,7 @@ export class PathBreadcrumb {
 		// as the jump target rather than a folder, and it's what the
 		// dropdown shows for this vault too, so the two match.
 		const iconEl = rootEl.createSpan({ cls: "lure-segment-icon lure-vault-icon" });
-		setIcon(iconEl, CURRENT_VAULT_ICON);
+		applyIcon(setIcon, iconEl, vaultIcon(), CURRENT_VAULT_ICON);
 		// The name is always in the row, whatever the setting: with the
 		// setting off it is held at no width rather than left out, so that
 		// pointing at the icon gives it back the same way pointing at a name
@@ -4567,7 +4570,7 @@ export class PathBreadcrumb {
 			cls: "lure-root-name",
 			text: this.plugin.app.vault.getName(),
 		});
-		if (!this.plugin.settings.showVaultName) nameEl.addClass(NAME_FOLDED_CLASS);
+		if (this.plugin.settings.vaultSegment !== "name") nameEl.addClass(NAME_FOLDED_CLASS);
 		// The vault's name is a folder like any other on the row — the one at
 		// the top — so it takes a drop like any other. Only while the row is
 		// showing this vault: out on a browsed path the same element names a
@@ -4721,7 +4724,7 @@ export class PathBreadcrumb {
 		const rootEl = this.vaultSegmentEl.createSpan({
 			cls: "view-header-breadcrumb lure-vault-segment lure-external-segment",
 		});
-		const named = this.plugin.settings.showVaultName;
+		const named = this.plugin.settings.vaultSegment === "name";
 		if (base && remainder !== null) {
 			const iconEl = rootEl.createSpan({ cls: "lure-segment-icon lure-vault-icon" });
 			applyIcon(setIcon, iconEl, base.icon, "folder");

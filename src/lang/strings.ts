@@ -16,8 +16,14 @@ export const EN = {
 	settingDelimiterName: "Delimiter",
 	settingDelimiterDesc: "Shown between path segments.",
 	delimiterPresetTooltip: 'Use "{char}"',
-	settingVaultNameName: "Show vault name",
-	settingVaultNameDesc: "As the first segment of the path.",
+	settingVaultSegmentName: "Vault segment",
+	settingVaultSegmentDesc:
+		"What the first segment of the path shows. With none, the vault is still a step of Tab's and the focus key's cycle.",
+	vaultSegmentName: "Icon and name",
+	vaultSegmentIcon: "Icon only",
+	vaultSegmentNone: "None",
+	settingVaultIconName: "Vault icon",
+	settingVaultIconDesc: "Any Lucide icon name, for the vault's segment and its entry among the places.",
 	settingSwapActionsName: "Folder name opens the dropdown",
 	settingSwapActionsDesc:
 		"On, a folder name opens its dropdown and the delimiter after it reveals the folder in the " +

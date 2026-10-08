@@ -12,6 +12,7 @@
 import { Command, Hotkey, Menu, Platform, Plugin, WorkspaceLeaf } from "obsidian";
 import { BreadcrumbManager } from "./breadcrumbManager";
 import { UnresolvedNotes } from "./unresolvedNotes";
+import { setCurrentVaultIcon } from "./systemLocations";
 import { EXTERNAL_VIEW_TYPE, ExternalFileView } from "./externalFileView";
 import { BreadcrumbSettingTab } from "./settingsTab";
 import { BreadcrumbPathSettings, DEFAULT_SETTINGS } from "./settings";
@@ -175,6 +176,13 @@ export default class BreadcrumbPathPlugin extends Plugin {
 			([key, value]) => key in DEFAULT_SETTINGS && value !== undefined,
 		);
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, Object.fromEntries(known));
+		// The vault-name toggle became a choice of three; a stored toggle says
+		// which of the first two it was.
+		const legacy = (stored as { showVaultName?: unknown }).showVaultName;
+		if (typeof legacy === "boolean" && !("vaultSegment" in (stored as object))) {
+			this.settings.vaultSegment = legacy ? "name" : "icon";
+		}
+		setCurrentVaultIcon(this.settings.vaultIcon);
 		// Before anything reads a string. `onload` builds the settings tab and
 		// the manager straight after this, and both call `t()`.
 		setLanguageOverride(this.settings.language);
@@ -280,6 +288,7 @@ export default class BreadcrumbPathPlugin extends Plugin {
 
 	async saveSettings(): Promise<void> {
 		await this.saveData(this.settings);
+		setCurrentVaultIcon(this.settings.vaultIcon);
 		this.manager.refreshAll();
 	}
 

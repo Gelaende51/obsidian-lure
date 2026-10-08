@@ -5,14 +5,18 @@ import {
 	SettingDefinitionControl,
 	SettingDefinitionItem,
 	SettingDefinitionRender,
+	setIcon,
 } from "obsidian";
 import type BreadcrumbPathPlugin from "./main";
-import type { BreadcrumbPathSettings } from "./settings";
+import { BreadcrumbPathSettings, DEFAULT_VAULT_ICON } from "./settings";
+import { applyIcon } from "./systemLocations";
 import { setLanguageOverride, t } from "./lang";
 import { FOLLOW_OBSIDIAN, LOCALE_NAMES } from "./lang/locales";
 import { LABELS, obsidianLabel } from "./obsidianLabels";
 
 const DELIMITER_PRESETS = ["/", ">", "▸", "›", "\\", "•"];
+/** Icons offered for the vault's own segment, ahead of typing any Lucide name. */
+const VAULT_ICON_PRESETS = ["home", "vault", "library", "archive", "book-open", "box"];
 
 /**
  * Turns each named plugin inside a description into a link to its page in
@@ -103,9 +107,22 @@ export class BreadcrumbSettingTab extends PluginSettingTab {
 				render: (setting) => this.renderDelimiter(setting),
 			},
 			{
-				name: t("settingVaultNameName"),
-				desc: t("settingVaultNameDesc"),
-				control: { type: "toggle", key: "showVaultName" },
+				name: t("settingVaultSegmentName"),
+				desc: t("settingVaultSegmentDesc"),
+				control: {
+					type: "dropdown",
+					key: "vaultSegment",
+					options: {
+						name: t("vaultSegmentName"),
+						icon: t("vaultSegmentIcon"),
+						none: t("vaultSegmentNone"),
+					},
+				},
+			},
+			{
+				name: t("settingVaultIconName"),
+				desc: t("settingVaultIconDesc"),
+				render: (setting: Setting) => this.renderVaultIcon(setting),
 			},
 			{
 				name: t("settingSwapActionsName"),
@@ -274,6 +291,41 @@ export class BreadcrumbSettingTab extends PluginSettingTab {
 				.setValue(this.plugin.settings.delimiter)
 				.onChange((value) => void this.setControlValue("delimiter", value || "/")),
 		);
+	}
+
+	/**
+	 * The vault's icon: a few that suit a starting point, and any Lucide name
+	 * typed beside them, previewed as it is typed. A name that draws nothing
+	 * falls back to the house when the row is drawn.
+	 */
+	private renderVaultIcon(setting: Setting): void {
+		const preview = setting.controlEl.createSpan({ cls: "lure-vault-icon-preview" });
+		const show = (name: string): void => {
+			preview.empty();
+			applyIcon(setIcon, preview, name || DEFAULT_VAULT_ICON, DEFAULT_VAULT_ICON);
+		};
+		for (const preset of VAULT_ICON_PRESETS) {
+			setting.addExtraButton((button) =>
+				button
+					.setIcon(preset)
+					.setTooltip(preset)
+					.onClick(async () => {
+						await this.setControlValue("vaultIcon", preset);
+						this.redraw();
+					}),
+			);
+		}
+		setting.addText((text) =>
+			text
+				.setPlaceholder(DEFAULT_VAULT_ICON)
+				.setValue(this.plugin.settings.vaultIcon)
+				.onChange((value) => {
+					show(value.trim());
+					void this.setControlValue("vaultIcon", value.trim() || DEFAULT_VAULT_ICON);
+				}),
+		);
+		show(this.plugin.settings.vaultIcon);
+		setting.controlEl.appendChild(preview);
 	}
 
 	/** The external-access description, warning line and all. */

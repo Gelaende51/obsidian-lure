@@ -2,6 +2,12 @@ import { FOLLOW_OBSIDIAN } from "./lang/locales";
 
 export type BreadcrumbAlignment = "left" | "center" | "right";
 
+/** What the row's opening segment shows: the vault's name, an icon alone, or nothing. */
+export type VaultSegment = "name" | "icon" | "none";
+
+/** The icon the vault's own segment carries unless another is picked. */
+export const DEFAULT_VAULT_ICON = "home";
+
 export interface BreadcrumbPathSettings {
 	/**
 	 * Language for this plugin's own text, or "" to follow Obsidian's.
@@ -17,7 +23,15 @@ export interface BreadcrumbPathSettings {
 	language: string;
 	alignment: BreadcrumbAlignment;
 	delimiter: string;
-	showVaultName: boolean;
+	/**
+	 * The row's opening segment. "name" shows the icon and the vault's name,
+	 * "icon" the icon alone with the name a hover away, "none" leaves the
+	 * segment out — the vault is then reached as a rung of the keys' cycle.
+	 * Replaces the old `showVaultName` toggle (on → "name", off → "icon").
+	 */
+	vaultSegment: VaultSegment;
+	/** Lucide icon for the vault's own segment and its row among the places. */
+	vaultIcon: string;
 	/**
 	 * Folder names open the dropdown and delimiters open the folder itself,
 	 * rather than the other way round. Never applies in rename/move mode.
@@ -54,7 +68,8 @@ export const DEFAULT_SETTINGS: BreadcrumbPathSettings = {
 	language: FOLLOW_OBSIDIAN,
 	alignment: "left",
 	delimiter: "/",
-	showVaultName: true,
+	vaultSegment: "name",
+	vaultIcon: DEFAULT_VAULT_ICON,
 	swapSegmentActions: true,
 	showDotFiles: false,
 	showFileExtension: false,

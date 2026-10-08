@@ -2,7 +2,7 @@
   "language": "",
   "alignment": "left",
   "delimiter": "/",
-  "showVaultName": true,
+  "vaultSegment": "name",
   "swapSegmentActions": true,
   "showDotFiles": true,
   "showFileExtension": true,

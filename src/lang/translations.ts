@@ -29,8 +29,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Trennzeichen",
 		settingDelimiterDesc: "Wird zwischen den Pfadsegmenten angezeigt.",
 		delimiterPresetTooltip: "„{char}“ verwenden",
-		settingVaultNameName: "Vault-Namen anzeigen",
-		settingVaultNameDesc: "Als erstes Segment des Pfads.",
 		settingSwapActionsName: "Ordnername öffnet das Dropdown",
 		settingSwapActionsDesc: "Eingeschaltet öffnet der Ordnername sein Dropdown, und das Trennzeichen dahinter zeigt den Ordner in der Seitenleiste — oder öffnet seine Ordnernotiz, sofern Folder notes das übernimmt. Ausgeschaltet tauschen beide die Rollen. Gilt nie im Umbenennen-/Verschieben-Modus.",
 		settingAllFilesDesc:
@@ -133,8 +131,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Séparateur",
 		settingDelimiterDesc: "Affiché entre les segments du chemin.",
 		delimiterPresetTooltip: "Utiliser « {char} »",
-		settingVaultNameName: "Afficher le nom du coffre",
-		settingVaultNameDesc: "Comme premier segment du chemin.",
 		settingSwapActionsName: "Le nom du dossier ouvre le menu",
 		settingSwapActionsDesc: "Activé, le nom du dossier ouvre son menu et le séparateur qui suit révèle le dossier dans la barre latérale — ou ouvre sa note de dossier, si Folder notes s'en charge. Désactivé, les deux s'échangent. Jamais en mode renommer/déplacer.",
 		settingAllFilesDesc:
@@ -238,8 +234,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Separador",
 		settingDelimiterDesc: "Se muestra entre los segmentos de la ruta.",
 		delimiterPresetTooltip: "Usar «{char}»",
-		settingVaultNameName: "Mostrar el nombre de la bóveda",
-		settingVaultNameDesc: "Como primer segmento de la ruta.",
 		settingSwapActionsName: "El nombre de la carpeta abre el desplegable",
 		settingSwapActionsDesc: "Activado, el nombre de la carpeta abre su desplegable y el separador siguiente muestra la carpeta en la barra lateral — o abre su nota de carpeta, si Folder notes se encarga. Desactivado, ambos se intercambian. Nunca en modo renombrar/mover.",
 		settingAllFilesDesc:
@@ -342,8 +336,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Separatore",
 		settingDelimiterDesc: "Mostrato tra i segmenti del percorso.",
 		delimiterPresetTooltip: "Usa «{char}»",
-		settingVaultNameName: "Mostra il nome del vault",
-		settingVaultNameDesc: "Come primo segmento del percorso.",
 		settingSwapActionsName: "Il nome della cartella apre il menu",
 		settingSwapActionsDesc: "Attivo, il nome della cartella apre il suo menu e il separatore successivo mostra la cartella nella barra laterale — o apre la sua nota di cartella, se se ne occupa Folder notes. Disattivo, i due si scambiano. Mai in modalità rinomina/sposta.",
 		settingAllFilesDesc:
@@ -446,8 +438,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Separador",
 		settingDelimiterDesc: "Mostrado entre os segmentos do caminho.",
 		delimiterPresetTooltip: "Utilizar «{char}»",
-		settingVaultNameName: "Mostrar o nome do cofre",
-		settingVaultNameDesc: "Como primeiro segmento do caminho.",
 		settingSwapActionsName: "O nome da pasta abre a lista",
 		settingSwapActionsDesc: "Ligado, o nome da pasta abre a sua lista e o separador seguinte mostra a pasta na barra lateral — ou abre a sua nota de pasta, se o Folder notes tratar disso. Desligado, os dois trocam. Nunca no modo renomear/mover.",
 		settingAllFilesDesc:
@@ -550,8 +540,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Separador",
 		settingDelimiterDesc: "Exibido entre os segmentos do caminho.",
 		delimiterPresetTooltip: "Usar “{char}”",
-		settingVaultNameName: "Mostrar o nome do cofre",
-		settingVaultNameDesc: "Como primeiro segmento do caminho.",
 		settingSwapActionsName: "O nome da pasta abre a lista",
 		settingSwapActionsDesc: "Ligado, o nome da pasta abre sua lista e o separador seguinte mostra a pasta na barra lateral — ou abre sua nota de pasta, se o Folder notes cuidar disso. Desligado, os dois trocam. Nunca no modo renomear/mover.",
 		settingAllFilesDesc:
@@ -654,8 +642,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Scheidingsteken",
 		settingDelimiterDesc: "Weergegeven tussen de padsegmenten.",
 		delimiterPresetTooltip: "“{char}” gebruiken",
-		settingVaultNameName: "Kluisnaam tonen",
-		settingVaultNameDesc: "Als eerste segment van het pad.",
 		settingSwapActionsName: "Mapnaam opent de lijst",
 		settingSwapActionsDesc: "Aan opent de mapnaam zijn lijst en toont het scheidingsteken erna de map in de zijbalk — of opent de mapnotitie, als Folder notes dat afhandelt. Uit wisselen de twee om. Nooit in hernoem-/verplaatsmodus.",
 		settingAllFilesDesc:
@@ -757,8 +743,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Separator",
 		settingDelimiterDesc: "Wyświetlane między segmentami ścieżki.",
 		delimiterPresetTooltip: "Użyj „{char}”",
-		settingVaultNameName: "Pokaż nazwę skarbca",
-		settingVaultNameDesc: "Jako pierwszy segment ścieżki.",
 		settingSwapActionsName: "Nazwa folderu otwiera listę",
 		settingSwapActionsDesc: "Włączone — nazwa folderu otwiera jego listę, a separator za nią pokazuje folder na pasku bocznym lub otwiera jego notatkę folderu, jeśli obsługuje ją Folder notes. Wyłączone — oba zamieniają się rolami. Nigdy w trybie zmiany nazwy/przenoszenia.",
 		settingAllFilesDesc:
@@ -860,8 +844,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Разделитель",
 		settingDelimiterDesc: "Показывается между сегментами пути.",
 		delimiterPresetTooltip: "Использовать «{char}»",
-		settingVaultNameName: "Показывать имя хранилища",
-		settingVaultNameDesc: "Как первый сегмент пути.",
 		settingSwapActionsName: "Имя папки открывает список",
 		settingSwapActionsDesc: "Включено — имя папки открывает свой список, а разделитель после него показывает папку на боковой панели или открывает её заметку папки, если этим занимается Folder notes. Выключено — они меняются ролями. Никогда в режиме переименования/перемещения.",
 		settingAllFilesDesc:
@@ -963,8 +945,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Роздільник",
 		settingDelimiterDesc: "Показується між сегментами шляху.",
 		delimiterPresetTooltip: "Використати «{char}»",
-		settingVaultNameName: "Показувати назву сховища",
-		settingVaultNameDesc: "Як перший сегмент шляху.",
 		settingSwapActionsName: "Назва теки відкриває список",
 		settingSwapActionsDesc: "Увімкнено — назва теки відкриває свій список, а роздільник після неї показує теку на бічній панелі або відкриває її нотатку теки, якщо цим займається Folder notes. Вимкнено — вони міняються ролями. Ніколи в режимі перейменування/переміщення.",
 		settingAllFilesDesc:
@@ -1066,8 +1046,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Oddělovač",
 		settingDelimiterDesc: "Zobrazuje se mezi segmenty cesty.",
 		delimiterPresetTooltip: "Použít „{char}“",
-		settingVaultNameName: "Zobrazit název trezoru",
-		settingVaultNameDesc: "Jako první segment cesty.",
 		settingSwapActionsName: "Název složky otevírá seznam",
 		settingSwapActionsDesc: "Zapnuto — název složky otevře svůj seznam a oddělovač za ním zobrazí složku v postranním panelu, případně otevře její poznámku složky, pokud se o ni stará Folder notes. Vypnuto — obojí si role vymění. Nikdy v režimu přejmenování/přesunu.",
 		settingAllFilesDesc:
@@ -1169,8 +1147,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Avgränsare",
 		settingDelimiterDesc: "Visas mellan sökvägens segment.",
 		delimiterPresetTooltip: "Använd ”{char}”",
-		settingVaultNameName: "Visa valvets namn",
-		settingVaultNameDesc: "Som sökvägens första segment.",
 		settingSwapActionsName: "Mappnamnet öppnar listan",
 		settingSwapActionsDesc: "På öppnar mappnamnet sin lista och avgränsaren efter det visar mappen i sidopanelen — eller öppnar dess mappanteckning, om Folder notes hanterar den. Av byter de två plats. Aldrig i byt namn-/flyttläge.",
 		settingAllFilesDesc:
@@ -1272,8 +1248,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Skilletegn",
 		settingDelimiterDesc: "Vises mellem stiens segmenter.",
 		delimiterPresetTooltip: "Brug “{char}”",
-		settingVaultNameName: "Vis boksens navn",
-		settingVaultNameDesc: "Som stiens første segment.",
 		settingSwapActionsName: "Mappenavnet åbner listen",
 		settingSwapActionsDesc: "Til åbner mappenavnet sin liste, og skilletegnet efter det viser mappen i sidepanelet — eller åbner dens mappenote, hvis Folder notes håndterer den. Fra bytter de to plads. Aldrig i omdøb-/flyttetilstand.",
 		settingAllFilesDesc:
@@ -1375,8 +1349,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Skilletegn",
 		settingDelimiterDesc: "Vises mellom segmentene i stien.",
 		delimiterPresetTooltip: "Bruk «{char}»",
-		settingVaultNameName: "Vis hvelvets navn",
-		settingVaultNameDesc: "Som første segment i stien.",
 		settingSwapActionsName: "Mappenavnet åpner listen",
 		settingSwapActionsDesc: "På åpner mappenavnet listen sin, og skilletegnet etter det viser mappen i sidepanelet — eller åpner mappenotatet, hvis Folder notes håndterer det. Av bytter de to plass. Aldri i endre navn-/flyttemodus.",
 		settingAllFilesDesc:
@@ -1478,8 +1450,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Erotin",
 		settingDelimiterDesc: "Näytetään polun osien välissä.",
 		delimiterPresetTooltip: "Käytä ”{char}”",
-		settingVaultNameName: "Näytä holvin nimi",
-		settingVaultNameDesc: "Polun ensimmäisenä osana.",
 		settingSwapActionsName: "Kansion nimi avaa luettelon",
 		settingSwapActionsDesc: "Päällä kansion nimi avaa luettelonsa ja sen jälkeinen erotin näyttää kansion sivupalkissa — tai avaa sen kansiomuistiinpanon, jos Folder notes hoitaa sen. Pois päältä nämä vaihtavat paikkaa. Ei koskaan nimeä/siirrä-tilassa.",
 		settingAllFilesDesc:
@@ -1581,8 +1551,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Ayırıcı",
 		settingDelimiterDesc: "Yol parçaları arasında gösterilir.",
 		delimiterPresetTooltip: "“{char}” kullan",
-		settingVaultNameName: "Kasa adını göster",
-		settingVaultNameDesc: "Yolun ilk parçası olarak.",
 		settingSwapActionsName: "Klasör adı listeyi açar",
 		settingSwapActionsDesc: "Açıkken klasör adı listesini açar, ardındaki ayırıcı ise klasörü kenar çubuğunda gösterir — ya da Folder notes devredeyse klasör notunu açar. Kapalıyken ikisi yer değiştirir. Yeniden adlandır/taşı modunda asla geçerli değildir.",
 		settingAllFilesDesc:
@@ -1684,8 +1652,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "区切り文字",
 		settingDelimiterDesc: "パスの区切りとして表示されます。",
 		delimiterPresetTooltip: "「{char}」を使う",
-		settingVaultNameName: "保管庫名を表示",
-		settingVaultNameDesc: "パスの最初の要素として表示します。",
 		settingSwapActionsName: "フォルダ名で一覧を開く",
 		settingSwapActionsDesc: "オンのとき、フォルダ名はその一覧を開き、後ろの区切り文字はサイドバーでフォルダを表示します（Folder notes が有効ならそのフォルダノートを開きます）。オフでは両者が入れ替わります。名前変更・移動モードでは適用されません。",
 		settingAllFilesDesc:
@@ -1787,8 +1753,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "구분 기호",
 		settingDelimiterDesc: "경로 구분자로 표시됩니다.",
 		delimiterPresetTooltip: "“{char}” 사용",
-		settingVaultNameName: "보관함 이름 표시",
-		settingVaultNameDesc: "경로의 첫 번째 항목으로 표시합니다.",
 		settingSwapActionsName: "폴더 이름으로 목록 열기",
 		settingSwapActionsDesc: "켜면 폴더 이름이 목록을 열고, 뒤의 구분자는 사이드바에서 폴더를 표시합니다 — Folder notes가 처리한다면 폴더 노트를 엽니다. 끄면 둘이 서로 바뀝니다. 이름 변경·이동 모드에서는 적용되지 않습니다.",
 		settingAllFilesDesc:
@@ -1890,8 +1854,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "分隔符",
 		settingDelimiterDesc: "显示在路径分段之间。",
 		delimiterPresetTooltip: "使用“{char}”",
-		settingVaultNameName: "显示仓库名称",
-		settingVaultNameDesc: "作为路径的第一段。",
 		settingSwapActionsName: "文件夹名打开列表",
 		settingSwapActionsDesc: "开启时，文件夹名打开其列表，其后的分隔符在侧边栏中显示该文件夹——若有 Folder notes 接管，则打开其文件夹笔记。关闭时两者互换。重命名/移动模式下始终不适用。",
 		settingAllFilesDesc:
@@ -1993,8 +1955,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "分隔符號",
 		settingDelimiterDesc: "顯示在路徑分段之間。",
 		delimiterPresetTooltip: "使用「{char}」",
-		settingVaultNameName: "顯示儲存庫名稱",
-		settingVaultNameDesc: "作為路徑的第一段。",
 		settingSwapActionsName: "資料夾名稱開啟清單",
 		settingSwapActionsDesc: "開啟時，資料夾名稱開啟其清單，其後的分隔符在側邊欄中顯示該資料夾——若有 Folder notes 接管，則開啟其資料夾筆記。關閉時兩者互換。重新命名/移動模式下永不適用。",
 		settingAllFilesDesc:
@@ -2096,8 +2056,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "الفاصل",
 		settingDelimiterDesc: "يظهر بين أجزاء المسار.",
 		delimiterPresetTooltip: "استخدام «{char}»",
-		settingVaultNameName: "إظهار اسم الخزنة",
-		settingVaultNameDesc: "كأول جزء من المسار.",
 		settingSwapActionsName: "اسم المجلد يفتح القائمة",
 		settingSwapActionsDesc: "عند التفعيل، يفتح اسم المجلد قائمته، ويُظهر الفاصل الذي يليه المجلد في الشريط الجانبي — أو يفتح ملاحظة المجلد إن كان Folder notes يتولى ذلك. عند الإيقاف يتبادل الاثنان. لا ينطبق أبدًا في وضع إعادة التسمية/النقل.",
 		settingAllFilesDesc:
@@ -2199,8 +2157,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Separador",
 		settingDelimiterDesc: "Es mostra entre els segments del camí.",
 		delimiterPresetTooltip: "Utilitza «{char}»",
-		settingVaultNameName: "Mostra el nom del magatzem",
-		settingVaultNameDesc: "Com a primer segment del camí.",
 		settingSwapActionsName: "El nom de la carpeta obre el desplegable",
 		settingSwapActionsDesc: "Activat, el nom de la carpeta obre el seu desplegable i el separador següent mostra la carpeta a la barra lateral — o obre la seva nota de carpeta, si se n'ocupa Folder notes. Desactivat, tots dos s'intercanvien. Mai en mode reanomena/mou.",
 		settingAllFilesDesc:
@@ -2304,8 +2260,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Separator",
 		settingDelimiterDesc: "Se afișează între segmentele căii.",
 		delimiterPresetTooltip: "Folosește „{char}”",
-		settingVaultNameName: "Afișează numele seifului",
-		settingVaultNameDesc: "Ca primul segment al căii.",
 		settingSwapActionsName: "Numele folderului deschide lista",
 		settingSwapActionsDesc: "Activat, numele folderului deschide lista sa, iar separatorul de după el arată folderul în bara laterală — sau deschide nota folderului, dacă se ocupă Folder notes. Dezactivat, cele două fac schimb. Niciodată în modul redenumire/mutare.",
 		settingAllFilesDesc:
@@ -2408,8 +2362,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Elválasztó",
 		settingDelimiterDesc: "Az útvonal szakaszai között jelenik meg.",
 		delimiterPresetTooltip: "A(z) „{char}” használata",
-		settingVaultNameName: "Tároló nevének megjelenítése",
-		settingVaultNameDesc: "Az útvonal első szakaszaként.",
 		settingSwapActionsName: "A mappanév nyitja a listát",
 		settingSwapActionsDesc: "Bekapcsolva a mappanév nyitja a listáját, az utána álló elválasztó pedig megmutatja a mappát az oldalsávon — vagy megnyitja a mappajegyzetét, ha a Folder notes kezeli. Kikapcsolva a kettő szerepet cserél. Átnevezés/áthelyezés módban soha nem érvényes.",
 		settingAllFilesDesc:
@@ -2512,8 +2464,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Oddeľovač",
 		settingDelimiterDesc: "Zobrazuje sa medzi segmentmi cesty.",
 		delimiterPresetTooltip: "Použiť „{char}“",
-		settingVaultNameName: "Zobraziť názov trezora",
-		settingVaultNameDesc: "Ako prvý segment cesty.",
 		settingSwapActionsName: "Názov priečinka otvára zoznam",
 		settingSwapActionsDesc: "Zapnuté — názov priečinka otvorí svoj zoznam a oddeľovač za ním zobrazí priečinok v bočnom paneli, prípadne otvorí jeho poznámku priečinka, ak sa o ňu stará Folder notes. Vypnuté — obidva si vymenia úlohy. Nikdy v režime premenovania/presunu.",
 		settingAllFilesDesc:
@@ -2615,8 +2565,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Atdalītājs",
 		settingDelimiterDesc: "Tiek rādīts starp ceļa segmentiem.",
 		delimiterPresetTooltip: "Lietot „{char}“",
-		settingVaultNameName: "Rādīt glabātavas nosaukumu",
-		settingVaultNameDesc: "Kā ceļa pirmais segments.",
 		settingSwapActionsName: "Mapes nosaukums atver sarakstu",
 		settingSwapActionsDesc: "Ieslēgts — mapes nosaukums atver savu sarakstu, bet atdalītājs aiz tā parāda mapi sānjoslā vai atver tās mapes piezīmi, ja to apstrādā Folder notes. Izslēgts — abi apmainās vietām. Nekad pārdēvēšanas/pārvietošanas režīmā.",
 		settingAllFilesDesc:
@@ -2718,8 +2666,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Ndarës",
 		settingDelimiterDesc: "Shfaqet mes segmenteve të shtegut.",
 		delimiterPresetTooltip: "Përdor „{char}“",
-		settingVaultNameName: "Shfaq emrin e kasafortës",
-		settingVaultNameDesc: "Si segmenti i parë i shtegut.",
 		settingSwapActionsName: "Emri i dosjes hap listën",
 		settingSwapActionsDesc: "I ndezur, emri i dosjes hap listën e vet dhe ndarësi pas tij e shfaq dosjen në shiritin anësor — ose hap shënimin e dosjes, nëse e trajton Folder notes. I fikur, të dy ndërrojnë vend. Kurrë në modalitetin riemërtim/zhvendosje.",
 		settingAllFilesDesc:
@@ -2822,8 +2768,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Раздвајач",
 		settingDelimiterDesc: "Приказује се између сегмената путање.",
 		delimiterPresetTooltip: "Користи „{char}“",
-		settingVaultNameName: "Прикажи назив трезора",
-		settingVaultNameDesc: "Као први сегмент путање.",
 		settingSwapActionsName: "Име фасцикле отвара листу",
 		settingSwapActionsDesc: "Укључено — име фасцикле отвара своју листу, а раздвојник иза њега приказује фасциклу у бочној траци или отвара њену белешку фасцикле, ако то обрађује Folder notes. Искључено — то двоје мењају улоге. Никада у режиму преименовања/премештања.",
 		settingAllFilesDesc:
@@ -2925,8 +2869,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Падзяляльнік",
 		settingDelimiterDesc: "Паказваецца паміж сегментамі шляху.",
 		delimiterPresetTooltip: "Ужыць «{char}»",
-		settingVaultNameName: "Паказваць назву сховішча",
-		settingVaultNameDesc: "Як першы сегмент шляху.",
 		settingSwapActionsName: "Назва папкі адкрывае спіс",
 		settingSwapActionsDesc: "Уключана — назва папкі адкрывае свой спіс, а падзяляльнік пасля яе паказвае папку ў бакавой панэлі або адкрывае яе нататку папкі, калі гэтым займаецца Folder notes. Выключана — яны мяняюцца ролямі. Ніколі ў рэжыме пераймянавання/перамяшчэння.",
 		settingAllFilesDesc:
@@ -3029,8 +2971,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Διαχωριστικό",
 		settingDelimiterDesc: "Εμφανίζεται ανάμεσα στα τμήματα της διαδρομής.",
 		delimiterPresetTooltip: "Χρήση «{char}»",
-		settingVaultNameName: "Εμφάνιση ονόματος θησαυροφυλακίου",
-		settingVaultNameDesc: "Ως πρώτο τμήμα της διαδρομής.",
 		settingSwapActionsName: "Το όνομα φακέλου ανοίγει τη λίστα",
 		settingSwapActionsDesc: "Ενεργό, το όνομα του φακέλου ανοίγει τη λίστα του και ο διαχωριστής μετά από αυτό εμφανίζει τον φάκελο στην πλαϊνή μπάρα — ή ανοίγει τη σημείωση φακέλου, αν την χειρίζεται το Folder notes. Ανενεργό, τα δύο εναλλάσσονται. Ποτέ σε λειτουργία μετονομασίας/μετακίνησης.",
 		settingAllFilesDesc:
@@ -3134,8 +3074,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Deighilteoir",
 		settingDelimiterDesc: "Taispeántar idir míreanna na conaire.",
 		delimiterPresetTooltip: "Úsáid „{char}“",
-		settingVaultNameName: "Taispeáin ainm an taisceadáin",
-		settingVaultNameDesc: "Mar chéad mhír den chonair.",
 		settingSwapActionsName: "Osclaíonn ainm an fhillteáin an liosta",
 		settingSwapActionsDesc: "Air, osclaíonn ainm an fhillteáin a liosta agus taispeánann an deighilteoir ina dhiaidh an fillteán sa bharra taoibh — nó osclaíonn sé nóta an fhillteáin, má tá Folder notes á láimhseáil. As, malartaíonn an bheirt. Ní bhaineann sé riamh leis an mód athainmnithe/bogtha.",
 		settingAllFilesDesc:
@@ -3237,8 +3175,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "תו מפריד",
 		settingDelimiterDesc: "מוצג בין מקטעי הנתיב.",
 		delimiterPresetTooltip: "שימוש ב־“{char}”",
-		settingVaultNameName: "הצגת שם הכספת",
-		settingVaultNameDesc: "כמקטע הראשון של הנתיב.",
 		settingSwapActionsName: "שם התיקייה פותח את הרשימה",
 		settingSwapActionsDesc: "כשמופעל, שם התיקייה פותח את הרשימה שלה והמפריד שאחריו מציג את התיקייה בסרגל הצד — או פותח את פתק התיקייה, אם Folder notes מטפל בכך. כשמכובה, השניים מתחלפים. לעולם לא במצב שינוי שם/העברה.",
 		settingAllFilesDesc:
@@ -3340,8 +3276,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "جداکننده",
 		settingDelimiterDesc: "میان بخش‌های مسیر نمایش داده می‌شود.",
 		delimiterPresetTooltip: "استفاده از «{char}»",
-		settingVaultNameName: "نمایش نام گاوصندوق",
-		settingVaultNameDesc: "به‌عنوان نخستین بخش مسیر.",
 		settingSwapActionsName: "نام پوشه فهرست را باز می‌کند",
 		settingSwapActionsDesc: "روشن باشد، نام پوشه فهرستش را باز می‌کند و جداکنندهٔ پس از آن پوشه را در نوار کناری نشان می‌دهد — یا اگر Folder notes فعال باشد، یادداشت پوشه را باز می‌کند. خاموش باشد، این دو جا عوض می‌کنند. هرگز در حالت تغییر نام/جابه‌جایی اعمال نمی‌شود.",
 		settingAllFilesDesc:
@@ -3443,8 +3377,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Pemisah",
 		settingDelimiterDesc: "Ditampilkan di antara segmen path.",
 		delimiterPresetTooltip: "Gunakan “{char}”",
-		settingVaultNameName: "Tampilkan nama vault",
-		settingVaultNameDesc: "Sebagai segmen pertama path.",
 		settingSwapActionsName: "Nama folder membuka daftar",
 		settingSwapActionsDesc: "Aktif, nama folder membuka daftarnya dan pemisah setelahnya menampilkan folder di bilah sisi — atau membuka catatan foldernya, jika Folder notes menanganinya. Nonaktif, keduanya bertukar. Tidak pernah berlaku dalam mode ganti nama/pindah.",
 		settingAllFilesDesc:
@@ -3546,8 +3478,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Pemisah",
 		settingDelimiterDesc: "Dipaparkan antara segmen laluan.",
 		delimiterPresetTooltip: "Guna “{char}”",
-		settingVaultNameName: "Tunjukkan nama bilik kebal",
-		settingVaultNameDesc: "Sebagai segmen pertama laluan.",
 		settingSwapActionsName: "Nama folder membuka senarai",
 		settingSwapActionsDesc: "Hidup, nama folder membuka senarainya dan pemisah selepasnya memaparkan folder di bar sisi — atau membuka nota foldernya, jika Folder notes mengendalikannya. Mati, kedua-duanya bertukar. Tidak pernah terpakai dalam mod nama semula/alih.",
 		settingAllFilesDesc:
@@ -3649,8 +3579,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Dấu phân cách",
 		settingDelimiterDesc: "Hiển thị giữa các đoạn đường dẫn.",
 		delimiterPresetTooltip: "Dùng “{char}”",
-		settingVaultNameName: "Hiển thị tên kho",
-		settingVaultNameDesc: "Là đoạn đầu tiên của đường dẫn.",
 		settingSwapActionsName: "Tên thư mục mở danh sách",
 		settingSwapActionsDesc: "Bật, tên thư mục mở danh sách của nó và dấu phân cách sau đó hiện thư mục ở thanh bên — hoặc mở ghi chú thư mục, nếu có Folder notes đảm nhiệm. Tắt, hai bên đổi chỗ. Không bao giờ áp dụng trong chế độ đổi tên/di chuyển.",
 		settingAllFilesDesc:
@@ -3752,8 +3680,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "ตัวคั่น",
 		settingDelimiterDesc: "แสดงระหว่างส่วนต่าง ๆ ของเส้นทาง",
 		delimiterPresetTooltip: "ใช้ “{char}”",
-		settingVaultNameName: "แสดงชื่อห้องนิรภัย",
-		settingVaultNameDesc: "เป็นส่วนแรกของเส้นทาง",
 		settingSwapActionsName: "ชื่อโฟลเดอร์เปิดรายการ",
 		settingSwapActionsDesc: "เมื่อเปิด ชื่อโฟลเดอร์จะเปิดรายการของมัน และตัวคั่นที่ตามมาจะแสดงโฟลเดอร์ในแถบข้าง — หรือเปิดโน้ตโฟลเดอร์ หากมี Folder notes ดูแลอยู่ เมื่อปิด ทั้งสองจะสลับกัน ไม่มีผลในโหมดเปลี่ยนชื่อ/ย้าย",
 		settingAllFilesDesc:
@@ -3855,8 +3781,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "សញ្ញាបំបែក",
 		settingDelimiterDesc: "បង្ហាញរវាងផ្នែកនៃផ្លូវ។",
 		delimiterPresetTooltip: "ប្រើ «{char}»",
-		settingVaultNameName: "បង្ហាញឈ្មោះឃ្លាំង",
-		settingVaultNameDesc: "ជាផ្នែកទីមួយនៃផ្លូវ។",
 		settingSwapActionsName: "ឈ្មោះថតបើកបញ្ជី",
 		settingSwapActionsDesc: "បើកដំណើរការ ឈ្មោះថតបើកបញ្ជីរបស់វា ហើយសញ្ញាបំបែកបន្ទាប់បង្ហាញថតនៅរបារចំហៀង — ឬបើកកំណត់ត្រាថត បើ Folder notes គ្រប់គ្រងវា។ បិទ ទាំងពីរប្តូរតួនាទីគ្នា។ មិនអនុវត្តទេក្នុងរបៀបប្តូរឈ្មោះ/ផ្លាស់ទី។",
 		settingAllFilesDesc:
@@ -3958,8 +3882,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "छुट्याउने चिन्ह",
 		settingDelimiterDesc: "पथका खण्डहरूबीच देखाइन्छ।",
 		delimiterPresetTooltip: "“{char}” प्रयोग गर्नुहोस्",
-		settingVaultNameName: "भल्टको नाम देखाउनुहोस्",
-		settingVaultNameDesc: "पथको पहिलो खण्डका रूपमा।",
 		settingSwapActionsName: "फोल्डरको नामले सूची खोल्छ",
 		settingSwapActionsDesc: "सक्रिय हुँदा, फोल्डरको नामले आफ्नो सूची खोल्छ र पछिको छुट्याउने चिन्हले फोल्डरलाई साइडबारमा देखाउँछ — वा Folder notes ले सम्हालेको छ भने त्यसको फोल्डर नोट खोल्छ। निष्क्रिय हुँदा दुवैले भूमिका साट्छन्। पुनःनामाकरण/सार्ने मोडमा कहिल्यै लागू हुँदैन।",
 		settingAllFilesDesc:
@@ -4061,8 +3983,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "বিভাজক",
 		settingDelimiterDesc: "পাথের অংশগুলোর মাঝে দেখানো হয়।",
 		delimiterPresetTooltip: "“{char}” ব্যবহার করুন",
-		settingVaultNameName: "ভল্টের নাম দেখান",
-		settingVaultNameDesc: "পাথের প্রথম অংশ হিসেবে।",
 		settingSwapActionsName: "ফোল্ডারের নাম তালিকা খোলে",
 		settingSwapActionsDesc: "চালু থাকলে ফোল্ডারের নাম তার তালিকা খোলে এবং পরের বিভাজক ফোল্ডারটি সাইডবারে দেখায় — অথবা Folder notes সামলালে তার ফোল্ডার নোট খোলে। বন্ধ থাকলে দুটি অদলবদল হয়। নাম পরিবর্তন/সরানো মোডে কখনও প্রযোজ্য নয়।",
 		settingAllFilesDesc:
@@ -4164,8 +4084,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "გამყოფი",
 		settingDelimiterDesc: "ჩანს ბილიკის სეგმენტებს შორის.",
 		delimiterPresetTooltip: "„{char}“-ის გამოყენება",
-		settingVaultNameName: "საცავის სახელის ჩვენება",
-		settingVaultNameDesc: "ბილიკის პირველ სეგმენტად.",
 		settingSwapActionsName: "საქაღალდის სახელი ხსნის სიას",
 		settingSwapActionsDesc: "ჩართულია — საქაღალდის სახელი ხსნის თავის სიას, ხოლო მის შემდეგ მდგომი გამყოფი აჩვენებს საქაღალდეს გვერდით ზოლში ან ხსნის მის საქაღალდის ჩანაწერს, თუ ამას Folder notes უზრუნველყოფს. გამორთულია — ორივე ცვლის როლს. არასოდეს მოქმედებს გადარქმევის/გადატანის რეჟიმში.",
 		settingAllFilesDesc:
@@ -4269,8 +4187,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "Ajratgich",
 		settingDelimiterDesc: "Yo‘l qismlari orasida ko‘rsatiladi.",
 		delimiterPresetTooltip: "“{char}” dan foydalanish",
-		settingVaultNameName: "Ombor nomini ko‘rsatish",
-		settingVaultNameDesc: "Yo‘lning birinchi qismi sifatida.",
 		settingSwapActionsName: "Jild nomi ro‘yxatni ochadi",
 		settingSwapActionsDesc: "Yoqilganda jild nomi o‘z ro‘yxatini ochadi, undan keyingi ajratgich esa jildni yon panelda ko‘rsatadi — yoki Folder notes shug‘ullansa, uning jild eslatmasini ochadi. O‘chirilganda ikkovi o‘rin almashadi. Nomini o‘zgartirish/ko‘chirish rejimida hech qachon qo‘llanilmaydi.",
 		settingAllFilesDesc:
@@ -4372,8 +4288,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "መለያያ",
 		settingDelimiterDesc: "በመንገዱ ክፍሎች መካከል ይታያል።",
 		delimiterPresetTooltip: "“{char}” ተጠቀም",
-		settingVaultNameName: "የመዝገብ ቤቱን ስም አሳይ",
-		settingVaultNameDesc: "እንደ መንገዱ የመጀመሪያ ክፍል።",
 		settingSwapActionsName: "የአቃፊ ስም ዝርዝሩን ይከፍታል",
 		settingSwapActionsDesc: "ሲበራ የአቃፊው ስም ዝርዝሩን ይከፍታል፣ ከሱ በኋላ ያለው መለያያ ደግሞ አቃፊውን በጎን አሞሌ ያሳያል — ወይም Folder notes የሚያስተዳድረው ከሆነ የአቃፊውን ማስታወሻ ይከፍታል። ሲጠፋ ሁለቱ ይለዋወጣሉ። በዳግም ስያሜ/ማዛወር ሁነታ ፈጽሞ አይሠራም።",
 		settingAllFilesDesc:
@@ -4475,8 +4389,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		settingDelimiterName: "विभाजकः",
 		settingDelimiterDesc: "पथखण्डयोः मध्ये दर्श्यते।",
 		delimiterPresetTooltip: "“{char}” इति प्रयुज्यताम्",
-		settingVaultNameName: "कोशनाम प्रदर्श्यताम्",
-		settingVaultNameDesc: "पथस्य प्रथमखण्डरूपेण।",
 		settingSwapActionsName: "पुटनाम सूचीं उद्घाटयति",
 		settingSwapActionsDesc: "सक्रिये सति पुटस्य नाम स्वसूचीं उद्घाटयति, तदनन्तरं विभाजकः पार्श्वपट्टिकायां पुटं दर्शयति — अथवा Folder notes सक्रियः चेत् तस्य पुटटिप्पणीं उद्घाटयति। निष्क्रिये सति उभौ परिवर्तेते। नामपरिवर्तन/स्थानान्तरणविधौ कदापि न प्रवर्तते।",
 		settingAllFilesDesc:

@@ -281,8 +281,19 @@ function listWindowsDrives(): SystemLocation[] {
  * same icon the root segment shows when the vault name is hidden, so the
  * two readings stay consistent.
  */
+let currentVaultIcon = CURRENT_VAULT_ICON;
+
+/** The icon picked for the open vault in the settings, used wherever that vault is drawn. */
+export function setCurrentVaultIcon(name: string): void {
+	currentVaultIcon = name.trim() || CURRENT_VAULT_ICON;
+}
+
+export function vaultIcon(): string {
+	return currentVaultIcon;
+}
+
 export function iconFor(location: SystemLocation): string {
-	if (location.isCurrentVault) return CURRENT_VAULT_ICON;
+	if (location.isCurrentVault) return currentVaultIcon;
 	if (location.kind === "drive") return DEVICE_ICONS[location.device];
 	return LOCATION_ICONS[location.kind];
 }

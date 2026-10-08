@@ -1921,7 +1921,7 @@ test("long paths: a name hidden by the setting opens like one hidden by the room
 	await squeezeTo(900);
 	const out = await page.evaluate(`
 		const p = app.plugins.plugins.lure;
-		p.settings.showVaultName = false;
+		p.settings.vaultSegment = "icon";
 		p.manager.refreshAll();
 		${PAUSE(500)}
 		const c = app.workspace.getLeavesOfType("markdown")[0].view.containerEl
@@ -1932,7 +1932,7 @@ test("long paths: a name hidden by the setting opens like one hidden by the room
 		${PAUSE(300)}
 		const open = Math.round(name.getBoundingClientRect().width);
 		c.dispatchEvent(new MouseEvent("mouseleave"));
-		p.settings.showVaultName = true;
+		p.settings.vaultSegment = "name";
 		p.manager.refreshAll();
 		${PAUSE(400)}
 		return JSON.stringify({ inDom: !!name, text: name.textContent, shut, open });
