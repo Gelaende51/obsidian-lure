@@ -628,6 +628,31 @@
 	color: var(--color-purple);
 }
 
+/* A file's type, where names are shown without extensions: at the row's
+   right-hand end, quiet until pointed at, and pressable to write the
+   extension out in the field. */
+.suggestion-item .lure-suggest-type {
+	flex-shrink: 0;
+	margin-inline-start: auto;
+	padding-inline-start: var(--size-4-2);
+	display: inline-flex;
+	align-items: center;
+	gap: var(--size-2-1);
+	color: var(--text-faint);
+	font-size: var(--font-ui-smaller);
+	cursor: pointer;
+}
+
+.suggestion-item .lure-suggest-type:hover {
+	color: var(--text-normal);
+	text-decoration: underline;
+}
+
+.suggestion-item .lure-suggest-type-icon {
+	display: inline-flex;
+	--icon-size: var(--icon-xs);
+}
+
 /* A note that is linked to and not written yet: pink, apart from the red of
    a taken name, and in italics as Obsidian draws an unresolved link. */
 .suggestion-item.lure-suggest-unresolved .lure-suggest-label {

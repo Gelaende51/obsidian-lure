@@ -6513,6 +6513,21 @@ export class PathBreadcrumb {
 	}
 
 	/**
+	 * A row's extension badge, pressed: the row's name goes in the field with
+	 * its extension written out and marked, so it can be read, kept or typed
+	 * over — and the list stays open on the same names.
+	 */
+	private revealExtension(input: HTMLInputElement, value: PathSuggestion): void {
+		if (this.inputEl !== input) return;
+		this.settleSuggestion(false);
+		const bounds = segmentBoundsAtCaret(input.value, input.selectionEnd ?? input.value.length);
+		this.writeSegment(input, bounds, value.label);
+		const dot = bounds.start + value.label.lastIndexOf(".");
+		input.setSelectionRange(dot, bounds.start + value.label.length);
+		input.focus();
+	}
+
+	/**
 	 * Puts a page's name in the field and nothing else.
 	 *
 	 * Not `writeSegment`, which replaces the segment the caret is in and
@@ -8362,6 +8377,7 @@ export class PathBreadcrumb {
 				mayListExternal: this.plugin.settings.accessExternalFiles,
 				warnsOnOpen: (extension) => this.warnsOnOpen(extension),
 				isFolderNote: (path) => this.isFolderNote(path),
+				showExtensions: this.plugin.settings.showFileExtension,
 				unresolvedIn: (folder) => (this.renameMode ? [] : this.plugin.unresolvedNotes.in(folder)),
 				pages: this.mainPaneViewTypes(),
 				queryOverride: this.suggestQueryOverride,
@@ -8396,6 +8412,7 @@ export class PathBreadcrumb {
 			() => {
 				if (this.inputEl === inputEl) this.paintCreateHint(inputEl);
 			},
+			(value) => this.revealExtension(inputEl, value),
 			);
 			this.suggest.onSelect((value, evt) => {
 				evt.preventDefault();

@@ -110,6 +110,11 @@ export interface SuggestContext {
 	warnsOnOpen: (extension: string) => boolean;
 	/** Whether a vault file is some folder's note — tinted so it reads as the folder's, not as one more note. */
 	isFolderNote: (path: string) => boolean;
+	/**
+	 * Whether names are shown with their extensions. Off, a file's row shows
+	 * its name bare and the extension in a badge at the right-hand end.
+	 */
+	showExtensions: boolean;
 	/** Notes linked to and not there yet that would be made in this folder. */
 	unresolvedIn: (folderPath: string) => { name: string; path: string }[];
 	/**
@@ -197,6 +202,18 @@ function leadingFirst(rows: PathSuggestion[], query: string): PathSuggestion[] {
 	// too; what is pinned but does not lead comes after them.
 	const rest = rows.filter((row) => !leads(row));
 	return [...leading, ...rest.filter((row) => !ranked(row)), ...rest.filter(ranked)];
+}
+
+/** The icon for a file's type in a row's extension badge. */
+function typeIcon(extension: string): string {
+	const ext = extension.toLowerCase();
+	if (isMarkdownExtension(ext)) return "file-text";
+	if (ext === "canvas") return "layout-dashboard";
+	if (ext === "pdf") return "file-text";
+	if (["png", "jpg", "jpeg", "gif", "bmp", "svg", "webp", "avif"].includes(ext)) return "image";
+	if (["mp3", "wav", "m4a", "ogg", "flac", "3gp", "webm"].includes(ext)) return "music";
+	if (["mp4", "mkv", "mov", "ogv"].includes(ext)) return "film";
+	return "file";
 }
 
 /** What a page is when a row cannot be measured. */
@@ -400,6 +417,8 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		 * handler has run, so it has to be told rather than left to guess.
 		 */
 		private onListed?: () => void,
+		/** A row's extension badge was pressed: the name goes in the field, extension and all. */
+		private onRevealExtension?: (value: PathSuggestion) => void,
 	) {
 		super(app, inputEl);
 		this.dragKeepFocusEl = inputEl;
@@ -1241,6 +1260,39 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		el.appendText(label.slice(cut));
 	}
 
+	/** The extension a row keeps in a badge rather than in its name, or null. */
+	private extensionBadge(value: PathSuggestion): string | null {
+		if (this.getContext().showExtensions) return null;
+		if (value.kind !== "file" && value.kind !== "keep-name") return null;
+		const dot = value.label.lastIndexOf(".");
+		// `dot > 0`: ".hidden" is a name, not an extension.
+		return dot > 0 && dot < value.label.length - 1 ? value.label.slice(dot + 1) : null;
+	}
+
+	/**
+	 * The type of a file whose extension is not in its name: an icon and the
+	 * extension, at the row's right-hand end. Pressing it puts the name in
+	 * the field with the extension written out, rather than opening the row.
+	 */
+	private renderBadge(el: HTMLElement, value: PathSuggestion, extension: string): void {
+		const badge = el.createSpan({ cls: "lure-suggest-type" });
+		setIcon(badge.createSpan({ cls: "lure-suggest-type-icon" }), typeIcon(extension));
+		badge.createSpan({ text: `.${extension}` });
+		setTooltip(badge, t("suggestShowExtension"));
+		const reveal = this.onRevealExtension;
+		if (!reveal) return;
+		// Pressed, not chosen: the row underneath must not take the press.
+		badge.addEventListener("mousedown", (evt) => {
+			evt.preventDefault();
+			evt.stopPropagation();
+		});
+		badge.addEventListener("click", (evt) => {
+			evt.preventDefault();
+			evt.stopPropagation();
+			reveal(value);
+		});
+	}
+
 	renderSuggestion(value: PathSuggestion, el: HTMLElement): void {
 		el.addClass(`lure-suggest-${value.kind}`);
 
@@ -1267,7 +1319,12 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			const iconEl = el.createSpan({ cls: "lure-suggest-icon" });
 			applyIcon(setIcon, iconEl, value.icon, "hard-drive");
 		}
-		this.writeLabel(el.createSpan({ cls: "lure-suggest-label" }), value.label);
+		const badge = this.extensionBadge(value);
+		this.writeLabel(
+			el.createSpan({ cls: "lure-suggest-label" }),
+			badge ? value.label.slice(0, value.label.length - badge.length - 1) : value.label,
+		);
+		if (badge) this.renderBadge(el, value, badge);
 
 		// "keep-name" is a proposed destination that nothing exists at yet,
 		// so there is nothing to act on either way — and neither is a note

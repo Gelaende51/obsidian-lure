@@ -110,6 +110,7 @@ export const EN = {
 	commandFocusVaultPath: "Focus the path bar on the path from the vault",
 	commandFocusAbsolutePath: "Focus the path bar on the path from the system root",
 	commandFocusVault: "Focus the path bar on the vault",
+	suggestShowExtension: "Show the extension",
 	noticeAutocompleteUnavailable: "Autocomplete unavailable: {error}",
 	suggestMore: "{count} more — keep typing to filter",
 
