@@ -369,6 +369,12 @@ test("ladder: Tab past the end widens the selection a rung at a time", async () 
 	expect("then the path from the system root", system.selected, (v) =>
 		typeof v === "string" && v.endsWith(`/${NOTE}`) && v.startsWith("/"));
 
+	// The vault's rung comes between the system path and the lap: the whole
+	// path in the field, the vault's own part of it marked.
+	await tab();
+	const vault = await look();
+	expect("then the vault, its part of the path marked", vault.value && vault.selected && vault.value.startsWith(vault.selected) && vault.value.endsWith(`/${NOTE}`), true);
+
 	await tab();
 	const wrapped = await look();
 	// The rungs are a loop, and it closes where it opened: this session was
@@ -428,6 +434,12 @@ test("a lap of the rungs from a folder click costs nothing", async () => {
 	}
 	expect("a rung shows the path from the system root", top && top.selected, (v) =>
 		typeof v === "string" && v.endsWith(`/${NOTE}`));
+
+	// The vault's rung comes between the system path and the lap: the whole
+	// path in the field, the vault's own part of it marked.
+	await tab();
+	const vault = await look();
+	expect("then the vault, its part of the path marked", vault.value && vault.selected && vault.value.startsWith(vault.selected) && vault.value.endsWith(`/${NOTE}`), true);
 
 	await tab();
 	const round = await look();
@@ -960,8 +972,12 @@ test("walking back past the front of the path loops round to the system path", a
 	// Nothing has been walked, so there is nothing to give back and nowhere
 	// further up: this press is the one that used to do nothing.
 	await back();
+	// The far rung is the vault now: the whole path, the vault's part marked.
+	const atVault = await look();
+	expect("the press loops round to the vault", atVault.value && atVault.selected && atVault.value.startsWith(atVault.selected) && atVault.value.endsWith(`/${leaf}`), true);
+	await back();
 	const looped = await look();
-	expect("the press loops round to the path from the system root", looped.value, (v) =>
+	expect("then the path from the system root", looped.value, (v) =>
 		typeof v === "string" && v.startsWith("/") && v.endsWith(`/${leaf}`));
 	expect("selected whole, as that rung shows it", looped.selected, looped.value);
 
