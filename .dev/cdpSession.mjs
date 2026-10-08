@@ -198,6 +198,8 @@ const KEY_CODES = {
 	ArrowLeft: [37, "ArrowLeft", ""], ArrowRight: [39, "ArrowRight", ""],
 	Home: [36, "Home", ""], End: [35, "End", ""],
 	PageUp: [33, "PageUp", ""], PageDown: [34, "PageDown", ""],
+	// The key itself, pressed alone: a tap of it completes in the path bar.
+	Alt: [18, "AltLeft", ""],
 };
 
 const MODIFIER_BITS = { alt: 1, ctrl: 2, control: 2, meta: 4, cmd: 4, shift: 8 };

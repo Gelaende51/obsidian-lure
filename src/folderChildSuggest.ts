@@ -308,6 +308,8 @@ function collidesWith(context: SuggestContext): (name: string) => boolean {
 
 /** Marks this plugin's popover, so the stylesheet can lift the height cap on it alone. */
 const POPOVER_CLASS = "lure-suggest-popover";
+/** On the popover while Enter would make the typed name, not open a row. */
+const CREATES_CLASS = "lure-suggest-creates";
 
 /** The tints a row can carry, named the way the stylesheet names them. */
 export type SuggestTint = "current" | "keep-name" | "taken" | "warn" | "md" | "external";
@@ -341,6 +343,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 	private readonly dragKeepFocusEl: HTMLInputElement;
 	/** Index of the entry the list should open on, worked out while building it. */
 	private preselectIndex = -1;
+	private enterCreates = false;
 	/** Guards the re-selection below against answering its own call. */
 	private preselecting = false;
 	/** Set once the list has been wrapped for the "up past the top" gesture. */
@@ -572,6 +575,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 	 */
 	onSelectedChange(value: PathSuggestion | undefined, evt: unknown): void {
 		this.wrapList();
+		this.paintCreateEdge();
 		if (this.preselecting) return;
 		if (this.restoring) {
 			// The pointer has left, and the row it is handing the highlight
@@ -838,19 +842,42 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 	}
 
 	/**
+	 * Whether Enter, pressed with nothing highlighted, would make the typed
+	 * name rather than open a row — drawn as a red edge down the list for as
+	 * long as no row is highlighted.
+	 */
+	markEnterCreates(creates: boolean): void {
+		this.enterCreates = creates;
+		this.paintCreateEdge();
+	}
+
+	private paintCreateEdge(): void {
+		const popover = (this as unknown as { suggestEl?: HTMLElement }).suggestEl;
+		const index = this.list()?.selectedItem ?? -1;
+		popover?.toggleClass(CREATES_CLASS, this.enterCreates && index < 0);
+	}
+
+	/**
 	 * Moves the highlight by whole rows, the way an arrow key does.
 	 *
 	 * Handed the wheel event that asked for it, because that is what tells
 	 * `onSelectedChange` a person moved the highlight rather than the list
 	 * settling itself — which is what makes the row preview into the field.
 	 * Stepping off either end rests at nothing, exactly as arrowing does:
-	 * the wrapping lives in `wrapList`, and this goes through it.
+	 * the wrapping lives in `wrapList`, and this goes through it — unless
+	 * `stopAtEnds`, which a wheel asks for.
 	 */
-	stepHighlight(rows: number, evt: UserEvent): boolean {
+	stepHighlight(rows: number, evt: UserEvent, stopAtEnds = false): boolean {
 		const list = this.list();
 		const values = list?.values;
 		if (!list || !Array.isArray(values) || values.length === 0) return false;
-		list.setSelectedItem(list.selectedItem + rows, evt);
+		let index = list.selectedItem + rows;
+		// A wheel stops at the first and the last row: a turn too many would
+		// otherwise throw the highlight to the far end of a long list, which
+		// the keys may do and a hand on a wheel does not expect.
+		if (stopAtEnds) index = Math.min(Math.max(index, 0), values.length - 1);
+		if (index === list.selectedItem) return true;
+		list.setSelectedItem(index, evt);
 		return true;
 	}
 

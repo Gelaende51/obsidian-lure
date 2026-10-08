@@ -173,8 +173,13 @@ async function type(text) {
 	await page.evaluate(focusField);
 }
 
+/**
+ * One step of the shell's completion. That is a tap of Alt now: Tab goes
+ * round the names at a fork instead (see the cases at the end), and is the
+ * same step everywhere else.
+ */
 async function tab() {
-	await pressKey(page, "Tab");
+	await pressKey(page, "Alt");
 	await page.evaluate(PAUSE(500) + "return true;");
 	await page.evaluate(focusField);
 }
@@ -1697,6 +1702,62 @@ test("where the leading rows part, the branch the offer takes is marked apart fr
 	// Taken, the two agree on as far as `alpha-`, and the next offer parts them again.
 	await tab();
 	expect("follows the offer to the next fork", await offered(), [`${PREFIX}alpha-one`]);
+});
+
+/** A real press of Tab, which goes round the names wherever several begin as typed. */
+async function realTab(spec = "Tab") {
+	await pressKey(page, spec);
+	await page.evaluate(PAUSE(500) + "return true;");
+	await page.evaluate(focusField);
+}
+
+test("Tab goes round the names at a fork, and back to what was typed", async () => {
+	await armAtRoot();
+	await type(`${PREFIX}al`);
+	const seen = [];
+	for (let i = 0; i < 3; i++) {
+		await realTab();
+		const now = await look();
+		seen.push(now.value);
+		expect(`press ${i + 1} marks only what it added`, now.selected, now.value.slice(`${PREFIX}al`.length));
+	}
+	expect("each press a different whole name", [...seen].sort(), [`${PREFIX}alpha-one`, `${PREFIX}alpha-two`, `${PREFIX}alpine`]);
+	await realTab();
+	expect("the fourth press gives back what was typed", (await look()).value, `${PREFIX}al`);
+	await realTab();
+	expect("and the round starts again", (await look()).value, seen[0]);
+	await realTab("shift+Tab");
+	expect("Shift+Tab goes the other way", (await look()).value, `${PREFIX}al`);
+	await realTab("shift+Tab");
+	expect("round to the last name", (await look()).value, seen[2]);
+});
+
+test("the list highlights the name Tab has on show", async () => {
+	await armAtRoot();
+	await type(`${PREFIX}al`);
+	await realTab();
+	const shown = (await look()).value;
+	const lit = await page.evaluate(`return document.querySelector(".suggestion-item.is-selected .lure-suggest-label")?.textContent ?? null;`);
+	expect("the highlighted row", lit, shown);
+	const rows = (await look()).rows;
+	expect("the others are still listed", rows.includes(`${PREFIX}alpine`) && rows.includes(`${PREFIX}alpha-one`), true);
+});
+
+test("a tap of Alt on a name Tab put on show steps into it", async () => {
+	await armAtRoot();
+	await type(`${PREFIX}al`);
+	await realTab();
+	const shown = (await look()).value;
+	await tab();
+	const after = await look();
+	expect("stepped into the folder on show", after.chips.at(-1), shown);
+});
+
+test("Tab with one name left still steps into it", async () => {
+	await armAtRoot();
+	await type(`${PREFIX}onl`);
+	await realTab();
+	expect("stepped in", (await look()).chips.at(-1), `${PREFIX}only`);
 });
 
 await run();

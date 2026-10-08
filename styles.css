@@ -214,6 +214,12 @@
 	background-color: var(--background-modifier-hover);
 }
 
+/* A folder the path walks into that is not there yet: Enter will make it,
+   and it is red for the same reason the field's text is. */
+.lure-browse-chip.lure-browse-chip-missing {
+	color: var(--text-error);
+}
+
 /* A folder about to take a dropped file.
    `is-being-dragged-over` is Obsidian's own class and the drop target sets
    it through Obsidian's own drag manager — but every rule the app has for it
@@ -701,6 +707,12 @@
    the rows Tab is about to walk toward, apart from the other ways on. */
 .suggestion-item.lure-suggest-leading.lure-suggest-offered::before {
 	background-color: var(--color-green);
+}
+
+/* Nothing highlighted, and Enter would make the typed name rather than open
+   a row: a red edge down the whole list, where the rows' own edges are. */
+.lure-suggest-popover.lure-suggest-creates {
+	box-shadow: inset 3px 0 0 var(--text-error);
 }
 
 /* Read-only external file view

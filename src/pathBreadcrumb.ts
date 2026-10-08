@@ -288,6 +288,8 @@ const WHEEL_LINE_PX = 16;
  * at the path, while this key alternates between two places to rename in.
  */
 const LAST_RENAME_RUNG = 3;
+/** A chip naming a folder that is not there yet. */
+const MISSING_CHIP_CLASS = "lure-browse-chip-missing";
 /**
  * The vault, as a rung after the path from the system root: the place every
  * path is counted from, with the other places beside it. Only where places
@@ -4352,7 +4354,7 @@ export class PathBreadcrumb {
 			this.wheelDelta += WHEEL_STEP_PX;
 		}
 		if (!steps) return true;
-		return this.suggest?.stepHighlight(steps, evt) ?? false;
+		return this.suggest?.stepHighlight(steps, evt, true) ?? false;
 	}
 
 	private lockExternalWrites(): void {
@@ -4503,6 +4505,9 @@ export class PathBreadcrumb {
 			// into Obsidian's own breadcrumb). Carrying the path on the
 			// element is what lets one gesture table serve both.
 			chip.dataset.lurePath = chipPath;
+			// A folder walked into ahead of itself is not there yet: red, as
+			// the field is red for a name Enter would make.
+			chip.toggleClass(MISSING_CHIP_CLASS, !this.entryExists(chipPath, false));
 			// Chips are this plugin's own elements, which no folder-notes
 			// plugin knows about, so the swapped chip separator can only
 			// offer the reveal fallback rather than the folder's note.
@@ -4746,6 +4751,7 @@ export class PathBreadcrumb {
 				text: segment,
 			});
 			chip.dataset.lurePath = chipPath;
+			chip.toggleClass(MISSING_CHIP_CLASS, !this.entryExists(chipPath, true));
 			chip.addEventListener("click", (evt) => {
 				evt.stopPropagation();
 				this.handleExternalSegmentClick(chipPath);
@@ -5928,6 +5934,11 @@ export class PathBreadcrumb {
 			!this.entryExists(this.browsePath, false);
 		const creates = (!listed && this.typedCreatesNew(inputEl.value)) || standingSomewhereNew;
 		inputEl.toggleClass(WILL_CREATE_CLASS, creates);
+		// The field stays in a row's colour while the list has rows for what
+		// was typed — but with none of them highlighted, Enter still makes the
+		// typed name rather than opening one of them. The list says so on its
+		// edge, so the red is there to see before the press.
+		this.suggest?.markEnterCreates(listed && !creates && this.typedCreatesNew(inputEl.value));
 		if (tint && !creates) inputEl.dataset.lureTint = tint;
 		else delete inputEl.dataset.lureTint;
 	}
@@ -8284,7 +8295,7 @@ export class PathBreadcrumb {
 			if (evt.key !== "Alt") return;
 			const downAt = this.altDownAt;
 			this.altDownAt = 0;
-			if (!downAt || Date.now() - downAt > ALT_TAP_MS || !document.hasFocus()) return;
+			if (!downAt || Date.now() - downAt > ALT_TAP_MS) return;
 			evt.preventDefault();
 			this.pressAlt(inputEl);
 		};
