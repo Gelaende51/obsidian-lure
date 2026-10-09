@@ -180,4 +180,75 @@ test("Tab at the vault root, stepping into folders", async () => {
 	for (let i = 1; i <= 4; i++) await press("shift+Tab", `Shift+Tab ${i} at the root`);
 });
 
+/** A real press of the left button at the middle of the first element matching `selector`. */
+async function clickOn(selector, index = 0) {
+	const raw = await page.evaluate(`
+		const el = document.querySelectorAll(${JSON.stringify(selector)})[${index}];
+		if (!el) return null;
+		const r = el.getBoundingClientRect();
+		return JSON.stringify({ x: Math.round(r.x + r.width / 2), y: Math.round(r.y + r.height / 2) });
+	`);
+	if (!raw) return false;
+	const { x, y } = JSON.parse(raw);
+	await page.send("Input.dispatchMouseEvent", { type: "mouseMoved", x, y, buttons: 0 });
+	for (const type of ["mousePressed", "mouseReleased"]) {
+		await page.send("Input.dispatchMouseEvent", { type, x, y, button: "left", buttons: type === "mousePressed" ? 1 : 0, clickCount: 1 });
+	}
+	await page.evaluate(PAUSE(400) + "return true;");
+	return true;
+}
+
+/** The field opened by a real click on a folder of the path, as a hand opens it. */
+async function openOnFolder() {
+	await page.evaluate(openNote);
+	expect("a folder of the path to click", await clickOn(".view-header-breadcrumb:not(.lure-vault-segment)"), true);
+	await check("opened by a click on the folder");
+}
+
+test("Tab and typing after picking a row with the mouse", async () => {
+	await openOnFolder();
+	expect("a row to pick", await clickOn(".suggestion-item"), true);
+	const field = JSON.parse(await page.evaluate(probe));
+	if (field.field === null) return; // the pick ended the field (opened a note): nothing left to leak from
+	await check("after the pick");
+	await press("Tab", "Tab after the pick");
+	await page.send("Input.insertText", { text: "q" });
+	await check("typing after the pick");
+});
+
+test("Tab and typing after a click on a folder chip", async () => {
+	await page.evaluate(openNote);
+	await page.evaluate(`
+		for (let i = 0; i < 3; i++) { app.commands.executeCommandById("lure:focus-path-bar"); ${PAUSE(300)} }
+		return true;
+	`);
+	await pressKey(page, "Backspace");
+	await page.send("Input.insertText", { text: "Lure-keyleak/" });
+	await page.evaluate(PAUSE(400) + "return true;");
+	expect("a chip to click", await clickOn(".lure-browse-chip"), true);
+	await check("after the chip");
+	await press("Tab", "Tab after the chip");
+	await page.send("Input.insertText", { text: "q" });
+	await check("typing after the chip");
+});
+
+test("Tab and typing after the wheel opened the list", async () => {
+	await page.evaluate(openNote);
+	const raw = await page.evaluate(`
+		const el = app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-filename-text");
+		const r = el.getBoundingClientRect();
+		return JSON.stringify({ x: Math.round(r.x + r.width / 2), y: Math.round(r.y + r.height / 2) });
+	`);
+	const { x, y } = JSON.parse(raw);
+	await page.send("Input.dispatchMouseEvent", { type: "mouseMoved", x, y, buttons: 0 });
+	for (let i = 0; i < 3; i++) {
+		await page.send("Input.dispatchMouseEvent", { type: "mouseWheel", x, y, deltaX: 0, deltaY: 120 });
+		await page.evaluate(PAUSE(250) + "return true;");
+	}
+	await check("after the wheel");
+	await press("Tab", "Tab after the wheel");
+	await page.send("Input.insertText", { text: "q" });
+	await check("typing after the wheel");
+});
+
 await run();
