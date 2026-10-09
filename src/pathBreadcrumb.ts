@@ -7428,6 +7428,12 @@ export class PathBreadcrumb {
 		}
 		const here = this.currentFolderPath();
 		const target = typed ? (here ? `${here}/${typed}` : typed) : here;
+		// With extensions hidden the field leaves a note's `.md` off; the path
+		// it names is the note's, extension and all.
+		if (target && !this.plugin.settings.showFileExtension && !/\.[^./]+$/.test(target)) {
+			const note = `${target}.md`;
+			if (this.plugin.app.vault.getAbstractFileByPath(note) instanceof TFile) return note;
+		}
 		// An empty field at the vault root names nothing at all, and there is
 		// no describing that; the row's own file is the only path left.
 		return target || null;
