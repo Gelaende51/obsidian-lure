@@ -349,18 +349,25 @@ test("the unchanged path with another chord converts a hard link to a symbolic l
 	await typeOverName("Hard");
 	await pressKey(page, "shift+Enter");
 	await settle(2000);
-	await page.evaluate(`
-		await app.workspace.getLeaf(false).openFile(app.vault.getAbstractFileByPath(${JSON.stringify(`${DIR}/Hard.md`)}));
+	const opened = await page.evaluate(`
+		let f = null;
+		for (let i = 0; i < 30 && !f; i++) { f = app.vault.getAbstractFileByPath(${JSON.stringify(`${DIR}/Hard.md`)}); if (!f) await new Promise((r) => setTimeout(r, 100)); }
+		if (!f) return "not indexed";
+		await app.workspace.getLeaf(false).openFile(f);
 		${PAUSE(800)}
-		return true;
+		return app.workspace.getActiveFile()?.path ?? null;
 	`);
+	expect("the hard link is open", opened, `${DIR}/Hard.md`);
 	for (let i = 0; i < 2; i++) {
 		await pressKey(page, "F2");
 		await settle(400);
 		if (await page.evaluate(`return !!document.querySelector(".lure-path-input");`)) break;
 	}
+	const before = await page.evaluate(`return JSON.stringify({ field: document.querySelector(".lure-path-input")?.value ?? null, renaming: !!document.querySelector(".lure-rename-active") });`);
 	await pressKey(page, "ctrl+shift+Enter");
 	await settle(2000);
+	const notices = await page.evaluate(`return JSON.stringify([...document.querySelectorAll(".notice")].map((n) => n.textContent));`);
+	console.log("    before: " + before + " notices: " + notices);
 	const hard = await disk(`${DIR}/Hard.md`);
 	expect("now a symbolic link", hard.symlink, true);
 	expect("pointing at the note", hard.link, "Note.md");

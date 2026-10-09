@@ -6359,9 +6359,10 @@ export class PathBreadcrumb {
 		// taking of the offer is the step it records.
 		if (tookStep) this.tabTrail.push(tookStep);
 
-		// The offer finished the name, and that is the whole press: the rungs
-		// begin on the next one.
-		if (action.kind === "ladder" && took) {
+		// With extensions hidden the offer finished the name, and that is the
+		// whole press: the rung after it is passed over, and starting the
+		// rungs in the same press jumped straight to the path from the vault.
+		if (action.kind === "ladder" && took && !this.plugin.settings.showFileExtension && this.externalPath === null) {
 			this.relistAfterTab(input);
 			return;
 		}

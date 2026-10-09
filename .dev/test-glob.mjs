@@ -200,9 +200,10 @@ test("after Enter the count and its colour go", async () => {
 	const r = await page.evaluate(`
 		await app.workspace.getLeaf(false).openFile(app.vault.getAbstractFileByPath(${JSON.stringify(`${DIR}/Pie.md`)}));
 		${PAUSE(600)}
-		return JSON.stringify(!!app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-other-paths"));
+		const el = app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-other-paths");
+		return JSON.stringify(el ? { file: app.workspace.getActiveFile()?.path, tint: el.dataset.lureTint, count: el.textContent, field: document.querySelector(".lure-path-input")?.value ?? null } : null);
 	`).then(JSON.parse);
-	expect("no button left over", r, false);
+	expect("no button left over", r, null);
 });
 
 test("Tab going round file names highlights each one in the list", async () => {
