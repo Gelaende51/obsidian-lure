@@ -295,26 +295,26 @@ export function otherPaths(app: App, disk: DiskLinks, file: TFile): OtherPath[] 
 	for (const path of disk.sameFile(file.path)) add(path, "hard");
 	for (const path of disk.linksPointingAt(target ?? file.path)) add(path, "symbolic");
 	// A note's own list is short, so what each entry is gets asked of the
-	// disk directly rather than waiting on the background scan.
-	const base = basePath(app);
+	// disk directly rather than of the vault — which does not list a symbolic
+	// link it did not see being made — or of the background scan.
 	for (const path of listedPaths(app, file)) {
-		if (!app.vault.getAbstractFileByPath(path)) {
-			add(path, "alias");
-			continue;
-		}
-		let symbolic = disk.targetOfLink(path) !== null;
-		if (!symbolic && base !== null) {
-			try {
-				symbolic = lstatSync(join(base, path)).isSymbolicLink();
-			} catch {
-				// Gone meanwhile; called what the vault still thinks it is.
-			}
-		}
-		add(path, symbolic ? "symbolic" : "hard");
+		const there = onDisk(app, path);
+		add(path, there === "symbolic" ? "symbolic" : there === "file" || app.vault.getAbstractFileByPath(path) ? "hard" : "alias");
 	}
 	const folder = parentOf(file.path);
 	for (const alias of nativeAliases(app, file)) add(folder ? `${folder}/${alias}` : alias, "name");
 	return [...found].map(([path, kind]) => ({ path, kind }));
+}
+
+/** What is at a vault path on disk: a symbolic link, anything else, or nothing. */
+export function onDisk(app: App, path: string): "symbolic" | "file" | null {
+	const base = basePath(app);
+	if (base === null) return null;
+	try {
+		return lstatSync(join(base, path)).isSymbolicLink() ? "symbolic" : "file";
+	} catch {
+		return null;
+	}
 }
 
 /** One alias row for the dropdown. */
@@ -323,7 +323,7 @@ export interface AliasRow {
 	name: string;
 	/** The note it stands for. */
 	target: string;
-	kind: "alias" | "name";
+	kind: "alias" | "name" | "symbolic";
 }
 
 /**
@@ -364,10 +364,13 @@ export class AliasRows {
 		};
 		for (const file of this.app.vault.getMarkdownFiles()) {
 			for (const path of listedPaths(this.app, file)) {
-				// Links are real files and listed as such; only an alias path
-				// has nothing of its own to show.
+				// Files the vault lists are listed as such. An alias path has
+				// nothing of its own to show, and a symbolic link the vault
+				// never picked up is shown here, opening the note it points at.
 				if (this.app.vault.getAbstractFileByPath(path)) continue;
-				put(parentOf(path), { name: nameOf(path), target: file.path, kind: "alias" });
+				const there = onDisk(this.app, path);
+				if (there === "file") continue;
+				put(parentOf(path), { name: nameOf(path), target: file.path, kind: there === "symbolic" ? "symbolic" : "alias" });
 			}
 			const folder = parentOf(file.path);
 			for (const alias of nativeAliases(this.app, file)) {

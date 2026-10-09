@@ -120,7 +120,7 @@ export interface SuggestContext {
 	 */
 	showExtensions: boolean;
 	/** Aliases standing in this folder: path aliases naming it, Obsidian's aliases of its notes. */
-	aliasesIn: (folderPath: string) => { name: string; target: string; kind: "alias" | "name" }[];
+	aliasesIn: (folderPath: string) => { name: string; target: string; kind: "alias" | "name" | "symbolic" }[];
 	/** Whether a vault path is a symbolic link or one name of a hard-linked file, or neither. */
 	linkKindOf: (path: string) => "symbolic" | "hard" | null;
 	/** Notes linked to and not there yet that would be made in this folder. */
@@ -1134,9 +1134,12 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 				kind: "file",
 				path: alias.target,
 				disabled: false,
-				alias: true,
-				warn: true,
-				endIcon: alias.kind === "alias" ? "signpost" : "at-sign",
+				// A symbolic link is a real file, if one the vault does not list:
+				// it is a note to open, not another name for one.
+				alias: alias.kind !== "symbolic",
+				warn: alias.kind !== "symbolic",
+				markdown: alias.kind === "symbolic",
+				endIcon: alias.kind === "alias" ? "signpost" : alias.kind === "name" ? "at-sign" : "file-symlink",
 			});
 		}
 

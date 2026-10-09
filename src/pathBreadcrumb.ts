@@ -6791,6 +6791,11 @@ export class PathBreadcrumb {
 			this.navigateToFile(there);
 			return;
 		}
+		// A symbolic link the vault does not list opens what it points at.
+		if (other.kind === "symbolic" && this.file) {
+			this.navigateToFile(this.file);
+			return;
+		}
 		const cut = other.path.lastIndexOf("/");
 		this.extendBrowsePath(cut < 0 ? "" : other.path.slice(0, cut));
 		this.enterTypingMode(other.path.slice(cut + 1), "all");
