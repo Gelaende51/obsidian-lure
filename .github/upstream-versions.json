@@ -9,7 +9,9 @@
     "home-launcher": "1.2.0",
     "nav-link-header": "2.8.0",
     "obsidian-front-matter-title-plugin": "4.2.1",
+    "obsidian-outliner": "4.10.2",
     "quick-explorer": "0.2.21",
-    "running-head": "2.1.1"
+    "running-head": "2.1.1",
+    "table-editor-obsidian": "0.23.2"
   }
 }
