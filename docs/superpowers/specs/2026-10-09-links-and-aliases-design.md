@@ -1,67 +1,72 @@
 # Hard links, symbolic links and alias paths — design
 
-Status: draft for review. From `.personal/issues4.md`, group F.
+Status: agreed (answers from `.personal/issues4.md`, "link specs additions", 2026-10-09).
 
 ## What it is for
 
 One note reachable at more than one path: from the path bar, make a second
 path for the note being renamed, and see and visit the note's other paths.
 
-## Three kinds of second path
+## Three kinds of second path, made in rename mode
 
-| Kind | What it is on disk | How Obsidian sees it | Made with (rename mode) |
-| --- | --- | --- | --- |
-| **Alias path** | nothing — a list in the note's frontmatter | one note; the extra path is the plugin's to show | <kbd>Alt</kbd>+<kbd>Enter</kbd> |
-| **Hard link** | a second directory entry for the same file (`fs.link`) | **two notes** with the same content | <kbd>Shift</kbd>+<kbd>Enter</kbd> |
-| **Symbolic link** | a link file pointing at the note (`fs.symlink`) | not indexed by Obsidian inside the vault | see open questions |
+| Kind | On disk | Made with |
+| --- | --- | --- |
+| **Alias path** | nothing — an entry in the note's `paths` frontmatter list | <kbd>Alt</kbd>+<kbd>Enter</kbd> |
+| **Hard link** | a second directory entry for the same file (`fs.link`) | <kbd>Shift</kbd>+<kbd>Enter</kbd> |
+| **Symbolic link** | a link file pointing at the note (`fs.symlink`, relative) | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> |
 
-<kbd>Ctrl</kbd>+<kbd>Enter</kbd> keeps meaning *copy*.
+<kbd>Ctrl</kbd>+<kbd>Enter</kbd> keeps meaning *copy*. A typed path or a picked
+row are both targets. A target that is already taken is refused with a
+notice. Inside the vault only in this version. Desktop only, as the plugin is.
 
-## Behaviour
+## The `paths` property
 
-1. **Alias path.** <kbd>Alt</kbd>+<kbd>Enter</kbd> in rename mode adds the typed
-   path to a frontmatter list on the note (recommended key: `paths`, as
-   Obsidian's own `aliases` holds names, not paths) and leaves the note where it
-   is. Typing an alias path into the field (navigation mode) opens the note, as
-   though it were there.
-2. **Hard link.** <kbd>Shift</kbd>+<kbd>Enter</kbd> in rename mode creates a hard
-   link at the typed path, desktop only, same filesystem only (a link across
-   devices fails and says so). The vault then indexes both paths as separate
-   notes that change together; this is stated in the confirmation the first
-   time, because sync tools (Obsidian Sync, Syncthing, git) do not keep hard
-   links and will turn them into copies.
-3. **The other paths of a note.** When a note has any — alias paths from its
-   frontmatter, other hard links to the same inode inside the vault, symbolic
-   links inside the vault pointing at it — a dropdown button appears in front
-   of the vault icon. It lists them by kind with an icon each; picking one
-   opens the note at that path (for an alias: shows it on the row).
-4. **Finding hard links** needs the inode of every file: built once from
-   `fs.stat` over the vault in the background, kept up to date from vault
-   events, and only while the feature is on (a setting, off by default,
-   because it costs a stat per file on large vaults).
+- Frontmatter key **`paths`**: a list of vault paths.
+- It holds every alias path, and every hard and symbolic link the plugin makes.
+  For a link it also holds the note's own path, because a hard link shares the
+  frontmatter and a symbolic link reads it: from either end, *the other paths*
+  are the list minus the path being looked from.
+- Kept up to date: when a path in some note's list is renamed, the entry is
+  rewritten; when it is deleted, the entry goes. One write per file on disk
+  (by inode), so a hard-linked pair is not written twice.
+- What an entry *is* is read from the disk, not stored: a symbolic link, the
+  same inode as the note (hard link), or nothing there (alias path).
+
+## Aliases in the dropdown
+
+- **Path aliases** are listed in the folder they name, under their own name.
+- **Native aliases** (Obsidian's `aliases`) are listed in the folder of the
+  note that carries them.
+- Both are **orange**, and picking one opens the note it stands for. Typing an
+  alias path and pressing Enter opens the note rather than creating one.
+- Not listed in rename mode (there the dropdown is about destinations).
+
+## The other paths of a note
+
+A button in front of the vault icon, shown only when the note has other paths:
+its `paths` entries, files with the same inode found in the vault, symbolic
+links in the vault pointing at it, and its native aliases. A menu lists them
+with an icon per kind; a link opens that file, an alias shows its path on the
+row. Hard and symbolic links not in `paths` are found by one background scan
+of the vault (`lstat` per file), kept for the session and refreshed on vault
+changes; the scan for hard links runs only when the note's link count is > 1.
 
 ## Components
 
-- `src/altPaths.ts` — reading/writing the frontmatter list
-  (`app.fileManager.processFrontMatter`), the inode index, `fs.link` /
-  `fs.symlink` wrappers with the vault-boundary and padlock checks the
-  external writes already use.
-- `pathBreadcrumb.ts` — the two modified Enters in rename mode; the
-  other-paths button and its dropdown.
-- Settings: *Find other paths of a note* (off), the frontmatter key.
-- Strings in every language; docs including the sync caveat.
+- `src/altPaths.ts` — the `paths` list (read, add, rename, remove via
+  `processFrontMatter`), link creation, the disk index (inodes, symbolic
+  links), and the alias index for the dropdown.
+- `pathBreadcrumb.ts` — the three Enter chords in rename mode, alias rows on
+  select and Enter, the other-paths button.
+- `folderChildSuggest.ts` — alias rows, orange.
+- `main.ts` — keeping `paths` up to date on vault rename and delete.
+- Strings in every language; usage guide and changelog, including that sync
+  tools (Obsidian Sync, Syncthing, git) do not keep hard links.
 
 ## Testing
 
-A suite against the test vault: each modified Enter creates what it says,
-the button appears exactly when a note has another path, and each row opens
-the right thing; a cross-device hard link is refused with a message.
-
-## Open questions (recommended answer first)
-
-1. **Symbolic links:** which key makes one — <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd>
-   (recommended), or a menu entry only, or not made at all (only shown)?
-2. **Frontmatter key** for alias paths: `paths` (recommended) or a setting.
-3. **Alias paths in navigation:** open the note (recommended), or only list it.
-4. **Mobile:** alias paths work everywhere; hard and symbolic links are
-   desktop only and the keys do nothing there (recommended), or say so.
+`.dev/test-links.mjs` against the test vault on CI: each chord makes what it
+says and records it in `paths`; a taken target is refused; both kinds of alias
+are listed orange and open their note; Enter on a typed alias path opens the
+note; the button appears exactly when there are other paths and its entries
+open the right thing; renaming a link rewrites its `paths` entry.
