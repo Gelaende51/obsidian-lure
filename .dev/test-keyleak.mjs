@@ -248,4 +248,37 @@ test("Tab and typing after the wheel opened the list", async () => {
 	await check("typing after the wheel");
 });
 
+test("the focus command run from the command palette", async () => {
+	// The palette hands the focus back to where it was when it closes — the
+	// note — and the command has run by then. Running the command directly,
+	// as the other cases do, never passes through that.
+	await page.evaluate(openNote);
+	await page.evaluate(`app.commands.executeCommandById("command-palette:open"); ${PAUSE(500)} return true;`);
+	await page.send("Input.insertText", { text: "Focus the path bar" });
+	await page.evaluate(PAUSE(500) + "return true;");
+	await pressKey(page, "Enter");
+	await page.evaluate(PAUSE(600) + "return true;");
+	await check("after the palette");
+	await press("Tab", "Tab after the palette");
+	await page.send("Input.insertText", { text: "q" });
+	await check("typing after the palette");
+});
+
+test("the palette opened and dismissed while the field is open", async () => {
+	await page.evaluate(openNote);
+	await page.evaluate(`
+		app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-filename-text").click();
+		${PAUSE(400)}
+		return true;
+	`);
+	await check("opened");
+	await page.evaluate(`app.commands.executeCommandById("command-palette:open"); ${PAUSE(500)} return true;`);
+	await pressKey(page, "Escape");
+	await page.evaluate(PAUSE(600) + "return true;");
+	const field = JSON.parse(await page.evaluate(probe));
+	if (field.field === null) return; // closing the palette ended the field: nothing to leak from
+	await check("after the palette closed");
+	await press("Tab", "Tab after the palette closed");
+});
+
 await run();
