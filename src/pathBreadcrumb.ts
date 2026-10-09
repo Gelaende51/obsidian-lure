@@ -32,7 +32,8 @@ import {
 	readableMinimum,
 } from "./pathFit";
 import { commonPrefix, planTab, TabCandidate } from "./tabComplete";
-import { FolderChildSuggest, MODIFIED_ENTER, guardFieldKeys, pageLabel, PathSuggestion } from "./folderChildSuggest";
+import { LinkKind, OtherPath, makeOtherPath, otherPaths } from "./altPaths";
+import { FolderChildSuggest, LINK_ENTER, MODIFIED_ENTER, guardFieldKeys, pageLabel, PathSuggestion } from "./folderChildSuggest";
 import { ExternalChild, PATH_SEP, externalJoin, externalParent, externalSegments, isExternalFile, isExternalFolder, listExternalChildren } from "./externalFs";
 import {
 	CURRENT_VAULT_ICON,
@@ -289,6 +290,14 @@ const WHEEL_LINE_PX = 16;
  * at the path, while this key alternates between two places to rename in.
  */
 const LAST_RENAME_RUNG = 3;
+/** The icon each kind of other path is listed under. */
+const OTHER_PATH_ICONS: Record<OtherPath["kind"], string> = {
+	alias: "signpost",
+	hard: "link",
+	symbolic: "link-2",
+	target: "file-symlink",
+	name: "at-sign",
+};
 /** A chip naming a folder that is not there yet. */
 const MISSING_CHIP_CLASS = "lure-browse-chip-missing";
 /**
@@ -783,6 +792,8 @@ export class PathBreadcrumb {
 	 */
 	private tabGivenBack: { start: number; end: number } | null = null;
 	private tabCycle: TabCycle | null = null;
+	/** Enter presses already acted on as a link, so no second handler moves the note as well. */
+	private linkEnters = new WeakSet<Event>();
 	/** When a lone Alt went down in the field, or 0 once anything else has. */
 	private altDownAt = 0;
 	/**
@@ -4454,6 +4465,7 @@ export class PathBreadcrumb {
 
 		// "None" leaves the vault's own segment out. Its delimiter stays: it
 		// is where the path starts, and it opens what it always opened.
+		this.renderOtherPathsButton();
 		if (this.plugin.settings.vaultSegment !== "none") this.renderRootSegment();
 
 		const separator = this.vaultSegmentEl.createSpan({
@@ -6516,6 +6528,91 @@ export class PathBreadcrumb {
 	}
 
 	/**
+	 * Which second path an Enter asks for, renaming: Alt for an alias path,
+	 * Shift for a hard link, Ctrl/Cmd+Shift for a symbolic link. Null for
+	 * anything else, and always outside rename mode.
+	 */
+	private linkKindFor(evt: UserEvent | null | undefined): LinkKind | null {
+		if (!this.renameMode || !(evt instanceof KeyboardEvent)) return null;
+		const mod = Keymap.isModifier(evt, "Mod");
+		if (evt.altKey && !evt.shiftKey && !mod) return "alias";
+		if (evt.shiftKey && !evt.altKey && !mod) return "hard";
+		if (evt.shiftKey && mod && !evt.altKey) return "symbolic";
+		return null;
+	}
+
+	/**
+	 * Gives the open note a second path, and leaves it where it is.
+	 *
+	 * Refused where the path is taken — by a file, a folder or another
+	 * note's alias — and outside the vault. The new path is recorded in the
+	 * note's `paths` list; see `altPaths.ts`.
+	 */
+	private async commitLink(target: string, kind: LinkKind): Promise<void> {
+		const file = this.file;
+		if (!file || this.externalPath !== null) {
+			new Notice(t("noticeLinkInsideOnly"));
+			return;
+		}
+		const path = normalizePath(target);
+		if (path === file.path || this.plugin.app.vault.getAbstractFileByPath(path) || this.plugin.aliasRows.resolve(path)) {
+			new Notice(t("noticeLinkTaken", { path }));
+			this.inputEl?.focus();
+			return;
+		}
+		try {
+			await makeOtherPath(this.plugin.app, file, path, kind);
+		} catch (err) {
+			const code = (err as NodeJS.ErrnoException).code;
+			new Notice(code === "EXDEV" ? t("noticeLinkOtherDevice") : t("noticeLinkFailed", { error: (err as Error).message }));
+			this.inputEl?.focus();
+			return;
+		}
+		const made = { alias: "noticeAliasMade", hard: "noticeHardLinkMade", symbolic: "noticeSymlinkMade" } as const;
+		new Notice(t(made[kind], { path }));
+		this.dismissEditing();
+	}
+
+	/**
+	 * The button in front of the vault's segment, on a note that has other
+	 * paths: a menu of them, each with an icon for what it is. A link opens
+	 * that file; an alias is shown on the row, where Enter opens the note.
+	 */
+	private renderOtherPathsButton(): void {
+		const file = this.file;
+		if (!file || this.browsePath !== null || this.externalPath !== null) return;
+		const others = otherPaths(this.plugin.app, this.plugin.diskLinks, file);
+		if (!others.length) return;
+		const button = this.vaultSegmentEl.createSpan({ cls: "clickable-icon lure-other-paths" });
+		setIcon(button, "waypoints");
+		setTooltip(button, t("otherPathsTooltip"));
+		button.addEventListener("click", (evt) => {
+			evt.stopPropagation();
+			const menu = new Menu();
+			for (const other of others) {
+				menu.addItem((item) =>
+					item
+						.setTitle(other.path)
+						.setIcon(OTHER_PATH_ICONS[other.kind])
+						.onClick(() => this.goToOtherPath(other)),
+				);
+			}
+			menu.showAtMouseEvent(evt);
+		});
+	}
+
+	private goToOtherPath(other: OtherPath): void {
+		const there = this.plugin.app.vault.getAbstractFileByPath(other.path);
+		if (there instanceof TFile) {
+			this.navigateToFile(there);
+			return;
+		}
+		const cut = other.path.lastIndexOf("/");
+		this.extendBrowsePath(cut < 0 ? "" : other.path.slice(0, cut));
+		this.enterTypingMode(other.path.slice(cut + 1), "all");
+	}
+
+	/**
 	 * A row's extension badge, pressed: the row's name goes in the field with
 	 * its extension written out and marked, so it can be read, kept or typed
 	 * over — and the list stays open on the same names.
@@ -8048,7 +8145,12 @@ export class PathBreadcrumb {
 
 			if (evt.key === "Enter") {
 				evt.preventDefault();
-				void this.handleTypedSubmit(inputEl.value, this.paneTypeFor(evt));
+				// Already made into a link by the scope: moving it as well would
+				// be the one thing the chord asked not to happen.
+				if (this.linkEnters.has(evt)) return;
+				const link = this.linkKindFor(evt);
+				if (link) this.linkEnters.add(evt);
+				void this.handleTypedSubmit(inputEl.value, this.paneTypeFor(evt), link);
 			} else if (evt.key === "Escape") {
 				evt.preventDefault();
 				this.cancelNavigation();
@@ -8270,6 +8372,18 @@ export class PathBreadcrumb {
 		// suggester's own scope is on top and its selection handler already
 		// reads the modifier.
 		const scope = new Scope(this.plugin.app.scope);
+		// Renaming, three more Enters make a second path for the note instead
+		// of moving it. Anywhere else they are left to what they did before.
+		for (const modifiers of LINK_ENTER) {
+			scope.register(modifiers, "Enter", (evt) => {
+				const link = this.linkKindFor(evt);
+				if (!link) return true;
+				evt.preventDefault();
+				this.linkEnters.add(evt);
+				void this.handleTypedSubmit(inputEl.value, false, link);
+				return false;
+			});
+		}
 		for (const modifiers of MODIFIED_ENTER) {
 			scope.register(modifiers, "Enter", (evt) => {
 				evt.preventDefault();
@@ -8381,6 +8495,7 @@ export class PathBreadcrumb {
 				warnsOnOpen: (extension) => this.warnsOnOpen(extension),
 				isFolderNote: (path) => this.isFolderNote(path),
 				showExtensions: this.plugin.settings.showFileExtension,
+				aliasesIn: (folder) => (this.renameMode ? [] : this.plugin.aliasRows.in(folder)),
 				unresolvedIn: (folder) => (this.renameMode ? [] : this.plugin.unresolvedNotes.in(folder)),
 				pages: this.mainPaneViewTypes(),
 				queryOverride: this.suggestQueryOverride,
@@ -8410,7 +8525,12 @@ export class PathBreadcrumb {
 			// The same thing the field's own Enter does, because it is the
 			// same press: the popover took it before the field could, and
 			// standing on no row it had nothing of its own to do with it.
-			(evt) => void this.handleTypedSubmit(inputEl.value, this.paneTypeFor(evt)),
+			(evt) => {
+				if (evt && this.linkEnters.has(evt)) return;
+				const link = this.linkKindFor(evt);
+				if (link && evt) this.linkEnters.add(evt);
+				void this.handleTypedSubmit(inputEl.value, this.paneTypeFor(evt), link);
+			},
 			// The field's colour is read off the list, which has just changed.
 			() => {
 				if (this.inputEl === inputEl) this.paintCreateHint(inputEl);
@@ -8427,6 +8547,17 @@ export class PathBreadcrumb {
 					return;
 				}
 				const paneType = this.paneTypeFor(evt);
+				// Renaming, with a link chord: a second path for the note where
+				// the row points, not a move there.
+				const link = this.linkKindFor(evt);
+				if (link) {
+					if (this.linkEnters.has(evt)) return;
+					this.linkEnters.add(evt);
+					const name = this.file?.name ?? "";
+					if (value.kind === "folder") void this.commitLink(`${value.path}/${name}`, link);
+					else if (value.kind === "file" || value.kind === "keep-name") void this.commitLink(value.path, link);
+					return;
+				}
 				// Only linked to so far: picking it makes it, as clicking the
 				// link would, and as Enter on the typed name does.
 				if (value.unresolved) {
@@ -8699,6 +8830,7 @@ export class PathBreadcrumb {
 	private async handleTypedSubmit(
 		rawText: string,
 		paneType: PaneType | false = false,
+		link: LinkKind | null = null,
 	): Promise<void> {
 		// Unquoted before anything looks at it: a path handed over by a file
 		// manager arrives wrapped, and every branch below — the URL check,
@@ -8752,6 +8884,10 @@ export class PathBreadcrumb {
 		}
 
 		if (this.externalPath !== null) {
+			if (link) {
+				new Notice(t("noticeLinkInsideOnly"));
+				return;
+			}
 			await this.submitExternal(trimmed, paneType);
 			return;
 		}
@@ -8771,6 +8907,10 @@ export class PathBreadcrumb {
 		}
 
 		if (this.renameMode) {
+			if (link) {
+				await this.commitLink(normalized, link);
+				return;
+			}
 			// Inside the vault by construction: an external row was routed to
 			// submitExternal above.
 			await this.commitRenameTo(normalized, false, paneType);
@@ -8778,6 +8918,14 @@ export class PathBreadcrumb {
 		}
 
 		const existing = this.plugin.app.vault.getAbstractFileByPath(normalized);
+		// A path the note answers to without being there: an alias opens it.
+		if (!existing) {
+			const aliased = this.plugin.aliasRows.resolve(normalized);
+			if (aliased) {
+				this.navigateToFile(aliased, paneType);
+				return;
+			}
+		}
 
 		if (existing instanceof TFile) {
 			// Held content goes in before the note is opened, so what appears

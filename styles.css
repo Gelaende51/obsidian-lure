@@ -1574,3 +1574,12 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 	color: var(--text-error);
 	font-size: var(--font-ui-small);
 }
+
+/* The button in front of the vault's segment on a note with other paths —
+   alias paths, hard and symbolic links, Obsidian's aliases. */
+.lure-other-paths {
+	display: inline-flex;
+	align-items: center;
+	padding: 0 2px;
+	--icon-size: var(--icon-s);
+}

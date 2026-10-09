@@ -12,6 +12,7 @@
 import { Command, Hotkey, Menu, Platform, Plugin, WorkspaceLeaf } from "obsidian";
 import { BreadcrumbManager } from "./breadcrumbManager";
 import { UnresolvedNotes } from "./unresolvedNotes";
+import { AliasRows, DiskLinks, followDelete, followRename } from "./altPaths";
 import { setCurrentVaultIcon } from "./systemLocations";
 import { letThroughGuard } from "./folderChildSuggest";
 import { EXTERNAL_VIEW_TYPE, ExternalFileView } from "./externalFileView";
@@ -61,6 +62,10 @@ export default class BreadcrumbPathPlugin extends Plugin {
 	private manager!: BreadcrumbManager;
 	/** Linked-to notes that are not there yet, for the dropdown. */
 	unresolvedNotes!: UnresolvedNotes;
+	/** Aliases for the dropdown, by folder. */
+	aliasRows!: AliasRows;
+	/** Hard and symbolic links in the vault, for a note's other paths. */
+	diskLinks!: DiskLinks;
 	/** Alternates the rename command between the inline title and the header path bar. */
 	private useHeaderRename = false;
 	private originalRenameCallback: CheckCallback | null = null;
@@ -76,11 +81,33 @@ export default class BreadcrumbPathPlugin extends Plugin {
 		this.registerView(EXTERNAL_VIEW_TYPE, (leaf) => new ExternalFileView(leaf, this));
 
 		this.unresolvedNotes = new UnresolvedNotes(this.app);
-		const forget = (): void => this.unresolvedNotes.invalidate();
+		this.aliasRows = new AliasRows(this.app);
+		// A scan that finds links redraws the rows, so the other-paths button
+		// appears on a note that has some.
+		this.diskLinks = new DiskLinks(this.app, () => this.manager.refreshAll());
+		const forget = (): void => {
+			this.unresolvedNotes.invalidate();
+			this.aliasRows.invalidate();
+		};
+		const changed = (): void => {
+			forget();
+			this.diskLinks.invalidate();
+		};
 		this.registerEvent(this.app.metadataCache.on("resolved", forget));
-		this.registerEvent(this.app.vault.on("create", forget));
-		this.registerEvent(this.app.vault.on("rename", forget));
-		this.registerEvent(this.app.vault.on("delete", forget));
+		this.registerEvent(this.app.metadataCache.on("changed", () => this.aliasRows.invalidate()));
+		this.registerEvent(this.app.vault.on("create", changed));
+		this.registerEvent(
+			this.app.vault.on("rename", (file, oldPath) => {
+				changed();
+				void followRename(this.app, oldPath, file.path);
+			}),
+		);
+		this.registerEvent(
+			this.app.vault.on("delete", (file) => {
+				changed();
+				void followDelete(this.app, file.path);
+			}),
+		);
 
 		this.manager = new BreadcrumbManager(this);
 		this.manager.registerEvents();

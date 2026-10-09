@@ -37,6 +37,8 @@ export interface PathSuggestion {
 	markdown?: boolean;
 	/** Where you already are — this bar's own note, or the folder it is standing in — tinted to say so. */
 	current?: boolean;
+	/** Another name for a note — a path alias or one of Obsidian's aliases. Picking it opens the note. */
+	alias?: boolean;
 	/** Linked to from some note and not there yet: picking it makes it. */
 	unresolved?: boolean;
 	/** Some folder's own note, as the running folder-note plugin defines one. */
@@ -115,6 +117,8 @@ export interface SuggestContext {
 	 * its name bare and the extension in a badge at the right-hand end.
 	 */
 	showExtensions: boolean;
+	/** Aliases standing in this folder: path aliases naming it, Obsidian's aliases of its notes. */
+	aliasesIn: (folderPath: string) => { name: string; target: string; kind: "alias" | "name" }[];
 	/** Notes linked to and not there yet that would be made in this folder. */
 	unresolvedIn: (folderPath: string) => { name: string; path: string }[];
 	/**
@@ -247,6 +251,9 @@ const SUGGESTION_LIMIT = 1000;
 
 /** The Enter presses that mean "somewhere else": a new tab, a split, a window. */
 export const MODIFIED_ENTER: Modifier[][] = [["Mod"], ["Mod", "Alt"], ["Mod", "Alt", "Shift"]];
+
+/** The Enter presses that, renaming, make a second path: alias, hard link, symbolic link. */
+export const LINK_ENTER: Modifier[][] = [["Alt"], ["Shift"], ["Mod", "Shift"]];
 
 /**
  * Modifier combinations that must not reach a command while a path is being
@@ -480,7 +487,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			if (!evt.isComposing) this.list()?.useSelectedItem(evt);
 			return false;
 		};
-		for (const modifiers of MODIFIED_ENTER) this.scope.register(modifiers, "Enter", choose);
+		for (const modifiers of [...MODIFIED_ENTER, ...LINK_ENTER]) this.scope.register(modifiers, "Enter", choose);
 		// Registered after those, so the Enter presses that mean "somewhere
 		// else" are matched by their own handler before the guard sees them.
 		guardFieldKeys(this.scope);
@@ -1101,6 +1108,21 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			});
 		}
 
+		// Aliases of notes, in orange: names that open a note standing
+		// somewhere else, or under another name here.
+		for (const alias of context.aliasesIn(folderPath)) {
+			if (!matches(alias.name)) continue;
+			suggestions.push({
+				label: alias.name,
+				kind: "file",
+				path: alias.target,
+				disabled: false,
+				alias: true,
+				warn: true,
+				icon: alias.kind === "alias" ? "signpost" : "at-sign",
+			});
+		}
+
 		// After everything the folder holds, never among it: these are not in
 		// the vault at all, and a listing that opened with them would bury the
 		// names that are.
@@ -1327,6 +1349,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		if (value.warn) el.addClass("lure-suggest-warn");
 		if (value.taken) el.addClass("lure-suggest-taken");
 		if (value.unresolved) el.addClass("lure-suggest-unresolved");
+		if (value.alias) el.addClass("lure-suggest-alias");
 		if (value.current) el.addClass("lure-suggest-current");
 		if (value.leading) el.addClass("lure-suggest-leading");
 		if (value.agreed) el.addClass("lure-suggest-agreed");
@@ -1346,7 +1369,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		// "keep-name" is a proposed destination that nothing exists at yet,
 		// so there is nothing to act on either way — and neither is a note
 		// that is only linked to.
-		if (value.kind === "keep-name" || value.unresolved) return;
+		if (value.kind === "keep-name" || value.unresolved || value.alias) return;
 
 		// Outside the vault there is no TAbstractFile, so the File Explorer's
 		// handlers cannot be reused — these rows used to fall through here

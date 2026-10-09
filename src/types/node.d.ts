@@ -52,6 +52,12 @@ declare module "fs" {
 	export interface Stats {
 		isDirectory(): boolean;
 		isFile(): boolean;
+		isSymbolicLink(): boolean;
+		/** Device and inode: together, which file on disk this is — what tells hard links apart. */
+		dev: number;
+		ino: number;
+		/** How many directory entries name this file; above one, it has hard links. */
+		nlink: number;
 	}
 
 	export const constants: {
@@ -81,6 +87,14 @@ declare module "fs/promises" {
 		options: { withFileTypes: true; encoding?: "utf8" },
 	): Promise<import("fs").Dirent[]>;
 	export function rename(oldPath: string, newPath: string): Promise<void>;
+	/** A second name for the same file (a hard link). Fails across devices with EXDEV. */
+	export function link(existingPath: string, newPath: string): Promise<void>;
+	/** A link file at `path` pointing at `target`, which may be relative to the link's folder. */
+	export function symlink(target: string, path: string): Promise<void>;
+	export function lstat(path: string): Promise<import("fs").Stats>;
+	export function stat(path: string): Promise<import("fs").Stats>;
+	/** Where a symbolic link points, as written in it. */
+	export function readlink(path: string): Promise<string>;
 	export function unlink(path: string): Promise<void>;
 	export function writeFile(
 		path: string,
@@ -109,6 +123,8 @@ declare module "path" {
 	export function basename(path: string, suffix?: string): string;
 	export function parse(path: string): ParsedPath;
 	export function dirname(path: string): string;
+	/** The way from one folder to a path, for a symbolic link that survives the vault moving. */
+	export function relative(from: string, to: string): string;
 	export const sep: string;
 }
 
