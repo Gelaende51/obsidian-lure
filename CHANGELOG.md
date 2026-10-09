@@ -17,7 +17,8 @@ Every release of Lure, newest first. What has landed since the last release is u
 - **With extensions hidden, each file in the dropdown shows its type** in a badge at the row's end; pressing the badge writes the name out in the field with its extension.
 - **A note can have other paths.** Renaming, <kbd>Alt</kbd>+<kbd>Enter</kbd> adds the typed path as an alias path, <kbd>Shift</kbd>+<kbd>Enter</kbd> makes a hard link there, and <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> a symbolic link; the note stays where it is. Each is recorded in the note's `paths` frontmatter, which follows renames and deletes.
 - **Aliases are listed in the dropdown**, orange: alias paths in the folder they name, Obsidian's own aliases beside their note. Picking one, or typing an alias path and pressing Enter, opens the note.
-- **A button in front of the vault's segment lists a note's other paths** — alias paths, hard and symbolic links found in the vault, Obsidian's aliases — when it has any.
+- **A button in front of the vault's segment lists a note's other paths** — alias paths, hard and symbolic links found in the vault, Obsidian's aliases — when it has any. It shows how many, in the colour of the strongest kind: hard link purple, symbolic link pink, alias orange. Its menu starts with the note's own path in blue.
+- **Glob patterns in the path field.** `*`, `?`, `**`, `[…]` and `{a,b}` match the vault's files; the same button counts the matches, green while there are some and red while there are none, and lists them. Enter opens every match, asking first above ten. A pattern of braces only — `Week {1,2,3}` — makes the notes it names. A real name containing one of these characters is always taken literally, and renaming never reads a pattern.
 - **The vault's segment can show its icon and name, its icon alone, or nothing**, and the icon can be any Lucide icon. This replaces *Show vault name*, and a stored choice carries over.
 
 ### Changed

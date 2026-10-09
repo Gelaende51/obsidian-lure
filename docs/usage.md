@@ -837,11 +837,46 @@ symbolic links found in the vault (whether this plugin made them or not), the
 note a symbolic link points at, and Obsidian's aliases. A link opens that file;
 an alias is shown on the row.
 
+The button shows **how many** other paths there are, and takes the colour of
+the strongest kind among them: a hard link **purple**, a symbolic link
+**pink**, an alias **orange**. In its menu the note's own path comes first, in
+**blue**, and every other path is drawn in its kind's colour.
+
 Sync tools — Obsidian Sync, Syncthing, git — do not keep hard links: on another
 device the two names become two copies. Obsidian also reads a hard-linked note
 again only under the name that was edited; this plugin re-reads the others when
 it writes `paths`, but an edit made in the note itself shows under the other
 name once that note is reopened.
+
+## Glob patterns
+
+Type a pattern instead of a path to work on every note it matches:
+
+| Pattern | Matches |
+| --- | --- |
+| `*` | any run of characters within one name |
+| `?` | one character |
+| `**` | any number of folders |
+| `[abc]` | one of the characters |
+| `{a,b}` | either spelling |
+
+`Recipes/*cake*` finds `Recipes/Cheesecake.md`: a note matches with or without
+its extension, as it is typed with or without one.
+
+While the field holds a pattern, the **other-paths button counts the matches**
+in place of the other paths, **green** while there are some and **red** while
+there are none, and its menu lists them in green. A step of the path that is a
+pattern is green or red on the row the same way.
+
+<kbd>Enter</kbd> **opens every match**: the first here, the rest in tabs of
+their own. More than ten asks first. A pattern of **braces only** —
+`Week {1,2,3}` — names a finite set of paths, and <kbd>Enter</kbd> makes the
+ones not there yet and opens them all. Brackets only match; they never make
+anything.
+
+A name that really has one of these characters — a note called `Odd [x]` — is
+always taken literally. Renaming never reads a pattern, and patterns stay
+inside the vault.
 
 ## One key for both renames
 
