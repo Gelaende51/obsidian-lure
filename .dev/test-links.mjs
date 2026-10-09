@@ -363,11 +363,8 @@ test("the unchanged path with another chord converts a hard link to a symbolic l
 		await settle(400);
 		if (await page.evaluate(`return !!document.querySelector(".lure-path-input");`)) break;
 	}
-	const before = await page.evaluate(`return JSON.stringify({ field: document.querySelector(".lure-path-input")?.value ?? null, renaming: !!document.querySelector(".lure-rename-active") });`);
 	await pressKey(page, "ctrl+shift+Enter");
 	await settle(2000);
-	const notices = await page.evaluate(`return JSON.stringify([...document.querySelectorAll(".notice")].map((n) => n.textContent));`);
-	console.log("    before: " + before + " notices: " + notices);
 	const hard = await disk(`${DIR}/Hard.md`);
 	expect("now a symbolic link", hard.symlink, true);
 	expect("pointing at the note", hard.link, "Note.md");

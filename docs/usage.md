@@ -821,10 +821,22 @@ path instead of moving it**:
 and so is one outside the vault. A hard link cannot cross to another drive; a
 symbolic link can.
 
+**The same presses on the path left as it is change what kind of link it is.**
+Open a hard link or a symbolic link, start renaming, and press a chord without
+editing the path: <kbd>Shift</kbd>+<kbd>Enter</kbd> makes it a hard link,
+<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> a symbolic link,
+<kbd>Alt</kbd>+<kbd>Enter</kbd> an alias path (the file goes, the path stays
+listed), and <kbd>Ctrl</kbd>+<kbd>Enter</kbd> a copy of its own. Typed onto one
+of the note's own alias paths, the chords turn that alias into a link or a copy.
+
 Every one of them is recorded in the note's **`paths`** frontmatter list —
 links together with the note's own path, because a hard link shares the
 frontmatter and a symbolic link reads it, so the list reads right from either
-end. When a listed file is renamed or deleted, its entry follows.
+end. When a listed file is renamed or deleted, its entry follows. Beside `paths`,
+which holds them all, each kind has its own list: **`paths-hardlinks`**,
+**`paths-symlinks`** and **`paths-aliases`**. A copy made with
+<kbd>Ctrl</kbd>+<kbd>Enter</kbd> keeps none of the note's lists; it names the
+note in **`paths-origin`**, and the note lists the copy in **`paths-forks`**.
 
 **Aliases are listed in the dropdown, in orange**: an alias path in the folder
 it names, and Obsidian's own `aliases` beside the note that carries them.
