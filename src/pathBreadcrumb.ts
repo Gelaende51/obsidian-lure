@@ -6700,10 +6700,17 @@ export class PathBreadcrumb {
 		const full = here ? (typed ? `${here}/${typed}` : here) : typed;
 		const segments = full.split("/").filter(Boolean);
 		if (!segments.some(hasGlobChars)) return null;
+		const vault = this.plugin.app.vault;
 		let prefix = "";
 		for (const segment of segments) {
+			const parent = prefix;
 			prefix = prefix ? `${prefix}/${segment}` : segment;
-			if (hasGlobChars(segment) && this.plugin.app.vault.getAbstractFileByPath(prefix)) return null;
+			if (!hasGlobChars(segment)) continue;
+			if (vault.getAbstractFileByPath(prefix)) return null;
+			// Typed without its extension, the way a note is typed.
+			const folder = parent ? vault.getAbstractFileByPath(parent) : vault.getRoot();
+			const lower = segment.toLowerCase();
+			if (folder instanceof TFolder && folder.children.some((child) => child.name.replace(/\.[^.]+$/, "").toLowerCase() === lower)) return null;
 		}
 		return segments.join("/");
 	}
