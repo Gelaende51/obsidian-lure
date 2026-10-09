@@ -72,6 +72,8 @@ declare module "fs" {
 		options: { withFileTypes: true; encoding?: "utf8" },
 	): Dirent[];
 	export function statSync(path: string): Stats;
+	/** The entry itself rather than what it points at: whether a path is a symbolic link. */
+	export function lstatSync(path: string): Stats;
 	export function existsSync(path: string): boolean;
 	export function readFileSync(path: string, encoding: "utf8"): string;
 }

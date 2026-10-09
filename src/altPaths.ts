@@ -1,6 +1,7 @@
 import { App, FileSystemAdapter, TFile, normalizePath } from "obsidian";
 import { link, lstat, mkdir, readlink, symlink, unlink } from "fs/promises";
 import { dirname, join, relative, resolve } from "path";
+import { lstatSync } from "fs";
 
 /**
  * A note's other paths: alias paths written in its frontmatter, hard and
@@ -293,10 +294,23 @@ export function otherPaths(app: App, disk: DiskLinks, file: TFile): OtherPath[] 
 	if (target) add(target, "target");
 	for (const path of disk.sameFile(file.path)) add(path, "hard");
 	for (const path of disk.linksPointingAt(target ?? file.path)) add(path, "symbolic");
+	// A note's own list is short, so what each entry is gets asked of the
+	// disk directly rather than waiting on the background scan.
+	const base = basePath(app);
 	for (const path of listedPaths(app, file)) {
-		if (disk.targetOfLink(path)) add(path, "symbolic");
-		else if (app.vault.getAbstractFileByPath(path)) add(path, "hard");
-		else add(path, "alias");
+		if (!app.vault.getAbstractFileByPath(path)) {
+			add(path, "alias");
+			continue;
+		}
+		let symbolic = disk.targetOfLink(path) !== null;
+		if (!symbolic && base !== null) {
+			try {
+				symbolic = lstatSync(join(base, path)).isSymbolicLink();
+			} catch {
+				// Gone meanwhile; called what the vault still thinks it is.
+			}
+		}
+		add(path, symbolic ? "symbolic" : "hard");
 	}
 	const folder = parentOf(file.path);
 	for (const alias of nativeAliases(app, file)) add(folder ? `${folder}/${alias}` : alias, "name");
