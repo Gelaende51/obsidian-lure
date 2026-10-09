@@ -6837,8 +6837,10 @@ export class PathBreadcrumb {
 			);
 			if (!ok) return;
 		}
-		this.globMatches = null;
 		this.cancelNavigation();
+		// After the field has gone: closing it measures it once more, and
+		// that re-read the pattern still standing in it.
+		this.globMatches = null;
 		this.updateIndicator();
 		const [first, ...rest] = files;
 		if (first) this.navigateToFile(first, paneType);
@@ -9142,6 +9144,8 @@ export class PathBreadcrumb {
 		this.removeDocumentClickAway();
 		this.browsePath = null;
 		this.mode = "breadcrumb";
+		// A pattern belongs to the field being cancelled.
+		this.globMatches = null;
 		this.showNativeBreadcrumb();
 		this.file = this.getFileForLeaf();
 
