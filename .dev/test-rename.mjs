@@ -150,7 +150,7 @@ test("the rename key walks the heading, the name, the extension and both paths, 
 		});
 	`));
 	const seen = [];
-	for (let i = 0; i < 6; i++) {
+	for (let i = 0; i < 7; i++) {
 		await pressKey(page, "F2");
 		await page.evaluate(PAUSE(650) + "return true;");
 		seen.push(await rung());
@@ -162,10 +162,13 @@ test("the rename key walks the heading, the name, the extension and both paths, 
 	expect("then the name with it", seen[2].selected, name);
 	expect("then the path from the vault", seen[3].selected, NOTE);
 	expect("then the path from the system root", seen[4].selected, (v) => typeof v === "string" && v.endsWith(NOTE) && v.startsWith("/"));
+	// The vault comes after the system path where places can be reached —
+	// the test vault has *Access external files* on.
+	expect("then the vault, its part of the path marked", seen[5].value?.startsWith(seen[5].selected ?? "\0") && seen[5].value.endsWith(NOTE), true);
 	// The last rung hands the key back rather than lapping the ladder: the
 	// cycle is a way of choosing where to rename, and a loop with no way out
 	// but Escape is not one.
-	expect("and the press after that is the heading again", seen[5].active, "inline-title");
+	expect("and the press after that is the heading again", seen[6].active, "inline-title");
 });
 
 test("a taken name is reported by the key that uses it, not while it is typed", async () => {

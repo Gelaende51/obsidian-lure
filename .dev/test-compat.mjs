@@ -478,7 +478,8 @@ test("settings: the jump to Obsidian's own file-types setting reveals it, and no
 		try { tab.display(); } catch (e) { return JSON.stringify({ threw: String(e) }); }
 		${PAUSE(300)}
 		const rows = [...host.querySelectorAll(".setting-item")];
-		const row = rows.find((item) => item.querySelector(".extra-setting-button, .clickable-icon"));
+		// The vault icon's presets are icon buttons too; that row is not the jump.
+		const row = rows.find((item) => item.querySelector(".extra-setting-button, .clickable-icon") && !item.querySelector(".lure-vault-icon-preview"));
 		const above = row ? rows[rows.indexOf(row) - 1] : null;
 		const button = row?.querySelector(".extra-setting-button, .clickable-icon");
 		const called = [];
