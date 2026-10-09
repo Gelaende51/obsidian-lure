@@ -180,8 +180,12 @@ test("a folder typed ahead of itself is a red chip", async () => {
 
 test("the list's edge is red while Enter would make the typed name", async () => {
 	await inOwnFolder();
-	await type("Ca");
-	expect("rows lead on, Enter would still make 'Ca'", (await look()).creates, true);
+	// Found inside a name, not at its start: the list has a row, nothing is
+	// offered or highlighted, and Enter would make "bbag".
+	await type("bbag");
+	const r = await look();
+	expect("a row is listed", r.rows.some((row) => row.label?.startsWith("Cabbage")), true);
+	expect("and the edge is red", r.creates, true);
 	await pressKey(page, "ArrowDown");
 	await settle();
 	expect("a row highlighted: no red edge", (await look()).creates, false);
