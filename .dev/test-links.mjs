@@ -235,4 +235,54 @@ test("renaming a hard link rewrites its entry in paths", async () => {
 	expect("the entry follows the rename", await pathsOf(NOTE), [NOTE, `${DIR}/Harder.md`]);
 });
 
+test("the button stays while editing, its menu opens under the bar, and link rows end in their own icon", async () => {
+	await renaming();
+	await typeOverName("Sub/Soft");
+	await pressKey(page, "ctrl+shift+Enter");
+	await settle(2000);
+	const r = await page.evaluate(`
+		const leaf = app.workspace.getLeaf(false);
+		await leaf.openFile(app.vault.getAbstractFileByPath(${JSON.stringify(`${DIR}/Sibling.md`)}));
+		${PAUSE(300)}
+		await leaf.openFile(app.vault.getAbstractFileByPath(${JSON.stringify(NOTE)}));
+		${PAUSE(900)}
+		const root = leaf.view.containerEl;
+		root.querySelector(".lure-filename-text").click();
+		${PAUSE(500)}
+		const whileEditing = !!root.querySelector(".lure-other-paths");
+		const button = root.querySelector(".lure-other-paths");
+		button?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+		${PAUSE(300)}
+		const menu = document.querySelector(".menu");
+		const bar = root.querySelector(".view-header");
+		const gap = menu && bar ? Math.round(menu.getBoundingClientRect().top - bar.getBoundingClientRect().bottom) : null;
+		const left = menu && button ? Math.round(menu.getBoundingClientRect().left - button.getBoundingClientRect().left) : null;
+		const icons = [...document.querySelectorAll(".menu .menu-item-icon svg")].map((s) => [...s.classList].find((c) => c.startsWith("lucide-")) ?? null);
+		menu?.remove();
+		return JSON.stringify({ whileEditing, gap, left, icons });
+	`).then(JSON.parse);
+	expect("the button stays while the name is being edited", r.whileEditing, true);
+	expect("the menu opens flush under the bar", r.gap !== null && Math.abs(r.gap) <= 2, true);
+	expect("and at the button's left edge", r.left !== null && Math.abs(r.left) <= 2, true);
+	expect("a symbolic link has its own icon", r.icons.includes("lucide-file-symlink"), true);
+	// Into the folder holding the link: its row ends in the symbolic-link icon.
+	await page.evaluate(`document.querySelector(".lure-path-input")?.blur(); document.body.click(); ${PAUSE(300)} return true;`);
+	await page.evaluate(`
+		const leaf = app.workspace.getLeaf(false);
+		await leaf.openFile(app.vault.getAbstractFileByPath(${JSON.stringify(`${DIR}/Sibling.md`)}));
+		${PAUSE(600)}
+		leaf.view.containerEl.querySelector(".lure-filename-text").click();
+		${PAUSE(400)}
+		return true;
+	`);
+	await pressKey(page, "ctrl+a");
+	await typeOverName("Sub/");
+	await settle(400);
+	const row = await page.evaluate(`
+		const el = [...document.querySelectorAll(".suggestion-item")].find((e) => e.querySelector(".lure-suggest-label")?.textContent?.startsWith("Soft"));
+		return JSON.stringify(el ? { kind: !!el.querySelector(".lure-suggest-end .lure-suggest-kind svg") } : null);
+	`).then(JSON.parse);
+	expect("the link's row ends in its icon", row?.kind, true);
+});
+
 await run();

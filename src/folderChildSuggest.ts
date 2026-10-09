@@ -37,6 +37,8 @@ export interface PathSuggestion {
 	markdown?: boolean;
 	/** Where you already are — this bar's own note, or the folder it is standing in — tinted to say so. */
 	current?: boolean;
+	/** An icon at the row's right-hand end saying what kind of name it is: an alias, a hard or a symbolic link. */
+	endIcon?: string;
 	/** Another name for a note — a path alias or one of Obsidian's aliases. Picking it opens the note. */
 	alias?: boolean;
 	/** Linked to from some note and not there yet: picking it makes it. */
@@ -119,6 +121,8 @@ export interface SuggestContext {
 	showExtensions: boolean;
 	/** Aliases standing in this folder: path aliases naming it, Obsidian's aliases of its notes. */
 	aliasesIn: (folderPath: string) => { name: string; target: string; kind: "alias" | "name" }[];
+	/** Whether a vault path is a symbolic link or one name of a hard-linked file, or neither. */
+	linkKindOf: (path: string) => "symbolic" | "hard" | null;
 	/** Notes linked to and not there yet that would be made in this folder. */
 	unresolvedIn: (folderPath: string) => { name: string; path: string }[];
 	/**
@@ -206,6 +210,18 @@ function leadingFirst(rows: PathSuggestion[], query: string): PathSuggestion[] {
 	// too; what is pinned but does not lead comes after them.
 	const rest = rows.filter((row) => !leads(row));
 	return [...leading, ...rest.filter((row) => !ranked(row)), ...rest.filter(ranked)];
+}
+
+/** The icons a row of a linked file ends with. */
+const LINK_ICONS: Record<"symbolic" | "hard" | "none", string | undefined> = {
+	symbolic: "file-symlink",
+	hard: "link",
+	none: undefined,
+};
+
+/** The right-hand end of a row, where its badges stand, made on first use. */
+function endOf(row: HTMLElement): HTMLElement {
+	return row.querySelector<HTMLElement>(":scope > .lure-suggest-end") ?? row.createSpan({ cls: "lure-suggest-end" });
 }
 
 /** The icon for a file's type in a row's extension badge. */
@@ -1090,6 +1106,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 					folderNote: context.isFolderNote(child.path),
 					current: child.path === context.currentPath,
 					taken: takes(child.name),
+					endIcon: LINK_ICONS[context.linkKindOf(child.path) ?? "none"],
 				});
 			}
 		}
@@ -1119,7 +1136,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 				disabled: false,
 				alias: true,
 				warn: true,
-				icon: alias.kind === "alias" ? "signpost" : "at-sign",
+				endIcon: alias.kind === "alias" ? "signpost" : "at-sign",
 			});
 		}
 
@@ -1314,7 +1331,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 	 * the field with the extension written out, rather than opening the row.
 	 */
 	private renderBadge(el: HTMLElement, value: PathSuggestion, extension: string): void {
-		const badge = el.createSpan({ cls: "lure-suggest-type" });
+		const badge = endOf(el).createSpan({ cls: "lure-suggest-type" });
 		setIcon(badge.createSpan({ cls: "lure-suggest-type-icon" }), typeIcon(extension));
 		badge.createSpan({ text: `.${extension}` });
 		setTooltip(badge, t("suggestShowExtension"));
@@ -1365,6 +1382,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			badge ? value.label.slice(0, value.label.length - badge.length - 1) : value.label,
 		);
 		if (badge) this.renderBadge(el, value, badge);
+		if (value.endIcon) setIcon(endOf(el).createSpan({ cls: "lure-suggest-kind" }), value.endIcon);
 
 		// "keep-name" is a proposed destination that nothing exists at yet,
 		// so there is nothing to act on either way — and neither is a note

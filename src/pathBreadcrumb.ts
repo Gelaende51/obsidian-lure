@@ -305,8 +305,8 @@ const OTHER_PATH_TINTS: Record<OtherPath["kind"], string> = {
 const OTHER_PATH_ICONS: Record<OtherPath["kind"], string> = {
 	alias: "signpost",
 	hard: "link",
-	symbolic: "link-2",
-	target: "file-symlink",
+	symbolic: "file-symlink",
+	target: "file-input",
 	name: "at-sign",
 };
 /** A chip naming a folder that is not there yet. */
@@ -6623,7 +6623,9 @@ export class PathBreadcrumb {
 	private updateIndicator(): void {
 		const file = this.file;
 		const inVault = this.externalPath === null && !this.showingLocations;
-		const others = file && inVault && this.browsePath === null ? otherPaths(this.plugin.app, this.plugin.diskLinks, file) : [];
+		// Shown while the row is being edited too — browsing a folder, typing,
+		// renaming — since the note it is about has not changed.
+		const others = file && inVault ? otherPaths(this.plugin.app, this.plugin.diskLinks, file) : [];
 		const matches = inVault ? this.globMatches : null;
 		if (!others.length && matches === null) {
 			this.indicatorEl?.remove();
@@ -6667,7 +6669,7 @@ export class PathBreadcrumb {
 				tint(item, "match");
 			});
 		}
-		if (file && this.externalPath === null && this.browsePath === null) {
+		if (file && this.externalPath === null) {
 			const others = otherPaths(this.plugin.app, this.plugin.diskLinks, file);
 			if (others.length) {
 				menu.addItem((item) => {
@@ -6683,7 +6685,13 @@ export class PathBreadcrumb {
 			}
 		}
 		(menu as unknown as { dom?: HTMLElement }).dom?.addClass("lure-other-paths-menu");
-		menu.showAtMouseEvent(evt);
+		// Under the button and flush with the bottom of the path bar, where
+		// the dropdown opens, rather than wherever the pointer happened to be.
+		const button = (evt.currentTarget as HTMLElement | null) ?? this.indicatorEl;
+		const bar = this.titleEl.closest<HTMLElement>(".view-header") ?? this.titleEl;
+		const at = button?.getBoundingClientRect();
+		if (at) menu.showAtPosition({ x: at.left, y: bar.getBoundingClientRect().bottom });
+		else menu.showAtMouseEvent(evt);
 	}
 
 	/**
@@ -8671,6 +8679,8 @@ export class PathBreadcrumb {
 				warnsOnOpen: (extension) => this.warnsOnOpen(extension),
 				isFolderNote: (path) => this.isFolderNote(path),
 				showExtensions: this.plugin.settings.showFileExtension,
+				linkKindOf: (path) =>
+					this.plugin.diskLinks.targetOfLink(path) ? "symbolic" : this.plugin.diskLinks.sameFile(path).length ? "hard" : null,
 				aliasesIn: (folder) => (this.renameMode ? [] : this.plugin.aliasRows.in(folder)),
 				unresolvedIn: (folder) => (this.renameMode ? [] : this.plugin.unresolvedNotes.in(folder)),
 				pages: this.mainPaneViewTypes(),

@@ -1624,3 +1624,23 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 .lure-vault-wrapper input[data-lure-tint="glob"] {
 	color: var(--color-green);
 }
+
+/* A row's right-hand end: the extension badge and the icon for what kind of
+   name it is — an alias, a hard link, a symbolic link. */
+.lure-suggest-popover .suggestion-item .lure-suggest-end {
+	flex-shrink: 0;
+	margin-inline-start: auto;
+	padding-inline-start: var(--size-4-2);
+	display: inline-flex;
+	align-items: center;
+	gap: var(--size-4-1);
+}
+.lure-suggest-popover .suggestion-item .lure-suggest-end .lure-suggest-type {
+	margin-inline-start: 0;
+	padding-inline-start: 0;
+}
+.suggestion-item .lure-suggest-kind {
+	display: inline-flex;
+	color: var(--text-faint);
+	--icon-size: var(--icon-xs);
+}
