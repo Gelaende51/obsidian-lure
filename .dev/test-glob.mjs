@@ -197,11 +197,14 @@ test("after Enter the count and its colour go", async () => {
 	await type("Cake*");
 	await pressKey(page, "Enter");
 	await settle(1200);
+	await page.evaluate(`const bc = app.plugins.plugins.lure.manager.breadcrumbFor(app.workspace.getLeaf(false)); window.__lureEarly = JSON.stringify({ matches: bc?.globMatches ?? "none", mode: bc?.mode, file: app.workspace.getActiveFile()?.path }); return true;`);
 	const r = await page.evaluate(`
 		await app.workspace.getLeaf(false).openFile(app.vault.getAbstractFileByPath(${JSON.stringify(`${DIR}/Pie.md`)}));
 		${PAUSE(600)}
-		const el = app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-other-paths");
-		return JSON.stringify(el ? { file: app.workspace.getActiveFile()?.path, tint: el.dataset.lureTint, count: el.textContent, field: document.querySelector(".lure-path-input")?.value ?? null } : null);
+		const leaf = app.workspace.getLeaf(false);
+		const el = leaf.view.containerEl.querySelector(".lure-other-paths");
+		const bc = app.plugins.plugins.lure.manager.breadcrumbFor(leaf);
+		return JSON.stringify(el ? { file: app.workspace.getActiveFile()?.path, tint: el.dataset.lureTint, count: el.textContent, field: document.querySelector(".lure-path-input")?.value ?? null, matches: bc?.globMatches ?? "none", mode: bc?.mode, same: bc?.indicatorEl === el, all: document.querySelectorAll(".lure-other-paths").length, early: window.__lureEarly } : null);
 	`).then(JSON.parse);
 	expect("no button left over", r, null);
 });
