@@ -80,6 +80,20 @@ const look = async () => JSON.parse(await page.evaluate(`
 	});
 `));
 
+/**
+ * A picture of the window for the colour cases, kept with LURE_SHOTS set: a
+ * class says a colour was asked for, only a picture says it shows.
+ */
+async function shoot(name) {
+	const dir = process.env.LURE_SHOTS;
+	if (!dir) return;
+	const { mkdirSync, writeFileSync } = await import("node:fs");
+	mkdirSync(`${dir}/look`, { recursive: true });
+	const png = await page.send("Page.captureScreenshot", { format: "png" });
+	const data = png?.result?.data ?? png?.data;
+	if (data) writeFileSync(`${dir}/look/${name}.png`, Buffer.from(data, "base64"));
+}
+
 const command = (id) => page.evaluate(`app.commands.executeCommandById(${JSON.stringify(id)}); ${PAUSE(400)} return true;`);
 const settle = (ms = 400) => page.evaluate(PAUSE(ms) + "return true;");
 async function type(text) {
@@ -164,6 +178,7 @@ test("a note that is only linked to is listed, pink, where it would be made", as
 	const row = (await look()).rows.find((r) => r.label?.startsWith("Ghost note"));
 	expect("listed", !!row, true);
 	expect("marked as unresolved", row?.cls.includes("lure-suggest-unresolved"), true);
+	await shoot("unresolved-pink");
 });
 
 test("a folder typed ahead of itself is a red chip", async () => {
@@ -174,6 +189,7 @@ test("a folder typed ahead of itself is a red chip", async () => {
 	const chip = (await look()).chips.find((c) => c.text === "Nowhere");
 	expect("the chip is there", !!chip, true);
 	expect("and red", chip?.missing, true);
+	await shoot("missing-chip-red");
 	const real = (await look()).chips.find((c) => c.text === DIR);
 	expect("a folder that is there is not", real?.missing ?? false, false);
 });
@@ -186,6 +202,7 @@ test("the list's edge is red while Enter would make the typed name", async () =>
 	const r = await look();
 	expect("a row is listed", r.rows.some((row) => row.label?.startsWith("Cabbage")), true);
 	expect("and the edge is red", r.creates, true);
+	await shoot("creates-edge-red");
 	await pressKey(page, "ArrowDown");
 	await settle();
 	expect("a row highlighted: no red edge", (await look()).creates, false);
@@ -199,6 +216,7 @@ test("with extensions hidden, the type is a badge at the row's end", async () =>
 		const row = (await look()).rows.find((r) => r.label?.startsWith("Cabbage"));
 		expect("the name without its extension", row?.label, "Cabbage");
 		expect("the badge carries it", row?.badge, ".md");
+		await shoot("type-badge");
 	} finally {
 		await setSettings(page, { showFileExtension: true });
 	}
