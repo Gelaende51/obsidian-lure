@@ -94,7 +94,21 @@ export default class BreadcrumbPathPlugin extends Plugin {
 			this.diskLinks.invalidate();
 		};
 		this.registerEvent(this.app.metadataCache.on("resolved", forget));
-		this.registerEvent(this.app.metadataCache.on("changed", () => this.aliasRows.invalidate()));
+		// A note's other paths changed: the aliases are listed afresh, and the
+		// rows redrawn so the other-paths button comes and goes with them.
+		// Only then — redrawing on every edit of every note would be waste.
+		const seenPaths = new Map<string, string>();
+		this.registerEvent(
+			this.app.metadataCache.on("changed", (file, _data, cache) => {
+				const fm = cache.frontmatter as Record<string, unknown> | undefined;
+				const now = JSON.stringify([fm?.paths ?? null, fm?.aliases ?? null]);
+				const before = seenPaths.get(file.path) ?? JSON.stringify([null, null]);
+				seenPaths.set(file.path, now);
+				if (now === before) return;
+				this.aliasRows.invalidate();
+				this.manager.refreshAll();
+			}),
+		);
 		this.registerEvent(this.app.vault.on("create", changed));
 		this.registerEvent(
 			this.app.vault.on("rename", (file, oldPath) => {

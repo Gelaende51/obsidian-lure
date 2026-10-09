@@ -104,6 +104,10 @@ export async function makeOtherPath(app: App, file: TFile, target: string, kind:
 	if (kind === "hard") await link(from, to);
 	else await symlink(relative(dirname(to), from), to);
 	await recordPaths(app, file, [file.path, target]);
+	// A hard link Obsidian has already picked up read the file before the
+	// list was written into it.
+	const made = app.vault.getAbstractFileByPath(target);
+	if (kind === "hard" && made instanceof TFile) await refreshNames(app, [made]);
 }
 
 /**
@@ -126,20 +130,42 @@ export async function followDelete(app: App, path: string): Promise<void> {
 
 async function rewriteListing(app: App, path: string, change: (list: string[]) => string[]): Promise<void> {
 	const base = basePath(app);
-	const seen = new Set<string>();
+	// Grouped by the file on disk: a hard-linked pair shares one frontmatter,
+	// so it is written once — and the other names are told, since Obsidian
+	// only re-reads the name a write went through.
+	const groups = new Map<string, TFile[]>();
 	for (const file of app.vault.getMarkdownFiles()) {
 		if (!listedPaths(app, file).includes(path)) continue;
+		let key = file.path;
 		if (base !== null) {
 			try {
 				const stats = await lstat(join(base, file.path));
-				const key = `${stats.dev}:${stats.ino}`;
-				if (seen.has(key)) continue;
-				seen.add(key);
+				if (!stats.isSymbolicLink()) key = `${stats.dev}:${stats.ino}`;
 			} catch {
 				continue;
 			}
 		}
-		await rewritePaths(app, file, (list) => (list.includes(path) ? change(list) : null));
+		groups.set(key, [...(groups.get(key) ?? []), file]);
+	}
+	for (const [first, ...others] of groups.values()) {
+		if (!first) continue;
+		await rewritePaths(app, first, (list) => (list.includes(path) ? change(list) : null));
+		await refreshNames(app, others);
+	}
+}
+
+/**
+ * Has Obsidian read these names again after their file changed through
+ * another one. The same text written back through each name is what makes
+ * its watcher and its cache notice; nothing on disk changes.
+ */
+export async function refreshNames(app: App, files: TFile[]): Promise<void> {
+	for (const file of files) {
+		try {
+			await app.vault.modify(file, await app.vault.adapter.read(file.path));
+		} catch {
+			// A name that went away meanwhile has nothing to refresh.
+		}
 	}
 }
 
