@@ -876,6 +876,14 @@ in place of the other paths, **green** while there are some and **red** while
 there are none, and its menu lists them in green. A step of the path that is a
 pattern is green or red on the row the same way.
 
+**The dropdown follows the pattern** for the step the caret is in. It lists
+the pattern itself first, then — where it has braces — the pattern with one
+group opened at a time: `{photo,video}-capture-{1,2}` gives
+`photo-capture-{1,2}` and `video-capture-{1,2}`, then the four whole names.
+After those come only the names the pattern matches, each with a **green
+edge**. Picking a pattern or a matching file writes it into the step, so the
+step narrows to that choice; picking a folder steps into it.
+
 <kbd>Enter</kbd> **opens every match**: the first here, the rest in tabs of
 their own. More than ten asks first. A pattern of **braces only** —
 `Week {1,2,3}` — names a finite set of paths, and <kbd>Enter</kbd> makes the
@@ -1014,7 +1022,7 @@ appear in a real name, where an apostrophe very much can.
 | **Folder name opens the dropdown** | On / Off | On | Swaps what a folder name and the delimiter after it do — see [the table above](#the-breadcrumb). With [Folder notes](obsidian://show-plugin?id=folder-notes) the delimiter opens folder notes. Never applies in rename/move mode. |
 | **Show dot files** | On / Off | Off | Whether dot-files and dot-folders are listed in the dropdowns. Overwrite protection applies either way. |
 | **Show all file types** | — | — | Not this plugin's setting but Obsidian's, named here because it answers the same question: your vault indexes only the file types it is told to, and only what it indexes can be listed. Look for it in Obsidian's settings and turn it on to see every file; the button beside the row opens that page with the setting scrolled into view and flashed, as clicking it in the settings' own search would. Outside the vault it does not apply, since nothing out there is indexed anyway. |
-| **Show file extensions** | On / Off | Off | Whether the file's name on the row carries its extension. Off, the dropdown shows each file's type in a badge at the row's end instead; pressing the badge writes the name out in the field with its extension. Off, it is left off — as Obsidian leaves it off a note's title. On, the row names the file the way the filesystem does. Either way the extension is the second thing given up when the row runs out of room, straight after the vault name. |
+| **Show file extensions** | On / Off | Off | Whether the file's name on the row carries its extension. Off, the field leaves a note's `.md` off too — only the *name with its extension* rung and the machine's path show it — and <kbd>Enter</kbd> puts it back. Off, the dropdown shows each file's type in a badge at the row's end instead; pressing the badge writes the name out in the field with its extension. Off, it is left off — as Obsidian leaves it off a note's title. On, the row names the file the way the filesystem does. Either way the extension is the second thing given up when the row runs out of room, straight after the vault name. |
 | **Access external files** | On / Off | **Off** | Whether the vault name opens the locations dropdown. Off, nothing in the plugin ever looks past this vault. |
 | **Hotkeys** | button | — | Opens Obsidian's *Hotkeys* filtered to this plugin, where *Focus the path bar* can be given a key. |
 
