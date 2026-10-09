@@ -285,4 +285,24 @@ test("the button stays while editing, its menu opens under the bar, and link row
 	expect("the link's row ends in its icon", row?.kind, true);
 });
 
+test("Tab going round the names highlights an alias row too", async () => {
+	await page.evaluate(`
+		await app.vault.create(${JSON.stringify(`${DIR}/Elsewise.md`)}, "");
+		const f = app.vault.getAbstractFileByPath(${JSON.stringify(NOTE)});
+		await app.fileManager.processFrontMatter(f, (fm) => { fm.paths = [${JSON.stringify(`${DIR}/Elsewhere.md`)}]; });
+		${PAUSE(800)}
+		return true;
+	`);
+	await browsing();
+	await typeOverName("Else");
+	const seen = [];
+	for (let i = 0; i < 2; i++) {
+		await pressKey(page, "Tab");
+		await settle(500);
+		seen.push(JSON.parse(await page.evaluate(`return JSON.stringify({ value: document.querySelector(".lure-path-input")?.value, lit: document.querySelector(".suggestion-item.is-selected .lure-suggest-label")?.textContent ?? null });`)));
+	}
+	expect("each name on show is the highlighted row", seen.every((s) => s.value === s.lit), true);
+	expect("the alias among them", seen.some((s) => s.value === "Elsewhere.md"), true);
+});
+
 await run();

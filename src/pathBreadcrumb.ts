@@ -806,6 +806,8 @@ export class PathBreadcrumb {
 	 */
 	private tabGivenBack: { start: number; end: number } | null = null;
 	private tabCycle: TabCycle | null = null;
+	/** Set by the rungs that show the extension on purpose, for the next field opened. */
+	private keepExtension = false;
 	/** Enter presses already acted on as a link, so no second handler moves the note as well. */
 	private linkEnters = new WeakSet<Event>();
 	/** What a pattern in the field matches, or null while the field holds no pattern. */
@@ -6801,6 +6803,19 @@ export class PathBreadcrumb {
 		this.enterTypingMode(other.path.slice(cut + 1), "all");
 	}
 
+	/** Puts a choice in place of the step the caret is in, leaving the rest of the field as typed. */
+	private collapseRung(label: string): void {
+		const input = this.inputEl;
+		if (!input) return;
+		const held = this.preview;
+		if (held) input.value = held.text;
+		const bounds = held ? held.segment : segmentBoundsAtCaret(input.value, input.selectionEnd ?? input.value.length);
+		this.preview = null;
+		this.settleSuggestion(false);
+		this.writeSegment(input, bounds, label);
+		input.focus();
+	}
+
 	/**
 	 * A row's extension badge, pressed: the row's name goes in the field with
 	 * its extension written out and marked, so it can be read, kept or typed
@@ -7512,6 +7527,7 @@ export class PathBreadcrumb {
 				this.setLadderField(reached, rest, pathStem(rest).length);
 				return;
 			case 1:
+				this.keepExtension = true;
 				this.setLadderField(reached, rest, "all");
 				return;
 			case 2: {
@@ -7539,6 +7555,7 @@ export class PathBreadcrumb {
 				// From the system root — what anything outside Obsidian wants.
 				const base = this.vaultBasePath();
 				const system = external || base === null ? target : `${base}/${target}`;
+				this.keepExtension = true;
 				this.setLadderField("", system, "all");
 				return;
 			}
@@ -8156,6 +8173,15 @@ export class PathBreadcrumb {
 		selection: "all" | "none" | number = "none",
 		host: HTMLElement = this.filenameEl,
 	): void {
+		// With extensions hidden the field leaves a note's `.md` off too, as
+		// the row does; Enter puts it back. Only the rungs that are about the
+		// extension — the name with it, the machine's path — keep it.
+		const keep = this.keepExtension;
+		this.keepExtension = false;
+		if (!keep && !this.plugin.settings.showFileExtension && this.externalPath === null && !this.showingLocations && /\.md$/i.test(initialText)) {
+			initialText = initialText.slice(0, -3);
+			if (typeof selection === "number") selection = Math.min(selection, initialText.length);
+		}
 		// Whatever the pointer had opened closes: the row is about to be
 		// edited, and a name still held wide under the field is width the
 		// field is not getting.
@@ -8684,6 +8710,7 @@ export class PathBreadcrumb {
 				warnsOnOpen: (extension) => this.warnsOnOpen(extension),
 				isFolderNote: (path) => this.isFolderNote(path),
 				showExtensions: this.plugin.settings.showFileExtension,
+				globActive: this.patternFor(this.preview?.text ?? (this.typedFieldValue() || inputEl.value)) !== null,
 				linkKindOf: (path) =>
 					this.plugin.diskLinks.targetOfLink(path) ? "symbolic" : this.plugin.diskLinks.sameFile(path).length ? "hard" : null,
 				aliasesIn: (folder) => (this.renameMode ? [] : this.plugin.aliasRows.in(folder)),
@@ -8747,6 +8774,19 @@ export class PathBreadcrumb {
 					const name = this.file?.name ?? "";
 					if (value.kind === "folder") void this.commitLink(`${value.path}/${name}`, link);
 					else if (value.kind === "file" || value.kind === "keep-name") void this.commitLink(value.path, link);
+					return;
+				}
+				// A pattern, or a name it matches: the step collapses to that
+				// choice in the field — a folder is stepped into, as always.
+				if (value.kind === "pattern" || (value.glob && value.kind === "file")) {
+					this.collapseRung(value.label);
+					return;
+				}
+				// An alias, or a symbolic link the vault does not list: the note it
+				// stands for opens.
+				if (value.opens) {
+					const note = this.plugin.app.vault.getAbstractFileByPath(value.opens);
+					if (note instanceof TFile) this.navigateToFile(note, paneType);
 					return;
 				}
 				// Only linked to so far: picking it makes it, as clicking the

@@ -163,4 +163,23 @@ test("renaming never reads a pattern", async () => {
 	expect("no pattern count", (await indicator()).count, null);
 });
 
+const listed = () => page.evaluate(`return JSON.stringify([...document.querySelectorAll(".suggestion-item")].map((e) => ({ label: e.querySelector(".lure-suggest-label")?.textContent, glob: e.classList.contains("lure-suggest-glob"), pattern: e.classList.contains("lure-suggest-pattern") })));`).then(JSON.parse);
+
+test("the dropdown lists the pattern, its braces opened, and only what it matches, edged green", async () => {
+	await inFolder();
+	await type("{Cake,Pie}*");
+	const rows = await listed();
+	expect("the pattern rows first", rows.filter((r) => r.pattern).map((r) => r.label), ["{Cake,Pie}*", "Cake*", "Pie*"]);
+	const found = rows.filter((r) => !r.pattern);
+	expect("the matches, all green", found.length > 0 && found.every((r) => r.glob), true);
+	expect("and nothing else", found.map((r) => r.label).sort(), ["Cake one.md", "Cake two.md", "Pie.md"]);
+});
+
+test("picking a match collapses the step to it", async () => {
+	await inFolder();
+	await type("{Cake,Pie}*");
+	await page.evaluate(`[...document.querySelectorAll(".suggestion-item")].find((e) => e.querySelector(".lure-suggest-label")?.textContent === "Pie.md")?.click(); ${PAUSE(400)} return true;`);
+	expect("the field holds the choice", await page.evaluate(`return document.querySelector(".lure-path-input")?.value ?? null;`), "Pie.md");
+});
+
 await run();

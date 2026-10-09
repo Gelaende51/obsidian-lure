@@ -6,6 +6,7 @@ import { SystemLocation, applyIcon, iconFor } from "./systemLocations";
 import { ExternalChild, externalJoin, listExternalChildren } from "./externalFs";
 import { isMarkdownExtension } from "./fileKinds";
 import { t } from "./lang";
+import { braceSteps, hasGlobChars, matchesName } from "./globPattern";
 
 /**
  * What a view is called, on the row and in the list: its type with a leading
@@ -22,7 +23,7 @@ export function pageLabel(viewType: string): string {
 export interface PathSuggestion {
 	/** Text shown in the list. */
 	label: string;
-	kind: "folder" | "file" | "keep-name" | "location" | "page" | "more";
+	kind: "folder" | "file" | "keep-name" | "location" | "page" | "more" | "pattern";
 	/** Folder path for "folder"; full target path for "file"/"keep-name"; absolute path for "location"; view type for "page". */
 	path: string;
 	/** Rendered greyed out to mark the name as already taken; still selectable. */
@@ -37,6 +38,10 @@ export interface PathSuggestion {
 	markdown?: boolean;
 	/** Where you already are — this bar's own note, or the folder it is standing in — tinted to say so. */
 	current?: boolean;
+	/** It matches the pattern typed for this step. Listed first, with a green edge. */
+	glob?: boolean;
+	/** The note a row opens when that is not the path it stands at: an alias, an unlisted symbolic link. */
+	opens?: string;
 	/** An icon at the row's right-hand end saying what kind of name it is: an alias, a hard or a symbolic link. */
 	endIcon?: string;
 	/** Another name for a note — a path alias or one of Obsidian's aliases. Picking it opens the note. */
@@ -121,6 +126,11 @@ export interface SuggestContext {
 	showExtensions: boolean;
 	/** Aliases standing in this folder: path aliases naming it, Obsidian's aliases of its notes. */
 	aliasesIn: (folderPath: string) => { name: string; target: string; kind: "alias" | "name" | "symbolic" }[];
+	/**
+	 * Whether what is typed for this step may be read as a glob pattern —
+	 * not renaming, inside the vault, and not a real name.
+	 */
+	globActive: boolean;
 	/** Whether a vault path is a symbolic link or one name of a hard-linked file, or neither. */
 	linkKindOf: (path: string) => "symbolic" | "hard" | null;
 	/** Notes linked to and not there yet that would be made in this folder. */
@@ -978,6 +988,25 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		// Substring rather than prefix: the dropdown doubles as a search of
 		// the folder, and finding "Weekly kickoff" by typing "kick" is most
 		// of what that is for. Tab is the one that needs a prefix.
+		// A pattern for this step filters by what it matches, and offers itself
+		// and its braces opened one group at a time — each a way to narrow the
+		// step to a choice.
+		const typed = (context.queryOverride ?? query).trim();
+		if (context.globActive && hasGlobChars(typed)) {
+			// Dot-files are already kept out by `shouldList` where they are hidden.
+			const dot = true;
+			const steps: PathSuggestion[] = braceSteps(typed).map((step) => ({
+				label: step,
+				kind: "pattern",
+				path: step,
+				disabled: false,
+				endIcon: "asterisk",
+			}));
+			const found = this.buildSuggestions(context, (name) => matchesName(typed, name, dot)).map((row) => ({ ...row, glob: true }));
+			const rows = [...steps, ...found];
+			this.listedLabels = rows.map((row) => row.label);
+			return this.capped(rows);
+		}
 		const rows = leadingFirst(this.buildSuggestions(context, (name) => !q || name.toLowerCase().includes(q)), q);
 		this.listedLabels = rows.filter((row) => row.kind !== "more").map((row) => row.label);
 		return this.capped(rows);
@@ -1132,7 +1161,10 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			suggestions.push({
 				label: alias.name,
 				kind: "file",
-				path: alias.target,
+				// Where the row stands, so the list can highlight it as its own
+				// row; what it opens is `opens`.
+				path: folderPath ? `${folderPath}/${alias.name}` : alias.name,
+				opens: alias.target,
 				disabled: false,
 				// A symbolic link is a real file, if one the vault does not list:
 				// it is a note to open, not another name for one.
@@ -1370,6 +1402,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		if (value.taken) el.addClass("lure-suggest-taken");
 		if (value.unresolved) el.addClass("lure-suggest-unresolved");
 		if (value.alias) el.addClass("lure-suggest-alias");
+		if (value.glob) el.addClass("lure-suggest-glob");
 		if (value.current) el.addClass("lure-suggest-current");
 		if (value.leading) el.addClass("lure-suggest-leading");
 		if (value.agreed) el.addClass("lure-suggest-agreed");
@@ -1390,7 +1423,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		// "keep-name" is a proposed destination that nothing exists at yet,
 		// so there is nothing to act on either way — and neither is a note
 		// that is only linked to.
-		if (value.kind === "keep-name" || value.unresolved || value.alias) return;
+		if (value.kind === "keep-name" || value.kind === "pattern" || value.unresolved || value.alias) return;
 
 		// Outside the vault there is no TAbstractFile, so the File Explorer's
 		// handlers cannot be reused — these rows used to fall through here

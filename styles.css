@@ -1644,3 +1644,22 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 	color: var(--text-faint);
 	--icon-size: var(--icon-xs);
 }
+
+/* A glob step in the dropdown: rows the pattern matches carry a green edge,
+   where the leading rows carry blue, and the pattern's own rows come first. */
+.suggestion-item.lure-suggest-glob {
+	position: relative;
+}
+.suggestion-item.lure-suggest-glob::before {
+	content: "";
+	position: absolute;
+	inset-inline-start: 0;
+	top: 0;
+	bottom: -1px;
+	width: 3px;
+	background-color: var(--color-green);
+}
+.suggestion-item.lure-suggest-pattern .lure-suggest-label {
+	color: var(--color-green);
+	font-family: var(--font-monospace);
+}

@@ -244,4 +244,19 @@ test("the vault's segment: name, icon only, or none", async () => {
 	}
 });
 
+test("with extensions hidden, the field leaves .md off too, except on the rung that shows it", async () => {
+	await setSettings(page, { showFileExtension: false });
+	try {
+		await page.evaluate(openNote);
+		await page.evaluate(`app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-filename-text").click(); ${PAUSE(400)} return true;`);
+		expect("the name without .md", (await look()).value, "Cake");
+		await command("lure:focus-path-bar-vault-path");
+		expect("the path from the vault without it", (await look()).value, `${DIR}/Cake`);
+		await command("lure:focus-path-bar-extension");
+		expect("the name with its extension, as that rung says", (await look()).value, "Cake.md");
+	} finally {
+		await setSettings(page, { showFileExtension: true });
+	}
+});
+
 await run();
