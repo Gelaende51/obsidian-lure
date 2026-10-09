@@ -837,6 +837,14 @@ symbolic links found in the vault (whether this plugin made them or not), the
 note a symbolic link points at, and Obsidian's aliases. A link opens that file;
 an alias is shown on the row.
 
+The button stays while the row is being edited, and its menu opens under it,
+flush with the bottom of the path bar. Each entry carries an icon for what it
+is — a signpost for an alias path, `@` for one of Obsidian's aliases, a chain
+for a hard link, a linked file for a symbolic link. In the dropdown the same
+icons stand at the right-hand end of the row. A symbolic link made while
+Obsidian runs is not listed by Obsidian itself; it is listed here, and opens
+the note it points at.
+
 The button shows **how many** other paths there are, and takes the colour of
 the strongest kind among them: a hard link **purple**, a symbolic link
 **pink**, an alias **orange**. In its menu the note's own path comes first, in
