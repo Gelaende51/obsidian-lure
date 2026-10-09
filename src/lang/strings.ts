@@ -129,6 +129,12 @@ export const EN = {
 	noticeLinkInsideOnly: "Links and alias paths can only be made inside the vault",
 	noticeLinkOtherDevice: "A hard link cannot reach another drive; use a symbolic link instead",
 	noticeLinkFailed: "Could not make the link: {error}",
+	globMatchesTooltip: "Matches: {count}",
+	noticeGlobNone: "Nothing matches {pattern}",
+	noticeGlobCreated: "Notes made: {count}",
+	modalOpenManyTitle: "Open {count} files?",
+	modalOpenManyBody: "{pattern} matches {count} files. Open each of them in a tab of its own?",
+	openAll: "Open all",
 	noticeAutocompleteUnavailable: "Autocomplete unavailable: {error}",
 	suggestMore: "{count} more — keep typing to filter",
 

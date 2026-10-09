@@ -100,7 +100,7 @@ export default class BreadcrumbPathPlugin extends Plugin {
 		const seenPaths = new Map<string, string>();
 		this.registerEvent(
 			this.app.metadataCache.on("changed", (file, _data, cache) => {
-				const fm = cache.frontmatter as Record<string, unknown> | undefined;
+				const fm = cache.frontmatter;
 				const now = JSON.stringify([fm?.paths ?? null, fm?.aliases ?? null]);
 				const before = seenPaths.get(file.path) ?? JSON.stringify([null, null]);
 				seenPaths.set(file.path, now);

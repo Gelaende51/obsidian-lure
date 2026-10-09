@@ -11,13 +11,23 @@ export class ConfirmCreateFileModal extends Modal {
 	private resolved = false;
 	private resolveFn!: (value: boolean) => void;
 
-	private constructor(app: App, private path: string) {
+	private constructor(
+		app: App,
+		private title: string,
+		private body: string,
+		private confirm: string,
+	) {
 		super(app);
 	}
 
 	static ask(app: App, path: string): Promise<boolean> {
+		return ConfirmCreateFileModal.askWith(app, t("modalCreateTitle"), t("modalCreateBody", { path }), t("create"));
+	}
+
+	/** The same yes-or-no, worded by the caller. */
+	static askWith(app: App, title: string, body: string, confirm: string): Promise<boolean> {
 		return new Promise((resolve) => {
-			const modal = new ConfirmCreateFileModal(app, path);
+			const modal = new ConfirmCreateFileModal(app, title, body, confirm);
 			modal.resolveFn = resolve;
 			modal.open();
 		});
@@ -25,10 +35,8 @@ export class ConfirmCreateFileModal extends Modal {
 
 	onOpen(): void {
 		const { contentEl } = this;
-		this.titleEl.setText(t("modalCreateTitle"));
-		contentEl.createEl("p", {
-			text: t("modalCreateBody", { path: this.path }),
-		});
+		this.titleEl.setText(this.title);
+		contentEl.createEl("p", { text: this.body });
 
 		const buttonRow = contentEl.createDiv({ cls: "lure-modal-buttons" });
 
@@ -39,7 +47,7 @@ export class ConfirmCreateFileModal extends Modal {
 		});
 
 		buttonRow
-			.createEl("button", { text: t("create"), cls: "mod-cta" })
+			.createEl("button", { text: this.confirm, cls: "mod-cta" })
 			.addEventListener("click", () => {
 				this.resolved = true;
 				this.resolveFn(true);

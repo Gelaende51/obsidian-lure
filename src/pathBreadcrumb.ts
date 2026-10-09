@@ -33,6 +33,7 @@ import {
 } from "./pathFit";
 import { commonPrefix, planTab, TabCandidate } from "./tabComplete";
 import { LinkKind, OtherPath, makeOtherPath, otherPaths } from "./altPaths";
+import { createsFiles, expandBraces, hasGlobChars, matchPaths } from "./globPattern";
 import { FolderChildSuggest, LINK_ENTER, MODIFIED_ENTER, guardFieldKeys, pageLabel, PathSuggestion } from "./folderChildSuggest";
 import { ExternalChild, PATH_SEP, externalJoin, externalParent, externalSegments, isExternalFile, isExternalFolder, listExternalChildren } from "./externalFs";
 import {
@@ -290,6 +291,16 @@ const WHEEL_LINE_PX = 16;
  * at the path, while this key alternates between two places to rename in.
  */
 const LAST_RENAME_RUNG = 3;
+/** More matches than this, and Enter on a pattern asks before opening them all. */
+const OPEN_MANY_ASKS = 10;
+/** The colour each kind of other path is drawn in, by the names the stylesheet uses. */
+const OTHER_PATH_TINTS: Record<OtherPath["kind"], string> = {
+	alias: "alias",
+	name: "alias",
+	symbolic: "symbolic",
+	hard: "hard",
+	target: "hard",
+};
 /** The icon each kind of other path is listed under. */
 const OTHER_PATH_ICONS: Record<OtherPath["kind"], string> = {
 	alias: "signpost",
@@ -300,6 +311,9 @@ const OTHER_PATH_ICONS: Record<OtherPath["kind"], string> = {
 };
 /** A chip naming a folder that is not there yet. */
 const MISSING_CHIP_CLASS = "lure-browse-chip-missing";
+/** A chip that is a pattern step, and whether any folder matches the path that far. */
+const GLOB_CHIP_MATCH = "lure-browse-chip-glob";
+const GLOB_CHIP_NONE = "lure-browse-chip-glob-none";
 /**
  * The vault, as a rung after the path from the system root: the place every
  * path is counted from, with the other places beside it. Only where places
@@ -794,6 +808,10 @@ export class PathBreadcrumb {
 	private tabCycle: TabCycle | null = null;
 	/** Enter presses already acted on as a link, so no second handler moves the note as well. */
 	private linkEnters = new WeakSet<Event>();
+	/** What a pattern in the field matches, or null while the field holds no pattern. */
+	private globMatches: string[] | null = null;
+	/** The other-paths button, kept to be updated as a pattern is typed. */
+	private indicatorEl: HTMLElement | null = null;
 	/** When a lone Alt went down in the field, or 0 once anything else has. */
 	private altDownAt = 0;
 	/**
@@ -4465,7 +4483,8 @@ export class PathBreadcrumb {
 
 		// "None" leaves the vault's own segment out. Its delimiter stays: it
 		// is where the path starts, and it opens what it always opened.
-		this.renderOtherPathsButton();
+		this.indicatorEl = null;
+		this.updateIndicator();
 		if (this.plugin.settings.vaultSegment !== "none") this.renderRootSegment();
 
 		const separator = this.vaultSegmentEl.createSpan({
@@ -4522,7 +4541,14 @@ export class PathBreadcrumb {
 			chip.dataset.lurePath = chipPath;
 			// A folder walked into ahead of itself is not there yet: red, as
 			// the field is red for a name Enter would make.
-			chip.toggleClass(MISSING_CHIP_CLASS, !this.entryExists(chipPath, false));
+			if (hasGlobChars(part) && !this.entryExists(chipPath, false)) {
+				// A pattern step, not a folder to make: green while some folder
+				// matches the path this far, red while none does.
+				const folders = this.plugin.app.vault.getAllFolders?.(false).map((f) => f.path) ?? [];
+				chip.addClass(matchPaths(chipPath, folders, this.plugin.settings.showDotFiles).length ? GLOB_CHIP_MATCH : GLOB_CHIP_NONE);
+			} else {
+				chip.toggleClass(MISSING_CHIP_CLASS, !this.entryExists(chipPath, false));
+			}
 			// Chips are this plugin's own elements, which no folder-notes
 			// plugin knows about, so the swapped chip separator can only
 			// offer the reveal fallback rather than the folder's note.
@@ -5948,6 +5974,16 @@ export class PathBreadcrumb {
 			this.browsePath !== "" &&
 			!this.entryExists(this.browsePath, false);
 		const creates = (!listed && this.typedCreatesNew(inputEl.value)) || standingSomewhereNew;
+		this.refreshGlob(inputEl);
+		if (this.globMatches !== null) {
+			// A pattern: green while it matches, red while it matches nothing
+			// — unless it is one Enter would make, which is what red says anyway.
+			inputEl.toggleClass(WILL_CREATE_CLASS, !this.globMatches.length);
+			if (this.globMatches.length) inputEl.dataset.lureTint = "glob";
+			else delete inputEl.dataset.lureTint;
+			this.suggest?.markEnterCreates(false);
+			return;
+		}
 		inputEl.toggleClass(WILL_CREATE_CLASS, creates);
 		// The field stays in a row's colour while the list has rows for what
 		// was typed — but with none of them highlighted, Enter still makes the
@@ -6574,31 +6610,164 @@ export class PathBreadcrumb {
 	}
 
 	/**
-	 * The button in front of the vault's segment, on a note that has other
-	 * paths: a menu of them, each with an icon for what it is. A link opens
-	 * that file; an alias is shown on the row, where Enter opens the note.
+	 * The button in front of the vault's segment: a note's other paths, and
+	 * while the field holds a pattern, what it matches.
+	 *
+	 * Its count is the number of other paths, or of matches while there is a
+	 * pattern. Its icon takes the colour of the strongest kind it holds — a
+	 * hard link over a symbolic link over an alias — and a pattern's colour
+	 * over all of them: green when something matches, red when nothing does.
+	 * The menu lists the matches, then the note's own path in blue, then the
+	 * other paths in their colours.
 	 */
-	private renderOtherPathsButton(): void {
+	private updateIndicator(): void {
 		const file = this.file;
-		if (!file || this.browsePath !== null || this.externalPath !== null) return;
-		const others = otherPaths(this.plugin.app, this.plugin.diskLinks, file);
-		if (!others.length) return;
-		const button = this.vaultSegmentEl.createSpan({ cls: "clickable-icon lure-other-paths" });
+		const inVault = this.externalPath === null && !this.showingLocations;
+		const others = file && inVault && this.browsePath === null ? otherPaths(this.plugin.app, this.plugin.diskLinks, file) : [];
+		const matches = inVault ? this.globMatches : null;
+		if (!others.length && matches === null) {
+			this.indicatorEl?.remove();
+			this.indicatorEl = null;
+			return;
+		}
+		let button = this.indicatorEl;
+		if (!button || button.parentElement !== this.vaultSegmentEl) {
+			button?.remove();
+			button = createSpan({ cls: "clickable-icon lure-other-paths" });
+			this.vaultSegmentEl.prepend(button);
+			this.indicatorEl = button;
+			button.addEventListener("mousedown", (evt) => evt.preventDefault());
+			button.addEventListener("click", (evt) => {
+				evt.stopPropagation();
+				this.showIndicatorMenu(evt);
+			});
+		}
+		button.empty();
 		setIcon(button, "waypoints");
-		setTooltip(button, t("otherPathsTooltip"));
-		button.addEventListener("click", (evt) => {
-			evt.stopPropagation();
-			const menu = new Menu();
-			for (const other of others) {
-				menu.addItem((item) =>
-					item
-						.setTitle(other.path)
-						.setIcon(OTHER_PATH_ICONS[other.kind])
-						.onClick(() => this.goToOtherPath(other)),
-				);
+		const count = matches !== null ? matches.length : others.length;
+		button.createSpan({ cls: "lure-other-paths-count", text: String(count) });
+		const strongest = (["hard", "target", "symbolic", "alias", "name"] as const).find((kind) => others.some((other) => other.kind === kind));
+		const colour = matches !== null ? (matches.length ? "match" : "none") : strongest ? OTHER_PATH_TINTS[strongest] : "alias";
+		button.dataset.lureTint = colour;
+		setTooltip(button, matches !== null ? t("globMatchesTooltip", { count: String(count) }) : t("otherPathsTooltip"));
+	}
+
+	private showIndicatorMenu(evt: MouseEvent): void {
+		const file = this.file;
+		const menu = new Menu();
+		const tint = (item: unknown, colour: string): void => {
+			(item as { dom?: HTMLElement }).dom?.setAttribute("data-lure-tint", colour);
+		};
+		for (const path of (this.globMatches ?? []).slice(0, 200)) {
+			menu.addItem((item) => {
+				item.setTitle(path).setIcon("file-search").onClick(() => {
+					const there = this.plugin.app.vault.getAbstractFileByPath(path);
+					if (there instanceof TFile) this.navigateToFile(there);
+				});
+				tint(item, "match");
+			});
+		}
+		if (file && this.externalPath === null && this.browsePath === null) {
+			const others = otherPaths(this.plugin.app, this.plugin.diskLinks, file);
+			if (others.length) {
+				menu.addItem((item) => {
+					item.setTitle(file.path).setIcon("file").setDisabled(true);
+					tint(item, "current");
+				});
 			}
-			menu.showAtMouseEvent(evt);
-		});
+			for (const other of others) {
+				menu.addItem((item) => {
+					item.setTitle(other.path).setIcon(OTHER_PATH_ICONS[other.kind]).onClick(() => this.goToOtherPath(other));
+					tint(item, OTHER_PATH_TINTS[other.kind]);
+				});
+			}
+		}
+		(menu as unknown as { dom?: HTMLElement }).dom?.addClass("lure-other-paths-menu");
+		menu.showAtMouseEvent(evt);
+	}
+
+	/**
+	 * The pattern the field spells, counted from the vault root, or null when
+	 * it is not one: renaming, outside the vault, no pattern character, or a
+	 * name with such a character that is really there — a real name is never
+	 * read as a pattern.
+	 */
+	private patternFor(text: string): string | null {
+		if (this.renameMode || this.externalPath !== null) return null;
+		const folder = this.currentFolderPath();
+		const here = folder === "/" ? "" : folder;
+		const typed = text.trim().replace(/^\/+/, "");
+		const full = here ? (typed ? `${here}/${typed}` : here) : typed;
+		const segments = full.split("/").filter(Boolean);
+		if (!segments.some(hasGlobChars)) return null;
+		let prefix = "";
+		for (const segment of segments) {
+			prefix = prefix ? `${prefix}/${segment}` : segment;
+			if (hasGlobChars(segment) && this.plugin.app.vault.getAbstractFileByPath(prefix)) return null;
+		}
+		return segments.join("/");
+	}
+
+	/** The vault's files a pattern matches, by the same visibility rules as the dropdown. */
+	private filesMatching(pattern: string): string[] {
+		const paths = this.plugin.app.vault
+			.getFiles()
+			.filter((file) => this.shouldListChild(file))
+			.map((file) => file.path);
+		return matchPaths(pattern, paths, this.plugin.settings.showDotFiles);
+	}
+
+	/** Re-reads the field as a pattern, after every change to it. */
+	private refreshGlob(inputEl: HTMLInputElement): void {
+		const pattern = this.patternFor(this.typedFieldValue() || inputEl.value);
+		this.globMatches = pattern === null ? null : this.filesMatching(pattern);
+		this.updateIndicator();
+	}
+
+	/**
+	 * Enter on a pattern: every match opens, the first here and the rest in
+	 * tabs of their own; more than ten asks first. A pattern of braces only
+	 * names a finite set of paths, and the ones not there yet are made.
+	 */
+	private async openPattern(pattern: string, paneType: PaneType | false): Promise<void> {
+		const vault = this.plugin.app.vault;
+		let paths = this.filesMatching(pattern);
+		if (createsFiles(pattern)) {
+			const named = expandBraces(pattern).map((path) => (/\.[^./]+$/.test(path) ? path : `${path}.md`));
+			let made = 0;
+			for (const path of named) {
+				if (vault.getAbstractFileByPath(path)) continue;
+				try {
+					await this.ensureFolderExists(path.substring(0, path.lastIndexOf("/")));
+					await vault.create(path, "");
+					made++;
+				} catch (err) {
+					new Notice(t("noticeCreateFailed", { error: (err as Error).message }));
+				}
+			}
+			if (made) new Notice(t("noticeGlobCreated", { count: String(made) }));
+			paths = named;
+		}
+		const files = paths.map((path) => vault.getAbstractFileByPath(path)).filter((f): f is TFile => f instanceof TFile);
+		if (!files.length) {
+			new Notice(t("noticeGlobNone", { pattern }));
+			return;
+		}
+		if (files.length > OPEN_MANY_ASKS) {
+			const ok = await ConfirmCreateFileModal.askWith(
+				this.plugin.app,
+				t("modalOpenManyTitle", { count: String(files.length) }),
+				t("modalOpenManyBody", { pattern, count: String(files.length) }),
+				t("openAll"),
+			);
+			if (!ok) return;
+		}
+		this.cancelNavigation();
+		const [first, ...rest] = files;
+		if (first) this.navigateToFile(first, paneType);
+		for (const file of rest) {
+			void this.plugin.app.workspace.getLeaf("tab").openFile(file, { active: false });
+		}
 	}
 
 	private goToOtherPath(other: OtherPath): void {
@@ -8889,6 +9058,13 @@ export class PathBreadcrumb {
 				return;
 			}
 			await this.submitExternal(trimmed, paneType);
+			return;
+		}
+
+		// A pattern: open what it matches, or make what it names.
+		const pattern = this.patternFor(trimmed);
+		if (pattern !== null) {
+			await this.openPattern(pattern, paneType);
 			return;
 		}
 

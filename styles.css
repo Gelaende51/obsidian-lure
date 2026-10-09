@@ -1583,3 +1583,44 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 	padding: 0 2px;
 	--icon-size: var(--icon-s);
 }
+
+/* The other-paths button's count, and its colour: the strongest kind of
+   other path it holds, or a pattern's answer — green, matching; red, not. */
+.lure-other-paths {
+	position: relative;
+	color: var(--color-orange);
+}
+.lure-other-paths[data-lure-tint="symbolic"] { color: var(--color-pink); }
+.lure-other-paths[data-lure-tint="hard"] { color: var(--color-purple); }
+.lure-other-paths[data-lure-tint="match"] { color: var(--color-green); }
+.lure-other-paths[data-lure-tint="none"] { color: var(--text-error); }
+
+.lure-other-paths-count {
+	position: absolute;
+	right: -3px;
+	bottom: -3px;
+	min-width: 12px;
+	padding: 0 2px;
+	border-radius: 6px;
+	background-color: var(--background-secondary);
+	font-size: 9px;
+	line-height: 12px;
+	text-align: center;
+	color: inherit;
+}
+
+/* The menu's rows in the same colours: the note's own path blue. */
+.lure-other-paths-menu .menu-item[data-lure-tint="current"] { color: var(--color-blue); }
+.lure-other-paths-menu .menu-item[data-lure-tint="alias"] { color: var(--color-orange); }
+.lure-other-paths-menu .menu-item[data-lure-tint="symbolic"] { color: var(--color-pink); }
+.lure-other-paths-menu .menu-item[data-lure-tint="hard"] { color: var(--color-purple); }
+.lure-other-paths-menu .menu-item[data-lure-tint="match"] { color: var(--color-green); }
+.lure-other-paths-menu .menu-item .menu-item-icon { color: inherit; }
+
+/* A pattern step on the row, and the field holding a pattern that matches. */
+.lure-browse-chip.lure-browse-chip-glob { color: var(--color-green); }
+.lure-browse-chip.lure-browse-chip-glob-none { color: var(--text-error); }
+.lure-filename input[data-lure-tint="glob"],
+.lure-vault-wrapper input[data-lure-tint="glob"] {
+	color: var(--color-green);
+}

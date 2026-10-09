@@ -114,6 +114,22 @@ test("Shift+Enter, renaming, makes a hard link and records both paths", async ()
 	expect("the same file", hard.ino, note.ino);
 	expect("two names for it", note.nlink, 2);
 	expect("both in paths", await pathsOf(NOTE), [NOTE, `${DIR}/Hard.md`]);
+	const button = await page.evaluate(`
+		app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-path-input")?.blur();
+		await app.workspace.getLeaf(false).openFile(app.vault.getAbstractFileByPath(${JSON.stringify(`${DIR}/Sibling.md`)}));
+		${PAUSE(400)}
+		await app.workspace.getLeaf(false).openFile(app.vault.getAbstractFileByPath(${JSON.stringify(NOTE)}));
+		${PAUSE(900)}
+		const el = app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-other-paths");
+		el?.click();
+		${PAUSE(300)}
+		const tints = [...document.querySelectorAll(".menu .menu-item")].map((e) => e.dataset.lureTint ?? null);
+		document.querySelector(".menu")?.remove();
+		return JSON.stringify({ count: el?.querySelector(".lure-other-paths-count")?.textContent ?? null, tint: el?.dataset.lureTint ?? null, tints });
+	`).then(JSON.parse);
+	expect("the button counts one other path", button.count, "1");
+	expect("purple, for a hard link", button.tint, "hard");
+	expect("its menu: own path blue, then the link purple", button.tints, ["current", "hard"]);
 });
 
 test("Ctrl+Shift+Enter, renaming, makes a relative symbolic link", async () => {
@@ -202,7 +218,7 @@ test("the other-paths button shows exactly when there are other paths", async ()
 		document.querySelector(".menu")?.remove();
 		return JSON.stringify(titles);
 	`).then(JSON.parse);
-	expect("its menu lists the path", items, [`${DIR}/Other.md`]);
+	expect("its menu lists the note, then the path", items, [NOTE, `${DIR}/Other.md`]);
 });
 
 test("renaming a hard link rewrites its entry in paths", async () => {
