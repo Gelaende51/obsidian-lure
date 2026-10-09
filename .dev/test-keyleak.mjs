@@ -217,13 +217,10 @@ test("Tab and typing after picking a row with the mouse", async () => {
 });
 
 test("Tab and typing after a click on a folder chip", async () => {
-	await page.evaluate(openNote);
-	await page.evaluate(`
-		for (let i = 0; i < 3; i++) { app.commands.executeCommandById("lure:focus-path-bar"); ${PAUSE(300)} }
-		return true;
-	`);
-	await pressKey(page, "Backspace");
-	await page.send("Input.insertText", { text: "Lure-keyleak/" });
+	// A click on the note's folder opens the field on it, marked; a tap of
+	// Alt steps into it, which leaves it on the row as a chip.
+	await openOnFolder();
+	await pressKey(page, "Alt");
 	await page.evaluate(PAUSE(400) + "return true;");
 	expect("a chip to click", await clickOn(".lure-browse-chip"), true);
 	await check("after the chip");
