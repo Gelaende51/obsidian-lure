@@ -6785,6 +6785,11 @@ export class PathBreadcrumb {
 
 	/** Re-reads the field as a pattern, after every change to it. */
 	private refreshGlob(inputEl: HTMLInputElement): void {
+		// A field that has closed holds no pattern, whatever its text still says.
+		if (inputEl !== this.inputEl) {
+			this.globMatches = null;
+			return;
+		}
 		const pattern = this.patternFor(this.typedFieldValue() || inputEl.value);
 		this.globMatches = pattern === null ? null : this.filesMatching(pattern);
 		this.updateIndicator();
@@ -8850,6 +8855,13 @@ export class PathBreadcrumb {
 					if (this.linkEnters.has(evt)) return;
 					this.linkEnters.add(evt);
 					const name = this.file?.name ?? "";
+					// The note's own row: the link it is opened at changes kind.
+					if (value.path === this.file?.path) {
+						void this.convertCurrent(link).then((done) => {
+							if (!done) new Notice(t("noticeLinkTaken", { path: value.path }));
+						});
+						return;
+					}
 					if (value.kind === "folder") void this.commitLink(`${value.path}/${name}`, link);
 					else if (value.kind === "file" || value.kind === "keep-name") void this.commitLink(value.path, link);
 					return;
@@ -8909,6 +8921,13 @@ export class PathBreadcrumb {
 						return;
 					}
 					this.descendCarrying(value.path, this.restAfterEditedSegment());
+					return;
+				}
+				// Ctrl on the note's own row, renaming: a link becomes a copy of its own.
+				if (this.renameMode && paneType && value.path === this.file?.path) {
+					void this.convertCurrent("copy").then((done) => {
+						if (!done) void this.commitRenameTo(value.path, false, paneType);
+					});
 					return;
 				}
 				if (this.renameMode) {
