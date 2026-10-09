@@ -6359,6 +6359,12 @@ export class PathBreadcrumb {
 		// taking of the offer is the step it records.
 		if (tookStep) this.tabTrail.push(tookStep);
 
+		// The offer finished the name, and that is the whole press: the rungs
+		// begin on the next one.
+		if (action.kind === "ladder" && took) {
+			this.relistAfterTab(input);
+			return;
+		}
 		if (action.kind === "ladder") {
 			// Unless what the field names is a page. The ladder widens a
 			// *path* — name, name with extension, from the vault, from the
@@ -6821,7 +6827,9 @@ export class PathBreadcrumb {
 			);
 			if (!ok) return;
 		}
+		this.globMatches = null;
 		this.cancelNavigation();
+		this.updateIndicator();
 		const [first, ...rest] = files;
 		if (first) this.navigateToFile(first, paneType);
 		for (const file of rest) {

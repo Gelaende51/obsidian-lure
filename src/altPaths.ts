@@ -217,7 +217,21 @@ export async function convertLink(app: App, file: TFile, to: LinkKind | "copy", 
 		other = normalizePath(within.split("\\").join("/"));
 	} else if (stats.nlink > 1) {
 		from = "hard";
-		other = sameFile.find((path) => path !== file.path) ?? null;
+		// The other name: from the scan when it has run, else from the
+		// note's own lists, checked against the disk.
+		const names = [...sameFile, ...readKey(app, file, KIND_KEYS.hard), ...listedPaths(app, file)];
+		for (const name of names) {
+			if (name === file.path) continue;
+			try {
+				const there = await lstat(join(base, name));
+				if (there.ino === stats.ino && there.dev === stats.dev) {
+					other = name;
+					break;
+				}
+			} catch {
+				// Not there; the next one.
+			}
+		}
 	} else {
 		return { result: "not-a-link", keeper: null };
 	}
