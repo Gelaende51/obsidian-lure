@@ -13,6 +13,7 @@ import { Command, Hotkey, Menu, Platform, Plugin, WorkspaceLeaf } from "obsidian
 import { BreadcrumbManager } from "./breadcrumbManager";
 import { UnresolvedNotes } from "./unresolvedNotes";
 import { setCurrentVaultIcon } from "./systemLocations";
+import { letThroughGuard } from "./folderChildSuggest";
 import { EXTERNAL_VIEW_TYPE, ExternalFileView } from "./externalFileView";
 import { BreadcrumbSettingTab } from "./settingsTab";
 import { BreadcrumbPathSettings, DEFAULT_SETTINGS } from "./settings";
@@ -85,6 +86,9 @@ export default class BreadcrumbPathPlugin extends Plugin {
 		this.manager.registerEvents();
 
 		this.registerFocusCommand();
+		// The path field claims modified keys so they cannot edit the note
+		// under it; this plugin's own keys act on the field and go through.
+		letThroughGuard((evt) => this.isOwnKey(evt));
 		// The navigation lock is shelved: it works, but not well enough to
 		// support in the wild, and a mode nobody can reach is a mode nobody
 		// can be surprised by. Everything behind it — the lock, its strings,
@@ -153,6 +157,19 @@ export default class BreadcrumbPathPlugin extends Plugin {
 		if (!rename && !this.isCommandHotkey(`${this.manifest.id}:focus-path-bar`, evt, true)) return null;
 		if (this.isBoundElsewhere(evt)) return null;
 		return rename;
+	}
+
+	/** Whether a press is one of this plugin's commands' keys, the rename key, or Shift with either cycle key. */
+	private isOwnKey(evt: KeyboardEvent): boolean {
+		if (this.cycleKeyBackwards(evt) !== null) return true;
+		if (this.isCommandHotkey(RENAME_COMMAND_ID, evt)) return true;
+		const prefix = `${this.manifest.id}:`;
+		const manager = this.app.hotkeyManager;
+		const ids = new Set([...Object.keys(manager?.defaultKeys ?? {}), ...Object.keys(manager?.customKeys ?? {})]);
+		for (const id of ids) {
+			if (id.startsWith(prefix) && this.isCommandHotkey(id, evt)) return true;
+		}
+		return false;
 	}
 
 	/** Hands the rename back to Obsidian's inline title, as the forward cycle does past its last rung. */

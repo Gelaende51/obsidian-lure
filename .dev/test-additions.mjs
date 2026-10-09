@@ -91,6 +91,8 @@ async function type(text) {
 async function inOwnFolder() {
 	await page.evaluate(openNote);
 	await page.evaluate(`app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-filename-text").click(); ${PAUSE(400)} return true;`);
+	// The click marks the name without its extension; all of it goes.
+	await pressKey(page, "ctrl+a");
 	await pressKey(page, "Backspace");
 	await settle(300);
 }

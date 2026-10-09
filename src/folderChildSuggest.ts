@@ -305,10 +305,22 @@ export function fieldKeepsKey(evt: KeyboardEvent): boolean {
  * alone was skipped exactly while the dropdown was up, which is most of the
  * time a path is being typed.
  */
+/**
+ * Keys the guard lets through although they are modified: this plugin's own
+ * — the focus key and the rung commands, and Shift with the rename or focus
+ * key — which act on the field rather than on the note under it. Set by the
+ * plugin, which is what knows how they are bound.
+ */
+let passesGuard: (evt: KeyboardEvent) => boolean = () => false;
+
+export function letThroughGuard(passes: (evt: KeyboardEvent) => boolean): void {
+	passesGuard = passes;
+}
+
 export function guardFieldKeys(scope: Scope): void {
 	for (const modifiers of COMMANDLESS_MODIFIERS) {
 		scope.register(modifiers, null, (evt) => {
-			if (fieldKeepsKey(evt)) return true;
+			if (fieldKeepsKey(evt) || passesGuard(evt)) return true;
 			evt.preventDefault();
 			return false;
 		});
@@ -876,9 +888,14 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 	}
 
 	private paintCreateEdge(): void {
-		const popover = (this as unknown as { suggestEl?: HTMLElement }).suggestEl;
-		const index = this.list()?.selectedItem ?? -1;
-		popover?.toggleClass(CREATES_CLASS, this.enterCreates && index < 0);
+		// Read once the list has settled: a fresh listing selects its first
+		// row and is moved off it straight after (see `onSelectedChange`), and
+		// painting in between read a highlight that was about to go.
+		queueMicrotask(() => {
+			const popover = (this as unknown as { suggestEl?: HTMLElement }).suggestEl;
+			const index = this.list()?.selectedItem ?? -1;
+			popover?.toggleClass(CREATES_CLASS, this.enterCreates && index < 0);
+		});
 	}
 
 	/**
