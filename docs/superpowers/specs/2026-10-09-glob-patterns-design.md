@@ -1,6 +1,6 @@
 # Glob patterns in the path field — design
 
-Status: draft for review. From `.personal/issues4.md`, group E.
+Status: agreed (answers from `.personal/issues4.md`, "glob specs additions", 2026-10-09).
 
 ## What it is for
 
@@ -57,11 +57,14 @@ create them.
 per behaviour above against the test vault, including a literal name that
 contains `[` to prove it is not taken as a pattern.
 
-## Open questions (recommended answer first)
+## Answers (2026-10-09)
 
-1. **Brackets in creation:** treat `[abc]` like `{a,b,c}` for creation —
-   *no* (recommended: only braces create; brackets only match).
-2. **Threshold for opening many:** 10 tabs before asking — or a setting.
-3. **Where the count goes:** at the end of the field (recommended) or in the
-   dropdown's count row only.
-4. **External paths:** leave out of v1 (recommended) or walk with a depth cap.
+1. Brackets only match; only braces create (no answer given; the recommended default).
+2. Opening more than **10** matches asks first.
+3. **Where matches show:** in the other-paths button and its menu. While the
+   field holds a pattern, the button's count is the number of matches (in
+   place of the other paths' count), its icon is **green** when something
+   matches — over every other colour — and **red** when nothing does; its menu
+   lists the matches in green, ahead of the note's other paths. This replaces
+   the count at the end of the field and the pattern listing in the dropdown.
+4. Outside the vault: left out for now.

@@ -51,6 +51,15 @@ row. Hard and symbolic links not in `paths` are found by one background scan
 of the vault (`lstat` per file), kept for the session and refreshed on vault
 changes; the scan for hard links runs only when the note's link count is > 1.
 
+### Its look (additions, 2026-10-09)
+
+- The button carries a small count of the other paths.
+- Its icon takes the colour of the strongest kind it holds: hard link
+  (Obsidian purple) over symbolic link (pink) over alias (orange).
+- The menu starts with the note's own path in blue, then the others in their
+  colours: alias paths and Obsidian's aliases orange, symbolic links pink,
+  hard links purple (and, seen from a symbolic link, the note it points at).
+
 ## Components
 
 - `src/altPaths.ts` — the `paths` list (read, add, rename, remove via
