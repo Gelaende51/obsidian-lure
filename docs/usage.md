@@ -806,6 +806,43 @@ and **Apply** moves both, links and all; **Cancel** moves nothing. Picking a
 taken name from the dropdown asks the same, and so does dropping a note onto a
 folder that already holds its name.
 
+## Other paths for one note
+
+Renaming, three more ways to press <kbd>Enter</kbd> give the note a **second
+path instead of moving it**:
+
+| Press | Makes | On disk |
+| --- | --- | --- |
+| <kbd>Alt</kbd>+<kbd>Enter</kbd> | an **alias path** | nothing — the path is written in the note's frontmatter |
+| <kbd>Shift</kbd>+<kbd>Enter</kbd> | a **hard link** | a second name for the same file; both are notes Obsidian lists |
+| <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> | a **symbolic link** | a link file pointing at the note, written relative to where it stands |
+
+<kbd>Ctrl</kbd>+<kbd>Enter</kbd> still copies. A path that is taken is refused,
+and so is one outside the vault. A hard link cannot cross to another drive; a
+symbolic link can.
+
+Every one of them is recorded in the note's **`paths`** frontmatter list —
+links together with the note's own path, because a hard link shares the
+frontmatter and a symbolic link reads it, so the list reads right from either
+end. When a listed file is renamed or deleted, its entry follows.
+
+**Aliases are listed in the dropdown, in orange**: an alias path in the folder
+it names, and Obsidian's own `aliases` beside the note that carries them.
+Picking one opens the note, and so does typing an alias path and pressing
+<kbd>Enter</kbd> — nothing is made there.
+
+**A note with other paths gets a button in front of the vault's segment.** It
+lists them, each under an icon for what it is: alias paths, hard links and
+symbolic links found in the vault (whether this plugin made them or not), the
+note a symbolic link points at, and Obsidian's aliases. A link opens that file;
+an alias is shown on the row.
+
+Sync tools — Obsidian Sync, Syncthing, git — do not keep hard links: on another
+device the two names become two copies. Obsidian also reads a hard-linked note
+again only under the name that was edited; this plugin re-reads the others when
+it writes `paths`, but an edit made in the note itself shows under the other
+name once that note is reopened.
+
 ## One key for both renames
 
 The rename command (<kbd>F2</kbd> by default, or whatever you've rebound it to) **alternates** between Obsidian's inline-title rename and this plugin's header path bar. If you've turned Obsidian's inline title off, the header path bar becomes the only target, so the key never does nothing.
