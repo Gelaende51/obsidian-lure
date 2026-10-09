@@ -1,5 +1,5 @@
 import { App, FileSystemAdapter, TFile, normalizePath } from "obsidian";
-import { link, lstat, mkdir, readlink, symlink, unlink } from "fs/promises";
+import { link, lstat, mkdir, readlink, symlink, unlink, writeFile } from "fs/promises";
 import { dirname, join, relative, resolve } from "path";
 import { lstatSync } from "fs";
 
@@ -50,11 +50,33 @@ function nameOf(path: string): string {
 	return path.slice(path.lastIndexOf("/") + 1);
 }
 
-/** The `paths` list of a note, as written, normalized. */
-export function listedPaths(app: App, file: TFile): string[] {
-	const value: unknown = app.metadataCache.getFileCache(file)?.frontmatter?.[PATHS_KEY];
+/**
+ * One list per kind beside `paths`, which is their sum (with the note's own
+ * path once it has links). Copies made from a note are its forks, and a copy
+ * names the note it was made from as its origin.
+ */
+export const KIND_KEYS = { alias: "paths-aliases", hard: "paths-hardlinks", symbolic: "paths-symlinks" } as const;
+export const FORKS_KEY = "paths-forks";
+export const ORIGIN_KEY = "paths-origin";
+const ALL_KEYS = [PATHS_KEY, KIND_KEYS.alias, KIND_KEYS.hard, KIND_KEYS.symbolic, FORKS_KEY, ORIGIN_KEY];
+
+function listIn(value: unknown): string[] {
 	const list = Array.isArray(value) ? value : typeof value === "string" ? [value] : [];
 	return list.filter((entry): entry is string => typeof entry === "string" && entry.trim() !== "").map((entry) => normalizePath(entry));
+}
+
+function readKey(app: App, file: TFile, key: string): string[] {
+	return listIn(app.metadataCache.getFileCache(file)?.frontmatter?.[key]);
+}
+
+/** The `paths` list of a note, as written, normalized. */
+export function listedPaths(app: App, file: TFile): string[] {
+	return readKey(app, file, PATHS_KEY);
+}
+
+/** Whether any of a note's path lists names this path. */
+function mentions(app: App, file: TFile, path: string): boolean {
+	return ALL_KEYS.some((key) => readKey(app, file, key).includes(path));
 }
 
 /** Obsidian's own aliases of a note. */
@@ -64,37 +86,98 @@ function nativeAliases(app: App, file: TFile): string[] {
 	return list.filter((entry): entry is string => typeof entry === "string" && entry.trim() !== "").map((entry) => entry.trim());
 }
 
-/** Rewrites the `paths` list of a note; `change` returns the new list, or null to leave it. */
-async function rewritePaths(app: App, file: TFile, change: (list: string[]) => string[] | null): Promise<void> {
+type Lists = Record<string, string[]>;
+
+/**
+ * Rewrites a note's path lists in one write. `change` edits them in place and
+ * says whether it changed anything; an emptied list is taken out, and the
+ * origin is written as a single path.
+ */
+async function rewriteLists(app: App, file: TFile, change: (lists: Lists) => boolean): Promise<void> {
 	await app.fileManager.processFrontMatter(file, (frontmatter: Record<string, unknown>) => {
-		const value = frontmatter[PATHS_KEY];
-		const list = (Array.isArray(value) ? value : typeof value === "string" ? [value] : []).filter(
-			(entry): entry is string => typeof entry === "string",
-		);
-		const next = change(list.map((entry) => normalizePath(entry)));
-		if (next === null) return;
-		if (next.length) frontmatter[PATHS_KEY] = next;
-		else delete frontmatter[PATHS_KEY];
+		const lists: Lists = {};
+		for (const key of ALL_KEYS) lists[key] = listIn(frontmatter[key]);
+		if (!change(lists)) return;
+		for (const key of ALL_KEYS) {
+			const list = [...new Set(lists[key])];
+			if (!list.length) delete frontmatter[key];
+			else frontmatter[key] = key === ORIGIN_KEY ? list[0] : list;
+		}
 	});
 }
 
-/** Adds paths to a note's list, each once. */
-export async function recordPaths(app: App, file: TFile, add: string[]): Promise<void> {
-	await rewritePaths(app, file, (list) => {
-		const missing = add.filter((path) => !list.includes(path));
-		return missing.length ? [...list, ...missing] : null;
+function put(lists: Lists, key: string, paths: string[]): boolean {
+	const list = (lists[key] ??= []);
+	const missing = paths.filter((path) => !list.includes(path));
+	list.push(...missing);
+	return missing.length > 0;
+}
+
+function drop(lists: Lists, key: string, path: string): boolean {
+	const list = lists[key] ?? [];
+	const at = list.indexOf(path);
+	if (at < 0) return false;
+	list.splice(at, 1);
+	return true;
+}
+
+/** Records a second path of a note in `paths` and in its kind's list. */
+async function recordOtherPath(app: App, file: TFile, target: string, kind: LinkKind): Promise<void> {
+	await rewriteLists(app, file, (lists) => {
+		const both = kind === "alias" ? [target] : [file.path, target];
+		const a = put(lists, PATHS_KEY, both);
+		const b = put(lists, KIND_KEYS[kind], kind === "hard" ? both : [target]);
+		return a || b;
 	});
 }
 
 /**
+ * Takes a path out of a note's lists — out of `paths`, and out of every kind's
+ * list — and the note's own path with it once nothing else is left.
+ */
+function forget(lists: Lists, own: string, path: string): boolean {
+	let changed = false;
+	for (const key of [PATHS_KEY, KIND_KEYS.alias, KIND_KEYS.hard, KIND_KEYS.symbolic]) changed = drop(lists, key, path) || changed;
+	const hard = lists[KIND_KEYS.hard] ?? [];
+	if (hard.length === 1 && hard[0] === own) changed = drop(lists, KIND_KEYS.hard, own) || changed;
+	const paths = lists[PATHS_KEY] ?? [];
+	if (paths.length === 1 && paths[0] === own) changed = drop(lists, PATHS_KEY, own) || changed;
+	return changed;
+}
+
+/** Takes one of a note's other paths off its lists. */
+export async function forgetOtherPath(app: App, file: TFile, path: string): Promise<void> {
+	await rewriteLists(app, file, (lists) => forget(lists, file.path, path));
+}
+
+/**
+ * A copy made from a note: the copy keeps none of the note's path lists and
+ * names the note as its origin, and the note lists the copy as a fork.
+ */
+export async function recordCopy(app: App, source: TFile, copy: TFile): Promise<void> {
+	await rewriteLists(app, copy, (lists) => {
+		for (const key of ALL_KEYS) lists[key] = [];
+		lists[ORIGIN_KEY] = [source.path];
+		return true;
+	});
+	await rewriteLists(app, source, (lists) => put(lists, FORKS_KEY, [copy.path]));
+}
+
+/** The note's own alias paths, from its lists. */
+export function aliasPathsOf(app: App, file: TFile): string[] {
+	const listed = new Set([...readKey(app, file, KIND_KEYS.alias), ...listedPaths(app, file)]);
+	return [...listed].filter((path) => path !== file.path && onDisk(app, path) === null && !app.vault.getAbstractFileByPath(path));
+}
+
+/**
  * Makes a second path for a note: an alias path in its frontmatter, or a hard
- * or symbolic link on disk — recorded in `paths` either way. The target must
- * be free; the caller has checked that. Symbolic links are written relative,
- * so they survive the vault being moved.
+ * or symbolic link on disk — recorded in `paths` and in its kind's list. The
+ * target must be free; the caller has checked that. Symbolic links are
+ * written relative, so they survive the vault being moved.
  */
 export async function makeOtherPath(app: App, file: TFile, target: string, kind: LinkKind): Promise<void> {
 	if (kind === "alias") {
-		await recordPaths(app, file, [target]);
+		await recordOtherPath(app, file, target, kind);
 		return;
 	}
 	const base = basePath(app);
@@ -104,15 +187,101 @@ export async function makeOtherPath(app: App, file: TFile, target: string, kind:
 	await mkdir(dirname(to), { recursive: true });
 	if (kind === "hard") await link(from, to);
 	else await symlink(relative(dirname(to), from), to);
-	await recordPaths(app, file, [file.path, target]);
+	await recordOtherPath(app, file, target, kind);
 	// A hard link Obsidian has already picked up read the file before the
 	// list was written into it.
 	const made = app.vault.getAbstractFileByPath(target);
 	if (kind === "hard" && made instanceof TFile) await refreshNames(app, [made]);
 }
 
+/** What converting a link answered. */
+export type ConvertResult = { result: "done" | "not-a-link" | "same"; keeper: string | null };
+
 /**
- * Keeps the `paths` lists true as files move and go.
+ * Turns the link a note is opened at into another kind — a hard link, a
+ * symbolic link, an alias path, or a copy of its own — keeping the path.
+ * `sameFile` names the file's other names on disk, for a hard link.
+ */
+export async function convertLink(app: App, file: TFile, to: LinkKind | "copy", sameFile: string[]): Promise<ConvertResult> {
+	const base = basePath(app);
+	if (base === null) return { result: "not-a-link", keeper: null };
+	const at = join(base, file.path);
+	const stats = await lstat(at);
+	let from: "hard" | "symbolic";
+	let other: string | null = null;
+	if (stats.isSymbolicLink()) {
+		from = "symbolic";
+		const target = resolve(dirname(at), await readlink(at));
+		const within = relative(base, target);
+		if (!within || within.startsWith("..")) return { result: "not-a-link", keeper: null };
+		other = normalizePath(within.split("\\").join("/"));
+	} else if (stats.nlink > 1) {
+		from = "hard";
+		other = sameFile.find((path) => path !== file.path) ?? null;
+	} else {
+		return { result: "not-a-link", keeper: null };
+	}
+	if (to === from) return { result: "same", keeper: other };
+	const keeper = other ? app.vault.getAbstractFileByPath(other) : null;
+	if (!(keeper instanceof TFile)) return { result: "not-a-link", keeper: null };
+
+	holdFollow(file.path);
+	const text = to === "copy" ? await app.vault.adapter.read(keeper.path) : "";
+	await unlink(at);
+	const source = join(base, keeper.path);
+	if (to === "symbolic") await symlink(relative(dirname(at), source), at);
+	else if (to === "hard") await link(source, at);
+	else if (to === "copy") await writeFile(at, text, "utf8");
+
+	await rewriteLists(app, keeper, (lists) => {
+		let changed = forget(lists, keeper.path, file.path);
+		if (to === "copy") changed = put(lists, FORKS_KEY, [file.path]) || changed;
+		else {
+			const both = to === "alias" ? [file.path] : [keeper.path, file.path];
+			changed = put(lists, PATHS_KEY, both) || changed;
+			changed = put(lists, KIND_KEYS[to], to === "hard" ? both : [file.path]) || changed;
+		}
+		return changed;
+	});
+	if (to === "copy") {
+		const copy = await waitForFile(app, file.path);
+		if (copy) {
+			await rewriteLists(app, copy, (lists) => {
+				for (const key of ALL_KEYS) lists[key] = [];
+				lists[ORIGIN_KEY] = [keeper.path];
+				return true;
+			});
+		}
+	} else if (to === "hard") {
+		const name = app.vault.getAbstractFileByPath(file.path);
+		if (name instanceof TFile) await refreshNames(app, [name]);
+	}
+	return { result: "done", keeper: keeper.path };
+}
+
+/** The vault's file at a path, once Obsidian has seen it appear — or null after a few seconds. */
+async function waitForFile(app: App, path: string): Promise<TFile | null> {
+	for (let i = 0; i < 30; i++) {
+		const file = app.vault.getAbstractFileByPath(path);
+		if (file instanceof TFile) return file;
+		await new Promise((resolve) => window.setTimeout(resolve, 100));
+	}
+	return null;
+}
+
+/**
+ * Paths this plugin is replacing on disk right now: their delete and create
+ * are its own doing, and must not be followed into the lists.
+ */
+const held = new Set<string>();
+
+function holdFollow(path: string): void {
+	held.add(path);
+	window.setTimeout(() => held.delete(path), 4000);
+}
+
+/**
+ * Keeps the path lists true as files move and go.
  *
  * Every note listing the old path has it rewritten — once per file on disk,
  * so a hard-linked pair, which shares one frontmatter, is written once. A
@@ -120,12 +289,14 @@ export async function makeOtherPath(app: App, file: TFile, target: string, kind:
  * relative to where it stands.
  */
 export async function followRename(app: App, oldPath: string, newPath: string): Promise<void> {
+	if (held.has(oldPath)) return;
 	const base = basePath(app);
 	if (base !== null) await repointSymlink(base, oldPath, newPath);
 	await rewriteListing(app, oldPath, (list) => list.map((entry) => (entry === oldPath ? newPath : entry)));
 }
 
 export async function followDelete(app: App, path: string): Promise<void> {
+	if (held.has(path)) return;
 	await rewriteListing(app, path, (list) => list.filter((entry) => entry !== path));
 }
 
@@ -136,7 +307,7 @@ async function rewriteListing(app: App, path: string, change: (list: string[]) =
 	// only re-reads the name a write went through.
 	const groups = new Map<string, TFile[]>();
 	for (const file of app.vault.getMarkdownFiles()) {
-		if (!listedPaths(app, file).includes(path)) continue;
+		if (!mentions(app, file, path)) continue;
 		let key = file.path;
 		if (base !== null) {
 			try {
@@ -150,7 +321,15 @@ async function rewriteListing(app: App, path: string, change: (list: string[]) =
 	}
 	for (const [first, ...others] of groups.values()) {
 		if (!first) continue;
-		await rewritePaths(app, first, (list) => (list.includes(path) ? change(list) : null));
+		await rewriteLists(app, first, (lists) => {
+			let changed = false;
+			for (const key of ALL_KEYS) {
+				if (!lists[key]?.includes(path)) continue;
+				lists[key] = change(lists[key]);
+				changed = true;
+			}
+			return changed;
+		});
 		await refreshNames(app, others);
 	}
 }
@@ -360,10 +539,30 @@ export class AliasRows {
 	private collect(): Map<string, AliasRow[]> {
 		const byFolder = new Map<string, AliasRow[]>();
 		const put = (folder: string, row: AliasRow): void => {
-			byFolder.set(folder, [...(byFolder.get(folder) ?? []), row]);
+			const rows = byFolder.get(folder) ?? [];
+			// Once per name in a folder, however many notes or names list it.
+			if (rows.some((other) => other.name === row.name)) return;
+			byFolder.set(folder, [...rows, row]);
 		};
+		const base = basePath(this.app);
+		const seen = new Set<string>();
 		for (const file of this.app.vault.getMarkdownFiles()) {
-			for (const path of listedPaths(this.app, file)) {
+			const fm = this.app.metadataCache.getFileCache(file)?.frontmatter;
+			if (!fm || (fm[PATHS_KEY] === undefined && fm.aliases === undefined && fm[KIND_KEYS.alias] === undefined)) continue;
+			// A hard-linked pair, or a note and a symbolic link to it that the
+			// vault lists, share one frontmatter: read it once, through the note.
+			if (base !== null) {
+				try {
+					const stats = lstatSync(join(base, file.path));
+					if (stats.isSymbolicLink()) continue;
+					const key = `${stats.dev}:${stats.ino}`;
+					if (seen.has(key)) continue;
+					seen.add(key);
+				} catch {
+					continue;
+				}
+			}
+			for (const path of new Set([...listedPaths(this.app, file), ...readKey(this.app, file, KIND_KEYS.alias)])) {
 				// Files the vault lists are listed as such. An alias path has
 				// nothing of its own to show, and a symbolic link the vault
 				// never picked up is shown here, opening the note it points at.

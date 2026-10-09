@@ -182,4 +182,42 @@ test("picking a match collapses the step to it", async () => {
 	expect("the field holds the choice", await page.evaluate(`return document.querySelector(".lure-path-input")?.value ?? null;`), "Pie.md");
 });
 
+test("a real * key press keeps the dropdown up with the matches", async () => {
+	await inFolder();
+	await type("Cake");
+	await pressKey(page, "*");
+	await settle(500);
+	const rows = await listed();
+	expect("the dropdown is up", rows.length > 0, true);
+	expect("with the matches in it", rows.filter((r) => r.glob).map((r) => r.label).sort(), ["Cake one.md", "Cake two.md"]);
+});
+
+test("after Enter the count and its colour go", async () => {
+	await inFolder();
+	await type("Cake*");
+	await pressKey(page, "Enter");
+	await settle(1200);
+	const r = await page.evaluate(`
+		await app.workspace.getLeaf(false).openFile(app.vault.getAbstractFileByPath(${JSON.stringify(`${DIR}/Pie.md`)}));
+		${PAUSE(600)}
+		return JSON.stringify(!!app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-other-paths"));
+	`).then(JSON.parse);
+	expect("no button left over", r, false);
+});
+
+test("Tab going round file names highlights each one in the list", async () => {
+	await inFolder();
+	await type("Cake");
+	const seen = [];
+	for (let i = 0; i < 4; i++) {
+		await pressKey(page, "Tab");
+		await settle(500);
+		seen.push(JSON.parse(await page.evaluate(`return JSON.stringify({ value: document.querySelector(".lure-path-input")?.value ?? null, lit: document.querySelector(".suggestion-item.is-selected .lure-suggest-label")?.textContent ?? null });`)));
+	}
+	// Press 3 gives back what was typed, where nothing is highlighted.
+	const named = seen.filter((s) => s.value !== "Cake");
+	expect("each name on show is the highlighted row", named.every((s) => s.value === s.lit) && named.length === 3, true);
+	if (!named.every((s) => s.value === s.lit)) console.log("    " + JSON.stringify(seen));
+});
+
 await run();

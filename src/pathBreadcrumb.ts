@@ -32,7 +32,7 @@ import {
 	readableMinimum,
 } from "./pathFit";
 import { commonPrefix, planTab, TabCandidate } from "./tabComplete";
-import { LinkKind, OtherPath, makeOtherPath, otherPaths } from "./altPaths";
+import { LinkKind, OtherPath, aliasPathsOf, convertLink, forgetOtherPath, makeOtherPath, otherPaths, recordCopy } from "./altPaths";
 import { createsFiles, expandBraces, hasGlobChars, matchPaths } from "./globPattern";
 import { FolderChildSuggest, LINK_ENTER, MODIFIED_ENTER, guardFieldKeys, pageLabel, PathSuggestion } from "./folderChildSuggest";
 import { ExternalChild, PATH_SEP, externalJoin, externalParent, externalSegments, isExternalFile, isExternalFolder, listExternalChildren } from "./externalFs";
@@ -808,6 +808,10 @@ export class PathBreadcrumb {
 	private tabCycle: TabCycle | null = null;
 	/** Set by the rungs that show the extension on purpose, for the next field opened. */
 	private keepExtension = false;
+	/** The rung was asked for by its own command, so it shows whatever it is about. */
+	private rungDirect = false;
+	/** The ladder is being walked backwards, for a rung that is passed over. */
+	private ladderBack = false;
 	/** Enter presses already acted on as a link, so no second handler moves the note as well. */
 	private linkEnters = new WeakSet<Event>();
 	/** What a pattern in the field matches, or null while the field holds no pattern. */
@@ -5719,6 +5723,7 @@ export class PathBreadcrumb {
 		// other than what it just did — the original stays put and the copy
 		// opens in its own pane — so without a word it is easy to believe
 		// nothing happened at all.
+		await recordCopy(this.plugin.app, this.file, copy);
 		new Notice(t("noticeCopied", { path: copy.path }));
 		this.revealInExplorer(copy);
 
@@ -6428,11 +6433,12 @@ export class PathBreadcrumb {
 	private tabCandidates(query: string): { rows: PathSuggestion[]; candidates: TabCandidate[] } {
 		const rows = this.suggest?.completions(query) ?? [];
 		const candidates: TabCandidate[] = rows.map((row) => ({
-			label: row.label,
+			label: this.fieldName(row.label, row.kind),
 			path: row.path,
 			folder: row.kind === "folder",
 		}));
-		const name = this.renameMode && !this.showingLocations ? (this.externalFileName ?? this.file?.name ?? null) : null;
+		const whole = this.renameMode && !this.showingLocations ? (this.externalFileName ?? this.file?.name ?? null) : null;
+		const name = whole === null ? null : this.fieldName(whole, "file");
 		if (!name || !name.toLowerCase().startsWith(query.toLowerCase())) return { rows, candidates };
 		const at = candidates.findIndex((candidate) => !candidate.folder && candidate.label === name);
 		if (at >= 0) {
@@ -6441,7 +6447,7 @@ export class PathBreadcrumb {
 		}
 		const folder = this.currentFolderPath();
 		const path =
-			this.externalPath !== null ? externalJoin(this.externalPath, name) : folder ? `${folder}/${name}` : name;
+			this.externalPath !== null ? externalJoin(this.externalPath, whole ?? name) : folder ? `${folder}/${whole ?? name}` : (whole ?? name);
 		candidates.unshift({ label: name, path, folder: false });
 		return { rows, candidates };
 	}
@@ -6586,6 +6592,35 @@ export class PathBreadcrumb {
 	 * note's alias — and outside the vault. The new path is recorded in the
 	 * note's `paths` list; see `altPaths.ts`.
 	 */
+	/**
+	 * Converts the link this note is opened at. Returns false when it is not a
+	 * link, so the press goes on to do what it did before.
+	 */
+	private async convertCurrent(to: LinkKind | "copy"): Promise<boolean> {
+		const file = this.file;
+		if (!file || this.externalPath !== null) return false;
+		let result;
+		let keeper: string | null;
+		try {
+			({ result, keeper } = await convertLink(this.plugin.app, file, to, this.plugin.diskLinks.sameFile(file.path)));
+		} catch (err) {
+			new Notice(t("noticeLinkFailed", { error: (err as Error).message }));
+			return true;
+		}
+		if (result === "not-a-link") return false;
+		if (result === "same") {
+			new Notice(t("noticeLinkSame"));
+			return true;
+		}
+		const done = { alias: "noticeConvertedAlias", hard: "noticeConvertedHard", symbolic: "noticeConvertedSymlink", copy: "noticeConvertedCopy" } as const;
+		new Notice(t(done[to], { path: file.path }));
+		this.dismissEditing();
+		// An alias path has no file to stay on: the note it names opens.
+		const note = to === "alias" && keeper ? this.plugin.app.vault.getAbstractFileByPath(keeper) : null;
+		if (note instanceof TFile) this.navigateToFile(note);
+		return true;
+	}
+
 	private async commitLink(target: string, kind: LinkKind): Promise<void> {
 		const file = this.file;
 		if (!file || this.externalPath !== null) {
@@ -6593,7 +6628,14 @@ export class PathBreadcrumb {
 			return;
 		}
 		const path = normalizePath(target);
-		if (path === file.path || this.plugin.app.vault.getAbstractFileByPath(path) || this.plugin.aliasRows.resolve(path)) {
+		// One of this note's own alias paths becomes the link asked for.
+		const ownAlias = aliasPathsOf(this.plugin.app, file).includes(path);
+		if (ownAlias && kind === "alias") {
+			new Notice(t("noticeLinkSame"));
+			return;
+		}
+		if (ownAlias) await forgetOtherPath(this.plugin.app, file, path);
+		else if (path === file.path || this.plugin.app.vault.getAbstractFileByPath(path) || this.plugin.aliasRows.resolve(path)) {
 			new Notice(t("noticeLinkTaken", { path }));
 			this.inputEl?.focus();
 			return;
@@ -6812,8 +6854,19 @@ export class PathBreadcrumb {
 		const bounds = held ? held.segment : segmentBoundsAtCaret(input.value, input.selectionEnd ?? input.value.length);
 		this.preview = null;
 		this.settleSuggestion(false);
-		this.writeSegment(input, bounds, label);
+		this.writeSegment(input, bounds, this.fieldName(label, "file"));
 		input.focus();
+	}
+
+	/**
+	 * A name as the field writes it: a note's `.md` left off while extensions
+	 * are hidden, the way the row and the dropdown show it — Enter puts it
+	 * back. Other files keep theirs, since Enter could not guess it.
+	 */
+	private fieldName(label: string, kind: string): string {
+		if (this.plugin.settings.showFileExtension || this.externalPath !== null) return label;
+		if (kind !== "file" && kind !== "keep-name") return label;
+		return /\.md$/i.test(label) ? label.slice(0, -3) : label;
 	}
 
 	/**
@@ -7181,7 +7234,12 @@ export class PathBreadcrumb {
 		if (this.tabStage !== null) {
 			if (this.tabStage > 0) {
 				this.tabStage -= 1;
-				this.applyLadderStage();
+				this.ladderBack = true;
+				try {
+					this.applyLadderStage();
+				} finally {
+					this.ladderBack = false;
+				}
 				return;
 			}
 			// Below the first rung the ladder is over, and the press goes on
@@ -7505,6 +7563,11 @@ export class PathBreadcrumb {
 			return;
 		}
 
+		// With extensions hidden the name-with-extension rung is passed over by
+		// the keys' cycles; only its own command shows it.
+		if (this.tabStage === 1 && !this.rungDirect && !this.plugin.settings.showFileExtension && this.externalPath === null && /\.md$/i.test(target)) {
+			this.tabStage = this.ladderBack ? 0 : 2;
+		}
 		// The vault's rung where it has nothing to offer is no rung at all.
 		if (this.tabStage === VAULT_RUNG && !this.hasVaultRung()) this.tabStage = LAP_RUNG;
 		// Off the vault's rung, the row comes back from the places it was
@@ -8965,7 +9028,7 @@ export class PathBreadcrumb {
 		// selection over it; what is showing now is a row, not a retreat.
 		this.tabGivenBack = null;
 		input.value =
-			base.text.slice(0, start) + value.label + this.tailUnder(value, base.text.slice(end));
+			base.text.slice(0, start) + this.fieldName(value.label, value.kind) + this.tailUnder(value, base.text.slice(end));
 		// Shown the way the offer is: what you typed stays yours, and the rest
 		// of the row's name is marked as a suggestion — so pointing at a row
 		// looks exactly like the offer that row would make, and typing runs on
@@ -8973,14 +9036,20 @@ export class PathBreadcrumb {
 		// (the list matches anywhere in a name) is marked whole, since none
 		// of it is yours.
 		const typed = base.text.slice(start, Math.min(base.selectionStart, end));
-		const kept = typed && value.label.toLowerCase().startsWith(typed.toLowerCase()) ? typed.length : 0;
-		input.setSelectionRange(start + kept, start + value.label.length);
+		const shown = this.fieldName(value.label, value.kind);
+		const kept = typed && shown.toLowerCase().startsWith(typed.toLowerCase()) ? typed.length : 0;
+		input.setSelectionRange(start + kept, start + shown.length);
 		this.autoSizeInput?.();
 	}
 
 	/** Removes the typing input (if any) and returns filenameEl to plain text, without touching browsePath. */
 	private exitTypingInput(): void {
 		if (this.mode !== "typing") return;
+		// A pattern's count and colour belong to the field.
+		if (this.globMatches !== null) {
+			this.globMatches = null;
+			this.updateIndicator();
+		}
 		this.editCleanup?.();
 		this.editCleanup = null;
 		this.inputEl = null;
@@ -9151,6 +9220,15 @@ export class PathBreadcrumb {
 		}
 
 		if (this.renameMode) {
+			// The path left as it is, with a link chord or Ctrl: the link this
+			// note is opened at becomes another kind of link, or a copy.
+			const to = link ?? (paneType ? "copy" : null);
+			if (to && this.file && normalized === this.file.path && (await this.convertCurrent(to))) return;
+			// Copying onto one of this note's own alias paths turns the alias
+			// into the copy.
+			if (!link && paneType && this.file && aliasPathsOf(this.plugin.app, this.file).includes(normalized)) {
+				await forgetOtherPath(this.plugin.app, this.file, normalized);
+			}
 			if (link) {
 				await this.commitLink(normalized, link);
 				return;
@@ -9692,7 +9770,12 @@ export class PathBreadcrumb {
 	focusRung(rung: number): boolean {
 		if (rung === VAULT_RUNG && !this.hasVaultRung()) return false;
 		this.lapArmedFor = null;
-		this.startLadderAt(rung, this.inputEl ? this.standingTargetPath() : null);
+		this.rungDirect = true;
+		try {
+			this.startLadderAt(rung, this.inputEl ? this.standingTargetPath() : null);
+		} finally {
+			this.rungDirect = false;
+		}
 		return true;
 	}
 

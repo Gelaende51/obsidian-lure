@@ -305,4 +305,68 @@ test("Tab going round the names highlights an alias row too", async () => {
 	expect("the alias among them", seen.some((s) => s.value === "Elsewhere.md"), true);
 });
 
+const listsOf = (path) => page.evaluate(`
+	const f = app.vault.getAbstractFileByPath(${JSON.stringify(path)});
+	const fm = f ? app.metadataCache.getFileCache(f)?.frontmatter ?? {} : null;
+	return JSON.stringify(fm && Object.fromEntries(Object.entries(fm).filter(([k]) => k.startsWith("paths"))));
+`).then(JSON.parse);
+
+test("each kind has its own list beside paths", async () => {
+	await renaming();
+	await typeOverName("Hard");
+	await pressKey(page, "shift+Enter");
+	await settle(1500);
+	await renaming();
+	await typeOverName("Sub/Soft");
+	await pressKey(page, "ctrl+shift+Enter");
+	await settle(1500);
+	await renaming();
+	await typeOverName("Alias one");
+	await pressKey(page, "alt+Enter");
+	await settle(1500);
+	const lists = await listsOf(NOTE);
+	expect("hard links, both names", lists["paths-hardlinks"], [NOTE, `${DIR}/Hard.md`]);
+	expect("symbolic links", lists["paths-symlinks"], [`${DIR}/Sub/Soft.md`]);
+	expect("alias paths", lists["paths-aliases"], [`${DIR}/Alias one.md`]);
+	expect("paths is all of them", [...lists.paths].sort(), [NOTE, `${DIR}/Hard.md`, `${DIR}/Sub/Soft.md`, `${DIR}/Alias one.md`].sort());
+});
+
+test("a copy names its origin and drops the lists, and the source lists it as a fork", async () => {
+	await renaming();
+	await typeOverName("Alias one");
+	await pressKey(page, "alt+Enter");
+	await settle(1200);
+	await renaming();
+	await typeOverName("Copied");
+	await pressKey(page, "ctrl+Enter");
+	await settle(1500);
+	expect("the copy's lists", await listsOf(`${DIR}/Copied.md`), { "paths-origin": NOTE });
+	expect("the source's forks", (await listsOf(NOTE))["paths-forks"], [`${DIR}/Copied.md`]);
+});
+
+test("the unchanged path with another chord converts a hard link to a symbolic link", async () => {
+	await renaming();
+	await typeOverName("Hard");
+	await pressKey(page, "shift+Enter");
+	await settle(2000);
+	await page.evaluate(`
+		await app.workspace.getLeaf(false).openFile(app.vault.getAbstractFileByPath(${JSON.stringify(`${DIR}/Hard.md`)}));
+		${PAUSE(800)}
+		return true;
+	`);
+	for (let i = 0; i < 2; i++) {
+		await pressKey(page, "F2");
+		await settle(400);
+		if (await page.evaluate(`return !!document.querySelector(".lure-path-input");`)) break;
+	}
+	await pressKey(page, "ctrl+shift+Enter");
+	await settle(2000);
+	const hard = await disk(`${DIR}/Hard.md`);
+	expect("now a symbolic link", hard.symlink, true);
+	expect("pointing at the note", hard.link, "Note.md");
+	const lists = await listsOf(NOTE);
+	expect("listed as one", lists["paths-symlinks"], [`${DIR}/Hard.md`]);
+	expect("and no longer as a hard link", lists["paths-hardlinks"] ?? [], []);
+});
+
 await run();

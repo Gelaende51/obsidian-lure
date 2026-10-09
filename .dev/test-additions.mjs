@@ -259,4 +259,22 @@ test("with extensions hidden, the field leaves .md off too, except on the rung t
 	}
 });
 
+test("with extensions hidden, Tab writes names without .md and passes over the extension rung", async () => {
+	await setSettings(page, { showFileExtension: false });
+	try {
+		await inOwnFolder();
+		await type("Cabb");
+		await pressKey(page, "Tab");
+		await settle();
+		expect("completed without .md", (await look()).value, "Cabbage");
+		await page.evaluate(openNote);
+		await page.evaluate(`app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-filename-text").click(); ${PAUSE(400)} return true;`);
+		await pressKey(page, "Tab");
+		await settle();
+		expect("the next rung is the path from the vault", (await look()).value, `${DIR}/Cake`);
+	} finally {
+		await setSettings(page, { showFileExtension: true });
+	}
+});
+
 await run();
