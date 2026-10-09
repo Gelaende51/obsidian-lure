@@ -6678,6 +6678,10 @@ export class PathBreadcrumb {
 		// renaming — since the note it is about has not changed.
 		const others = file && inVault ? otherPaths(this.plugin.app, this.plugin.diskLinks, file) : [];
 		const matches = inVault ? this.globMatches : null;
+		// Any other button in the row is one a redraw lost track of.
+		for (const stray of Array.from(this.vaultSegmentEl.querySelectorAll(".lure-other-paths"))) {
+			if (stray !== this.indicatorEl) stray.remove();
+		}
 		if (!others.length && matches === null) {
 			this.indicatorEl?.remove();
 			this.indicatorEl = null;
