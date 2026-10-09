@@ -672,7 +672,7 @@ test("off the rungs, F2 and the focus command press Tab", async () => {
 
 test("F2 ends its cycle on the inline title", async () => {
 	await page.evaluate(openVaultNote);
-	for (let i = 0; i < 6; i++) {
+	for (let i = 0; i < 7; i++) {
 		await pressKey(page, "F2");
 		await page.evaluate(PAUSE(300) + "return true;");
 	}
@@ -680,7 +680,7 @@ test("F2 ends its cycle on the inline title", async () => {
 		field: !!document.querySelector(".view-header-title-container input"),
 		title: !!document.activeElement?.closest(".inline-title"),
 	};`);
-	expect("heading, four rungs, and back to the heading", r, { field: false, title: true });
+	expect("heading, five rungs (the vault the fifth), and back to the heading", r, { field: false, title: true });
 });
 
 test("after the cycle leaves, the next press is Tab's lap: the root folder", async () => {
@@ -694,7 +694,7 @@ test("after the cycle leaves, the next press is Tab's lap: the root folder", asy
 		});
 	`;
 	await page.evaluate(openVaultNote);
-	for (let i = 0; i < 7; i++) {
+	for (let i = 0; i < 8; i++) {
 		await pressKey(page, "F2");
 		await page.evaluate(PAUSE(300) + "return true;");
 	}
@@ -702,7 +702,7 @@ test("after the cycle leaves, the next press is Tab's lap: the root folder", asy
 		JSON.parse(await page.evaluate(read)), { value: `${ROOT}/inner/leaf.md`, selected: ROOT });
 
 	await page.evaluate(openVaultNote);
-	for (let i = 0; i < 6; i++) {
+	for (let i = 0; i < 7; i++) {
 		await page.evaluate(`app.commands.executeCommandById("lure:focus-path-bar");` + PAUSE(300) + "return true;");
 	}
 	expect("the command: past the note, the same",
@@ -728,6 +728,9 @@ test("the focus command walks F2's rungs, then hands focus back to the note", as
 	expect("then the path from the system root", rungs[3].selected, `${app.vaultPath}/${ROOT}/inner/leaf.md`);
 	expect("navigating, not renaming", rungs.some((r) => r.renaming), false);
 
+	// The vault's rung, where places can be reached: the test vault opens them.
+	const vault = await press();
+	expect("then the vault, its part of the path marked", typeof vault.selected === "string" && `${app.vaultPath}/${ROOT}/inner/leaf.md`.startsWith(vault.selected), true);
 	const after = await press();
 	expect("the next press closes the field", after.selected, null);
 	expect("and the cursor is back in the note", after.inEditor, true);
