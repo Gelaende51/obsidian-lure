@@ -2631,6 +2631,7 @@ from the logged readings; the factors will move as readings accumulate.
 - `concurrency.cancel-in-progress` for push events means every push cancels the previous push run — pushing often while waiting for results leaves no run that finishes. Stop pushing until one has.
 - A job's log can be read only once the job ends (`gh api --allow-escape-sequences repos/…/actions/jobs/<id>/logs`); a five-hour VM job is a black box until then. Always check a run's `headSha` before reading its result as the current code's.
 - A container job runs actions with the host's Node, so the image needs glibc and `tar`; the container runs as root, so Electron needs `--no-sandbox`. openSUSE Tumbleweed broke mid-run (mirror 404s, the upgrade removed `sh`): a rolling release is a bad CI base — Leap is used instead.
+- openSUSE Leap 15.6 is end of life and its repositories answer 404; Leap 16.0's slim image has no `tar` and a busybox `sh`, which installing packages removes (`bash-sh` puts `/bin/sh` back). It also declares no `PATH`: after `setup-node` prepends its tool cache, the job's PATH is the tool cache alone, without `/usr/bin`. Writing the system directories to `GITHUB_PATH` in the first step fixes every later step.
 - The Windows runner's session cannot move a file to the Recycle Bin: `shell.trashItem` fails with "Failed to create FileOperation instance". Works on a desktop.
 
 ## macOS under the debugging protocol
