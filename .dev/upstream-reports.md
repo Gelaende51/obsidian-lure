@@ -17,22 +17,26 @@ again before it is sent.
 - **Reproduce:** `npx obsidian-launcher@3 launch -p id:obsidian-prozen <vault>`.
 - **Found by:** test-compat-ui in `.github/workflows/test.yml`, run 38052133194.
 
-## Iconic: turning it on freezes Obsidian's window (CI sandbox)
+## Iconic: turning it on freezes Obsidian's window on Linux and Windows
 
 - **Project:** [Iconic](https://github.com/gfxholo/iconic) (`iconic`), 1.1.10
-- **Where:** Obsidian 1.14.4 and 1.8.7 on Ubuntu (GitHub runner), under Xvfb,
-  started by obsidian-launcher with a copy of a small demo vault. No other
-  community plugin enabled.
+- **Where:** Obsidian 1.14.4 (and 1.8.7 on Linux), started by
+  obsidian-launcher with a copy of a small demo vault, on GitHub runners:
+  - Ubuntu under Xvfb — freezes;
+  - Windows Server 2025, a real desktop session — freezes;
+  - macOS 15 (Apple silicon) — does **not** freeze.
+  Each with no other community plugin enabled (and again beside Lure, the
+  same).
 - **What happens:** `app.plugins.enablePlugin("iconic")` never returns; the
   window's page stops answering the DevTools protocol (`Runtime.evaluate`
-  times out), `Debugger.pause` does not pause it either, and no dialog or
-  renderer crash is reported. The same happens with every other plugin off.
-- **Suspected:** a synchronous call that blocks outside JavaScript at load
-  (the debugger can interrupt any script loop), e.g. a sync IPC or a file
-  system walk.
-- **Still to check before filing:** whether it happens on a desktop session
-  (Linux, Windows, macOS) and in a fresh vault, and which Iconic version
-  started it. `.dev/probe-freeze.mjs` reproduces it: `EXTRA_PLUGINS=iconic
-  LURE_OFF=1 .dev/ci-run.sh probe-freeze`.
-- **Found by:** test-compat-ui, then the freeze-probe job of
-  `.github/workflows/test-systems.yml` (run 38061880299, Lure on and off).
+  times out), `Debugger.pause` does not pause it either, and no dialog,
+  exception or renderer crash is reported.
+- **Suspected:** a synchronous call that blocks outside JavaScript at load —
+  the debugger can interrupt any script loop — and one that behaves
+  differently on macOS: a native API (system colours, file icons) or a sync
+  IPC to the main process.
+- **Still to check before filing:** a person's own desktop on Linux or
+  Windows, a fresh vault, and which Iconic version started it.
+- **Reproduce:** `EXTRA_PLUGINS=iconic LURE_OFF=1 .dev/ci-run.sh probe-freeze`
+  (`.dev/probe-freeze.mjs`), or the freeze-probe job of
+  `.github/workflows/test-systems.yml` (runs 38061880299, 38066641480).

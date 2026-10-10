@@ -92,11 +92,13 @@ const ALL_PEERS = [
 	  why: "keeps each note in one tab, focusing the one already open" },
 	{ set: "ui", id: "open-tab-settings", name: "Open Tab Settings", kind: "adjacent",
 	  why: "changes where opened files go: new tab, no duplicates" },
-	// Iconic (iconic) is left out: turning it on freezes Obsidian's page in
-	// the CI sandbox (Linux, xvfb, Obsidian 1.8.7 and 1.14.4) with Lure off
-	// as well — not a conflict, and nothing after it could be asked. The
-	// debugger cannot pause the page either, so it is blocked outside
-	// JavaScript. See .dev/probe-freeze.mjs and .dev/upstream-reports.md.
+	// Last, and installed on macOS only (.dev/ci-run.sh): turning Iconic on
+	// freezes Obsidian on Linux and Windows with Lure off as well — not a
+	// conflict, and nothing after it could be asked; the debugger cannot
+	// pause the page either. macOS is unaffected. See .dev/probe-freeze.mjs
+	// and .dev/upstream-reports.md. Elsewhere it reports "not installed".
+	{ set: "ui", id: "iconic", name: "Iconic", kind: "header",
+	  why: "icons and colours on tabs, files and titles" },
 ];
 /** Which set this run checks: the original neighbours, or (test-compat-ui) the header plugins. */
 const PEERS = ALL_PEERS.filter((p) => (p.set ?? "base") === (process.env.LURE_PEER_SET ?? "base"));

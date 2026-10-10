@@ -45,6 +45,8 @@ if [ "$SUITE" = test-compat-ui ]; then
 		-p id:obsidian-filename-heading-sync
 		-p id:advanced-rename-and-delete-handler -p id:mononote -p id:open-tab-settings
 	)
+	# Iconic freezes Obsidian when turned on, except on macOS.
+	[ "$(uname)" = Darwin ] && PLUGINS+=(-p id:iconic)
 fi
 
 # The installer (Electron) goes with the app: the newest for "latest", the
