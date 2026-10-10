@@ -8,6 +8,41 @@
 
 Každé vydání pluginu Lure, od nejnovějšího. Co přibylo od posledního vydání, najdete pod *Nevydáno*. Verze nemají předponu `v`, stejně jako značky vydání.
 
+## Nevydáno
+
+### Přidáno
+
+- **Tab prochází jména na rozcestí.** Pokud to, co jste napsali, je stále začátkem několika jmen, každé stisknutí zapíše celé další z nich a vyznačí doplněnou část. Stisknutí po posledním vrátí to, co jste napsali. <kbd>Shift</kbd>+<kbd>Tab</kbd> jde opačným směrem. Když zbývá jediné jméno, Tab do něj vstoupí jako dřív.
+- **Klepnutí na <kbd>Alt</kbd> doplňuje** tak, jako dřív Tab: dokud se jména shodují, pak do jediné zbylé složky a potom nahoru po příčkách. Na jménu, které Tab zobrazil, do něj vstoupí.
+- **Trezor je příčkou** za cestou od kořene systému, a to pro Tab, klávesu přejmenování i klávesu fokusu: tato místa se otevírají s celou cestou v poli a s vyznačenou částí trezoru. Jen se zapnutým *Access external files*.
+- **Příkaz pro každou příčku** (jméno, jméno s příponou, cesta od trezoru, cesta od kořene systému, trezor), abyste mohli přiřadit klávesu přímo té, kterou chcete.
+- **<kbd>Shift</kbd> s klávesou přejmenování nebo klávesou fokusu prochází cyklus pozpátku.**
+- **Poznámky, na které vedou odkazy, ale ještě nejsou napsané, jsou uvedeny** v rozbalovacím seznamu, růžově, ve složce, kde by je Obsidian vytvořil. Výběrem takové poznámky ji vytvoříte.
+- **Se skrytými příponami ukazuje každý soubor v rozbalovacím seznamu svůj typ** ve štítku na konci řádku a lišta cesty ukazuje typ otevřeného souboru na svém pravém konci. Stisknutím štítku se jméno vypíše v poli i s příponou. Štítek lišty cesty zůstává, dokud je pole otevřené.
+- **Poznámka může mít další cesty.** Při přejmenování <kbd>Alt</kbd>+<kbd>Enter</kbd> přidá napsanou cestu jako cestu aliasu, <kbd>Shift</kbd>+<kbd>Enter</kbd> na ní vytvoří pevný odkaz a <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> symbolický odkaz. Poznámka zůstane, kde je. Každá cesta se zaznamená ve frontmatteru `paths` poznámky, který sleduje přejmenování a mazání, i ta provedená mimo Obsidian: pevný nebo symbolický odkaz vytvořený, oddělený nebo odstraněný ve správci souborů, v terminálu nebo při zavřeném Obsidianu se v seznamech opraví.
+- **Aliasy jsou uvedeny v rozbalovacím seznamu**, oranžově: cesty aliasů ve složce, kterou určují, a vlastní aliasy Obsidianu vedle své poznámky. Výběr aliasu, nebo napsání cesty aliasu a stisknutí Enter, otevře poznámku.
+- **Tlačítko před segmentem trezoru vypisuje další cesty poznámky**, pokud nějaké má: cesty aliasů, pevné a symbolické odkazy nalezené v trezoru a aliasy Obsidianu. Ukazuje jejich počet v barvě nejsilnějšího druhu: pevný odkaz fialově, symbolický odkaz růžově, alias oranžově. Jeho seznam je sestaven jako rozbalovací seznam (stejné řádky, barvy a štítky přípon, zvýraznění pod ukazatelem i šipkami) a začíná vlastní cestou poznámky modře. Se skrytými příponami tlačítko místo toho tvoří ikona štítku na konci řádku: štítek převezme jeho barvu za šedou příponou a seznam se otevře tak, že končí tam, kde končí přípona.
+- **Každý druh další cesty má vlastní seznam** (`paths-hardlinks`, `paths-symlinks`, `paths-aliases`) vedle `paths`, jejich součtu. Kopie uvádí svůj zdroj v `paths-origin` a seznamy zdroje nepřebírá. Zdroj ji uvádí v `paths-forks`.
+- **Odkaz může změnit druh na místě**: při přejmenování s nezměněnou cestou promění klávesové zkratky pro odkazy a <kbd>Ctrl</kbd>+<kbd>Enter</kbd> pevný nebo symbolický odkaz v odkaz druhého druhu, v cestu aliasu nebo ve vlastní kopii.
+- **Vzory glob v poli cesty.** `*`, `?`, `**`, `[…]` a `{a,b}` vyhledávají soubory trezoru. Totéž tlačítko počítá shody, zeleně, pokud nějaké jsou, a červeně, pokud žádné nejsou, a vypisuje je. Enter otevře všechny shody a nad deset se nejdřív zeptá. Vzor tvořený jen složenými závorkami, například `Week {1,2,3}`, vytvoří poznámky, které jmenuje. Skutečné jméno obsahující některý z těchto znaků se vždy bere doslova a přejmenování vzory nikdy nevyhodnocuje.
+- **Segment trezoru může ukazovat svou ikonu a jméno, jen ikonu, nebo nic**, a ikonou může být libovolná ikona Lucide. Nahrazuje to *Show vault name* a uložená volba se přenese.
+- **Další cesty mimo trezor.** Při přejmenování souboru mimo trezor vytvoří <kbd>Shift</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> a <kbd>Alt</kbd>+<kbd>Enter</kbd> pevný odkaz, symbolický odkaz a cestu aliasu, stejně jako uvnitř. Plugin o nich vede záznam (`external-links.json`), tlačítko dalších cest je vypisuje, cesta aliasu otevře svůj soubor a přesun nebo smazání přes lištu cesty záznam aktualizuje.
+
+### Změněno
+
+- **Na jménu trezoru zabírá pole celou šířku řádku**, aby se do něj vešla cesta od kořene systému, se kterou se otevírá.
+- **Při přesunu poznámky je její vlastní jméno první** pro Tab i nabídku, před jinými jmény, která začínají stejně.
+- **Složky v cestě, které ještě neexistují, jsou červené**, stejně jako je pole červené u jména, které by Enter vytvořil.
+- **Rozbalovací seznam má červený okraj, když by Enter vytvořil napsané jméno** a není zvýrazněn žádný řádek. V takovém případě si samotné pole ponechává barvu řádku.
+- **Kolečko myši se zastaví na prvním a posledním řádku** rozbalovacího seznamu, místo aby přeskočilo na druhý konec. Šipky dál přeskakují dokola.
+- **Přetažení na cestu, které nelze provést, řekne proč** (soubor už v té složce je, složka do sebe sama, jméno tam už existuje), místo aby záhlaví pod ním nabídlo otevření souboru.
+
+### Opraveno
+
+- **Řádek přizpůsobený ve chvíli, kdy jeho karta byla v pozadí,** vynechal jméno trezoru i jméno poznámky a mohl tak zůstat, i když měl po přepnutí na kartu místa dost. Nyní se přizpůsobí, jakmile má šířku, a znovu pokaždé, když se ta šířka změní.
+- **Se skrytými příponami štítek ustoupí, když řádku dochází místo**, stejně jako přípona. Dřív zůstával na obrazovce.
+- **Windows:** cesty zapsané s `/` (`C:/Users/you/vault/Note.md`) se rozpoznají jako cesty uvnitř trezoru, cesty kódované procenty s písmenem jednotky se dekódují a cesty v počítači se všude zapisují s `\` místo směsi obou oddělovačů.
+
 ## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Opraveno

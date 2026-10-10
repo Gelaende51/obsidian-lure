@@ -8,6 +8,41 @@
 
 Katrs Lure laidiens, jaunākais pirmais. Tas, kas ienācis kopš pēdējā laidiena, ir sadaļā *Neizdots*. Versijām nav `v` priedēkļa, tāpat kā laidienu tagiem.
 
+## Neizdots
+
+### Pievienots
+
+- **Tab pārslēdz nosaukumus atzarojumā.** Ja ierakstītais joprojām ir vairāku nosaukumu sākums, katrs nospiediens ieraksta nākamo nosaukumu pilnībā un iezīmē pievienoto daļu. Nospiediens pēc pēdējā atjauno ierakstīto. <kbd>Shift</kbd>+<kbd>Tab</kbd> iet pretējā virzienā. Ja palicis viens nosaukums, Tab ieiet tajā kā līdz šim.
+- **<kbd>Alt</kbd> pieskāriens pabeidz** tā, kā agrāk to darīja Tab: tik tālu, cik nosaukumi sakrīt, tad vienīgajā atlikušajā mapē, tad augšup pa pakāpieniem. Ja Tab ir parādījis nosaukumu, <kbd>Alt</kbd> ieiet tajā.
+- **Krātuve ir pakāpiens** pēc ceļa no sistēmas saknes, vienādi Tab, pārdēvēšanas taustiņam un fokusa taustiņam: šīs vietas atveras ar visu ceļu laukā un iezīmētu krātuves daļu. Tikai tad, ja ieslēgts *Access external files*.
+- **Komanda katram pakāpienam** (nosaukums, nosaukums ar paplašinājumu, ceļš no krātuves, ceļš no sistēmas saknes, krātuve), lai taustiņu varētu piesaistīt tieši vajadzīgajam.
+- **<kbd>Shift</kbd> kopā ar pārdēvēšanas vai fokusa taustiņu iet pa ciklu atpakaļ.**
+- **Nolaižamajā sarakstā ir piezīmes, uz kurām ir saites, bet kas vēl nav uzrakstītas**, rozā krāsā, tajā mapē, kurā Obsidian tās izveidotu. Izvēloties kādu no tām, tā tiek izveidota.
+- **Ja paplašinājumi ir paslēpti, katrs fails nolaižamajā sarakstā rāda savu tipu** emblēmā rindas galā, un ceļa josla labajā galā rāda atvērtā faila tipu. Nospiežot emblēmu, nosaukums laukā tiek izrakstīts ar paplašinājumu. Ceļa joslas emblēma paliek redzama, kamēr lauks ir atvērts.
+- **Piezīmei var būt citi ceļi.** Pārdēvējot <kbd>Alt</kbd>+<kbd>Enter</kbd> pievieno ierakstīto ceļu kā aizstājvārda ceļu, <kbd>Shift</kbd>+<kbd>Enter</kbd> izveido tur cieto saiti, bet <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> izveido simbolisko saiti. Piezīme paliek, kur bija. Katrs ceļš tiek ierakstīts piezīmes `paths` frontmatter, kas seko pārdēvēšanām un dzēšanām, arī tām, kas veiktas ārpus Obsidian: ja cietā vai simboliskā saite ir izveidota, atdalīta vai noņemta failu pārvaldniekā, terminālī vai laikā, kad Obsidian bija aizvērts, saraksti tiek izlaboti.
+- **Nolaižamajā sarakstā ir aizstājvārdi**, oranžā krāsā: aizstājvārdu ceļi mapē, ko tie norāda, un Obsidian paša aizstājvārdi blakus savai piezīmei. Izvēloties kādu vai ierakstot aizstājvārda ceļu un nospiežot Enter, tiek atvērta piezīme.
+- **Poga pirms krātuves segmenta uzskaita piezīmes citus ceļus**, ja tādi ir: aizstājvārdu ceļus, krātuvē atrastās cietās un simboliskās saites un Obsidian aizstājvārdus. Poga rāda to skaitu stiprākā veida krāsā: cietā saite violeta, simboliskā saite rozā, aizstājvārds oranžs. Tās saraksts ir veidots tāpat kā nolaižamais saraksts, ar tām pašām rindām, krāsām un paplašinājumu emblēmām, kas tiek izceltas zem rādītāja un ar bulttaustiņiem. Saraksts sākas ar piezīmes pašas ceļu zilā krāsā. Ja paplašinājumi ir paslēpti, pogas vietā ir rindas gala emblēmas ikona: emblēma iegūst pogas krāsu aiz pelēka paplašinājuma, un saraksts atveras tā, ka tas beidzas tur, kur paplašinājums.
+- **Katram citu ceļu veidam ir savs saraksts** (`paths-hardlinks`, `paths-symlinks`, `paths-aliases`) blakus `paths`, kas ir to summa. Kopija norāda savu avotu laukā `paths-origin` un atmet avota sarakstus; avots to uzskaita laukā `paths-forks`.
+- **Saite var mainīt veidu uz vietas**: pārdēvējot un atstājot ceļu nemainītu, saišu taustiņu kombinācijas un <kbd>Ctrl</kbd>+<kbd>Enter</kbd> pārvērš cieto vai simbolisko saiti otrā veidā, aizstājvārda ceļā vai patstāvīgā kopijā.
+- **Glob šabloni ceļa laukā.** `*`, `?`, `**`, `[…]` un `{a,b}` meklē atbilstības krātuves failos; tā pati poga parāda atbilstību skaitu (zaļā krāsā, ja tādas ir, sarkanā, ja to nav) un tās uzskaita. Enter atver visas atbilstības, bet, ja to ir vairāk par desmit, vispirms pajautā. Šablons tikai ar figūriekavām, piemēram, `Week {1,2,3}`, izveido piezīmes, ko tas nosauc. Īsts nosaukums, kas satur kādu no šīm rakstzīmēm, vienmēr tiek uztverts burtiski, un pārdēvēšana nekad neinterpretē šablonu.
+- **Krātuves segments var rādīt ikonu un nosaukumu, tikai ikonu vai neko**, un ikona var būt jebkura Lucide ikona. Tas aizstāj *Show vault name*, un saglabātā izvēle tiek pārnesta.
+- **Citi ceļi ārpus krātuves.** Pārdēvējot failu ārpus krātuves, <kbd>Shift</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> un <kbd>Alt</kbd>+<kbd>Enter</kbd> izveido attiecīgi cieto saiti, simbolisko saiti un aizstājvārda ceļu, tāpat kā krātuvē. Spraudnis glabā ierakstu (`external-links.json`), citu ceļu poga tos uzskaita, aizstājvārda ceļš atver savu failu, un, pārvietojot vai dzēšot failu caur ceļa joslu, ieraksts tiek atjaunināts.
+
+### Mainīts
+
+- **Uz krātuves nosaukuma lauks aizņem visu rindas platumu**, lai ietilptu ceļš no sistēmas saknes, ar kuru tas atveras.
+- **Pārvietojot piezīmi, tās pašas nosaukums ir pirmais** Tab un piedāvājumā, pirms citiem nosaukumiem ar tādu pašu sākumu.
+- **Ceļā esošās mapes, kuru vēl nav, ir sarkanas**, tāpat kā lauks ir sarkans, ja Enter izveidotu jaunu nosaukumu.
+- **Nolaižamajam sarakstam ir sarkana mala, ja Enter izveidotu ierakstīto nosaukumu** un neviena rinda nav izcelta, jo pats lauks šādā gadījumā rāda rindas krāsu.
+- **Peles ritenītis apstājas pie nolaižamā saraksta pirmās un pēdējās rindas**, nevis turpina no otra gala; bulttaustiņi joprojām turpina no otra gala.
+- **Ja nomešanu uz ceļa nevar veikt, tiek parādīts iemesls** (fails jau ir tajā mapē, mapi nevar ievietot pašā sevī, šāds nosaukums jau pastāv), nevis aiz ceļa joslas esošā galvene piedāvā atvērt failu.
+
+### Labots
+
+- **Ja rinda tika pielāgota, kamēr tās cilne bija fonā,** tā atteicās no krātuves nosaukuma un piezīmes nosaukuma un varēja tādā stāvoklī palikt, arī tad, kad cilne nonāca priekšplānā un vietas pietika. Tagad rinda tiek pielāgota, kad tai ir platums, un atkārtoti ikreiz, kad šis platums mainās.
+- **Ja paplašinājumi ir paslēpti, emblēma tiek paslēpta, kad rindā pietrūkst vietas**, tāpat kā paplašinājums; iepriekš tā palika redzama.
+- **Windows:** ceļi, kas rakstīti ar `/` (`C:/Users/you/vault/Note.md`), tiek atpazīti kā krātuves ceļi, procentkodēti ceļi ar diska burtu tiek atkodēti, un ceļi datorā visur tiek rakstīti ar `\`, nevis jaucot abus atdalītājus.
+
 ## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Labots

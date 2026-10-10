@@ -9,6 +9,41 @@
 
 Çdo publikim i Lure, më i riu i pari. Ajo që ka ardhur që nga publikimi i fundit ndodhet nën *Të papublikuara*. Versionet nuk kanë prapashtesën `v`, njësoj si etiketat e publikimeve.
 
+## Të papublikuara
+
+### Të shtuara
+
+- **Tab kalon me radhë nëpër emrat në një degëzim.** Kur ajo që keni shtypur është ende fillimi i disa emrave, çdo shtypje shkruan të plotë emrin tjetër, me pjesën e shtuar të shënuar, dhe shtypja pas të fundit ju kthen atë që keni shtypur. <kbd>Shift</kbd>+<kbd>Tab</kbd> shkon në drejtimin tjetër. Kur ka mbetur vetëm një emër, Tab hyn brenda si më parë.
+- **Një prekje e <kbd>Alt</kbd> plotëson** ashtu si bënte më parë Tab: deri aty ku emrat përputhen, brenda dosjes së vetme që ka mbetur, pastaj lart nëpër shkallaret. Mbi një emër që Tab e ka nxjerrë në pamje, hyn brenda tij.
+- **Kasaforta është një shkallare** pas shtegut nga rrënja e sistemit, njësoj për Tab, tastin e riemërtimit dhe tastin e fokusit: vendet hapen me të gjithë shtegun në fushë dhe pjesën e kasafortës të shënuar. Vetëm kur *Access external files* është aktiv.
+- **Një komandë për çdo shkallare** — emri, emri me prapashtesën, shtegu nga kasaforta, shtegu nga rrënja e sistemit, kasaforta — për t'i lidhur një tast drejtpërdrejt asaj që dëshironi.
+- **<kbd>Shift</kbd> me tastin e riemërtimit ose tastin e fokusit e përshkon ciklin së prapthi.**
+- **Shënimet me lidhje drejt tyre që nuk janë shkruar ende listohen** në listën rënëse, me ngjyrë rozë, në dosjen ku Obsidian do t'i krijonte. Zgjedhja e njërit e krijon atë.
+- **Me prapashtesat të fshehura, çdo skedar në listën rënëse tregon llojin e vet** në një etiketë në fund të rreshtit, dhe shiriti i shtegut tregon atë të skedarit të hapur në skajin e tij të djathtë; shtypja e një etikete e shkruan emrin në fushë me prapashtesën. Etiketa e shiritit të shtegut mbetet ndërsa fusha është e hapur.
+- **Një shënim mund të ketë shtigje të tjera.** Gjatë riemërtimit, <kbd>Alt</kbd>+<kbd>Enter</kbd> e shton shtegun e shtypur si shteg-alias, <kbd>Shift</kbd>+<kbd>Enter</kbd> krijon aty një lidhje të fortë, dhe <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> një lidhje simbolike; shënimi mbetet aty ku është. Secila regjistrohet në frontmatter-in `paths` të shënimit, i cili ndjek riemërtimet dhe fshirjet — edhe ato të bëra jashtë Obsidian-it: një lidhje e fortë ose simbolike e krijuar, e ndarë ose e hequr në një menaxher skedarësh, në një terminal ose ndërsa Obsidian ishte i mbyllur ndreqet në lista.
+- **Aliaset listohen në listën rënëse**, me portokalli: shtigjet-alias në dosjen që emërtojnë, aliaset e vetë Obsidian-it pranë shënimit të tyre. Zgjedhja e njërit, ose shtypja e një shtegu-alias dhe shtypja e Enter, e hap shënimin.
+- **Një buton përpara segmentit të kasafortës liston shtigjet e tjera të një shënimi** — shtigje-alias, lidhje të forta dhe simbolike të gjetura në kasafortë, aliaset e Obsidian-it — kur ai ka të tilla. Ai tregon sa janë, me ngjyrën e llojit më të fortë: lidhja e fortë vjollcë, lidhja simbolike rozë, aliasi portokalli. Lista e tij ndërtohet si lista rënëse — të njëjtat rreshta, ngjyra dhe etiketa prapashtesash, të theksuara nën treguesin dhe me tastet e shigjetave — dhe fillon me shtegun e vetë shënimit me blu. Me prapashtesat të fshehura, ai është ikona e etiketës në fund të rreshtit: etiketa merr ngjyrën e tij pas një prapashtese gri, dhe lista hapet duke përfunduar aty ku përfundon prapashtesa.
+- **Çdo lloj shtegu tjetër ka listën e vet** — `paths-hardlinks`, `paths-symlinks`, `paths-aliases` — pranë `paths`, shumës së tyre. Një kopje e emërton burimin e saj në `paths-origin` dhe i lë jashtë listat e burimit; burimi e liston atë në `paths-forks`.
+- **Një lidhje mund të ndryshojë llojin në vend**: gjatë riemërtimit me shtegun të lënë siç është, kombinimet e tasteve për lidhjet dhe <kbd>Ctrl</kbd>+<kbd>Enter</kbd> e kthejnë një lidhje të fortë ose simbolike në llojin tjetër, në një shteg-alias ose në një kopje më vete.
+- **Modele glob në fushën e shtegut.** `*`, `?`, `**`, `[…]` dhe `{a,b}` përputhen me skedarët e kasafortës; i njëjti buton numëron përputhjet, jeshil kur ka të tilla dhe i kuq kur nuk ka asnjë, dhe i liston ato. Enter hap çdo përputhje, duke pyetur më parë kur janë mbi dhjetë. Një model vetëm me kllapa gjarpërore — `Week {1,2,3}` — krijon shënimet që emërton. Një emër i vërtetë që përmban njërën nga këto shenja merret gjithmonë fjalë për fjalë, dhe riemërtimi nuk lexon kurrë një model.
+- **Segmenti i kasafortës mund të tregojë ikonën dhe emrin e saj, vetëm ikonën, ose asgjë**, dhe ikona mund të jetë çdo ikonë Lucide. Kjo zëvendëson *Show vault name*, dhe një zgjedhje e ruajtur bartet.
+- **Shtigje të tjera jashtë kasafortës.** Gjatë riemërtimit të një skedari atje jashtë, <kbd>Shift</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> dhe <kbd>Alt</kbd>+<kbd>Enter</kbd> krijojnë një lidhje të fortë, një lidhje simbolike dhe një shteg-alias, njësoj si brenda. Shtojca mban regjistrin (`external-links.json`), butoni i shtigjeve të tjera i liston ato, një shteg-alias hap skedarin e vet, dhe një zhvendosje ose fshirje përmes shiritit të shtegut e merr regjistrin me vete.
+
+### Të ndryshuara
+
+- **Mbi emrin e kasafortës, fusha zë të gjithë gjerësinë e rreshtit**, për shtegun nga rrënja e sistemit me të cilin hapet.
+- **Kur zhvendoset një shënim, emri i tij vjen i pari** për Tab dhe për propozimin, përpara emrave të tjerë që fillojnë njësoj.
+- **Dosjet në shteg që nuk ekzistojnë ende janë të kuqe**, ashtu si fusha është e kuqe për një emër që Enter do ta krijonte.
+- **Lista rënëse ka një buzë të kuqe kur Enter do ta krijonte emrin e shtypur** ndërsa asnjë rresht nuk është i theksuar, aty ku vetë fusha ruan ngjyrën e një rreshti.
+- **Rrota ndalon në rreshtin e parë dhe të fundit** të listës rënëse në vend që të rifillojë nga ana tjetër; tastet e shigjetave ende rifillojnë.
+- **Një lëshim mbi shtegun që nuk mund të kryhet tregon arsyen** — tashmë në atë dosje, një dosje brenda vetes, një emër që ekziston tashmë atje — në vend që ta lërë kokën e faqes pas tij të ofrojë hapjen e skedarit.
+
+### Të ndrequra
+
+- **Një rresht i përshtatur ndërsa skeda e tij ishte në sfond** hiqte dorë nga emri i kasafortës dhe emri i shënimit, dhe mund të mbetej kështu edhe me hapësirë të mjaftueshme pasi skeda dilte përpara. Tani përshtatet kur ka një gjerësi, dhe sërish sa herë që ajo gjerësi ndryshon.
+- **Me prapashtesat të fshehura, etiketa i lë vend kur rreshti nuk mjafton**, ashtu si prapashtesa; më parë mbetej në ekran.
+- **Windows:** shtigjet e shkruara me `/` (`C:/Users/you/vault/Note.md`) njihen si brenda kasafortës, shtigjet e koduara me përqindje me shkronjë disku dekodohen, dhe shtigjet në kompjuter shkruhen kudo me `\` në vend të një përzierjeje të të dy ndarësve.
+
 ## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Të ndrequra

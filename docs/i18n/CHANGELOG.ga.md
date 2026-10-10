@@ -8,6 +8,41 @@
 
 Gach eisiúint de Lure, an ceann is nuaí ar dtús. Tá a bhfuil tagtha isteach ó bhí an eisiúint dheireanach ann faoi *Gan eisiúint*. Níl réimír `v` ar na leaganacha, ar aon dul leis na clibeanna eisiúna.
 
+## Gan eisiúint
+
+### Curtha leis
+
+- **Téann Tab timpeall na n-ainmneacha ag gabhal.** Nuair is tús le roinnt ainmneacha fós an méid a chlóscríobh tú, scríobhann gach brú an chéad cheann eile ina iomláine, agus an chuid a chuir sé leis marcáilte, agus tugann an brú i ndiaidh an chinn dheireanaigh an méid a chlóscríobh tú ar ais. Téann <kbd>Shift</kbd>+<kbd>Tab</kbd> an treo eile. Nuair nach bhfuil ach ainm amháin fágtha, céimníonn Tab isteach mar a rinne sé roimhe.
+- **Críochnaíonn buille de <kbd>Alt</kbd>** mar a dhéanadh Tab: chomh fada agus a réitíonn na hainmneacha, isteach san aon fhillteán amháin atá fágtha, ansin suas na céimeanna. Ar ainm atá curtha ar taispeáint ag Tab, céimníonn sé isteach ann.
+- **Is céim é an stór** i ndiaidh na conaire ó fhréamh an chórais, do Tab, don eochair athainmnithe agus don eochair fócais araon: osclaíonn na háiteanna leis an gconair iomlán sa réimse agus cuid an stóir marcáilte. Ach amháin le *Access external files* air.
+- **Ordú do gach céim**: an t-ainm, an t-ainm lena iarmhír, an chonair ón stór, an chonair ó fhréamh an chórais, an stór. Leis sin is féidir eochair a cheangal go díreach leis an gceann atá uait.
+- **Siúlann <kbd>Shift</kbd> leis an eochair athainmnithe nó leis an eochair fócais an timthriall ar gcúl.**
+- **Liostaítear nótaí a bhfuil naisc chucu agus nach bhfuil scríofa fós** san anuas, i mbándearg, san fhillteán ina ndéanfadh Obsidian iad. Má roghnaítear ceann, déantar é.
+- **Le hiarmhíreanna i bhfolach, taispeánann gach comhad san anuas a chineál** i suaitheantas ag deireadh an ró, agus taispeánann an barra conaire cineál an chomhaid oscailte ag a cheann ar dheis. Má bhrúitear suaitheantas, scríobhtar an t-ainm amach sa réimse lena iarmhír. Fanann suaitheantas an bharra conaire fad atá an réimse oscailte.
+- **Is féidir conairí eile a bheith ag nóta.** Ag athainmniú, cuireann <kbd>Alt</kbd>+<kbd>Enter</kbd> an chonair chlóscríofa leis mar chonair ailias, déanann <kbd>Shift</kbd>+<kbd>Enter</kbd> crua-nasc ansin, agus déanann <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> nasc siombalach; fanann an nóta san áit a bhfuil sé. Taifeadtar gach ceann i réamhábhar `paths` an nóta, a leanann athainmnithe agus scriosanna. Áirítear leo sin cinn a rinneadh lasmuigh de Obsidian: má rinneadh, má scoilteadh nó má baineadh crua-nasc nó nasc siombalach i mbainisteoir comhad, i dteirminéal nó fad a bhí Obsidian dúnta, cuirtear ina cheart sna liostaí é.
+- **Liostaítear ailiasanna san anuas**, in oráiste: conairí ailias san fhillteán a ainmníonn siad, agus ailiasanna Obsidian féin in aice lena nóta. Má roghnaítear ceann, nó má chlóscríobhtar conair ailias agus má bhrúitear Enter, osclaítear an nóta.
+- **Liostaíonn cnaipe os comhair mhír an stóir conairí eile nóta**, nuair atá cinn aige: conairí ailias, crua-naisc agus naisc shiombalacha a aimsítear sa stór, agus ailiasanna Obsidian. Taispeánann sé cé mhéad atá ann, i ndath an chineáil is láidre: crua-nasc corcra, nasc siombalach bándearg, ailias oráiste. Tógtar a liosta mar a thógtar an t-anuas, leis na rónna céanna, na dathanna céanna agus na suaitheantais iarmhíre céanna, aibhsithe faoin bpointeoir agus leis na saigheadeochracha. Tosaíonn an liosta le conair an nóta féin i ngorm. Le hiarmhíreanna i bhfolach, is é deilbhín an tsuaitheantais ag deireadh an ró atá ann ina áit: glacann an suaitheantas a dhath taobh thiar d'iarmhír liath, agus osclaíonn an liosta ag críochnú san áit a gcríochnaíonn an iarmhír.
+- **Tá a liosta féin ag gach cineál conaire eile**: `paths-hardlinks`, `paths-symlinks` agus `paths-aliases`, in aice le `paths`, arb é a suim é. Ainmníonn cóip a foinse in `paths-origin` agus fágann sí liostaí na foinse ar lár; liostaíonn an fhoinse í in `paths-forks`.
+- **Is féidir le nasc a chineál a athrú san áit a bhfuil sé**: ag athainmniú agus an chonair fágtha mar atá, iompaíonn cordaí na nasc agus <kbd>Ctrl</kbd>+<kbd>Enter</kbd> crua-nasc nó nasc siombalach ina chineál eile, ina chonair ailias nó ina chóip dá chuid féin.
+- **Patrúin glob sa réimse conaire.** Meaitseálann `*`, `?`, `**`, `[…]` agus `{a,b}` comhaid an stóir. Comhaireann an cnaipe céanna na meaitseálacha agus liostaíonn sé iad; bíonn sé glas fad atá cinn ann agus dearg fad nach bhfuil aon cheann ann. Osclaíonn Enter gach meaitseáil, ag fiafraí ar dtús os cionn deich gcinn. Déanann patrún nach bhfuil ann ach lúibíní slabhracha, mar shampla `Week {1,2,3}`, na nótaí a ainmníonn sé. Glactar i gcónaí go litriúil le fíorainm ina bhfuil ceann de na carachtair seo, agus ní léann athainmniú patrún riamh.
+- **Is féidir le mír an stóir a dheilbhín agus a ainm, a dheilbhín amháin, nó faic a thaispeáint**, agus is féidir aon deilbhín Lucide a úsáid. Tagann sé seo in ionad *Show vault name*, agus coinnítear rogha atá stóráilte cheana.
+- **Conairí eile lasmuigh den stór.** Ag athainmniú comhaid amuigh ansin, déanann <kbd>Shift</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> agus <kbd>Alt</kbd>+<kbd>Enter</kbd> crua-nasc, nasc siombalach agus conair ailias, mar a dhéantar istigh. Coinníonn an breiseán an taifead (`external-links.json`) agus liostaíonn an cnaipe conairí eile iad. Osclaíonn conair ailias a comhad, agus nuair a bhogtar nó a scriostar comhad tríd an mbarra conaire, tugtar an taifead leis.
+
+### Athraithe
+
+- **Ar ainm an stóir, glacann an réimse leithead iomlán an ró**, ar son na conaire ó fhréamh an chórais a bhíonn ann nuair a osclaíonn sé.
+- **Ag bogadh nóta, tagann a ainm féin ar dtús** do Tab agus don tairiscint, roimh ainmneacha eile a thosaíonn ar an mbealach céanna.
+- **Tá fillteáin sa chonair nach bhfuil ann fós dearg**, díreach mar atá an réimse dearg d'ainm a dhéanfadh Enter.
+- **Tá imeall dearg ar an anuas nuair a dhéanfadh Enter an t-ainm clóscríofa** agus gan aon ró aibhsithe, sa chás ina gcoinníonn an réimse féin dath an ró.
+- **Stopann an roth ag an gcéad ró agus ag an ró deireanach** den anuas in ionad dul timpeall; téann na saigheadeochracha timpeall fós.
+- **Nuair nach féidir rud a scaoileadh ar an gconair, deirtear cén fáth**: tá sé san fhillteán sin cheana, fillteán isteach ann féin, nó ainm atá ann cheana. Roimhe seo, thairg an ceanntásc taobh thiar di an comhad a oscailt.
+
+### Deisithe
+
+- **Ró a cuireadh in oiriúint fad a bhí a chluaisín ar chúl**, thréig sé ainm an stóir agus ainm an nóta, agus d'fhéadfadh sé fanacht mar sin, fiú le neart spáis, nuair a tháinig an cluaisín chun tosaigh. Cuirtear in oiriúint é nuair atá leithead aige, agus arís gach uair a athraíonn an leithead sin.
+- **Le hiarmhíreanna i bhfolach, géilleann an suaitheantas nuair a éiríonn an ró gearr**, mar a dhéanann an iarmhír; d'fhan sé ar an scáileán roimhe seo.
+- **Windows:** aithnítear conairí atá scríofa le `/` (`C:/Users/you/vault/Note.md`) mar chonairí taobh istigh den stór, díchódaítear conairí ionchódaithe le céatadáin a bhfuil litir tiomántáin acu, agus scríobhtar conairí ar an ríomhaire le `\` i gcónaí in ionad meascán den dá dheighilteoir.
+
 ## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Deisithe

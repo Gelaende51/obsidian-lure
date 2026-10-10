@@ -8,6 +8,41 @@
 
 Todas as versões do Lure, da mais recente para a mais antiga. O que entrou desde a última versão está em *Não publicado*. As versões não levam o prefixo `v`, assim como as tags de release.
 
+## Não publicado
+
+### Adicionado
+
+- **Tab percorre os nomes numa bifurcação.** Quando o que você digitou ainda é o início de vários nomes, cada toque escreve o próximo por inteiro, com a parte acrescentada marcada, e o toque depois do último devolve o que você digitou. <kbd>Shift</kbd>+<kbd>Tab</kbd> vai no sentido contrário. Com um só nome restante, Tab entra nele como antes.
+- **Um toque em <kbd>Alt</kbd> completa** como Tab fazia: até onde os nomes coincidem, para dentro da única pasta restante e depois subindo os degraus. Num nome que Tab pôs em exibição, entra nele.
+- **O cofre é um degrau** depois do caminho a partir da raiz do sistema, tanto para Tab quanto para a tecla de renomear e a tecla de foco: esses pontos abrem com o caminho inteiro no campo e a parte do cofre marcada. Só com *Acessar arquivos externos* ativado.
+- **Um comando para cada degrau** (o nome, o nome com a extensão, o caminho a partir do cofre, o caminho a partir da raiz do sistema, o cofre), para associar uma tecla diretamente ao que você quer.
+- **<kbd>Shift</kbd> com a tecla de renomear ou a tecla de foco percorre o ciclo de trás para frente.**
+- **Notas que recebem links e ainda não foram escritas aparecem** na lista, em rosa, na pasta em que o Obsidian as criaria. Escolher uma a cria.
+- **Com as extensões ocultas, cada arquivo na lista mostra seu tipo** num selo no fim da linha, e a barra de caminho mostra o do arquivo aberto na sua extremidade direita; clicar num selo escreve o nome no campo com a extensão. O selo da barra de caminho continua visível enquanto o campo está aberto.
+- **Uma nota pode ter outros caminhos.** Ao renomear, <kbd>Alt</kbd>+<kbd>Enter</kbd> adiciona o caminho digitado como caminho alternativo, <kbd>Shift</kbd>+<kbd>Enter</kbd> cria ali um link físico e <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> um link simbólico; a nota fica onde está. Cada um é registrado no frontmatter `paths` da nota, que acompanha renomeações e exclusões, inclusive as feitas fora do Obsidian: um link físico ou simbólico criado, separado ou removido num gerenciador de arquivos, num terminal ou com o Obsidian fechado é corrigido nas listas.
+- **Os aliases aparecem na lista**, em laranja: caminhos alternativos na pasta que indicam, os aliases do próprio Obsidian ao lado da nota. Escolher um, ou digitar um caminho alternativo e pressionar Enter, abre a nota.
+- **Um botão antes do segmento do cofre lista os outros caminhos de uma nota** (caminhos alternativos, links físicos e simbólicos encontrados no cofre, aliases do Obsidian), quando ela tem algum. Ele mostra quantos são, na cor do tipo mais forte: link físico roxo, link simbólico rosa, alias laranja. A lista dele é montada como a lista de sugestões, com as mesmas linhas, cores e selos de extensão, realçadas sob o ponteiro e pelas setas, e começa pelo caminho da própria nota em azul. Com as extensões ocultas, ele passa a ser o ícone do selo no fim da linha: o selo assume sua cor por trás de uma extensão cinza, e a lista abre terminando onde termina a extensão.
+- **Cada tipo de outro caminho tem sua própria lista** (`paths-hardlinks`, `paths-symlinks`, `paths-aliases`), ao lado de `paths`, que é a soma delas. Uma cópia indica sua origem em `paths-origin` e descarta as listas da origem; a origem a lista em `paths-forks`.
+- **Um link pode mudar de tipo no lugar**: ao renomear deixando o caminho como está, os atalhos de link e <kbd>Ctrl</kbd>+<kbd>Enter</kbd> transformam um link físico ou simbólico no outro tipo, num caminho alternativo ou numa cópia independente.
+- **Padrões glob no campo de caminho.** `*`, `?`, `**`, `[…]` e `{a,b}` correspondem aos arquivos do cofre; o mesmo botão conta as correspondências, verde enquanto houver alguma e vermelho enquanto não houver nenhuma, e as lista. Enter abre todas as correspondências, perguntando antes se forem mais de dez. Um padrão só com chaves, como `Week {1,2,3}`, cria as notas que nomeia. Um nome real que contenha um desses caracteres é sempre lido literalmente, e renomear nunca interpreta um padrão.
+- **O segmento do cofre pode mostrar seu ícone e nome, só o ícone ou nada**, e o ícone pode ser qualquer ícone do Lucide. Isso substitui *Mostrar nome do cofre*, e uma escolha já salva é mantida.
+- **Outros caminhos fora do cofre.** Ao renomear um arquivo lá fora, <kbd>Shift</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> e <kbd>Alt</kbd>+<kbd>Enter</kbd> criam um link físico, um link simbólico e um caminho alternativo, como dentro do cofre. O plugin guarda o registro (`external-links.json`), o botão de outros caminhos os lista, um caminho alternativo abre seu arquivo, e mover ou excluir pela barra de caminho leva o registro junto.
+
+### Alterado
+
+- **No nome do cofre, o campo ocupa a largura inteira da linha**, para o caminho a partir da raiz do sistema com que ele abre.
+- **Ao mover uma nota, o próprio nome dela vem primeiro** para Tab e para a sugestão, antes de outros nomes que começam do mesmo jeito.
+- **Pastas do caminho que ainda não existem ficam em vermelho**, assim como o campo fica vermelho para um nome que Enter criaria.
+- **A lista ganha uma borda vermelha quando Enter criaria o nome digitado** sem nenhuma linha realçada, já que o próprio campo mantém a cor de uma linha.
+- **A roda do mouse para na primeira e na última linha** da lista em vez de dar a volta; as setas continuam dando a volta.
+- **Soltar algo no caminho que não pode ser feito diz o motivo** (já está nessa pasta, uma pasta dentro de si mesma, um nome que já existe ali) em vez de deixar o cabeçalho por trás oferecer abrir o arquivo.
+
+### Corrigido
+
+- **Uma linha ajustada enquanto sua aba estava em segundo plano** abria mão do nome do cofre e do nome da nota, e podia continuar assim mesmo com espaço de sobra quando a aba voltava à frente. Ela agora é ajustada quando tem largura, e de novo sempre que essa largura muda.
+- **Com as extensões ocultas, o selo cede lugar quando a linha fica curta**, como a extensão faz; antes ele continuava na tela.
+- **Windows:** caminhos escritos com `/` (`C:/Users/you/vault/Note.md`) são reconhecidos como dentro do cofre, caminhos com codificação percentual e letra de unidade são decodificados, e caminhos na máquina são escritos sempre com `\` em vez de uma mistura dos dois separadores.
+
 ## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Corrigido

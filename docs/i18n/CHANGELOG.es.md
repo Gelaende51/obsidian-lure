@@ -9,6 +9,41 @@
 
 Todas las versiones de Lure, de la más reciente a la más antigua. Lo que ha entrado desde la última versión está bajo *Sin publicar*. Los números de versión no llevan el prefijo `v`, igual que las etiquetas de publicación.
 
+## Sin publicar
+
+### Añadido
+
+- **Tab recorre los nombres en una bifurcación.** Cuando lo escrito todavía es el comienzo de varios nombres, cada pulsación escribe el siguiente completo, con la parte añadida marcada, y la pulsación tras el último devuelve lo que habías escrito. <kbd>Shift</kbd>+<kbd>Tab</kbd> va en sentido contrario. Si solo queda un nombre, Tab entra en él como antes.
+- **Una pulsación de <kbd>Alt</kbd> completa** como antes lo hacía Tab: hasta donde coinciden los nombres, dentro de la única carpeta que queda y luego peldaño a peldaño. Sobre un nombre que Tab ha puesto a la vista, entra en él.
+- **La bóveda es un peldaño** después de la ruta desde la raíz del sistema, tanto para Tab como para la tecla de renombrar y la tecla de foco: esos lugares se abren con la ruta completa en el campo y la parte de la bóveda marcada. Solo con *Acceder a archivos externos* activado.
+- **Un comando para cada peldaño** —el nombre, el nombre con su extensión, la ruta desde la bóveda, la ruta desde la raíz del sistema, la bóveda— para asignar una tecla directamente al que quieras.
+- **<kbd>Shift</kbd> con la tecla de renombrar o la tecla de foco recorre el ciclo hacia atrás.**
+- **Las notas enlazadas que aún no están escritas aparecen** en el desplegable, en rosa, en la carpeta donde Obsidian las crearía. Elegir una la crea.
+- **Con las extensiones ocultas, cada archivo del desplegable muestra su tipo** en una insignia al final de la fila, y la barra de ruta muestra la del archivo abierto en su extremo derecho; pulsar una insignia escribe el nombre en el campo con su extensión. La insignia de la barra de ruta se mantiene mientras el campo está abierto.
+- **Una nota puede tener otras rutas.** Al renombrar, <kbd>Alt</kbd>+<kbd>Enter</kbd> añade la ruta escrita como ruta alias, <kbd>Shift</kbd>+<kbd>Enter</kbd> crea allí un enlace duro y <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> un enlace simbólico; la nota se queda donde está. Cada una queda registrada en el frontmatter `paths` de la nota, que sigue los cambios de nombre y los borrados, también los hechos fuera de Obsidian: un enlace duro o simbólico creado, separado o eliminado en un gestor de archivos, una terminal o con Obsidian cerrado se corrige en las listas.
+- **Los alias aparecen en el desplegable**, en naranja: las rutas alias en la carpeta que nombran, los alias propios de Obsidian junto a su nota. Elegir uno, o escribir una ruta alias y pulsar Enter, abre la nota.
+- **Un botón delante del segmento de la bóveda lista las otras rutas de una nota** —rutas alias, enlaces duros y simbólicos encontrados en la bóveda, alias de Obsidian— cuando las tiene. Muestra cuántas hay, en el color del tipo más fuerte: enlace duro morado, enlace simbólico rosa, alias naranja. Su lista se construye como el desplegable —las mismas filas, colores e insignias de extensión, resaltadas bajo el puntero y con las flechas— y empieza con la ruta propia de la nota en azul. Con las extensiones ocultas, en su lugar es el icono de la insignia al final de la fila: la insignia toma su color detrás de una extensión gris, y la lista se abre terminando donde termina la extensión.
+- **Cada tipo de otra ruta tiene su propia lista** —`paths-hardlinks`, `paths-symlinks`, `paths-aliases`— junto a `paths`, su suma. Una copia nombra su origen en `paths-origin` y descarta las listas del origen; el origen la lista en `paths-forks`.
+- **Un enlace puede cambiar de tipo en su sitio**: al renombrar dejando la ruta como está, las combinaciones de enlace y <kbd>Ctrl</kbd>+<kbd>Enter</kbd> convierten un enlace duro o simbólico en el otro tipo, en una ruta alias o en una copia independiente.
+- **Patrones glob en el campo de ruta.** `*`, `?`, `**`, `[…]` y `{a,b}` coinciden con los archivos de la bóveda; el mismo botón cuenta las coincidencias, en verde mientras las hay y en rojo mientras no hay ninguna, y las lista. Enter abre todas las coincidencias, preguntando antes si son más de diez. Un patrón solo de llaves —`Week {1,2,3}`— crea las notas que nombra. Un nombre real que contenga uno de estos caracteres se toma siempre literalmente, y al renombrar nunca se interpreta un patrón.
+- **El segmento de la bóveda puede mostrar su icono y nombre, solo su icono o nada**, y el icono puede ser cualquier icono de Lucide. Esto sustituye a *Mostrar nombre de la bóveda*, y una elección guardada se conserva.
+- **Otras rutas fuera de la bóveda.** Al renombrar un archivo de fuera, <kbd>Shift</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> y <kbd>Alt</kbd>+<kbd>Enter</kbd> crean un enlace duro, un enlace simbólico y una ruta alias, como dentro. El plugin lleva el registro (`external-links.json`), el botón de otras rutas las lista, una ruta alias abre su archivo, y mover o borrar a través de la barra de ruta arrastra el registro consigo.
+
+### Cambiado
+
+- **Sobre el nombre de la bóveda, el campo ocupa todo el ancho de la fila**, para la ruta desde la raíz del sistema con la que se abre.
+- **Al mover una nota, su propio nombre va primero** para Tab y la sugerencia, por delante de otros nombres que empiezan igual.
+- **Las carpetas de la ruta que aún no existen aparecen en rojo**, igual que el campo está en rojo para un nombre que Enter crearía.
+- **El desplegable tiene un borde rojo cuando Enter crearía el nombre escrito** sin ninguna fila resaltada, cuando el propio campo conserva el color de una fila.
+- **La rueda se detiene en la primera y la última fila** del desplegable en lugar de dar la vuelta; las flechas siguen dando la vuelta.
+- **Soltar sobre la ruta algo que no se puede hacer explica por qué** —ya está en esa carpeta, una carpeta dentro de sí misma, un nombre que ya existe— en lugar de dejar que la cabecera de detrás ofrezca abrir el archivo.
+
+### Corregido
+
+- **Una fila ajustada mientras su pestaña estaba al fondo** renunciaba al nombre de la bóveda y al de la nota, y podía quedarse así con espacio de sobra cuando la pestaña pasaba al frente. Ahora se ajusta cuando tiene ancho, y de nuevo cada vez que ese ancho cambia.
+- **Con las extensiones ocultas, la insignia cede cuando la fila se queda corta**, igual que la extensión; antes seguía en pantalla.
+- **Windows:** las rutas escritas con `/` (`C:/Users/you/vault/Note.md`) se reconocen como dentro de la bóveda, las rutas con codificación por porcentaje y letra de unidad se decodifican, y las rutas de la máquina se escriben con `\` en todas partes en lugar de una mezcla de ambos separadores.
+
 ## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Corregido

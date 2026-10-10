@@ -9,6 +9,41 @@
 
 Lure'un her sürümü, en yenisi en üstte. Son sürümden bu yana gelenler *Yayımlanmamış* başlığı altındadır. Sürüm numaraları, sürüm etiketleriyle uyumlu olarak `v` öneki taşımaz.
 
+## Yayımlanmamış
+
+### Eklenenler
+
+- **Tab, bir ayrımda adlar arasında sırayla döner.** Yazdığınız şey hâlâ birkaç adın başlangıcıysa, her basış bir sonraki adı tam olarak yazar ve eklediği kısmı işaretler. Sonuncudan sonraki basış, yazdığınızı geri getirir. <kbd>Shift</kbd>+<kbd>Tab</kbd> ters yönde gider. Tek ad kaldığında Tab eskisi gibi içine girer.
+- **<kbd>Alt</kbd> tuşuna kısa bir dokunuş**, Tab'ın eskiden yaptığı gibi **tamamlar**: adların uyuştuğu yere kadar tamamlar, kalan tek klasörün içine girer, ardından basamaklarda yukarı çıkar. Tab'ın gösterdiği bir adın üzerindeyken onun içine girer.
+- **Kasa da bir basamaktır.** Sistem kökünden yolun ardından gelir ve Tab, yeniden adlandırma tuşu ile odak tuşu için aynı şekilde çalışır: yerler, alanda yolun tamamıyla ve kasaya ait kısım işaretlenmiş olarak açılır. Yalnızca *Harici dosyalara eriş* açıkken geçerlidir.
+- **Her basamak için bir komut** vardır: ad, uzantısıyla ad, kasadan yol, sistem kökünden yol ve kasa. Böylece bir tuşu doğrudan istediğiniz basamağa atayabilirsiniz.
+- **Yeniden adlandırma tuşu ya da odak tuşuyla birlikte <kbd>Shift</kbd>, döngüde geriye doğru ilerler.**
+- **Bağlantı verilmiş ama henüz yazılmamış notlar** açılır listede pembe renkte, Obsidian'ın onları oluşturacağı klasörde **listelenir**. Birini seçmek onu oluşturur.
+- **Uzantılar gizliyken, açılır listedeki her dosyanın türü** satırın sonundaki bir rozette gösterilir. Yol çubuğu da açık dosyanın türünü sağ ucunda gösterir. Bir rozete basmak, adı alana uzantısıyla birlikte yazar. Yol çubuğunun rozeti, alan açıkken yerinde kalır.
+- **Bir notun başka yolları olabilir.** Yeniden adlandırırken <kbd>Alt</kbd>+<kbd>Enter</kbd> yazılan yolu bir takma ad yolu olarak ekler. <kbd>Shift</kbd>+<kbd>Enter</kbd> orada bir sabit bağlantı, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> ise bir sembolik bağlantı oluşturur. Not her durumda olduğu yerde kalır. Her biri notun `paths` ön bilgisine kaydedilir ve bu kayıt yeniden adlandırmaları ve silmeleri izler. Obsidian dışında yapılanlar da buna dahildir: bir dosya yöneticisinde, bir terminalde ya da Obsidian kapalıyken oluşturulan, ayrılan veya kaldırılan sabit ya da sembolik bağlantılar listelerde düzeltilir.
+- **Takma adlar açılır listede turuncu renkte listelenir.** Takma ad yolları adlandırdıkları klasörde, Obsidian'ın kendi takma adları ise notlarının yanında görünür. Birini seçmek ya da bir takma ad yolu yazıp Enter'a basmak notu açar.
+- **Kasa kesiminin önündeki bir düğme, bir notun diğer yollarını listeler.** Bunlar takma ad yolları, kasada bulunan sabit ve sembolik bağlantılar ve Obsidian'ın takma adlarıdır. Düğme yalnızca not bunlardan en az birine sahipse görünür. Kaç tane olduğunu en güçlü türün renginde gösterir: sabit bağlantı mor, sembolik bağlantı pembe, takma ad turuncu. Listesi açılır liste gibi kurulur: aynı satırlar, renkler ve uzantı rozetleri kullanılır ve satırlar işaretçinin altında ve ok tuşlarıyla vurgulanır. Liste, notun kendi yoluyla mavi renkte başlar. Uzantılar gizliyken düğme yerine satır sonundaki rozetin simgesi kullanılır: rozet, gri bir uzantının arkasında düğmenin rengini alır ve liste, uzantının bittiği yerde bitecek şekilde açılır.
+- **Her diğer yol türünün kendi listesi vardır**: `paths-hardlinks`, `paths-symlinks` ve `paths-aliases`. Bunlar, hepsinin toplamı olan `paths`'ın yanında tutulur. Bir kopya kaynağını `paths-origin` içinde belirtir ve kaynağın listelerini almaz. Kaynak ise kopyayı `paths-forks` içinde listeler.
+- **Bir bağlantı yerinde tür değiştirebilir.** Yol olduğu gibi bırakılarak yeniden adlandırılırken bağlantı tuş kombinasyonları ve <kbd>Ctrl</kbd>+<kbd>Enter</kbd>, bir sabit ya da sembolik bağlantıyı diğer türe, bir takma ad yoluna ya da kendine ait bir kopyaya dönüştürür.
+- **Yol alanında glob desenleri.** `*`, `?`, `**`, `[…]` ve `{a,b}` kasanın dosyalarıyla eşleşir. Aynı düğme eşleşmeleri sayar ve listeler: eşleşme varken yeşil, yokken kırmızı olur. Enter her eşleşmeyi açar ve ondan fazla eşleşme varsa önce sorar. Yalnızca süslü parantezlerden oluşan bir desen, örneğin `Week {1,2,3}`, adlandırdığı notları oluşturur. Bu karakterlerden birini içeren gerçek bir ad her zaman olduğu gibi alınır ve yeniden adlandırma hiçbir zaman desen olarak okunmaz.
+- **Kasa kesimi simgesini ve adını, yalnızca simgesini ya da hiçbir şey göstermeyebilir.** Simge herhangi bir Lucide simgesi olabilir. Bu, *Kasa adını göster* ayarının yerini alır ve kaydedilmiş bir seçim yeni ayara aktarılır.
+- **Kasa dışındaki diğer yollar.** Kasa dışındaki bir dosyayı yeniden adlandırırken <kbd>Shift</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> ve <kbd>Alt</kbd>+<kbd>Enter</kbd>, kasa içinde olduğu gibi sırasıyla bir sabit bağlantı, bir sembolik bağlantı ve bir takma ad yolu oluşturur. Kaydı eklenti tutar (`external-links.json`) ve diğer yollar düğmesi bunları listeler. Bir takma ad yolu dosyasını açar. Yol çubuğu üzerinden yapılan bir taşıma ya da silme, kaydı da beraberinde günceller.
+
+### Değişenler
+
+- **Kasanın adının üzerindeyken alan, satırın tüm genişliğini kaplar.** Böylece açıldığı sistem kökünden yol sığar.
+- **Bir not taşınırken önce kendi adı gelir.** Tab ve öneri, aynı şekilde başlayan diğer adlardan önce notun kendi adını sunar.
+- **Yolda henüz var olmayan klasörler kırmızıdır**, tıpkı Enter'ın oluşturacağı bir ad için alanın kırmızı olması gibi.
+- **Hiçbir satır vurgulanmamışken Enter yazılan adı oluşturacaksa, açılır listenin kenarı kırmızı olur.** Alanın kendisi bu durumda bir satırın rengini korur.
+- **Fare tekerleği açılır listenin ilk ve son satırında durur**, artık başa dönmez. Ok tuşları ise hâlâ başa döner.
+- **Yola yapılamayan bir bırakma nedenini söyler.** Örneğin dosya zaten o klasördedir, bir klasör kendi içine taşınmak istenmiştir ya da orada aynı adda bir dosya vardır. Önceden bunun yerine arkadaki başlık dosyayı açmayı öneriyordu.
+
+### Düzeltilenler
+
+- **Sekmesi arka plandayken sığdırılan bir satır**, kasa adını ve notun adını gizliyordu. Sekme öne geldiğinde yeterince yer olsa bile bu şekilde kalabiliyordu. Satır artık bir genişliği olduğunda ve bu genişlik her değiştiğinde yeniden sığdırılıyor.
+- **Uzantılar gizliyken satır daraldığında rozet de uzantı gibi gizleniyor.** Önceden ekranda kalıyordu.
+- **Windows:** `/` ile yazılan yollar (`C:/Users/you/vault/Note.md`) artık kasanın içinde olarak tanınıyor. Sürücü harfi içeren yüzde kodlu yollar çözülüyor. Makinedeki yollar da iki ayırıcının karışımı yerine baştan sona `\` ile yazılıyor.
+
 ## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Düzeltilenler

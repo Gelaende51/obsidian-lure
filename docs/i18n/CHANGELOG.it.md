@@ -9,6 +9,41 @@
 
 Ogni release di Lure, dalla più recente. Ciò che è arrivato dopo l'ultima release sta sotto *Non rilasciato*. Le versioni non hanno il prefisso `v`, come i tag delle release.
 
+## Non rilasciato
+
+### Aggiunto
+
+- **Tab fa il giro dei nomi a una biforcazione.** Dove ciò che hai digitato è ancora l'inizio di più nomi, ogni pressione scrive per intero il nome successivo, con la parte aggiunta evidenziata. La pressione dopo l'ultimo restituisce ciò che avevi digitato. <kbd>Shift</kbd>+<kbd>Tab</kbd> va nell'altro senso. Con un solo nome rimasto, Tab vi entra come prima.
+- **Un tocco di <kbd>Alt</kbd> completa** come faceva prima Tab: fin dove i nomi coincidono, poi dentro l'unica cartella rimasta, poi su per i gradini. Su un nome che Tab ha messo in mostra, vi entra.
+- **Il vault è un gradino** dopo il percorso dalla radice del sistema, sia per Tab sia per il tasto di rinomina e il tasto di focus: questi punti si aprono con l'intero percorso nel campo e la parte del vault evidenziata. Solo con *Access external files* attivo.
+- **Un comando per ogni gradino** — il nome, il nome con l'estensione, il percorso dal vault, il percorso dalla radice del sistema, il vault — per associare un tasto direttamente a quello che vuoi.
+- **<kbd>Shift</kbd> con il tasto di rinomina o il tasto di focus percorre il ciclo all'indietro.**
+- **Le note collegate ma non ancora scritte sono elencate** nel menu a discesa, in rosa, nella cartella in cui Obsidian le creerebbe. Sceglierne una la crea.
+- **Con le estensioni nascoste, ogni file nel menu a discesa mostra il suo tipo** in un badge alla fine della riga, e la barra del percorso mostra quello del file aperto alla sua estremità destra. Premere un badge scrive nel campo il nome completo di estensione. Il badge della barra del percorso resta mentre il campo è aperto.
+- **Una nota può avere altri percorsi.** Durante la rinomina, <kbd>Alt</kbd>+<kbd>Enter</kbd> aggiunge il percorso digitato come percorso alias, <kbd>Shift</kbd>+<kbd>Enter</kbd> crea lì un hard link e <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> un link simbolico; la nota resta dov'è. Ognuno è registrato nel frontmatter `paths` della nota, che segue rinomine ed eliminazioni, anche quelle fatte fuori da Obsidian. Un hard link o un link simbolico creato, separato o rimosso in un file manager, in un terminale o mentre Obsidian era chiuso viene sistemato negli elenchi.
+- **Gli alias sono elencati nel menu a discesa**, in arancione: i percorsi alias nella cartella che indicano, gli alias propri di Obsidian accanto alla loro nota. Sceglierne uno, oppure digitare un percorso alias e premere Enter, apre la nota.
+- **Un pulsante davanti al segmento del vault elenca gli altri percorsi di una nota** — percorsi alias, hard link e link simbolici trovati nel vault, alias di Obsidian — quando ne ha. Mostra quanti sono, nel colore del tipo più forte: hard link viola, link simbolico rosa, alias arancione. Il suo elenco è costruito come il menu a discesa, con le stesse righe, gli stessi colori e badge delle estensioni, evidenziati sotto il puntatore e con i tasti freccia. Inizia con il percorso della nota stessa, in blu. Con le estensioni nascoste, il pulsante diventa invece l'icona del badge alla fine della riga: il badge prende il suo colore dietro un'estensione grigia, e l'elenco si apre terminando dove termina l'estensione.
+- **Ogni tipo di altro percorso ha il suo elenco** — `paths-hardlinks`, `paths-symlinks`, `paths-aliases` — accanto a `paths`, che li riunisce tutti. Una copia indica la sua origine in `paths-origin` e non riprende gli elenchi dell'origine; l'origine la elenca in `paths-forks`.
+- **Un link può cambiare tipo sul posto**: rinominando senza modificare il percorso, le combinazioni di tasti dei link e <kbd>Ctrl</kbd>+<kbd>Enter</kbd> trasformano un hard link o un link simbolico nell'altro tipo, in un percorso alias o in una copia indipendente.
+- **Pattern glob nel campo del percorso.** `*`, `?`, `**`, `[…]` e `{a,b}` trovano corrispondenze tra i file del vault. Lo stesso pulsante conta le corrispondenze, verde finché ce ne sono e rosso finché non ce n'è nessuna, e le elenca. Enter apre ogni corrispondenza, chiedendo conferma se sono più di dieci. Un pattern con sole graffe — `Week {1,2,3}` — crea le note che nomina. Un nome reale che contiene uno di questi caratteri è sempre preso alla lettera, e la rinomina non interpreta mai un pattern.
+- **Il segmento del vault può mostrare icona e nome, solo l'icona o niente**, e l'icona può essere una qualsiasi icona Lucide. Questo sostituisce *Show vault name*, e una scelta salvata viene mantenuta.
+- **Altri percorsi fuori dal vault.** Rinominando un file all'esterno, <kbd>Shift</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> e <kbd>Alt</kbd>+<kbd>Enter</kbd> creano rispettivamente un hard link, un link simbolico e un percorso alias, come all'interno. Il plugin ne tiene traccia in `external-links.json`, e il pulsante degli altri percorsi li elenca. Un percorso alias apre il suo file, e uno spostamento o un'eliminazione tramite la barra del percorso aggiorna anche questa registrazione.
+
+### Modificato
+
+- **Sul nome del vault il campo occupa l'intera larghezza della riga**, per far spazio al percorso dalla radice del sistema con cui si apre.
+- **Spostando una nota, il suo stesso nome viene per primo** per Tab e per il suggerimento, prima di altri nomi che iniziano allo stesso modo.
+- **Le cartelle del percorso che non esistono ancora sono rosse**, così come il campo è rosso per un nome che Enter creerebbe.
+- **Il menu a discesa ha un bordo rosso quando Enter creerebbe il nome digitato** e nessuna riga è evidenziata, nei casi in cui il campo stesso mantiene il colore di una riga.
+- **La rotellina si ferma alla prima e all'ultima riga** del menu a discesa invece di ricominciare dall'altro capo; i tasti freccia invece continuano a farlo.
+- **Un trascinamento sul percorso che non può essere eseguito spiega il motivo** — già in quella cartella, una cartella dentro sé stessa, un nome già presente — invece di lasciare che l'intestazione sottostante proponga di aprire il file.
+
+### Corretto
+
+- **Una riga adattata mentre la sua scheda era in secondo piano** perdeva il nome del vault e il nome della nota, e poteva restare così anche con spazio in abbondanza una volta tornata in primo piano la scheda. Ora viene adattata quando ha una larghezza, e di nuovo ogni volta che quella larghezza cambia.
+- **Con le estensioni nascoste, il badge si ritira quando la riga diventa troppo corta**, come fa l'estensione; prima restava sullo schermo.
+- **Windows:** i percorsi scritti con `/` (`C:/Users/you/vault/Note.md`) sono riconosciuti come interni al vault, e i percorsi con codifica percentuale e lettera di unità vengono decodificati. I percorsi sulla macchina sono scritti ovunque con `\`, invece che con un misto dei due separatori.
+
 ## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Corretto

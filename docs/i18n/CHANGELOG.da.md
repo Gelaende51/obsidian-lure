@@ -8,6 +8,41 @@
 
 Hver udgivelse af Lure, nyeste først. Det, der er kommet til siden seneste udgivelse, står under *Ikke udgivet*. Versioner har intet `v`-præfiks, så de svarer til udgivelsesmærkerne.
 
+## Ikke udgivet
+
+### Tilføjet
+
+- **Tab går rundt mellem navnene ved en forgrening.** Hvor det, du har skrevet, stadig er begyndelsen på flere navne, skriver hvert tryk det næste helt ud med den tilføjede del markeret, og trykket efter det sidste giver det tilbage, du skrev. <kbd>Shift</kbd>+<kbd>Tab</kbd> går den anden vej. Når der er ét navn tilbage, går Tab ind som før.
+- **Et tryk på <kbd>Alt</kbd> fuldfører** sådan, som Tab gjorde før: så langt navnene er enige, ind i den ene mappe, der er tilbage, og derefter op ad trinene. På et navn, Tab har vist frem, går den ind i det.
+- **Boksen er et trin** efter stien fra systemroden, for Tab, omdøbningstasten og fokustasten ens: stederne åbner med hele stien i feltet og boksens del markeret. Kun med *Access external files* slået til.
+- **En kommando for hvert trin** — navnet, navnet med filtypenavn, stien fra boksen, stien fra systemroden, boksen — så en tast kan bindes direkte til det, du vil have.
+- **<kbd>Shift</kbd> sammen med omdøbningstasten eller fokustasten går baglæns gennem rækken af trin.**
+- **Noter, der linkes til, men endnu ikke er skrevet, vises** i rullelisten, i pink, i den mappe, Obsidian ville oprette dem i. Vælger man en, oprettes den.
+- **Med skjulte filtypenavne viser hver fil i rullelisten sin type** i et mærke for enden af rækken, og stilinjen viser den åbne fils i sin højre ende; et tryk på et mærke skriver navnet ud i feltet med filtypenavn. Stilinjens mærke bliver, mens feltet er åbent.
+- **En note kan have andre stier.** Ved omdøbning tilføjer <kbd>Alt</kbd>+<kbd>Enter</kbd> den skrevne sti som aliassti, <kbd>Shift</kbd>+<kbd>Enter</kbd> laver et hårdt link dertil og <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> et symbolsk link; noten bliver, hvor den er. Hver af dem registreres i notens `paths`-frontmatter, der følger omdøbninger og sletninger — også dem uden for Obsidian: et hårdt eller symbolsk link, der er lavet, skilt fra eller fjernet i en filhåndtering, en terminal eller mens Obsidian var lukket, bliver rettet ind i listerne.
+- **Aliasser vises i rullelisten**, i orange: aliasstier i den mappe, de nævner, og Obsidians egne aliasser ved siden af deres note. Vælger man en, eller skriver man en aliassti og trykker Enter, åbnes noten.
+- **En knap foran boksens segment viser en notes andre stier** — aliasstier, hårde og symbolske links fundet i boksen, Obsidians aliasser — når den har nogen. Den viser antallet i farven for den stærkeste slags: hårdt link lilla, symbolsk link pink, alias orange. Dens liste er bygget som rullelisten — samme rækker, farver og filtypemærker, fremhævet under markøren og med piletasterne — og begynder med notens egen sti i blåt. Med skjulte filtypenavne er den i stedet ikonet på mærket for enden af rækken: mærket får dens farve bag et gråt filtypenavn, og listen åbner, så den slutter, hvor filtypenavnet gør.
+- **Hver slags anden sti har sin egen liste** — `paths-hardlinks`, `paths-symlinks`, `paths-aliases` — ved siden af `paths`, der er deres sum. En kopi nævner sin kilde i `paths-origin` og dropper kildens lister; kilden opfører den i `paths-forks`.
+- **Et link kan skifte slags på stedet**: ved omdøbning med stien uændret gør linkkombinationerne og <kbd>Ctrl</kbd>+<kbd>Enter</kbd> et hårdt eller symbolsk link til den anden slags, til en aliassti eller til en selvstændig kopi.
+- **Glob-mønstre i stifeltet.** `*`, `?`, `**`, `[…]` og `{a,b}` matcher boksens filer; samme knap tæller træfferne, grøn så længe der er nogen og rød så længe der ingen er, og viser dem. Enter åbner alle træffere og spørger først, hvis der er over ti. Et mønster kun af klammer — `Week {1,2,3}` — opretter de noter, det nævner. Et rigtigt navn, der indeholder et af disse tegn, tages altid bogstaveligt, og omdøbning læser aldrig et mønster.
+- **Boksens segment kan vise sit ikon og navn, kun ikonet eller ingenting**, og ikonet kan være et hvilket som helst Lucide-ikon. Det erstatter *Show vault name*, og et gemt valg føres videre.
+- **Andre stier uden for boksen.** Ved omdøbning af en fil derude laver <kbd>Shift</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> og <kbd>Alt</kbd>+<kbd>Enter</kbd> et hårdt link, et symbolsk link og en aliassti, som indenfor. Pluginnet fører registret (`external-links.json`), knappen for andre stier viser dem, en aliassti åbner sin fil, og en flytning eller sletning via stilinjen tager registret med.
+
+### Ændret
+
+- **På boksens navn fylder feltet hele rækkens bredde**, til stien fra systemroden, som det åbner med.
+- **Når en note flyttes, kommer dens eget navn først** for Tab og forslaget, foran andre navne, der begynder ens.
+- **Mapper i stien, der ikke findes endnu, er røde**, ligesom feltet er rødt for et navn, Enter ville oprette.
+- **Rullelisten har en rød kant, når Enter ville oprette det skrevne navn**, mens ingen række er fremhævet, hvor feltet selv beholder en rækkes farve.
+- **Hjulet stopper ved første og sidste række** i rullelisten i stedet for at starte forfra; piletasterne starter stadig forfra.
+- **Et slip på stien, der ikke kan gennemføres, siger hvorfor** — allerede i den mappe, en mappe ind i sig selv, et navn, der allerede findes — i stedet for at lade overskriften bag den tilbyde at åbne filen.
+
+### Rettet
+
+- **En række, der blev tilpasset, mens dens fane lå bagved**, opgav boksnavnet og notens navn og kunne blive sådan, selv med plads til overs, når fanen kom frem. Den tilpasses nu, når den har en bredde, og igen hver gang bredden ændres.
+- **Med skjulte filtypenavne viger mærket, når rækken bliver for kort**, ligesom filtypenavnet gør; før blev det stående på skærmen.
+- **Windows:** stier skrevet med `/` (`C:/Users/you/vault/Note.md`) genkendes som inden for boksen, procentkodede stier med drevbogstav afkodes, og stier på maskinen skrives med `\` hele vejen igennem i stedet for en blanding af begge skilletegn.
+
 ## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Rettet

@@ -8,6 +8,41 @@
 
 Todas as versões do Lure, da mais recente para a mais antiga. O que chegou desde a última versão está em *Por lançar*. Os números de versão não levam prefixo `v`, tal como as etiquetas das versões.
 
+## Por lançar
+
+### Adicionado
+
+- **O Tab percorre os nomes numa bifurcação.** Quando o que escreveu ainda é o início de vários nomes, cada toque escreve o seguinte por inteiro, com a parte acrescentada marcada, e o toque a seguir ao último devolve o que escreveu. <kbd>Shift</kbd>+<kbd>Tab</kbd> percorre no sentido contrário. Quando resta um só nome, o Tab entra nele como antes.
+- **Um toque em <kbd>Alt</kbd> completa** como o Tab fazia antes: até onde os nomes coincidem, para dentro da única pasta que resta e depois pelos degraus acima. Sobre um nome que o Tab pôs à vista, entra nele.
+- **O cofre é um degrau** a seguir ao caminho desde a raiz do sistema, tanto para o Tab como para a tecla de renomear e a tecla de foco: abre com o caminho completo no campo e a parte do cofre marcada. Só com *Access external files* ativado.
+- **Um comando para cada degrau** (o nome, o nome com a extensão, o caminho desde o cofre, o caminho desde a raiz do sistema, o cofre) para atribuir uma tecla diretamente ao que quiser.
+- **<kbd>Shift</kbd> com a tecla de renomear ou a tecla de foco percorre o ciclo para trás.**
+- **As notas com ligações mas ainda por escrever aparecem** na lista, a cor-de-rosa, na pasta onde o Obsidian as criaria. Escolher uma cria-a.
+- **Com as extensões ocultas, cada ficheiro na lista mostra o seu tipo** num distintivo no fim da linha, e a barra de caminho mostra o do ficheiro aberto na sua extremidade direita. Premir um distintivo escreve o nome no campo com a extensão. O distintivo da barra de caminho mantém-se enquanto o campo está aberto.
+- **Uma nota pode ter outros caminhos.** Ao renomear, <kbd>Alt</kbd>+<kbd>Enter</kbd> acrescenta o caminho escrito como caminho de alias, <kbd>Shift</kbd>+<kbd>Enter</kbd> cria aí uma ligação física e <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> uma ligação simbólica. A nota fica onde está. Cada um fica registado no frontmatter `paths` da nota, que acompanha mudanças de nome e eliminações, incluindo as feitas fora do Obsidian: uma ligação física ou simbólica criada, separada ou removida num gestor de ficheiros, num terminal ou com o Obsidian fechado é corrigida nas listas.
+- **Os aliases aparecem na lista**, a laranja: os caminhos de alias na pasta que indicam, os aliases do próprio Obsidian ao lado da sua nota. Escolher um, ou escrever um caminho de alias e premir Enter, abre a nota.
+- **Um botão antes do segmento do cofre lista os outros caminhos de uma nota** (caminhos de alias, ligações físicas e simbólicas encontradas no cofre, aliases do Obsidian), quando os tem. Mostra quantos são, na cor do tipo mais forte: ligação física a roxo, ligação simbólica a cor-de-rosa, alias a laranja. A sua lista é construída como a lista principal, com as mesmas linhas, cores e distintivos de extensão, realçadas sob o ponteiro e pelas teclas de seta, e começa pelo caminho da própria nota a azul. Com as extensões ocultas, o botão é antes o ícone do distintivo no fim da linha: o distintivo ganha a sua cor por trás de uma extensão cinzenta, e a lista abre a terminar onde a extensão termina.
+- **Cada tipo de outro caminho tem a sua própria lista** (`paths-hardlinks`, `paths-symlinks`, `paths-aliases`) ao lado de `paths`, que é a soma de todas. Uma cópia indica a sua origem em `paths-origin` e não herda as listas da origem. A origem regista-a em `paths-forks`.
+- **Uma ligação pode mudar de tipo no mesmo sítio**: ao renomear sem alterar o caminho, as combinações de ligação e <kbd>Ctrl</kbd>+<kbd>Enter</kbd> transformam uma ligação física ou simbólica no outro tipo, num caminho de alias ou numa cópia independente.
+- **Padrões glob no campo de caminho.** `*`, `?`, `**`, `[…]` e `{a,b}` correspondem aos ficheiros do cofre. O mesmo botão conta as correspondências, a verde enquanto houver alguma e a vermelho enquanto não houver nenhuma, e lista-as. Enter abre todas as correspondências, pedindo confirmação acima de dez. Um padrão só com chavetas, como `Week {1,2,3}`, cria as notas que indica. Um nome real que contenha um destes caracteres é sempre lido literalmente, e ao renomear nunca se lê um padrão.
+- **O segmento do cofre pode mostrar o ícone e o nome, só o ícone ou nada**, e o ícone pode ser qualquer ícone Lucide. Isto substitui *Show vault name*, e uma escolha guardada é mantida.
+- **Outros caminhos fora do cofre.** Ao renomear um ficheiro lá fora, <kbd>Shift</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> e <kbd>Alt</kbd>+<kbd>Enter</kbd> criam uma ligação física, uma ligação simbólica e um caminho de alias, tal como dentro do cofre. O plugin guarda o registo (`external-links.json`), o botão de outros caminhos lista-os, um caminho de alias abre o seu ficheiro, e uma mudança de local ou eliminação feita pela barra de caminho atualiza o registo.
+
+### Alterado
+
+- **Sobre o nome do cofre, o campo ocupa toda a largura da linha**, para o caminho desde a raiz do sistema com que abre.
+- **Ao mover uma nota, o seu próprio nome vem primeiro** para o Tab e para a sugestão, à frente de outros nomes que começam da mesma maneira.
+- **As pastas do caminho que ainda não existem ficam a vermelho**, tal como o campo fica a vermelho para um nome que o Enter criaria.
+- **A lista tem uma margem vermelha quando o Enter criaria o nome escrito** sem nenhuma linha realçada, nos casos em que o próprio campo mantém a cor de uma linha.
+- **A roda do rato para na primeira e na última linha** da lista em vez de dar a volta. As teclas de seta continuam a dar a volta.
+- **Um arrastar para o caminho que não pode ser feito diz porquê** (já está nessa pasta, uma pasta para dentro de si própria, um nome que já lá existe) em vez de deixar o cabeçalho por trás oferecer-se para abrir o ficheiro.
+
+### Corrigido
+
+- **Uma linha ajustada enquanto o seu separador estava em segundo plano** perdia o nome do cofre e o nome da nota, e podia ficar assim, mesmo com espaço de sobra, quando o separador passava para a frente. Agora é ajustada quando tem largura e de novo sempre que essa largura muda.
+- **Com as extensões ocultas, o distintivo cede quando a linha fica curta**, como faz a extensão. Antes ficava no ecrã.
+- **Windows:** os caminhos escritos com `/` (`C:/Users/you/vault/Note.md`) são reconhecidos como estando dentro do cofre, os caminhos codificados em percentagem com letra de unidade são descodificados, e os caminhos na máquina são escritos sempre com `\` em vez de uma mistura dos dois separadores.
+
 ## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Corrigido

@@ -9,6 +9,41 @@
 
 Hver utgivelse av Lure, den nyeste først. Det som har kommet inn siden forrige utgivelse, står under *Ikke utgitt*. Versjonene har ingen `v` foran seg, slik som utgivelsesmerkene.
 
+## Ikke utgitt
+
+### Lagt til
+
+- **Tab går rundt navnene ved et veiskille.** Der det du har skrevet fortsatt er begynnelsen på flere navn, skriver hvert trykk det neste navnet helt, med delen det la til markert, og trykket etter det siste gir tilbake det du skrev. <kbd>Shift</kbd>+<kbd>Tab</kbd> går den andre veien. Med ett navn igjen går Tab inn som før.
+- **Et trykk på <kbd>Alt</kbd> fullfører** slik Tab gjorde før: så langt navnene stemmer overens, inn i den ene mappen som er igjen, og så opp trinnene. På et navn Tab har vist fram, går det inn i det.
+- **Hvelvet er et trinn** etter stien fra systemroten, for Tab, omdøpingstasten og fokustasten likt: stedene åpner med hele stien i feltet og hvelvets del markert. Bare med *Access external files* slått på.
+- **En kommando for hvert trinn** — navnet, navnet med filendelsen, stien fra hvelvet, stien fra systemroten, hvelvet — slik at du kan binde en tast rett til det du vil ha.
+- **<kbd>Shift</kbd> sammen med omdøpingstasten eller fokustasten går baklengs gjennom syklusen.**
+- **Notater som det lenkes til og som ikke er skrevet ennå, vises** i nedtrekkslisten, i rosa, i mappen Obsidian ville lage dem i. Velger du ett, blir det laget.
+- **Med filendelser skjult viser hver fil i nedtrekkslisten typen sin** i et merke på slutten av raden, og stilinjen viser den åpne filens type ytterst til høyre; et trykk på et merke skriver navnet ut i feltet med filendelsen. Stilinjens merke blir stående mens feltet er åpent.
+- **Et notat kan ha andre stier.** Ved omdøping legger <kbd>Alt</kbd>+<kbd>Enter</kbd> til den skrevne stien som en aliassti, <kbd>Shift</kbd>+<kbd>Enter</kbd> lager en hard lenke der, og <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> en symbolsk lenke; notatet blir der det er. Hver av dem føres opp i notatets `paths`-frontmatter, som følger omdøpinger og slettinger — også de som gjøres utenfor Obsidian: en hard eller symbolsk lenke som er laget, skilt ut eller fjernet i en filbehandler, i en terminal eller mens Obsidian var lukket, blir rettet opp i listene.
+- **Aliaser vises i nedtrekkslisten**, i oransje: aliasstier i mappen de nevner, Obsidians egne aliaser ved siden av notatet sitt. Velger du et, eller skriver du en aliassti og trykker Enter, åpnes notatet.
+- **En knapp foran hvelvets segment viser et notats andre stier** — aliasstier, harde og symbolske lenker funnet i hvelvet, Obsidians aliaser — når det har noen. Den viser hvor mange, i fargen til den sterkeste typen: hard lenke lilla, symbolsk lenke rosa, alias oransje. Listen er bygd som nedtrekkslisten — de samme radene, fargene og filendelsesmerkene, uthevet under pekeren og med piltastene — og begynner med notatets egen sti i blått. Med filendelser skjult er knappen i stedet ikonet til merket på slutten av raden: merket får fargen bak en grå filendelse, og listen åpner seg slik at den slutter der filendelsen slutter.
+- **Hver type annen sti har sin egen liste** — `paths-hardlinks`, `paths-symlinks`, `paths-aliases` — ved siden av `paths`, som er summen av dem. En kopi nevner kilden sin i `paths-origin` og dropper kildens lister; kilden fører kopien opp i `paths-forks`.
+- **En lenke kan bytte type der den står**: ved omdøping med stien uendret gjør lenkekombinasjonene og <kbd>Ctrl</kbd>+<kbd>Enter</kbd> en hard eller symbolsk lenke om til den andre typen, til en aliassti eller til en egen kopi.
+- **Glob-mønstre i stifeltet.** `*`, `?`, `**`, `[…]` og `{a,b}` matcher filene i hvelvet; den samme knappen teller treffene, grønn så lenge det finnes noen og rød så lenge det ikke finnes noen, og lister dem opp. Enter åpner alle treff, men spør først hvis det er flere enn ti. Et mønster med bare krøllparenteser — `Week {1,2,3}` — lager notatene det nevner. Et ekte navn som inneholder ett av disse tegnene, tas alltid bokstavelig, og omdøping leser aldri et mønster.
+- **Hvelvets segment kan vise ikonet og navnet sitt, bare ikonet, eller ingenting**, og ikonet kan være et hvilket som helst Lucide-ikon. Dette erstatter *Show vault name*, og et lagret valg blir ført videre.
+- **Andre stier utenfor hvelvet.** Når du omdøper en fil der ute, lager <kbd>Shift</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> og <kbd>Alt</kbd>+<kbd>Enter</kbd> en hard lenke, en symbolsk lenke og en aliassti, som inne i hvelvet. Programtillegget fører registeret (`external-links.json`), knappen for andre stier viser dem, en aliassti åpner filen sin, og en flytting eller sletting gjennom stilinjen tar registeret med seg.
+
+### Endret
+
+- **På hvelvets navn tar feltet hele radens bredde**, for stien fra systemroten som det åpner med.
+- **Når et notat flyttes, kommer dets eget navn først** for Tab og forslaget, foran andre navn som begynner likt.
+- **Mapper i stien som ikke finnes ennå, er røde**, slik feltet er rødt for et navn Enter ville lage.
+- **Nedtrekkslisten har en rød kant når Enter ville lage det skrevne navnet** mens ingen rad er uthevet, der feltet selv beholder en rads farge.
+- **Hjulet stopper ved første og siste rad** i nedtrekkslisten i stedet for å begynne forfra; piltastene går fortsatt rundt.
+- **Et slipp på stien som ikke kan utføres, sier hvorfor** — allerede i den mappen, en mappe inn i seg selv, et navn som allerede finnes der — i stedet for å la overskriften bak tilby å åpne filen.
+
+### Rettet
+
+- **En rad som ble tilpasset mens fanen lå i bakgrunnen**, ga fra seg hvelvnavnet og notatets navn, og kunne bli værende slik med plass til overs når fanen kom fram. Den tilpasses nå når den har en bredde, og på nytt hver gang bredden endrer seg.
+- **Med filendelser skjult viker merket når raden blir for kort**, slik filendelsen gjør; før ble det stående på skjermen.
+- **Windows:** stier skrevet med `/` (`C:/Users/you/vault/Note.md`) gjenkjennes som innenfor hvelvet, prosentkodede stier med stasjonsbokstav dekodes, og stier på maskinen skrives med `\` hele veien i stedet for en blanding av begge skilletegnene.
+
 ## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Rettet

@@ -8,6 +8,41 @@
 
 Toutes les versions de Lure, de la plus récente à la plus ancienne. Ce qui a été ajouté depuis la dernière version figure sous *Non publié*. Les numéros de version ne portent pas de préfixe `v`, comme les étiquettes de publication.
 
+## Non publié
+
+### Ajouté
+
+- **Tab parcourt les noms à un embranchement.** Si ce que vous avez tapé est encore le début de plusieurs noms, chaque pression écrit le suivant en entier et marque la partie ajoutée. La pression qui suit le dernier rend ce que vous aviez tapé. <kbd>Shift</kbd>+<kbd>Tab</kbd> parcourt les noms dans l'autre sens. Lorsqu'il ne reste qu'un nom, Tab y entre comme avant.
+- **Un appui bref sur <kbd>Alt</kbd> complète** comme le faisait Tab : aussi loin que les noms concordent, puis dans le seul dossier restant, puis en remontant les échelons. Sur un nom que Tab a affiché, il y entre.
+- **Le coffre est un échelon** après le chemin depuis la racine du système, pour Tab comme pour la touche de renommage et la touche de focus. À ces positions, le champ s'ouvre avec le chemin complet et la partie du coffre marquée. Uniquement avec *Accéder aux fichiers externes* activé.
+- **Une commande pour chaque échelon** (le nom, le nom avec son extension, le chemin depuis le coffre, le chemin depuis la racine du système, le coffre), pour associer une touche directement à celui que vous voulez.
+- **<kbd>Shift</kbd> avec la touche de renommage ou la touche de focus parcourt le cycle à l'envers.**
+- **Les notes vers lesquelles pointent des liens mais qui ne sont pas encore écrites apparaissent** dans le menu déroulant, en rose, dans le dossier où Obsidian les créerait. En choisir une la crée.
+- **Avec les extensions masquées, chaque fichier du menu déroulant affiche son type** dans un badge en fin de ligne, et la barre de chemin affiche celui du fichier ouvert à son extrémité droite. Appuyer sur un badge écrit le nom dans le champ avec son extension. Le badge de la barre de chemin reste affiché tant que le champ est ouvert.
+- **Une note peut avoir d'autres chemins.** Lors d'un renommage, <kbd>Alt</kbd>+<kbd>Enter</kbd> ajoute le chemin tapé comme chemin d'alias, <kbd>Shift</kbd>+<kbd>Enter</kbd> y crée un lien physique et <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> un lien symbolique ; la note reste où elle est. Chacun est enregistré dans la propriété `paths` du frontmatter de la note. Cette liste suit les renommages et les suppressions, y compris ceux effectués hors d'Obsidian : un lien physique ou symbolique créé, détaché ou supprimé dans un gestionnaire de fichiers, dans un terminal ou pendant qu'Obsidian était fermé est corrigé dans les listes.
+- **Les alias apparaissent dans le menu déroulant**, en orange : les chemins d'alias dans le dossier qu'ils désignent, les alias propres à Obsidian à côté de leur note. En choisir un, ou taper un chemin d'alias et appuyer sur Entrée, ouvre la note.
+- **Un bouton devant le segment du coffre liste les autres chemins d'une note** lorsqu'elle en a : chemins d'alias, liens physiques et symboliques trouvés dans le coffre, alias d'Obsidian. Il en indique le nombre, dans la couleur du type le plus fort : violet pour un lien physique, rose pour un lien symbolique, orange pour un alias. Sa liste est construite comme le menu déroulant, avec les mêmes lignes, couleurs et badges d'extension, et la même mise en surbrillance sous le pointeur et avec les flèches. Elle commence par le chemin propre de la note, en bleu. Avec les extensions masquées, le bouton prend la forme de l'icône du badge de fin de ligne : le badge prend sa couleur derrière une extension grise, et la liste s'ouvre alignée sur la fin de l'extension.
+- **Chaque type d'autre chemin a sa propre liste** (`paths-hardlinks`, `paths-symlinks`, `paths-aliases`), à côté de `paths`, qui les réunit. Une copie nomme sa source dans `paths-origin` et ne reprend pas les listes de la source ; la source la mentionne dans `paths-forks`.
+- **Un lien peut changer de type sur place** : en renommant sans modifier le chemin, les combinaisons de touches de lien et <kbd>Ctrl</kbd>+<kbd>Enter</kbd> transforment un lien physique ou symbolique en lien de l'autre type, en chemin d'alias ou en copie indépendante.
+- **Motifs glob dans le champ de chemin.** `*`, `?`, `**`, `[…]` et `{a,b}` correspondent aux fichiers du coffre. Le même bouton compte les correspondances et les liste ; il est vert lorsqu'il y en a et rouge lorsqu'il n'y en a aucune. Entrée ouvre toutes les correspondances, en demandant d'abord confirmation au-delà de dix. Un motif composé uniquement d'accolades, comme `Week {1,2,3}`, crée les notes qu'il désigne. Un vrai nom contenant l'un de ces caractères est toujours pris littéralement, et le renommage n'interprète jamais de motif.
+- **Le segment du coffre peut afficher son icône et son nom, son icône seule ou rien**, et l'icône peut être n'importe quelle icône Lucide. Cette option remplace *Afficher le nom du coffre*, et un choix déjà enregistré est conservé.
+- **D'autres chemins hors du coffre.** Lors du renommage d'un fichier situé hors du coffre, <kbd>Shift</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> et <kbd>Alt</kbd>+<kbd>Enter</kbd> créent respectivement un lien physique, un lien symbolique et un chemin d'alias, comme à l'intérieur. Le plugin les enregistre (`external-links.json`), le bouton des autres chemins les liste et un chemin d'alias ouvre son fichier. Un déplacement ou une suppression via la barre de chemin met l'enregistrement à jour.
+
+### Modifié
+
+- **Sur le nom du coffre, le champ occupe toute la largeur de la ligne**, pour le chemin depuis la racine du système avec lequel il s'ouvre.
+- **Lors du déplacement d'une note, son propre nom vient en premier** pour Tab et la suggestion, avant les autres noms qui commencent de la même façon.
+- **Les dossiers du chemin qui n'existent pas encore sont en rouge**, comme le champ l'est pour un nom qu'Entrée créerait.
+- **Le menu déroulant a une bordure rouge lorsqu'Entrée créerait le nom tapé** et qu'aucune ligne n'est en surbrillance, car le champ lui-même garde la couleur d'une ligne.
+- **La molette s'arrête à la première et à la dernière ligne** du menu déroulant au lieu de boucler ; les flèches bouclent toujours.
+- **Un dépôt impossible sur le chemin en indique la raison** (déjà dans ce dossier, dossier déposé dans lui-même, nom déjà présent), au lieu de laisser l'en-tête situé derrière proposer d'ouvrir le fichier.
+
+### Corrigé
+
+- **Une ligne ajustée pendant que son onglet était à l'arrière-plan** perdait le nom du coffre et celui de la note, et pouvait rester ainsi alors que la place ne manquait plus une fois l'onglet ramené au premier plan. Elle est désormais ajustée dès qu'elle a une largeur, puis chaque fois que cette largeur change.
+- **Avec les extensions masquées, le badge s'efface lorsque la ligne manque de place**, comme le fait l'extension ; auparavant, il restait affiché.
+- **Windows :** les chemins écrits avec `/` (`C:/Users/you/vault/Note.md`) sont reconnus comme situés dans le coffre, les chemins encodés en pourcentage avec une lettre de lecteur sont décodés, et les chemins de la machine sont écrits avec `\` partout au lieu d'un mélange des deux séparateurs.
+
 ## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Corrigé

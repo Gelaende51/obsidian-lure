@@ -9,6 +9,41 @@
 
 Jede Veröffentlichung von Lure, die neueste zuerst. Was seit der letzten Veröffentlichung dazugekommen ist, steht unter *Unveröffentlicht*. Versionen tragen kein `v` davor, passend zu den Release-Tags.
 
+## Unveröffentlicht
+
+### Hinzugefügt
+
+- **An einer Gabelung wechselt Tab reihum durch die Namen.** Wenn das Getippte noch mehrere Namen beginnen kann, schreibt jeder Druck den nächsten ganz aus und markiert den ergänzten Teil. Der Druck nach dem letzten Namen stellt das Getippte wieder her. <kbd>Shift</kbd>+<kbd>Tab</kbd> geht in die andere Richtung. Bleibt nur ein Name übrig, steigt Tab wie bisher hinein.
+- **Ein kurzer Druck auf <kbd>Alt</kbd> vervollständigt** so, wie es bisher Tab tat: so weit, wie die Namen übereinstimmen, dann in den einzigen verbliebenen Ordner, dann die Stufen hinauf. Steht ein Name im Feld, den Tab dort angezeigt hat, steigt es in ihn hinein.
+- **Der Vault ist eine Stufe** nach dem Pfad vom Systemstamm, für Tab, die Umbenennen-Taste und die Fokus-Taste gleichermaßen: Dort öffnet sich das Feld mit dem ganzen Pfad, und der Teil des Vaults ist markiert. Nur mit eingeschaltetem *Access external files*.
+- **Ein Befehl für jede Stufe** – der Name, der Name mit Endung, der Pfad vom Vault aus, der Pfad vom Systemstamm aus, der Vault –, um eine Taste direkt an die gewünschte zu binden.
+- **<kbd>Shift</kbd> zusammen mit der Umbenennen-Taste oder der Fokus-Taste durchläuft den Zyklus rückwärts.**
+- **Das Dropdown führt Notizen auf, die verlinkt, aber noch nicht geschrieben sind**, in Pink und in dem Ordner, in dem Obsidian sie anlegen würde. Wählt man eine aus, wird sie angelegt.
+- **Bei ausgeblendeten Endungen zeigt jede Datei im Dropdown ihren Typ** in einem Badge am Ende der Zeile. Die Pfadleiste zeigt den Typ der geöffneten Datei an ihrem rechten Ende. Ein Klick auf ein Badge schreibt den Namen mit seiner Endung ins Feld. Das Badge der Pfadleiste bleibt sichtbar, solange das Feld offen ist.
+- **Eine Notiz kann weitere Pfade haben.** Beim Umbenennen fügt <kbd>Alt</kbd>+<kbd>Enter</kbd> den getippten Pfad als Alias-Pfad hinzu, <kbd>Shift</kbd>+<kbd>Enter</kbd> legt dort einen Hardlink an und <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> einen symbolischen Link. Die Notiz bleibt dabei, wo sie ist. Jeder dieser Pfade wird im Frontmatter `paths` der Notiz festgehalten, das Umbenennungen und Löschungen folgt, auch solchen außerhalb von Obsidian: Wird ein Hard- oder symbolischer Link in einem Dateimanager, einem Terminal oder bei geschlossenem Obsidian angelegt, abgespalten oder entfernt, werden die Listen richtiggestellt.
+- **Das Dropdown führt Aliase auf**, in Orange: Alias-Pfade in dem Ordner, den sie nennen, und Obsidians eigene Aliase neben ihrer Notiz. Wählt man einen aus oder tippt einen Alias-Pfad und drückt Enter, öffnet sich die Notiz.
+- **Eine Schaltfläche vor dem Segment des Vaults listet die weiteren Pfade einer Notiz auf**, sofern sie welche hat: Alias-Pfade, im Vault gefundene Hard- und symbolische Links sowie Obsidians Aliase. Sie zeigt deren Anzahl in der Farbe der stärksten Art: Hardlink lila, symbolischer Link pink, Alias orange. Ihre Liste ist wie das Dropdown aufgebaut, mit denselben Zeilen, Farben und Endungs-Badges, und Zeilen werden unter dem Mauszeiger und mit den Pfeiltasten hervorgehoben. Die Liste beginnt mit dem eigenen Pfad der Notiz in Blau. Bei ausgeblendeten Endungen tritt das Badge am Zeilenende an die Stelle der Schaltfläche: Es übernimmt ihre Farbe hinter einer grauen Endung, und die Liste öffnet sich so, dass sie dort endet, wo die Endung endet.
+- **Jede Art weiterer Pfade hat ihre eigene Liste** – `paths-hardlinks`, `paths-symlinks`, `paths-aliases` – neben `paths`, das alle zusammenfasst. Eine Kopie nennt ihre Quelle in `paths-origin` und übernimmt deren Listen nicht. Die Quelle führt die Kopie in `paths-forks`.
+- **Ein Link kann seine Art an Ort und Stelle wechseln**: Benennt man ihn um und lässt den Pfad unverändert, machen die Link-Tastenkombinationen und <kbd>Ctrl</kbd>+<kbd>Enter</kbd> aus einem Hard- oder symbolischen Link die jeweils andere Art, einen Alias-Pfad oder eine eigenständige Kopie.
+- **Glob-Muster im Pfadfeld.** `*`, `?`, `**`, `[…]` und `{a,b}` passen auf die Dateien des Vaults. Dieselbe Schaltfläche zählt die Treffer, grün, solange es welche gibt, und rot, solange es keine gibt, und listet sie auf. Enter öffnet jeden Treffer und fragt bei mehr als zehn vorher nach. Ein Muster, das nur aus geschweiften Klammern besteht, etwa `Week {1,2,3}`, legt die Notizen an, die es nennt. Ein echter Name, der eines dieser Zeichen enthält, wird immer wörtlich genommen, und beim Umbenennen wird nie ein Muster ausgewertet.
+- **Das Segment des Vaults kann Symbol und Namen, nur das Symbol oder nichts zeigen**, und als Symbol lässt sich jedes Lucide-Symbol wählen. Das ersetzt *Show vault name*. Eine gespeicherte Auswahl wird übernommen.
+- **Weitere Pfade außerhalb des Vaults.** Beim Umbenennen einer Datei außerhalb legen <kbd>Shift</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> und <kbd>Alt</kbd>+<kbd>Enter</kbd> wie innerhalb einen Hardlink, einen symbolischen Link und einen Alias-Pfad an. Das Plugin führt darüber Buch (`external-links.json`). Die Schaltfläche für weitere Pfade listet sie auf, ein Alias-Pfad öffnet seine Datei, und beim Verschieben oder Löschen über die Pfadleiste werden die Einträge mitgenommen.
+
+### Geändert
+
+- **Steht das Feld auf dem Namen des Vaults, nimmt es die ganze Breite der Zeile ein**, damit der Pfad vom Systemstamm Platz hat, mit dem es sich öffnet.
+- **Beim Verschieben einer Notiz kommt ihr eigener Name zuerst**, für Tab und für den Vorschlag, noch vor anderen Namen mit demselben Anfang.
+- **Ordner im Pfad, die es noch nicht gibt, sind rot**, so wie das Feld rot ist, wenn Enter den Namen anlegen würde.
+- **Das Dropdown hat einen roten Rand, wenn Enter den getippten Namen anlegen würde** und keine Zeile hervorgehoben ist. Ist eine Zeile hervorgehoben, behält das Feld selbst deren Farbe.
+- **Das Mausrad hält an der ersten und letzten Zeile** des Dropdowns an, statt umzulaufen. Die Pfeiltasten laufen weiterhin um.
+- **Lässt sich ein Ablegen auf dem Pfad nicht ausführen, steht dort der Grund**, etwa dass die Datei schon in diesem Ordner liegt, ein Ordner in sich selbst verschoben würde oder der Name schon vorhanden ist. Die Kopfzeile dahinter bietet dann nicht mehr an, die Datei zu öffnen.
+
+### Behoben
+
+- **Wurde eine Zeile eingepasst, während ihr Tab im Hintergrund lag**, verlor sie den Vault-Namen und den Namen der Notiz. Sobald der Tab nach vorn kam, konnte sie so bleiben, obwohl genug Platz da war. Jetzt wird sie eingepasst, sobald sie eine Breite hat, und erneut, wann immer sich diese Breite ändert.
+- **Bei ausgeblendeten Endungen weicht das Badge, wenn die Zeile zu knapp wird**, so wie die Endung. Vorher blieb es auf dem Bildschirm.
+- **Windows:** Pfade mit `/` (`C:/Users/you/vault/Note.md`) werden als im Vault liegend erkannt, prozentkodierte Pfade mit Laufwerksbuchstaben werden dekodiert, und Pfade auf dem Rechner werden durchgehend mit `\` geschrieben statt mit einer Mischung beider Trennzeichen.
+
 ## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Behoben

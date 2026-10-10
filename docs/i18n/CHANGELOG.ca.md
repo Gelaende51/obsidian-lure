@@ -9,6 +9,41 @@
 
 Cada versió de Lure, de la més nova a la més antiga. El que ha arribat des de la darrera versió és a *Sense publicar*. Les versions no porten el prefix `v`, igual que les etiquetes de les versions.
 
+## Sense publicar
+
+### Afegit
+
+- **El Tab recorre els noms en una bifurcació.** Quan el que has escrit encara és l'inici de diversos noms, cada pulsació n'escriu el següent sencer, amb la part afegida marcada, i la pulsació després de l'últim retorna el que havies escrit. <kbd>Shift</kbd>+<kbd>Tab</kbd> va en sentit contrari. Quan només queda un nom, el Tab hi entra com abans.
+- **Un toc d'<kbd>Alt</kbd> completa** com ho feia abans el Tab: fins on coincideixen els noms, dins l'única carpeta que queda i després pels esglaons. Sobre un nom que el Tab ha mostrat, hi entra.
+- **La caixa forta és un esglaó** després del camí des de l'arrel del sistema, tant per al Tab com per a la tecla de canviar el nom i la tecla d'enfocar: aquests llocs s'obren amb el camí sencer al camp i la part de la caixa forta marcada. Només amb *Access external files* activat.
+- **Una ordre per a cada esglaó** (el nom, el nom amb l'extensió, el camí des de la caixa forta, el camí des de l'arrel del sistema, la caixa forta) per assignar una tecla directament al que vulguis.
+- **<kbd>Shift</kbd> amb la tecla de canviar el nom o la tecla d'enfocar recorre el cicle cap enrere.**
+- **Les notes enllaçades que encara no s'han escrit apareixen** al desplegable, en rosa, a la carpeta on Obsidian les crearia. Triar-ne una la crea.
+- **Amb les extensions amagades, cada fitxer del desplegable mostra el seu tipus** en una etiqueta al final de la fila, i la barra de camí mostra el del fitxer obert al seu extrem dret; prémer una etiqueta escriu el nom al camp amb la seva extensió. L'etiqueta de la barra de camí es manté mentre el camp és obert.
+- **Una nota pot tenir altres camins.** En canviar el nom, <kbd>Alt</kbd>+<kbd>Enter</kbd> afegeix el camí escrit com a camí àlies, <kbd>Shift</kbd>+<kbd>Enter</kbd> hi crea un enllaç dur i <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> un enllaç simbòlic; la nota es queda on és. Cadascun queda registrat a la propietat `paths` del frontmatter de la nota, que segueix els canvis de nom i les eliminacions, també els fets fora d'Obsidian: un enllaç dur o simbòlic creat, separat o eliminat en un gestor de fitxers, en un terminal o mentre Obsidian era tancat es corregeix a les llistes.
+- **Els àlies apareixen al desplegable**, en taronja: els camins àlies a la carpeta que indiquen, els àlies propis d'Obsidian al costat de la seva nota. Triar-ne un, o escriure un camí àlies i prémer Enter, obre la nota.
+- **Un botó davant del segment de la caixa forta mostra els altres camins d'una nota** (camins àlies, enllaços durs i simbòlics trobats a la caixa forta, àlies d'Obsidian) quan en té. Indica quants n'hi ha, amb el color del tipus més fort: enllaç dur en lila, enllaç simbòlic en rosa, àlies en taronja. La seva llista es construeix com el desplegable (les mateixes files, colors i etiquetes d'extensió, ressaltades sota el punter i amb les fletxes) i comença amb el camí propi de la nota en blau. Amb les extensions amagades, en lloc d'això és la icona de l'etiqueta al final de la fila: l'etiqueta pren el seu color darrere d'una extensió grisa, i la llista s'obre acabant on acaba l'extensió.
+- **Cada tipus d'altre camí té la seva pròpia llista** (`paths-hardlinks`, `paths-symlinks`, `paths-aliases`) al costat de `paths`, que n'és la suma. Una còpia indica el seu origen a `paths-origin` i descarta les llistes de l'origen; l'origen la registra a `paths-forks`.
+- **Un enllaç pot canviar de tipus al seu lloc**: en canviar el nom deixant el camí tal com és, les combinacions d'enllaç i <kbd>Ctrl</kbd>+<kbd>Enter</kbd> converteixen un enllaç dur o simbòlic en l'altre tipus, en un camí àlies o en una còpia pròpia.
+- **Patrons glob al camp de camí.** `*`, `?`, `**`, `[…]` i `{a,b}` coincideixen amb els fitxers de la caixa forta; el mateix botó compta les coincidències, en verd mentre n'hi ha i en vermell mentre no n'hi ha cap, i les llista. Enter obre totes les coincidències, i pregunta abans si n'hi ha més de deu. Un patró només amb claus, com ara `Week {1,2,3}`, crea les notes que anomena. Un nom real que contingui algun d'aquests caràcters sempre es pren literalment, i canviar el nom mai no interpreta un patró.
+- **El segment de la caixa forta pot mostrar la seva icona i el seu nom, només la icona o res**, i la icona pot ser qualsevol icona de Lucide. Això substitueix *Show vault name*, i l'opció desada es conserva.
+- **Altres camins fora de la caixa forta.** En canviar el nom d'un fitxer de fora, <kbd>Shift</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> i <kbd>Alt</kbd>+<kbd>Enter</kbd> creen un enllaç dur, un enllaç simbòlic i un camí àlies, com a dins. El connector en manté el registre (`external-links.json`), el botó d'altres camins els llista, un camí àlies obre el seu fitxer, i un moviment o una eliminació a través de la barra de camí s'emporta el registre.
+
+### Canviat
+
+- **Sobre el nom de la caixa forta, el camp ocupa tota l'amplada de la fila**, per al camí des de l'arrel del sistema amb què s'obre.
+- **En moure una nota, el seu propi nom va primer** per al Tab i per a la proposta, per davant d'altres noms que comencen igual.
+- **Les carpetes del camí que encara no existeixen són vermelles**, igual que el camp és vermell per a un nom que Enter crearia.
+- **El desplegable té una vora vermella quan Enter crearia el nom escrit** sense cap fila ressaltada, ja que el camp mateix conserva el color d'una fila.
+- **La roda s'atura a la primera i a l'última fila** del desplegable en lloc de tornar a començar; les fletxes encara hi tornen.
+- **Deixar anar sobre el camí quan no es pot fer explica per què** (ja és en aquesta carpeta, una carpeta dins de si mateixa, un nom que ja hi és) en lloc de deixar que la capçalera de darrere ofereixi obrir el fitxer.
+
+### Corregit
+
+- **Una fila ajustada mentre la seva pestanya era al fons** renunciava al nom de la caixa forta i al de la nota, i podia quedar-se així amb espai de sobres un cop la pestanya passava al davant. Ara s'ajusta quan té amplada, i de nou cada vegada que aquesta amplada canvia.
+- **Amb les extensions amagades, l'etiqueta cedeix quan la fila es queda curta**, com fa l'extensió; abans es quedava a la pantalla.
+- **Windows:** els camins escrits amb `/` (`C:/Users/you/vault/Note.md`) es reconeixen com a dins de la caixa forta, els camins codificats amb percentatges amb lletra d'unitat es descodifiquen, i els camins de la màquina s'escriuen sempre amb `\` en lloc d'una barreja de tots dos separadors.
+
 ## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Corregit

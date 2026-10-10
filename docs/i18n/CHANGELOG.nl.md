@@ -9,6 +9,41 @@
 
 Elke release van Lure, de nieuwste eerst. Wat er sinds de laatste release is geland staat onder *Niet uitgebracht*. Versies dragen geen `v`-voorvoegsel, net als de release-tags.
 
+## Niet uitgebracht
+
+### Toegevoegd
+
+- **Tab loopt bij een splitsing de namen langs.** Waar wat je typte nog het begin is van meerdere namen, schrijft elke druk de volgende naam voluit, met het toegevoegde deel gemarkeerd, en de druk na de laatste geeft terug wat je typte. <kbd>Shift</kbd>+<kbd>Tab</kbd> gaat de andere kant op. Is er nog één naam over, dan stapt Tab erin zoals voorheen.
+- **Een tik op <kbd>Alt</kbd> vult aan** zoals Tab dat vroeger deed: zo ver als de namen overeenkomen, de ene overgebleven map in, en dan de treden op. Op een naam die Tab heeft getoond, stapt hij erin.
+- **De kluis is een trede** na het pad vanaf de systeemroot, voor Tab, de hernoemtoets en de focustoets gelijk: de plaatsen openen met het hele pad in het veld en het deel van de kluis gemarkeerd. Alleen met *Access external files* aan.
+- **Een opdracht voor elke trede** (de naam, de naam met extensie, het pad vanaf de kluis, het pad vanaf de systeemroot, de kluis) om een toets rechtstreeks aan de gewenste te koppelen.
+- **<kbd>Shift</kbd> met de hernoemtoets of de focustoets doorloopt de cyclus achterwaarts.**
+- **Notities waarnaar gelinkt wordt maar die nog niet geschreven zijn, staan in de lijst**, in roze, in de map waarin Obsidian ze zou aanmaken. Er een kiezen maakt hem aan.
+- **Met verborgen extensies toont elk bestand in de lijst zijn type** in een badge aan het eind van de rij, en de padbalk toont dat van het geopende bestand aan zijn rechteruiteinde; een badge indrukken schrijft de naam met extensie uit in het veld. De badge van de padbalk blijft staan zolang het veld open is.
+- **Een notitie kan andere paden hebben.** Bij hernoemen voegt <kbd>Alt</kbd>+<kbd>Enter</kbd> het getypte pad toe als aliaspad, maakt <kbd>Shift</kbd>+<kbd>Enter</kbd> daar een harde link en <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> een symbolische link; de notitie blijft waar hij is. Elk wordt vastgelegd in de `paths`-frontmatter van de notitie, die hernoemingen en verwijderingen volgt, ook die buiten Obsidian: een harde of symbolische link die in een bestandsbeheerder, een terminal of terwijl Obsidian dicht was is gemaakt, afgesplitst of verwijderd, wordt in de lijsten rechtgezet.
+- **Aliassen staan in de lijst**, in oranje: aliaspaden in de map die ze noemen, Obsidians eigen aliassen naast hun notitie. Er een kiezen, of een aliaspad typen en op Enter drukken, opent de notitie.
+- **Een knop voor het segment van de kluis toont de andere paden van een notitie** (aliaspaden, harde en symbolische links die in de kluis gevonden zijn, Obsidians aliassen) als die er zijn. Hij toont hoeveel, in de kleur van de sterkste soort: harde link paars, symbolische link roze, alias oranje. Zijn lijst is opgebouwd als de lijst van het veld (dezelfde rijen, kleuren en extensiebadges, gemarkeerd onder de aanwijzer en met de pijltoetsen) en begint met het eigen pad van de notitie in blauw. Met verborgen extensies is hij in plaats daarvan het pictogram van de badge aan het eind van de rij: de badge neemt zijn kleur aan achter een grijze extensie, en de lijst opent zo dat hij eindigt waar de extensie eindigt.
+- **Elke soort ander pad heeft een eigen lijst** (`paths-hardlinks`, `paths-symlinks`, `paths-aliases`) naast `paths`, hun som. Een kopie noemt haar bron in `paths-origin` en laat de lijsten van de bron vallen; de bron vermeldt haar in `paths-forks`.
+- **Een link kan ter plekke van soort veranderen**: bij hernoemen met het pad ongewijzigd maken de linkcombinaties en <kbd>Ctrl</kbd>+<kbd>Enter</kbd> van een harde of symbolische link de andere soort, een aliaspad of een eigen kopie.
+- **Glob-patronen in het padveld.** `*`, `?`, `**`, `[…]` en `{a,b}` matchen de bestanden van de kluis; dezelfde knop telt de treffers, groen zolang er zijn en rood zolang er geen zijn, en somt ze op. Enter opent elke treffer en vraagt het eerst boven de tien. Een patroon met alleen accolades (`Week {1,2,3}`) maakt de notities aan die het noemt. Een echte naam met een van deze tekens wordt altijd letterlijk genomen, en hernoemen leest nooit een patroon.
+- **Het segment van de kluis kan zijn pictogram en naam tonen, alleen zijn pictogram, of niets**, en het pictogram kan elk Lucide-pictogram zijn. Dit vervangt *Show vault name*, en een opgeslagen keuze wordt overgenomen.
+- **Andere paden buiten de kluis.** Bij het hernoemen van een bestand daarbuiten maken <kbd>Shift</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> en <kbd>Alt</kbd>+<kbd>Enter</kbd> een harde link, een symbolische link en een aliaspad, net als binnen de kluis. De plug-in houdt de registratie bij (`external-links.json`), de knop voor andere paden somt ze op, een aliaspad opent zijn bestand, en een verplaatsing of verwijdering via de padbalk neemt de registratie mee.
+
+### Gewijzigd
+
+- **Op de naam van de kluis neemt het veld de hele breedte van de rij in**, voor het pad vanaf de systeemroot waarmee het opent.
+- **Bij het verplaatsen van een notitie komt haar eigen naam eerst** voor Tab en het aanbod, vóór andere namen die hetzelfde beginnen.
+- **Mappen in het pad die nog niet bestaan zijn rood**, zoals het veld rood is voor een naam die Enter zou aanmaken.
+- **De lijst heeft een rode rand wanneer Enter de getypte naam zou aanmaken** terwijl er geen rij gemarkeerd is, waar het veld zelf de kleur van een rij houdt.
+- **Het scrollwiel stopt bij de eerste en laatste rij** van de lijst in plaats van rond te gaan; de pijltoetsen gaan nog steeds rond.
+- **Een neerzetting op het pad die niet kan, zegt waarom** (al in die map, een map in zichzelf, een naam die er al is) in plaats van de kop erachter te laten aanbieden het bestand te openen.
+
+### Opgelost
+
+- **Een rij die werd ingepast terwijl haar tabblad achteraan lag**, gaf de kluisnaam en de naam van de notitie op, en kon zo blijven met ruimte over zodra het tabblad naar voren kwam. Ze wordt ingepast wanneer ze een breedte heeft, en opnieuw telkens als die breedte verandert.
+- **Met verborgen extensies wijkt de badge wanneer de rij te kort wordt**, zoals de extensie dat doet; eerder bleef hij in beeld.
+- **Windows:** paden geschreven met `/` (`C:/Users/you/vault/Note.md`) worden herkend als binnen de kluis, procent-gecodeerde paden met een stationsletter worden gedecodeerd, en paden op de machine worden overal met `\` geschreven in plaats van een mengeling van beide scheidingstekens.
+
 ## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Opgelost

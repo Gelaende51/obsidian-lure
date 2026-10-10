@@ -9,6 +9,41 @@
 
 Kaikki Luren julkaisut, uusin ensin. Se, mikä on valmistunut viimeisimmän julkaisun jälkeen, on kohdassa *Julkaisematon*. Versionumeroissa ei ole `v`-etuliitettä, samoin kuin julkaisutunnisteissa.
 
+## Julkaisematon
+
+### Lisätty
+
+- **Tab kiertää nimiä haarautumakohdassa.** Kun kirjoittamasi on yhä usean nimen alku, kukin painallus kirjoittaa seuraavan nimen kokonaan ja merkitsee lisäämänsä osan. Viimeisen jälkeinen painallus palauttaa kirjoittamasi. <kbd>Shift</kbd>+<kbd>Tab</kbd> kiertää toiseen suuntaan. Kun jäljellä on yksi nimi, Tab siirtyy sisään kuten ennenkin.
+- **<kbd>Alt</kbd>-näppäimen napautus täydentää** niin kuin Tab ennen: niin pitkälle kuin nimet ovat yhtäpitäviä, sitten ainoaan jäljellä olevaan kansioon ja sen jälkeen portaita ylöspäin. Kun Tab on tuonut nimen näkyviin, napautus siirtyy sen sisään.
+- **Holvi on porras** järjestelmän juuresta alkavan polun jälkeen Tabille, uudelleennimeämisnäppäimelle ja kohdistusnäppäimelle. Kohdat avautuvat niin, että koko polku on kentässä ja holvin osuus on merkitty. Vain kun *Käytä ulkoisia tiedostoja* on päällä.
+- **Kullekin portaalle on oma komento** (nimi, nimi tiedostopäätteineen, polku holvista, polku järjestelmän juuresta, holvi), joten näppäimen voi sitoa suoraan haluttuun portaaseen.
+- **<kbd>Shift</kbd> uudelleennimeämis- tai kohdistusnäppäimen kanssa kulkee kierron takaperin.**
+- **Muistiinpanot, joihin on linkitetty mutta joita ei ole vielä kirjoitettu, näkyvät** alasvetoluettelossa vaaleanpunaisina siinä kansiossa, johon Obsidian ne loisi. Tällaisen muistiinpanon valitseminen luo sen.
+- **Kun tiedostopäätteet on piilotettu, alasvetoluettelo näyttää kunkin tiedoston tyypin** merkissä rivin lopussa, ja polkupalkki näyttää avoimen tiedoston tyypin oikeassa reunassaan. Merkin painaminen kirjoittaa nimen kenttään tiedostopäätteineen. Polkupalkin merkki pysyy näkyvissä, kun kenttä on auki.
+- **Muistiinpanolla voi olla muita polkuja.** Uudelleennimettäessä <kbd>Alt</kbd>+<kbd>Enter</kbd> lisää kirjoitetun polun aliaspoluksi, <kbd>Shift</kbd>+<kbd>Enter</kbd> luo sinne kovan linkin ja <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> symbolisen linkin. Muistiinpano pysyy paikallaan. Jokainen polku kirjataan muistiinpanon `paths`-frontmatteriin, joka seuraa uudelleennimeämisiä ja poistoja myös Obsidianin ulkopuolella. Jos kova tai symbolinen linkki luodaan, irrotetaan tai poistetaan tiedostonhallinnassa, päätteessä tai Obsidianin ollessa suljettuna, luettelot korjataan vastaamaan sitä.
+- **Aliakset näkyvät alasvetoluettelossa** oransseina: aliaspolut nimeämässään kansiossa ja Obsidianin omat aliakset muistiinpanonsa vieressä. Muistiinpano avautuu, kun valitset aliaksen tai kirjoitat aliaspolun ja painat Enteriä.
+- **Holvin segmentin edessä oleva painike luettelee muistiinpanon muut polut**, kun niitä on: aliaspolut, holvista löytyvät kovat ja symboliset linkit sekä Obsidianin aliakset. Painike näyttää polkujen määrän vahvimman lajin värillä: kova linkki violetti, symbolinen linkki vaaleanpunainen, alias oranssi. Sen luettelo on rakennettu kuten alasvetoluettelo, eli siinä on samat rivit, värit ja tiedostopäätemerkit sekä korostus osoittimen alla ja nuolinäppäimillä. Luettelo alkaa muistiinpanon omalla polulla sinisenä. Kun tiedostopäätteet on piilotettu, painikkeena toimii sen sijaan rivin lopun merkki: merkki saa painikkeen värin harmaan tiedostopäätteen taakse, ja luettelo avautuu niin, että se päättyy tiedostopäätteen kohdalle.
+- **Kullakin muiden polkujen lajilla on oma luettelonsa** (`paths-hardlinks`, `paths-symlinks`, `paths-aliases`) niiden summan `paths` rinnalla. Kopio nimeää lähteensä kentässä `paths-origin` eikä peri lähteen luetteloita. Lähde luettelee kopion kentässä `paths-forks`.
+- **Linkki voi vaihtaa lajiaan paikallaan**: kun uudelleennimeät polkua muuttamatta, linkkien näppäinyhdistelmät ja <kbd>Ctrl</kbd>+<kbd>Enter</kbd> muuttavat kovan tai symbolisen linkin toisen lajin linkiksi, aliaspoluksi tai omaksi kopiokseen.
+- **Glob-hahmot polkukentässä.** `*`, `?`, `**`, `[…]` ja `{a,b}` vastaavat holvin tiedostoja. Sama painike laskee osumat ja luettelee ne. Se on vihreä, kun osumia on, ja punainen, kun niitä ei ole. Enter avaa kaikki osumat ja kysyy ensin, jos niitä on yli kymmenen. Pelkistä aaltosulkeista koostuva hahmo, kuten `Week {1,2,3}`, luo nimeämänsä muistiinpanot. Todellinen nimi, jossa on jokin näistä merkeistä, tulkitaan aina kirjaimellisesti, eikä uudelleennimeäminen koskaan tulkitse hahmoja.
+- **Holvin segmentti voi näyttää kuvakkeensa ja nimensä, pelkän kuvakkeen tai ei mitään**, ja kuvake voi olla mikä tahansa Lucide-kuvake. Tämä korvaa asetuksen *Näytä holvin nimi*, ja tallennettu valinta säilyy.
+- **Muut polut holvin ulkopuolella.** Kun nimeät uudelleen holvin ulkopuolista tiedostoa, <kbd>Shift</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> ja <kbd>Alt</kbd>+<kbd>Enter</kbd> luovat kovan linkin, symbolisen linkin ja aliaspolun kuten holvin sisälläkin. Laajennus pitää niistä kirjaa (`external-links.json`), ja muiden polkujen painike luettelee ne. Aliaspolku avaa tiedostonsa, ja polkupalkin kautta tehty siirto tai poisto päivittää kirjanpidon.
+
+### Muutettu
+
+- **Holvin nimen kohdalla kenttä vie rivin koko leveyden**, jotta järjestelmän juuresta alkava polku, jolla se avautuu, mahtuu näkyviin.
+- **Muistiinpanoa siirrettäessä sen oma nimi tulee ensin** Tabille ja ehdotukselle, ennen muita samoin alkavia nimiä.
+- **Polun kansiot, joita ei vielä ole, ovat punaisia**, kuten kenttäkin on punainen, kun Enter loisi kirjoitetun nimen.
+- **Alasvetoluettelolla on punainen reuna, kun Enter loisi kirjoitetun nimen** eikä mitään riviä ole korostettu. Kenttä itse säilyttää tällöin rivin värin.
+- **Rulla pysähtyy alasvetoluettelon ensimmäiseen ja viimeiseen riviin** eikä enää kierrä ympäri. Nuolinäppäimet kiertävät yhä.
+- **Kun polulle pudottaminen ei onnistu, kerrotaan syy**: kohde on jo siinä kansiossa, kansiota yritetään siirtää itseensä tai nimi on jo käytössä. Aiemmin polkupalkin takana oleva otsake tarjosi tällöin tiedoston avaamista.
+
+### Korjattu
+
+- **Rivi, joka sovitettiin välilehden ollessa taustalla,** luopui holvin ja muistiinpanon nimestä ja saattoi jäädä sellaiseksi, vaikka tilaa oli yllin kyllin välilehden tultua esiin. Rivi sovitetaan nyt, kun sillä on leveys, ja uudelleen aina leveyden muuttuessa.
+- **Kun tiedostopäätteet on piilotettu, merkki väistyy rivin käydessä ahtaaksi** samoin kuin tiedostopääte. Aiemmin se jäi näkyviin.
+- **Windows:** `/`-merkillä kirjoitetut polut (`C:/Users/you/vault/Note.md`) tunnistetaan holvin sisäisiksi, ja prosenttikoodatut polut, joissa on asemakirjain, puretaan. Koneen polut kirjoitetaan nyt kauttaaltaan `\`-merkillä, eikä erottimia enää sekoiteta.
+
 ## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Korjattu

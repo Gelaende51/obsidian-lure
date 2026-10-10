@@ -9,6 +9,41 @@
 
 A Lure minden kiadása, a legújabbal kezdve. Ami a legutóbbi kiadás óta került be, a *Kiadatlan* szakaszban található. A verziószámok elé nem kerül `v` előtag, így megegyeznek a kiadási címkékkel.
 
+## Kiadatlan
+
+### Hozzáadva
+
+- **A Tab elágazásnál körbejárja a neveket.** Ahol a beírt szöveggel még több név is kezdődik, minden lenyomás a következőt írja ki teljes egészében, a hozzáadott részt kijelölve, az utolsó utáni lenyomás pedig visszaadja a beírt szöveget. A <kbd>Shift</kbd>+<kbd>Tab</kbd> a másik irányba halad. Ha egyetlen név marad, a Tab a korábbiak szerint belép.
+- **Az <kbd>Alt</kbd> egyszeri lenyomása kiegészít**, ahogy korábban a Tab: ameddig a nevek egyeznek, a megmaradt egyetlen mappába, majd felfelé a fokokon. Ha a Tab egy nevet jelenített meg, belép abba.
+- **A széf is egy fok** a rendszergyökértől induló útvonal után, a Tab, az átnevezési billentyű és a fókuszbillentyű számára egyaránt: ezek a helyek a teljes útvonallal a mezőben nyílnak meg, a széfhez tartozó részt kijelölve. Csak bekapcsolt *Külső fájlok elérése* beállítással.
+- **Minden fokhoz tartozik egy parancs**: a név, a név a kiterjesztésével, a széftől induló útvonal, a rendszergyökértől induló útvonal és a széf. Így egy billentyű közvetlenül a kívánt fokhoz köthető.
+- **A <kbd>Shift</kbd> az átnevezési vagy a fókuszbillentyűvel visszafelé járja be a kört.**
+- **A legördülő lista a hivatkozott, de még meg nem írt jegyzeteket is felsorolja**, rózsaszínnel, abban a mappában, ahol az Obsidian létrehozná őket. Ha kiválasztod az egyiket, létrejön.
+- **Rejtett kiterjesztéseknél a legördülő lista minden fájlja jelvényben mutatja a típusát** a sor végén, az útvonalsáv pedig a jobb szélén a megnyitott fájlét. A jelvényre kattintva a név a kiterjesztésével együtt kerül a mezőbe. Az útvonalsáv jelvénye megmarad, amíg a mező nyitva van.
+- **Egy jegyzetnek más útvonalai is lehetnek.** Átnevezéskor az <kbd>Alt</kbd>+<kbd>Enter</kbd> a beírt útvonalat álnév-útvonalként adja hozzá, a <kbd>Shift</kbd>+<kbd>Enter</kbd> hard linket hoz létre ott, a <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> pedig szimbolikus linket; a jegyzet a helyén marad. Mindegyik bekerül a jegyzet `paths` frontmatterébe, amely követi az átnevezéseket és a törléseket, az Obsidianon kívül végzetteket is. Ha egy hard vagy szimbolikus linket fájlkezelőben, terminálban vagy az Obsidian zárt állapotában hoznak létre, választanak le vagy távolítanak el, a listák ezt is helyreigazítják.
+- **Az álnevek megjelennek a legördülő listában**, narancssárgával: az álnév-útvonalak az általuk megnevezett mappában, az Obsidian saját álnevei pedig a jegyzetük mellett. Ha kiválasztod az egyiket, vagy beírsz egy álnév-útvonalat és lenyomod az Entert, megnyílik a jegyzet.
+- **A széf szegmense előtti gomb felsorolja a jegyzet más útvonalait**, ha vannak ilyenek: álnév-útvonalakat, a széfben talált hard és szimbolikus linkeket, valamint az Obsidian álneveit. A gomb a számukat mutatja, a legerősebb fajta színében: hard link lila, szimbolikus link rózsaszín, álnév narancssárga. Listája a legördülő listához hasonlóan épül fel, ugyanazokkal a sorokkal, színekkel és kiterjesztés-jelvényekkel, a mutató alatt és a nyílbillentyűkkel kiemelve. A lista a jegyzet saját útvonalával kezdődik, kékkel. Rejtett kiterjesztéseknél a gomb helyett a sor végi jelvény ikonja jelenik meg: a jelvény a szürke kiterjesztés mögött veszi fel a színét, és a lista úgy nyílik meg, hogy ott ér véget, ahol a kiterjesztés.
+- **A más útvonalak minden fajtájának saját listája van** (`paths-hardlinks`, `paths-symlinks`, `paths-aliases`) a `paths` mellett, amely ezek összege. Egy másolat a `paths-origin` mezőben nevezi meg a forrását, és elhagyja a forrás listáit; a forrás a `paths-forks` mezőben tartja nyilván.
+- **Egy link a helyén fajtát válthat**: ha átnevezéskor az útvonalat változatlanul hagyod, a linkkombinációk és a <kbd>Ctrl</kbd>+<kbd>Enter</kbd> a hard vagy szimbolikus linket a másik fajtává, álnév-útvonallá vagy önálló másolattá alakítják.
+- **Glob minták az útvonalmezőben.** A `*`, `?`, `**`, `[…]` és `{a,b}` a széf fájljaira illeszkednek. Ugyanaz a gomb megszámolja a találatokat, zölden, amíg van találat, és pirosan, amíg nincs, és fel is sorolja őket. Az Enter minden találatot megnyit, tíz fölött előbb rákérdez. A csak kapcsos zárójelekből álló minta, például `Week {1,2,3}`, létrehozza az általa megnevezett jegyzeteket. Az ilyen karaktert tartalmazó valódi neveket a bővítmény mindig szó szerint veszi, és átnevezéskor soha nem értelmez mintát.
+- **A széf szegmense megjelenítheti az ikonját és a nevét, csak az ikonját, vagy semmit**, az ikon pedig bármely Lucide ikon lehet. Ez felváltja a *Széf nevének megjelenítése* beállítást, és a korábban tárolt választás megmarad.
+- **Más útvonalak a széfen kívül.** Egy ottani fájl átnevezésekor a <kbd>Shift</kbd>+<kbd>Enter</kbd>, a <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> és az <kbd>Alt</kbd>+<kbd>Enter</kbd> hard linket, szimbolikus linket, illetve álnév-útvonalat hoz létre, ahogy a széfen belül is. A bővítmény nyilvántartja őket (`external-links.json`), és a más útvonalak gombja felsorolja őket. Egy álnév-útvonal megnyitja a fájlját, az útvonalsávon keresztüli áthelyezés vagy törlés pedig a nyilvántartást is frissíti.
+
+### Módosítva
+
+- **A széf nevén a mező a sor teljes szélességét elfoglalja**, hogy elférjen benne a rendszergyökértől induló útvonal, amellyel megnyílik.
+- **Jegyzet áthelyezésekor a jegyzet saját neve kerül előre** a Tab és a felajánlás számára, megelőzve a vele azonosan kezdődő más neveket.
+- **Az útvonal még nem létező mappái pirosak**, ahogy a mező is piros, ha olyan név van benne, amelyet az Enter létrehozna.
+- **A legördülő lista széle piros, ha az Enter létrehozná a beírt nevet**, és egyik sor sincs kiemelve. Ilyenkor ugyanis maga a mező egy sor színét őrzi.
+- **A görgő megáll a legördülő lista első és utolsó soránál**, ahelyett hogy körbefordulna; a nyílbillentyűk továbbra is körbefordulnak.
+- **Ha az útvonalra ejtett elemet nem lehet áthelyezni, a bővítmény megmondja, miért**: már abban a mappában van, egy mappa nem kerülhet önmagába, vagy a név már létezik ott. Korábban ilyenkor a mögötte lévő fejléc felajánlotta a fájl megnyitását.
+
+### Javítva
+
+- **A háttérben lévő lapon méretezett sor** elhagyta a széf nevét és a jegyzet nevét, és így maradhatott akkor is, amikor a lap előtérbe került és lett elég hely. A sor mostantól akkor kap méretet, amikor már van szélessége, és újra, valahányszor ez a szélesség megváltozik.
+- **Rejtett kiterjesztéseknél a jelvény eltűnik, ha a sor túl keskeny**, ahogy a kiterjesztés is; korábban a képernyőn maradt.
+- **Windows:** a bővítmény a `/` jellel írt útvonalakat (`C:/Users/you/vault/Note.md`) is széfen belülinek ismeri fel, és dekódolja a meghajtóbetűjeles, százalékkódolt útvonalakat. A gépen lévő útvonalakat mostantól mindenhol `\` jellel írja, a két elválasztó keveréke helyett.
+
 ## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Javítva

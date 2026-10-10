@@ -9,6 +9,41 @@
 
 Lure'ning har bir relizi, eng yangisi birinchi. Oxirgi relizdan beri qo‘shilganlar *Chiqarilmagan* bo‘limida. Versiyalar reliz teglariga mos ravishda `v` prefiksisiz yoziladi.
 
+## Chiqarilmagan
+
+### Qo‘shildi
+
+- **Tab ayrilish joyida nomlarni aylanib chiqadi.** Siz yozgan matn hali bir nechta nomning boshi bo‘lib turgan joyda har bir bosish keyingi nomni to‘liq yozadi va o‘zi qo‘shgan qismini belgilab qo‘yadi. Oxirgisidan keyingi bosish siz yozgan matnni qaytaradi. <kbd>Shift</kbd>+<kbd>Tab</kbd> teskari yo‘nalishda yuradi. Bitta nom qolganda Tab avvalgidek uning ichiga kiradi.
+- **<kbd>Alt</kbd> ni bir marta bosish to‘ldiradi**, Tab ilgari qilganidek: nomlar mos kelgan joygacha, qolgan yagona papkaning ichiga, so‘ng pog‘onalar bo‘ylab yuqoriga. Tab ko‘rsatib qo‘ygan nom ustida u shu nomning ichiga kiradi.
+- **Ombor tizim ildizidan boshlanadigan yo‘ldan keyingi pog‘ona bo‘ldi**, Tab, nomni o‘zgartirish tugmasi va fokus tugmasi uchun birdek: bu joylarda maydon butun yo‘l bilan ochiladi va omborga tegishli qism belgilangan bo‘ladi. Faqat *Tashqi fayllarga kirish* yoqilganda.
+- **Har bir pog‘ona uchun buyruq**: nom, kengaytmali nom, ombordan yo‘l, tizim ildizidan yo‘l, ombor. Bular yordamida tugmani to‘g‘ridan-to‘g‘ri kerakli pog‘onaga bog‘lash mumkin.
+- **Nomni o‘zgartirish tugmasi yoki fokus tugmasi <kbd>Shift</kbd> bilan bosilsa, aylanish teskari yo‘nalishda o‘tadi.**
+- **Havola berilgan, lekin hali yozilmagan eslatmalar** ochiladigan ro‘yxatda pushti rangda, Obsidian ularni yaratadigan papkada ko‘rsatiladi. Birini tanlash uni yaratadi.
+- **Kengaytmalar yashirilganda ochiladigan ro‘yxatdagi har bir fayl o‘z turini** qator oxiridagi nishonda ko‘rsatadi, yo‘l paneli esa ochiq faylning turini o‘ng chetida ko‘rsatadi. Nishonni bosish nomni maydonga kengaytmasi bilan yozadi. Yo‘l panelining nishoni maydon ochiq turganda ham qoladi.
+- **Eslatmaning boshqa yo‘llari ham bo‘lishi mumkin.** Nomni o‘zgartirishda <kbd>Alt</kbd>+<kbd>Enter</kbd> yozilgan yo‘lni taxallus yo‘li sifatida qo‘shadi, <kbd>Shift</kbd>+<kbd>Enter</kbd> u yerda qattiq havola yaratadi, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> esa ramziy havola yaratadi; eslatma o‘z joyida qoladi. Har biri eslatmaning `paths` frontmatter-ida qayd etiladi. Bu ro‘yxat nom o‘zgarishlari va o‘chirishlarni kuzatib boradi, Obsidian-dan tashqarida qilinganlarini ham: fayl menejerida, terminalda yoki Obsidian yopiq paytida yaratilgan, ajratilgan yoki o‘chirilgan qattiq yoki ramziy havola ro‘yxatlarda to‘g‘rilab qo‘yiladi.
+- **Taxalluslar ochiladigan ro‘yxatda ko‘rsatiladi**, to‘q sariq rangda: taxallus yo‘llari o‘zlari ko‘rsatgan papkada, Obsidian-ning o‘z taxalluslari esa eslatmasi yonida. Birini tanlash yoki taxallus yo‘lini yozib Enter-ni bosish eslatmani ochadi.
+- **Ombor segmenti oldidagi tugma eslatmaning boshqa yo‘llarini ro‘yxat qilib ko‘rsatadi**: taxallus yo‘llari, omborda topilgan qattiq va ramziy havolalar, Obsidian taxalluslari. Tugma faqat shunday yo‘llar bo‘lganda chiqadi. U ularning sonini eng kuchli turning rangida ko‘rsatadi: qattiq havola binafsha, ramziy havola pushti, taxallus to‘q sariq. Uning ro‘yxati ochiladigan ro‘yxat kabi tuzilgan: o‘sha qatorlar, ranglar va kengaytma nishonlari, ko‘rsatkich ostida va strelka tugmalari bilan ajratib ko‘rsatiladi. Ro‘yxat eslatmaning o‘z yo‘li bilan ko‘k rangda boshlanadi. Kengaytmalar yashirilganda tugma o‘rnida qator oxiridagi nishonning belgisi turadi: nishon uning rangini oladi va bu rang kulrang kengaytma ortida ko‘rinadi, ro‘yxat esa kengaytma tugagan joyda tugaydigan qilib ochiladi.
+- **Boshqa yo‘llarning har bir turi o‘z ro‘yxatiga ega**: `paths-hardlinks`, `paths-symlinks`, `paths-aliases`. Ular ularning yig‘indisi bo‘lgan `paths` yonida turadi. Nusxa o‘z manbasini `paths-origin` da ko‘rsatadi va manbaning ro‘yxatlarini olmaydi; manba esa uni `paths-forks` da qayd etadi.
+- **Havola o‘z joyida turini o‘zgartirishi mumkin**: yo‘lni o‘zgarishsiz qoldirib nomni o‘zgartirishda havola tugma birikmalari va <kbd>Ctrl</kbd>+<kbd>Enter</kbd> qattiq yoki ramziy havolani boshqa turdagi havolaga, taxallus yo‘liga yoki alohida nusxaga aylantiradi.
+- **Yo‘l maydonida glob andozalari.** `*`, `?`, `**`, `[…]` va `{a,b}` ombordagi fayllarga mos keladi. O‘sha tugma mosliklarni sanaydi va ularni ro‘yxat qilib ko‘rsatadi; mosliklar bor ekan u yashil, yo‘q ekan qizil bo‘ladi. Enter har bir moslikni ochadi, o‘ntadan ko‘p bo‘lsa avval so‘raydi. Faqat jingalak qavslardan iborat andoza, masalan `Week {1,2,3}`, o‘zi nomlagan eslatmalarni yaratadi. Shu belgilardan birini o‘z ichiga olgan haqiqiy nom har doim so‘zma-so‘z olinadi, nomni o‘zgartirish esa hech qachon andoza sifatida o‘qilmaydi.
+- **Ombor segmenti belgisi va nomini, faqat belgisini yoki hech narsani ko‘rsatishi mumkin**, belgi esa istalgan Lucide belgisi bo‘lishi mumkin. Bu *Ombor nomini ko‘rsatish* sozlamasining o‘rnini egallaydi, saqlangan tanlov esa saqlanib qoladi.
+- **Ombordan tashqaridagi boshqa yo‘llar.** U yerdagi faylning nomini o‘zgartirishda <kbd>Shift</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> va <kbd>Alt</kbd>+<kbd>Enter</kbd> ombor ichidagidek qattiq havola, ramziy havola va taxallus yo‘lini yaratadi. Plagin ularning qaydini saqlaydi (`external-links.json`), boshqa yo‘llar tugmasi ularni ro‘yxat qilib ko‘rsatadi, taxallus yo‘li o‘z faylini ochadi. Yo‘l paneli orqali ko‘chirish yoki o‘chirishda qayd ham birga yangilanadi.
+
+### O‘zgartirildi
+
+- **Ombor nomi ustida maydon qatorning butun kengligini egallaydi**, chunki u tizim ildizidan boshlanadigan yo‘l bilan ochiladi.
+- **Eslatmani ko‘chirishda uning o‘z nomi birinchi keladi**, Tab uchun ham, taklif uchun ham, xuddi shunday boshlanadigan boshqa nomlardan oldin.
+- **Yo‘ldagi hali mavjud bo‘lmagan papkalar qizil rangda**, xuddi Enter yaratadigan nom uchun maydon qizil bo‘lganidek.
+- **Hech bir qator ajratilmagan paytda Enter yozilgan nomni yaratadigan bo‘lsa, ochiladigan ro‘yxatning cheti qizil bo‘ladi**, chunki maydonning o‘zi qator rangini saqlab qoladi.
+- **G‘ildirak ochiladigan ro‘yxatning birinchi va oxirgi qatorida to‘xtaydi**, boshiga qaytib aylanmaydi; strelka tugmalari esa avvalgidek aylanadi.
+- **Yo‘lga tashlab bo‘lmaydigan narsa tashlanganda sababi aytiladi**: allaqachon o‘sha papkada, papkani o‘zining ichiga, u yerda bunday nom allaqachon bor. Ilgari buning o‘rniga orqadagi sarlavha faylni ochishni taklif qilardi.
+
+### Tuzatildi
+
+- **Varag‘i orqada turgan paytda moslangan qator** ombor nomi va eslatma nomini yashirib qo‘yardi. Varaq oldinga chiqqach, joy yetarli bo‘lsa ham, shu holatda qolishi mumkin edi. Endi qator kenglikka ega bo‘lganda moslanadi va bu kenglik har safar o‘zgarganda qayta moslanadi.
+- **Kengaytmalar yashirilganda qatorga joy yetmay qolsa, nishon ham kengaytma kabi bo‘shatib beradi**; ilgari u ekranda qolib ketardi.
+- **Windows:** `/` bilan yozilgan yo‘llar (`C:/Users/you/vault/Note.md`) ombor ichida deb tan olinadi, disk harfi bor foiz bilan kodlangan yo‘llar dekodlanadi. Kompyuterdagi yo‘llar esa ikki xil ajratgich aralashmasi o‘rniga hamma joyda `\` bilan yoziladi.
+
 ## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Tuzatildi

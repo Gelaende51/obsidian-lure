@@ -8,6 +8,41 @@
 
 Každé vydanie pluginu Lure, od najnovšieho. Čo pribudlo od posledného vydania, nájdeš pod *Nevydané*. Verzie nemajú predponu `v`, rovnako ako značky vydaní.
 
+## Nevydané
+
+### Pridané
+
+- **Tab prechádza dookola názvami na rozvetvení.** Kde je to, čo si napísal, ešte začiatkom viacerých názvov, každé stlačenie vpíše celý ďalší z nich a označí časť, ktorú doplnilo. Stlačenie po poslednom vráti to, čo si napísal. <kbd>Shift</kbd>+<kbd>Tab</kbd> ide opačným smerom. Keď zostane jediný názov, Tab doň vstúpi ako predtým.
+- **Ťuknutie na <kbd>Alt</kbd> dopĺňa** tak, ako predtým Tab: pokiaľ sa názvy zhodujú, potom do jediného zostávajúceho priečinka a napokon nahor po priečkach. Na názve, ktorý ukázal Tab, doň vstúpi.
+- **Trezor je priečkou** za cestou od koreňa systému, a to pre Tab, kláves na premenovanie aj kláves na fokus: tieto miesta sa otvárajú s celou cestou v poli a s označenou časťou trezoru. Len so zapnutým nastavením *Prístup k externým súborom*.
+- **Príkaz pre každú priečku** (názov, názov s príponou, cesta od trezoru, cesta od koreňa systému, trezor), aby si mohol priradiť kláves priamo tej, ktorú chceš.
+- **<kbd>Shift</kbd> s klávesom na premenovanie alebo s klávesom na fokus prechádza cyklus odzadu.**
+- **Poznámky, na ktoré vedú odkazy a ktoré ešte nie sú napísané, sú uvedené** v rozbaľovacom zozname, ružovou, v priečinku, v ktorom by ich Obsidian vytvoril. Výber takej poznámky ju vytvorí.
+- **So skrytými príponami ukazuje každý súbor v rozbaľovacom zozname svoj typ** v odznaku na konci riadku. Lišta cesty ukazuje typ otvoreného súboru na svojom pravom konci. Stlačenie odznaku vypíše názov v poli aj s príponou. Odznak lišty cesty zostáva, kým je pole otvorené.
+- **Poznámka môže mať ďalšie cesty.** Pri premenovaní <kbd>Alt</kbd>+<kbd>Enter</kbd> pridá napísanú cestu ako cestu aliasu, <kbd>Shift</kbd>+<kbd>Enter</kbd> tam vytvorí pevný odkaz a <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> symbolický odkaz. Poznámka zostane, kde je. Každá cesta sa zaznamená vo frontmatter `paths` poznámky, ktorý sleduje premenovania a mazania. Platí to aj pre tie urobené mimo Obsidianu: pevný alebo symbolický odkaz vytvorený, oddelený alebo odstránený v správcovi súborov, v termináli alebo kým bol Obsidian zatvorený, sa v zoznamoch napraví.
+- **Aliasy sú uvedené v rozbaľovacom zozname**, oranžovou: cesty aliasov v priečinku, ktorý pomenúvajú, a vlastné aliasy Obsidianu vedľa svojej poznámky. Výber aliasu alebo napísanie cesty aliasu a stlačenie Enter otvorí poznámku.
+- **Tlačidlo pred segmentom trezoru uvádza ďalšie cesty poznámky**, ak nejaké má: cesty aliasov, pevné a symbolické odkazy nájdené v trezore a aliasy Obsidianu. Ukazuje ich počet vo farbe najsilnejšieho druhu: pevný odkaz fialovou, symbolický odkaz ružovou, alias oranžovou. Jeho zoznam je zostavený ako rozbaľovací zoznam, s rovnakými riadkami, farbami a odznakmi prípon, zvýraznenými pod ukazovateľom a šípkami. Začína vlastnou cestou poznámky, modrou. So skrytými príponami je tlačidlom namiesto toho ikona odznaku na konci riadku: odznak preberie jeho farbu za sivou príponou a zoznam sa otvorí tak, že končí tam, kde prípona.
+- **Každý druh ďalšej cesty má vlastný zoznam** (`paths-hardlinks`, `paths-symlinks`, `paths-aliases`) vedľa `paths`, ktorý je ich súčtom. Kópia uvádza svoj zdroj v `paths-origin` a vynechá zoznamy zdroja. Zdroj ju uvádza v `paths-forks`.
+- **Odkaz môže zmeniť druh na mieste**: pri premenovaní s nezmenenou cestou premenia skratky pre odkazy a <kbd>Ctrl</kbd>+<kbd>Enter</kbd> pevný alebo symbolický odkaz na druhý druh, na cestu aliasu alebo na samostatnú kópiu.
+- **Glob vzory v poli cesty.** `*`, `?`, `**`, `[…]` a `{a,b}` sa porovnávajú so súbormi trezoru. To isté tlačidlo počíta zhody: je zelené, kým nejaké sú, a červené, kým nie je žiadna, a zhody aj uvádza. Enter otvorí každú zhodu, pri viac ako desiatich sa najprv opýta. Vzor len so zloženými zátvorkami, napríklad `Week {1,2,3}`, vytvorí poznámky, ktoré pomenúva. Skutočný názov, ktorý obsahuje niektorý z týchto znakov, sa vždy berie doslovne a premenovanie nikdy nečíta vzor.
+- **Segment trezoru môže ukazovať svoju ikonu a názov, iba ikonu alebo nič** a ikonou môže byť ľubovoľná ikona Lucide. Nahrádza to nastavenie *Zobraziť názov trezoru* a uložená voľba sa prenesie.
+- **Ďalšie cesty mimo trezoru.** Pri premenovaní súboru mimo trezoru vytvoria <kbd>Shift</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> a <kbd>Alt</kbd>+<kbd>Enter</kbd> pevný odkaz, symbolický odkaz a cestu aliasu, rovnako ako vnútri. Plugin si o nich vedie záznam (`external-links.json`) a tlačidlo ďalších ciest ich uvádza. Cesta aliasu otvorí svoj súbor a presun alebo zmazanie cez lištu cesty vezme záznam so sebou.
+
+### Zmenené
+
+- **Na názve trezoru zaberá pole celú šírku riadku**, aby sa doň zmestila cesta od koreňa systému, s ktorou sa otvára.
+- **Pri presúvaní poznámky je pre Tab a ponuku prvý jej vlastný názov**, pred inými názvami, ktoré sa začínajú rovnako.
+- **Priečinky v ceste, ktoré ešte neexistujú, sú červené**, tak ako je pole červené pri názve, ktorý by Enter vytvoril.
+- **Rozbaľovací zoznam má červený okraj, keď by Enter vytvoril napísaný názov** a nie je zvýraznený žiadny riadok. Samotné pole si totiž ponecháva farbu riadku.
+- **Koliesko sa zastaví na prvom a poslednom riadku** rozbaľovacieho zoznamu namiesto pretáčania dookola. Šípky stále pretáčajú dookola.
+- **Pustenie na cestu, ktoré sa nedá vykonať, povie prečo** (už je v tom priečinku, priečinok do seba samého, názov tam už existuje) namiesto toho, aby hlavička za ním ponúkla otvorenie súboru.
+
+### Opravené
+
+- **Riadok prispôsobený, kým bola jeho karta v pozadí,** sa vzdal názvu trezoru aj názvu poznámky a mohol tak zostať aj s voľným miestom, keď sa karta dostala dopredu. Teraz sa prispôsobí, keď má šírku, a znova vždy, keď sa táto šírka zmení.
+- **So skrytými príponami odznak ustúpi, keď sa riadok skráti**, rovnako ako prípona. Predtým zostával na obrazovke.
+- **Windows:** cesty napísané s `/` (`C:/Users/you/vault/Note.md`) sa rozpoznajú ako cesty vnútri trezoru a cesty s percentuálnym kódovaním a písmenom jednotky sa dekódujú. Cesty na počítači sa všade píšu s `\` namiesto zmesi oboch oddeľovačov.
+
 ## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Opravené

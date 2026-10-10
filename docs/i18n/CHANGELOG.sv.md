@@ -9,6 +9,41 @@
 
 Varje utgåva av Lure, nyast först. Det som har landat sedan den senaste utgåvan ligger under *Ej släppt*. Versionerna bär inget `v`-prefix, i linje med utgåvetaggarna.
 
+## Ej släppt
+
+### Tillagt
+
+- **Tabb går runt namnen vid en förgrening.** Där det du skrivit fortfarande inleder flera namn skriver varje tryck ut nästa namn helt, med den tillagda delen markerad, och trycket efter det sista ger tillbaka det du skrev. <kbd>Shift</kbd>+<kbd>Tab</kbd> går åt andra hållet. När bara ett namn återstår kliver Tabb in som förut.
+- **Ett tryck på <kbd>Alt</kbd> kompletterar** så som Tabb gjorde förut: så långt namnen stämmer överens, in i den enda mapp som återstår, sedan uppför stegen. På ett namn som Tabb har visat upp kliver det in i det.
+- **Valvet är ett steg** efter sökvägen från systemroten, för Tabb, byt namn-tangenten och fokustangenten likaså: de ställena öppnas med hela sökvägen i fältet och valvets del markerad. Endast med *Access external files* påslaget.
+- **Ett kommando för varje steg** — namnet, namnet med filändelse, sökvägen från valvet, sökvägen från systemroten, valvet — så att en tangent kan bindas direkt till det du vill ha.
+- **<kbd>Shift</kbd> med byt namn-tangenten eller fokustangenten går cykeln baklänges.**
+- **Anteckningar som det länkas till men som ännu inte är skrivna listas** i rullgardinsmenyn, i rosa, i den mapp där Obsidian skulle skapa dem. Väljer man en skapas den.
+- **Med dolda filändelser visar varje fil i rullgardinsmenyn sin typ** i en bricka i radens slut, och sökvägsfältet visar den öppna filens längst till höger; ett tryck på en bricka skriver ut namnet i fältet med filändelse. Sökvägsfältets bricka står kvar medan fältet är öppet.
+- **En anteckning kan ha andra sökvägar.** Vid namnbyte lägger <kbd>Alt</kbd>+<kbd>Enter</kbd> till den skrivna sökvägen som aliassökväg, <kbd>Shift</kbd>+<kbd>Enter</kbd> skapar en hård länk där och <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> en symbolisk länk; anteckningen stannar där den är. Var och en registreras i anteckningens `paths`-frontmatter, som följer namnbyten och borttagningar — även sådana som görs utanför Obsidian: en hård eller symbolisk länk som skapats, brutits loss eller tagits bort i en filhanterare, en terminal eller medan Obsidian var stängt rättas till i listorna.
+- **Alias listas i rullgardinsmenyn**, i orange: aliassökvägar i den mapp de anger, Obsidians egna alias bredvid sin anteckning. Väljer man ett, eller skriver en aliassökväg och trycker Enter, öppnas anteckningen.
+- **En knapp framför valvets segment listar en antecknings andra sökvägar** — aliassökvägar, hårda och symboliska länkar som hittats i valvet, Obsidians alias — när den har några. Den visar hur många, i färgen för det starkaste slaget: hård länk lila, symbolisk länk rosa, alias orange. Dess lista är uppbyggd som rullgardinsmenyn — samma rader, färger och filändelsebrickor, markerade under pekaren och med piltangenterna — och börjar med anteckningens egen sökväg i blått. Med dolda filändelser är den i stället ikonen för brickan i radens slut: brickan tar dess färg bakom en grå filändelse, och listan öppnas så att den slutar där filändelsen gör.
+- **Varje slags annan sökväg har en egen lista** — `paths-hardlinks`, `paths-symlinks`, `paths-aliases` — bredvid `paths`, deras summa. En kopia anger sin källa i `paths-origin` och släpper källans listor; källan listar den i `paths-forks`.
+- **En länk kan byta slag på plats**: vid namnbyte med sökvägen orörd gör länkkombinationerna och <kbd>Ctrl</kbd>+<kbd>Enter</kbd> om en hård eller symbolisk länk till det andra slaget, en aliassökväg eller en egen kopia.
+- **Globmönster i sökvägsfältet.** `*`, `?`, `**`, `[…]` och `{a,b}` matchar valvets filer; samma knapp räknar träffarna, grön så länge det finns några och röd så länge det inte finns några, och listar dem. Enter öppnar varje träff och frågar först om de är fler än tio. Ett mönster med enbart klammerparenteser — `Week {1,2,3}` — skapar anteckningarna det namnger. Ett verkligt namn som innehåller något av dessa tecken tas alltid bokstavligt, och namnbyte läser aldrig ett mönster.
+- **Valvets segment kan visa sin ikon och sitt namn, enbart ikonen eller ingenting**, och ikonen kan vara vilken Lucide-ikon som helst. Detta ersätter *Show vault name*, och ett sparat val förs över.
+- **Andra sökvägar utanför valvet.** När en fil där ute byter namn skapar <kbd>Shift</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> och <kbd>Alt</kbd>+<kbd>Enter</kbd> en hård länk, en symbolisk länk och en aliassökväg, precis som inuti. Pluginet för registret (`external-links.json`), knappen för andra sökvägar listar dem, en aliassökväg öppnar sin fil, och en flytt eller borttagning via sökvägsfältet tar med sig registret.
+
+### Ändrat
+
+- **På valvets namn tar fältet radens hela bredd**, för sökvägen från systemroten som det öppnas med.
+- **När en anteckning flyttas kommer dess eget namn först** för Tabb och förslaget, före andra namn som börjar likadant.
+- **Mappar i sökvägen som inte finns än är röda**, liksom fältet är rött för ett namn som Enter skulle skapa.
+- **Rullgardinsmenyn får en röd kant när Enter skulle skapa det skrivna namnet** medan ingen rad är markerad, där fältet självt behåller en rads färg.
+- **Mushjulet stannar vid första och sista raden** i rullgardinsmenyn i stället för att börja om; piltangenterna går fortfarande runt.
+- **En släppning på sökvägen som inte kan genomföras säger varför** — redan i den mappen, en mapp in i sig själv, ett namn som redan finns där — i stället för att låta rubriken bakom erbjuda att öppna filen.
+
+### Rättat
+
+- **En rad som anpassades medan dess flik låg i bakgrunden** gav upp valvnamnet och anteckningens namn och kunde bli kvar så med gott om utrymme när fliken väl kom fram. Den anpassas när den har en bredd, och på nytt varje gång den bredden har ändrats.
+- **Med dolda filändelser viker brickan undan när raden blir för kort**, som filändelsen gör; tidigare stannade den kvar på skärmen.
+- **Windows:** sökvägar skrivna med `/` (`C:/Users/you/vault/Note.md`) känns igen som inuti valvet, procentkodade sökvägar med enhetsbokstav avkodas, och sökvägar på datorn skrivs genomgående med `\` i stället för en blandning av båda avgränsarna.
+
 ## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Rättat

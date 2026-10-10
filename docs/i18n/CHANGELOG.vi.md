@@ -9,6 +9,41 @@
 
 Mọi bản phát hành của Lure, mới nhất ở trên cùng. Những gì đã được đưa vào kể từ bản phát hành gần nhất nằm dưới mục *Chưa phát hành*. Số phiên bản không có tiền tố `v`, khớp với các thẻ phát hành.
 
+## Chưa phát hành
+
+### Đã thêm
+
+- **Tab xoay vòng qua các tên tại chỗ rẽ nhánh.** Khi những gì bạn đã gõ vẫn là phần đầu của nhiều tên, mỗi lần nhấn sẽ viết trọn tên kế tiếp, với phần được thêm vào được đánh dấu, và lần nhấn sau tên cuối cùng sẽ trả lại những gì bạn đã gõ. <kbd>Shift</kbd>+<kbd>Tab</kbd> đi theo chiều ngược lại. Khi chỉ còn một tên, Tab bước vào tên đó như trước.
+- **Một lần chạm <kbd>Alt</kbd> sẽ hoàn thành** theo cách Tab từng làm: đến chừng nào các tên còn trùng nhau, vào thư mục duy nhất còn lại, rồi leo lên các nấc. Trên một tên mà Tab đang hiển thị, nó bước vào tên đó.
+- **Vault là một nấc** sau đường dẫn từ gốc hệ thống, cho Tab, phím đổi tên và phím tiêu điểm như nhau: các vị trí đó mở ra với toàn bộ đường dẫn trong ô và phần thuộc vault được đánh dấu. Chỉ khi bật *Access external files*.
+- **Mỗi nấc có một lệnh riêng** — tên, tên kèm phần mở rộng, đường dẫn từ vault, đường dẫn từ gốc hệ thống, vault — để gán phím thẳng cho nấc bạn muốn.
+- **<kbd>Shift</kbd> cùng với phím đổi tên hoặc phím tiêu điểm sẽ đi ngược vòng.**
+- **Các ghi chú được liên kết tới nhưng chưa được viết giờ được liệt kê** trong danh sách thả xuống, màu hồng, trong thư mục mà Obsidian sẽ tạo chúng. Chọn một ghi chú như vậy sẽ tạo ra nó.
+- **Khi ẩn phần mở rộng, mỗi tệp trong danh sách thả xuống hiển thị loại của nó** trong một nhãn ở cuối hàng, và thanh đường dẫn hiển thị loại của tệp đang mở ở đầu bên phải; nhấn vào một nhãn sẽ viết đầy đủ tên kèm phần mở rộng vào ô. Nhãn của thanh đường dẫn vẫn ở lại khi ô đang mở.
+- **Một ghi chú có thể có các đường dẫn khác.** Khi đổi tên, <kbd>Alt</kbd>+<kbd>Enter</kbd> thêm đường dẫn đã gõ làm đường dẫn bí danh, <kbd>Shift</kbd>+<kbd>Enter</kbd> tạo một liên kết cứng ở đó, và <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> tạo một liên kết tượng trưng; ghi chú vẫn ở nguyên chỗ. Mỗi đường dẫn được ghi lại trong frontmatter `paths` của ghi chú, vốn theo sát các lần đổi tên và xóa — kể cả những thao tác ngoài Obsidian: một liên kết cứng hay tượng trưng được tạo, tách ra hoặc gỡ bỏ trong trình quản lý tệp, trong terminal hoặc khi Obsidian đang đóng sẽ được chỉnh lại trong các danh sách.
+- **Bí danh được liệt kê trong danh sách thả xuống**, màu cam: đường dẫn bí danh nằm trong thư mục mà chúng chỉ định, bí danh riêng của Obsidian nằm bên cạnh ghi chú của chúng. Chọn một bí danh, hoặc gõ một đường dẫn bí danh rồi nhấn Enter, sẽ mở ghi chú.
+- **Một nút phía trước phân đoạn vault liệt kê các đường dẫn khác của ghi chú** — đường dẫn bí danh, liên kết cứng và tượng trưng tìm thấy trong vault, bí danh của Obsidian — khi ghi chú có chúng. Nút hiển thị số lượng, bằng màu của loại mạnh nhất: liên kết cứng màu tím, liên kết tượng trưng màu hồng, bí danh màu cam. Danh sách của nút được dựng giống danh sách thả xuống — cùng các hàng, màu sắc và nhãn phần mở rộng, được tô sáng dưới con trỏ và bằng các phím mũi tên — và bắt đầu bằng đường dẫn riêng của ghi chú màu xanh lam. Khi ẩn phần mở rộng, thay vào đó nút là biểu tượng của nhãn ở cuối hàng: nhãn mang màu của nút phía sau phần mở rộng màu xám, và danh sách mở ra kết thúc đúng nơi phần mở rộng kết thúc.
+- **Mỗi loại đường dẫn khác có danh sách riêng** — `paths-hardlinks`, `paths-symlinks`, `paths-aliases` — bên cạnh `paths`, tổng của chúng. Một bản sao ghi tên nguồn của nó trong `paths-origin` và bỏ đi các danh sách của nguồn; nguồn liệt kê bản sao trong `paths-forks`.
+- **Một liên kết có thể đổi loại tại chỗ**: khi đổi tên mà giữ nguyên đường dẫn, các tổ hợp phím liên kết và <kbd>Ctrl</kbd>+<kbd>Enter</kbd> biến một liên kết cứng hoặc tượng trưng thành loại còn lại, thành một đường dẫn bí danh hoặc thành một bản sao riêng.
+- **Mẫu glob trong ô đường dẫn.** `*`, `?`, `**`, `[…]` và `{a,b}` khớp với các tệp của vault; cũng nút đó đếm số kết quả khớp, màu xanh lá khi có và màu đỏ khi không có, và liệt kê chúng. Enter mở mọi kết quả khớp, hỏi trước nếu nhiều hơn mười. Một mẫu chỉ gồm dấu ngoặc nhọn — `Week {1,2,3}` — sẽ tạo ra các ghi chú mà nó nêu tên. Một tên thật chứa một trong các ký tự này luôn được hiểu theo nghĩa đen, và khi đổi tên thì không bao giờ đọc thành mẫu.
+- **Phân đoạn vault có thể hiển thị biểu tượng và tên, chỉ biểu tượng, hoặc không gì cả**, và biểu tượng có thể là bất kỳ biểu tượng Lucide nào. Tùy chọn này thay thế *Show vault name*, và lựa chọn đã lưu được giữ lại.
+- **Đường dẫn khác bên ngoài vault.** Khi đổi tên một tệp ở ngoài đó, <kbd>Shift</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> và <kbd>Alt</kbd>+<kbd>Enter</kbd> tạo một liên kết cứng, một liên kết tượng trưng và một đường dẫn bí danh, như ở bên trong. Plugin lưu bản ghi (`external-links.json`), nút đường dẫn khác liệt kê chúng, một đường dẫn bí danh mở tệp của nó, và việc di chuyển hoặc xóa qua thanh đường dẫn sẽ mang bản ghi theo.
+
+### Đã thay đổi
+
+- **Trên tên vault, ô chiếm toàn bộ bề rộng của hàng**, dành cho đường dẫn từ gốc hệ thống mà nó mở ra cùng.
+- **Khi di chuyển một ghi chú, tên của chính nó được xếp đầu tiên** cho Tab và gợi ý, trước những tên khác có cùng phần đầu.
+- **Các thư mục trong đường dẫn chưa tồn tại có màu đỏ**, giống như ô có màu đỏ với một tên mà Enter sẽ tạo ra.
+- **Danh sách thả xuống có viền đỏ khi Enter sẽ tạo ra tên đã gõ** trong lúc không có hàng nào được tô sáng, ở chỗ bản thân ô giữ màu của một hàng.
+- **Con lăn chuột dừng lại ở hàng đầu tiên và hàng cuối cùng** của danh sách thả xuống thay vì quay vòng; các phím mũi tên vẫn quay vòng.
+- **Một thao tác thả lên đường dẫn không thể thực hiện sẽ cho biết lý do** — đã ở trong thư mục đó, một thư mục vào chính nó, một tên đã tồn tại ở đó — thay vì để phần đầu trang phía sau đề nghị mở tệp.
+
+### Đã sửa
+
+- **Một hàng được căn chỉnh khi thẻ của nó đang ở phía sau** đã bỏ mất tên vault và tên ghi chú, và có thể vẫn như vậy dù còn dư chỗ khi thẻ được đưa lên trước. Giờ đây hàng được căn chỉnh khi nó có bề rộng, và lại được căn chỉnh mỗi khi bề rộng đó thay đổi.
+- **Khi ẩn phần mở rộng, nhãn sẽ nhường chỗ khi hàng bị thiếu chỗ**, như phần mở rộng vẫn làm; trước đây nó vẫn ở lại trên màn hình.
+- **Windows:** các đường dẫn viết bằng `/` (`C:/Users/you/vault/Note.md`) được nhận biết là nằm trong vault, các đường dẫn mã hóa phần trăm có ký tự ổ đĩa được giải mã, và các đường dẫn trên máy được viết thống nhất bằng `\` thay vì trộn lẫn cả hai loại dấu phân cách.
+
 ## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Đã sửa

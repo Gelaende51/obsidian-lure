@@ -9,6 +9,41 @@
 
 Każde wydanie Lure, od najnowszego. To, co pojawiło się od ostatniego wydania, znajduje się pod nagłówkiem *Niewydane*. Wersje nie mają przedrostka `v`, zgodnie ze znacznikami wydań.
 
+## Niewydane
+
+### Dodano
+
+- **Tab przechodzi kolejno przez nazwy w miejscu rozgałęzienia.** Gdy wpisany tekst jest wciąż początkiem kilku nazw, każde naciśnięcie wpisuje w całości następną, z zaznaczoną dopisaną częścią, a naciśnięcie po ostatniej przywraca to, co wpisano. <kbd>Shift</kbd>+<kbd>Tab</kbd> idzie w przeciwną stronę. Gdy zostaje jedna nazwa, Tab wchodzi do niej jak dotąd.
+- **Krótkie naciśnięcie <kbd>Alt</kbd> uzupełnia** tak, jak wcześniej robił to Tab: do miejsca, w którym nazwy przestają się zgadzać, do jedynego pozostałego folderu, a potem w górę po szczeblach. Na nazwie wyświetlonej przez Tab wchodzi do niej.
+- **Sejf jest szczeblem** po ścieżce od katalogu głównego systemu, zarówno dla Tab, jak i dla klawisza zmiany nazwy i klawisza fokusu: te miejsca otwierają się z całą ścieżką w polu i zaznaczoną częścią sejfu. Tylko przy włączonym *Access external files*.
+- **Polecenie dla każdego szczebla** (nazwa, nazwa z rozszerzeniem, ścieżka od sejfu, ścieżka od katalogu głównego systemu, sejf), aby przypisać klawisz bezpośrednio do tego, który jest potrzebny.
+- **<kbd>Shift</kbd> z klawiszem zmiany nazwy lub klawiszem fokusu przechodzi cykl wstecz.**
+- **Notatki, do których prowadzą linki, a które jeszcze nie powstały, są wyświetlane** na liście, na różowo, w folderze, w którym utworzyłby je Obsidian. Wybranie takiej notatki ją tworzy.
+- **Przy ukrytych rozszerzeniach każdy plik na liście pokazuje swój typ** w plakietce na końcu wiersza, a pasek ścieżki pokazuje typ otwartego pliku na swoim prawym końcu; naciśnięcie plakietki wpisuje do pola nazwę z rozszerzeniem. Plakietka paska ścieżki pozostaje, dopóki pole jest otwarte.
+- **Notatka może mieć inne ścieżki.** Przy zmianie nazwy <kbd>Alt</kbd>+<kbd>Enter</kbd> dodaje wpisaną ścieżkę jako ścieżkę aliasu, <kbd>Shift</kbd>+<kbd>Enter</kbd> tworzy tam dowiązanie twarde, a <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> dowiązanie symboliczne; notatka zostaje tam, gdzie jest. Każda z nich jest zapisywana we właściwości `paths` we frontmatterze notatki, która nadąża za zmianami nazw i usunięciami — także tymi dokonanymi poza Obsidianem: dowiązanie twarde lub symboliczne utworzone, odłączone lub usunięte w menedżerze plików, w terminalu albo przy zamkniętym Obsidianie zostaje poprawione na listach.
+- **Aliasy są wyświetlane na liście**, na pomarańczowo: ścieżki aliasów w folderze, który wskazują, własne aliasy Obsidiana obok swojej notatki. Wybranie jednego z nich albo wpisanie ścieżki aliasu i naciśnięcie Enter otwiera notatkę.
+- **Przycisk przed segmentem sejfu wyświetla inne ścieżki notatki** (ścieżki aliasów, dowiązania twarde i symboliczne znalezione w sejfie, aliasy Obsidiana), jeśli jakieś ma. Pokazuje ich liczbę w kolorze najsilniejszego rodzaju: dowiązanie twarde na fioletowo, dowiązanie symboliczne na różowo, alias na pomarańczowo. Jego lista jest zbudowana jak lista podpowiedzi (te same wiersze, kolory i plakietki rozszerzeń, podświetlanie pod wskaźnikiem i klawiszami strzałek) i zaczyna się od własnej ścieżki notatki na niebiesko. Przy ukrytych rozszerzeniach przyciskiem jest zamiast tego ikona plakietki na końcu wiersza: plakietka przyjmuje jego kolor za szarym rozszerzeniem, a lista otwiera się tak, by kończyć się tam, gdzie rozszerzenie.
+- **Każdy rodzaj innej ścieżki ma własną listę** (`paths-hardlinks`, `paths-symlinks`, `paths-aliases`) obok `paths`, będącej ich sumą. Kopia wskazuje swoje źródło w `paths-origin` i pomija listy źródła; źródło wymienia ją w `paths-forks`.
+- **Dowiązanie może zmienić rodzaj w miejscu**: przy zmianie nazwy z pozostawioną bez zmian ścieżką skróty dowiązań i <kbd>Ctrl</kbd>+<kbd>Enter</kbd> zamieniają dowiązanie twarde lub symboliczne w dowiązanie drugiego rodzaju, ścieżkę aliasu albo samodzielną kopię.
+- **Wzorce glob w polu ścieżki.** `*`, `?`, `**`, `[…]` i `{a,b}` dopasowują pliki sejfu; ten sam przycisk liczy dopasowania, na zielono, gdy jakieś są, i na czerwono, gdy nie ma żadnych, oraz je wyświetla. Enter otwiera każde dopasowanie, a przy ponad dziesięciu najpierw pyta. Wzorzec złożony wyłącznie z nawiasów klamrowych, np. `Week {1,2,3}`, tworzy wymienione w nim notatki. Prawdziwa nazwa zawierająca któryś z tych znaków jest zawsze traktowana dosłownie, a zmiana nazwy nigdy nie odczytuje wzorca.
+- **Segment sejfu może pokazywać jego ikonę i nazwę, samą ikonę albo nic**, a ikoną może być dowolna ikona Lucide. Zastępuje to *Show vault name*, a zapisany wybór zostaje przeniesiony.
+- **Inne ścieżki poza sejfem.** Przy zmianie nazwy pliku poza sejfem <kbd>Shift</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> i <kbd>Alt</kbd>+<kbd>Enter</kbd> tworzą dowiązanie twarde, dowiązanie symboliczne i ścieżkę aliasu, tak jak wewnątrz. Wtyczka prowadzi ich rejestr (`external-links.json`), przycisk innych ścieżek je wyświetla, ścieżka aliasu otwiera swój plik, a przeniesienie lub usunięcie przez pasek ścieżki aktualizuje rejestr.
+
+### Zmieniono
+
+- **Na nazwie sejfu pole zajmuje całą szerokość wiersza**, ze względu na ścieżkę od katalogu głównego systemu, z którą się otwiera.
+- **Przy przenoszeniu notatki jej własna nazwa jest pierwsza** dla Tab i podpowiedzi, przed innymi nazwami zaczynającymi się tak samo.
+- **Foldery w ścieżce, które jeszcze nie istnieją, są czerwone**, tak jak pole jest czerwone dla nazwy, którą utworzyłby Enter.
+- **Lista ma czerwoną krawędź, gdy Enter utworzyłby wpisaną nazwę**, a żaden wiersz nie jest podświetlony, w sytuacji gdy samo pole zachowuje kolor wiersza.
+- **Kółko myszy zatrzymuje się na pierwszym i ostatnim wierszu** listy zamiast przeskakiwać na drugi koniec; klawisze strzałek nadal przeskakują.
+- **Upuszczenie na ścieżkę, którego nie da się wykonać, podaje powód** (już w tym folderze, folder do samego siebie, nazwa już istnieje), zamiast pozwalać nagłówkowi pod spodem proponować otwarcie pliku.
+
+### Naprawiono
+
+- **Wiersz dopasowywany, gdy jego karta była w tle,** rezygnował z nazwy sejfu i nazwy notatki i mógł tak pozostać mimo wolnego miejsca, gdy karta wysunęła się na wierzch. Jest teraz dopasowywany, gdy ma szerokość, i ponownie przy każdej jej zmianie.
+- **Przy ukrytych rozszerzeniach plakietka ustępuje, gdy w wierszu brakuje miejsca**, tak jak rozszerzenie; wcześniej pozostawała na ekranie.
+- **Windows:** ścieżki zapisane z `/` (`C:/Users/you/vault/Note.md`) są rozpoznawane jako leżące w sejfie, ścieżki zakodowane procentowo z literą dysku są dekodowane, a ścieżki na komputerze są wszędzie zapisywane z `\` zamiast mieszanką obu separatorów.
+
 ## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Naprawiono

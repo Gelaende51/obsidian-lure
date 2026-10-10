@@ -9,6 +9,41 @@
 
 Fiecare versiune a Lure, cea mai nouă prima. Ce a apărut de la ultima versiune se află sub *Nelansate*. Versiunile nu poartă prefixul `v`, la fel ca etichetele de lansare.
 
+## Nelansate
+
+### Adăugat
+
+- **Tab trece pe rând prin nume la o bifurcație.** Acolo unde ce ai tastat este încă începutul mai multor nume, fiecare apăsare scrie următorul nume întreg, cu partea adăugată marcată, iar apăsarea de după ultimul îți redă ce ai tastat. <kbd>Shift</kbd>+<kbd>Tab</kbd> merge în sens invers. Când a rămas un singur nume, Tab intră în el ca înainte.
+- **O apăsare scurtă pe <kbd>Alt</kbd> completează** așa cum o făcea înainte Tab: până unde numele coincid, în singurul dosar rămas, apoi în sus pe trepte. Pe un nume pe care Tab l-a afișat, intră în el.
+- **Seiful este o treaptă** după calea de la rădăcina sistemului, deopotrivă pentru Tab, tasta de redenumire și tasta de focalizare: aceste locuri se deschid cu calea întreagă în câmp și cu partea seifului marcată. Doar cu *Access external files* activat.
+- **O comandă pentru fiecare treaptă** (numele, numele cu extensia, calea din seif, calea de la rădăcina sistemului, seiful), pentru a lega o tastă direct de cea dorită.
+- **<kbd>Shift</kbd> împreună cu tasta de redenumire sau cu tasta de focalizare parcurge ciclul înapoi.**
+- **Notele spre care există legături și care nu sunt încă scrise apar** în lista derulantă, cu roz, în dosarul în care le-ar crea Obsidian. Alegerea uneia o creează.
+- **Cu extensiile ascunse, fiecare fișier din lista derulantă își arată tipul** într-o insignă la capătul rândului, iar bara de cale îl arată pe cel al fișierului deschis la capătul ei din dreapta; apăsarea unei insigne scrie numele în câmp împreună cu extensia. Insigna barei de cale rămâne cât timp câmpul este deschis.
+- **O notă poate avea alte căi.** La redenumire, <kbd>Alt</kbd>+<kbd>Enter</kbd> adaugă calea tastată ca o cale-alias, <kbd>Shift</kbd>+<kbd>Enter</kbd> creează acolo o legătură fizică, iar <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> o legătură simbolică; nota rămâne unde este. Fiecare este înregistrată în frontmatter-ul `paths` al notei, care urmează redenumirile și ștergerile, inclusiv pe cele făcute în afara Obsidian: o legătură fizică sau simbolică creată, separată sau ștearsă într-un manager de fișiere, într-un terminal sau cât timp Obsidian era închis este corectată în liste.
+- **Aliasurile apar în lista derulantă**, cu portocaliu: căile-alias în dosarul pe care îl numesc, aliasurile proprii ale Obsidian lângă nota lor. Alegerea unuia, sau tastarea unei căi-alias urmată de Enter, deschide nota.
+- **Un buton în fața segmentului seifului listează celelalte căi ale unei note** (căi-alias, legături fizice și simbolice găsite în seif, aliasurile Obsidian), atunci când are vreuna. Arată câte sunt, în culoarea celui mai puternic tip: legătura fizică cu violet, legătura simbolică cu roz, aliasul cu portocaliu. Lista lui este construită ca lista derulantă, cu aceleași rânduri, culori și insigne de extensie, evidențiate sub cursor și cu tastele săgeți, și începe cu calea proprie a notei, cu albastru. Cu extensiile ascunse, butonul este în schimb pictograma insignei de la capătul rândului: insigna îi preia culoarea în spatele unei extensii gri, iar lista se deschide terminându-se acolo unde se termină extensia.
+- **Fiecare tip de altă cale are propria listă** (`paths-hardlinks`, `paths-symlinks`, `paths-aliases`), alături de `paths`, suma lor. O copie își numește sursa în `paths-origin` și renunță la listele sursei; sursa o trece în `paths-forks`.
+- **O legătură își poate schimba tipul pe loc**: la redenumire cu calea lăsată neschimbată, combinațiile de taste pentru legături și <kbd>Ctrl</kbd>+<kbd>Enter</kbd> transformă o legătură fizică sau simbolică în celălalt tip, într-o cale-alias sau într-o copie de sine stătătoare.
+- **Modele glob în câmpul de cale.** `*`, `?`, `**`, `[…]` și `{a,b}` se potrivesc cu fișierele seifului; același buton numără potrivirile, verde cât timp există și roșu cât timp nu există niciuna, și le listează. Enter deschide toate potrivirile, cerând mai întâi confirmare peste zece. Un model format doar din acolade, precum `Week {1,2,3}`, creează notele pe care le numește. Un nume real care conține unul dintre aceste caractere este luat întotdeauna literal, iar redenumirea nu interpretează niciodată un model.
+- **Segmentul seifului poate arăta pictograma și numele, doar pictograma sau nimic**, iar pictograma poate fi orice pictogramă Lucide. Aceasta înlocuiește *Show vault name*, iar o alegere salvată se păstrează.
+- **Alte căi în afara seifului.** La redenumirea unui fișier aflat acolo, <kbd>Shift</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> și <kbd>Alt</kbd>+<kbd>Enter</kbd> creează o legătură fizică, o legătură simbolică și o cale-alias, ca în interior. Pluginul ține evidența (`external-links.json`), butonul pentru alte căi le listează, o cale-alias își deschide fișierul, iar o mutare sau ștergere prin bara de cale actualizează și evidența.
+
+### Modificat
+
+- **Pe numele seifului, câmpul ocupă toată lățimea rândului**, pentru calea de la rădăcina sistemului cu care se deschide.
+- **La mutarea unei note, propriul ei nume vine primul** pentru Tab și pentru sugestie, înaintea altor nume care încep la fel.
+- **Dosarele din cale care nu există încă sunt roșii**, așa cum câmpul este roșu pentru un nume pe care Enter l-ar crea.
+- **Lista derulantă are o margine roșie când Enter ar crea numele tastat** și niciun rând nu este evidențiat, acolo unde câmpul însuși păstrează culoarea unui rând.
+- **Rotița se oprește la primul și la ultimul rând** al listei derulante în loc să o ia de la capăt; tastele săgeți o iau în continuare de la capăt.
+- **O plasare pe cale care nu se poate efectua spune de ce** (deja în acel dosar, un dosar în el însuși, un nume care există deja acolo), în loc să lase antetul din spatele ei să propună deschiderea fișierului.
+
+### Corectat
+
+- **Un rând ajustat cât timp fila lui era în fundal** renunța la numele seifului și la numele notei și putea rămâne așa, deși avea loc destul, după ce fila trecea în față. Acum este ajustat când are o lățime și din nou de fiecare dată când acea lățime se schimbă.
+- **Cu extensiile ascunse, insigna cedează locul când rândul devine prea scurt**, la fel ca extensia; înainte rămânea pe ecran.
+- **Windows:** căile scrise cu `/` (`C:/Users/you/vault/Note.md`) sunt recunoscute ca fiind în seif, căile codificate procentual cu literă de unitate sunt decodificate, iar căile de pe calculator sunt scrise peste tot cu `\` în loc de un amestec al ambilor separatori.
+
 ## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Corectat

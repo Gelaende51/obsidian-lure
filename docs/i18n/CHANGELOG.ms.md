@@ -8,6 +8,41 @@
 
 Setiap keluaran Lure, yang terbaharu dahulu. Apa yang telah mendarat sejak keluaran terakhir ada di bawah *Belum dikeluarkan*. Versi tidak membawa awalan `v`, sepadan dengan tag keluarannya.
 
+## Belum dikeluarkan
+
+### Ditambah
+
+- **Tab bergilir melalui nama-nama di simpang.** Jika apa yang anda taip masih menjadi permulaan beberapa nama, setiap tekanan menulis nama seterusnya sepenuhnya dan menanda bahagian yang ditambahnya. Tekanan selepas nama terakhir mengembalikan apa yang anda taip. <kbd>Shift</kbd>+<kbd>Tab</kbd> bergerak ke arah sebaliknya. Apabila tinggal satu nama, Tab melangkah masuk seperti dahulu.
+- **Satu ketukan <kbd>Alt</kbd> melengkapkan** seperti yang dilakukan Tab dahulu: setakat mana nama-nama itu sepadan, kemudian masuk ke satu-satunya folder yang tinggal, kemudian naik anak tangga. Pada nama yang sedang dipaparkan oleh Tab, ia melangkah masuk ke dalamnya.
+- **Vault menjadi satu anak tangga** selepas laluan dari akar sistem, bagi Tab, kekunci tukar nama dan kekunci fokus: tempat-tempat itu dibuka dengan seluruh laluan dalam medan dan bahagian vault ditanda. Hanya apabila *Akses fail luaran* dihidupkan.
+- **Satu perintah untuk setiap anak tangga**, iaitu nama, nama dengan sambungannya, laluan dari vault, laluan dari akar sistem dan vault. Dengan itu anda boleh mengikat kekunci terus kepada anak tangga yang anda mahu.
+- **<kbd>Shift</kbd> bersama kekunci tukar nama atau kekunci fokus menelusuri kitaran ke belakang.**
+- **Nota yang dipautkan tetapi belum ditulis kini disenaraikan** dalam senarai lungsur, berwarna merah jambu, dalam folder tempat Obsidian akan menciptanya. Memilih satu daripadanya akan menciptanya.
+- **Apabila sambungan disembunyikan, setiap fail dalam senarai lungsur menunjukkan jenisnya** dalam lencana di hujung baris. Bar laluan pula menunjukkan jenis fail yang terbuka di hujung kanannya. Menekan lencana menulis nama itu dalam medan bersama sambungannya. Lencana bar laluan kekal semasa medan terbuka.
+- **Nota boleh mempunyai laluan lain.** Semasa menukar nama, <kbd>Alt</kbd>+<kbd>Enter</kbd> menambah laluan yang ditaip sebagai laluan alias, <kbd>Shift</kbd>+<kbd>Enter</kbd> mencipta pautan keras di situ, dan <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> mencipta pautan simbolik. Nota itu kekal di tempatnya. Setiap satu direkodkan dalam frontmatter `paths` nota, yang mengikuti penukaran nama dan pemadaman, termasuk yang dibuat di luar Obsidian. Pautan keras atau simbolik yang dicipta, dipisahkan atau dibuang dalam pengurus fail, dalam terminal atau semasa Obsidian ditutup akan dibetulkan dalam senarai.
+- **Alias disenaraikan dalam senarai lungsur**, berwarna oren. Laluan alias muncul dalam folder yang dinamakannya, manakala alias Obsidian sendiri muncul di sebelah notanya. Memilih satu, atau menaip laluan alias dan menekan Enter, membuka nota itu.
+- **Butang di hadapan segmen vault menyenaraikan laluan lain sesebuah nota** apabila nota itu mempunyainya: laluan alias, pautan keras dan simbolik yang ditemui dalam vault, serta alias Obsidian. Butang itu menunjukkan bilangannya, dalam warna jenis yang paling kuat: ungu untuk pautan keras, merah jambu untuk pautan simbolik, oren untuk alias. Senarainya dibina seperti senarai lungsur, dengan baris, warna dan lencana sambungan yang sama, serta diserlahkan di bawah penuding dan oleh kekunci anak panah. Senarai itu bermula dengan laluan nota itu sendiri dalam warna biru. Apabila sambungan disembunyikan, butang itu menjadi ikon pada lencana di hujung baris: lencana itu mengambil warnanya di belakang sambungan berwarna kelabu, dan senarai dibuka dengan hujungnya sejajar dengan hujung sambungan.
+- **Setiap jenis laluan lain mempunyai senarainya sendiri**, iaitu `paths-hardlinks`, `paths-symlinks` dan `paths-aliases`, di samping `paths` yang merupakan jumlah kesemuanya. Salinan menamakan sumbernya dalam `paths-origin` dan tidak membawa senarai sumber itu, manakala sumber menyenaraikan salinan itu dalam `paths-forks`.
+- **Pautan boleh bertukar jenis di tempatnya.** Semasa menukar nama dengan laluan dibiarkan seperti asal, kombinasi kekunci pautan dan <kbd>Ctrl</kbd>+<kbd>Enter</kbd> menukar pautan keras atau simbolik kepada jenis yang satu lagi, kepada laluan alias atau kepada salinannya sendiri.
+- **Corak glob dalam medan laluan.** `*`, `?`, `**`, `[…]` dan `{a,b}` memadankan fail-fail dalam vault. Butang yang sama mengira padanan, berwarna hijau selagi ada padanan dan merah selagi tiada, serta menyenaraikannya. Enter membuka setiap padanan, dan bertanya dahulu jika lebih daripada sepuluh. Corak yang hanya mengandungi kurungan kerinting, seperti `Week {1,2,3}`, mencipta nota-nota yang dinamakannya. Nama sebenar yang mengandungi salah satu aksara ini sentiasa dibaca secara harfiah, dan penukaran nama tidak pernah membaca corak.
+- **Segmen vault boleh menunjukkan ikon dan namanya, ikonnya sahaja, atau tiada apa-apa**, dan ikon itu boleh menjadi mana-mana ikon Lucide. Ini menggantikan *Tunjukkan nama vault*, dan pilihan yang telah disimpan akan dibawa bersama.
+- **Laluan lain di luar vault.** Semasa menukar nama fail di luar sana, <kbd>Shift</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> dan <kbd>Alt</kbd>+<kbd>Enter</kbd> masing-masing mencipta pautan keras, pautan simbolik dan laluan alias, sama seperti di dalam vault. Pemalam menyimpan rekodnya (`external-links.json`), dan butang laluan lain menyenaraikannya. Laluan alias membuka failnya, dan pemindahan atau pemadaman melalui bar laluan turut mengemas kini rekod itu.
+
+### Diubah
+
+- **Pada nama vault, medan mengambil seluruh lebar baris** untuk laluan dari akar sistem yang dibukanya.
+- **Semasa memindahkan nota, namanya sendiri didahulukan** bagi Tab dan cadangan, mendahului nama-nama lain yang bermula dengan cara yang sama.
+- **Folder dalam laluan yang belum wujud berwarna merah**, sama seperti medan berwarna merah untuk nama yang akan dicipta oleh Enter.
+- **Senarai lungsur mempunyai tepi merah apabila Enter akan mencipta nama yang ditaip** semasa tiada baris diserlahkan, kerana medan itu sendiri mengekalkan warna baris.
+- **Roda tetikus berhenti pada baris pertama dan terakhir** senarai lungsur dan tidak lagi berpusing semula. Kekunci anak panah masih berpusing semula.
+- **Lepasan pada laluan yang tidak dapat dilakukan kini menyatakan sebabnya**, contohnya fail sudah berada dalam folder itu, folder ke dalam dirinya sendiri, atau nama yang sudah wujud di situ. Sebelum ini pengepala di belakangnya menawarkan untuk membuka fail itu.
+
+### Dibaiki
+
+- **Baris yang dimuatkan semasa tabnya berada di belakang** melepaskan nama vault dan nama nota, dan boleh kekal begitu walaupun ada ruang yang cukup setelah tab itu dibawa ke hadapan. Baris itu kini dimuatkan apabila ia mempunyai lebar, dan dimuatkan semula setiap kali lebar itu berubah.
+- **Apabila sambungan disembunyikan, lencana kini memberi laluan apabila baris menjadi sempit**, sama seperti sambungan. Sebelum ini lencana kekal pada skrin.
+- **Windows:** laluan yang ditulis dengan `/` (`C:/Users/you/vault/Note.md`) kini dikenali sebagai berada di dalam vault, dan laluan berkod peratus dengan huruf pemacu kini dinyahkod. Laluan pada mesin ditulis dengan `\` sepenuhnya dan bukan lagi campuran kedua-dua pemisah.
+
 ## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Dibaiki

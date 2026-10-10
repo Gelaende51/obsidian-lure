@@ -8,6 +8,41 @@
 
 Setiap rilis Lure, yang terbaru lebih dulu. Apa yang sudah mendarat sejak rilis terakhir ada di bawah *Belum dirilis*. Versi tidak memakai awalan `v`, sesuai dengan tanda rilisnya.
 
+## Belum dirilis
+
+### Ditambahkan
+
+- **Tab berputar di antara nama-nama pada percabangan.** Jika yang Anda ketik masih menjadi awal beberapa nama, setiap tekanan menuliskan nama berikutnya secara utuh, dengan bagian yang ditambahkannya ditandai, dan tekanan setelah yang terakhir mengembalikan apa yang Anda ketik. <kbd>Shift</kbd>+<kbd>Tab</kbd> berjalan ke arah sebaliknya. Bila tinggal satu nama, Tab masuk ke dalamnya seperti sebelumnya.
+- **Satu ketukan <kbd>Alt</kbd> melengkapi** seperti yang dulu dilakukan Tab: sejauh nama-nama itu sama, masuk ke satu-satunya folder yang tersisa, lalu menaiki anak tangga. Pada nama yang sedang ditampilkan oleh Tab, ketukan itu masuk ke dalamnya.
+- **Vault menjadi satu anak tangga** setelah jalur dari akar sistem, baik untuk Tab, tombol ganti nama, maupun tombol fokus: tempat-tempat itu terbuka dengan seluruh jalur di bidang dan bagian vault ditandai. Hanya jika *Access external files* aktif.
+- **Satu perintah untuk setiap anak tangga**, yaitu nama, nama beserta ekstensinya, jalur dari vault, jalur dari akar sistem, dan vault, sehingga sebuah tombol dapat diikat langsung ke yang Anda inginkan.
+- **<kbd>Shift</kbd> bersama tombol ganti nama atau tombol fokus menjalani siklus secara mundur.**
+- **Catatan yang sudah ditautkan tetapi belum ditulis ditampilkan** di menu tarik-turun, berwarna merah muda, di folder tempat Obsidian akan membuatnya. Memilih salah satunya akan membuatnya.
+- **Saat ekstensi disembunyikan, setiap file di menu tarik-turun menampilkan jenisnya** dalam lencana di ujung barisnya, dan bilah jalur menampilkan jenis file yang terbuka di ujung kanannya; menekan lencana menuliskan nama itu di bidang beserta ekstensinya. Lencana bilah jalur tetap ada selama bidang terbuka.
+- **Sebuah catatan dapat memiliki jalur lain.** Saat mengganti nama, <kbd>Alt</kbd>+<kbd>Enter</kbd> menambahkan jalur yang diketik sebagai jalur alias, <kbd>Shift</kbd>+<kbd>Enter</kbd> membuat tautan keras di sana, dan <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> membuat tautan simbolik; catatan itu tetap di tempatnya. Masing-masing dicatat di frontmatter `paths` milik catatan, yang mengikuti penggantian nama dan penghapusan, termasuk yang dilakukan di luar Obsidian: tautan keras atau simbolik yang dibuat, dipisahkan, atau dihapus di pengelola file, di terminal, atau saat Obsidian tertutup akan dibetulkan dalam daftar-daftar itu.
+- **Alias ditampilkan di menu tarik-turun**, berwarna oranye: jalur alias di folder yang disebutnya, alias bawaan Obsidian di samping catatannya. Memilih salah satunya, atau mengetik jalur alias lalu menekan Enter, membuka catatan tersebut.
+- **Sebuah tombol di depan segmen vault menampilkan daftar jalur lain sebuah catatan**, yaitu jalur alias, tautan keras dan simbolik yang ditemukan di vault, serta alias Obsidian, bila catatan itu memilikinya. Tombol itu menunjukkan jumlahnya dalam warna jenis yang terkuat: tautan keras ungu, tautan simbolik merah muda, alias oranye. Daftarnya disusun seperti menu tarik-turun, dengan baris, warna, dan lencana ekstensi yang sama, disorot di bawah penunjuk dan dengan tombol panah, dan diawali dengan jalur catatan itu sendiri dalam warna biru. Saat ekstensi disembunyikan, tombol itu menjadi ikon lencana di ujung baris: lencana mengambil warnanya di belakang ekstensi berwarna abu-abu, dan daftarnya terbuka dengan ujung yang sejajar dengan ujung ekstensi.
+- **Setiap jenis jalur lain memiliki daftarnya sendiri**, yaitu `paths-hardlinks`, `paths-symlinks`, dan `paths-aliases`, di samping `paths` yang merupakan gabungan semuanya. Salinan menyebut sumbernya di `paths-origin` dan tidak membawa daftar milik sumbernya; sumber mencantumkannya di `paths-forks`.
+- **Tautan dapat berganti jenis di tempat**: saat mengganti nama dengan jalur dibiarkan apa adanya, kombinasi tombol tautan dan <kbd>Ctrl</kbd>+<kbd>Enter</kbd> mengubah tautan keras atau simbolik menjadi jenis yang lain, menjadi jalur alias, atau menjadi salinan tersendiri.
+- **Pola glob di bidang jalur.** `*`, `?`, `**`, `[…]` dan `{a,b}` mencocokkan file-file di vault; tombol yang sama menghitung kecocokannya, hijau selama ada dan merah selama tidak ada, serta menampilkan daftarnya. Enter membuka setiap kecocokan, dengan bertanya terlebih dulu bila jumlahnya lebih dari sepuluh. Pola yang hanya berisi kurung kurawal, seperti `Week {1,2,3}`, membuat catatan-catatan yang disebutnya. Nama sungguhan yang mengandung salah satu karakter ini selalu diartikan apa adanya, dan penggantian nama tidak pernah membaca pola.
+- **Segmen vault dapat menampilkan ikon dan namanya, ikonnya saja, atau tidak sama sekali**, dan ikonnya dapat berupa ikon Lucide apa pun. Ini menggantikan *Show vault name*, dan pilihan yang tersimpan tetap terbawa.
+- **Jalur lain di luar vault.** Saat mengganti nama file di luar sana, <kbd>Shift</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd>, dan <kbd>Alt</kbd>+<kbd>Enter</kbd> membuat tautan keras, tautan simbolik, dan jalur alias, sama seperti di dalam vault. Plugin menyimpan rekamannya (`external-links.json`), tombol jalur lain menampilkannya, jalur alias membuka filenya, dan pemindahan atau penghapusan melalui bilah jalur ikut membawa rekaman itu.
+
+### Diubah
+
+- **Pada nama vault, bidang mengambil seluruh lebar baris**, untuk menampung jalur dari akar sistem yang ditampilkannya saat terbuka.
+- **Saat memindahkan catatan, namanya sendiri didahulukan** untuk Tab dan tawaran, di depan nama lain yang berawalan sama.
+- **Folder dalam jalur yang belum ada berwarna merah**, sebagaimana bidang berwarna merah untuk nama yang akan dibuat oleh Enter.
+- **Menu tarik-turun memiliki tepi merah bila Enter akan membuat nama yang diketik** selagi tidak ada baris yang disorot, karena bidang itu sendiri mempertahankan warna baris.
+- **Roda gulir berhenti di baris pertama dan terakhir** menu tarik-turun alih-alih berputar kembali; tombol panah tetap berputar.
+- **Seret-lepas ke jalur yang tidak dapat dilakukan menjelaskan alasannya**, misalnya sudah berada di folder itu, folder ke dalam dirinya sendiri, atau nama yang sudah ada di sana, alih-alih membiarkan header di belakangnya menawarkan untuk membuka file.
+
+### Diperbaiki
+
+- **Baris yang disesuaikan saat tabnya berada di belakang** melepaskan nama vault dan nama catatan, dan bisa tetap begitu meskipun ruangnya lebih dari cukup setelah tab itu berpindah ke depan. Kini baris disesuaikan saat sudah memiliki lebar, dan disesuaikan lagi setiap kali lebar itu berubah.
+- **Saat ekstensi disembunyikan, lencana mengalah ketika baris kekurangan ruang**, seperti halnya ekstensi; sebelumnya lencana tetap tampil di layar.
+- **Windows:** jalur yang ditulis dengan `/` (`C:/Users/you/vault/Note.md`) dikenali sebagai berada di dalam vault, jalur berkode persen dengan huruf drive didekodekan, dan jalur di komputer ditulis dengan `\` secara konsisten alih-alih campuran kedua pemisah.
+
 ## 1.5.2 — 2026-09-28[^1.5.2]
 
 ### Diperbaiki
