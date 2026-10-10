@@ -141,6 +141,13 @@ export default class BreadcrumbPathPlugin extends Plugin {
 		// all: a note's lists are checked when a path bar shows it instead —
 		// in any pane, where Obsidian's file-open speaks only for the active one.
 		this.noteShown = changed;
+		// And on opening one in the active pane, where a path bar that redraws
+		// once for two quick opens ending on the same note sees no change.
+		this.registerEvent(
+			this.app.workspace.on("file-open", (file) => {
+				if (file?.extension === "md") changed();
+			}),
+		);
 		// An editor that saves through a new file and a rename splits a hard
 		// link off into a file of its own, and Obsidian sees only a change.
 		this.registerEvent(
