@@ -205,6 +205,25 @@ async function openOnFolder() {
 	await check("opened by a click on the folder");
 }
 
+// As reported: a click on a folder of the path, part of a name typed over
+// the marked folder, then Tab — and Tab again, round the names and back.
+test("Tab after typing part of a name over a clicked folder", async () => {
+	await openOnFolder();
+	await page.send("Input.insertText", { text: "Lure-keyleak/Si" });
+	await check("typing over the folder");
+	for (let i = 1; i <= 4; i++) await press("Tab", `Tab ${i} after typing`);
+	await page.send("Input.insertText", { text: "q" });
+	await check("typing after the Tabs");
+});
+
+test("Tab after typing a few letters over a clicked folder", async () => {
+	await openOnFolder();
+	await page.send("Input.insertText", { text: "Lu" });
+	await check("typing over the folder");
+	for (let i = 1; i <= 3; i++) await press("Tab", `Tab ${i} after two letters`);
+	await press("shift+Tab", "Shift+Tab back");
+});
+
 test("Tab and typing after picking a row with the mouse", async () => {
 	await openOnFolder();
 	expect("a row to pick", await clickOn(".suggestion-item"), true);

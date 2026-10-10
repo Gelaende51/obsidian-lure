@@ -208,6 +208,41 @@ test("aliases are listed orange where they stand, and open their note", async ()
 	expect("and makes nothing", (await disk(`${DIR}/Elsewhere.md`)).exists, false);
 });
 
+// Reported: names doubled, without their extension, while arrowing through
+// a folder of notes with aliases. A note's own path in its lists (a hard link
+// records both names), an alias that is its own name, an alias path beside it.
+test("arrowing through a folder of notes with aliases lists each name once", async () => {
+	await setSettings(page, { showFileExtension: false });
+	try {
+		await page.evaluate(`
+			const f = app.vault.getAbstractFileByPath(${JSON.stringify(NOTE)});
+			await app.fileManager.processFrontMatter(f, (fm) => {
+				fm.paths = [${JSON.stringify(NOTE)}, ${JSON.stringify(`${DIR}/Elsewhere.md`)}];
+				fm.aliases = ["Note", "Nickname"];
+			});
+			const s = app.vault.getAbstractFileByPath(${JSON.stringify(`${DIR}/Sibling.md`)});
+			await app.fileManager.processFrontMatter(s, (fm) => { fm.aliases = ["Sib"]; });
+			${PAUSE(800)}
+			return true;
+		`);
+		await browsing();
+		await pressKey(page, "Backspace");
+		await settle(400);
+		const seen = [];
+		for (let i = 0; i <= 6; i++) {
+			if (i) await pressKey(page, "ArrowDown");
+			await settle(250);
+			const labels = (await rows()).map((r) => r.label);
+			const doubled = labels.filter((l, at) => labels.indexOf(l) !== at);
+			seen.push(doubled.length ? `press ${i}: ${doubled.join(", ")} in [${labels.join(" | ")}]` : null);
+		}
+		expect("no name listed twice, before or after any arrow press", seen.filter(Boolean), []);
+	} finally {
+		await page.evaluate(`document.querySelector(".lure-path-input")?.blur(); return true;`);
+		await setSettings(page, { showFileExtension: true });
+	}
+});
+
 test("the other-paths button shows exactly when there are other paths", async () => {
 	const button = () => page.evaluate(`
 		await app.workspace.getLeaf(false).openFile(app.vault.getAbstractFileByPath(${JSON.stringify(NOTE)}));
