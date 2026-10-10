@@ -2599,3 +2599,55 @@ from the logged readings; the factors will move as readings accumulate.
 
 ## obsidian-launcher refuses a plugin whose version has two parts
 - ProZen's manifest says `"version": "0.3"`. Obsidian installs and runs it; obsidian-launcher@3 stops the whole launch with `Invalid version "0.3"` (semver parse), so no plugin in the list gets installed. Worth a report upstream (coerce, or skip that plugin with a warning). Until then ProZen is left out of test-compat-ui.
+
+## Obsidian and links on disk
+- Obsidian does not index a symbolic link made while it runs: the link is not a `TFile` until a restart or rescan. Classifying "is this other path a link?" from the vault index called it an alias; it has to be asked of the disk (`lstatSync`) at the moment it is shown.
+- A hard link is one file under two names, but Obsidian re-reads it only under the name that was written through. After writing the `paths` lists into a hard-linked note, the other names are re-read explicitly (`refreshNames`), or their metadata stays stale until edited.
+- Sync tools (Obsidian Sync, Syncthing, git) do not keep hard links: on the other device the two names arrive as two copies.
+- A symbolic link written with an absolute target breaks when the vault moves; written relative to the link's folder it survives. On Windows `fs.symlink` needs Developer Mode or the symlink privilege — a GitHub Windows runner has it.
+- Files outside the vault have no frontmatter and no index, so their other paths are recorded by the plugin (`external-links.json` beside `data.json`, not in it: *Restore defaults* resets the settings object and would take them along) and checked against the disk (device+inode for hard links, `readlink` for symbolic ones) each time they are shown.
+
+## Obsidian API odds met in this round
+- `ButtonComponent.setDestructive` does not exist on older Obsidian; `setWarning` is deprecated. Feature-test and fall back to the `mod-warning` class.
+- `PluginSettingTab.display()` is deprecated since 1.13 in favour of `getSettingDefinitions()`; eslint flags it, but the minimum app version still needs it.
+- A count or mark drawn as a child element changes the row's `textContent`, which the suites (and the keyboard filter) read as the name. Drawing it from CSS (`::after { content: attr(data-count) }`) keeps the label text exactly the name.
+
+## The installer and the app are versioned apart
+- Obsidian updates its app (the asar) without replacing the installer (Electron). `obsidian-versions.json` from wdio-obsidian-service lists, per app version, `minInstallerVersion` (what a fresh install gets) and `minRunnableInstallerVersion` (the oldest that still runs it). For every app since 1.5.3, including 1.14.4, the oldest runnable installer is 1.1.9 — Electron 21, Chromium 106.
+- Electron 23 dropped Windows 7, 8 and 8.1, so anyone who installed Obsidian there before that still gets today's app on Chromium 106. Plugin code and CSS have to work on Chromium 106: `color-mix()` (Chromium 111) needs a fallback, and a custom property holding `color-mix()` is not validated when read, so its fallback has to be chosen with `@supports`, not by declaring it twice.
+- Electron 38 dropped macOS 11 (macOS 12 is the floor).
+- Chromium dropped XP and Vista in 2016, before Obsidian existed: no Obsidian build ever ran there. ReactOS targets the XP/2003 kernel (first NT6 syscall in July 2026 is a stub) and cannot run any Electron Obsidian needs.
+
+## obsidian-launcher
+- `obsidian-launcher launch -p id:<plugin>` installs **and enables** every plugin listed. Anything that should start off has to be turned off afterwards (`.dev/ci-prepare.mjs`).
+- `--installer` takes an exact version (`1.1.16`) as well as `earliest`/`latest`; `earliest` means `minInstallerVersion`, not the oldest runnable.
+- It picks the build for the machine's architecture (Arm64 on `windows-11-arm`, Apple silicon on `macos-15`).
+- Obsidian is single-instance. Launching again while the previous copy is still shutting down hands the launch to it and exits — "Obsidian did not come up" on every other suite when several run in one job. Wait until the old process is gone (`stop_obsidian` in ci-run.sh).
+
+## GitHub Actions, as this repository met it
+- Runner images: `windows-2025` (= `windows-latest`, Windows 11 24H2 base), `windows-2022` (Windows 10 21H2-era base), `windows-11-arm` (free for public repos), `macos-15` (Apple silicon), `macos-15-intel`; `windows-2019` is retired. All Windows and macOS runners have a desktop session; Linux needs `xvfb-run`.
+- Standard Linux runners expose `/dev/kvm` (since April 2024) once a udev rule opens it to the runner user: a Windows VM can run inside one (dockur/windows). Windows and macOS runners cannot nest virtual machines.
+- Concurrency is per account, across repositories: a stuck queue in one repository can be another's runs holding the slots. `githubstatus.com` can say "operational" while nothing starts for an hour.
+- `concurrency.cancel-in-progress` for push events means every push cancels the previous push run — pushing often while waiting for results leaves no run that finishes. Stop pushing until one has.
+- A job's log can be read only once the job ends (`gh api --allow-escape-sequences repos/…/actions/jobs/<id>/logs`); a five-hour VM job is a black box until then. Always check a run's `headSha` before reading its result as the current code's.
+- A container job runs actions with the host's Node, so the image needs glibc and `tar`; the container runs as root, so Electron needs `--no-sandbox`. openSUSE Tumbleweed broke mid-run (mirror 404s, the upgrade removed `sh`): a rolling release is a bad CI base — Leap is used instead.
+- The Windows runner's session cannot move a file to the Recycle Bin: `shell.trashItem` fails with "Failed to create FileOperation instance". Works on a desktop.
+
+## macOS under the debugging protocol
+- Obsidian's Mod is Cmd on macOS and a word at a time is Alt: suites written with `ctrl+…` need translating (`describeKey`), except Ctrl+Tab.
+- A Cmd+letter sent through `Input.dispatchKeyEvent` is the app menu's to answer; sent bare it can hang the protocol call forever (a 45-minute job sat on one Cmd+A). Passing the editing command (`commands: ["selectAll"]`, as Puppeteer does) makes it work; every `Input.*` call now has a 10-second deadline so a lost one fails its case, not the job.
+- macOS's default file system ignores case, as Windows does: two folders differing only in case cannot both exist.
+
+## Test-suite habits that paid off
+- Read an element again right before acting on it: the row redraws when a background scan (links on disk) comes back, and a reference taken before that clicks a detached node — which does nothing and fails silently.
+- When a page stops answering, `Runtime.evaluate` cannot help, but `Debugger.pause` still stops the main thread and returns the stack (`.dev/probe-freeze.mjs`), on an unminified build (`node esbuild.config.mjs readable`).
+- One plugin per job finds which neighbour leaves something behind (`peer-residue`): loaded alone, none of the header plugins broke F2 or the rename field, so the earlier failure needed several of them at once.
+- `.dev/test-remote.sh` / workflow inputs choose the system; `test-systems.yml` holds the ones without a runner (distros, old engine, Server 2019 VM, residue and freeze probes).
+
+## Windows licences for testing
+- Free and allowed: Windows Server 2016/2019/2022/2025 evaluations (180 days, activate online within 10 days; 2019 is the Windows 10 1809 base), Windows 11 Enterprise evaluation (90 days, aimed at IT pros evaluating Windows), Windows Insider Preview builds. The Windows 10 Enterprise evaluation page now redirects to an end-of-support notice; Microsoft's free Windows 11 developer VMs last expired in 2024.
+- No licence-clean source exists for Windows 7, 8 or 8.1: test them only on owned, licensed media (a self-hosted runner), or test their engine instead (installer 1.1.16 on Linux).
+
+## Working on the plugin locally
+- The test vaults symlink the repository's `main.js`: a change is invisible there until `npm run build` (now also a post-commit hook, `core.hooksPath .dev/hooks`), and Hot Reload (pjeby) with a `.hotreload` file in the plugin folder reloads it without the debugging port.
+- Headless translation runs occasionally answer with a duplicated JSON block, a misspelled key or an empty duplicate key; `npm run check:lang` catches all three, and the fix is by hand.
