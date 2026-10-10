@@ -231,6 +231,9 @@
    variables restyles this with them. */
 .view-header-breadcrumb.is-being-dragged-over {
 	color: var(--nav-item-color-highlighted);
+	/* Before color-mix (Chromium 111): the oldest installer today's Obsidian
+	   still runs on is Chromium 106, the last one Windows 7 and 8 have. */
+	background: hsla(var(--interactive-accent-hsl), 0.1);
 	background: color-mix(in oklch, var(--interactive-accent) 10%, transparent);
 	border-radius: var(--radius-s);
 }
@@ -1044,7 +1047,14 @@
    active-hover mix is a tenth, which is quieter than this wants to be while
    still being something you can read a file name through. */
 .workspace {
-	--lure-flash-wash: color-mix(in oklch, var(--interactive-accent) 38%, transparent);
+	--lure-flash-wash: hsla(var(--interactive-accent-hsl), 0.38);
+}
+/* A custom property is not checked when it is read in, so an engine without
+   color-mix would keep it and paint nothing: it is only offered where it works. */
+@supports (color: color-mix(in oklch, red, blue)) {
+	.workspace {
+		--lure-flash-wash: color-mix(in oklch, var(--interactive-accent) 38%, transparent);
+	}
 }
 
 /* A row this plugin has just written to — created, moved, copied. Obsidian's
