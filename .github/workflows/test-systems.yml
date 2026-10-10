@@ -50,6 +50,15 @@ jobs:
       options: --shm-size=2g
     name: ${{ matrix.image }}
     steps:
+      # Checkout unpacks with tar, which the smallest images (openSUSE Leap)
+      # leave out.
+      - name: tar, for the checkout
+        run: |
+          command -v tar >/dev/null && exit 0
+          if command -v zypper >/dev/null; then zypper --non-interactive install tar gzip
+          elif command -v dnf >/dev/null; then dnf install -y tar gzip
+          elif command -v pacman >/dev/null; then pacman -Sy --noconfirm tar gzip
+          else apt-get update -q && apt-get install -y -q tar gzip; fi
       - uses: actions/checkout@v4
       - name: System packages
         run: sh .dev/ci-distro-deps.sh
