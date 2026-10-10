@@ -155,6 +155,16 @@ export class BreadcrumbSettingTab extends PluginSettingTab {
 						desc: t("settingDotFilesDesc"),
 						control: { type: "toggle", key: "showDotFiles" },
 					},
+					{
+						name: t("settingLinkedOnlyName"),
+						desc: t("settingLinkedOnlyDesc"),
+						control: { type: "toggle", key: "listLinkedOnly" },
+					},
+					{
+						name: t("settingAliasesName"),
+						desc: t("settingAliasesDesc"),
+						control: { type: "toggle", key: "listAliases" },
+					},
 					// Beside the dot-file rule because it answers the same question —
 					// what a dropdown is allowed to list — and immediately after it
 					// because it is the one that is *not* this plugin's to toggle. It
@@ -164,6 +174,26 @@ export class BreadcrumbSettingTab extends PluginSettingTab {
 						name: obsidianLabel(LABELS.showAllFileTypes, "Show all file types"),
 						desc: t("settingAllFilesDesc"),
 						render: (setting: Setting) => this.drawAllFilesJump(setting),
+					},
+				],
+			},
+			{
+				type: "group",
+				heading: t("settingGroupPatterns"),
+				items: [
+					{
+						name: t("settingGlobsName"),
+						desc: t("settingGlobsDesc"),
+						control: { type: "toggle", key: "useGlobs" },
+					},
+					{
+						name: t("settingOpenManyName"),
+						desc: t("settingOpenManyDesc"),
+						control: {
+							type: "dropdown",
+							key: "openManyAsk",
+							options: { "5": "5", "10": "10", "20": "20", "50": "50", "0": t("openManyNever") },
+						},
 					},
 				],
 			},

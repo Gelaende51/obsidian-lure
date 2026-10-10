@@ -69,6 +69,14 @@ export interface BreadcrumbPathSettings {
 	 * exist only as a property — cannot be made.
 	 */
 	recordPaths: boolean;
+	/** Read `*`, `?`, `[…]` and `{…}` in the field as glob patterns. Off, they are plain characters. */
+	useGlobs: boolean;
+	/** How many matches Enter opens before asking first: "5", "10", "20", "50", or "0" for never asking. */
+	openManyAsk: string;
+	/** List notes that are only linked to, in pink, in the folder they would be made in. */
+	listLinkedOnly: boolean;
+	/** List path aliases and Obsidian's aliases, in orange, in the dropdown. */
+	listAliases: boolean;
 }
 
 export const DEFAULT_SETTINGS: BreadcrumbPathSettings = {
@@ -82,4 +90,8 @@ export const DEFAULT_SETTINGS: BreadcrumbPathSettings = {
 	showFileExtension: false,
 	accessExternalFiles: false,
 	recordPaths: true,
+	useGlobs: true,
+	openManyAsk: "10",
+	listLinkedOnly: true,
+	listAliases: true,
 };

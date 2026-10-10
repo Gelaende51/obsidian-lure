@@ -291,8 +291,6 @@ const WHEEL_LINE_PX = 16;
  * at the path, while this key alternates between two places to rename in.
  */
 const LAST_RENAME_RUNG = 3;
-/** More matches than this, and Enter on a pattern asks before opening them all. */
-const OPEN_MANY_ASKS = 10;
 /** The colour each kind of other path is drawn in, by the names the stylesheet uses. */
 const OTHER_PATH_TINTS: Record<OtherPath["kind"], string> = {
 	alias: "alias",
@@ -6806,7 +6804,7 @@ export class PathBreadcrumb {
 	 * read as a pattern.
 	 */
 	private patternFor(text: string): string | null {
-		if (this.renameMode || this.externalPath !== null) return null;
+		if (!this.plugin.settings.useGlobs || this.renameMode || this.externalPath !== null) return null;
 		const folder = this.currentFolderPath();
 		const here = folder === "/" ? "" : folder;
 		const typed = text.trim().replace(/^\/+/, "");
@@ -6878,7 +6876,8 @@ export class PathBreadcrumb {
 			new Notice(t("noticeGlobNone", { pattern }));
 			return;
 		}
-		if (files.length > OPEN_MANY_ASKS) {
+		const asksAbove = Number(this.plugin.settings.openManyAsk) || 0;
+		if (asksAbove > 0 && files.length > asksAbove) {
 			const ok = await ConfirmCreateFileModal.askWith(
 				this.plugin.app,
 				t("modalOpenManyTitle", { count: String(files.length) }),
@@ -8898,8 +8897,9 @@ export class PathBreadcrumb {
 				createRow: this.createRow(inputEl),
 				linkKindOf: (path) =>
 					this.plugin.diskLinks.targetOfLink(path) ? "symbolic" : this.plugin.diskLinks.sameFile(path).length ? "hard" : null,
-				aliasesIn: (folder) => (this.renameMode ? [] : this.plugin.aliasRows.in(folder)),
-				unresolvedIn: (folder) => (this.renameMode ? [] : this.plugin.unresolvedNotes.in(folder)),
+				aliasesIn: (folder) => (this.renameMode || !this.plugin.settings.listAliases ? [] : this.plugin.aliasRows.in(folder)),
+				unresolvedIn: (folder) =>
+					this.renameMode || !this.plugin.settings.listLinkedOnly ? [] : this.plugin.unresolvedNotes.in(folder),
 				pages: this.mainPaneViewTypes(),
 				queryOverride: this.suggestQueryOverride,
 				offered: this.suggested
