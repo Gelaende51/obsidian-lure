@@ -19,7 +19,7 @@ on:
       target:
         description: "What to run on"
         type: choice
-        options: [distros, old-engine, server-2019, peer-residue, all]
+        options: [distros, old-engine, server-2019, peer-residue, freeze-probe, all]
         default: distros
       suites:
         description: "Suites, space separated"
@@ -143,6 +143,32 @@ jobs:
           SUITE_FILTER=F2 OBSIDIAN_VERSION=latest xvfb-run -a -s "-screen 0 1920x1080x24" .dev/ci-run.sh test-keyleak || failed=1
           SUITE_FILTER=renaming OBSIDIAN_VERSION=latest xvfb-run -a -s "-screen 0 1920x1080x24" .dev/ci-run.sh test-links || failed=1
           exit $failed
+
+  # Where the page spends its time when a peer freezes it (Iconic did, in
+  # test-compat-ui): .dev/probe-freeze.mjs pauses it and prints the stacks.
+  freeze-probe:
+    if: inputs.target == 'freeze-probe'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        peer: [iconic, vertical-tabs, continuous-mode]
+    name: freeze probe, ${{ matrix.peer }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: node esbuild.config.mjs readable
+      - name: Turn the peer on after Lure and sample the stack
+        env:
+          OBSIDIAN_EXTRA_ARGS: --no-sandbox
+          EXTRA_PLUGINS: ${{ matrix.peer }}
+          OBSIDIAN_VERSION: latest
+        run: xvfb-run -a -s "-screen 0 1920x1080x24" .dev/ci-run.sh probe-freeze
 
   server-2019:
     if: inputs.target == 'server-2019' || inputs.target == 'all'

@@ -9,6 +9,8 @@ if you want to view the source, visit the plugin's github repository
 `;
 
 const prod = process.argv[2] === "production";
+// One build, not minified: for reading stack traces (.dev/probe-freeze.mjs).
+const readable = process.argv[2] === "readable";
 
 const context = await esbuild.context({
 	banner: { js: banner },
@@ -40,7 +42,7 @@ const context = await esbuild.context({
 	minify: prod,
 });
 
-if (prod) {
+if (prod || readable) {
 	await context.rebuild();
 	process.exit(0);
 } else {
