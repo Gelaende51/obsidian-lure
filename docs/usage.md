@@ -507,6 +507,16 @@ With the padlock open, the path bar behaves out there the way it does inside:
 | Rename/move mode, type a new name | Renames the file the row is showing. A name with no extension keeps the file's own — out here a folder holds every kind of file, and a rename shouldn't quietly turn a `.png` into a `.md` |
 | Rename/move mode, browse elsewhere, pick **keep this name** | Moves it there under the name it already has |
 | Hold <kbd>Ctrl</kbd> on either | Copies instead of moving, and opens the copy in a new tab |
+| Rename/move mode, <kbd>Shift</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> or <kbd>Alt</kbd>+<kbd>Enter</kbd> | A hard link, a symbolic link (written relative) or an alias path at the typed path, as inside — the file stays where it is |
+
+**Other paths out here are kept by the plugin.** A file outside the vault has
+no frontmatter to list them in, so the links and alias paths made from the path
+bar are recorded in `external-links.json` in the plugin's folder — apart from
+its settings, so *Restore defaults* leaves them alone. The other-paths button
+lists them for the file, in the same colours, and they are checked against the
+disk each time: a link removed by another program drops out of the list. Typing
+an alias path out here opens the file it names, and moving or deleting the file
+through the path bar takes its record along.
 
 Locked, all of those report what's blocking them instead of happening. Nothing is ever overwritten in either state: a target that already exists is refused, and the refusal is the filesystem's own (`COPYFILE_EXCL`, an exclusive create) rather than a check that could lose a race. A move across filesystems — off a USB stick, off a network share — falls back to copy-then-delete, and the original is only removed once the copy has landed.
 

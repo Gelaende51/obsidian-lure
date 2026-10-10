@@ -75,6 +75,8 @@ declare module "fs" {
 	/** The entry itself rather than what it points at: whether a path is a symbolic link. */
 	export function lstatSync(path: string): Stats;
 	export function existsSync(path: string): boolean;
+	/** Where a symbolic link points, as written in it. */
+	export function readlinkSync(path: string): string;
 	export function readFileSync(path: string, encoding: "utf8"): string;
 }
 

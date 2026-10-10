@@ -22,6 +22,7 @@ Every release of Lure, newest first. What has landed since the last release is u
 - **A link can change kind in place**: renaming with the path left as it is, the link chords and <kbd>Ctrl</kbd>+<kbd>Enter</kbd> turn a hard or symbolic link into the other kind, an alias path or a copy of its own.
 - **Glob patterns in the path field.** `*`, `?`, `**`, `[…]` and `{a,b}` match the vault's files; the same button counts the matches, green while there are some and red while there are none, and lists them. Enter opens every match, asking first above ten. A pattern of braces only — `Week {1,2,3}` — makes the notes it names. A real name containing one of these characters is always taken literally, and renaming never reads a pattern.
 - **The vault's segment can show its icon and name, its icon alone, or nothing**, and the icon can be any Lucide icon. This replaces *Show vault name*, and a stored choice carries over.
+- **Other paths outside the vault.** Renaming a file out there, <kbd>Shift</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> and <kbd>Alt</kbd>+<kbd>Enter</kbd> make a hard link, a symbolic link and an alias path, as inside. The plugin keeps the record (`external-links.json`), the other-paths button lists them, an alias path opens its file, and a move or delete through the path bar takes the record along.
 
 ### Changed
 

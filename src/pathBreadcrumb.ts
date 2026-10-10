@@ -6730,7 +6730,49 @@ export class PathBreadcrumb {
 		return true;
 	}
 
+	/**
+	 * A second path for the file this pane shows outside the vault, at
+	 * `typed` — relative to where the row points, or absolute. Kept by the
+	 * plugin (externalLinks.ts), since out here there is no frontmatter.
+	 */
+	private async commitExternalLink(typed: string, kind: LinkKind): Promise<void> {
+		const source = this.getExternalPathForLeaf();
+		if (!source) {
+			new Notice(t("noticeLinkInsideOnly"));
+			return;
+		}
+		if (!this.requireExternalUnlock()) return;
+		let target = isAbsolutePath(typed) ? typed : externalJoin(this.externalPath ?? "", typed);
+		if (isExternalFolder(target)) target = externalJoin(target, source.slice(source.search(/[^\\/]*$/)));
+		target = this.withRenameExtension(target);
+		if (samePath(target, source)) {
+			new Notice(t("noticeLinkSame"));
+			return;
+		}
+		if ((await externalExists(target)) || this.plugin.externalLinks.resolveAlias(target)) {
+			new Notice(t("noticeLinkTaken", { path: target }));
+			this.inputEl?.focus();
+			return;
+		}
+		try {
+			await this.plugin.externalLinks.make(source, target, kind);
+		} catch (err) {
+			const code = (err as NodeJS.ErrnoException).code;
+			new Notice(code === "EXDEV" ? t("noticeLinkOtherDevice") : t("noticeLinkFailed", { error: (err as Error).message }));
+			this.inputEl?.focus();
+			return;
+		}
+		const made = { alias: "noticeAliasMade", hard: "noticeHardLinkMade", symbolic: "noticeSymlinkMade" } as const;
+		new Notice(t(made[kind], { path: target }));
+		this.dismissEditing();
+		this.updateIndicator();
+	}
+
 	private async commitLink(target: string, kind: LinkKind): Promise<void> {
+		if (this.externalPath !== null && this.getExternalPathForLeaf()) {
+			await this.commitExternalLink(target, kind);
+			return;
+		}
 		const file = this.file;
 		if (!file || this.externalPath !== null) {
 			new Notice(t("noticeLinkInsideOnly"));
@@ -6789,7 +6831,8 @@ export class PathBreadcrumb {
 		const inVault = this.externalPath === null && !this.showingLocations;
 		// Shown while the row is being edited too — browsing a folder, typing,
 		// renaming — since the note it is about has not changed.
-		const others = file && inVault ? otherPaths(this.plugin.app, this.plugin.diskLinks, file) : [];
+		const outside = this.externalPath !== null && !this.showingLocations ? this.getExternalPathForLeaf() : null;
+		const others = file && inVault ? otherPaths(this.plugin.app, this.plugin.diskLinks, file) : outside ? this.plugin.externalLinks.othersOf(outside) : [];
 		const matches = inVault ? this.globMatches : null;
 		// Any other button in the row is one a redraw lost track of.
 		for (const stray of Array.from(this.vaultSegmentEl.querySelectorAll(".lure-other-paths"))) {
@@ -6840,6 +6883,14 @@ export class PathBreadcrumb {
 					if (there instanceof TFile) this.navigateToFile(there);
 				},
 			});
+		}
+		const outside = this.externalPath !== null ? this.getExternalPathForLeaf() : null;
+		if (outside) {
+			const others = this.plugin.externalLinks.othersOf(outside);
+			if (others.length) entries.push({ path: outside, icon: "file", tint: "current", go: null });
+			for (const other of others) {
+				entries.push({ path: other.path, icon: OTHER_PATH_ICONS[other.kind], tint: OTHER_PATH_TINTS[other.kind], go: () => void openExternalFile(this.plugin, other.kind === "alias" ? outside : other.path, false, this.leaf) });
+			}
 		}
 		if (file && this.externalPath === null) {
 			const others = otherPaths(app, this.plugin.diskLinks, file);
@@ -9485,7 +9536,7 @@ export class PathBreadcrumb {
 
 		if (this.externalPath !== null) {
 			if (link) {
-				new Notice(t("noticeLinkInsideOnly"));
+				await this.commitExternalLink(trimmed, link);
 				return;
 			}
 			await this.submitExternal(trimmed, paneType);
@@ -9640,6 +9691,12 @@ export class PathBreadcrumb {
 		// URL or a pasted `C:/…` would otherwise stand in the row with `/`.
 		const native = onMachinePath(normalized);
 		if (!(await externalExists(native))) {
+			const named = this.plugin.externalLinks.resolveAlias(native);
+			if (named) {
+				this.cancelNavigation();
+				void openExternalFile(this.plugin, named, paneType, this.leaf);
+				return;
+			}
 			new Notice(t("noticeExternalNotFound", { path: native }));
 			return;
 		}
@@ -9710,6 +9767,14 @@ export class PathBreadcrumb {
 		// "ideas" opens the "ideas.md" already sitting there rather than
 		// offering to create a second file beside it.
 		const target = this.withNoteExtension(typedPath);
+
+		// An alias path recorded out here opens the file it names.
+		const named = isExternalFile(target) ? null : (this.plugin.externalLinks.resolveAlias(typedPath) ?? this.plugin.externalLinks.resolveAlias(target));
+		if (named) {
+			void openExternalFile(this.plugin, named, paneType, this.leaf);
+			this.cancelNavigation();
+			return;
+		}
 
 		if (isExternalFile(target)) {
 			void openExternalFile(this.plugin, target, paneType, this.leaf);

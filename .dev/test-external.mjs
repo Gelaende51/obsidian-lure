@@ -15,7 +15,7 @@
  * Requires --remote-debugging-port=9222 (see .dev/cdp.mjs) and a vault open.
  */
 
-import { mkdirSync, rmSync, writeFileSync, readFileSync, existsSync, chmodSync } from "fs";
+import { mkdirSync, rmSync, writeFileSync, readFileSync, existsSync, chmodSync, statSync, lstatSync, readlinkSync } from "fs";
 import { join } from "path";
 import { homedir, tmpdir, userInfo } from "os";
 import { canRenameFiles, connect, PAUSE, pressKey, quiesce, reloadPlugin, setSettings, setVaultConfig, asPosix } from "./cdpSession.mjs";
@@ -1899,5 +1899,112 @@ if (!(await canRenameFiles(page))) {
 	page.close();
 	process.exit(2);
 }
+
+// ------------------------------------------------------- links out here
+
+/** The other-paths button of the active pane: its count, colour and menu. */
+const OTHER_PATHS = `
+	const btn = app.workspace.activeLeaf.view.containerEl.querySelector(".lure-other-paths");
+	btn?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+	${PAUSE(300)}
+	const menu = [...document.querySelectorAll(".lure-other-paths-menu .menu-item")].map((e) => [e.querySelector(".menu-item-title")?.textContent, e.dataset.lureTint]);
+	document.querySelector(".lure-other-paths-menu")?.remove();
+	return { count: btn?.querySelector(".lure-other-paths-count")?.textContent ?? null, tint: btn?.dataset.lureTint ?? null, menu };
+`;
+
+test("links: Shift+Enter, renaming a file out here, makes a hard link and lists it", async () => {
+	const from = join(BED, "linked.txt");
+	const to = join(BED, "linked-hard.txt");
+	rmSync(to, { force: true });
+	writeFileSync(from, "one file\n");
+	await page.evaluate(`
+		${open(from)}
+		${breadcrumb}
+		bc.externalWritesUnlocked = true;
+		bc.startHeaderRename();
+		${PAUSE(400)}
+		bc.inputEl?.focus();
+		bc.inputEl?.setSelectionRange(0, "linked".length);
+		return true;
+	`);
+	await page.send("Input.insertText", { text: "linked-hard" });
+	await page.evaluate(PAUSE(300) + "return true;");
+	await pressKey(page, "shift+Enter");
+	await page.evaluate(PAUSE(1000) + "return true;");
+	expect("the link is there", existsSync(to), true);
+	expect("the same file", existsSync(to) && statSync(to).ino === statSync(from).ino, true);
+	expect("and the file stayed", existsSync(from), true);
+	const b = await page.evaluate(`${breadcrumb} bc.updateIndicator(); ${OTHER_PATHS}`);
+	expect("the button counts it", b.count, "1");
+	expect("purple, for a hard link", b.tint, "hard");
+	expect("its menu: own path blue, then the link purple", b.menu, [[from, "current"], [to, "hard"]]);
+	const c = await page.evaluate(`${open(to)} ${breadcrumb} bc.updateIndicator(); ${OTHER_PATHS}`);
+	expect("seen from the other name, the first one", c.menu, [[to, "current"], [from, "hard"]]);
+});
+
+test("links: a symbolic link out here is written relative, and an alias opens its file", async () => {
+	const from = join(BED, "target.txt");
+	const sym = join(BED, "sub", "pointer.txt");
+	const alias = join(BED, "nickname.txt");
+	rmSync(sym, { force: true });
+	writeFileSync(from, "the target\n");
+	const r = await page.evaluate(`
+		${open(from)}
+		${breadcrumb}
+		bc.externalWritesUnlocked = true;
+		bc.renameMode = true;
+		${CLEAR_NOTICES}
+		await bc.commitExternalLink(${JSON.stringify(sym)}, "symbolic");
+		${PAUSE(300)}
+		const symNotice = ${LAST_NOTICE};
+		bc.renameMode = true;
+		await bc.commitExternalLink(${JSON.stringify(alias)}, "alias");
+		${PAUSE(300)}
+		bc.updateIndicator();
+		${OTHER_PATHS.replace(/return /, "const others = ")}
+		bc.cancelNavigation?.();
+		bc.externalPath = ${JSON.stringify(BED)};
+		bc.renameMode = false;
+		await bc.submitExternal("nickname.txt", false);
+		${PAUSE(600)}
+		return { symNotice, others, opened: app.workspace.activeLeaf.view.path ?? null };
+	`);
+	// Windows asks for Developer Mode or the right to make symbolic links;
+	// a runner without it says so rather than making one.
+	const symMade = existsSync(sym) || (() => { try { return lstatSync(sym).isSymbolicLink(); } catch { return false; } })();
+	if (symMade) {
+		expect("a symbolic link", lstatSync(sym).isSymbolicLink(), true);
+		expect("written relative", readlinkSync(sym).replace(/\\/g, "/"), "../target.txt");
+	} else {
+		console.log(`    no symbolic link here: ${r.symNotice}`);
+	}
+	expect("the alias is listed, orange", r.others.menu.find((m) => m[0] === alias)?.[1], "alias");
+	expect("typing the alias opens the file", r.opened, from);
+});
+
+test("links: a file moved through the bar keeps its other paths", async () => {
+	const from = join(BED, "mover.txt");
+	const twin = join(BED, "mover-twin.txt");
+	const moved = join(BED, "sub", "moved.txt");
+	for (const p of [twin, moved]) rmSync(p, { force: true });
+	writeFileSync(from, "moves\n");
+	const r = await page.evaluate(`
+		${open(from)}
+		${breadcrumb}
+		bc.externalWritesUnlocked = true;
+		bc.renameMode = true;
+		await bc.commitExternalLink(${JSON.stringify(twin)}, "hard");
+		${PAUSE(300)}
+		bc.renameMode = true;
+		bc.externalPath = ${JSON.stringify(BED)};
+		await bc.commitExternalRename(${JSON.stringify(moved)}, false);
+		${PAUSE(800)}
+		${breadcrumb}
+		bc.updateIndicator();
+		${OTHER_PATHS}
+	`);
+	expect("moved", existsSync(moved) && !existsSync(from), true);
+	expect("the twin is still its other path", r.menu, [[moved, "current"], [twin, "hard"]]);
+});
 
 await run();

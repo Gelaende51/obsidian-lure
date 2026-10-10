@@ -13,6 +13,8 @@ import { Command, Hotkey, Menu, Platform, Plugin, WorkspaceLeaf } from "obsidian
 import { BreadcrumbManager } from "./breadcrumbManager";
 import { UnresolvedNotes } from "./unresolvedNotes";
 import { AliasRows, DiskLinks, followDelete, followRename, setRecording } from "./altPaths";
+import { ExternalLinks } from "./externalLinks";
+import { externalChanges } from "./externalFileOps";
 import { setCurrentVaultIcon } from "./systemLocations";
 import { letThroughGuard } from "./folderChildSuggest";
 import { EXTERNAL_VIEW_TYPE, ExternalFileView } from "./externalFileView";
@@ -66,6 +68,8 @@ export default class BreadcrumbPathPlugin extends Plugin {
 	aliasRows!: AliasRows;
 	/** Hard and symbolic links in the vault, for a note's other paths. */
 	diskLinks!: DiskLinks;
+	/** Second paths made for files outside the vault, which have nowhere else to be kept. */
+	externalLinks!: ExternalLinks;
 	/** Alternates the rename command between the inline title and the header path bar. */
 	private useHeaderRename = false;
 	private originalRenameCallback: CheckCallback | null = null;
@@ -85,6 +89,17 @@ export default class BreadcrumbPathPlugin extends Plugin {
 		// A scan that finds links redraws the rows, so the other-paths button
 		// appears on a note that has some.
 		this.diskLinks = new DiskLinks(this.app, () => this.manager.refreshAll());
+		// Beside data.json rather than in it: restoring the default settings
+		// must not take the links with it.
+		const linksFile = `${this.manifest.dir ?? `${this.app.vault.configDir}/plugins/${this.manifest.id}`}/external-links.json`;
+		const adapter = this.app.vault.adapter;
+		this.externalLinks = new ExternalLinks({
+			read: async () => ((await adapter.exists(linksFile)) ? adapter.read(linksFile) : null),
+			write: (text) => adapter.write(linksFile, text),
+		});
+		await this.externalLinks.load();
+		externalChanges.moved = (from, to) => this.externalLinks.moved(from, to);
+		externalChanges.removed = (path) => this.externalLinks.removed(path);
 		const forget = (): void => {
 			this.unresolvedNotes.invalidate();
 			this.aliasRows.invalidate();

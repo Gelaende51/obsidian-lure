@@ -78,6 +78,16 @@ export async function readExternalFile(path: string): Promise<ArrayBuffer> {
  * is the standard answer; the copy still refuses to overwrite, and the
  * original is only unlinked once it has succeeded.
  */
+/**
+ * Told when a file outside the vault moves or goes to the trash through any
+ * of the plugin's own gestures, so the second paths recorded for it follow
+ * (see externalLinks.ts). Set once by the plugin.
+ */
+export const externalChanges: {
+	moved: (from: string, to: string) => Promise<void>;
+	removed: (path: string) => Promise<void>;
+} = { moved: async () => {}, removed: async () => {} };
+
 export async function moveExternalFile(from: string, to: string): Promise<void> {
 	await ensureParent(to);
 	try {
@@ -87,6 +97,7 @@ export async function moveExternalFile(from: string, to: string): Promise<void> 
 		await copyFile(from, to, constants.COPYFILE_EXCL);
 		await unlink(from);
 	}
+	await externalChanges.moved(from, to);
 }
 
 /** Missing parents included, matching what committing a typed path does inside the vault. */
@@ -148,4 +159,5 @@ export async function renameExternalEntry(from: string, to: string): Promise<voi
  */
 export async function trashExternalEntry(path: string): Promise<void> {
 	await shell.trashItem(path);
+	await externalChanges.removed(path);
 }
