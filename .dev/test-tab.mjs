@@ -1140,7 +1140,9 @@ test("Home, End and the page keys move through the list while it is up, and the 
 	// With nothing listed, the same keys belong to the text.
 	await armed();
 	await type("zzq");
-	expect("precondition: nothing is listed", await page.evaluate(`return !document.querySelector(".suggestion-container");`), true);
+	// The row for the file Enter would make is all that is listed, and it is
+	// no list to move through.
+	expect("precondition: nothing of the folder's is listed", await page.evaluate(`return !document.querySelector(".suggestion-container .suggestion-item:not(.lure-suggest-creates)");`), true);
 	await pressKey(page, "End");
 	await settle(250);
 	const end = await caret();
@@ -1731,7 +1733,7 @@ test("Tab first completes as far as the names agree, then goes round them", asyn
 	await armAtRoot();
 	await type(`${PREFIX}al`);
 	await realTab();
-	expect("the first press stops where the names part", (await look()).value, `${PREFIX}alp`);
+	expect("the first press stops where the names part", (await look()).typed, (v) => typeof v === "string" && v.startsWith(`${PREFIX}alp`) && v.length <= `${PREFIX}alp`.length);
 	await realTab();
 	expect("the next writes a whole name", [`${PREFIX}alpha-one`, `${PREFIX}alpha-two`, `${PREFIX}alpine`].includes((await look()).value), true);
 });
