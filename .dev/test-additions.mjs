@@ -14,7 +14,7 @@
  * Requires --remote-debugging-port=9222 and the test vault open.
  */
 
-import { CLEAR_NOTICES, connect, PAUSE, pressKey, quiesce, reloadPlugin, parkPointer, setSettings } from "./cdpSession.mjs";
+import { CLEAR_NOTICES, connect, PAUSE, pressKey, quiesce, reloadPlugin, parkPointer, setSettings, asPosix } from "./cdpSession.mjs";
 import { createSuite } from "./harness.mjs";
 
 const DIR = "Lure-add";
@@ -119,7 +119,7 @@ test("a command opens the field straight on its rung", async () => {
 	expect("the path from the vault", (await look()).selected, NOTE);
 	await command("lure:focus-path-bar-absolute-path");
 	const abs = await look();
-	expect("the path from the system root", abs.selected, (v) => typeof v === "string" && v.startsWith("/") && v.endsWith(`/${NOTE}`));
+	expect("the path from the system root", abs.selected, (v) => typeof v === "string" && asPosix(v).startsWith("/") && asPosix(v).endsWith(`/${NOTE}`));
 	await command("lure:focus-path-bar-vault");
 	const vault = await look();
 	expect("the vault: the whole path, its own part marked", vault.value?.endsWith(`/${NOTE}`) && vault.value.startsWith(vault.selected) && vault.selected.length > 0 && !vault.selected.endsWith(NOTE), true);
@@ -136,7 +136,7 @@ test("Shift with the focus key walks its cycle backwards", async () => {
 		expect("from a closed row, the last rung: the vault", first.value?.endsWith(`/${NOTE}`) && first.selected?.length > 0 && !first.selected.endsWith(NOTE), true);
 		await pressKey(page, "ctrl+shift+j");
 		await settle();
-		expect("then the path from the system root", (await look()).selected, (v) => typeof v === "string" && v.endsWith(`/${NOTE}`) && v.startsWith("/"));
+		expect("then the path from the system root", (await look()).selected, (v) => typeof v === "string" && asPosix(v).endsWith(`/${NOTE}`) && asPosix(v).startsWith("/"));
 		await pressKey(page, "ctrl+shift+j");
 		await settle();
 		expect("then the path from the vault", (await look()).selected, NOTE);

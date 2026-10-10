@@ -623,3 +623,12 @@ export async function canFocusEditable(page, notePath) {
 		return took;
 	`);
 }
+
+/**
+ * A machine path the way the suites were written to read one: `C:\\a\\b`
+ * becomes `/C:/a/b`, so an assertion about where a path starts and ends holds
+ * on Windows as on Linux. Anything that is not a string comes back as it is.
+ */
+export function asPosix(value) {
+	return typeof value === "string" ? value.replace(/\\/g, "/").replace(/^([A-Za-z]):/, "/$1:") : value;
+}

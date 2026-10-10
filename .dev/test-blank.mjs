@@ -16,7 +16,7 @@
  * Requires --remote-debugging-port=9222 and OBSIDIAN_VAULT set.
  */
 
-import { connect, PAUSE, pressKey, quiesce, reloadPlugin, restoreTabTakers, standDownTabTakers } from "./cdpSession.mjs";
+import { connect, PAUSE, pressKey, quiesce, reloadPlugin, restoreTabTakers, standDownTabTakers, asPosix } from "./cdpSession.mjs";
 import { createSuite, skipCase } from "./harness.mjs";
 
 const ROOT = "LureBlank";
@@ -237,7 +237,7 @@ test("the vault name opens its places on a pane holding no file", async () => {
 		});
 	`));
 	expect("the field opens on the vault's own path", opened.field, (v) =>
-		typeof v === "string" && v.startsWith("/"));
+		typeof v === "string" && asPosix(v).startsWith("/"));
 	expect("with the places listed under it", opened.places, (v) => v > 0);
 	expect("and Obsidian's title nowhere beside it", opened.titleWidth, 0);
 	await pressKey(page, "Escape");

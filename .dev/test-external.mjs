@@ -18,7 +18,7 @@
 import { mkdirSync, rmSync, writeFileSync, readFileSync, existsSync, chmodSync } from "fs";
 import { join } from "path";
 import { homedir, userInfo } from "os";
-import { canRenameFiles, connect, PAUSE, pressKey, quiesce, reloadPlugin, setSettings, setVaultConfig } from "./cdpSession.mjs";
+import { canRenameFiles, connect, PAUSE, pressKey, quiesce, reloadPlugin, setSettings, setVaultConfig, asPosix } from "./cdpSession.mjs";
 import { createSuite, skipCase } from "./harness.mjs";
 import { build } from "esbuild";
 import { fileURLToPath } from "node:url";
@@ -1591,7 +1591,7 @@ test("path bar: the field outside reads from the place you picked", async () => 
 		bc.cancelNavigation();
 		return out;
 	`);
-	expect("no absolute path in the field", r.field, (v) => typeof v === "string" && !v.startsWith("/"));
+	expect("no absolute path in the field", r.field, (v) => typeof v === "string" && !asPosix(v).startsWith("/"));
 	// Which place that is depends on how the file was reached: opened by
 	// path, as here, the row starts from the filesystem root, so the field
 	// holds the path from there. The rule is the same either way — the field

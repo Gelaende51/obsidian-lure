@@ -139,7 +139,8 @@ test("Ctrl+Shift+Enter, renaming, makes a relative symbolic link", async () => {
 	await settle(1500);
 	const soft = await disk(`${DIR}/Sub/Soft.md`);
 	expect("a symbolic link", soft.symlink, true);
-	expect("written relative", soft.link, "../Note.md");
+	// In the machine's own separator: `..\\Note.md` on Windows.
+	expect("written relative", soft.link?.replace(/\\/g, "/"), "../Note.md");
 	expect("the note did not move", (await disk(NOTE)).exists, true);
 	expect("both in paths", await pathsOf(NOTE), [NOTE, `${DIR}/Sub/Soft.md`]);
 });

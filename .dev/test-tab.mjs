@@ -24,7 +24,7 @@
  * Requires --remote-debugging-port=9222 and OBSIDIAN_VAULT set.
  */
 
-import { CLEAR_NOTICES, connect, PAUSE, pressKey, quiesce, reloadPlugin, parkPointer } from "./cdpSession.mjs";
+import { CLEAR_NOTICES, connect, PAUSE, pressKey, quiesce, reloadPlugin, parkPointer, asPosix } from "./cdpSession.mjs";
 import { createSuite, skipCase } from "./harness.mjs";
 
 const NOTE = "Schemes/2026/Cake catapult.md";
@@ -367,13 +367,13 @@ test("ladder: Tab past the end widens the selection a rung at a time", async () 
 	await tab();
 	const system = await look();
 	expect("then the path from the system root", system.selected, (v) =>
-		typeof v === "string" && v.endsWith(`/${NOTE}`) && v.startsWith("/"));
+		typeof v === "string" && asPosix(v).endsWith(`/${NOTE}`) && asPosix(v).startsWith("/"));
 
 	// The vault's rung comes between the system path and the lap: the whole
 	// path in the field, the vault's own part of it marked.
 	await tab();
 	const vault = await look();
-	expect("then the vault, its part of the path marked", vault.value && vault.selected && vault.value.startsWith(vault.selected) && vault.value.endsWith(`/${NOTE}`), true);
+	expect("then the vault, its part of the path marked", vault.value && vault.selected && vault.value.startsWith(vault.selected) && asPosix(vault.value).endsWith(`/${NOTE}`), true);
 
 	await tab();
 	const wrapped = await look();
@@ -430,16 +430,16 @@ test("a lap of the rungs from a folder click costs nothing", async () => {
 	for (let i = 0; i < 6 && !top; i++) {
 		await tab();
 		const rung = await look();
-		if (typeof rung.selected === "string" && rung.selected.startsWith("/")) top = rung;
+		if (typeof rung.selected === "string" && asPosix(rung.selected).startsWith("/")) top = rung;
 	}
 	expect("a rung shows the path from the system root", top && top.selected, (v) =>
-		typeof v === "string" && v.endsWith(`/${NOTE}`));
+		typeof v === "string" && asPosix(v).endsWith(`/${NOTE}`));
 
 	// The vault's rung comes between the system path and the lap: the whole
 	// path in the field, the vault's own part of it marked.
 	await tab();
 	const vault = await look();
-	expect("then the vault, its part of the path marked", vault.value && vault.selected && vault.value.startsWith(vault.selected) && vault.value.endsWith(`/${NOTE}`), true);
+	expect("then the vault, its part of the path marked", vault.value && vault.selected && vault.value.startsWith(vault.selected) && asPosix(vault.value).endsWith(`/${NOTE}`), true);
 
 	await tab();
 	const round = await look();
@@ -522,7 +522,7 @@ test("a fourth click reaches the system path too", async () => {
 	`);
 	const s = await look();
 	expect("selected from the system root", s.selected, (v) =>
-		typeof v === "string" && v.endsWith(`/${NOTE}`) && v.startsWith("/"));
+		typeof v === "string" && asPosix(v).endsWith(`/${NOTE}`) && asPosix(v).startsWith("/"));
 });
 
 test("the rung that reaches the system root leaves the row to the field", async () => {
@@ -537,10 +537,10 @@ test("the rung that reaches the system root leaves the row to the field", async 
 	for (let i = 0; i < 8 && !top; i++) {
 		await tab();
 		const rung = await look();
-		if (typeof rung.value === "string" && rung.value.startsWith("/")) top = rung;
+		if (typeof rung.value === "string" && asPosix(rung.value).startsWith("/")) top = rung;
 	}
 	expect("a rung holds the path from the system root", top && top.value, (v) =>
-		typeof v === "string" && v.endsWith(`/${NOTE}`));
+		typeof v === "string" && asPosix(v).endsWith(`/${NOTE}`));
 
 	const row = JSON.parse(await page.evaluate(`
 		const root = app.workspace.getMostRecentLeaf().view.containerEl
@@ -974,11 +974,11 @@ test("walking back past the front of the path loops round to the system path", a
 	await back();
 	// The far rung is the vault now: the whole path, the vault's part marked.
 	const atVault = await look();
-	expect("the press loops round to the vault", atVault.value && atVault.selected && atVault.value.startsWith(atVault.selected) && atVault.value.endsWith(`/${leaf}`), true);
+	expect("the press loops round to the vault", atVault.value && atVault.selected && atVault.value.startsWith(atVault.selected) && asPosix(atVault.value).endsWith(`/${leaf}`), true);
 	await back();
 	const looped = await look();
 	expect("then the path from the system root", looped.value, (v) =>
-		typeof v === "string" && v.startsWith("/") && v.endsWith(`/${leaf}`));
+		typeof v === "string" && asPosix(v).startsWith("/") && asPosix(v).endsWith(`/${leaf}`));
 	expect("selected whole, as that rung shows it", looped.selected, looped.value);
 
 	// And from there it goes on narrowing down the rungs, rather than
@@ -1544,6 +1544,8 @@ test("the list of a right-hand pane opens under its own field, not the left pane
 });
 
 test("the offer ignores case, spells the name as it is, and prefers the spelling typed", async () => {
+	// Two folders that differ only in case cannot both exist on Windows.
+	if (process.platform === "win32") skipCase("needs a case-sensitive file system");
 	const upper = `${PREFIX}zCase`, lower = `${PREFIX}zcase`;
 	await page.evaluate(`for (const f of ${JSON.stringify([upper, lower])}) if (!app.vault.getAbstractFileByPath(f)) await app.vault.createFolder(f); return true;`);
 	try {

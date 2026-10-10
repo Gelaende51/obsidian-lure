@@ -557,6 +557,15 @@ function firstDifference(a: string, b: string): number {
  * rename. The extension is not what you are typing until you put the caret
  * past the dot, and then it counts like anything else.
  */
+/**
+ * A vault path written out on the machine: the vault's own folder, then the
+ * path in the machine's separator. Joined with `/` it read
+ * `C:\\Users\\…\\vault/Notes/a.md` on Windows — one path in two spellings.
+ */
+function onMachine(base: string, vaultPath: string): string {
+	return `${base}${PATH_SEP}${vaultPath.split("/").join(PATH_SEP)}`;
+}
+
 function queryAtCaret(input: HTMLInputElement): string {
 	const value = input.value;
 	const caret = input.selectionEnd ?? value.length;
@@ -1720,7 +1729,7 @@ export class PathBreadcrumb {
 		const row = this.rowDisplayPath();
 		if (!row) return "";
 		const base = this.vaultBasePath();
-		return base === null ? row : `${base}/${row}`;
+		return base === null ? row : onMachine(base, row);
 	}
 
 	/** What the row's opening segment names: this vault, or the location standing in for it outside. */
@@ -7797,7 +7806,7 @@ export class PathBreadcrumb {
 			case 3: {
 				// From the system root — what anything outside Obsidian wants.
 				const base = this.vaultBasePath();
-				const system = external || base === null ? target : `${base}/${target}`;
+				const system = external || base === null ? target : onMachine(base, target);
 				this.keepExtension = true;
 				this.setLadderField("", system, "all");
 				return;
@@ -7807,7 +7816,7 @@ export class PathBreadcrumb {
 				// whole path in the field and the part the vault stands for
 				// marked — so typing or picking swaps only that.
 				const base = external ? (this.externalBase?.path ?? null) : this.vaultBasePath();
-				const whole = external || base === null ? target : `${base}/${target}`;
+				const whole = external || base === null ? target : onMachine(base, target);
 				const marked = base !== null && isInside(whole, base) ? base.length : "all";
 				this.exitTypingInput();
 				this.showingLocations = true;
@@ -8290,7 +8299,7 @@ export class PathBreadcrumb {
 		if (base === null) return { text: display, select: display ? "all" : "none" };
 
 		const text =
-			this.externalPath !== null ? display : display ? `${base}/${display}` : base;
+			this.externalPath !== null ? display : display ? onMachine(base, display) : base;
 		// Only when the row really is under that place: browsing above an
 		// external base leaves the row showing a path the label no longer
 		// covers, and selecting its first N characters would highlight an
