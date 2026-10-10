@@ -131,6 +131,8 @@ export interface SuggestContext {
 	 * not renaming, inside the vault, and not a real name.
 	 */
 	globActive: boolean;
+	/** Whether a path is the open note or one of its other paths. */
+	isCurrentNote: (path: string) => boolean;
 	/** Whether a vault path is a symbolic link or one name of a hard-linked file, or neither. */
 	linkKindOf: (path: string) => "symbolic" | "hard" | null;
 	/** Notes linked to and not there yet that would be made in this folder. */
@@ -374,8 +376,8 @@ function collidesWith(context: SuggestContext): (name: string) => boolean {
 
 /** Marks this plugin's popover, so the stylesheet can lift the height cap on it alone. */
 const POPOVER_CLASS = "lure-suggest-popover";
-/** On the popover while Enter would make the typed name, not open a row. */
-const CREATES_CLASS = "lure-suggest-creates";
+/** On the one row Enter would act on, when that press settles a whole path. */
+const ENTER_ROW_CLASS = "lure-suggest-enter";
 
 /** The tints a row can carry, named the way the stylesheet names them. */
 export type SuggestTint = "current" | "keep-name" | "taken" | "unresolved" | "warn" | "md" | "external";
@@ -410,7 +412,6 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 	private readonly dragKeepFocusEl: HTMLInputElement;
 	/** Index of the entry the list should open on, worked out while building it. */
 	private preselectIndex = -1;
-	private enterCreates = false;
 	/** Guards the re-selection below against answering its own call. */
 	private preselecting = false;
 	/** Set once the list has been wrapped for the "up past the top" gesture. */
@@ -910,24 +911,40 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		return values[index] ?? null;
 	}
 
-	/**
-	 * Whether Enter, pressed with nothing highlighted, would make the typed
-	 * name rather than open a row — drawn as a red edge down the list for as
-	 * long as no row is highlighted.
-	 */
-	markEnterCreates(creates: boolean): void {
-		this.enterCreates = creates;
+	/** The field changed: the row Enter would act on is marked again. */
+	markEnterCreates(_creates: boolean): void {
 		this.paintCreateEdge();
 	}
 
+	/**
+	 * The red edge goes on the one row Enter would act on right now — the
+	 * highlighted row, or failing that the row the typed name is exactly —
+	 * when that press would settle a whole path (open or move a file) rather
+	 * than step into a folder. A pattern's Enter acts on all its matches, so
+	 * no single row is marked then.
+	 */
 	private paintCreateEdge(): void {
 		// Read once the list has settled: a fresh listing selects its first
 		// row and is moved off it straight after (see `onSelectedChange`), and
 		// painting in between read a highlight that was about to go.
 		queueMicrotask(() => {
-			const popover = (this as unknown as { suggestEl?: HTMLElement }).suggestEl;
-			const index = this.list()?.selectedItem ?? -1;
-			popover?.toggleClass(CREATES_CLASS, this.enterCreates && index < 0);
+			const list = this.list();
+			const values = list?.values ?? [];
+			const els = list?.suggestions ?? [];
+			for (const el of els) el.removeClass(ENTER_ROW_CLASS);
+			if (!values.length || values.some((value) => value.glob)) return;
+			let index = list?.selectedItem ?? -1;
+			if (index < 0 && this.lastQuery) {
+				const typed = this.lastQuery;
+				index = values.findIndex((value) => {
+					const label = value.label.toLowerCase();
+					return label === typed || label.replace(/\.md$/, "") === typed;
+				});
+			}
+			const row = values[index];
+			if (!row) return;
+			const settles = row.kind === "file" || row.kind === "keep-name";
+			els[index]?.toggleClass(ENTER_ROW_CLASS, settles);
 		});
 	}
 
@@ -1403,6 +1420,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		if (value.unresolved) el.addClass("lure-suggest-unresolved");
 		if (value.alias) el.addClass("lure-suggest-alias");
 		if (value.glob) el.addClass("lure-suggest-glob");
+		if (this.getContext().isCurrentNote(value.opens ?? value.path)) el.addClass("lure-suggest-here");
 		if (value.current) el.addClass("lure-suggest-current");
 		if (value.leading) el.addClass("lure-suggest-leading");
 		if (value.agreed) el.addClass("lure-suggest-agreed");
@@ -1418,7 +1436,17 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			badge ? value.label.slice(0, value.label.length - badge.length - 1) : value.label,
 		);
 		if (badge) this.renderBadge(el, value, badge);
-		if (value.endIcon) setIcon(endOf(el).createSpan({ cls: "lure-suggest-kind" }), value.endIcon);
+		if (value.endIcon) {
+			// A small mark at the bottom right of the file's icon — the badge's
+			// when there is one, else a file icon of its own to carry it.
+			let host = el.querySelector<HTMLElement>(".lure-suggest-type-icon");
+			if (!host) {
+				host = endOf(el).createSpan({ cls: "lure-suggest-type-icon lure-suggest-file-icon" });
+				setIcon(host, typeIcon(value.label.slice(value.label.lastIndexOf(".") + 1)));
+			}
+			host.addClass("lure-suggest-has-kind");
+			setIcon(host.createSpan({ cls: "lure-suggest-kind" }), value.endIcon);
+		}
 
 		// "keep-name" is a proposed destination that nothing exists at yet,
 		// so there is nothing to act on either way — and neither is a note

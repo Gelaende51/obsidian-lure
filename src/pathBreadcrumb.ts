@@ -6865,6 +6865,14 @@ export class PathBreadcrumb {
 		this.enterTypingMode(other.path.slice(cut + 1), "all");
 	}
 
+	/** The open note's path, or one of its other paths. */
+	private isCurrentNotePath(path: string): boolean {
+		const file = this.file;
+		if (!file || this.externalPath !== null) return false;
+		if (path === file.path) return true;
+		return otherPaths(this.plugin.app, this.plugin.diskLinks, file).some((other) => other.path === path);
+	}
+
 	/** Puts a choice in place of the step the caret is in, leaving the rest of the field as typed. */
 	private collapseRung(label: string): void {
 		const input = this.inputEl;
@@ -8750,6 +8758,11 @@ export class PathBreadcrumb {
 		inputEl.addEventListener("dblclick", onDblClick);
 		window.addEventListener("keydown", onEscapeCapture, true);
 		this.editCleanup = () => {
+			// A pattern's count and colour go with the field, however it closes.
+			if (this.globMatches !== null) {
+				this.globMatches = null;
+				queueMicrotask(() => this.updateIndicator());
+			}
 			inputEl.removeEventListener("keydown", onKeydown);
 			inputEl.removeEventListener("keyup", onKeyup);
 			inputEl.removeEventListener("blur", onBlur);
@@ -8800,6 +8813,7 @@ export class PathBreadcrumb {
 				isFolderNote: (path) => this.isFolderNote(path),
 				showExtensions: this.plugin.settings.showFileExtension,
 				globActive: this.patternFor(this.preview?.text ?? (this.typedFieldValue() || inputEl.value)) !== null,
+				isCurrentNote: (path) => this.isCurrentNotePath(path),
 				linkKindOf: (path) =>
 					this.plugin.diskLinks.targetOfLink(path) ? "symbolic" : this.plugin.diskLinks.sameFile(path).length ? "hard" : null,
 				aliasesIn: (folder) => (this.renameMode ? [] : this.plugin.aliasRows.in(folder)),

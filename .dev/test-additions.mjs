@@ -194,18 +194,22 @@ test("a folder typed ahead of itself is a red chip", async () => {
 	expect("a folder that is there is not", real?.missing ?? false, false);
 });
 
-test("the list's edge is red while Enter would make the typed name", async () => {
+test("the row Enter would act on carries the red edge, and the open note's row the blue", async () => {
 	await inOwnFolder();
-	// Found inside a name, not at its start: the list has a row, nothing is
-	// offered or highlighted, and Enter would make "bbag".
-	await type("bbag");
-	const r = await look();
-	expect("a row is listed", r.rows.some((row) => row.label?.startsWith("Cabbage")), true);
-	expect("and the edge is red", r.creates, true);
-	await shoot("creates-edge-red");
+	await type("Cabbage");
+	const rows = () => page.evaluate(`return JSON.stringify([...document.querySelectorAll(".suggestion-item")].map((e) => ({ label: e.querySelector(".lure-suggest-label")?.textContent, enter: e.classList.contains("lure-suggest-enter"), here: e.classList.contains("lure-suggest-here") })));`).then(JSON.parse);
+	await settle(300);
+	let r = await rows();
+	expect("the typed name's row is the one Enter opens", r.filter((row) => row.enter).map((row) => row.label), ["Cabbage.md"]);
+	await shoot("enter-row-red");
+	await pressKey(page, "ctrl+a");
+	await type("Ca");
+	r = await rows();
+	expect("the open note's row is blue", r.find((row) => row.label === "Cake.md")?.here, true);
 	await pressKey(page, "ArrowDown");
-	await settle();
-	expect("a row highlighted: no red edge", (await look()).creates, false);
+	await settle(300);
+	r = await rows();
+	expect("one row marked, the highlighted one", r.filter((row) => row.enter).length, 1);
 });
 
 test("with extensions hidden, the type is a badge at the row's end", async () => {
@@ -275,6 +279,14 @@ test("with extensions hidden, Tab writes names without .md and passes over the e
 	} finally {
 		await setSettings(page, { showFileExtension: true });
 	}
+});
+
+test("the glob count goes when the field is left by a click elsewhere", async () => {
+	await inOwnFolder();
+	await type("Ca*");
+	expect("counted while typing", await page.evaluate(`return !!app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-other-paths");`), true);
+	await page.evaluate(`document.querySelector(".workspace-leaf-content .cm-content, .workspace-leaf-content .markdown-preview-view")?.dispatchEvent(new MouseEvent("mousedown", { bubbles: true })); document.body.click(); ${PAUSE(600)} return true;`);
+	expect("gone after the click", await page.evaluate(`return !!app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-other-paths");`), false);
 });
 
 await run();

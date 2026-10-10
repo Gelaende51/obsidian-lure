@@ -645,7 +645,8 @@
 
 .suggestion-item .lure-suggest-type:hover {
 	color: var(--text-normal);
-	text-decoration: underline;
+	background-color: rgba(var(--color-purple-rgb), 0.15);
+	border-radius: var(--radius-s);
 }
 
 .suggestion-item .lure-suggest-type-icon {
@@ -746,10 +747,53 @@
 	background-color: var(--color-green);
 }
 
-/* Nothing highlighted, and Enter would make the typed name rather than open
-   a row: a red edge down the whole list, where the rows' own edges are. */
-.lure-suggest-popover.lure-suggest-creates {
-	box-shadow: inset 3px 0 0 var(--text-error);
+/* The one row Enter would act on, when it settles a whole path: a red edge
+   where the rows' other edges are, over them. */
+.suggestion-item.lure-suggest-enter {
+	position: relative;
+}
+.suggestion-item.lure-suggest-enter::before,
+.suggestion-item.lure-suggest-leading.lure-suggest-enter::before {
+	content: "";
+	position: absolute;
+	inset-inline-start: 0;
+	top: 0;
+	bottom: -1px;
+	width: 3px;
+	background-color: var(--text-error);
+}
+
+/* The open note and its other paths: a blue edge. */
+.suggestion-item.lure-suggest-here {
+	position: relative;
+}
+.suggestion-item.lure-suggest-here:not(.lure-suggest-enter)::before {
+	content: "";
+	position: absolute;
+	inset-inline-start: 0;
+	top: 0;
+	bottom: -1px;
+	width: 3px;
+	background-color: var(--color-blue);
+}
+
+/* A link's kind as a small mark at the bottom right of the file's icon. */
+.suggestion-item .lure-suggest-type-icon.lure-suggest-has-kind {
+	position: relative;
+}
+.suggestion-item .lure-suggest-has-kind .lure-suggest-kind {
+	position: absolute;
+	right: -4px;
+	bottom: -4px;
+	--icon-size: 9px;
+	background-color: var(--background-primary);
+	border-radius: 50%;
+	line-height: 0;
+}
+.suggestion-item .lure-suggest-file-icon {
+	display: inline-flex;
+	color: var(--text-faint);
+	--icon-size: var(--icon-xs);
 }
 
 /* Read-only external file view
