@@ -445,7 +445,7 @@ test("vault name: Ctrl opens a tab behind this one, and arms it on arrival", asy
 		return {
 			browse: bc ? bc.browsePath : null,
 			fieldOpen: !!opened.view.containerEl.querySelector(".lure-path-input"),
-			rows: document.querySelectorAll(".suggestion-item").length,
+			rows: document.querySelectorAll(".suggestion-item:not(.lure-suggest-creates)").length,
 		};
 	`);
 	await page.evaluate(closeOpenedTab);
@@ -788,7 +788,7 @@ const openDropdown = `
 const dropdownState = `
 	const c = app.workspace.getMostRecentLeaf().view.containerEl
 		.querySelector(".view-header-title-container");
-	const rows = [...document.querySelectorAll(".suggestion-item")];
+	const rows = [...document.querySelectorAll(".suggestion-item:not(.lure-suggest-creates)")];
 	return {
 		rows: rows.map((e) => e.textContent),
 		selected: rows.findIndex((e) => e.classList.contains("is-selected")),
@@ -875,7 +875,7 @@ test("dropdown: hovering previews, and taking the pointer off restores", async (
 		const list = bc.suggest.suggestions;
 		const typed = c.querySelector("input").value;
 		const opened = list.selectedItem;
-		[...document.querySelectorAll(".suggestion-item")]
+		[...document.querySelectorAll(".suggestion-item:not(.lure-suggest-creates)")]
 			.find((e) => e.textContent !== typed)
 			.dispatchEvent(new MouseEvent("mousemove", { bubbles: true }));
 		${PAUSE(250)}
@@ -908,7 +908,7 @@ test("dropdown: the pointer leaving gives back the row you arrowed to", async ()
 			.querySelector(".view-header-title-container");
 		const list = bc.suggest.suggestions;
 		const arrowed = list.selectedItem;
-		const rows = [...document.querySelectorAll(".suggestion-item")];
+		const rows = [...document.querySelectorAll(".suggestion-item:not(.lure-suggest-creates)")];
 		rows[arrowed === 0 ? rows.length - 1 : 0]
 			.dispatchEvent(new MouseEvent("mousemove", { bubbles: true }));
 		${PAUSE(250)}
@@ -946,7 +946,7 @@ test("Enter with nothing named says so instead of closing the row", async () => 
 			armed: true,
 			before,
 			empty: input.value === "",
-			rows: document.querySelectorAll(".suggestion-item").length,
+			rows: document.querySelectorAll(".suggestion-item:not(.lure-suggest-creates)").length,
 		};
 	`);
 	expect("the field opens in the empty folder", out.armed, true);
@@ -1111,7 +1111,7 @@ test("dropdown: the preview shows the rest of the path only as far as it exists"
 	const hover = async (label) => await page.evaluate(`
 		const c = app.workspace.getMostRecentLeaf().view.containerEl
 			.querySelector(".view-header-title-container");
-		const row = [...document.querySelectorAll(".suggestion-item")]
+		const row = [...document.querySelectorAll(".suggestion-item:not(.lure-suggest-creates)")]
 			.find((e) => e.textContent === ${JSON.stringify(label)});
 		if (!row) return "not listed";
 		row.dispatchEvent(new MouseEvent("mousemove", { bubbles: true }));
@@ -1150,7 +1150,7 @@ test("dropdown: typing lets go of the highlight, and marks what matched", async 
 	await page.send("Input.insertText", { text: "a" });
 	await page.evaluate(PAUSE(400) + "return true;");
 	const typed = await page.evaluate(`
-		const rows = [...document.querySelectorAll(".suggestion-item")];
+		const rows = [...document.querySelectorAll(".suggestion-item:not(.lure-suggest-creates)")];
 		return {
 			selected: rows.findIndex((e) => e.classList.contains("is-selected")),
 			labels: rows.map((e) => e.textContent),
@@ -1187,7 +1187,7 @@ test("dropdown: the rows show the part the offer would add, and the field does n
 
 	const shown = await page.evaluate(`
 		const input = document.querySelector(".lure-path-input");
-		const rows = [...document.querySelectorAll(".suggestion-item")];
+		const rows = [...document.querySelectorAll(".suggestion-item:not(.lure-suggest-creates)")];
 		return {
 			value: input.value,
 			selected: input.value.slice(input.selectionStart, input.selectionEnd),
@@ -1303,7 +1303,7 @@ test("dropdown: the list answers the caret, and leaving it gives the field back"
 		${PAUSE(700)}
 		const input = c.querySelector(".lure-path-input");
 		if (!input) return JSON.stringify({ opened: false, why: "the click opened no field" });
-		const rows = () => [...document.querySelectorAll(".suggestion-item")].map((e) => e.textContent.trim());
+		const rows = () => [...document.querySelectorAll(".suggestion-item:not(.lure-suggest-creates)")].map((e) => e.textContent.trim());
 		const opened = { value: input.value, rows: rows() };
 
 		// A different segment picked out by hand — dragged over, not typed —
@@ -1317,7 +1317,7 @@ test("dropdown: the list answers the caret, and leaving it gives the field back"
 
 		// A row of that list, which is a name the segment does not already
 		// hold. Where it lands is the whole question.
-		const row = [...document.querySelectorAll(".suggestion-item")]
+		const row = [...document.querySelectorAll(".suggestion-item:not(.lure-suggest-creates)")]
 			.find((e) => e.textContent.trim() === "aaaa-common-two");
 		if (!row) return JSON.stringify({ opened: true, first: opened, moved, hovered: null });
 		row.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
@@ -1381,7 +1381,7 @@ test("dropdown: a preview swaps one step and leaves the rest of the path", async
 	await page.evaluate(PAUSE(300) + "return true;");
 	const moved = await page.evaluate(`
 		const input = document.querySelector(".view-header-title-container input");
-		const rows = [...document.querySelectorAll(".suggestion-item")];
+		const rows = [...document.querySelectorAll(".suggestion-item:not(.lure-suggest-creates)")];
 		return {
 			field: input.value,
 			selected: input.value.slice(input.selectionStart, input.selectionEnd),
@@ -1404,7 +1404,7 @@ test("dropdown: a preview swaps one step and leaves the rest of the path", async
 	// assuming how far that is.
 	for (let i = 0; i < 12; i++) {
 		const at = await page.evaluate(`
-			return [...document.querySelectorAll(".suggestion-item")]
+			return [...document.querySelectorAll(".suggestion-item:not(.lure-suggest-creates)")]
 				.findIndex((e) => e.classList.contains("is-selected"));
 		`);
 		if (at < 0) break;
@@ -1443,7 +1443,7 @@ test("the vault name opens the path in full, with the place selected", async () 
 		return {
 			value: input?.value ?? null,
 			selected: input ? input.value.slice(input.selectionStart, input.selectionEnd) : null,
-			rows: document.querySelectorAll(".suggestion-item").length,
+			rows: document.querySelectorAll(".suggestion-item:not(.lure-suggest-creates)").length,
 		};
 	`);
 	// The row is cleared to make room for the field, so what it was showing

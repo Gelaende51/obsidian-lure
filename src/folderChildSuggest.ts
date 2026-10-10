@@ -786,8 +786,13 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		// measures the *selected* row, so with nothing selected it did
 		// nothing; and it moved the selection without scrolling in step, so
 		// a few presses took it out of sight.
-		const page = (direction: 1 | -1) => (evt: KeyboardEvent): false => {
+		// A list holding only the file Enter would make is no list to move
+		// through: the keys go to the text, as they do when nothing is listed.
+		const onlyCreate = (): boolean =>
+			Array.isArray(list.values) && list.values.length > 0 && list.values.every((value) => value.creates);
+		const page = (direction: 1 | -1) => (evt: KeyboardEvent): boolean => {
 			if (evt.isComposing) return false;
+			if (onlyCreate()) return true;
 			const values = list.values;
 			const count = Array.isArray(values) ? values.length : 0;
 			const scroller = list.containerEl;
@@ -820,8 +825,9 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		};
 		// The first and last rows, brought into sight: Obsidian's own Home
 		// and End moved the selection and left the list where it was.
-		const end = (last: boolean) => (evt: KeyboardEvent): false => {
+		const end = (last: boolean) => (evt: KeyboardEvent): boolean => {
 			if (evt.isComposing) return false;
+			if (onlyCreate()) return true;
 			const count = Array.isArray(list.values) ? list.values.length : 0;
 			if (count === 0) return false;
 			list.setSelectedItem(last ? count - 1 : 0, evt);
@@ -1037,8 +1043,9 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		}
 		const listed = leadingFirst(this.buildSuggestions(context, (name) => !q || name.toLowerCase().includes(q)), q);
 		const create = context.createRow;
+		// Last, so arrowing reaches the folder's own rows first.
 		const rows: PathSuggestion[] = create
-			? [{ label: create.label, kind: "file", path: create.path, disabled: false, creates: true }, ...listed]
+			? [...listed, { label: create.label, kind: "file", path: create.path, disabled: false, creates: true }]
 			: listed;
 		this.listedLabels = rows.filter((row) => row.kind !== "more").map((row) => row.label);
 		return this.capped(rows);

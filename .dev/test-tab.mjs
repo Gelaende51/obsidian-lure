@@ -155,7 +155,7 @@ const field = `
 		// of Tab, the text the press wrote, with the next offer left out.
 		typed: input ? input.value.slice(0, input.selectionStart) + input.value.slice(input.selectionEnd) : null,
 		chips: [...document.querySelectorAll(".lure-browse-chip")].map((c) => c.textContent),
-		rows: [...document.querySelectorAll(".suggestion-item .lure-suggest-label")].map((e) => e.textContent),
+		rows: [...document.querySelectorAll(".suggestion-item:not(.lure-suggest-creates) .lure-suggest-label")].map((e) => e.textContent),
 	});
 `;
 
@@ -1121,7 +1121,7 @@ test("arrowing off the front of the field brings the folder before it in", async
 
 test("Home, End and the page keys move through the list while it is up, and the text once it is not", async () => {
 	const row = async () => JSON.parse(await page.evaluate(`
-		const rows = [...document.querySelectorAll(".suggestion-container .suggestion-item")];
+		const rows = [...document.querySelectorAll(".suggestion-container .suggestion-item:not(.lure-suggest-creates)")];
 		return JSON.stringify({ count: rows.length, at: rows.findIndex((r) => r.classList.contains("is-selected")) });
 	`));
 	await armed();
@@ -1258,7 +1258,7 @@ test("the dropdown follows the caret into the folder it stands in", async () => 
 			return JSON.stringify({
 				caret: input?.selectionEnd ?? null,
 				folder: bar?.folderAtCaret?.() ?? null,
-				rows: [...document.querySelectorAll(".suggestion-item .lure-suggest-label")].map((e) => e.textContent),
+				rows: [...document.querySelectorAll(".suggestion-item:not(.lure-suggest-creates) .lure-suggest-label")].map((e) => e.textContent),
 			});
 		`));
 	};
@@ -1291,7 +1291,7 @@ test("the dropdown follows the caret into the folder it stands in", async () => 
 		return true;`);
 	await settle(600);
 	const whole = JSON.parse(await page.evaluate(`return JSON.stringify(
-		[...document.querySelectorAll(".suggestion-item .lure-suggest-label")].map((e) => e.textContent));`));
+		[...document.querySelectorAll(".suggestion-item:not(.lure-suggest-creates) .lure-suggest-label")].map((e) => e.textContent));`));
 	expect("the start of the name lists all of the folder", whole, (v) => v.includes("Abacus.md") && v.length > 1);
 });
 
