@@ -8739,7 +8739,7 @@ export class PathBreadcrumb {
 			const room = host === this.vaultSegmentEl ? (this.titleEl.parentElement ?? this.titleEl).getBoundingClientRect().right - inputEl.getBoundingClientRect().left - INPUT_SLACK_PX : 0;
 			// The stylesheet caps a field at its box, and this box is the vault
 			// segment's, not the row's: the cap would undo the room just given.
-			if (room > 0) inputEl.style.maxWidth = "none";
+			inputEl.toggleClass("lure-input-row-wide", room > 0);
 			inputEl.style.width = `${Math.max(INPUT_MIN_PX, Math.ceil(content), Math.floor(room))}px`;
 			// A field grows with what is typed into it, and a path is longer
 			// than a pane long before it is finished. Nothing here can be

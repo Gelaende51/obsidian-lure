@@ -377,6 +377,11 @@
 	flex: 0 0 auto;
 }
 
+/* On the vault's name the field is given the row's width, past its box. */
+.lure-vault-wrapper input.lure-typing-input.lure-input-row-wide {
+	max-width: none;
+}
+
 /* The field wears the colour of the row it stands for, so a name reads the
    same typed as listed — `fieldTint` in folderChildSuggest says which row
    that is, and `tintOf` which tint wins where a row qualifies for several.
