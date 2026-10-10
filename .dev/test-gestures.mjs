@@ -2216,7 +2216,8 @@ test("the file's extension can be put on the row", async () => {
 		const read = () => {
 			const el = app.workspace.getLeavesOfType("markdown")[0].view.containerEl
 				.querySelector(".lure-filename");
-			return [...el.querySelectorAll(".lure-filename-text, .lure-filename-ext")]
+			// The badge an extension that is off becomes is not part of the name.
+			return [...el.querySelectorAll(".lure-filename-text, .lure-filename-ext:not(.lure-filename-badge)")]
 				.map((e) => e.textContent)
 				.join("");
 		};
