@@ -55,7 +55,7 @@ jobs:
       - name: tar, for the checkout
         run: |
           command -v tar >/dev/null && exit 0
-          if command -v zypper >/dev/null; then zypper --non-interactive --gpg-auto-import-keys refresh && zypper --non-interactive install tar gzip
+          if command -v zypper >/dev/null; then zypper --non-interactive --gpg-auto-import-keys refresh && zypper --non-interactive install bash-sh tar gzip
           elif command -v dnf >/dev/null; then dnf install -y tar gzip
           elif command -v pacman >/dev/null; then pacman -Sy --noconfirm tar gzip
           else apt-get update -q && apt-get install -y -q tar gzip; fi

@@ -25,7 +25,9 @@ case "$ID ${ID_LIKE:-}" in
 		# The image's package lists go stale faster than the mirrors keep old
 		# files: install from a fresh list, or half of it is a 404.
 		zypper --non-interactive --gpg-auto-import-keys refresh
-		zypper --non-interactive install bash curl procps which xorg-x11-server-Xvfb \
+		# bash-sh: the slim image's /bin/sh is busybox's, which these
+		# packages push out — without it the next step has no shell at all.
+		zypper --non-interactive install bash bash-sh curl procps which xorg-x11-server-Xvfb \
 			mozilla-nss libgtk-3-0 libgbm1 libXss1 libXtst6 at-spi2-core libdrm2 libsecret-1-0 alsa
 		;;
 	*)
