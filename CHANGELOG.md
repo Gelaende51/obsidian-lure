@@ -26,6 +26,7 @@ Every release of Lure, newest first. What has landed since the last release is u
 
 ### Changed
 
+- **On the vault's name the field takes the row's whole width**, for the path from the system root it opens with.
 - **Moving a note, its own name comes first** for Tab and the offer, ahead of other names that start the same way.
 - **Folders in the path that are not there yet are red**, as the field is red for a name Enter would make.
 - **The dropdown has a red edge when Enter would make the typed name** while no row is highlighted, where the field itself keeps a row's colour.
@@ -34,6 +35,8 @@ Every release of Lure, newest first. What has landed since the last release is u
 
 ### Fixed
 
+- **A row fitted while its tab was at the back** gave up the vault name and the note's name, and could stay that way with room to spare once the tab came forward. It is fitted when it has a width, and again whenever that width changed.
+- **With extensions hidden, the badge gives way when the row runs short**, as the extension does; it stayed on screen before.
 - **Windows:** paths written with `/` (`C:/Users/you/vault/Note.md`) are recognised as inside the vault, percent-encoded paths with a drive letter are decoded, and paths on the machine are written with `\` throughout instead of a mix of both separators.
 
 ## 1.5.2 — 2026-09-28[^1.5.2]
