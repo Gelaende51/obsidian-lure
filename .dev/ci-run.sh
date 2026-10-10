@@ -41,7 +41,7 @@ if [ "$SUITE" = test-compat-ui ]; then
 		-p id:obsidian-icon-folder -p id:cmdr -p id:pane-relief -p id:obsidian-hider
 		-p id:make-md -p id:tab-file-path -p id:obsidian-hover-editor
 		-p id:notebook-navigator -p id:editor-breadcrumbs -p id:another-name
-		-p id:obsidian-path-title -p id:iconic -p id:vertical-tabs -p id:continuous-mode
+		-p id:obsidian-path-title -p id:vertical-tabs -p id:continuous-mode
 		-p id:obsidian-filename-heading-sync
 		-p id:advanced-rename-and-delete-handler -p id:mononote -p id:open-tab-settings
 	)
