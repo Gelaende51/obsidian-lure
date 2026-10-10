@@ -25,6 +25,11 @@ on:
         type: choice
         options: [both, latest, earliest]
         default: both
+      os:
+        description: "Systems: Linux (Ubuntu), Windows (Server 2025), or both"
+        type: choice
+        options: [linux, windows, both]
+        default: linux
   workflow_call:
 
 concurrency:
@@ -85,7 +90,7 @@ jobs:
 
   obsidian:
     needs: plan
-    if: needs.plan.outputs.suites != '[]'
+    if: needs.plan.outputs.suites != '[]' && (github.event_name != 'workflow_dispatch' || inputs.os != 'windows')
     runs-on: ubuntu-latest
     timeout-minutes: 45
     strategy:
@@ -137,6 +142,63 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: failures-${{ matrix.suite }}-${{ matrix.version }}
+          path: |
+            obsidian-*.log
+            shots/
+
+  obsidian-windows:
+    needs: plan
+    # On demand only: Windows runners are slower to start, and the suites were
+    # written on Linux — this is where they learn what Windows does differently.
+    if: needs.plan.outputs.suites != '[]' && github.event_name == 'workflow_dispatch' && inputs.os != 'linux'
+    runs-on: windows-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: ${{ fromJSON(needs.plan.outputs.suites) }}
+        version: ${{ fromJSON(needs.plan.outputs.versions) }}
+    name: ${{ matrix.suite }} (Obsidian ${{ matrix.version }}, Windows)
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - name: Build the plugin
+        run: node esbuild.config.mjs production
+      - name: Cache Obsidian downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.obsidian-cache
+          key: obsidian-${{ matrix.version }}-${{ runner.os }}-${{ hashFiles('manifest.json') }}
+          restore-keys: obsidian-${{ matrix.version }}-${{ runner.os }}-
+      - name: Run ${{ matrix.suite }}
+        shell: bash
+        env:
+          OBSIDIAN_VERSION: ${{ matrix.version }}
+          SUITE_FILTER: ${{ inputs.filter }}
+          LURE_SHOTS: shots
+        run: |
+          set +e
+          # A desktop session is there already: no virtual display.
+          .dev/ci-run.sh "${{ matrix.suite }}"
+          code=$?
+          if [ $code -eq 2 ]; then echo "::warning::${{ matrix.suite }} skipped cases it could not ask here"; exit 0; fi
+          exit $code
+      - name: Keep the pictures the colour cases take
+        if: always() && matrix.suite == 'test-additions'
+        uses: actions/upload-artifact@v4
+        with:
+          name: look-${{ matrix.version }}-windows
+          path: shots/look/
+          if-no-files-found: ignore
+      - name: Keep Obsidian's log and the failure screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failures-${{ matrix.suite }}-${{ matrix.version }}-windows
           path: |
             obsidian-*.log
             shots/
