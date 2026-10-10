@@ -60,6 +60,9 @@ export const DEVICE_ICONS: Record<DeviceType, string> = {
  */
 export const GLYPH_ICONS: Record<string, string> = {
 	tilde: "M4 12q4-5 8 0t8 0",
+	// Lucide's split. Obsidian's Lucide answers "split" with git-branch-plus,
+	// an older icon kept under that name.
+	"lure-split": "M16 3h5v5M8 3H3v5M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3M15 9l6-6",
 };
 
 export const LOCATION_ICONS: Record<LocationKind, string> = {

@@ -1,5 +1,5 @@
 import { App, FileSystemAdapter, TFile, normalizePath } from "obsidian";
-import { link, lstat, mkdir, readlink, symlink, unlink, writeFile } from "fs/promises";
+import { link, lstat, mkdir, readdir, readlink, symlink, unlink, writeFile } from "fs/promises";
 import { dirname, join, relative, resolve } from "path";
 import { lstatSync } from "fs";
 
@@ -451,7 +451,21 @@ export class DiskLinks {
 		const linksTo = new Map<string, string[]>();
 		const targetOf = new Map<string, string>();
 		if (base !== null) {
-			const files = this.app.vault.getFiles();
+			// The vault's files, and the symbolic links in its folders that
+			// it does not list: one made while Obsidian runs is not seen.
+			const files: { path: string }[] = this.app.vault.getFiles();
+			const known = new Set(files.map((file) => file.path));
+			for (const folder of this.app.vault.getAllFolders(true)) {
+				try {
+					for (const entry of await readdir(join(base, folder.path), { withFileTypes: true })) {
+						const path = folder.isRoot() ? entry.name : `${folder.path}/${entry.name}`;
+						if (entry.isSymbolicLink() && !known.has(path)) files.push({ path });
+					}
+				} catch {
+					// A folder gone meanwhile has nothing to add.
+				}
+				if (generation !== this.generation) return this.again();
+			}
 			for (let i = 0; i < files.length; i += 200) {
 				await Promise.all(
 					files.slice(i, i + 200).map(async (file) => {

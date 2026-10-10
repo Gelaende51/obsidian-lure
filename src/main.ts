@@ -135,6 +135,13 @@ export default class BreadcrumbPathPlugin extends Plugin {
 			}),
 		);
 		this.registerEvent(this.app.vault.on("create", changed));
+		// An editor that saves through a new file and a rename splits a hard
+		// link off into a file of its own, and Obsidian sees only a change.
+		this.registerEvent(
+			this.app.vault.on("modify", (file) => {
+				if (this.diskLinks.sameFile(file.path).length) changed();
+			}),
+		);
 		this.registerEvent(
 			this.app.vault.on("rename", (file, oldPath) => {
 				changed();

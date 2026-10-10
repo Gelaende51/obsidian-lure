@@ -456,7 +456,7 @@ test("the badge: a hand, a grey extension, its list ending where it does, built 
 				cursor: getComputedStyle(badge).cursor,
 				extGrey: getComputedStyle(ext).color !== getComputedStyle(badge).color,
 				chevronBox: Math.round(chevron.getBoundingClientRect().width),
-				icon: [...badge.querySelectorAll(".lure-badge-other-paths > svg")].map((e) => e.getAttribute("class")).join(" "),
+				icon: badge.querySelector(".lure-badge-other-paths > svg path")?.getAttribute("d") ?? null,
 				covered: (() => { const a = badge.querySelector(".lure-badge-other-paths > svg").getBoundingClientRect(), c = badge.querySelector(".lure-other-paths-count").getBoundingClientRect(); return Math.round(Math.max(0, Math.min(a.right, c.right) - Math.max(a.left, c.left)) * Math.max(0, Math.min(a.bottom, c.bottom) - Math.max(a.top, c.top)) / (a.width * a.height) * 100); })(),
 			};
 			badge.querySelector(".lure-badge-other-paths").click();
@@ -480,7 +480,7 @@ test("the badge: a hand, a grey extension, its list ending where it does, built 
 		expect("a hand over the badge", r.cursor, "pointer");
 		expect("its extension stays grey in the tint", r.extGrey, true);
 		expect("the chevron has a box like the count", r.chevronBox, 12);
-		expect("the button is Lucide's split", r.icon, (v) => /lucide-split/.test(v));
+		expect("the button is Lucide's split", r.icon, (v) => typeof v === "string" && v.startsWith("M16 3h5v5"));
 		expect("and the count covers little of it", r.covered, (v) => v <= 25);
 		expect("the list ends where the extension does", r.rightGap !== null && Math.abs(r.rightGap) <= 2, true);
 		expect("names without the extension, as in the dropdown", r.labels, [`${DIR}/Note`, `${DIR}/Other`, `${DIR}/Third`]);

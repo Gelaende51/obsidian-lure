@@ -872,11 +872,25 @@ the strongest kind among them: a hard link **purple**, a symbolic link
 **pink**, an alias **orange**. In its menu the note's own path comes first, in
 **blue**, and every other path is drawn in its kind's colour.
 
+The list is built like the dropdown: the same rows and colours, the
+extension in a badge at a row's end while extensions are hidden, and the row
+under the pointer or picked with the arrow keys highlighted; <kbd>Enter</kbd>
+opens it, <kbd>Esc</kbd> closes the list.
+
 With file extensions hidden, the button moves to the **badge at the row's
-end**: it takes the place of the file's type icon, and the whole badge takes
-its colour. Pressing the icon opens the list; pressing the rest of the badge
-writes the extension out, as before. While the field is open the badge is
-not there, and the button stands in front of the vault's segment again.
+end**: it takes the place of the file's type icon, and the badge takes its
+colour behind the extension, which stays grey. Pressing the icon opens the
+list, ending where the extension does; pressing the rest of the badge writes
+the extension out, as before. The badge stays while the field is open, and
+pressing it there adds the extension to what the field holds.
+
+**The lists stay true to the disk.** Links made, moved or removed outside
+Obsidian — in a file manager, a terminal, by a sync, or while Obsidian was
+closed — are put right a moment after the vault changes, and once at start:
+a hard or symbolic link to a note that its lists leave out is added, and a
+listed one that is gone, or that an editor's save has turned into a file of
+its own, is taken out. Alias paths are names only, so nothing on disk
+changes them.
 
 Sync tools — Obsidian Sync, Syncthing, git — do not keep hard links: on another
 device the two names become two copies. Obsidian also reads a hard-linked note

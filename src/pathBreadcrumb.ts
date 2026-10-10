@@ -4939,7 +4939,7 @@ export class PathBreadcrumb {
 			// extension out, and stays grey, apart from the button.
 			badge.dataset.lureTint = otherPathsTint(others);
 			const opener = badge.createSpan({ cls: "lure-suggest-type-icon lure-badge-other-paths" });
-			setIcon(opener, "split");
+			applyIcon(setIcon, opener, "lure-split", "split");
 			opener.createSpan({ cls: "lure-other-paths-count", text: String(others.length) });
 			setIcon(opener.createSpan({ cls: "lure-other-paths-chevron" }), "chevron-down");
 			setTooltip(opener, t("otherPathsTooltip"));
@@ -6897,7 +6897,7 @@ export class PathBreadcrumb {
 			});
 		}
 		button.empty();
-		setIcon(button, "split");
+		applyIcon(setIcon, button, "lure-split", "split");
 		const count = matches !== null ? matches.length : others.length;
 		button.createSpan({ cls: "lure-other-paths-count", text: String(count) });
 		// A small down chevron at the bottom left: pressing it opens a list.
