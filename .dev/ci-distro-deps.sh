@@ -22,6 +22,9 @@ case "$ID ${ID_LIKE:-}" in
 			nss gtk3 mesa libxss libxtst at-spi2-core libdrm libsecret alsa-lib
 		;;
 	*suse*)
+		# The image's package lists go stale faster than the mirrors keep old
+		# files: install from a fresh list, or half of it is a 404.
+		zypper --non-interactive --gpg-auto-import-keys refresh
 		zypper --non-interactive install bash curl procps which xorg-x11-server-Xvfb \
 			mozilla-nss libgtk-3-0 libgbm1 libXss1 libXtst6 at-spi2-core libdrm2 libsecret-1-0 alsa
 		;;
