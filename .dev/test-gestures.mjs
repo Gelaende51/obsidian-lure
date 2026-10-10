@@ -2269,6 +2269,37 @@ test("the vault segment offers what can be done to the vault", async () => {
 	expect("and the vault's id", items, (v) => v.some((t) => /\bID\b/i.test(t)));
 });
 
+test("a row fitted while its tab was at the back is whole when the tab comes forward", async () => {
+	const r = JSON.parse(await page.evaluate(`
+		const lure = app.plugins.plugins.lure;
+		const front = app.workspace.getLeaf(false);
+		const notes = app.vault.getRoot().children.filter((f) => f.extension === "md");
+		await front.openFile(notes[0]);
+		const back = app.workspace.createLeafInParent(front.parent, front.parent.children.indexOf(front) + 1);
+		await back.openFile(notes[1] ?? notes[0]);
+		app.workspace.setActiveLeaf(back, { focus: true });
+		${PAUSE(600)}
+		// The front note's row now has no width; fitted then, as a reload does.
+		const instance = lure.manager.instances.get(front);
+		const hidden = front.view.containerEl.querySelector(".view-header-title-container").clientWidth;
+		instance.fitRow();
+		app.workspace.setActiveLeaf(front, { focus: true });
+		${PAUSE(800)}
+		const c = front.view.containerEl.querySelector(".view-header-title-container");
+		const name = c.querySelector(".lure-filename-text");
+		const out = {
+			hidden,
+			spent: !!c.querySelector(".lure-name-spent"),
+			nameWhole: name ? name.scrollWidth <= name.clientWidth + 1 && name.getBoundingClientRect().width > 0 : null,
+		};
+		back.detach();
+		return JSON.stringify(out);
+	`));
+	expect("the tab at the back had no width", r.hidden, 0);
+	expect("brought forward, the vault name is not given up", r.spent, false);
+	expect("and the file's name is whole", r.nameWhole, true);
+});
+
 test("long paths: the extension goes second, straight after the vault name", async () => {
 	await page.evaluate(buildVaultFixture);
 	await page.evaluate(narrowPane("leaf.md", 0));

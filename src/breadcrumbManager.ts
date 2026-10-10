@@ -62,6 +62,9 @@ export class BreadcrumbManager {
 		this.plugin.registerEvent(
 			workspace.on("active-leaf-change", (leaf) => {
 				if (leaf) this.patchLeaf(leaf);
+				// A tab brought forward, here or in another pane: a row fitted
+				// while it had no width, or another one, is fitted again.
+				for (const instance of this.instances.values()) instance.refitIfStale();
 			}),
 		);
 		this.plugin.registerEvent(workspace.on("layout-change", () => this.fullSweep()));

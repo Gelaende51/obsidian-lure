@@ -717,6 +717,8 @@ export class PathBreadcrumb {
 	private domListeners = new AbortController();
 	/** Refits the row when the pane is resized — the whole point of fitting it. */
 	private resizeObserver: ResizeObserver | null = null;
+	/** The width the row was last fitted to; 0 while it had none. */
+	private fittedWidth = 0;
 	/** The name currently being shown in full because the pointer is on it. */
 	private openedName: HTMLElement | null = null;
 	/** The box holding that name, marked so it can widen with it. */
@@ -3612,6 +3614,16 @@ export class PathBreadcrumb {
 		// re-cutting the chips under it would move the text the user is
 		// typing into. The row is refitted when the session ends.
 		if (this.inputEl) return;
+		// A row with no width is in a tab at the back: fitted now, everything
+		// on it gives way — the vault name and the file's own name — and it
+		// was seen staying that way once the tab came forward. It is fitted
+		// when it has a width to fit.
+		const width = container.clientWidth;
+		if (width === 0) {
+			this.fittedWidth = 0;
+			return;
+		}
+		this.fittedWidth = width;
 
 		container.style.removeProperty(GAP_VAR);
 		container.removeClass(SCROLL_CLASS);
@@ -4292,6 +4304,12 @@ export class PathBreadcrumb {
 	 * and it fires no Obsidian event of its own — the row would keep names
 	 * that no longer fit until something else happened to redraw it.
 	 */
+	/** Fits the row again if its width is no longer the one it was fitted to. */
+	refitIfStale(): void {
+		const container = this.titleEl.parentElement;
+		if (container && container.clientWidth !== this.fittedWidth) this.fitRow();
+	}
+
 	private observeWidth(): void {
 		const container = this.titleEl.parentElement;
 		if (!container || this.resizeObserver) return;
