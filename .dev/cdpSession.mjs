@@ -205,12 +205,22 @@ const KEY_CODES = {
 const MODIFIER_BITS = { alt: 1, ctrl: 2, control: 2, meta: 4, cmd: 4, shift: 8 };
 
 /** "ctrl+shift+f2" -> the CDP payload for one press. */
+/** Keys a word-wise "ctrl" moves over, which macOS moves over with Alt instead. */
+const WORD_KEYS = new Set(["ArrowLeft", "ArrowRight", "Backspace", "Delete"]);
+
 export function describeKey(spec) {
 	const parts = spec.split("+");
 	const name = parts.pop();
 	let modifiers = 0;
-	for (const part of parts) {
-		const bit = MODIFIER_BITS[part.toLowerCase()];
+	for (const raw of parts) {
+		// The suites were written where Ctrl is Obsidian's Mod. On macOS Mod is
+		// Cmd, and a word at a time is Alt — so "ctrl" is read the way the
+		// press is meant there. Ctrl+Tab stays Ctrl on every system.
+		let part = raw.toLowerCase();
+		if (process.platform === "darwin" && (part === "ctrl" || part === "control") && name !== "Tab") {
+			part = WORD_KEYS.has(name) ? "alt" : "meta";
+		}
+		const bit = MODIFIER_BITS[part];
 		if (!bit) throw new Error(`unknown modifier "${part}" in "${spec}"`);
 		modifiers |= bit;
 	}

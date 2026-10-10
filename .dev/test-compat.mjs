@@ -83,8 +83,9 @@ const ALL_PEERS = [
 	  why: "an alternative tab view that regroups the headers" },
 	{ set: "ui", id: "continuous-mode", name: "Continuous Mode", kind: "header",
 	  why: "shows a tab group's notes as one scroll, each with its header" },
-	{ set: "ui", id: "obsidian-prozen", name: "ProZen", kind: "header",
-	  why: "a full-screen mode that removes the chrome around the note" },
+	// ProZen (obsidian-prozen) belongs here too, but its manifest version is
+	// "0.3": Obsidian takes it, obsidian-launcher refuses to install anything
+	// beside it ("Invalid version"). See .dev/takeaways.md.
 	{ set: "ui", id: "obsidian-filename-heading-sync", name: "Filename Heading Sync", kind: "adjacent",
 	  why: "renames the file after its first heading" },
 	{ set: "ui", id: "advanced-rename-and-delete-handler", name: "Advanced Rename and Delete Handler", kind: "adjacent",

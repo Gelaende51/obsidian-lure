@@ -2596,3 +2596,6 @@ from the logged readings; the factors will move as readings accumulate.
 - `"/"` on Windows is the root of the current drive (on a runner `D:\`, holding little but `a\`).
 - Windows takes either separator and ignores case: anything comparing paths (`isInside`, `samePath`) has to normalise both, and anything producing a path for the row should write the machine's separator (`onMachine`, `onMachinePath`). A `file://` URL yields `C:/…` with forward slashes.
 - obsidian-launcher picks the installer for the runner's architecture: on `windows-11-arm` it unpacks `app-arm64.7z` from the NSIS installer.
+
+## obsidian-launcher refuses a plugin whose version has two parts
+- ProZen's manifest says `"version": "0.3"`. Obsidian installs and runs it; obsidian-launcher@3 stops the whole launch with `Invalid version "0.3"` (semver parse), so no plugin in the list gets installed. Worth a report upstream (coerce, or skip that plugin with a warning). Until then ProZen is left out of test-compat-ui.
