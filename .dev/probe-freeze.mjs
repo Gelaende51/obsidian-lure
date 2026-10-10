@@ -44,7 +44,24 @@ const send = (method, params = {}, timeout = 15000) =>
 const evaluate = (expression, timeout) =>
 	send("Runtime.evaluate", { expression: `(async () => { ${expression} })()`, awaitPromise: true, returnByValue: true }, timeout);
 
-console.log(`peer: ${PEER}`);
+// A dialog blocks the page as surely as a loop does, and a crashed renderer
+// answers nothing at all — neither can be paused, so both are listened for.
+listeners.push((message) => {
+	if (message.method === "Page.javascriptDialogOpening") {
+		console.log(`dialog: ${message.params.type} "${message.params.message}"`);
+		void send("Page.handleJavaScriptDialog", { accept: true }, 5000);
+	}
+	if (message.method === "Inspector.targetCrashed") console.log("the renderer crashed");
+	if (message.method === "Runtime.exceptionThrown") console.log(`exception: ${message.params.exceptionDetails?.exception?.description?.split("\n").slice(0, 4).join(" | ")}`);
+});
+await send("Page.enable", {}, 5000);
+await send("Inspector.enable", {}, 5000);
+await send("Runtime.enable", {}, 5000);
+
+// The control: the same press with Lure off says whether the peer does this alone.
+const LURE_OFF = process.env.LURE_OFF === "1";
+console.log(`peer: ${PEER}${LURE_OFF ? " (Lure off)" : ""}`);
+if (LURE_OFF) await evaluate(`await app.plugins.disablePlugin("lure"); return true;`, 8000);
 const ready = await evaluate(`
 	const md = app.vault.getMarkdownFiles()[0];
 	await app.workspace.getLeaf(false).openFile(md);

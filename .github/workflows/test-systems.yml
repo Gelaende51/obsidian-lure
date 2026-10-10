@@ -153,8 +153,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        peer: [iconic, vertical-tabs, continuous-mode]
-    name: freeze probe, ${{ matrix.peer }}
+        peer: [iconic]
+        lure: ["on", "off"]
+    name: freeze probe, ${{ matrix.peer }}, Lure ${{ matrix.lure }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -167,6 +168,7 @@ jobs:
         env:
           OBSIDIAN_EXTRA_ARGS: --no-sandbox
           EXTRA_PLUGINS: ${{ matrix.peer }}
+          LURE_OFF: ${{ matrix.lure == 'off' && '1' || '' }}
           OBSIDIAN_VERSION: latest
         run: xvfb-run -a -s "-screen 0 1920x1080x24" .dev/ci-run.sh probe-freeze
 
