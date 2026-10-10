@@ -234,8 +234,12 @@
 	/* Before color-mix (Chromium 111): the oldest installer today's Obsidian
 	   still runs on is Chromium 106, the last one Windows 7 and 8 have. */
 	background: hsla(var(--interactive-accent-hsl), 0.1);
-	background: color-mix(in oklch, var(--interactive-accent) 10%, transparent);
 	border-radius: var(--radius-s);
+}
+@supports (color: color-mix(in oklch, red, blue)) {
+	.view-header-breadcrumb.is-being-dragged-over {
+		background: color-mix(in oklch, var(--interactive-accent) 10%, transparent);
+	}
 }
 
 /* Anywhere on the header but a folder, Obsidian answers a dragged file with

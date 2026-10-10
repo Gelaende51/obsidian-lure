@@ -494,12 +494,17 @@ export class DiskLinks {
 			}
 		}
 		if (generation !== this.generation) return this.again();
+		// Rows are redrawn only for news: a scan runs each time a note is
+		// shown, and a redraw of every row each time cut into what the rows
+		// were doing — a navigation-lock move lost its external pane's step.
+		const seen = (m: Map<string, unknown>): string => JSON.stringify([...m].sort());
+		const news = seen(inodeOf) !== seen(this.inodeOf) || seen(targetOf) !== seen(this.targetOf);
 		this.byInode = byInode;
 		this.inodeOf = inodeOf;
 		this.linksTo = linksTo;
 		this.targetOf = targetOf;
 		this.state = "ready";
-		this.onReady();
+		if (news) this.onReady();
 		for (const settle of this.waiting.splice(0)) settle();
 	}
 
