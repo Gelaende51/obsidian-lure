@@ -44,7 +44,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image: ["debian:12", "ubuntu:20.04", "fedora:42", "archlinux:latest", "opensuse/leap:15.6"]
+        image: ["debian:12", "ubuntu:20.04", "fedora:42", "archlinux:latest", "opensuse/leap:16.0"]
     container:
       image: ${{ matrix.image }}
       options: --shm-size=2g
