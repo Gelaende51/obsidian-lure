@@ -131,6 +131,10 @@ export const EN = {
 	noticeLinkFailed: "Could not make the link: {error}",
 	globMatchesTooltip: "Matches: {count}",
 	noticeLinkSame: "It already is that kind of path",
+	noticeAliasNeedsProperties: "Alias paths are kept as a property; turn on Record other paths to make them",
+	settingRecordPathsName: "Record other paths",
+	settingRecordPathsDesc:
+		"Write a note's alias paths, hard and symbolic links, copies and origin into its properties (paths, paths-hardlinks, paths-symlinks, paths-aliases, paths-forks, paths-origin), and keep them up to date as files move.",
 	noticeConvertedAlias: "{path} is an alias path now",
 	noticeConvertedHard: "{path} is a hard link now",
 	noticeConvertedSymlink: "{path} is a symbolic link now",

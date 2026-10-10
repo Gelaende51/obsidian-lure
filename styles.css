@@ -410,7 +410,7 @@
 .lure-vault-wrapper input[data-lure-tint="keep-name"],
 .lure-filename input[data-lure-tint="current"],
 .lure-vault-wrapper input[data-lure-tint="current"] {
-	color: var(--color-blue);
+	color: var(--text-normal);
 }
 
 /* Nothing answers to what is in the field yet, so Enter will make it rather
@@ -640,12 +640,12 @@
 	gap: var(--size-2-1);
 	color: var(--text-faint);
 	font-size: var(--font-ui-smaller);
-	cursor: pointer;
 }
 
 .suggestion-item .lure-suggest-type {
 	padding: 1px 4px;
 	border-radius: var(--radius-s);
+	cursor: default;
 }
 .suggestion-item .lure-suggest-type:hover {
 	color: var(--text-normal);
@@ -710,74 +710,12 @@
    is the one you already have open — "you are here" is the more specific
    fact in both cases. */
 .suggestion-item.lure-suggest-current .lure-suggest-label {
-	color: var(--color-blue);
 	/* Bold rather than medium. Medium is a weight you can only see beside
 	   the same word set normally, and the row it marks is rarely beside its
 	   own twin: in a list of twenty names, "where you are" has to be findable
 	   at a glance rather than by comparison. The colour alone was doing that
 	   work, and a theme that tints its lists leaves it nothing to do. */
 	font-weight: var(--font-bold, 700);
-}
-
-/* A name that begins with what was typed, listed ahead of the names that
-   only contain it: a bar down its left edge, one unbroken line down the
-   whole run of them — drawn past the row's own bottom margin into the next,
-   and positioned, so it takes no width from the row and moves no text.
-   Blue when the run of them goes on agreeing past what was typed: there is
-   a base Tab would complete. Where they part instead, green on the branch
-   the offer takes (below). */
-.suggestion-item.lure-suggest-leading {
-	position: relative;
-}
-
-.suggestion-item.lure-suggest-leading::before {
-	content: "";
-	position: absolute;
-	inset-inline-start: 0;
-	top: 0;
-	bottom: -1px;
-	width: 3px;
-	background-color: var(--interactive-accent);
-}
-
-.suggestion-item.lure-suggest-leading.lure-suggest-agreed::before {
-	background-color: var(--color-blue);
-}
-
-/* Where the leading rows part, the branch the offer heads down is green:
-   the rows Tab is about to walk toward, apart from the other ways on. */
-.suggestion-item.lure-suggest-leading.lure-suggest-offered::before {
-	background-color: var(--color-green);
-}
-
-/* The one row Enter would act on, when it settles a whole path: a red edge
-   where the rows' other edges are, over them. */
-.suggestion-item.lure-suggest-enter {
-	position: relative;
-}
-.suggestion-item.lure-suggest-enter::before,
-.suggestion-item.lure-suggest-leading.lure-suggest-enter::before {
-	content: "";
-	position: absolute;
-	inset-inline-start: 0;
-	top: 0;
-	bottom: -1px;
-	width: 3px;
-	background-color: var(--text-error);
-}
-
-/* The open note and its other paths: a blue edge. */
-.suggestion-item.lure-suggest-here {
-	position: relative;
-}
-.suggestion-item.lure-suggest-here:not(.lure-suggest-enter)::before {
-	content: "";
-	position: absolute;
-	inset-inline-start: 0;
-	top: 0;
-	bottom: -1px;
-	width: 3px;
-	background-color: var(--color-blue);
 }
 
 /* A link's kind as a small mark at the bottom right of the file's icon. */
@@ -1692,20 +1630,6 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 	--icon-size: var(--icon-xs);
 }
 
-/* A glob step in the dropdown: rows the pattern matches carry a green edge,
-   where the leading rows carry blue, and the pattern's own rows come first. */
-.suggestion-item.lure-suggest-glob {
-	position: relative;
-}
-.suggestion-item.lure-suggest-glob::before {
-	content: "";
-	position: absolute;
-	inset-inline-start: 0;
-	top: 0;
-	bottom: -1px;
-	width: 3px;
-	background-color: var(--color-green);
-}
 .suggestion-item.lure-suggest-pattern .lure-suggest-label {
 	color: var(--color-green);
 	font-family: var(--font-monospace);
@@ -1747,4 +1671,59 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 	border-radius: 3px;
 	background-color: var(--background-primary);
 	color: var(--text-muted);
+}
+
+/* The row's bars, side by side down its left edge: red for the row Enter
+   acts on, blue for where you are, the leading names' bar (accent; blue
+   where they agree, green on the offer's branch), green for a pattern's
+   matches. Positioned, so they take no width and move no text, and drawn
+   past the row's bottom margin so a run of them reads as one line. */
+.lure-suggest-popover .suggestion-item {
+	position: relative;
+}
+.suggestion-item .lure-suggest-bars {
+	position: absolute;
+	inset-inline-start: 0;
+	top: 0;
+	bottom: -1px;
+	display: flex;
+	gap: 1px;
+	pointer-events: none;
+}
+.suggestion-item .lure-bar {
+	display: none;
+	width: 3px;
+}
+.suggestion-item.lure-suggest-enter .lure-bar-enter {
+	display: block;
+	background-color: var(--text-error);
+}
+.suggestion-item.lure-suggest-current .lure-bar-current {
+	display: block;
+	background-color: var(--color-blue);
+}
+.suggestion-item.lure-suggest-leading .lure-bar-leading {
+	display: block;
+	background-color: var(--interactive-accent);
+}
+.suggestion-item.lure-suggest-leading.lure-suggest-agreed .lure-bar-leading {
+	background-color: var(--color-blue);
+}
+.suggestion-item.lure-suggest-leading.lure-suggest-offered .lure-bar-leading {
+	background-color: var(--color-green);
+}
+.suggestion-item.lure-suggest-glob .lure-bar-glob {
+	display: block;
+	background-color: var(--color-green);
+}
+
+/* The open note's other paths: blue text (where you are has the blue bar). */
+.suggestion-item.lure-suggest-here .lure-suggest-label {
+	color: var(--color-blue);
+}
+
+/* A folder's count of what it holds, where a file shows its extension. */
+.suggestion-item .lure-suggest-count {
+	color: var(--text-faint);
+	font-size: var(--font-ui-smaller);
 }

@@ -12,7 +12,7 @@
 import { Command, Hotkey, Menu, Platform, Plugin, WorkspaceLeaf } from "obsidian";
 import { BreadcrumbManager } from "./breadcrumbManager";
 import { UnresolvedNotes } from "./unresolvedNotes";
-import { AliasRows, DiskLinks, followDelete, followRename } from "./altPaths";
+import { AliasRows, DiskLinks, followDelete, followRename, setRecording } from "./altPaths";
 import { setCurrentVaultIcon } from "./systemLocations";
 import { letThroughGuard } from "./folderChildSuggest";
 import { EXTERNAL_VIEW_TYPE, ExternalFileView } from "./externalFileView";
@@ -241,6 +241,7 @@ export default class BreadcrumbPathPlugin extends Plugin {
 			this.settings.vaultSegment = legacy ? "name" : "icon";
 		}
 		setCurrentVaultIcon(this.settings.vaultIcon);
+		setRecording(this.settings.recordPaths);
 		// Before anything reads a string. `onload` builds the settings tab and
 		// the manager straight after this, and both call `t()`.
 		setLanguageOverride(this.settings.language);
@@ -347,6 +348,7 @@ export default class BreadcrumbPathPlugin extends Plugin {
 	async saveSettings(): Promise<void> {
 		await this.saveData(this.settings);
 		setCurrentVaultIcon(this.settings.vaultIcon);
+		setRecording(this.settings.recordPaths);
 		this.manager.refreshAll();
 	}
 

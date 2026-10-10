@@ -38,6 +38,8 @@ export interface PathSuggestion {
 	markdown?: boolean;
 	/** Where you already are — this bar's own note, or the folder it is standing in — tinted to say so. */
 	current?: boolean;
+	/** How many files and folders a folder holds, shown where a file shows its extension. */
+	count?: number;
 	/** Not there: the file Enter would make of what was typed. Red, first. */
 	creates?: boolean;
 	/** An empty file, marked with a 0 on its icon. */
@@ -232,7 +234,8 @@ function leadingFirst(rows: PathSuggestion[], query: string): PathSuggestion[] {
 
 /** The icons a row of a linked file ends with. */
 const LINK_ICONS: Record<"symbolic" | "hard" | "none", string | undefined> = {
-	symbolic: "file-symlink",
+	// A plain arrow reads at badge size, where a whole file-with-arrow does not.
+	symbolic: "arrow-up-right",
 	hard: "link",
 	none: undefined,
 };
@@ -421,6 +424,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 	private readonly dragKeepFocusEl: HTMLInputElement;
 	/** Index of the entry the list should open on, worked out while building it. */
 	private preselectIndex = -1;
+	private pointerHighlight = false;
 	/** Guards the re-selection below against answering its own call. */
 	private preselecting = false;
 	/** Set once the list has been wrapped for the "up past the top" gesture. */
@@ -653,6 +657,9 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 	 * list simply appearing must not overwrite what is being typed.
 	 */
 	onSelectedChange(value: PathSuggestion | undefined, evt: unknown): void {
+		// A highlight the pointer put there is a look, not a choice the red
+		// edge should follow; the keys' highlight is.
+		this.pointerHighlight = evt instanceof MouseEvent;
 		this.wrapList();
 		this.paintCreateEdge();
 		if (this.preselecting) return;
@@ -949,7 +956,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			const els = list?.suggestions ?? [];
 			for (const el of els) el.removeClass(ENTER_ROW_CLASS);
 			if (!values.length || values.some((value) => value.glob)) return;
-			let index = list?.selectedItem ?? -1;
+			let index = this.pointerHighlight ? -1 : (list?.selectedItem ?? -1);
 			if (index < 0 && this.lastQuery) {
 				const typed = this.lastQuery;
 				index = values.findIndex((value) => {
@@ -1142,6 +1149,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 					path: child.path,
 					disabled: false,
 					current: child.path === context.currentFolder,
+					count: child.children.length,
 					// A folder is taken too when the file would collide *inside*
 					// it: that is the choice being made while picking where to
 					// move, long before its contents are on screen.
@@ -1444,6 +1452,11 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		if (value.alias) el.addClass("lure-suggest-alias");
 		if (value.glob) el.addClass("lure-suggest-glob");
 		if (value.creates) el.addClass("lure-suggest-creates");
+		// One bar per thing that holds for the row, side by side: the row
+		// Enter acts on, where you are, the names the typing leads to, a
+		// pattern's matches. Each shows only while its class is on the row.
+		const bars = el.createSpan({ cls: "lure-suggest-bars" });
+		for (const bar of ["enter", "current", "leading", "glob"]) bars.createSpan({ cls: `lure-bar lure-bar-${bar}` });
 		if (this.getContext().isCurrentNote(value.opens ?? value.path)) el.addClass("lure-suggest-here");
 		if (value.current) el.addClass("lure-suggest-current");
 		if (value.leading) el.addClass("lure-suggest-leading");
@@ -1460,6 +1473,9 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			badge ? value.label.slice(0, value.label.length - badge.length - 1) : value.label,
 		);
 		if (badge) this.renderBadge(el, value, badge);
+		if (value.kind === "folder" && value.count !== undefined) {
+			endOf(el).createSpan({ cls: "lure-suggest-count", text: `+${value.count}` });
+		}
 		if (value.endIcon || value.empty) {
 			// Small marks on the file's icon — the badge's when there is one,
 			// else a file icon of its own to carry them: a link's kind at the

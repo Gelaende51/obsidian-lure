@@ -306,4 +306,32 @@ test("the file Enter would make is the red first row, and empty files carry a 0"
 	expect("the empty note is marked 0", empty, true);
 });
 
+test("typing a note's name in another case opens it rather than making a second", async () => {
+	await inOwnFolder();
+	await type("cabbage");
+	await pressKey(page, "Enter");
+	await settle(900);
+	expect("the note that is there opens", await page.evaluate(`return app.workspace.getActiveFile()?.path ?? null;`), `${DIR}/Cabbage.md`);
+	expect("and no lower-case twin is made", await page.evaluate(`return !!app.vault.getAbstractFileByPath(${JSON.stringify(`${DIR}/cabbage.md`)});`), false);
+});
+
+test("folders show what they hold, and several bars can stand on one row", async () => {
+	await page.evaluate(`if (!app.vault.getAbstractFileByPath(${JSON.stringify(`${DIR}/Cave`)})) await app.vault.createFolder(${JSON.stringify(`${DIR}/Cave`)}); await app.vault.create(${JSON.stringify(`${DIR}/Cave/inside.md`)}, ""); ${PAUSE(400)} return true;`);
+	await inOwnFolder();
+	await type("Cav");
+	const row = await page.evaluate(`
+		const el = [...document.querySelectorAll(".suggestion-item")].find((e) => e.querySelector(".lure-suggest-label")?.textContent === "Cave");
+		return JSON.stringify(el ? { count: el.querySelector(".lure-suggest-count")?.textContent ?? null } : null);
+	`).then(JSON.parse);
+	expect("the folder's count", row?.count, "+1");
+	await pressKey(page, "ctrl+a");
+	await type("Cake");
+	const bars = await page.evaluate(`
+		const el = [...document.querySelectorAll(".suggestion-item")].find((e) => e.querySelector(".lure-suggest-label")?.textContent === "Cake.md");
+		return JSON.stringify(el ? [...el.querySelectorAll(".lure-bar")].filter((b) => getComputedStyle(b).display !== "none").map((b) => [...b.classList].find((c) => c.startsWith("lure-bar-"))) : null);
+	`).then(JSON.parse);
+	expect("the open note's row: where you are, Enter's row, and a leading name", bars, (v) => Array.isArray(v) && ["lure-bar-current", "lure-bar-enter", "lure-bar-leading"].every((b) => v.includes(b)));
+	await shoot("bars");
+});
+
 await run();

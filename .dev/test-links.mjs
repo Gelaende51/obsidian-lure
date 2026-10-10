@@ -294,7 +294,7 @@ test("Tab going round the names highlights an alias row too", async () => {
 		return true;
 	`);
 	await browsing();
-	await typeOverName("Else");
+	await typeOverName("Elsew");
 	const seen = [];
 	for (let i = 0; i < 2; i++) {
 		await pressKey(page, "Tab");

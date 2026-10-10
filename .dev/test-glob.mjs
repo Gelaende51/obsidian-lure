@@ -211,7 +211,8 @@ test("after Enter the count and its colour go", async () => {
 
 test("Tab going round file names highlights each one in the list", async () => {
 	await inFolder();
-	await type("Cake");
+	// "Cake " is as far as the two names agree, so Tab goes round them at once.
+	await type("Cake ");
 	const seen = [];
 	for (let i = 0; i < 4; i++) {
 		await pressKey(page, "Tab");
@@ -219,7 +220,7 @@ test("Tab going round file names highlights each one in the list", async () => {
 		seen.push(JSON.parse(await page.evaluate(`return JSON.stringify({ value: document.querySelector(".lure-path-input")?.value ?? null, lit: document.querySelector(".suggestion-item.is-selected .lure-suggest-label")?.textContent ?? null });`)));
 	}
 	// Press 3 gives back what was typed, where nothing is highlighted.
-	const named = seen.filter((s) => s.value !== "Cake");
+	const named = seen.filter((s) => s.value !== "Cake ");
 	expect("each name on show is the highlighted row", named.every((s) => s.value === s.lit) && named.length === 3, true);
 	if (!named.every((s) => s.value === s.lit)) console.log("    " + JSON.stringify(seen));
 });

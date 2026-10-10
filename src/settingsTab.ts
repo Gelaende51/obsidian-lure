@@ -120,6 +120,11 @@ export class BreadcrumbSettingTab extends PluginSettingTab {
 				},
 			},
 			{
+				name: t("settingRecordPathsName"),
+				desc: t("settingRecordPathsDesc"),
+				control: { type: "toggle", key: "recordPaths" },
+			},
+			{
 				name: t("settingVaultIconName"),
 				desc: t("settingVaultIconDesc"),
 				render: (setting: Setting) => this.renderVaultIcon(setting),

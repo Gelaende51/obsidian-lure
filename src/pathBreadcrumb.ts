@@ -6465,6 +6465,7 @@ export class PathBreadcrumb {
 	 */
 	private pressTab(input: HTMLInputElement): void {
 		if (this.turnCycle(input, 1)) return;
+		if (this.completeToFork(input)) return;
 		if (this.startCycle(input)) return;
 		this.handleTabCompletion(input);
 	}
@@ -6542,6 +6543,33 @@ export class PathBreadcrumb {
 			shown: "",
 		};
 		this.showCycle(input);
+		return true;
+	}
+
+	/**
+	 * Tab's first press at a fork: as far as the names agree, the way a shell
+	 * completes — the round of whole names starts on the press after. Only
+	 * where that writes something; where the names part straight away, the
+	 * round starts at once.
+	 */
+	private completeToFork(input: HTMLInputElement): boolean {
+		if (this.tabStage !== null || this.showingLocations || this.preview || this.composing) return false;
+		const run = this.suggested;
+		const value = run ? this.typedFieldValue() : input.value;
+		const caret = run ? run.start : (input.selectionStart ?? 0);
+		if (!run && caret !== (input.selectionEnd ?? 0)) return false;
+		const bounds = segmentBoundsAtCaret(value, caret);
+		const typed = value.slice(bounds.start, caret);
+		const tail = value.slice(caret, bounds.end);
+		if (!typed || (tail && !/^\.[^./\\\s]+$/.test(tail))) return false;
+		const names = [...new Set(this.tabCandidates(typed).candidates.map((candidate) => candidate.label))];
+		if (names.length < 2) return false;
+		const shared = commonPrefix(names);
+		if (shared.length <= typed.length) return false;
+		this.settleSuggestion(false);
+		input.value = value;
+		this.writeSegment(input, { start: bounds.start, end: caret }, shared);
+		this.offerSuggestion(input);
 		return true;
 	}
 
@@ -6635,6 +6663,12 @@ export class PathBreadcrumb {
 			return;
 		}
 		const path = normalizePath(target);
+		// An alias path exists only as a property: with properties off there is
+		// nowhere to keep one.
+		if (kind === "alias" && !this.plugin.settings.recordPaths) {
+			new Notice(t("noticeAliasNeedsProperties"));
+			return;
+		}
 		// One of this note's own alias paths becomes the link asked for.
 		const ownAlias = aliasPathsOf(this.plugin.app, file).includes(path);
 		if (ownAlias && kind === "alias") {
@@ -8004,7 +8038,20 @@ export class PathBreadcrumb {
 	/** Whether anything at all is at a path — a folder or a file, on either side of the vault boundary. */
 	private entryExists(path: string, external: boolean): boolean {
 		if (external) return isExternalFolder(path) || isExternalFile(path);
-		return this.plugin.app.vault.getAbstractFileByPath(path) !== null;
+		return this.vaultEntry(path) !== null;
+	}
+
+	/**
+	 * What is at a vault path, with the case ignored where nothing matches it
+	 * exactly: typing `cake` where `Cake.md` is opens that note rather than
+	 * making a second one that only Linux could tell apart from it.
+	 */
+	private vaultEntry(path: string): TAbstractFile | null {
+		const vault = this.plugin.app.vault;
+		const exact = vault.getAbstractFileByPath(path);
+		if (exact) return exact;
+		const lower = path.toLowerCase();
+		return vault.getAllLoadedFiles().find((entry) => entry.path.toLowerCase() === lower) ?? null;
 	}
 
 	/** Whether a path names a folder, which is to say somewhere the walk could go on into. */
@@ -9278,7 +9325,7 @@ export class PathBreadcrumb {
 
 		const folderPath = this.currentFolderPath();
 		const candidatePath = folderPath ? `${folderPath}/${trimmed}` : trimmed;
-		const asFolder = this.plugin.app.vault.getAbstractFileByPath(normalizePath(candidatePath));
+		const asFolder = this.vaultEntry(normalizePath(candidatePath));
 		if (asFolder instanceof TFolder) {
 			this.extendBrowsePath(asFolder.path);
 			this.enterTypingMode("");
@@ -9310,7 +9357,7 @@ export class PathBreadcrumb {
 			return;
 		}
 
-		const existing = this.plugin.app.vault.getAbstractFileByPath(normalized);
+		const existing = this.vaultEntry(normalized);
 		// A path the note answers to without being there: an alias opens it.
 		if (!existing) {
 			const aliased = this.plugin.aliasRows.resolve(normalized);

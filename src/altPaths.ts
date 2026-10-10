@@ -88,12 +88,24 @@ function nativeAliases(app: App, file: TFile): string[] {
 
 type Lists = Record<string, string[]>;
 
+/** Whether path properties are written at all; the plugin sets it from its settings. */
+let recording = true;
+
+export function setRecording(on: boolean): void {
+	recording = on;
+}
+
+export function isRecording(): boolean {
+	return recording;
+}
+
 /**
  * Rewrites a note's path lists in one write. `change` edits them in place and
  * says whether it changed anything; an emptied list is taken out, and the
  * origin is written as a single path.
  */
 async function rewriteLists(app: App, file: TFile, change: (lists: Lists) => boolean): Promise<void> {
+	if (!recording) return;
 	await app.fileManager.processFrontMatter(file, (frontmatter: Record<string, unknown>) => {
 		const lists: Lists = {};
 		for (const key of ALL_KEYS) lists[key] = listIn(frontmatter[key]);

@@ -62,6 +62,13 @@ export interface BreadcrumbPathSettings {
 	 * way any other segment does.
 	 */
 	accessExternalFiles: boolean;
+	/**
+	 * Whether a note's other paths, copies and origin are written into its
+	 * properties (`paths`, `paths-hardlinks`, …) and kept up to date. Off,
+	 * links are still made but nothing is recorded, and alias paths — which
+	 * exist only as a property — cannot be made.
+	 */
+	recordPaths: boolean;
 }
 
 export const DEFAULT_SETTINGS: BreadcrumbPathSettings = {
@@ -74,4 +81,5 @@ export const DEFAULT_SETTINGS: BreadcrumbPathSettings = {
 	showDotFiles: false,
 	showFileExtension: false,
 	accessExternalFiles: false,
+	recordPaths: true,
 };
