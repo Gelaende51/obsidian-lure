@@ -414,9 +414,28 @@ export class DiskLinks {
 		private readonly onReady: () => void,
 	) {}
 
+	private waiting: (() => void)[] = [];
+
 	invalidate(): void {
 		this.generation += 1;
 		this.state = "none";
+	}
+
+	/** Settles once a scan of the vault as it is now has finished. */
+	whenReady(): Promise<void> {
+		this.ensure();
+		if (this.state === "ready") return Promise.resolve();
+		return new Promise((settle) => this.waiting.push(settle));
+	}
+
+	/** The names of every file in the vault that has more than one. */
+	hardGroups(): string[][] {
+		return [...this.byInode.values()];
+	}
+
+	/** Every symbolic link in the vault that points into it, with its target. */
+	symbolicLinks(): [string, string][] {
+		return [...this.targetOf];
 	}
 
 	private ensure(): void {
@@ -457,16 +476,22 @@ export class DiskLinks {
 						}
 					}),
 				);
-				if (generation !== this.generation) return;
+				if (generation !== this.generation) return this.again();
 			}
 		}
-		if (generation !== this.generation) return;
+		if (generation !== this.generation) return this.again();
 		this.byInode = byInode;
 		this.inodeOf = inodeOf;
 		this.linksTo = linksTo;
 		this.targetOf = targetOf;
 		this.state = "ready";
 		this.onReady();
+		for (const settle of this.waiting.splice(0)) settle();
+	}
+
+	/** A scan overtaken by a change: someone still waiting gets a fresh one. */
+	private again(): void {
+		if (this.waiting.length) this.ensure();
 	}
 
 	/** Other names of the same file. */
@@ -509,6 +534,69 @@ export function otherPaths(app: App, disk: DiskLinks, file: TFile): OtherPath[] 
 	const folder = parentOf(file.path);
 	for (const alias of nativeAliases(app, file)) add(folder ? `${folder}/${alias}` : alias, "name");
 	return [...found].map(([path, kind]) => ({ path, kind }));
+}
+
+/**
+ * Brings the path lists in line with the disk, for what changed where Lure
+ * could not see it: in a file manager, a terminal, a sync, or while Obsidian
+ * was closed. A hard or symbolic link to a note that its lists leave out is
+ * added; a listed one that is gone from the disk, or that an editor's save
+ * has turned into a file of its own, is taken out. Alias paths are names
+ * only and nothing on disk speaks for or against them, so they are left.
+ */
+export async function reconcileLists(app: App, disk: DiskLinks): Promise<void> {
+	if (!recording) return;
+	const base = basePath(app);
+	if (base === null) return;
+	await disk.whenReady();
+	// What the disk says: every name of a file, and the links at each note.
+	const namesOf = new Map<string, string[]>();
+	for (const group of disk.hardGroups()) for (const path of group) namesOf.set(path, group);
+	const linksAt = new Map<string, string[]>();
+	for (const [linkPath, target] of disk.symbolicLinks()) linksAt.set(target, [...(linksAt.get(target) ?? []), linkPath]);
+
+	const written = new Set<string>();
+	for (const file of app.vault.getMarkdownFiles()) {
+		// A symbolic link's frontmatter is its note's, and is seen there.
+		if (held.has(file.path) || disk.targetOfLink(file.path)) continue;
+		const names = namesOf.get(file.path) ?? [file.path];
+		// A hard-linked file has one frontmatter for all its names: written once.
+		const key = [...names].sort().join("\0");
+		if (written.has(key)) continue;
+		written.add(key);
+		const hard = names.length > 1 ? names : [];
+		const links = names.flatMap((name) => linksAt.get(name) ?? []);
+		const listedHard = readKey(app, file, KIND_KEYS.hard).filter((path) => !names.includes(path));
+		const listedLinks = readKey(app, file, KIND_KEYS.symbolic).filter((path) => !links.includes(path));
+		// Listed and not what the disk says: gone, or a file of its own now.
+		const stale: string[] = [];
+		for (const path of [...listedHard, ...listedLinks]) {
+			if (held.has(path)) continue;
+			try {
+				const stats = await lstat(join(base, path));
+				if (listedHard.includes(path) && !stats.isSymbolicLink()) stale.push(path);
+			} catch {
+				stale.push(path);
+			}
+		}
+		const missingHard = hard.filter((path) => !held.has(path) && !readKey(app, file, KIND_KEYS.hard).includes(path));
+		const missingLinks = links.filter((path) => !held.has(path) && !readKey(app, file, KIND_KEYS.symbolic).includes(path));
+		if (!stale.length && !missingHard.length && !missingLinks.length) continue;
+		await rewriteLists(app, file, (lists) => {
+			let changed = false;
+			for (const path of stale) changed = forget(lists, file.path, path) || changed;
+			if (missingHard.length) {
+				changed = put(lists, PATHS_KEY, hard) || changed;
+				changed = put(lists, KIND_KEYS.hard, hard) || changed;
+			}
+			for (const path of missingLinks) {
+				changed = put(lists, PATHS_KEY, [file.path, path]) || changed;
+				changed = put(lists, KIND_KEYS.symbolic, [path]) || changed;
+			}
+			return changed;
+		});
+		await refreshNames(app, hard.filter((path) => path !== file.path && path.endsWith(".md")).map((path) => app.vault.getAbstractFileByPath(path)).filter((there): there is TFile => there instanceof TFile));
+	}
 }
 
 /** What is at a vault path on disk: a symbolic link, anything else, or nothing. */

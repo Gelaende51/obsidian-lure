@@ -9,10 +9,10 @@
  * see the LICENSE file or <https://www.gnu.org/licenses/> for details.
  */
 
-import { Command, Hotkey, Menu, Platform, Plugin, WorkspaceLeaf } from "obsidian";
+import { Command, Hotkey, Menu, Platform, Plugin, WorkspaceLeaf, debounce } from "obsidian";
 import { BreadcrumbManager } from "./breadcrumbManager";
 import { UnresolvedNotes } from "./unresolvedNotes";
-import { AliasRows, DiskLinks, followDelete, followRename, setRecording } from "./altPaths";
+import { AliasRows, DiskLinks, followDelete, followRename, reconcileLists, setRecording } from "./altPaths";
 import { ExternalLinks } from "./externalLinks";
 import { externalChanges } from "./externalFileOps";
 import { setCurrentVaultIcon } from "./systemLocations";
@@ -104,10 +104,20 @@ export default class BreadcrumbPathPlugin extends Plugin {
 			this.unresolvedNotes.invalidate();
 			this.aliasRows.invalidate();
 		};
+		// Links made, moved or removed where Lure could not see it are put
+		// right in the lists once the vault has been quiet for a moment —
+		// and once at the start, for what changed while Obsidian was closed.
+		const reconcile = debounce(() => void reconcileLists(this.app, this.diskLinks), 1500, true);
 		const changed = (): void => {
 			forget();
 			this.diskLinks.invalidate();
+			if (this.app.workspace.layoutReady) reconcile();
 		};
+		const firstResolve = this.app.metadataCache.on("resolved", () => {
+			this.app.metadataCache.offref(firstResolve);
+			reconcile();
+		});
+		this.registerEvent(firstResolve);
 		this.registerEvent(this.app.metadataCache.on("resolved", forget));
 		// A note's other paths changed: the aliases are listed afresh, and the
 		// rows redrawn so the other-paths button comes and goes with them.

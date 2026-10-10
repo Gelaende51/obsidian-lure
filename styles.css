@@ -1802,9 +1802,21 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 .lure-filename-badge .lure-badge-extension {
 	color: var(--text-faint);
 }
-.lure-badge-other-paths {
-	cursor: var(--cursor);
-	margin-inline-end: 3px;
+.lure-filename-badge .lure-badge-other-paths {
+	cursor: pointer;
+	/* Lucide's split at full small size, with the count and chevron hung
+	   off its corners rather than over it — at the badge's own icon size
+	   they covered all of it. */
+	--icon-size: var(--icon-s);
+	margin-inline: 5px 8px;
+}
+.lure-filename-badge .lure-badge-other-paths .lure-other-paths-count {
+	right: -8px;
+	bottom: -5px;
+}
+.lure-filename-badge .lure-badge-other-paths .lure-other-paths-chevron {
+	left: -6px;
+	bottom: -5px;
 }
 .lure-badge-other-paths .lure-other-paths-count,
 .lure-badge-other-paths .lure-other-paths-chevron {

@@ -456,7 +456,8 @@ test("the badge: a hand, a grey extension, its list ending where it does, built 
 				cursor: getComputedStyle(badge).cursor,
 				extGrey: getComputedStyle(ext).color !== getComputedStyle(badge).color,
 				chevronBox: Math.round(chevron.getBoundingClientRect().width),
-				icon: !!badge.querySelector(".lure-badge-other-paths > svg.lucide-split"),
+				icon: [...badge.querySelectorAll(".lure-badge-other-paths > svg")].map((e) => e.getAttribute("class")).join(" "),
+				covered: (() => { const a = badge.querySelector(".lure-badge-other-paths > svg").getBoundingClientRect(), c = badge.querySelector(".lure-other-paths-count").getBoundingClientRect(); return Math.round(Math.max(0, Math.min(a.right, c.right) - Math.max(a.left, c.left)) * Math.max(0, Math.min(a.bottom, c.bottom) - Math.max(a.top, c.top)) / (a.width * a.height) * 100); })(),
 			};
 			badge.querySelector(".lure-badge-other-paths").click();
 			${PAUSE(300)}
@@ -479,7 +480,8 @@ test("the badge: a hand, a grey extension, its list ending where it does, built 
 		expect("a hand over the badge", r.cursor, "pointer");
 		expect("its extension stays grey in the tint", r.extGrey, true);
 		expect("the chevron has a box like the count", r.chevronBox, 12);
-		expect("the button is Lucide's split", r.icon, true);
+		expect("the button is Lucide's split", r.icon, (v) => /lucide-split/.test(v));
+		expect("and the count covers little of it", r.covered, (v) => v <= 25);
 		expect("the list ends where the extension does", r.rightGap !== null && Math.abs(r.rightGap) <= 2, true);
 		expect("names without the extension, as in the dropdown", r.labels, [`${DIR}/Note`, `${DIR}/Other`, `${DIR}/Third`]);
 		expect("which is in a badge", r.badges, [".md", ".md", ".md"]);
@@ -511,6 +513,36 @@ test("the badge: a hand, a grey extension, its list ending where it does, built 
 		await page.evaluate(`document.querySelector(".lure-path-input")?.blur(); document.querySelector(".lure-other-paths-menu")?.remove(); return true;`);
 		await setSettings(page, { showFileExtension: true });
 	}
+});
+
+test("links made and undone outside Obsidian are put right in the lists", async () => {
+	const outside = (code) => page.evaluate(`
+		const fs = require("fs"), path = require("path");
+		const base = app.vault.adapter.getBasePath();
+		const at = (p) => path.join(base, p);
+		${code}
+		${PAUSE(4500)}
+		return true;
+	`);
+	await outside(`fs.linkSync(at(${JSON.stringify(NOTE)}), at(${JSON.stringify(`${DIR}/Twin.md`)}));`);
+	let lists = await listsOf(NOTE);
+	expect("a hard link made in a terminal is listed", lists?.["paths-hardlinks"], (v) => Array.isArray(v) && v.includes(`${DIR}/Twin.md`) && v.includes(NOTE));
+	expect("in paths too", lists?.paths, (v) => Array.isArray(v) && v.includes(`${DIR}/Twin.md`));
+	await outside(`fs.symlinkSync("../Note.md", at(${JSON.stringify(`${DIR}/Sub/Pointer.md`)}));`);
+	lists = await listsOf(NOTE);
+	expect("a symbolic link made in a terminal is listed", lists?.["paths-symlinks"], (v) => Array.isArray(v) && v.includes(`${DIR}/Sub/Pointer.md`));
+	// An editor saving through a temporary file and a rename leaves a file of its own.
+	await outside(`
+		const twin = at(${JSON.stringify(`${DIR}/Twin.md`)});
+		fs.writeFileSync(twin + ".tmp", fs.readFileSync(twin));
+		fs.renameSync(twin + ".tmp", twin);
+	`);
+	lists = await listsOf(NOTE);
+	expect("a hard link an editor's save split off is taken out", lists?.["paths-hardlinks"] ?? [], (v) => !v.includes(`${DIR}/Twin.md`));
+	expect("and out of paths", lists?.paths ?? [], (v) => !v.includes(`${DIR}/Twin.md`));
+	await outside(`fs.unlinkSync(at(${JSON.stringify(`${DIR}/Sub/Pointer.md`)}));`);
+	lists = await listsOf(NOTE);
+	expect("a symbolic link removed in a terminal is taken out", lists?.["paths-symlinks"] ?? [], []);
 });
 
 await run();
