@@ -77,8 +77,6 @@ const ALL_PEERS = [
 	// open notes the way the path bar does.
 	{ set: "ui", id: "obsidian-path-title", name: "Path Title", kind: "header",
 	  why: "writes the path into each pane's title" },
-	{ set: "ui", id: "iconic", name: "Iconic", kind: "header",
-	  why: "icons and colours on tabs, files and titles" },
 	{ set: "ui", id: "vertical-tabs", name: "Vertical Tabs", kind: "header",
 	  why: "an alternative tab view that regroups the headers" },
 	{ set: "ui", id: "continuous-mode", name: "Continuous Mode", kind: "header",
@@ -94,6 +92,10 @@ const ALL_PEERS = [
 	  why: "keeps each note in one tab, focusing the one already open" },
 	{ set: "ui", id: "open-tab-settings", name: "Open Tab Settings", kind: "adjacent",
 	  why: "changes where opened files go: new tab, no duplicates" },
+	// Last: turning it on after Lure has frozen the page (see
+	// .dev/probe-freeze.mjs), and nothing after that point can be asked.
+	{ set: "ui", id: "iconic", name: "Iconic", kind: "header",
+	  why: "icons and colours on tabs, files and titles" },
 ];
 /** Which set this run checks: the original neighbours, or (test-compat-ui) the header plugins. */
 const PEERS = ALL_PEERS.filter((p) => (p.set ?? "base") === (process.env.LURE_PEER_SET ?? "base"));
