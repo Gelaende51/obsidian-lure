@@ -764,7 +764,7 @@ name is turned off or has been squeezed away.
 | **Red** ring on the path bar | The row points outside your vault | Obsidian cannot open what's there as a note, and nothing out there is written until you open the padlock. |
 | **Orange** ring on the path bar | The file is a text type Obsidian has no view for | A caution. Obsidian would hand it to your desktop's default application; the plugin shows it instead. |
 | **Red** folder in the path | That folder is not there yet; <kbd>Enter</kbd> will make it along with the rest |
-| **Red** edge down the dropdown | Nothing is highlighted, and <kbd>Enter</kbd> would make the typed name rather than open one of the rows listed |
+| **Red** edge on a dropdown row | The row <kbd>Enter</kbd> would act on right now — the highlighted one, or the one the typed name is exactly — where that press opens or moves a file rather than stepping into a folder |
 | **Red** text in the open field | Nothing is at that path yet | <kbd>Enter</kbd> will make it rather than open it. Not a warning so much as a statement of what the next keystroke does — see [Typing a path](#typing-a-path). |
 | **Red** padlock in place of the rename toggle | The row points outside your vault and writing there is still locked | The same red as the ring, for the same reason: it marks a refusal. Pressing it allows writing here and hands the slot back to the toggle — see [Writing outside the vault](#writing-outside-the-vault). |
 
@@ -853,7 +853,7 @@ The button stays while the row is being edited, and its menu opens under it,
 flush with the bottom of the path bar. Each entry carries an icon for what it
 is — a signpost for an alias path, `@` for one of Obsidian's aliases, a chain
 for a hard link, a linked file for a symbolic link. In the dropdown the same
-icons stand at the right-hand end of the row. A symbolic link made while
+icons sit as a small mark at the bottom right of the row's file icon. A symbolic link made while
 Obsidian runs is not listed by Obsidian itself; it is listed here, and opens
 the note it points at.
 
@@ -948,6 +948,7 @@ This works by wrapping the `workspace:edit-file-title` command rather than grabb
 | **Purple** | A note (`.md`, `.markdown`) — what Obsidian will open as a note, picked out of a folder of mixed contents |
 | **Orange** | Not a note — anything Obsidian will not open as one, from a PDF to a `.txt`, and the `:page` entries with them. A folder of mixed contents is read for the notes in it, and one colour for everything else says that faster than a caution on a few of them; see [the warning colours](#the-warning-colours) |
 | **Muted** | Outside your vault, so the vault's own handling doesn't apply |
+| **Blue** edge | The open note and its other paths — alias paths, hard and symbolic links |
 | **Blue**, bold | Where you already are: this bar's own note, and the folder the path bar is standing on. In rename/move mode the *keep this name* entry stands in the note's place — the same note either way |
 | **Pink**, italic | A note that is linked to and not written yet, listed in the folder Obsidian would make it in. Picking it makes it |
 | **Red** | Rename/move mode only: the name is taken. Still selectable — picking one asks what to do about the file in the way; see [A name that is taken](#a-name-that-is-taken) |
