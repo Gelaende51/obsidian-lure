@@ -929,6 +929,7 @@ const deleteFromViewer = (confirm) => `
 		asked: document.querySelector(".modal-container") ? (document.querySelector(".modal-title")?.textContent ?? "") : null,
 	};
 	${confirm ? `document.querySelector(".modal-container button.mod-warning")?.click(); ${PAUSE(1500)}` : ""}
+	out.after = [...document.querySelectorAll(".notice")].map((n) => n.textContent);
 	document.querySelectorAll(".notice").forEach((n) => n.remove());
 	document.querySelectorAll(".modal-container").forEach((m) => m.remove());
 	document.querySelectorAll(".menu").forEach((m) => m.remove());
@@ -980,7 +981,10 @@ test("viewer menu: a file with no reading to edit can still be deleted", async (
 		${deleteFromViewer(true)}
 	`);
 	expect("it asked rather than refusing", r.asked, (v) => typeof v === "string" && v.length > 0);
+	// The Recycle Bin can take its time over a first item.
+	for (let i = 0; i < 25 && existsSync(pic); i++) await new Promise((done) => setTimeout(done, 200));
 	expect("and the file is gone", existsSync(pic), false);
+	if (existsSync(pic)) console.log(`    notices after confirming: ${JSON.stringify(r.after)}`);
 	rmSync(bed, { recursive: true, force: true });
 });
 

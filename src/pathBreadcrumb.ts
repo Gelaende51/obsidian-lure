@@ -482,7 +482,8 @@ function stemLength(name: string): number {
  */
 function asLanding(relative: string): { path: string; select: number } | null {
 	if (!relative) return null;
-	const cut = relative.indexOf("/");
+	// Outside the vault the path is the machine's, `\` on Windows.
+	const cut = relative.search(/[\\/]/);
 	return { path: relative, select: cut < 0 ? relative.length : cut };
 }
 
