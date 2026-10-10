@@ -72,6 +72,27 @@ const ALL_PEERS = [
 	  why: "a VS Code style folder trail above the editor" },
 	{ set: "ui", id: "another-name", name: "Another Name", kind: "adjacent",
 	  why: "adds a second name after the inline title" },
+	// Found by a keyword pass over community-plugins.json (2026-10): the
+	// ones that write the path or the title, reshape tabs, or rename and
+	// open notes the way the path bar does.
+	{ set: "ui", id: "obsidian-path-title", name: "Path Title", kind: "header",
+	  why: "writes the path into each pane's title" },
+	{ set: "ui", id: "iconic", name: "Iconic", kind: "header",
+	  why: "icons and colours on tabs, files and titles" },
+	{ set: "ui", id: "vertical-tabs", name: "Vertical Tabs", kind: "header",
+	  why: "an alternative tab view that regroups the headers" },
+	{ set: "ui", id: "continuous-mode", name: "Continuous Mode", kind: "header",
+	  why: "shows a tab group's notes as one scroll, each with its header" },
+	{ set: "ui", id: "obsidian-prozen", name: "ProZen", kind: "header",
+	  why: "a full-screen mode that removes the chrome around the note" },
+	{ set: "ui", id: "obsidian-filename-heading-sync", name: "Filename Heading Sync", kind: "adjacent",
+	  why: "renames the file after its first heading" },
+	{ set: "ui", id: "advanced-rename-and-delete-handler", name: "Advanced Rename and Delete Handler", kind: "adjacent",
+	  why: "takes over renames and deletes for the whole vault" },
+	{ set: "ui", id: "mononote", name: "Mononote", kind: "adjacent",
+	  why: "keeps each note in one tab, focusing the one already open" },
+	{ set: "ui", id: "open-tab-settings", name: "Open Tab Settings", kind: "adjacent",
+	  why: "changes where opened files go: new tab, no duplicates" },
 ];
 /** Which set this run checks: the original neighbours, or (test-compat-ui) the header plugins. */
 const PEERS = ALL_PEERS.filter((p) => (p.set ?? "base") === (process.env.LURE_PEER_SET ?? "base"));
