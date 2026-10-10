@@ -1798,6 +1798,11 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 .lure-filename-badge[data-lure-tint]:hover {
 	background-color: rgba(var(--lure-badge-tint), 0.22);
 }
+/* Given up when the row runs short, like the extension it stands for: its
+   own display would otherwise outrank the fitter's. */
+.lure-filename-badge.lure-given-up {
+	display: none;
+}
 /* The extension stays grey whatever the tint, apart from the button. */
 .lure-filename-badge .lure-badge-extension {
 	color: var(--text-faint);

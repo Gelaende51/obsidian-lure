@@ -419,7 +419,10 @@ test("with extensions hidden the badge is the other-paths button, in their colou
 		root.querySelector(".lure-filename-badge > span:last-child")?.click();
 		${PAUSE(400)}
 		const input = root.querySelector(".lure-path-input");
+		const frontAfter = !!root.querySelector(".lure-other-paths");
+		const badgeAfter = !!root.querySelector(".lure-filename .lure-filename-badge .lure-badge-other-paths");
 		return JSON.stringify({
+			frontAfter, badgeAfter,
 			opener: !!opener, front, tint: badge?.dataset.lureTint ?? null,
 			count: opener?.querySelector(".lure-other-paths-count")?.textContent ?? null,
 			menu, input0, value: input?.value ?? null,
@@ -433,6 +436,7 @@ test("with extensions hidden the badge is the other-paths button, in their colou
 	expect("the icon opens the list", r.menu, [NOTE, `${DIR}/Other.md`]);
 	expect("without opening the field", r.input0, false);
 	expect("the rest of the badge writes the extension out", [r.value, r.selected], [NOTE.split("/").pop(), ".md"]);
+	expect("the button stays in the badge, not at the front", [r.badgeAfter, r.frontAfter], [true, false]);
 });
 
 test("the badge: a hand, a grey extension, its list ending where it does, built like the dropdown", async () => {
@@ -508,7 +512,7 @@ test("the badge: a hand, a grey extension, its list ending where it does, built 
 		expect("the field holds the name without it", editing.value, "Note");
 		expect("and the button is not doubled at the front", editing.front, false);
 		expect("pressed there, it writes the extension in, marked", [revealed.value, revealed.selected], ["Note.md", ".md"]);
-		expect("and goes", revealed.badge, false);
+		expect("and stays", revealed.badge, true);
 	} finally {
 		await page.evaluate(`document.querySelector(".lure-path-input")?.blur(); document.querySelector(".lure-other-paths-menu")?.remove(); return true;`);
 		await setSettings(page, { showFileExtension: true });

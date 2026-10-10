@@ -5172,8 +5172,7 @@ export class PathBreadcrumb {
 
 	/**
 	 * The badge pressed while the field is open: the extension goes on the
-	 * end of what the field holds, marked, and the badge has nothing left
-	 * to say.
+	 * end of what the field holds, marked.
 	 */
 	private revealExtensionInField(): void {
 		const input = this.inputEl;
@@ -5184,10 +5183,8 @@ export class PathBreadcrumb {
 			input.value += dotted;
 			input.dispatchEvent(new Event("input", { bubbles: true }));
 		}
-		this.filenameEl.querySelector(":scope > .lure-filename-badge")?.remove();
 		input.focus();
 		input.setSelectionRange(input.value.length - dotted.length, input.value.length);
-		this.updateIndicator();
 	}
 
 	private revealFileExtension(file: TFile): void {
@@ -8714,11 +8711,11 @@ export class PathBreadcrumb {
 		});
 		this.inputEl = inputEl;
 		this.lapArmedFor = null;
-		// The badge stays beside the field while the name in it goes without
-		// its extension: opening the dropdown is no reason for the row to
-		// stop saying what the file is.
+		// The badge stays beside the field: opening the dropdown is no reason
+		// for the row to stop saying what the file is, and the other-paths
+		// button stays at the row's end with it rather than moving to the front.
 		const file = this.file;
-		if (host === this.filenameEl && file?.extension && this.badgeWanted() && !initialText.toLowerCase().endsWith(`.${file.extension.toLowerCase()}`)) {
+		if (host === this.filenameEl && file?.extension && this.badgeWanted()) {
 			this.renderFileBadge(host, file);
 		}
 
