@@ -299,6 +299,11 @@ const OTHER_PATH_TINTS: Record<OtherPath["kind"], string> = {
 	hard: "hard",
 	target: "hard",
 };
+/** The colour other paths give their button: the strongest kind among them. */
+function otherPathsTint(others: readonly OtherPath[]): string {
+	const strongest = (["hard", "target", "symbolic", "alias", "name"] as const).find((kind) => others.some((other) => other.kind === kind));
+	return strongest ? OTHER_PATH_TINTS[strongest] : "alias";
+}
 /** The icon each kind of other path is listed under. */
 const OTHER_PATH_ICONS: Record<OtherPath["kind"], string> = {
 	alias: "signpost",
@@ -4911,10 +4916,28 @@ export class PathBreadcrumb {
 			const link = disk.targetOfLink(file.path) ? "symbolic" : disk.sameFile(file.path).length ? "hard" : "none";
 			const facts = { label: file.name, kind: "file" as const, path: file.path, disabled: false, empty: file.stat.size === 0, endIcon: LINK_ICONS[link] };
 			const badge = this.filenameEl.createSpan({ cls: `${EXTENSION_CLASS} lure-filename-badge` });
-			const icon = badge.createSpan({ cls: "lure-suggest-type-icon lure-suggest-has-kind" });
-			setIcon(icon, typeIcon(file.extension));
-			if (facts.endIcon) setIcon(icon.createSpan({ cls: "lure-suggest-kind" }), facts.endIcon);
-			if (facts.empty) icon.createSpan({ cls: "lure-suggest-empty" });
+			const others = otherPaths(this.plugin.app, disk, file);
+			if (others.length) {
+				// A note with other paths: the other-paths button takes the type
+				// icon's place, and the whole badge its colour. The icon opens
+				// their list; the rest of the badge still writes the extension out.
+				badge.dataset.lureTint = otherPathsTint(others);
+				const opener = badge.createSpan({ cls: "lure-suggest-type-icon lure-badge-other-paths" });
+				setIcon(opener, "split");
+				opener.createSpan({ cls: "lure-other-paths-count", text: String(others.length) });
+				setIcon(opener.createSpan({ cls: "lure-other-paths-chevron" }), "chevron-down");
+				setTooltip(opener, t("otherPathsTooltip"));
+				opener.addEventListener("mousedown", (evt) => evt.preventDefault());
+				opener.addEventListener("click", (evt) => {
+					evt.stopPropagation();
+					this.showIndicatorMenu(evt);
+				});
+			} else {
+				const icon = badge.createSpan({ cls: "lure-suggest-type-icon lure-suggest-has-kind" });
+				setIcon(icon, typeIcon(file.extension));
+				if (facts.endIcon) setIcon(icon.createSpan({ cls: "lure-suggest-kind" }), facts.endIcon);
+				if (facts.empty) icon.createSpan({ cls: "lure-suggest-empty" });
+			}
 			badge.createSpan({ text: `.${file.extension}` });
 			setTooltip(badge, `${describeFile(file.extension, facts)}\n${t("suggestShowExtension")}`);
 		}
@@ -6756,6 +6779,11 @@ export class PathBreadcrumb {
 	 * The menu lists the matches, then the note's own path in blue, then the
 	 * other paths in their colours.
 	 */
+	/** Whether the row ends in the open file's badge: extensions hidden, a file in the vault, no field open. */
+	private badgeShows(): boolean {
+		return !this.plugin.settings.showFileExtension && !!this.file?.extension && this.externalPath === null && !this.showingLocations && this.inputEl === null;
+	}
+
 	private updateIndicator(): void {
 		const file = this.file;
 		const inVault = this.externalPath === null && !this.showingLocations;
@@ -6767,7 +6795,9 @@ export class PathBreadcrumb {
 		for (const stray of Array.from(this.vaultSegmentEl.querySelectorAll(".lure-other-paths"))) {
 			if (stray !== this.indicatorEl) stray.remove();
 		}
-		if (!others.length && matches === null) {
+		// The badge at the row's end carries them while it shows: its icon is
+		// the button then, and a second one at the front would say it twice.
+		if ((!others.length && matches === null) || (matches === null && this.badgeShows())) {
 			this.indicatorEl?.remove();
 			this.indicatorEl = null;
 			return;
@@ -6790,8 +6820,7 @@ export class PathBreadcrumb {
 		button.createSpan({ cls: "lure-other-paths-count", text: String(count) });
 		// A small down chevron at the bottom left: pressing it opens a list.
 		setIcon(button.createSpan({ cls: "lure-other-paths-chevron" }), "chevron-down");
-		const strongest = (["hard", "target", "symbolic", "alias", "name"] as const).find((kind) => others.some((other) => other.kind === kind));
-		const colour = matches !== null ? (matches.length ? "match" : "none") : strongest ? OTHER_PATH_TINTS[strongest] : "alias";
+		const colour = matches !== null ? (matches.length ? "match" : "none") : otherPathsTint(others);
 		button.dataset.lureTint = colour;
 		setTooltip(button, matches !== null ? t("globMatchesTooltip", { count: String(count) }) : t("otherPathsTooltip"));
 	}
@@ -6859,6 +6888,9 @@ export class PathBreadcrumb {
 			left: `${Math.round(at.left)}px`,
 			top: `${Math.round(bar.getBoundingClientRect().bottom)}px`,
 		});
+		// From the badge at the row's end it would run off the window: kept in.
+		const overflow = menu.getBoundingClientRect().right - window.innerWidth + 8;
+		if (overflow > 0) menu.setCssProps({ left: `${Math.max(0, Math.round(at.left - overflow))}px` });
 		window.setTimeout(() => {
 			document.addEventListener("pointerdown", away, true);
 			document.addEventListener("keydown", onKey, true);

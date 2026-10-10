@@ -862,6 +862,12 @@ the strongest kind among them: a hard link **purple**, a symbolic link
 **pink**, an alias **orange**. In its menu the note's own path comes first, in
 **blue**, and every other path is drawn in its kind's colour.
 
+With file extensions hidden, the button moves to the **badge at the row's
+end**: it takes the place of the file's type icon, and the whole badge takes
+its colour. Pressing the icon opens the list; pressing the rest of the badge
+writes the extension out, as before. While the field is open the badge is
+not there, and the button stands in front of the vault's segment again.
+
 Sync tools — Obsidian Sync, Syncthing, git — do not keep hard links: on another
 device the two names become two copies. Obsidian also reads a hard-linked note
 again only under the name that was edited; this plugin re-reads the others when

@@ -11,7 +11,7 @@
  * Requires --remote-debugging-port=9222 and the test vault open.
  */
 
-import { CLEAR_NOTICES, connect, PAUSE, pressKey, quiesce, reloadPlugin, parkPointer } from "./cdpSession.mjs";
+import { CLEAR_NOTICES, connect, PAUSE, pressKey, quiesce, reloadPlugin, parkPointer, setSettings } from "./cdpSession.mjs";
 import { createSuite } from "./harness.mjs";
 
 const DIR = "Lure-links";
@@ -120,12 +120,12 @@ test("Shift+Enter, renaming, makes a hard link and records both paths", async ()
 		${PAUSE(400)}
 		await app.workspace.getLeaf(false).openFile(app.vault.getAbstractFileByPath(${JSON.stringify(NOTE)}));
 		${PAUSE(900)}
-		const el = app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-other-paths");
+		const el = app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-other-paths, .lure-badge-other-paths");
 		el?.click();
 		${PAUSE(300)}
 		const tints = [...document.querySelectorAll(".menu .menu-item")].map((e) => e.dataset.lureTint ?? null);
 		document.querySelector(".menu")?.remove();
-		return JSON.stringify({ count: el?.querySelector(".lure-other-paths-count")?.textContent ?? null, tint: el?.dataset.lureTint ?? null, tints });
+		return JSON.stringify({ count: el?.querySelector(".lure-other-paths-count")?.textContent ?? null, tint: el?.closest("[data-lure-tint]")?.dataset.lureTint ?? null, tints });
 	`).then(JSON.parse);
 	expect("the button counts one other path", button.count, "1");
 	expect("purple, for a hard link", button.tint, "hard");
@@ -201,7 +201,7 @@ test("the other-paths button shows exactly when there are other paths", async ()
 	const button = () => page.evaluate(`
 		await app.workspace.getLeaf(false).openFile(app.vault.getAbstractFileByPath(${JSON.stringify(NOTE)}));
 		${PAUSE(700)}
-		return !!app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-other-paths");
+		return !!app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-other-paths, .lure-badge-other-paths");
 	`);
 	expect("none without other paths", await button(), false);
 	await page.evaluate(`
@@ -212,7 +212,7 @@ test("the other-paths button shows exactly when there are other paths", async ()
 	`);
 	expect("there with one", await button(), true);
 	const items = await page.evaluate(`
-		app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-other-paths").click();
+		app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-other-paths, .lure-badge-other-paths").click();
 		${PAUSE(300)}
 		const titles = [...document.querySelectorAll(".menu .menu-item-title")].map((e) => e.textContent);
 		document.body.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
@@ -221,7 +221,7 @@ test("the other-paths button shows exactly when there are other paths", async ()
 	`).then(JSON.parse);
 	expect("its menu lists the note, then the path", items, [NOTE, `${DIR}/Other.md`]);
 	const draggable = await page.evaluate(`
-		app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-other-paths").click();
+		app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-other-paths, .lure-badge-other-paths").click();
 		${PAUSE(300)}
 		const rows = [...document.querySelectorAll(".lure-other-paths-menu .menu-item")];
 		const out = rows.map((r) => r.getAttribute("draggable"));
@@ -381,6 +381,46 @@ test("the unchanged path with another chord converts a hard link to a symbolic l
 	const lists = await listsOf(NOTE);
 	expect("listed as one", lists["paths-symlinks"], [`${DIR}/Hard.md`]);
 	expect("and no longer as a hard link", lists["paths-hardlinks"] ?? [], []);
+});
+
+test("with extensions hidden the badge is the other-paths button, in their colour", async () => {
+	await setSettings(page, { showFileExtension: false });
+	await page.evaluate(`
+		const f = app.vault.getAbstractFileByPath(${JSON.stringify(NOTE)});
+		await app.fileManager.processFrontMatter(f, (fm) => { fm.paths = [${JSON.stringify(`${DIR}/Other.md`)}]; });
+		${PAUSE(500)}
+		await app.workspace.getLeaf(false).openFile(f);
+		${PAUSE(800)}
+		return true;
+	`);
+	const r = await page.evaluate(`
+		const root = app.workspace.getLeaf(false).view.containerEl;
+		const badge = root.querySelector(".lure-filename-badge");
+		const opener = badge?.querySelector(".lure-badge-other-paths");
+		const front = !!root.querySelector(".lure-other-paths");
+		opener?.click();
+		${PAUSE(300)}
+		const menu = [...document.querySelectorAll(".lure-other-paths-menu .menu-item-title")].map((e) => e.textContent);
+		document.querySelector(".lure-other-paths-menu")?.remove();
+		${PAUSE(100)}
+		const input0 = !!root.querySelector(".lure-path-input");
+		badge?.querySelector("span:last-child")?.click();
+		${PAUSE(400)}
+		const input = root.querySelector(".lure-path-input");
+		return JSON.stringify({
+			opener: !!opener, front, tint: badge?.dataset.lureTint ?? null,
+			count: opener?.querySelector(".lure-other-paths-count")?.textContent ?? null,
+			menu, input0, value: input?.value ?? null,
+			selected: input ? input.value.slice(input.selectionStart, input.selectionEnd) : null,
+		});
+	`).then(JSON.parse);
+	expect("the badge's icon is the button", r.opener, true);
+	expect("and no second one at the front", r.front, false);
+	expect("the badge takes the colour", r.tint, "alias");
+	expect("with the count", r.count, "1");
+	expect("the icon opens the list", r.menu, [NOTE, `${DIR}/Other.md`]);
+	expect("without opening the field", r.input0, false);
+	expect("the rest of the badge writes the extension out", [r.value, r.selected], [NOTE.split("/").pop(), ".md"]);
 });
 
 await run();

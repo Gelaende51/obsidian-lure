@@ -1771,6 +1771,27 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 	content: "0";
 }
 
+/* A note with other paths: the badge takes their colour, faintly behind
+   and fully in front, and its icon is the other-paths button. */
+.lure-filename-badge[data-lure-tint] {
+	--lure-badge-tint: var(--color-orange-rgb);
+	color: rgb(var(--lure-badge-tint));
+	background-color: rgba(var(--lure-badge-tint), 0.12);
+}
+.lure-filename-badge[data-lure-tint="symbolic"] { --lure-badge-tint: var(--color-pink-rgb); }
+.lure-filename-badge[data-lure-tint="hard"] { --lure-badge-tint: var(--color-purple-rgb); }
+.lure-filename-badge[data-lure-tint]:hover {
+	background-color: rgba(var(--lure-badge-tint), 0.22);
+}
+.lure-badge-other-paths {
+	cursor: var(--cursor);
+	margin-inline-end: 3px;
+}
+.lure-badge-other-paths .lure-other-paths-count,
+.lure-badge-other-paths .lure-other-paths-chevron {
+	background-color: var(--background-primary);
+}
+
 /* The other-paths menu, built here so its rows can be dragged and
    right-clicked: placed by the code under the button. */
 .menu.lure-other-paths-menu {
