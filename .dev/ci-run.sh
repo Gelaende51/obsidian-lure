@@ -30,6 +30,10 @@ PLUGINS=(
 	-p id:home-launcher
 	-p id:obsidian-outliner -p id:table-editor-obsidian
 )
+# EXTRA_PLUGINS: more community plugin ids to install (and so to load once
+# before ci-prepare turns them off) — how test-systems.yml finds which of
+# them leaves something behind.
+for id in ${EXTRA_PLUGINS:-}; do PLUGINS+=(-p "id:$id"); done
 # The header plugins test-compat-ui checks are installed for it alone: some
 # keep patches after being disabled, and would be in every other suite's way.
 if [ "$SUITE" = test-compat-ui ]; then
