@@ -78,7 +78,7 @@ import {
 	classifyTarget,
 } from "./segmentGestures";
 import { LABELS, obsidianLabel } from "./obsidianLabels";
-import { makeDraggable, makeDropTarget, showContextMenu } from "./nativeFileItem";
+import { makeDraggable, makeDropTarget, showContextMenu, wireNativeFileItem } from "./nativeFileItem";
 import { warnsOnOpen } from "./fileKinds";
 import { t } from "./lang";
 import { confirmAction } from "./prompts";
@@ -6478,6 +6478,7 @@ export class PathBreadcrumb {
 	 * anywhere else, the completion it has always been.
 	 */
 	private pressTab(input: HTMLInputElement): void {
+		if (this.completeBraceAlternative(input)) return;
 		if (this.turnCycle(input, 1)) return;
 		if (this.completeToFork(input)) return;
 		if (this.startCycle(input)) return;
@@ -6690,7 +6691,7 @@ export class PathBreadcrumb {
 			return;
 		}
 		if (ownAlias) await forgetOtherPath(this.plugin.app, file, path);
-		else if (path === file.path || this.plugin.app.vault.getAbstractFileByPath(path) || this.plugin.aliasRows.resolve(path)) {
+		else if (path === file.path || this.vaultEntry(path) || this.plugin.aliasRows.resolve(path)) {
 			new Notice(t("noticeLinkTaken", { path }));
 			this.inputEl?.focus();
 			return;
@@ -6759,43 +6760,73 @@ export class PathBreadcrumb {
 
 	private showIndicatorMenu(evt: MouseEvent): void {
 		const file = this.file;
-		const menu = new Menu();
-		const tint = (item: unknown, colour: string): void => {
-			(item as { dom?: HTMLElement }).dom?.setAttribute("data-lure-tint", colour);
-		};
+		const app = this.plugin.app;
+		type Entry = { path: string; icon: string; tint: string; go: (() => void) | null };
+		const entries: Entry[] = [];
 		for (const path of (this.globMatches ?? []).slice(0, 200)) {
-			menu.addItem((item) => {
-				item.setTitle(path).setIcon("file-search").onClick(() => {
-					const there = this.plugin.app.vault.getAbstractFileByPath(path);
+			entries.push({
+				path,
+				icon: "file-search",
+				tint: "match",
+				go: () => {
+					const there = app.vault.getAbstractFileByPath(path);
 					if (there instanceof TFile) this.navigateToFile(there);
-				});
-				tint(item, "match");
+				},
 			});
 		}
 		if (file && this.externalPath === null) {
-			const others = otherPaths(this.plugin.app, this.plugin.diskLinks, file);
-			if (others.length) {
-				menu.addItem((item) => {
-					item.setTitle(file.path).setIcon("file").setDisabled(true);
-					tint(item, "current");
-				});
-			}
+			const others = otherPaths(app, this.plugin.diskLinks, file);
+			if (others.length) entries.push({ path: file.path, icon: "file", tint: "current", go: null });
 			for (const other of others) {
-				menu.addItem((item) => {
-					item.setTitle(other.path).setIcon(OTHER_PATH_ICONS[other.kind]).onClick(() => this.goToOtherPath(other));
-					tint(item, OTHER_PATH_TINTS[other.kind]);
-				});
+				entries.push({ path: other.path, icon: OTHER_PATH_ICONS[other.kind], tint: OTHER_PATH_TINTS[other.kind], go: () => this.goToOtherPath(other) });
 			}
 		}
-		(menu as unknown as { dom?: HTMLElement }).dom?.addClass("lure-other-paths-menu");
-		// Under the button and flush with the bottom of the path bar, where
-		// the dropdown opens, rather than wherever the pointer happened to be.
+		if (!entries.length) return;
+
+		// Not Obsidian's Menu: its items cannot be dragged or right-clicked.
+		// The same look, with each file in it wired like a File Explorer row —
+		// drag it into a note for a link, onto a folder to move it, or
+		// right-click it for the file's own menu.
+		document.querySelector(".lure-other-paths-menu")?.remove();
+		const menu = document.body.createDiv({ cls: "menu lure-other-paths-menu" });
+		const close = (): void => {
+			menu.remove();
+			document.removeEventListener("pointerdown", away, true);
+			document.removeEventListener("keydown", onKey, true);
+		};
+		const away = (e: PointerEvent): void => {
+			if (!menu.contains(e.target as Node)) close();
+		};
+		const onKey = (e: KeyboardEvent): void => {
+			if (e.key === "Escape") close();
+		};
+		for (const entry of entries) {
+			const row = menu.createDiv({ cls: "menu-item", attr: { "data-lure-tint": entry.tint } });
+			setIcon(row.createDiv({ cls: "menu-item-icon" }), entry.icon);
+			row.createDiv({ cls: "menu-item-title", text: entry.path });
+			if (!entry.go) row.addClass("is-disabled");
+			const there = app.vault.getAbstractFileByPath(entry.path);
+			if (there instanceof TFile) wireNativeFileItem(app, row, there);
+			row.addEventListener("click", () => {
+				close();
+				entry.go?.();
+			});
+		}
+		// Under the button and flush with the bottom of the path bar, where the
+		// dropdown opens.
 		const button = (evt.currentTarget as HTMLElement | null) ?? this.indicatorEl;
 		const bar = this.titleEl.closest<HTMLElement>(".view-header") ?? this.titleEl;
-		const at = button?.getBoundingClientRect();
-		if (at) menu.showAtPosition({ x: at.left, y: bar.getBoundingClientRect().bottom });
-		else menu.showAtMouseEvent(evt);
+		const at = button?.getBoundingClientRect() ?? { left: evt.clientX };
+		menu.setCssProps({
+			left: `${Math.round(at.left)}px`,
+			top: `${Math.round(bar.getBoundingClientRect().bottom)}px`,
+		});
+		window.setTimeout(() => {
+			document.addEventListener("pointerdown", away, true);
+			document.addEventListener("keydown", onKey, true);
+		});
 	}
+
 
 	/**
 	 * The pattern the field spells, counted from the vault root, or null when
@@ -6817,7 +6848,7 @@ export class PathBreadcrumb {
 			const parent = prefix;
 			prefix = prefix ? `${prefix}/${segment}` : segment;
 			if (!hasGlobChars(segment)) continue;
-			if (vault.getAbstractFileByPath(prefix)) return null;
+			if (this.vaultEntry(prefix)) return null;
 			// Typed without its extension, the way a note is typed.
 			const folder = parent ? vault.getAbstractFileByPath(parent) : vault.getRoot();
 			const lower = segment.toLowerCase();
@@ -6938,6 +6969,52 @@ export class PathBreadcrumb {
 		const file = this.file;
 		if (!file || this.externalPath !== null || path === file.path) return false;
 		return otherPaths(this.plugin.app, this.plugin.diskLinks, file).some((other) => other.path === path);
+	}
+
+	/**
+	 * The alternative the caret is typing inside an open brace of the step it
+	 * is in — `{Cake,Pi|` gives `Pi` — or null outside one, or with patterns off.
+	 */
+	private braceAlternative(input: HTMLInputElement): { start: number; end: number; text: string } | null {
+		if (!this.plugin.settings.useGlobs || this.renameMode || this.externalPath !== null) return null;
+		const caret = input.selectionStart ?? 0;
+		if (caret !== (input.selectionEnd ?? 0)) return null;
+		const before = input.value.slice(0, caret);
+		const stepStart = Math.max(before.lastIndexOf("/"), before.lastIndexOf("\\")) + 1;
+		const step = before.slice(stepStart);
+		const open = step.lastIndexOf("{");
+		if (open < 0 || step.lastIndexOf("}") > open) return null;
+		const start = stepStart + Math.max(open, step.lastIndexOf(",")) + 1;
+		return { start, end: caret, text: input.value.slice(start, caret) };
+	}
+
+	/** Writes a name in as the alternative being typed, and leaves the brace open for the next. */
+	private fillBraceAlternative(input: HTMLInputElement, name: string): void {
+		const alt = this.braceAlternative(input);
+		if (!alt) return;
+		this.preview = null;
+		this.settleSuggestion(false);
+		input.value = input.value.slice(0, alt.start) + name + input.value.slice(alt.end);
+		const caret = alt.start + name.length;
+		input.setSelectionRange(caret, caret);
+		input.dispatchEvent(new Event("input"));
+		input.focus();
+	}
+
+	/**
+	 * Tab inside an open brace: the alternative is completed against the
+	 * folder's names — as far as they agree, or whole where one is left.
+	 */
+	private completeBraceAlternative(input: HTMLInputElement): boolean {
+		const alt = this.braceAlternative(input);
+		if (!alt) return false;
+		const names = [...new Set(this.tabCandidates(alt.text).candidates.map((candidate) => candidate.label))].filter((name) =>
+			name.toLowerCase().startsWith(alt.text.toLowerCase()),
+		);
+		if (!names.length) return true;
+		const next = names.length === 1 ? (names[0] ?? alt.text) : commonPrefix(names);
+		if (next.length > alt.text.length) this.fillBraceAlternative(input, next);
+		return true;
 	}
 
 	/** Puts a choice in place of the step the caret is in, leaving the rest of the field as typed. */
@@ -7876,7 +7953,11 @@ export class PathBreadcrumb {
 			return;
 		}
 		const base = this.currentFolderPath();
-		this.descendCarrying(normalizePath(base ? `${base}/${typed}` : typed), rest);
+		// Into the folder that is there in another case, rather than a new
+		// one beside it that only Linux could tell apart.
+		const wanted = normalizePath(base ? `${base}/${typed}` : typed);
+		const there = this.vaultEntry(wanted);
+		this.descendCarrying(there instanceof TFolder ? there.path : wanted, rest);
 	}
 
 	/**
@@ -8075,7 +8156,7 @@ export class PathBreadcrumb {
 	/** Whether a path names a folder, which is to say somewhere the walk could go on into. */
 	private isFolderPath(path: string, external: boolean): boolean {
 		if (external) return isExternalFolder(path);
-		return this.plugin.app.vault.getAbstractFileByPath(path) instanceof TFolder;
+		return this.vaultEntry(path) instanceof TFolder;
 	}
 
 	private currentFolderPath(): string {
@@ -8892,6 +8973,7 @@ export class PathBreadcrumb {
 				warnsOnOpen: (extension) => this.warnsOnOpen(extension),
 				isFolderNote: (path) => this.isFolderNote(path),
 				showExtensions: this.plugin.settings.showFileExtension,
+				braceAlt: this.braceAlternative(inputEl)?.text ?? null,
 				globActive: this.patternFor(this.preview?.text ?? (this.typedFieldValue() || inputEl.value)) !== null,
 				isCurrentNote: (path) => this.isCurrentNotePath(path),
 				createRow: this.createRow(inputEl),
@@ -8971,6 +9053,11 @@ export class PathBreadcrumb {
 				// The file Enter would make: picking it makes it, as Enter does.
 				if (value.creates) {
 					void this.handleTypedSubmit(this.typedFieldValue() || inputEl.value, paneType);
+					return;
+				}
+				// Inside an open brace: the name goes in as the alternative being typed.
+				if (this.braceAlternative(inputEl) && (value.kind === "file" || value.kind === "folder")) {
+					this.fillBraceAlternative(inputEl, this.fieldName(value.label, value.kind));
 					return;
 				}
 				// A pattern, or a name it matches: the step collapses to that

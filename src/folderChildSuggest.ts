@@ -137,6 +137,8 @@ export interface SuggestContext {
 	 * not renaming, inside the vault, and not a real name.
 	 */
 	globActive: boolean;
+	/** The alternative being typed inside an open brace, `{Cake,Pi|`, or null. */
+	braceAlt: string | null;
 	/** Whether a path is one of the open note's other paths. */
 	isCurrentNote: (path: string) => boolean;
 	/** The file Enter would make of what was typed, when it would make one. */
@@ -1067,6 +1069,14 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		// and its braces opened one group at a time — each a way to narrow the
 		// step to a choice.
 		const typed = (context.queryOverride ?? query).trim();
+		// Inside an open brace the list is about the one alternative being
+		// typed: the names it begins, to complete or to pick into the brace.
+		if (context.braceAlt !== null) {
+			const alt = context.braceAlt.toLowerCase();
+			const rows = leadingFirst(this.buildSuggestions(context, (name) => name.toLowerCase().startsWith(alt)), alt);
+			this.listedLabels = rows.map((row) => row.label);
+			return this.capped(rows);
+		}
 		if (context.globActive && hasGlobChars(typed)) {
 			// Dot-files are already kept out by `shouldList` where they are hidden.
 			const dot = true;
@@ -1078,7 +1088,17 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 				endIcon: "asterisk",
 			}));
 			const found = this.buildSuggestions(context, (name) => matchesName(typed, name, dot)).map((row) => ({ ...row, glob: true }));
-			const rows = [...steps, ...found];
+			// A brace opened all the way can spell a name that is listed as a
+			// match anyway; the match stands for it, once.
+			const names = new Set(found.flatMap((row) => [row.label.toLowerCase(), row.label.toLowerCase().replace(/\.md$/, "")]));
+			const kept = steps.filter((step, i) => i === 0 || hasGlobChars(step.label) || !names.has(step.label.toLowerCase()));
+			const seen = new Set<string>();
+			const rows = [...kept, ...found].filter((row) => {
+				const key = `${row.kind}:${row.path.toLowerCase()}`;
+				if (seen.has(key)) return false;
+				seen.add(key);
+				return true;
+			});
 			this.listedLabels = rows.map((row) => row.label);
 			return this.capped(rows);
 		}

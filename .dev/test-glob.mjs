@@ -225,4 +225,25 @@ test("Tab going round file names highlights each one in the list", async () => {
 	if (!named.every((s) => s.value === s.lit)) console.log("    " + JSON.stringify(seen));
 });
 
+test("inside an open brace the list and Tab are about the alternative being typed", async () => {
+	await inFolder();
+	await type("{Cake o");
+	const rows = (await listed()).map((r) => r.label);
+	expect("the names that alternative begins", rows.includes("Cake one.md") && !rows.includes("Pie.md"), true);
+	await pressKey(page, "Tab");
+	await settle(400);
+	expect("Tab completes it inside the brace", await page.evaluate(`return document.querySelector(".lure-path-input")?.value ?? null;`), "{Cake one.md");
+	await type(",Pi");
+	await pressKey(page, "Tab");
+	await settle(400);
+	expect("and the next one", await page.evaluate(`return document.querySelector(".lure-path-input")?.value ?? null;`), "{Cake one.md,Pie.md");
+});
+
+test("a brace opened to names that are listed shows each of them once", async () => {
+	await inFolder();
+	await type("{Cake one,Pie}");
+	const labels = (await listed()).map((r) => r.label.toLowerCase().replace(/\.md$/, ""));
+	expect("no name twice", labels.filter((l, i) => labels.indexOf(l) !== i), []);
+});
+
 await run();

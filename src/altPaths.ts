@@ -552,12 +552,16 @@ export class AliasRows {
 
 	/** The note a typed path stands for when it is an alias, or null. */
 	resolve(path: string): TFile | null {
-		const folder = parentOf(path);
-		const name = nameOf(path);
+		// Case-blind, as typing a path is everywhere else.
+		const lowerFolder = parentOf(path).toLowerCase();
+		const name = nameOf(path).toLowerCase();
 		const bare = name.replace(/\.md$/i, "");
-		const row = this.in(folder).find((entry) =>
-			entry.kind === "alias" ? entry.name === name : entry.name === bare || entry.name === name,
-		);
+		this.byFolder ??= this.collect();
+		const rows = [...this.byFolder].filter(([folder]) => folder.toLowerCase() === lowerFolder).flatMap(([, entries]) => entries);
+		const row = rows.find((entry) => {
+			const own = entry.name.toLowerCase();
+			return entry.kind === "alias" ? own === name : own === bare || own === name;
+		});
 		const file = row ? this.app.vault.getAbstractFileByPath(row.target) : null;
 		return file instanceof TFile ? file : null;
 	}

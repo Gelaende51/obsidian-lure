@@ -219,6 +219,15 @@ test("the other-paths button shows exactly when there are other paths", async ()
 		return JSON.stringify(titles);
 	`).then(JSON.parse);
 	expect("its menu lists the note, then the path", items, [NOTE, `${DIR}/Other.md`]);
+	const draggable = await page.evaluate(`
+		app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-other-paths").click();
+		${PAUSE(300)}
+		const rows = [...document.querySelectorAll(".lure-other-paths-menu .menu-item")];
+		const out = rows.map((r) => r.getAttribute("draggable"));
+		document.querySelector(".lure-other-paths-menu")?.remove();
+		return JSON.stringify(out);
+	`).then(JSON.parse);
+	expect("the note's own row can be dragged like a File Explorer row", draggable[0], "true");
 });
 
 test("renaming a hard link rewrites its entry in paths", async () => {

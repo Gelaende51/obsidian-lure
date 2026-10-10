@@ -418,4 +418,15 @@ test("the settings come in groups, with a way back to the defaults", async () =>
 	expect("a restore row among them", r.restore, true);
 });
 
+test("a folder typed in another case is stepped into, not made again", async () => {
+	await page.evaluate(`if (!app.vault.getAbstractFileByPath(${JSON.stringify(`${DIR}/Cave`)})) await app.vault.createFolder(${JSON.stringify(`${DIR}/Cave`)}); ${PAUSE(300)} return true;`);
+	await inOwnFolder();
+	await type("cave");
+	await pressKey(page, "/");
+	await settle(400);
+	const chip = (await look()).chips.at(-1);
+	expect("the chip is the folder as it is spelled", chip?.text, "Cave");
+	expect("and not red", chip?.missing, false);
+});
+
 await run();
