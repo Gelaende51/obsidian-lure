@@ -220,10 +220,15 @@ jobs:
         run: |
           for i in $(seq 1 270); do
             [ -f /mnt/shared/done.txt ] && break
+            # Setup reports its errors in setup.log: no use waiting past one.
+            if grep -qa "FullyQualifiedErrorId" /mnt/shared/setup.log 2>/dev/null; then
+              echo "::error::setup failed in the guest"; tr -d '\r' < /mnt/shared/setup.log; exit 1
+            fi
             if [ $((i % 10)) -eq 0 ]; then echo "--- minute $i"; docker logs --tail 3 windows 2>&1; ls /mnt/shared; fi
             sleep 60
           done
           echo "--- results"; cat /mnt/shared/results.txt 2>/dev/null || echo "none"
+          [ -f /mnt/shared/run-error.txt ] && { echo "::error::the run in the guest stopped"; tr -d '\r' < /mnt/shared/run-error.txt; }
           [ -f /mnt/shared/done.txt ] || { echo "::error::the guest did not finish"; docker logs --tail 40 windows; exit 1; }
           ! grep -qvE ' (0|2)$' /mnt/shared/results.txt
       - name: Keep the guest's logs
