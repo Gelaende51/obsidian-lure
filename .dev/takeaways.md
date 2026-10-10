@@ -2605,11 +2605,16 @@ from the logged readings; the factors will move as readings accumulate.
 - A hard link is one file under two names, but Obsidian re-reads it only under the name that was written through. After writing the `paths` lists into a hard-linked note, the other names are re-read explicitly (`refreshNames`), or their metadata stays stale until edited.
 - Sync tools (Obsidian Sync, Syncthing, git) do not keep hard links: on the other device the two names arrive as two copies.
 - A symbolic link written with an absolute target breaks when the vault moves; written relative to the link's folder it survives. On Windows `fs.symlink` needs Developer Mode or the symlink privilege — a GitHub Windows runner has it.
+- Links changed outside Obsidian, as Obsidian reports them: a hard link made with `ln` is a `create`; an editor saving through a temp file and a rename turns a hard link into a file of its own, reported only as a `modify`; a symbolic link made or removed raises **no vault event at all** (and is not listed). Keeping the lists true takes a disk check after create/delete/rename, after a modify of a hard-linked name, at start (first metadata `resolved`), and whenever a note is shown — the symbolic links found by reading the vault's folders (`readdir` with file types), not the index.
+- `workspace.on("file-open")` fires for the active pane only; a pane opened in the background does not raise it. And a path bar that redraws once for two quick opens ending on the note it showed before sees no change. A trigger "when a note is shown" needs both.
+- Writing a note back to a text Obsidian has seen before (frontmatter added, then removed again) left its metadata cache holding the lists from before, for longer than 12 s on CI. Writing the same text once more through `vault.modify` makes it read the note again.
 - Files outside the vault have no frontmatter and no index, so their other paths are recorded by the plugin (`external-links.json` beside `data.json`, not in it: *Restore defaults* resets the settings object and would take them along) and checked against the disk (device+inode for hard links, `readlink` for symbolic ones) each time they are shown.
 
 ## Obsidian API odds met in this round
 - `ButtonComponent.setDestructive` does not exist on older Obsidian; `setWarning` is deprecated. Feature-test and fall back to the `mod-warning` class.
 - `PluginSettingTab.display()` is deprecated since 1.13 in favour of `getSettingDefinitions()`; eslint flags it, but the minimum app version still needs it.
+- Obsidian's bundled Lucide answers `setIcon(el, "split")` with `git-branch-plus` — an older icon once called split — not Lucide's current split (two arrows parting). Draw that one from its path data (`GLYPH_ICONS` in systemLocations.ts).
+- A utility class that hides (`.lure-given-up { display: none }`) loses to a later rule of the same specificity that sets `display` — the extension badge never went when the row ran short. Pair it with the element's own class.
 - A count or mark drawn as a child element changes the row's `textContent`, which the suites (and the keyboard filter) read as the name. Drawing it from CSS (`::after { content: attr(data-count) }`) keeps the label text exactly the name.
 
 ## The installer and the app are versioned apart

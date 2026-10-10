@@ -2320,6 +2320,14 @@ test("long paths: the extension goes second, straight after the vault name", asy
 	`);
 	// With extensions hidden the badge stands for the extension, and goes
 	// where it would: as short as the row gets here, it is not on screen.
+	const readBadge = () => settledRead(`
+		const c = app.workspace.getLeavesOfType("markdown")[0].view.containerEl.querySelector(".view-header-title-container");
+		const b = c.querySelector(".lure-filename-badge");
+		return JSON.stringify({ there: !!b, shown: b ? b.getBoundingClientRect().width > 0 : null, givenUp: b ? b.classList.contains("lure-given-up") : null });
+	`).then(JSON.parse);
+	await squeezeTo(Math.round(wanted * 1.15));
+	const roomyBadge = await readBadge();
+	expect("with room, the badge is shown", [roomyBadge.there, roomyBadge.givenUp, roomyBadge.shown], [true, false, true]);
 	await squeezeTo(Math.round(wanted * 0.46));
 	const badge = JSON.parse(await settledRead(`
 		const c = app.workspace.getLeavesOfType("markdown")[0].view.containerEl.querySelector(".view-header-title-container");
