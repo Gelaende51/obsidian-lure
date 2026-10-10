@@ -94,6 +94,7 @@ export async function connect() {
 	const pending = new Map();
 	socket.addEventListener("message", (event) => {
 		const message = JSON.parse(event.data);
+		if (message.method === "Debugger.paused") onPaused?.(message.params);
 		const settle = pending.get(message.id);
 		if (!settle) return;
 		pending.delete(message.id);
@@ -117,6 +118,32 @@ export async function connect() {
 			}
 		});
 
+	// The first time the page stops answering, where it is: the debugger can
+	// still stop a script that loops, and a pause that never comes says the
+	// page is blocked outside JavaScript (a sync call into the main process).
+	let onPaused = null;
+	let sampled = false;
+	const sampleStack = async () => {
+		if (sampled) return;
+		sampled = true;
+		const within = (promise, ms) => Promise.race([promise, new Promise((r) => setTimeout(() => r(null), ms))]);
+		const paused = new Promise((resolve) => (onPaused = resolve));
+		await within(send("Debugger.enable").catch(() => null), 5000);
+		await within(send("Debugger.pause").catch(() => null), 5000);
+		const params = await within(paused, 5000);
+		onPaused = null;
+		if (!params) {
+			console.log("    stuck page: the debugger could not pause it");
+			return;
+		}
+		console.log("    stuck page, paused in:");
+		for (const frame of params.callFrames.slice(0, 12)) {
+			console.log(`      ${frame.functionName || "(anonymous)"}  ${(frame.url || "?").split("/").pop()}:${frame.location.lineNumber + 1}`);
+		}
+		await within(send("Debugger.resume").catch(() => null), 5000);
+		await within(send("Debugger.disable").catch(() => null), 5000);
+	};
+
 	/**
 	 * Evaluates in the page and returns the value. Expressions are wrapped
 	 * in an async IIFE so a test step can await Obsidian's own promises —
@@ -135,7 +162,10 @@ export async function connect() {
 			new Promise((_, reject) =>
 				setTimeout(() => reject(new Error(`page did not answer in ${timeoutMs}ms`)), timeoutMs),
 			),
-		]);
+		]).catch(async (error) => {
+			if (error.message.startsWith("page did not answer")) await sampleStack();
+			throw error;
+		});
 		if (result.exceptionDetails) {
 			throw new Error(result.exceptionDetails.exception?.description ?? "threw in page");
 		}
