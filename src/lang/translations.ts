@@ -6163,7 +6163,6 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		dropAppendBody: "तपाईंले छोड्नुभएको सामग्री “{name}” को अन्त्यमा थपिनेछ।",
 		dropAppended: "“{name}” मा थपियो",
 		commandFocusPathBar: "पथ पट्टीमा फोकस गर्नुहोस्",
-		suggestShowExtension: "",
 		suggestShowExtension: "एक्सटेन्सन देखाउन क्लिक गर्नुहोस्",
 		typeImage: "तस्बिर",
 		typeAudio: "अडियो",
