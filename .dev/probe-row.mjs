@@ -13,7 +13,7 @@
 import { connect, PAUSE, setSettings } from "./cdpSession.mjs";
 
 const page = await connect();
-await setSettings(page, { showFileExtension: false });
+await setSettings(page, { showFileExtension: false, vaultSegment: "name", vaultIcon: "vault", swapSegmentActions: true, showDotFiles: true, accessExternalFiles: true, alignment: "left", delimiter: "/" });
 await page.evaluate(`
 	const root = app.vault.getRoot().children.filter((f) => f.extension === "md");
 	const note = root[0];
@@ -26,7 +26,7 @@ await page.evaluate(`
 	${PAUSE(1500)}
 	return true;
 `);
-const report = await page.evaluate(`
+const read = () => page.evaluate(`
 	const rows = app.workspace.getLeavesOfType("markdown").map((leaf) => {
 		const c = leaf.view.containerEl.querySelector(".view-header-title-container");
 		const parts = [...c.querySelectorAll("*")].filter((e) => e.children.length === 0 || e.matches(".lure-filename, .lure-filename-badge, .lure-vault-wrapper, .view-header-title, .view-header-title-parent"))
@@ -38,7 +38,12 @@ const report = await page.evaluate(`
 	});
 	return JSON.stringify(rows, null, 1);
 `);
-console.log(report);
+console.log("--- after opening\n" + (await read()));
+// Hot Reload reloads the plugin on every build: twice, then again.
+for (let i = 0; i < 2; i++) {
+	await page.evaluate(`await app.plugins.disablePlugin("lure"); await app.plugins.enablePlugin("lure"); ${PAUSE(1500)} return true;`);
+}
+console.log("--- after two reloads\n" + (await read()));
 if (process.env.LURE_SHOTS) {
 	const { mkdirSync, writeFileSync } = await import("node:fs");
 	mkdirSync(`${process.env.LURE_SHOTS}/look`, { recursive: true });
