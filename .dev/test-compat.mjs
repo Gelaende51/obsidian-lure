@@ -27,7 +27,7 @@ import { createSuite } from "./harness.mjs";
  * click. Ids and names are verbatim from Obsidian's community-plugins.json;
  * plugin names are never translated or reworded.
  */
-const PEERS = [
+const ALL_PEERS = [
 	{ id: "folder-notes", name: "Folder notes", kind: "folder-note",
 	  why: "opens folder notes from the path — the click Lure re-dispatches" },
 	{ id: "folder-note-plugin", name: "Folder Note", kind: "folder-note",
@@ -48,28 +48,33 @@ const PEERS = [
 	  why: "renders a hierarchy trail in the note body" },
 	// The most installed plugins that draw into or around the note header
 	// (community-plugin-stats, 2026-10): each is a way the row can be
-	// crowded, restyled or replaced.
-	{ id: "obsidian-icon-folder", name: "Iconize", kind: "header",
+	// crowded, restyled or replaced. A set of their own, run as
+	// test-compat-ui: several patch the workspace at load and do not take
+	// it all back when disabled, so loaded beside every suite they changed
+	// what F2 and the rename field did there.
+	{ set: "ui", id: "obsidian-icon-folder", name: "Iconize", kind: "header",
 	  why: "puts icons in titles, tabs and the file tree" },
-	{ id: "cmdr", name: "Commander", kind: "header",
+	{ set: "ui", id: "cmdr", name: "Commander", kind: "header",
 	  why: "adds command buttons to the view header" },
-	{ id: "pane-relief", name: "Pane Relief", kind: "header",
+	{ set: "ui", id: "pane-relief", name: "Pane Relief", kind: "header",
 	  why: "adds per-pane history counts to the header's arrows" },
-	{ id: "obsidian-hider", name: "Hider", kind: "header",
+	{ set: "ui", id: "obsidian-hider", name: "Hider", kind: "header",
 	  why: "hides parts of the interface, the title bar among them" },
-	{ id: "make-md", name: "Make.md", kind: "header",
+	{ set: "ui", id: "make-md", name: "Make.md", kind: "header",
 	  why: "draws its own path and header over notes" },
-	{ id: "tab-file-path", name: "Tab File Path", kind: "header",
+	{ set: "ui", id: "tab-file-path", name: "Tab File Path", kind: "header",
 	  why: "writes the file's path into its tab title" },
-	{ id: "obsidian-hover-editor", name: "Hover Editor", kind: "adjacent",
+	{ set: "ui", id: "obsidian-hover-editor", name: "Hover Editor", kind: "adjacent",
 	  why: "turns page previews into panes with headers of their own" },
-	{ id: "notebook-navigator", name: "Notebook Navigator", kind: "adjacent",
+	{ set: "ui", id: "notebook-navigator", name: "Notebook Navigator", kind: "adjacent",
 	  why: "a file browser of its own, revealing the open file" },
-	{ id: "editor-breadcrumbs", name: "Editor Breadcrumbs", kind: "adjacent",
+	{ set: "ui", id: "editor-breadcrumbs", name: "Editor Breadcrumbs", kind: "adjacent",
 	  why: "a VS Code style folder trail above the editor" },
-	{ id: "another-name", name: "Another Name", kind: "adjacent",
+	{ set: "ui", id: "another-name", name: "Another Name", kind: "adjacent",
 	  why: "adds a second name after the inline title" },
 ];
+/** Which set this run checks: the original neighbours, or (test-compat-ui) the header plugins. */
+const PEERS = ALL_PEERS.filter((p) => (p.set ?? "base") === (process.env.LURE_PEER_SET ?? "base"));
 
 let page;
 

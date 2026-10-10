@@ -29,10 +29,16 @@ PLUGINS=(
 	-p id:running-head -p id:crumbs-obsidian -p id:breadcrumbs
 	-p id:home-launcher
 	-p id:obsidian-outliner -p id:table-editor-obsidian
-	-p id:obsidian-icon-folder -p id:cmdr -p id:pane-relief -p id:obsidian-hider
-	-p id:make-md -p id:tab-file-path -p id:obsidian-hover-editor
-	-p id:notebook-navigator -p id:editor-breadcrumbs -p id:another-name
 )
+# The header plugins test-compat-ui checks are installed for it alone: some
+# keep patches after being disabled, and would be in every other suite's way.
+if [ "$SUITE" = test-compat-ui ]; then
+	PLUGINS+=(
+		-p id:obsidian-icon-folder -p id:cmdr -p id:pane-relief -p id:obsidian-hider
+		-p id:make-md -p id:tab-file-path -p id:obsidian-hover-editor
+		-p id:notebook-navigator -p id:editor-breadcrumbs -p id:another-name
+	)
+fi
 
 # The installer (Electron) goes with the app: the newest for "latest", the
 # oldest that can run it for "earliest" — which is what users on each end have.
