@@ -739,6 +739,26 @@ test("path bar: moving a note out of the vault asks, then really moves it", asyn
 
 // -------------------------------------------------------------- dropdown
 
+test("dropdown: on the vault's name the field takes the row's whole width", async () => {
+	const r = await page.evaluate(`
+		const md = app.vault.getMarkdownFiles()[0];
+		await app.workspace.getLeaf(false).openFile(md);
+		${PAUSE(300)}
+		${breadcrumb}
+		const plugin = app.plugins.plugins.lure;
+		const was = plugin.settings.accessExternalFiles;
+		plugin.settings.accessExternalFiles = true;
+		bc.openLocationMenu();
+		${PAUSE(300)}
+		const input = bc.inputEl, row = bc.titleEl;
+		const gap = input && row ? Math.round(row.getBoundingClientRect().right - input.getBoundingClientRect().right) : null;
+		bc.cancelNavigation();
+		plugin.settings.accessExternalFiles = was;
+		return { gap };
+	`);
+	expect("the field reaches the row's end", r.gap !== null && r.gap >= 0 && r.gap <= 24, true);
+});
+
 test("dropdown: gated by the Access external files setting", async () => {
 	const r = await page.evaluate(`
 		const md = app.vault.getMarkdownFiles()[0];

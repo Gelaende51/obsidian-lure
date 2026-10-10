@@ -8736,7 +8736,11 @@ export class PathBreadcrumb {
 			// both, because a field cannot give anything up (see the
 			// `lure-editing` rule in styles.css).
 			const content = textWidth(inputEl.value, inputEl) + INPUT_SLACK_PX;
-			inputEl.style.width = `${Math.max(INPUT_MIN_PX, Math.ceil(content))}px`;
+			// On the vault's name the field holds a path from the system root,
+			// the longest thing it ever holds, and nothing else stands on the
+			// row: it takes the row's whole width.
+			const room = host === this.vaultSegmentEl ? this.titleEl.getBoundingClientRect().right - inputEl.getBoundingClientRect().left - INPUT_SLACK_PX : 0;
+			inputEl.style.width = `${Math.max(INPUT_MIN_PX, Math.ceil(content), Math.floor(room))}px`;
 			// A field grows with what is typed into it, and a path is longer
 			// than a pane long before it is finished. Nothing here can be
 			// shortened — it is text being edited, not names being fitted —
