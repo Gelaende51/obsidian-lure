@@ -70,6 +70,33 @@ than the header title.
 | [Crumbs](obsidian://show-plugin?id=crumbs-obsidian) | `crumbs-obsidian` | Coexists |
 | [Breadcrumbs](obsidian://show-plugin?id=breadcrumbs) | `breadcrumbs` | Coexists |
 
+**Draw into or around the header — the most installed ones** (`test-compat-ui`,
+2026-10). Found by downloads and by a keyword pass over every community
+plugin's description; each is turned on and off beside Lure, in both load
+orders where it touches the header, on Obsidian 1.8.7 and the latest.
+
+| Plugin | Id | Result |
+| --- | --- | --- |
+| [Iconize](obsidian://show-plugin?id=obsidian-icon-folder) | `obsidian-icon-folder` | Coexists |
+| [Commander](obsidian://show-plugin?id=cmdr) | `cmdr` | Coexists |
+| [Hider](obsidian://show-plugin?id=obsidian-hider) | `obsidian-hider` | Coexists with its default settings |
+| [Make.md](obsidian://show-plugin?id=make-md) | `make-md` | Coexists on the latest Obsidian; does not load on 1.8.7 |
+| [Tab File Path](obsidian://show-plugin?id=tab-file-path) | `tab-file-path` | Coexists |
+| [Path Title](obsidian://show-plugin?id=obsidian-path-title) | `obsidian-path-title` | Coexists |
+| [Vertical Tabs](obsidian://show-plugin?id=vertical-tabs) | `vertical-tabs` | Coexists |
+| [Continuous Mode](obsidian://show-plugin?id=continuous-mode) | `continuous-mode` | Coexists |
+| [Hover Editor](obsidian://show-plugin?id=obsidian-hover-editor) | `obsidian-hover-editor` | Coexists |
+| [Notebook Navigator](obsidian://show-plugin?id=notebook-navigator) | `notebook-navigator` | Coexists |
+| [Editor Breadcrumbs](obsidian://show-plugin?id=editor-breadcrumbs) | `editor-breadcrumbs` | Coexists |
+| [Another Name](obsidian://show-plugin?id=another-name) | `another-name` | Coexists |
+| [Filename Heading Sync](obsidian://show-plugin?id=obsidian-filename-heading-sync) | `obsidian-filename-heading-sync` | Coexists |
+| [Advanced Rename and Delete Handler](obsidian://show-plugin?id=advanced-rename-and-delete-handler) | `advanced-rename-and-delete-handler` | Coexists (needs Obsidian 1.14.4) |
+| [Mononote](obsidian://show-plugin?id=mononote) | `mononote` | Coexists |
+| [Open Tab Settings](obsidian://show-plugin?id=open-tab-settings) | `open-tab-settings` | Coexists (needs Obsidian 1.13.4) |
+| [Iconic](obsidian://show-plugin?id=iconic) | `iconic` | Not tested: turning it on froze Obsidian in the test sandbox with Lure off too — not a conflict with Lure, reported to be checked upstream |
+| [Pane Relief](obsidian://show-plugin?id=pane-relief) | `pane-relief` | Not tested: does not load on the Obsidian versions tested |
+| [ProZen](obsidian://show-plugin?id=obsidian-prozen) | `obsidian-prozen` | Not tested: the test launcher refuses its version number (`0.3`) |
+
 ## May conflict
 
 Untested expectations based on what each plugin modifies, not results. Please
