@@ -1,4 +1,4 @@
-<!-- Übersetzung von README.md — Stand: Commit 1334ec5.
+<!-- Übersetzung von README.md — Stand: Commit 64b0be6.
      Maschinell übersetzt (Claude Opus 5) und nicht von Muttersprachlern
      geprüft. Korrekturen sind willkommen; das englische README ist die
      maßgebliche Fassung. -->

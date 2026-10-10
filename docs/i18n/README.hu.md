@@ -1,4 +1,4 @@
-<!-- A README.md fordítása — állapot: 1334ec5 commit.
+<!-- A README.md fordítása — állapot: 64b0be6 commit.
      Gépi fordítás (Claude Opus 5), anyanyelvi lektorálás nélkül.
      A javításokat szívesen fogadjuk; az irányadó változat az angol
      README. -->

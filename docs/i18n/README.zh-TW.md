@@ -1,4 +1,4 @@
-<!-- README.md 的翻譯 — 對應提交：1334ec5。
+<!-- README.md 的翻譯 — 對應提交：64b0be6。
      機器翻譯（Claude Opus 5），未經母語者校訂。歡迎指正；以英文 README
      為準。 -->
 
