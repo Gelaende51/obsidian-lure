@@ -1,0 +1,158 @@
+# The suites on systems GitHub has no runner for, on demand only:
+#
+# - distros: other Linux distributions, as containers on the Linux runner;
+# - old-engine: today's Obsidian on its oldest installer that still runs it
+#   (Electron 21, Chromium 106) — the engine Windows 7, 8 and 8.1 are left
+#   with, since newer Electron dropped them — on Linux, where no old Windows
+#   is needed to ask it;
+# - server-2019: Windows Server 2019 (the Windows 10 1809 code base) in a
+#   virtual machine on the Linux runner (dockur/windows over KVM), installed
+#   from Microsoft's own 180-day evaluation image on every run.
+#
+# Actions → Test other systems → Run workflow, or
+#   gh workflow run test-systems.yml -f target=distros -f suites="test-tab"
+name: Test other systems
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "What to run on"
+        type: choice
+        options: [distros, old-engine, server-2019, all]
+        default: distros
+      suites:
+        description: "Suites, space separated"
+        default: "test-html test-tab test-links"
+      obsidian:
+        description: "Obsidian versions"
+        type: choice
+        options: [both, latest, earliest]
+        default: both
+
+permissions:
+  contents: read
+
+env:
+  VERSIONS: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
+
+jobs:
+  distros:
+    if: inputs.target == 'distros' || inputs.target == 'all'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ["debian:12", "ubuntu:20.04", "fedora:42", "archlinux:latest", "opensuse/tumbleweed"]
+    container:
+      image: ${{ matrix.image }}
+      options: --shm-size=2g
+    name: ${{ matrix.image }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: System packages
+        run: sh .dev/ci-distro-deps.sh
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - run: npm ci
+      - run: node esbuild.config.mjs production
+      - name: Run the suites
+        shell: bash
+        env:
+          # Root in a container: Electron's sandbox will not start as root.
+          OBSIDIAN_EXTRA_ARGS: --no-sandbox
+          SUITES: ${{ inputs.suites }}
+        run: |
+          set +e
+          Xvfb :99 -screen 0 1920x1080x24 >/dev/null 2>&1 &
+          export DISPLAY=:99
+          failed=0
+          for version in $VERSIONS; do
+            for suite in $SUITES; do
+              echo "::group::$suite (Obsidian $version)"
+              OBSIDIAN_VERSION=$version .dev/ci-run.sh "$suite"; code=$?
+              echo "::endgroup::"
+              case $code in 0) ;; 2) echo "::warning::$suite ($version) skipped cases" ;; *) echo "::error::$suite ($version) failed"; failed=1 ;; esac
+            done
+          done
+          exit $failed
+
+  old-engine:
+    if: inputs.target == 'old-engine' || inputs.target == 'all'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: node esbuild.config.mjs production
+      - name: Run the suites on installer 1.1.16 (Electron 21)
+        shell: bash
+        env:
+          OBSIDIAN_EXTRA_ARGS: --no-sandbox
+          OBSIDIAN_INSTALLER: "1.1.16"
+          SUITES: ${{ inputs.suites }}
+        run: |
+          set +e
+          failed=0
+          for version in $VERSIONS; do
+            for suite in $SUITES; do
+              echo "::group::$suite (Obsidian $version, installer 1.1.16)"
+              OBSIDIAN_VERSION=$version xvfb-run -a -s "-screen 0 1920x1080x24" .dev/ci-run.sh "$suite"; code=$?
+              echo "::endgroup::"
+              case $code in 0) ;; 2) echo "::warning::$suite ($version) skipped cases" ;; *) echo "::error::$suite ($version) failed"; failed=1 ;; esac
+            done
+          done
+          exit $failed
+
+  server-2019:
+    if: inputs.target == 'server-2019' || inputs.target == 'all'
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - name: Let the runner user use KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+          ls -l /dev/kvm
+      - name: Hand the guest the repository and what to run
+        env:
+          SUITES: ${{ inputs.suites }}
+        run: |
+          sudo mkdir -p /mnt/win /mnt/shared
+          sudo chown "$USER" /mnt/win /mnt/shared
+          rsync -a --exclude node_modules --exclude .git ./ /mnt/shared/repo/
+          echo "$SUITES" > /mnt/shared/suites.txt
+          echo "$VERSIONS" > /mnt/shared/versions.txt
+      - name: Install and start Windows Server 2019 (evaluation)
+        run: |
+          docker run -d --name windows -e VERSION=2019 -e RAM_SIZE=10G -e CPU_CORES=4 -e DISK_SIZE=48G \
+            --device=/dev/kvm --device=/dev/net/tun --cap-add NET_ADMIN \
+            -v /mnt/win:/storage -v "$PWD/.dev/vm:/oem" -v /mnt/shared:/shared \
+            --stop-timeout 120 docker.io/dockurr/windows
+      - name: Wait for the suites in the guest
+        run: |
+          for i in $(seq 1 270); do
+            [ -f /mnt/shared/done.txt ] && break
+            if [ $((i % 10)) -eq 0 ]; then echo "--- minute $i"; docker logs --tail 3 windows 2>&1; ls /mnt/shared; fi
+            sleep 60
+          done
+          echo "--- results"; cat /mnt/shared/results.txt 2>/dev/null || echo "none"
+          [ -f /mnt/shared/done.txt ] || { echo "::error::the guest did not finish"; docker logs --tail 40 windows; exit 1; }
+          ! grep -qvE ' (0|2)$' /mnt/shared/results.txt
+      - name: Keep the guest's logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-2019-logs
+          path: |
+            /mnt/shared/*.log
+            /mnt/shared/*.txt
+          if-no-files-found: ignore
