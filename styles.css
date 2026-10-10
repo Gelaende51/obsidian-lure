@@ -1777,3 +1777,16 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 	position: fixed;
 	z-index: var(--layer-menu);
 }
+
+/* The other-paths button's down chevron, bottom left: it opens a list. */
+.lure-other-paths-chevron {
+	position: absolute;
+	left: -3px;
+	bottom: -3px;
+	display: inline-flex;
+	--icon-size: 9px;
+	--icon-stroke: 3px;
+	background-color: var(--background-secondary);
+	border-radius: 50%;
+	line-height: 0;
+}

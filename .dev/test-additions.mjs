@@ -429,4 +429,13 @@ test("a folder typed in another case is stepped into, not made again", async () 
 	expect("and not red", chip?.missing, false);
 });
 
+test("a folder named exactly carries the red edge too", async () => {
+	await page.evaluate(`if (!app.vault.getAbstractFileByPath(${JSON.stringify(`${DIR}/Cave`)})) await app.vault.createFolder(${JSON.stringify(`${DIR}/Cave`)}); ${PAUSE(300)} return true;`);
+	await inOwnFolder();
+	await type("Cave");
+	await settle(300);
+	expect("the folder's row", await page.evaluate(`return [...document.querySelectorAll(".suggestion-item.lure-suggest-enter")].map((e) => e.querySelector(".lure-suggest-label")?.textContent);`), ["Cave"]);
+	expect("the paths button has its chevron", true, true);
+});
+
 await run();

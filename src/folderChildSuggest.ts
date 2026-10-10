@@ -1002,7 +1002,8 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			}
 			const row = values[index];
 			if (!row) return;
-			const settles = row.kind === "file" || row.kind === "keep-name";
+			// A folder too: Enter on it acts on that row as surely as on a file.
+			const settles = row.kind === "file" || row.kind === "keep-name" || row.kind === "folder";
 			els[index]?.toggleClass(ENTER_ROW_CLASS, settles);
 		});
 	}

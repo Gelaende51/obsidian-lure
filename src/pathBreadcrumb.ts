@@ -6752,6 +6752,8 @@ export class PathBreadcrumb {
 		setIcon(button, "split");
 		const count = matches !== null ? matches.length : others.length;
 		button.createSpan({ cls: "lure-other-paths-count", text: String(count) });
+		// A small down chevron at the bottom left: pressing it opens a list.
+		setIcon(button.createSpan({ cls: "lure-other-paths-chevron" }), "chevron-down");
 		const strongest = (["hard", "target", "symbolic", "alias", "name"] as const).find((kind) => others.some((other) => other.kind === kind));
 		const colour = matches !== null ? (matches.length ? "match" : "none") : strongest ? OTHER_PATH_TINTS[strongest] : "alias";
 		button.dataset.lureTint = colour;
