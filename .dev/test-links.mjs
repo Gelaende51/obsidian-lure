@@ -404,7 +404,8 @@ test("with extensions hidden the badge is the other-paths button, in their colou
 		document.querySelector(".lure-other-paths-menu")?.remove();
 		${PAUSE(100)}
 		const input0 = !!root.querySelector(".lure-path-input");
-		badge?.querySelector("span:last-child")?.click();
+		// Read again: the row redraws when the scan of links comes back.
+		root.querySelector(".lure-filename-badge > span:last-child")?.click();
 		${PAUSE(400)}
 		const input = root.querySelector(".lure-path-input");
 		return JSON.stringify({

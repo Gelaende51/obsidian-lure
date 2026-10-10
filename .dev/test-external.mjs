@@ -981,6 +981,8 @@ test("viewer menu: a file with no reading to edit can still be deleted", async (
 		${deleteFromViewer(true)}
 	`);
 	expect("it asked rather than refusing", r.asked, (v) => typeof v === "string" && v.length > 0);
+	// A runner's session has no shell to hand the Recycle Bin request to.
+	if (process.platform === "win32" && (r.after ?? []).some((n) => /FileOperation/.test(n))) skipCase("this Windows session has no Recycle Bin to move to");
 	// The Recycle Bin can take its time over a first item.
 	for (let i = 0; i < 25 && existsSync(pic); i++) await new Promise((done) => setTimeout(done, 200));
 	expect("and the file is gone", existsSync(pic), false);
@@ -1999,9 +2001,11 @@ test("links: a file moved through the bar keeps its other paths", async () => {
 		bc.externalPath = ${JSON.stringify(BED)};
 		await bc.commitExternalRename(${JSON.stringify(moved)}, false);
 		${PAUSE(800)}
-		${breadcrumb}
-		bc.updateIndicator();
-		${OTHER_PATHS}
+		{
+			${breadcrumb}
+			bc.updateIndicator();
+			${OTHER_PATHS}
+		}
 	`);
 	expect("moved", existsSync(moved) && !existsSync(from), true);
 	expect("the twin is still its other path", r.menu, [[moved, "current"], [twin, "hard"]]);
