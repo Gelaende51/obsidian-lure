@@ -26,9 +26,9 @@ on:
         options: [both, latest, earliest]
         default: both
       os:
-        description: "Systems: Linux (Ubuntu), Windows (Server 2025), or both"
+        description: "Systems: Linux (Ubuntu); Windows Server 2025 (windows), Windows 11 on Arm (windows-arm), every Windows image incl. Server 2022 (windows-all); both = Linux + Server 2025; all = Linux + every Windows"
         type: choice
-        options: [linux, windows, both]
+        options: [linux, windows, windows-arm, windows-all, both, all]
         default: linux
   workflow_call:
 
@@ -46,12 +46,15 @@ jobs:
       suites: ${{ steps.plan.outputs.suites }}
       versions: ${{ steps.plan.outputs.versions }}
       unit: ${{ steps.plan.outputs.unit }}
+      linux: ${{ steps.plan.outputs.linux }}
+      windows: ${{ steps.plan.outputs.windows }}
     steps:
       - uses: actions/checkout@v4
       - id: plan
         env:
           WANT_SUITES: ${{ inputs.suites }}
           WANT_VERSIONS: ${{ inputs.obsidian }}
+          WANT_OS: ${{ inputs.os }}
         run: |
           # A suite needs Obsidian when it connects to one; the others only
           # bundle the sources and run in plain Node.
@@ -70,6 +73,18 @@ jobs:
           echo "suites=$(printf '%s\n' "${app[@]}" | jq -R . | jq -sc 'map(select(. != ""))')" >> "$GITHUB_OUTPUT"
           echo "unit=$(printf '%s\n' "${unit[@]}" | jq -R . | jq -sc 'map(select(. != ""))')" >> "$GITHUB_OUTPUT"
           echo "versions=$versions" >> "$GITHUB_OUTPUT"
+          # Pushes and release.yml pass no os: Linux only.
+          case "${WANT_OS:-linux}" in
+            linux) linux=true; windows='[]' ;;
+            windows) linux=false; windows='["windows-2025"]' ;;
+            windows-arm) linux=false; windows='["windows-11-arm"]' ;;
+            windows-all) linux=false; windows='["windows-2025","windows-2022","windows-11-arm"]' ;;
+            both) linux=true; windows='["windows-2025"]' ;;
+            all) linux=true; windows='["windows-2025","windows-2022","windows-11-arm"]' ;;
+            *) echo "::error::unknown os $WANT_OS"; exit 1 ;;
+          esac
+          echo "linux=$linux" >> "$GITHUB_OUTPUT"
+          echo "windows=$windows" >> "$GITHUB_OUTPUT"
 
   unit:
     needs: plan
@@ -90,7 +105,7 @@ jobs:
 
   obsidian:
     needs: plan
-    if: needs.plan.outputs.suites != '[]' && (github.event_name != 'workflow_dispatch' || inputs.os != 'windows')
+    if: needs.plan.outputs.suites != '[]' && needs.plan.outputs.linux == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     strategy:
@@ -150,15 +165,18 @@ jobs:
     needs: plan
     # On demand only: Windows runners are slower to start, and the suites were
     # written on Linux — this is where they learn what Windows does differently.
-    if: needs.plan.outputs.suites != '[]' && github.event_name == 'workflow_dispatch' && inputs.os != 'linux'
-    runs-on: windows-latest
+    # windows-11-arm runs the Arm64 build of Obsidian (the launcher picks the
+    # installer for the runner's architecture).
+    if: needs.plan.outputs.suites != '[]' && needs.plan.outputs.windows != '[]'
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
         suite: ${{ fromJSON(needs.plan.outputs.suites) }}
         version: ${{ fromJSON(needs.plan.outputs.versions) }}
-    name: ${{ matrix.suite }} (Obsidian ${{ matrix.version }}, Windows)
+        runner: ${{ fromJSON(needs.plan.outputs.windows) }}
+    name: ${{ matrix.suite }} (Obsidian ${{ matrix.version }}, ${{ matrix.runner }})
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -172,8 +190,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.obsidian-cache
-          key: obsidian-${{ matrix.version }}-${{ runner.os }}-${{ hashFiles('manifest.json') }}
-          restore-keys: obsidian-${{ matrix.version }}-${{ runner.os }}-
+          key: obsidian-${{ matrix.version }}-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('manifest.json') }}
+          restore-keys: obsidian-${{ matrix.version }}-${{ runner.os }}-${{ runner.arch }}-
       - name: Run ${{ matrix.suite }}
         shell: bash
         env:
@@ -191,14 +209,14 @@ jobs:
         if: always() && matrix.suite == 'test-additions'
         uses: actions/upload-artifact@v4
         with:
-          name: look-${{ matrix.version }}-windows
+          name: look-${{ matrix.version }}-${{ matrix.runner }}
           path: shots/look/
           if-no-files-found: ignore
       - name: Keep Obsidian's log and the failure screenshots
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: failures-${{ matrix.suite }}-${{ matrix.version }}-windows
+          name: failures-${{ matrix.suite }}-${{ matrix.version }}-${{ matrix.runner }}
           path: |
             obsidian-*.log
             shots/

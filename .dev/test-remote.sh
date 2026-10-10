@@ -6,7 +6,8 @@
 #   .dev/test-remote.sh test-tab test-drop  # just these
 #   OBSIDIAN=latest .dev/test-remote.sh test-tab
 #   FILTER="long paths" OBSIDIAN=earliest .dev/test-remote.sh test-gestures   # only matching cases
-#   OS=windows .dev/test-remote.sh test-tab   # on Windows (or OS=both)
+#   OS=windows .dev/test-remote.sh test-tab   # on Windows Server 2025; also windows-arm
+#                                           # (Windows 11 on Arm), windows-all, both, all
 #
 # Tests the pushed commit: push first. Needs the gh CLI, signed in.
 set -eu
