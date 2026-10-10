@@ -1738,7 +1738,7 @@ export class PathBreadcrumb {
 		// where the user pressed.
 		else if (count === 3) {
 			const suffix = this.pathSuffixAfter(folderPath);
-			void this.copyToClipboard(suffix ? `${name}/${suffix}` : name);
+			void this.copyToClipboard(suffix ? `${name}${this.externalPath !== null ? PATH_SEP : "/"}${suffix}` : name);
 		}
 	}
 
@@ -8522,7 +8522,7 @@ export class PathBreadcrumb {
 		if (depth === 0 && !isExternalFile(externalJoin(base, name))) return null;
 		const reached = [...parts.slice(0, depth), isExternalFile(externalJoin(folder, name)) ? name : ""]
 			.filter((part) => part !== "")
-			.join("/");
+			.join(PATH_SEP);
 		return reached ? asLanding(reached) : null;
 	}
 
