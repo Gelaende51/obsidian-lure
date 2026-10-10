@@ -101,11 +101,20 @@ export async function connect() {
 		else settle.resolve(message.result);
 	});
 
+	// Input events get a deadline of their own: one that is never answered
+	// (macOS has done this to a Cmd+letter) fails the case it belongs to
+	// instead of holding the whole job until the runner gives up on it.
 	const send = (method, params = {}) =>
 		new Promise((resolve, reject) => {
 			const id = nextId++;
 			pending.set(id, { resolve, reject });
 			socket.send(JSON.stringify({ id, method, params }));
+			if (method.startsWith("Input.")) {
+				setTimeout(() => {
+					if (!pending.delete(id)) return;
+					reject(new Error(`${method} was not answered within 10 s`));
+				}, 10000);
+			}
 		});
 
 	/**
@@ -245,14 +254,24 @@ export function describeKey(spec) {
 }
 
 /** Presses a key in a connected page. Accepts the same specs as describeKey. */
+/**
+ * On macOS a Cmd+letter is the menu's to answer, not the page's: delivered
+ * bare it either does nothing or never comes back. Naming the editing
+ * command with the press is how the debugger asks for it (what Puppeteer
+ * does on a Mac).
+ */
+const MAC_COMMANDS = { a: "selectAll", c: "copy", x: "cut", v: "paste", z: "undo" };
+
 export async function pressKey(page, spec) {
 	const { key, code, keyCode, modifiers, text } = describeKey(spec);
 	const base = { key, code, windowsVirtualKeyCode: keyCode, nativeVirtualKeyCode: keyCode, modifiers };
+	const command = process.platform === "darwin" && modifiers === 4 ? MAC_COMMANDS[key.toLowerCase()] : undefined;
 	await page.send("Input.dispatchKeyEvent", {
 		...base,
 		type: text ? "keyDown" : "rawKeyDown",
 		text,
 		unmodifiedText: text,
+		...(command ? { commands: [command] } : {}),
 	});
 	await page.send("Input.dispatchKeyEvent", { ...base, type: "keyUp" });
 }
