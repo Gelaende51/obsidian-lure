@@ -305,7 +305,7 @@ const OTHER_PATH_TINTS: Record<OtherPath["kind"], string> = {
 const OTHER_PATH_ICONS: Record<OtherPath["kind"], string> = {
 	alias: "signpost",
 	hard: "link",
-	symbolic: "file-symlink",
+	symbolic: "arrow-up-right",
 	target: "file-input",
 	name: "at-sign",
 };

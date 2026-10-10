@@ -410,7 +410,7 @@
 .lure-vault-wrapper input[data-lure-tint="keep-name"],
 .lure-filename input[data-lure-tint="current"],
 .lure-vault-wrapper input[data-lure-tint="current"] {
-	color: var(--text-normal);
+	color: var(--color-blue);
 }
 
 /* Nothing answers to what is in the field yet, so Enter will make it rather
@@ -710,6 +710,7 @@
    is the one you already have open — "you are here" is the more specific
    fact in both cases. */
 .suggestion-item.lure-suggest-current .lure-suggest-label {
+	color: var(--color-blue);
 	/* Bold rather than medium. Medium is a weight you can only see beside
 	   the same word set normally, and the row it marks is rarely beside its
 	   own twin: in a list of twenty names, "where you are" has to be findable
@@ -1638,7 +1639,7 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 /* Pages — `:graph`, `:search` — are not files: grey. Folder notes read as
    plain text beside their bold folder. The file Enter would make is red. */
 .suggestion-item.lure-suggest-page .lure-suggest-label {
-	color: var(--text-muted);
+	color: var(--text-faint);
 }
 .suggestion-item.lure-suggest-md.lure-suggest-folder-note .lure-suggest-label,
 .suggestion-item.lure-suggest-folder-note .lure-suggest-label {
@@ -1650,7 +1651,7 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 }
 .lure-filename input[data-lure-tint="page"],
 .lure-vault-wrapper input[data-lure-tint="page"] {
-	color: var(--text-muted);
+	color: var(--text-faint);
 }
 .lure-filename input[data-lure-tint="folder-note"],
 .lure-vault-wrapper input[data-lure-tint="folder-note"] {

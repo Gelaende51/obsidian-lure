@@ -335,4 +335,49 @@ test("folders show what they hold, and several bars can stand on one row", async
 	await shoot("bars");
 });
 
+test("arrowing through the list never shows a name twice", async () => {
+	for (const hidden of [false, true]) {
+		await setSettings(page, { showFileExtension: !hidden });
+		await page.evaluate(openNote);
+		await page.evaluate(`app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-filename-text").click(); ${PAUSE(500)} return true;`);
+		const seen = [];
+		for (let i = 0; i < 6; i++) {
+			await pressKey(page, "ArrowDown");
+			await settle(250);
+			seen.push(JSON.parse(await page.evaluate(`return JSON.stringify([...document.querySelectorAll(".suggestion-item")].map((e) => (e.querySelector(".lure-suggest-label")?.textContent ?? "") + "|" + e.className.replace(/suggestion-item|mod-complex|lure-suggest-/g, "").trim()));`)));
+		}
+		const twice = seen.map((rows) => {
+			const stems = rows.map((r) => r.split("|")[0].replace(/\.md$/, "").toLowerCase());
+			return stems.filter((stem, i) => stems.indexOf(stem) !== i);
+		});
+		expect(`no name listed twice (extensions ${hidden ? "hidden" : "shown"})`, twice.flat(), []);
+		if (twice.flat().length) console.log("    rows: " + JSON.stringify(seen.find((_, i) => twice[i].length)));
+	}
+	await setSettings(page, { showFileExtension: true });
+});
+
+test("a list opened by a click shows no red bar until something is typed or pressed", async () => {
+	await page.evaluate(openNote);
+	await page.evaluate(`app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-filename-text").click(); ${PAUSE(500)} return true;`);
+	expect("no row carries it", await page.evaluate(`return document.querySelectorAll(".suggestion-item.lure-suggest-enter").length;`), 0);
+	await pressKey(page, "ArrowDown");
+	await settle(300);
+	expect("a key's highlight does", await page.evaluate(`return document.querySelectorAll(".suggestion-item.lure-suggest-enter").length;`), (v) => v <= 1);
+});
+
+test("an empty file's 0 sits at the bottom left of its icon", async () => {
+	await inOwnFolder();
+	await type("Cab");
+	const where = await page.evaluate(`
+		const el = [...document.querySelectorAll(".suggestion-item")].find((e) => e.querySelector(".lure-suggest-label")?.textContent?.startsWith("Cabbage"));
+		const icon = el?.querySelector(".lure-suggest-has-kind");
+		const zero = el?.querySelector(".lure-suggest-empty");
+		if (!icon || !zero) return null;
+		const a = icon.getBoundingClientRect(), b = zero.getBoundingClientRect();
+		return JSON.stringify({ left: b.left < a.left + a.width / 2, bottom: b.bottom > a.top + a.height / 2 });
+	`);
+	expect("left and bottom of the icon", where && JSON.parse(where), { left: true, bottom: true });
+	await shoot("empty-zero");
+});
+
 await run();

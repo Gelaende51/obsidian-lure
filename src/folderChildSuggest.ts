@@ -424,7 +424,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 	private readonly dragKeepFocusEl: HTMLInputElement;
 	/** Index of the entry the list should open on, worked out while building it. */
 	private preselectIndex = -1;
-	private pointerHighlight = false;
+	private keyHighlight = false;
 	/** Guards the re-selection below against answering its own call. */
 	private preselecting = false;
 	/** Set once the list has been wrapped for the "up past the top" gesture. */
@@ -659,7 +659,9 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 	onSelectedChange(value: PathSuggestion | undefined, evt: unknown): void {
 		// A highlight the pointer put there is a look, not a choice the red
 		// edge should follow; the keys' highlight is.
-		this.pointerHighlight = evt instanceof MouseEvent;
+		// Only a highlight a key put there is one the red edge follows: not the
+		// pointer's, and not the one the list opens on.
+		this.keyHighlight = evt instanceof KeyboardEvent;
 		this.wrapList();
 		this.paintCreateEdge();
 		if (this.preselecting) return;
@@ -956,8 +958,10 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			const els = list?.suggestions ?? [];
 			for (const el of els) el.removeClass(ENTER_ROW_CLASS);
 			if (!values.length || values.some((value) => value.glob)) return;
-			let index = this.pointerHighlight ? -1 : (list?.selectedItem ?? -1);
-			if (index < 0 && this.lastQuery) {
+			let index = this.keyHighlight ? (list?.selectedItem ?? -1) : -1;
+			// The typed name's own row, once something has been typed — a list
+			// just opened by a click holds the name it opened on, not a choice.
+			if (index < 0 && this.lastQuery && this.getContext().queryOverride !== null) {
 				const typed = this.lastQuery;
 				index = values.findIndex((value) => {
 					const label = value.label.toLowerCase();
@@ -1456,7 +1460,9 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		// Enter acts on, where you are, the names the typing leads to, a
 		// pattern's matches. Each shows only while its class is on the row.
 		const bars = el.createSpan({ cls: "lure-suggest-bars" });
-		for (const bar of ["enter", "current", "leading", "glob"]) bars.createSpan({ cls: `lure-bar lure-bar-${bar}` });
+		// The bars that run down many rows first, so a run stays one line even
+		// where a row carries a bar of its own as well.
+		for (const bar of ["leading", "glob", "current", "enter"]) bars.createSpan({ cls: `lure-bar lure-bar-${bar}` });
 		if (this.getContext().isCurrentNote(value.opens ?? value.path)) el.addClass("lure-suggest-here");
 		if (value.current) el.addClass("lure-suggest-current");
 		if (value.leading) el.addClass("lure-suggest-leading");
