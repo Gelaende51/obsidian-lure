@@ -609,7 +609,10 @@ export async function reconcileLists(app: App, disk: DiskLinks): Promise<void> {
 			}
 			return changed;
 		});
-		await refreshNames(app, hard.filter((path) => path !== file.path && path.endsWith(".md")).map((path) => app.vault.getAbstractFileByPath(path)).filter((there): there is TFile => there instanceof TFile));
+		// The other names, and this one too: written back to a text Obsidian
+		// has seen before, its cache kept the lists it had (seen on CI).
+		const refresh = [file.path, ...hard.filter((path) => path !== file.path && path.endsWith(".md"))];
+		await refreshNames(app, refresh.map((path) => app.vault.getAbstractFileByPath(path)).filter((there): there is TFile => there instanceof TFile));
 	}
 }
 

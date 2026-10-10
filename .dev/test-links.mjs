@@ -566,21 +566,6 @@ test("symbolic links made and removed outside Obsidian are put right in the list
 	expect("a symbolic link made in a terminal is listed", await symlinks((v) => v.includes(POINTER)), (v) => v.includes(POINTER));
 	await outside(`fs.unlinkSync(at(${JSON.stringify(POINTER)}));`);
 	expect("a symbolic link removed in a terminal is taken out", await symlinks((v) => !v.includes(POINTER)), []);
-	const diag = await page.evaluate(`
-		const lure = app.plugins.plugins.lure;
-		const inVault = !!app.vault.getAbstractFileByPath(${JSON.stringify(POINTER)});
-		let onDisk = "gone";
-		try { onDisk = require("fs").lstatSync(require("path").join(app.vault.adapter.getBasePath(), ${JSON.stringify(POINTER)})).isSymbolicLink() ? "link" : "file"; } catch {}
-		lure.diskLinks.invalidate();
-		await lure.diskLinks.whenReady();
-		const scan = JSON.stringify(lure.diskLinks.symbolicLinks());
-		lure.noteShown();
-		${PAUSE(4000)}
-		const fm = app.metadataCache.getFileCache(app.vault.getAbstractFileByPath(${JSON.stringify(NOTE)}))?.frontmatter ?? {};
-		const raw = await app.vault.adapter.read(${JSON.stringify(NOTE)});
-		return "inVault=" + inVault + " onDisk=" + onDisk + " scan=" + scan + " afterDirect=" + JSON.stringify(fm["paths-symlinks"] ?? null) + " file=" + JSON.stringify(raw.slice(0, 200));
-	`);
-	expect("(diagnostic)", diag, "-");
 });
 
 await run();
