@@ -264,7 +264,7 @@ test("the button stays while editing, its menu opens under the bar, and link row
 	expect("the button stays while the name is being edited", r.whileEditing, true);
 	expect("the menu opens flush under the bar", r.gap !== null && Math.abs(r.gap) <= 2, true);
 	expect("and at the button's left edge", r.left !== null && Math.abs(r.left) <= 2, true);
-	expect("a symbolic link has its own icon", r.icons, (v) => Array.isArray(v) && v.includes("lucide-file-symlink"));
+	expect("a symbolic link has its own icon", r.icons, (v) => Array.isArray(v) && v.includes("lucide-arrow-up-right"));
 	// Into the folder holding the link: its row ends in the symbolic-link icon.
 	await page.evaluate(`document.querySelector(".lure-path-input")?.blur(); document.body.click(); ${PAUSE(300)} return true;`);
 	await page.evaluate(`

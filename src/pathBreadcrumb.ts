@@ -6734,7 +6734,7 @@ export class PathBreadcrumb {
 			});
 		}
 		button.empty();
-		setIcon(button, "waypoints");
+		setIcon(button, "split");
 		const count = matches !== null ? matches.length : others.length;
 		button.createSpan({ cls: "lure-other-paths-count", text: String(count) });
 		const strongest = (["hard", "target", "symbolic", "alias", "name"] as const).find((kind) => others.some((other) => other.kind === kind));
