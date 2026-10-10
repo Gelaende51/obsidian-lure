@@ -39,11 +39,22 @@ const read = () => page.evaluate(`
 	return JSON.stringify(rows, null, 1);
 `);
 console.log("--- after opening\n" + (await read()));
-// Hot Reload reloads the plugin on every build: twice, then again.
-for (let i = 0; i < 2; i++) {
-	await page.evaluate(`await app.plugins.disablePlugin("lure"); await app.plugins.enablePlugin("lure"); ${PAUSE(1500)} return true;`);
-}
-console.log("--- after two reloads\n" + (await read()));
+// Hot Reload reloads the plugin on every build — here while the note is a
+// background tab, whose row is 0 px wide; then the tab is brought forward.
+await page.evaluate(`
+	const left = app.workspace.getLeavesOfType("markdown").find((l) => l.view.file?.path === app.vault.getRoot().children.filter((f) => f.extension === "md")[0].path);
+	const background = app.workspace.createLeafInParent(left.parent, left.parent.children.indexOf(left) + 1);
+	await background.openFile(app.vault.getMarkdownFiles().find((f) => f.path !== left.view.file.path));
+	app.workspace.setActiveLeaf(background, { focus: true });
+	${PAUSE(800)}
+	await app.plugins.disablePlugin("lure");
+	await app.plugins.enablePlugin("lure");
+	${PAUSE(1500)}
+	app.workspace.setActiveLeaf(left, { focus: true });
+	${PAUSE(1500)}
+	return true;
+`);
+console.log("--- after a reload with the note in the background, brought forward\n" + (await read()));
 if (process.env.LURE_SHOTS) {
 	const { mkdirSync, writeFileSync } = await import("node:fs");
 	mkdirSync(`${process.env.LURE_SHOTS}/look`, { recursive: true });
