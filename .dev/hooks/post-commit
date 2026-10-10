@@ -1,0 +1,7 @@
+#!/bin/sh
+# After every commit, rebuild main.js for the vaults that load this repo's
+# build through a symlink (Hot Reload in those vaults then reloads Lure).
+# Only the bundle, in the background: the checks belong to `npm run build`.
+cd "$(git rev-parse --show-toplevel)" || exit 0
+( node esbuild.config.mjs production >/dev/null 2>&1 & )
+exit 0
