@@ -34,7 +34,7 @@ import {
 import { commonPrefix, planTab, TabCandidate } from "./tabComplete";
 import { LinkKind, OtherPath, aliasPathsOf, convertLink, forgetOtherPath, makeOtherPath, otherPaths, recordCopy } from "./altPaths";
 import { createsFiles, expandBraces, hasGlobChars, matchPaths } from "./globPattern";
-import { FolderChildSuggest, LINK_ENTER, MODIFIED_ENTER, guardFieldKeys, pageLabel, PathSuggestion } from "./folderChildSuggest";
+import { FolderChildSuggest, LINK_ENTER, LINK_ICONS, describeFile, typeIcon, MODIFIED_ENTER, guardFieldKeys, pageLabel, PathSuggestion } from "./folderChildSuggest";
 import { ExternalChild, PATH_SEP, externalJoin, externalParent, externalSegments, isExternalFile, isExternalFolder, listExternalChildren } from "./externalFs";
 import {
 	CURRENT_VAULT_ICON,
@@ -4876,6 +4876,22 @@ export class PathBreadcrumb {
 				cls: EXTENSION_CLASS,
 				text: this.file.name.slice(this.file.basename.length),
 			});
+		} else if (this.file.extension) {
+			// Hidden from the name, the extension is shown as the dropdown shows
+			// it: a badge with the file's icon and marks, at the right-hand end
+			// of the row. It is still the extension to the fitter, given up
+			// whole straight after the vault name.
+			const file = this.file;
+			const disk = this.plugin.diskLinks;
+			const link = disk.targetOfLink(file.path) ? "symbolic" : disk.sameFile(file.path).length ? "hard" : "none";
+			const facts = { label: file.name, kind: "file" as const, path: file.path, disabled: false, empty: file.stat.size === 0, endIcon: LINK_ICONS[link] };
+			const badge = this.filenameEl.createSpan({ cls: `${EXTENSION_CLASS} lure-filename-badge` });
+			const icon = badge.createSpan({ cls: "lure-suggest-type-icon lure-suggest-has-kind" });
+			setIcon(icon, typeIcon(file.extension));
+			if (facts.endIcon) setIcon(icon.createSpan({ cls: "lure-suggest-kind" }), facts.endIcon);
+			if (facts.empty) icon.createSpan({ cls: "lure-suggest-empty" });
+			badge.createSpan({ text: `.${file.extension}` });
+			setTooltip(badge, describeFile(file.extension, facts));
 		}
 		makeDraggable(this.plugin.app, nameEl, this.file);
 	}
@@ -6905,7 +6921,10 @@ export class PathBreadcrumb {
 	 */
 	private createRow(inputEl: HTMLInputElement): { label: string; path: string } | null {
 		if (this.renameMode || this.externalPath !== null || this.preview) return null;
-		const value = this.typedFieldValue() || inputEl.value;
+		// What Enter would commit, which takes a standing offer with it: the
+		// typed letters alone named a file that is not there while the offer
+		// names one that is, and the list said "make it" while Enter opened it.
+		const value = inputEl.value;
 		if (!value.trim() || this.patternFor(value) !== null || !this.typedCreatesNew(value)) return null;
 		const caret = inputEl.selectionEnd ?? value.length;
 		if (/[\\/]/.test(value.slice(caret))) return null;

@@ -8,7 +8,8 @@ import {
 	setIcon,
 } from "obsidian";
 import type BreadcrumbPathPlugin from "./main";
-import { BreadcrumbPathSettings, DEFAULT_VAULT_ICON } from "./settings";
+import { BreadcrumbPathSettings, DEFAULT_SETTINGS, DEFAULT_VAULT_ICON } from "./settings";
+import { ConfirmCreateFileModal } from "./createFileModal";
 import { applyIcon } from "./systemLocations";
 import { setLanguageOverride, t } from "./lang";
 import { FOLLOW_OBSIDIAN, LOCALE_NAMES } from "./lang/locales";
@@ -86,95 +87,137 @@ export class BreadcrumbSettingTab extends PluginSettingTab {
 				},
 			},
 			{
-				name: t("settingAlignmentName"),
-				desc: t("settingAlignmentDesc"),
-				control: {
-					type: "dropdown",
-					key: "alignment",
-					options: {
-						left: t("alignmentLeft"),
-						center: t("alignmentCenter"),
-						right: t("alignmentRight"),
+				type: "group",
+				heading: t("settingGroupPathBar"),
+				items: [
+					{
+						name: t("settingAlignmentName"),
+						desc: t("settingAlignmentDesc"),
+						control: {
+							type: "dropdown",
+							key: "alignment",
+							options: {
+								left: t("alignmentLeft"),
+								center: t("alignmentCenter"),
+								right: t("alignmentRight"),
+							},
+						},
 					},
-				},
-			},
-			{
-				name: t("settingDelimiterName"),
-				desc: t("settingDelimiterDesc"),
-				// Six presets and a free text field in one row: more than a
-				// control declaration can say, and the one place here that
-				// has to be drawn rather than described.
-				render: (setting) => this.renderDelimiter(setting),
-			},
-			{
-				name: t("settingVaultSegmentName"),
-				desc: t("settingVaultSegmentDesc"),
-				control: {
-					type: "dropdown",
-					key: "vaultSegment",
-					options: {
-						name: t("vaultSegmentName"),
-						icon: t("vaultSegmentIcon"),
-						none: t("vaultSegmentNone"),
+					{
+						name: t("settingDelimiterName"),
+						desc: t("settingDelimiterDesc"),
+						// Six presets and a free text field in one row: more than a
+						// control declaration can say, and the one place here that
+						// has to be drawn rather than described.
+						render: (setting) => this.renderDelimiter(setting),
 					},
-				},
+					{
+						name: t("settingVaultSegmentName"),
+						desc: t("settingVaultSegmentDesc"),
+						control: {
+							type: "dropdown",
+							key: "vaultSegment",
+							options: {
+								name: t("vaultSegmentName"),
+								icon: t("vaultSegmentIcon"),
+								none: t("vaultSegmentNone"),
+							},
+						},
+					},
+					{
+						name: t("settingVaultIconName"),
+						desc: t("settingVaultIconDesc"),
+						render: (setting: Setting) => this.renderVaultIcon(setting),
+					},
+					{
+						name: t("settingExtensionName"),
+						desc: t("settingExtensionDesc"),
+						control: { type: "toggle", key: "showFileExtension" },
+					},
+				],
 			},
 			{
-				name: t("settingRecordPathsName"),
-				desc: t("settingRecordPathsDesc"),
-				control: { type: "toggle", key: "recordPaths" },
+				type: "group",
+				heading: t("settingGroupDropdown"),
+				items: [
+					{
+						name: t("settingSwapActionsName"),
+						desc: withPluginLinks(t("settingSwapActionsDesc"), [
+							// The only folder-note plugin that claims the header path;
+							// the others create folder notes but never answer a click
+							// on the breadcrumb. See docs/compatibility.md.
+							{ name: "Folder notes", id: "folder-notes" },
+						]),
+						control: { type: "toggle", key: "swapSegmentActions" },
+					},
+					{
+						name: t("settingDotFilesName"),
+						desc: t("settingDotFilesDesc"),
+						control: { type: "toggle", key: "showDotFiles" },
+					},
+					// Beside the dot-file rule because it answers the same question —
+					// what a dropdown is allowed to list — and immediately after it
+					// because it is the one that is *not* this plugin's to toggle. It
+					// is named as Obsidian names it, so it can be searched for by the
+					// name it has on the page the button leads to.
+					{
+						name: obsidianLabel(LABELS.showAllFileTypes, "Show all file types"),
+						desc: t("settingAllFilesDesc"),
+						render: (setting: Setting) => this.drawAllFilesJump(setting),
+					},
+				],
 			},
 			{
-				name: t("settingVaultIconName"),
-				desc: t("settingVaultIconDesc"),
-				render: (setting: Setting) => this.renderVaultIcon(setting),
+				type: "group",
+				heading: t("settingGroupOtherPaths"),
+				items: [
+					{
+						name: t("settingRecordPathsName"),
+						desc: t("settingRecordPathsDesc"),
+						control: { type: "toggle", key: "recordPaths" },
+					},
+				],
 			},
 			{
-				name: t("settingSwapActionsName"),
-				desc: withPluginLinks(t("settingSwapActionsDesc"), [
-					// The only folder-note plugin that claims the header path;
-					// the others create folder notes but never answer a click
-					// on the breadcrumb. See docs/compatibility.md.
-					{ name: "Folder notes", id: "folder-notes" },
-				]),
-				control: { type: "toggle", key: "swapSegmentActions" },
+				type: "group",
+				heading: t("settingGroupOutside"),
+				items: [
+					{
+						// The one setting that widens what the plugin can reach, so it
+						// says so: the description carries a warning line in the error
+						// colour rather than burying the consequence in ordinary grey
+						// body text.
+						name: t("settingExternalName"),
+						desc: this.externalDescription(),
+						control: { type: "toggle", key: "accessExternalFiles" },
+					},
+				],
 			},
 			{
-				name: t("settingDotFilesName"),
-				desc: t("settingDotFilesDesc"),
-				control: { type: "toggle", key: "showDotFiles" },
-			},
-			// Beside the dot-file rule because it answers the same question —
-			// what a dropdown is allowed to list — and immediately after it
-			// because it is the one that is *not* this plugin's to toggle. It
-			// is named as Obsidian names it, so it can be searched for by the
-			// name it has on the page the button leads to.
-			{
-				name: obsidianLabel(LABELS.showAllFileTypes, "Show all file types"),
-				desc: t("settingAllFilesDesc"),
-				render: (setting: Setting) => this.drawAllFilesJump(setting),
+				type: "group",
+				heading: t("settingGroupKeys"),
+				items: [
+					// The command ships without a key, so the way to give it one sits
+					// where someone looking for its settings is already looking.
+					{
+						name: obsidianLabel(LABELS.hotkeys, "Hotkeys"),
+						desc: t("settingHotkeysDesc").replace("{command}", t("commandFocusPathBar")),
+						render: (setting: Setting) => this.drawHotkeysJump(setting),
+					},
+				],
 			},
 			{
-				name: t("settingExtensionName"),
-				desc: t("settingExtensionDesc"),
-				control: { type: "toggle", key: "showFileExtension" },
+				type: "group",
+				heading: t("settingGroupReset"),
+				items: [
+					{
+						name: t("settingRestoreName"),
+						desc: t("settingRestoreDesc"),
+						render: (setting: Setting) => this.drawRestoreDefaults(setting),
+					},
+				],
 			},
-			{
-				// The one setting that widens what the plugin can reach, so it
-				// says so: the description carries a warning line in the error
-				// colour rather than burying the consequence in ordinary grey
-				// body text.
-				name: t("settingExternalName"),
-				desc: this.externalDescription(),
-				control: { type: "toggle", key: "accessExternalFiles" },
-			},
-			// The command ships without a key, so the way to give it one sits
-			// where someone looking for its settings is already looking.
-			{
-				name: obsidianLabel(LABELS.hotkeys, "Hotkeys"),
-				desc: t("settingHotkeysDesc").replace("{command}", t("commandFocusPathBar")),
-				render: (setting: Setting) => this.drawHotkeysJump(setting),
-			},
+
 		];
 	}
 
@@ -231,7 +274,18 @@ export class BreadcrumbSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 		containerEl.empty();
 
+		// Groups are walked into, with their heading drawn as one.
+		const flat: Definition[] = [];
 		for (const definition of this.getSettingDefinitions()) {
+			if ("type" in definition && (definition.type === "group" || definition.type === "list")) {
+				const group = definition as unknown as { heading?: string; items?: Definition[] };
+				if (group.heading) new Setting(containerEl).setName(group.heading).setHeading();
+				flat.push(...(group.items ?? []));
+			} else {
+				flat.push(definition);
+			}
+		}
+		for (const definition of flat) {
 			const setting = new Setting(containerEl);
 			if ("name" in definition && definition.name) setting.setName(definition.name);
 			if ("desc" in definition && definition.desc) setting.setDesc(definition.desc);
@@ -331,6 +385,36 @@ export class BreadcrumbSettingTab extends PluginSettingTab {
 		);
 		show(this.plugin.settings.vaultIcon);
 		setting.controlEl.appendChild(preview);
+	}
+
+	/**
+	 * Every setting back to its default, after asking. The language stays:
+	 * it is the way out of a language you cannot read, and resetting it
+	 * would put the page you are reading into another one.
+	 */
+	private drawRestoreDefaults(setting: Setting): void {
+		setting.addButton((button) => {
+			// Marked destructive: `setDestructive` from 1.13, the class the older
+			// `setWarning` set before that.
+			const marked = button as unknown as { setDestructive?: () => unknown };
+			if (marked.setDestructive) marked.setDestructive();
+			else button.buttonEl.addClass("mod-warning");
+			button
+				.setButtonText(t("settingRestoreButton"))
+				.onClick(async () => {
+					const ok = await ConfirmCreateFileModal.askWith(
+						this.app,
+						t("modalRestoreTitle"),
+						t("modalRestoreBody"),
+						t("settingRestoreButton"),
+					);
+					if (!ok) return;
+					const language = this.plugin.settings.language;
+					this.plugin.settings = { ...DEFAULT_SETTINGS, language };
+					await this.plugin.saveSettings();
+					this.redraw();
+				});
+		});
 	}
 
 	/** The external-access description, warning line and all. */

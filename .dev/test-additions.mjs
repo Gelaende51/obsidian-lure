@@ -380,4 +380,41 @@ test("an empty file's 0 sits at the bottom left of its icon", async () => {
 	await shoot("empty-zero");
 });
 
+test("with extensions hidden the path bar ends in the file's badge", async () => {
+	await setSettings(page, { showFileExtension: false });
+	try {
+		await page.evaluate(openNote);
+		const r = await page.evaluate(`
+			const root = app.workspace.getLeaf(false).view.containerEl.querySelector(".view-header-title-container");
+			const badge = root?.querySelector(".lure-filename-badge");
+			if (!badge) return null;
+			const a = badge.getBoundingClientRect(), b = root.getBoundingClientRect(), name = root.querySelector(".lure-filename-text").getBoundingClientRect();
+			return JSON.stringify({ text: badge.textContent, nearRight: b.right - a.right < 40, gap: a.left - name.right });
+		`).then((v) => v && JSON.parse(v));
+		expect("the badge is there", r?.text, ".md");
+		expect("at the row's right-hand end", r?.nearRight, true);
+		await shoot("path-bar-badge");
+	} finally {
+		await setSettings(page, { showFileExtension: true });
+	}
+});
+
+test("with an offer standing, the list does not offer to make the typed letters", async () => {
+	await inOwnFolder();
+	await type("Cabb");
+	const rows = await page.evaluate(`return JSON.stringify([...document.querySelectorAll(".suggestion-item")].map((e) => ({ label: e.querySelector(".lure-suggest-label")?.textContent, creates: e.classList.contains("lure-suggest-creates"), enter: e.classList.contains("lure-suggest-enter") })));`).then(JSON.parse);
+	expect("no would-create row", rows.some((r) => r.creates), false);
+	expect("Enter's row is the one the offer completes", rows.filter((r) => r.enter).map((r) => r.label), ["Cabbage.md"]);
+});
+
+test("the settings come in groups, with a way back to the defaults", async () => {
+	const r = await page.evaluate(`
+		const tab = (app.setting.pluginTabs ?? []).find((t) => t.id === "lure");
+		const defs = tab.getSettingDefinitions();
+		return JSON.stringify({ groups: defs.filter((d) => d.type === "group").length, restore: JSON.stringify(defs).length > 0 && defs.some((d) => d.type === "group" && (d.items ?? []).some((i) => typeof i.render === "function" && i.name && /default/i.test(i.name))) });
+	`).then(JSON.parse);
+	expect("several groups", r.groups >= 5, true);
+	expect("a restore row among them", r.restore, true);
+});
+
 await run();

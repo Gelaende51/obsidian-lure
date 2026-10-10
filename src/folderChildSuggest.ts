@@ -232,8 +232,35 @@ function leadingFirst(rows: PathSuggestion[], query: string): PathSuggestion[] {
 	return [...leading, ...rest.filter((row) => !ranked(row)), ...rest.filter(ranked)];
 }
 
+/** What a file is, in words: its type, then what the marks on its icon say. */
+export function describeFile(extension: string, value: PathSuggestion): string {
+	const ext = extension.toLowerCase();
+	const kind = typeIcon(ext);
+	const type = isMarkdownExtension(ext)
+		? "Markdown"
+		: ext === "canvas"
+			? "Canvas"
+			: ext === "pdf"
+				? "PDF"
+				: ext === "base"
+					? "Base"
+					: kind === "image"
+						? t("typeImage")
+						: kind === "music"
+							? t("typeAudio")
+							: kind === "film"
+								? t("typeVideo")
+								: t("typeFile", { ext: ext.toUpperCase() });
+	const marks: string[] = [];
+	if (value.empty) marks.push(t("markEmpty"));
+	if (value.endIcon === LINK_ICONS.symbolic) marks.push(t("markSymlink"));
+	if (value.endIcon === LINK_ICONS.hard) marks.push(t("markHardlink"));
+	if (value.alias) marks.push(t("markAlias"));
+	return [type, ...marks].join(" · ");
+}
+
 /** The icons a row of a linked file ends with. */
-const LINK_ICONS: Record<"symbolic" | "hard" | "none", string | undefined> = {
+export const LINK_ICONS: Record<"symbolic" | "hard" | "none", string | undefined> = {
 	// A plain arrow reads at badge size, where a whole file-with-arrow does not.
 	symbolic: "arrow-up-right",
 	hard: "link",
@@ -246,7 +273,7 @@ function endOf(row: HTMLElement): HTMLElement {
 }
 
 /** The icon for a file's type in a row's extension badge. */
-function typeIcon(extension: string): string {
+export function typeIcon(extension: string): string {
 	const ext = extension.toLowerCase();
 	if (isMarkdownExtension(ext)) return "file-text";
 	if (ext === "canvas") return "layout-dashboard";
@@ -961,8 +988,11 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			let index = this.keyHighlight ? (list?.selectedItem ?? -1) : -1;
 			// The typed name's own row, once something has been typed — a list
 			// just opened by a click holds the name it opened on, not a choice.
-			if (index < 0 && this.lastQuery && this.getContext().queryOverride !== null) {
-				const typed = this.lastQuery;
+			const context = this.getContext();
+			if (index < 0 && this.lastQuery && context.queryOverride !== null) {
+				// What Enter would commit: the typed name with a standing offer
+				// taken, since Enter takes it.
+				const typed = (context.offered?.prefix ?? this.lastQuery).toLowerCase();
 				index = values.findIndex((value) => {
 					const label = value.label.toLowerCase();
 					return label === typed || label.replace(/\.md$/, "") === typed;
@@ -1421,7 +1451,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		const badge = endOf(el).createSpan({ cls: "lure-suggest-type" });
 		setIcon(badge.createSpan({ cls: "lure-suggest-type-icon" }), typeIcon(extension));
 		badge.createSpan({ text: `.${extension}` });
-		setTooltip(badge, t("suggestShowExtension"));
+		setTooltip(badge, `${describeFile(extension, value)}\n${t("suggestShowExtension")}`);
 		const reveal = this.onRevealExtension;
 		if (!reveal) return;
 		// Pressed, not chosen: the row underneath must not take the press.
@@ -1493,6 +1523,8 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 				setIcon(host, typeIcon(value.label.slice(value.label.lastIndexOf(".") + 1)));
 			}
 			host.addClass("lure-suggest-has-kind");
+			// Without a badge the icon is the one place to say what the marks mean.
+			if (!badge) setTooltip(host, describeFile(value.label.slice(value.label.lastIndexOf(".") + 1), value));
 			if (value.endIcon) setIcon(host.createSpan({ cls: "lure-suggest-kind" }), value.endIcon);
 			// Drawn by the stylesheet, so the row's text stays the name and its extension.
 			if (value.empty) host.createSpan({ cls: "lure-suggest-empty" });

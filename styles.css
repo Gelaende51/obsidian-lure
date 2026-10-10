@@ -1703,14 +1703,10 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 	display: block;
 	background-color: var(--color-blue);
 }
-.suggestion-item.lure-suggest-leading .lure-bar-leading {
-	display: block;
-	background-color: var(--interactive-accent);
-}
-.suggestion-item.lure-suggest-leading.lure-suggest-agreed .lure-bar-leading {
-	background-color: var(--color-blue);
-}
+/* Blue is where you are, and nothing else: the names the typing leads to
+   carry no bar of their own, only the branch the offer heads down. */
 .suggestion-item.lure-suggest-leading.lure-suggest-offered .lure-bar-leading {
+	display: block;
 	background-color: var(--color-green);
 }
 .suggestion-item.lure-suggest-glob .lure-bar-glob {
@@ -1730,4 +1726,47 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 .suggestion-item .lure-suggest-count {
 	color: var(--text-faint);
 	font-size: var(--font-ui-smaller);
+}
+
+/* With extensions hidden, the open file's type as a badge at the row's
+   right-hand end — the dropdown's badge, marks and all. */
+.lure-filename-badge {
+	margin-inline-start: auto;
+	padding: 1px 4px;
+	display: inline-flex;
+	align-items: center;
+	gap: var(--size-2-1);
+	color: var(--text-faint);
+	font-size: var(--font-ui-smaller);
+	border-radius: var(--radius-s);
+}
+.lure-filename-badge:hover {
+	background-color: rgba(var(--color-purple-rgb), 0.15);
+}
+.lure-filename-badge .lure-suggest-type-icon {
+	position: relative;
+	display: inline-flex;
+	--icon-size: var(--icon-xs);
+}
+.lure-filename-badge .lure-suggest-kind {
+	position: absolute;
+	right: -4px;
+	bottom: -4px;
+	--icon-size: 9px;
+	background-color: var(--background-primary);
+	border-radius: 50%;
+	line-height: 0;
+}
+.lure-filename-badge .lure-suggest-empty {
+	position: absolute;
+	left: -4px;
+	bottom: -5px;
+	font-size: 8px;
+	line-height: 9px;
+	padding: 0 1px;
+	border-radius: 3px;
+	background-color: var(--background-primary);
+}
+.lure-filename-badge .lure-suggest-empty::after {
+	content: "0";
 }
