@@ -50,7 +50,18 @@ INSTALLER="${OBSIDIAN_INSTALLER:-$([ "$VERSION" = earliest ] && echo earliest ||
 # `launch` starts Obsidian detached and returns; Obsidian is stopped on exit by
 # where it runs from — the launcher's cache — so a system Obsidian is untouched.
 CACHE="${OBSIDIAN_CACHE:-$HOME/.obsidian-cache}"
-trap 'pkill -f "$CACHE/" 2>/dev/null' EXIT
+# Waited for, not only signalled: Obsidian is single-instance, and a suite run
+# straight after this one (the test-systems jobs run several in a row) would
+# otherwise hand its launch to the copy still shutting down, and see it exit.
+stop_obsidian() {
+	pkill -f "$CACHE/" 2>/dev/null
+	for _ in $(seq 1 20); do
+		pgrep -f "$CACHE/" >/dev/null 2>&1 || return 0
+		sleep 0.5
+	done
+	pkill -9 -f "$CACHE/" 2>/dev/null
+}
+trap stop_obsidian EXIT
 # The copy of the vault goes under home, where a vault lives — so home
 # "contains" it, as the location cases expect. Windows reads TEMP/TMP, not
 # TMPDIR; left alone it copies to %TEMP%, which a runner spells with the
