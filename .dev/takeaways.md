@@ -2662,6 +2662,9 @@ from the logged readings; the factors will move as readings accumulate.
 ## dockur/windows runs the OEM script at the first logon, and there is no second
 - `install.bat` from `/oem` runs at the first logon after the unattended install, in the user's desktop session. A Startup-folder entry written from it waits for a next logon, which never comes: the first Server 2019 run sat idle for 2½ hours with setup finished and the suites never started. Start the run from the same script; and have the host give up when setup is done and the run has not begun after a quarter of an hour.
 
+- Once started, the Server 2019 guest ran test-html, test-tab and test-links on both Obsidian versions in about 20 minutes after setup (run 38078609700). Only one case failed there: a hard link split off by a save through a temporary file and a rename stays in the lists on Windows (on Linux it is taken out). Still to find: whether Windows reports that rename at all, or keeps the two names one file.
+- The guest writes its logs as UTF-16 in places (PowerShell redirection): read them with `iconv -f utf-16le` or `tr -d '\0'`, not as UTF-8.
+
 ## Windows PowerShell 5.1 hands a JSON array down the pipeline whole
 - `Invoke-RestMethod <url returning an array> | Where-Object {…}` in Windows PowerShell 5.1 (what Windows Server 2019 ships) passes the array as one object: the filter sees every element's property at once, matches, and `Select-Object -First 1` returns the whole list. Assign the result to a variable first (`$all = Invoke-RestMethod …; $all | Where-Object …`), which enumerates it. PowerShell 7 does not have this quirk, so a script tried on a newer machine works.
 - In the Server 2019 VM this turned the Node download URL into nonsense (400), the setup stopped, and the suites never started — four and a half hours of a silent wait. The host now gives up as soon as `setup.log` holds an error, and the logon script writes `run-error.txt` from a `trap`.
