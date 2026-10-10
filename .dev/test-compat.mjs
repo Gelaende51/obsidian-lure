@@ -46,6 +46,29 @@ const PEERS = [
 	  why: "breadcrumb navigation of its own" },
 	{ id: "breadcrumbs", name: "Breadcrumbs", kind: "adjacent",
 	  why: "renders a hierarchy trail in the note body" },
+	// The most installed plugins that draw into or around the note header
+	// (community-plugin-stats, 2026-10): each is a way the row can be
+	// crowded, restyled or replaced.
+	{ id: "obsidian-icon-folder", name: "Iconize", kind: "header",
+	  why: "puts icons in titles, tabs and the file tree" },
+	{ id: "cmdr", name: "Commander", kind: "header",
+	  why: "adds command buttons to the view header" },
+	{ id: "pane-relief", name: "Pane Relief", kind: "header",
+	  why: "adds per-pane history counts to the header's arrows" },
+	{ id: "obsidian-hider", name: "Hider", kind: "header",
+	  why: "hides parts of the interface, the title bar among them" },
+	{ id: "make-md", name: "Make.md", kind: "header",
+	  why: "draws its own path and header over notes" },
+	{ id: "tab-file-path", name: "Tab File Path", kind: "header",
+	  why: "writes the file's path into its tab title" },
+	{ id: "obsidian-hover-editor", name: "Hover Editor", kind: "adjacent",
+	  why: "turns page previews into panes with headers of their own" },
+	{ id: "notebook-navigator", name: "Notebook Navigator", kind: "adjacent",
+	  why: "a file browser of its own, revealing the open file" },
+	{ id: "editor-breadcrumbs", name: "Editor Breadcrumbs", kind: "adjacent",
+	  why: "a VS Code style folder trail above the editor" },
+	{ id: "another-name", name: "Another Name", kind: "adjacent",
+	  why: "adds a second name after the inline title" },
 ];
 
 let page;

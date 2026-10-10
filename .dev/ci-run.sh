@@ -29,6 +29,9 @@ PLUGINS=(
 	-p id:running-head -p id:crumbs-obsidian -p id:breadcrumbs
 	-p id:home-launcher
 	-p id:obsidian-outliner -p id:table-editor-obsidian
+	-p id:obsidian-icon-folder -p id:cmdr -p id:pane-relief -p id:obsidian-hider
+	-p id:make-md -p id:tab-file-path -p id:obsidian-hover-editor
+	-p id:notebook-navigator -p id:editor-breadcrumbs -p id:another-name
 )
 
 # The installer (Electron) goes with the app: the newest for "latest", the
