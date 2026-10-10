@@ -1,5 +1,5 @@
-# Node 24 and Git Bash (portable), then run.ps1 in the Startup folder of every
-# user: the VM logs its user in on its own, and the suites need that session.
+# Node 24 and Git Bash (portable). install.bat starts run.ps1 once this is done,
+# in the logon session it runs in, which the suites need.
 $ErrorActionPreference = "Stop"
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $ProgressPreference = "SilentlyContinue"
@@ -17,7 +17,5 @@ $git = $latest.assets | Where-Object { $_.name -match "^PortableGit-.*-64-bit\.7
 Invoke-WebRequest $git.browser_download_url -OutFile C:\OEM\git.exe
 Start-Process C:\OEM\git.exe -ArgumentList "-o", "C:\tools\git", "-y" -Wait
 
-$startup = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp"
-Set-Content "$startup\lure-run.cmd" "powershell -NoProfile -ExecutionPolicy Bypass -File C:\OEM\run.ps1"
 "node $node, $($git.name)"
 "setup finished"

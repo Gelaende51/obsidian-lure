@@ -2659,6 +2659,9 @@ from the logged readings; the factors will move as readings accumulate.
 - The test vaults symlink the repository's `main.js`: a change is invisible there until `npm run build` (now also a post-commit hook, `core.hooksPath .dev/hooks`), and Hot Reload (pjeby) with a `.hotreload` file in the plugin folder reloads it without the debugging port.
 - Headless translation runs occasionally answer with a duplicated JSON block, a misspelled key or an empty duplicate key; `npm run check:lang` catches all three, and the fix is by hand.
 
+## dockur/windows runs the OEM script at the first logon, and there is no second
+- `install.bat` from `/oem` runs at the first logon after the unattended install, in the user's desktop session. A Startup-folder entry written from it waits for a next logon, which never comes: the first Server 2019 run sat idle for 2½ hours with setup finished and the suites never started. Start the run from the same script; and have the host give up when setup is done and the run has not begun after a quarter of an hour.
+
 ## Windows PowerShell 5.1 hands a JSON array down the pipeline whole
 - `Invoke-RestMethod <url returning an array> | Where-Object {…}` in Windows PowerShell 5.1 (what Windows Server 2019 ships) passes the array as one object: the filter sees every element's property at once, matches, and `Select-Object -First 1` returns the whole list. Assign the result to a variable first (`$all = Invoke-RestMethod …; $all | Where-Object …`), which enumerates it. PowerShell 7 does not have this quirk, so a script tried on a newer machine works.
 - In the Server 2019 VM this turned the Node download URL into nonsense (400), the setup stopped, and the suites never started — four and a half hours of a silent wait. The host now gives up as soon as `setup.log` holds an error, and the logon script writes `run-error.txt` from a `trap`.

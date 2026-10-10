@@ -227,6 +227,11 @@ jobs:
             if grep -qa "FullyQualifiedErrorId" /mnt/shared/setup.log 2>/dev/null; then
               echo "::error::setup failed in the guest"; tr -d '\r' < /mnt/shared/setup.log; exit 1
             fi
+            # Setup done and no run within a quarter of an hour: it is not coming.
+            if grep -qa "setup finished" /mnt/shared/setup.log 2>/dev/null && [ ! -f /mnt/shared/run-started.txt ]; then
+              setup_done=${setup_done:-$i}
+              if [ $((i - setup_done)) -ge 15 ]; then echo "::error::setup finished but the run did not start"; tr -d '\r' < /mnt/shared/setup.log; exit 1; fi
+            fi
             if [ $((i % 10)) -eq 0 ]; then echo "--- minute $i"; docker logs --tail 3 windows 2>&1; ls /mnt/shared; fi
             sleep 60
           done
