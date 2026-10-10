@@ -14,7 +14,7 @@ Every release of Lure, newest first. What has landed since the last release is u
 - **A command for each rung** — the name, the name with its extension, the path from the vault, the path from the system root, the vault — to bind a key straight to the one you want.
 - **<kbd>Shift</kbd> with the rename key or the focus key walks the cycle backwards.**
 - **Notes that are linked to and not written yet are listed** in the dropdown, in pink, in the folder Obsidian would make them in. Picking one makes it.
-- **With extensions hidden, each file in the dropdown shows its type** in a badge at the row's end; pressing the badge writes the name out in the field with its extension.
+- **With extensions hidden, each file in the dropdown shows its type** in a badge at the row's end, and the path bar shows the open file's at its right-hand end; pressing a badge writes the name out in the field with its extension.
 - **A note can have other paths.** Renaming, <kbd>Alt</kbd>+<kbd>Enter</kbd> adds the typed path as an alias path, <kbd>Shift</kbd>+<kbd>Enter</kbd> makes a hard link there, and <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> a symbolic link; the note stays where it is. Each is recorded in the note's `paths` frontmatter, which follows renames and deletes.
 - **Aliases are listed in the dropdown**, orange: alias paths in the folder they name, Obsidian's own aliases beside their note. Picking one, or typing an alias path and pressing Enter, opens the note.
 - **A button in front of the vault's segment lists a note's other paths** — alias paths, hard and symbolic links found in the vault, Obsidian's aliases — when it has any. It shows how many, in the colour of the strongest kind: hard link purple, symbolic link pink, alias orange. Its menu starts with the note's own path in blue.
@@ -30,6 +30,10 @@ Every release of Lure, newest first. What has landed since the last release is u
 - **The dropdown has a red edge when Enter would make the typed name** while no row is highlighted, where the field itself keeps a row's colour.
 - **The wheel stops at the first and last row** of the dropdown instead of wrapping round; the arrow keys still wrap.
 - **A drop onto the path that cannot be made says why** — already in that folder, a folder into itself, a name already there — instead of letting the header behind it offer to open the file.
+
+### Fixed
+
+- **Windows:** paths written with `/` (`C:/Users/you/vault/Note.md`) are recognised as inside the vault, percent-encoded paths with a drive letter are decoded, and paths on the machine are written with `\` throughout instead of a mix of both separators.
 
 ## 1.5.2 — 2026-09-28[^1.5.2]
 

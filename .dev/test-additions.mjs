@@ -438,4 +438,59 @@ test("a folder named exactly carries the red edge too", async () => {
 	expect("the paths button has its chevron", true, true);
 });
 
+test("pressing the path bar's badge writes the extension out, marked", async () => {
+	await setSettings(page, { showFileExtension: false });
+	try {
+		await page.evaluate(openNote);
+		await page.evaluate(`app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-filename-badge")?.click(); ${PAUSE(400)} return true;`);
+		const r = await look();
+		expect("the name with its extension in the field", r.value, "Cake.md");
+		expect("the extension marked", r.selected, ".md");
+		expect("navigating, not renaming", r.renaming, false);
+	} finally {
+		await setSettings(page, { showFileExtension: true });
+	}
+});
+
+/**
+ * What the red edge promises is what Enter does: the row carrying it is
+ * the file that opens (or the folder that is stepped into). Read the edge,
+ * press Enter, and compare with where the pane went.
+ */
+async function redEdgeThenEnter(label, keys) {
+	await inOwnFolder();
+	for (const k of keys) {
+		if (k.startsWith("type:")) await type(k.slice(5));
+		else { await pressKey(page, k); await settle(250); }
+	}
+	const red = await page.evaluate(`return JSON.stringify([...document.querySelectorAll(".suggestion-item.lure-suggest-enter")].map((e) => e.querySelector(".lure-suggest-label")?.textContent ?? ""));`).then(JSON.parse);
+	expect(`${label}: one row carries the red edge`, red.length, 1);
+	await pressKey(page, "Enter");
+	await settle(800);
+	const went = await page.evaluate(`
+		const f = app.workspace.getActiveFile();
+		return JSON.stringify({ file: f?.path ?? null, chips: [...document.querySelectorAll(".lure-browse-chip")].map((c) => c.textContent) });
+	`).then(JSON.parse);
+	const name = (red[0] ?? "").replace(/\.md$/, "");
+	const opened = went.file?.split("/").pop()?.replace(/\.md$/, "") ?? null;
+	expect(`${label}: Enter went to that row`, opened === name || went.chips.at(-1) === name, true);
+	if (!(opened === name || went.chips.at(-1) === name)) console.log(`    red: ${JSON.stringify(red)}  went: ${JSON.stringify(went)}`);
+}
+
+test("the red edge is where Enter goes: a name with its completion standing", async () => {
+	await redEdgeThenEnter("offer", ["type:Cabb"]);
+});
+
+test("the red edge is where Enter goes: a row reached with the arrows", async () => {
+	await redEdgeThenEnter("arrows", ["type:Ca", "ArrowDown", "ArrowDown"]);
+});
+
+test("the red edge is where Enter goes: down and back up", async () => {
+	await redEdgeThenEnter("down and up", ["ArrowDown", "ArrowDown", "ArrowDown", "ArrowUp"]);
+});
+
+test("the red edge is where Enter goes: a name typed out in full", async () => {
+	await redEdgeThenEnter("exact", ["type:Linker"]);
+});
+
 await run();

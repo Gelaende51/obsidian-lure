@@ -2587,3 +2587,12 @@ from the logged readings; the factors will move as readings accumulate.
 ## A lone Alt as a key
 - Electron delivers a bare Alt as keydown/keyup with `key === "Alt"`. A tap is: Alt down with no other modifier, no key in between, up within ~600 ms. Alt+Tab to another window shows up here as Alt down followed by the field's `blur` (the Tab goes to the window manager), so clearing the armed tap on blur is enough; `document.hasFocus()` would also have refused it under xvfb on CI.
 - The Alt keydown has to be taken before the code that settles an inline offer on any non-character key, or the tap that is meant to *take* the offer throws it away first.
+
+## Windows paths, as the suites met them on GitHub's Windows runners
+- A Windows path pasted into page code as `"${path}"` is parsed as a JS string literal: `C:\Users\runneradmin` reads `C:Users` + carriage return + `unneradmin`. Every path handed to `page.evaluate` goes through `JSON.stringify`.
+- Git Bash hands Node `HOME` already converted (`C:\Users\runneradmin`), so `${process.env.HOME}/x` builds a mixed path. Use `join(homedir(), …)`.
+- Node and Obsidian on Windows ignore `TMPDIR`; they read `TEMP`/`TMP`, which on a runner hold the 8.3 short name (`C:\Users\RUNNER~1\…`). A vault copied there never compares equal to home's long spelling, so "home contains the vault" is false. `ci-run.sh` sets all three.
+- `chmod 0o000` only sets read-only on Windows; a file cannot be made unreadable that way.
+- `"/"` on Windows is the root of the current drive (on a runner `D:\`, holding little but `a\`).
+- Windows takes either separator and ignores case: anything comparing paths (`isInside`, `samePath`) has to normalise both, and anything producing a path for the row should write the machine's separator (`onMachine`, `onMachinePath`). A `file://` URL yields `C:/…` with forward slashes.
+- obsidian-launcher picks the installer for the runner's architecture: on `windows-11-arm` it unpacks `app-arm64.7z` from the NSIS installer.

@@ -1096,6 +1096,13 @@ export class PathBreadcrumb {
 			// differs (navigate vs. move), and that's decided at submit.
 			// The name itself selects just the file name; the empty space
 			// around it stays the way to grab the whole path at once.
+			// The badge stands for the hidden extension, and pressing it is
+			// asking to see it: the name opens with the extension written out
+			// and marked, as the dropdown's badge does for a row.
+			if (target.closest(".lure-filename-badge") && this.file && !this.paneTypeFor(evt)) {
+				this.revealFileExtension(this.file);
+				return;
+			}
 			if (target.closest(".lure-filename-text")) {
 				// A modifier means "open it", not "edit it" — the same rule
 				// a link or a File Explorer row follows, so Ctrl, Ctrl+Alt
@@ -4908,7 +4915,7 @@ export class PathBreadcrumb {
 			if (facts.endIcon) setIcon(icon.createSpan({ cls: "lure-suggest-kind" }), facts.endIcon);
 			if (facts.empty) icon.createSpan({ cls: "lure-suggest-empty" });
 			badge.createSpan({ text: `.${file.extension}` });
-			setTooltip(badge, describeFile(file.extension, facts));
+			setTooltip(badge, `${describeFile(file.extension, facts)}\n${t("suggestShowExtension")}`);
 		}
 		makeDraggable(this.plugin.app, nameEl, this.file);
 	}
@@ -5123,6 +5130,15 @@ export class PathBreadcrumb {
 		// field and the ladder would stop after one step.
 		this.climbFromClick = true;
 		return true;
+	}
+
+	private revealFileExtension(file: TFile): void {
+		this.editFromName = true;
+		const parent = file.parent?.path ?? "";
+		this.extendBrowsePath(parent === "/" ? "" : parent);
+		this.keepExtension = true;
+		this.enterTypingMode(file.name, "none");
+		this.inputEl?.setSelectionRange(file.basename.length, file.name.length);
 	}
 
 	private handleFilenameClick(): void {

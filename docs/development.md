@@ -200,8 +200,11 @@ A suite takes the focus and runs for minutes, so they run on GitHub's runners ra
 .dev/test-remote.sh                     # push first; every suite, both versions, waits for the result
 .dev/test-remote.sh test-tab test-drop  # only these
 OBSIDIAN=latest .dev/test-remote.sh test-tab
+OS=windows .dev/test-remote.sh test-tab # on Windows instead (see below)
 .dev/ci-run.sh test-tab                 # the same sandboxed run locally (needs a display; downloads Obsidian once)
 ```
+
+Pushes test on Linux only. Windows runs on demand, through `OS` or the workflow's *os* input: `windows` is Windows Server 2025 (the Windows 11 24H2 code base), `windows-arm` Windows 11 on Arm64 (the Arm build of Obsidian), `windows-all` both of those and Windows Server 2022 (the Windows 10 era code base), `both` Linux and Server 2025, `all` Linux and every Windows image. No Windows older than 10 is worth a runner: Obsidian is Electron, and Electron 23 dropped Windows 7, 8 and 8.1.
 
 A suite that exits 2 — cases it could not ask on that display — passes with a warning; the Obsidian log of a failed suite is attached to the run. So are a screenshot and the header's HTML at each failing case's first failed assertion (`LURE_SHOTS`), since a runner cannot be watched. `FILTER="long paths" .dev/test-remote.sh test-gestures` runs only the matching cases. `node .dev/ci-speed.mjs [run id]` appends how a run's times compare with this machine's to `.dev/test-speed.md`: a full round is ~8 minutes on the runners against ~23 here.
 
