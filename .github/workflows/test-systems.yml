@@ -157,14 +157,17 @@ jobs:
   # test-compat-ui): .dev/probe-freeze.mjs pauses it and prints the stacks.
   freeze-probe:
     if: inputs.target == 'freeze-probe'
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
     strategy:
       fail-fast: false
       matrix:
         peer: [iconic]
         lure: ["on", "off"]
-    name: freeze probe, ${{ matrix.peer }}, Lure ${{ matrix.lure }}
+        # Linux runs under a virtual display; Windows and macOS have a real
+        # desktop session, which says whether a freeze is the display's.
+        os: [ubuntu-latest, windows-2025, macos-15]
+    name: freeze probe, ${{ matrix.peer }}, Lure ${{ matrix.lure }}, ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -173,13 +176,18 @@ jobs:
           cache: npm
       - run: npm ci
       - run: node esbuild.config.mjs readable
-      - name: Turn the peer on after Lure and sample the stack
+      - name: Turn the peer on and sample the stack
+        shell: bash
         env:
-          OBSIDIAN_EXTRA_ARGS: --no-sandbox
           EXTRA_PLUGINS: ${{ matrix.peer }}
           LURE_OFF: ${{ matrix.lure == 'off' && '1' || '' }}
           OBSIDIAN_VERSION: latest
-        run: xvfb-run -a -s "-screen 0 1920x1080x24" .dev/ci-run.sh probe-freeze
+        run: |
+          if [ "$RUNNER_OS" = Linux ]; then
+            OBSIDIAN_EXTRA_ARGS=--no-sandbox xvfb-run -a -s "-screen 0 1920x1080x24" .dev/ci-run.sh probe-freeze
+          else
+            .dev/ci-run.sh probe-freeze
+          fi
 
   server-2019:
     if: inputs.target == 'server-2019' || inputs.target == 'all'
