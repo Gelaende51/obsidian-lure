@@ -1065,6 +1065,11 @@ export class PathBreadcrumb {
 			// permanently with no way back.
 			if (this.inputEl) {
 				if (evt.target === this.inputEl) return;
+				// The badge beside the field writes the extension out in it.
+				if ((evt.target as HTMLElement).closest(".lure-filename-badge")) {
+					this.revealExtensionInField();
+					return;
+				}
 				// The field is only as wide as what is in it, so the row
 				// beside it is empty space that still belongs to the edit.
 				// A run of presses out there means what it means on the field
@@ -4907,41 +4912,49 @@ export class PathBreadcrumb {
 				text: this.file.name.slice(this.file.basename.length),
 			});
 		} else if (this.file.extension) {
-			// Hidden from the name, the extension is shown as the dropdown shows
-			// it: a badge with the file's icon and marks, at the right-hand end
-			// of the row. It is still the extension to the fitter, given up
-			// whole straight after the vault name.
-			const file = this.file;
-			const disk = this.plugin.diskLinks;
-			const link = disk.targetOfLink(file.path) ? "symbolic" : disk.sameFile(file.path).length ? "hard" : "none";
-			const facts = { label: file.name, kind: "file" as const, path: file.path, disabled: false, empty: file.stat.size === 0, endIcon: LINK_ICONS[link] };
-			const badge = this.filenameEl.createSpan({ cls: `${EXTENSION_CLASS} lure-filename-badge` });
-			const others = otherPaths(this.plugin.app, disk, file);
-			if (others.length) {
-				// A note with other paths: the other-paths button takes the type
-				// icon's place, and the whole badge its colour. The icon opens
-				// their list; the rest of the badge still writes the extension out.
-				badge.dataset.lureTint = otherPathsTint(others);
-				const opener = badge.createSpan({ cls: "lure-suggest-type-icon lure-badge-other-paths" });
-				setIcon(opener, "split");
-				opener.createSpan({ cls: "lure-other-paths-count", text: String(others.length) });
-				setIcon(opener.createSpan({ cls: "lure-other-paths-chevron" }), "chevron-down");
-				setTooltip(opener, t("otherPathsTooltip"));
-				opener.addEventListener("mousedown", (evt) => evt.preventDefault());
-				opener.addEventListener("click", (evt) => {
-					evt.stopPropagation();
-					this.showIndicatorMenu(evt);
-				});
-			} else {
-				const icon = badge.createSpan({ cls: "lure-suggest-type-icon lure-suggest-has-kind" });
-				setIcon(icon, typeIcon(file.extension));
-				if (facts.endIcon) setIcon(icon.createSpan({ cls: "lure-suggest-kind" }), facts.endIcon);
-				if (facts.empty) icon.createSpan({ cls: "lure-suggest-empty" });
-			}
-			badge.createSpan({ text: `.${file.extension}` });
-			setTooltip(badge, `${describeFile(file.extension, facts)}\n${t("suggestShowExtension")}`);
+			this.renderFileBadge(this.filenameEl, this.file);
 		}
 		makeDraggable(this.plugin.app, nameEl, this.file);
+	}
+
+	/**
+	 * Hidden from the name, the extension is shown as the dropdown shows it:
+	 * a badge with the file's icon and marks, at the right-hand end of the
+	 * row. It is still the extension to the fitter, given up whole straight
+	 * after the vault name. It stays while the field is open, so the row
+	 * goes on saying what the file is while its name is edited.
+	 */
+	private renderFileBadge(host: HTMLElement, file: TFile): void {
+		const disk = this.plugin.diskLinks;
+		const link = disk.targetOfLink(file.path) ? "symbolic" : disk.sameFile(file.path).length ? "hard" : "none";
+		const facts = { label: file.name, kind: "file" as const, path: file.path, disabled: false, empty: file.stat.size === 0, endIcon: LINK_ICONS[link] };
+		const badge = host.createSpan({ cls: `${EXTENSION_CLASS} lure-filename-badge` });
+		// A press on it is not one that leaves the field.
+		badge.addEventListener("mousedown", (evt) => evt.preventDefault());
+		const others = otherPaths(this.plugin.app, disk, file);
+		if (others.length) {
+			// A note with other paths: the other-paths button takes the type
+			// icon's place, and the badge their colour behind it. The icon
+			// opens their list; the rest of the badge still writes the
+			// extension out, and stays grey, apart from the button.
+			badge.dataset.lureTint = otherPathsTint(others);
+			const opener = badge.createSpan({ cls: "lure-suggest-type-icon lure-badge-other-paths" });
+			setIcon(opener, "split");
+			opener.createSpan({ cls: "lure-other-paths-count", text: String(others.length) });
+			setIcon(opener.createSpan({ cls: "lure-other-paths-chevron" }), "chevron-down");
+			setTooltip(opener, t("otherPathsTooltip"));
+			opener.addEventListener("click", (evt) => {
+				evt.stopPropagation();
+				this.showIndicatorMenu(evt, badge);
+			});
+		} else {
+			const icon = badge.createSpan({ cls: "lure-suggest-type-icon lure-suggest-has-kind" });
+			setIcon(icon, typeIcon(file.extension));
+			if (facts.endIcon) setIcon(icon.createSpan({ cls: "lure-suggest-kind" }), facts.endIcon);
+			if (facts.empty) icon.createSpan({ cls: "lure-suggest-empty" });
+		}
+		badge.createSpan({ cls: "lure-badge-extension", text: `.${file.extension}` });
+		setTooltip(badge, `${describeFile(file.extension, facts)}\n${t("suggestShowExtension")}`);
 	}
 
 	/**
@@ -5154,6 +5167,26 @@ export class PathBreadcrumb {
 		// field and the ladder would stop after one step.
 		this.climbFromClick = true;
 		return true;
+	}
+
+	/**
+	 * The badge pressed while the field is open: the extension goes on the
+	 * end of what the field holds, marked, and the badge has nothing left
+	 * to say.
+	 */
+	private revealExtensionInField(): void {
+		const input = this.inputEl;
+		const extension = this.file?.extension;
+		if (!input || !extension) return;
+		const dotted = `.${extension}`;
+		if (!input.value.toLowerCase().endsWith(dotted.toLowerCase())) {
+			input.value += dotted;
+			input.dispatchEvent(new Event("input", { bubbles: true }));
+		}
+		this.filenameEl.querySelector(":scope > .lure-filename-badge")?.remove();
+		input.focus();
+		input.setSelectionRange(input.value.length - dotted.length, input.value.length);
+		this.updateIndicator();
 	}
 
 	private revealFileExtension(file: TFile): void {
@@ -6821,9 +6854,15 @@ export class PathBreadcrumb {
 	 * The menu lists the matches, then the note's own path in blue, then the
 	 * other paths in their colours.
 	 */
-	/** Whether the row ends in the open file's badge: extensions hidden, a file in the vault, no field open. */
+	/** Whether the row ends in the open file's badge: with the field open, only where it kept it. */
 	private badgeShows(): boolean {
-		return !this.plugin.settings.showFileExtension && !!this.file?.extension && this.externalPath === null && !this.showingLocations && this.inputEl === null;
+		if (!this.badgeWanted()) return false;
+		return this.inputEl === null || this.filenameEl.querySelector(":scope > .lure-filename-badge") !== null;
+	}
+
+	/** Whether the open file's extension goes in a badge: hidden from names, a file in the vault, no locations menu. */
+	private badgeWanted(): boolean {
+		return !this.plugin.settings.showFileExtension && !!this.file?.extension && this.externalPath === null && !this.showingLocations;
 	}
 
 	private updateIndicator(): void {
@@ -6868,7 +6907,11 @@ export class PathBreadcrumb {
 		setTooltip(button, matches !== null ? t("globMatchesTooltip", { count: String(count) }) : t("otherPathsTooltip"));
 	}
 
-	private showIndicatorMenu(evt: MouseEvent): void {
+	/**
+	 * The list of other paths, opened from the button at the front or the
+	 * badge at the end — whose right edge, the extension's, it then shares.
+	 */
+	private showIndicatorMenu(evt: MouseEvent, alignTo: HTMLElement | null = null): void {
 		const file = this.file;
 		const app = this.plugin.app;
 		type Entry = { path: string; icon: string; tint: string; go: (() => void) | null };
@@ -6901,35 +6944,75 @@ export class PathBreadcrumb {
 		}
 		if (!entries.length) return;
 
-		// Not Obsidian's Menu: its items cannot be dragged or right-clicked.
-		// The same look, with each file in it wired like a File Explorer row —
-		// drag it into a note for a link, onto a folder to move it, or
-		// right-click it for the file's own menu.
+		// Built like the path dropdown — its rows, bars, colours and
+		// extension badges, highlighted under the pointer and by the arrow
+		// keys — and not Obsidian's Menu, whose items cannot be dragged or
+		// right-clicked: each file in it is wired like a File Explorer row.
 		document.querySelector(".lure-other-paths-menu")?.remove();
-		const menu = document.body.createDiv({ cls: "menu lure-other-paths-menu" });
+		const menu = document.body.createDiv({ cls: "suggestion-container lure-suggest-popover lure-other-paths-menu" });
+		const list = menu.createDiv({ cls: "suggestion" });
+		const rows: { el: HTMLElement; entry: Entry }[] = [];
+		let selected = -1;
+		const select = (index: number, scroll: boolean): void => {
+			rows[selected]?.el.removeClass("is-selected");
+			selected = index;
+			const row = rows[selected]?.el;
+			row?.addClass("is-selected");
+			if (scroll) row?.scrollIntoView({ block: "nearest" });
+		};
 		const close = (): void => {
 			menu.remove();
 			document.removeEventListener("pointerdown", away, true);
 			document.removeEventListener("keydown", onKey, true);
+		};
+		const choose = (entry: Entry): void => {
+			close();
+			entry.go?.();
 		};
 		const away = (e: PointerEvent): void => {
 			if (!menu.contains(e.target as Node)) close();
 		};
 		const onKey = (e: KeyboardEvent): void => {
 			if (e.key === "Escape") close();
+			else if ((e.key === "ArrowDown" || e.key === "ArrowUp") && rows.length) select((selected + (e.key === "ArrowDown" ? 1 : -1) + rows.length) % rows.length, true);
+			else if (e.key === "Enter" && rows[selected]) choose(rows[selected].entry);
+			else return;
+			// The keys are the list's while it shows, not the field's under it.
+			e.preventDefault();
+			e.stopPropagation();
 		};
+		const hideExtensions = !this.plugin.settings.showFileExtension;
 		for (const entry of entries) {
-			const row = menu.createDiv({ cls: "menu-item", attr: { "data-lure-tint": entry.tint } });
-			setIcon(row.createDiv({ cls: "menu-item-icon" }), entry.icon);
-			row.createDiv({ cls: "menu-item-title", text: entry.path });
-			if (!entry.go) row.addClass("is-disabled");
+			const el = list.createDiv({ cls: "suggestion-item lure-suggest-file", attr: { "data-lure-tint": entry.tint, "data-path": entry.path } });
+			const bars = el.createSpan({ cls: "lure-suggest-bars" });
+			for (const bar of ["glob", "current"]) bars.createSpan({ cls: `lure-bar lure-bar-${bar}` });
+			if (entry.tint === "current") el.addClass("lure-suggest-current");
+			if (entry.tint === "match") el.addClass("lure-suggest-glob");
+			// The extension as the dropdown has it: off the name and in a
+			// badge at the row's end, when extensions are hidden.
+			const dot = entry.path.lastIndexOf(".");
+			const slash = Math.max(entry.path.lastIndexOf("/"), entry.path.lastIndexOf("\\"));
+			const extension = hideExtensions && dot > slash + 1 && dot < entry.path.length - 1 ? entry.path.slice(dot + 1) : null;
+			el.createSpan({ cls: "lure-suggest-label", text: extension ? entry.path.slice(0, dot) : entry.path });
+			const end = el.createSpan({ cls: "lure-suggest-end" });
+			// What kind of other path it is, where the dropdown says so.
+			if (entry.tint !== "current" && entry.tint !== "match") setIcon(end.createSpan({ cls: "lure-suggest-kind" }), entry.icon);
+			if (extension) {
+				const badge = end.createSpan({ cls: "lure-suggest-type" });
+				setIcon(badge.createSpan({ cls: "lure-suggest-type-icon" }), typeIcon(extension));
+				badge.createSpan({ text: `.${extension}` });
+			}
 			const there = app.vault.getAbstractFileByPath(entry.path);
-			if (there instanceof TFile) wireNativeFileItem(app, row, there);
-			row.addEventListener("click", () => {
-				close();
-				entry.go?.();
+			if (there instanceof TFile) wireNativeFileItem(app, el, there);
+			const index = rows.length;
+			rows.push({ el, entry });
+			el.addEventListener("mousemove", () => {
+				if (selected !== index) select(index, false);
 			});
+			el.addEventListener("click", () => choose(entry));
 		}
+		// The first path it can go to, as the dropdown starts on its first row.
+		select(Math.max(0, rows.findIndex((row) => row.entry.go)), false);
 		// Under the button and flush with the bottom of the path bar, where the
 		// dropdown opens.
 		const button = (evt.currentTarget as HTMLElement | null) ?? this.indicatorEl;
@@ -6939,9 +7022,14 @@ export class PathBreadcrumb {
 			left: `${Math.round(at.left)}px`,
 			top: `${Math.round(bar.getBoundingClientRect().bottom)}px`,
 		});
-		// From the badge at the row's end it would run off the window: kept in.
+		// From the badge, it ends where the extension does.
+		if (alignTo) {
+			const right = alignTo.getBoundingClientRect().right;
+			menu.setCssProps({ left: `${Math.max(0, Math.round(right - menu.getBoundingClientRect().width))}px` });
+		}
+		// Kept in the window.
 		const overflow = menu.getBoundingClientRect().right - window.innerWidth + 8;
-		if (overflow > 0) menu.setCssProps({ left: `${Math.max(0, Math.round(at.left - overflow))}px` });
+		if (overflow > 0) menu.setCssProps({ left: `${Math.max(0, Math.round(menu.getBoundingClientRect().left - overflow))}px` });
 		window.setTimeout(() => {
 			document.addEventListener("pointerdown", away, true);
 			document.addEventListener("keydown", onKey, true);
@@ -8625,6 +8713,13 @@ export class PathBreadcrumb {
 		});
 		this.inputEl = inputEl;
 		this.lapArmedFor = null;
+		// The badge stays beside the field while the name in it goes without
+		// its extension: opening the dropdown is no reason for the row to
+		// stop saying what the file is.
+		const file = this.file;
+		if (host === this.filenameEl && file?.extension && this.badgeWanted() && !initialText.toLowerCase().endsWith(`.${file.extension.toLowerCase()}`)) {
+			this.renderFileBadge(host, file);
+		}
 
 		// Measured against its own font rather than flex-sized, so it fits
 		// whatever it's seeded with (a full path, say) as tightly as the

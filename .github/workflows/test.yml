@@ -151,10 +151,10 @@ jobs:
           if [ $code -eq 2 ]; then echo "::warning::${{ matrix.suite }} skipped cases it could not ask here"; exit 0; fi
           exit $code
       - name: Keep the pictures the colour cases take
-        if: always() && matrix.suite == 'test-additions'
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: look-${{ matrix.version }}
+          name: look-${{ matrix.suite }}-${{ matrix.version }}
           path: shots/look/
           if-no-files-found: ignore
       - name: Keep Obsidian's log and the failure screenshots
@@ -212,10 +212,10 @@ jobs:
           if [ $code -eq 2 ]; then echo "::warning::${{ matrix.suite }} skipped cases it could not ask here"; exit 0; fi
           exit $code
       - name: Keep the pictures the colour cases take
-        if: always() && matrix.suite == 'test-additions'
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: look-${{ matrix.version }}-${{ matrix.runner }}
+          name: look-${{ matrix.suite }}-${{ matrix.version }}-${{ matrix.runner }}
           path: shots/look/
           if-no-files-found: ignore
       - name: Keep Obsidian's log and the failure screenshots

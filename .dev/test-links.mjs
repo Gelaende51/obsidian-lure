@@ -55,6 +55,17 @@ const { test, expect, run } = createSuite({
 
 const settle = (ms = 500) => page.evaluate(PAUSE(ms) + "return true;");
 
+/** A picture of the window, kept with LURE_SHOTS set: only a picture says a look shows. */
+async function shoot(name) {
+	const dir = process.env.LURE_SHOTS;
+	if (!dir) return;
+	const { mkdirSync, writeFileSync } = await import("node:fs");
+	mkdirSync(`${dir}/look`, { recursive: true });
+	const png = await page.send("Page.captureScreenshot", { format: "png" });
+	const data = png?.result?.data ?? png?.data;
+	if (data) writeFileSync(`${dir}/look/${name}.png`, Buffer.from(data, "base64"));
+}
+
 /** Opens the note and the rename field on its name, stem marked. */
 async function renaming() {
 	await page.evaluate(`
@@ -123,8 +134,8 @@ test("Shift+Enter, renaming, makes a hard link and records both paths", async ()
 		const el = app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-other-paths, .lure-badge-other-paths");
 		el?.click();
 		${PAUSE(300)}
-		const tints = [...document.querySelectorAll(".menu .menu-item")].map((e) => e.dataset.lureTint ?? null);
-		document.querySelector(".menu")?.remove();
+		const tints = [...document.querySelectorAll(".lure-other-paths-menu .suggestion-item")].map((e) => e.dataset.lureTint ?? null);
+		document.querySelector(".lure-other-paths-menu")?.remove();
 		return JSON.stringify({ count: el?.querySelector(".lure-other-paths-count")?.textContent ?? null, tint: el?.closest("[data-lure-tint]")?.dataset.lureTint ?? null, tints });
 	`).then(JSON.parse);
 	expect("the button counts one other path", button.count, "1");
@@ -214,16 +225,16 @@ test("the other-paths button shows exactly when there are other paths", async ()
 	const items = await page.evaluate(`
 		app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-other-paths, .lure-badge-other-paths").click();
 		${PAUSE(300)}
-		const titles = [...document.querySelectorAll(".menu .menu-item-title")].map((e) => e.textContent);
+		const titles = [...document.querySelectorAll(".lure-other-paths-menu .suggestion-item")].map((e) => e.dataset.path);
 		document.body.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
-		document.querySelector(".menu")?.remove();
+		document.querySelector(".lure-other-paths-menu")?.remove();
 		return JSON.stringify(titles);
 	`).then(JSON.parse);
 	expect("its menu lists the note, then the path", items, [NOTE, `${DIR}/Other.md`]);
 	const draggable = await page.evaluate(`
 		app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-other-paths, .lure-badge-other-paths").click();
 		${PAUSE(300)}
-		const rows = [...document.querySelectorAll(".lure-other-paths-menu .menu-item")];
+		const rows = [...document.querySelectorAll(".lure-other-paths-menu .suggestion-item")];
 		const out = rows.map((r) => r.getAttribute("draggable"));
 		document.querySelector(".lure-other-paths-menu")?.remove();
 		return JSON.stringify(out);
@@ -263,11 +274,11 @@ test("the button stays while editing, its menu opens under the bar, and link row
 		const button = root.querySelector(".lure-other-paths");
 		button?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
 		${PAUSE(300)}
-		const menu = document.querySelector(".menu");
+		const menu = document.querySelector(".lure-other-paths-menu");
 		const bar = root.querySelector(".view-header");
 		const gap = menu && bar ? Math.round(menu.getBoundingClientRect().top - bar.getBoundingClientRect().bottom) : null;
 		const left = menu && button ? Math.round(menu.getBoundingClientRect().left - button.getBoundingClientRect().left) : null;
-		const icons = [...document.querySelectorAll(".menu .menu-item-icon svg")].map((s) => [...s.classList].find((c) => c.startsWith("lucide-")) ?? null);
+		const icons = [...document.querySelectorAll(".lure-other-paths-menu .lure-suggest-kind svg")].map((s) => [...s.classList].find((c) => c.startsWith("lucide-")) ?? null);
 		menu?.remove();
 		return JSON.stringify({ whileEditing, gap, left, icons });
 	`).then(JSON.parse);
@@ -400,7 +411,7 @@ test("with extensions hidden the badge is the other-paths button, in their colou
 		const front = !!root.querySelector(".lure-other-paths");
 		opener?.click();
 		${PAUSE(300)}
-		const menu = [...document.querySelectorAll(".lure-other-paths-menu .menu-item-title")].map((e) => e.textContent);
+		const menu = [...document.querySelectorAll(".lure-other-paths-menu .suggestion-item")].map((e) => e.dataset.path);
 		document.querySelector(".lure-other-paths-menu")?.remove();
 		${PAUSE(100)}
 		const input0 = !!root.querySelector(".lure-path-input");
@@ -422,6 +433,84 @@ test("with extensions hidden the badge is the other-paths button, in their colou
 	expect("the icon opens the list", r.menu, [NOTE, `${DIR}/Other.md`]);
 	expect("without opening the field", r.input0, false);
 	expect("the rest of the badge writes the extension out", [r.value, r.selected], [NOTE.split("/").pop(), ".md"]);
+});
+
+test("the badge: a hand, a grey extension, its list ending where it does, built like the dropdown", async () => {
+	await setSettings(page, { showFileExtension: false });
+	try {
+		await page.evaluate(`
+			const f = app.vault.getAbstractFileByPath(${JSON.stringify(NOTE)});
+			await app.fileManager.processFrontMatter(f, (fm) => { fm.paths = [${JSON.stringify(`${DIR}/Other.md`)}, ${JSON.stringify(`${DIR}/Third.md`)}]; });
+			${PAUSE(500)}
+			await app.workspace.getLeaf(false).openFile(f);
+			${PAUSE(800)}
+			return true;
+		`);
+		await shoot("badge-other-paths");
+		const r = await page.evaluate(`
+			const root = app.workspace.getLeaf(false).view.containerEl;
+			const badge = root.querySelector(".lure-filename-badge");
+			const ext = badge.querySelector(".lure-badge-extension");
+			const chevron = badge.querySelector(".lure-other-paths-chevron");
+			const out = {
+				cursor: getComputedStyle(badge).cursor,
+				extGrey: getComputedStyle(ext).color !== getComputedStyle(badge).color,
+				chevronBox: Math.round(chevron.getBoundingClientRect().width),
+				icon: !!badge.querySelector(".lure-badge-other-paths > svg.lucide-split"),
+			};
+			badge.querySelector(".lure-badge-other-paths").click();
+			${PAUSE(300)}
+			const menu = document.querySelector(".lure-other-paths-menu");
+			out.rightGap = menu ? Math.round(menu.getBoundingClientRect().right - badge.getBoundingClientRect().right) : null;
+			const rows = [...(menu?.querySelectorAll(".suggestion-item") ?? [])];
+			out.labels = rows.map((e) => e.querySelector(".lure-suggest-label")?.textContent);
+			out.badges = rows.map((e) => e.querySelector(".lure-suggest-type")?.textContent ?? null);
+			out.selected = rows.findIndex((e) => e.classList.contains("is-selected"));
+			return JSON.stringify(out);
+		`).then(JSON.parse);
+		await shoot("other-paths-list");
+		await pressKey(page, "ArrowDown");
+		const after = await page.evaluate(`
+			const rows = [...document.querySelectorAll(".lure-other-paths-menu .suggestion-item")];
+			const i = rows.findIndex((e) => e.classList.contains("is-selected"));
+			document.querySelector(".lure-other-paths-menu")?.remove();
+			return i;
+		`);
+		expect("a hand over the badge", r.cursor, "pointer");
+		expect("its extension stays grey in the tint", r.extGrey, true);
+		expect("the chevron has a box like the count", r.chevronBox, 12);
+		expect("the button is Lucide's split", r.icon, true);
+		expect("the list ends where the extension does", r.rightGap !== null && Math.abs(r.rightGap) <= 2, true);
+		expect("names without the extension, as in the dropdown", r.labels, [`${DIR}/Note`, `${DIR}/Other`, `${DIR}/Third`]);
+		expect("which is in a badge", r.badges, [".md", ".md", ".md"]);
+		expect("the first path to go to is highlighted", r.selected, 1);
+		expect("the arrow keys move the highlight", after, 2);
+
+		// The field open on the name: the badge stays, and writes the extension in.
+		const editing = await page.evaluate(`
+			const root = app.workspace.getLeaf(false).view.containerEl;
+			root.querySelector(".lure-filename-text").click();
+			${PAUSE(500)}
+			const input = root.querySelector(".lure-path-input");
+			return JSON.stringify({ badge: !!root.querySelector(".lure-filename .lure-filename-badge"), value: input?.value ?? null, front: !!root.querySelector(".lure-other-paths") });
+		`).then(JSON.parse);
+		await shoot("badge-while-editing");
+		const revealed = await page.evaluate(`
+			const root = app.workspace.getLeaf(false).view.containerEl;
+			root.querySelector(".lure-filename-badge .lure-badge-extension")?.click();
+			${PAUSE(300)}
+			const input = root.querySelector(".lure-path-input");
+			return JSON.stringify({ value: input?.value ?? null, selected: input ? input.value.slice(input.selectionStart, input.selectionEnd) : null, badge: !!root.querySelector(".lure-filename-badge") });
+		`).then(JSON.parse);
+		expect("the badge stays while the field is open", editing.badge, true);
+		expect("the field holds the name without it", editing.value, "Note");
+		expect("and the button is not doubled at the front", editing.front, false);
+		expect("pressed there, it writes the extension in, marked", [revealed.value, revealed.selected], ["Note.md", ".md"]);
+		expect("and goes", revealed.badge, false);
+	} finally {
+		await page.evaluate(`document.querySelector(".lure-path-input")?.blur(); document.querySelector(".lure-other-paths-menu")?.remove(); return true;`);
+		await setSettings(page, { showFileExtension: true });
+	}
 });
 
 await run();

@@ -1909,7 +1909,7 @@ const OTHER_PATHS = `
 	const btn = app.workspace.activeLeaf.view.containerEl.querySelector(".lure-other-paths");
 	btn?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
 	${PAUSE(300)}
-	const menu = [...document.querySelectorAll(".lure-other-paths-menu .menu-item")].map((e) => [e.querySelector(".menu-item-title")?.textContent, e.dataset.lureTint]);
+	const menu = [...document.querySelectorAll(".lure-other-paths-menu .suggestion-item")].map((e) => [e.dataset.path, e.dataset.lureTint]);
 	document.querySelector(".lure-other-paths-menu")?.remove();
 	return { count: btn?.querySelector(".lure-other-paths-count")?.textContent ?? null, tint: btn?.dataset.lureTint ?? null, menu };
 `;
