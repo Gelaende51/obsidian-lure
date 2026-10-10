@@ -564,8 +564,22 @@ test("symbolic links made and removed outside Obsidian are put right in the list
 	const POINTER = `${DIR}/Sub/Pointer.md`;
 	await outside(`fs.symlinkSync("../Note.md", at(${JSON.stringify(POINTER)}));`);
 	expect("a symbolic link made in a terminal is listed", await symlinks((v) => v.includes(POINTER)), (v) => v.includes(POINTER));
+	await page.evaluate(`
+		const lure = app.plugins.plugins.lure, disk = lure.diskLinks;
+		const d = (window.__diag = { shown: 0, ready: [], writes: 0, errors: [] });
+		const shown = lure.noteShown;
+		lure.noteShown = () => { d.shown++; shown(); };
+		const whenReady = disk.whenReady.bind(disk);
+		disk.whenReady = () => whenReady().then(() => { d.ready.push(JSON.stringify(disk.symbolicLinks())); });
+		const pfm = app.fileManager.processFrontMatter.bind(app.fileManager);
+		app.fileManager.processFrontMatter = (f, fn) => { d.writes++; return pfm(f, fn).catch((e) => { d.errors.push(String(e)); throw e; }); };
+		window.addEventListener("unhandledrejection", (e) => d.errors.push(String(e.reason)));
+		return true;
+	`);
 	await outside(`fs.unlinkSync(at(${JSON.stringify(POINTER)}));`);
-	expect("a symbolic link removed in a terminal is taken out", await symlinks((v) => !v.includes(POINTER)), []);
+	const removed = await symlinks((v) => !v.includes(POINTER));
+	expect("a symbolic link removed in a terminal is taken out", removed, []);
+	if (removed.length) expect("(diagnostic)", await page.evaluate(`return JSON.stringify(window.__diag);`), "-");
 });
 
 await run();
