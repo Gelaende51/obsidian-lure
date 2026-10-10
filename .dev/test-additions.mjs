@@ -205,7 +205,8 @@ test("the row Enter would act on carries the red edge, and the open note's row t
 	await pressKey(page, "ctrl+a");
 	await type("Ca");
 	r = await rows();
-	expect("the open note's row is blue", r.find((row) => row.label === "Cake.md")?.here, true);
+	// Blue is for the open note's other paths, not for the note itself.
+	expect("the open note's own row is not blue", r.find((row) => row.label === "Cake.md")?.here, false);
 	await pressKey(page, "ArrowDown");
 	await settle(300);
 	r = await rows();
@@ -300,9 +301,9 @@ test("the file Enter would make is the red first row, and empty files carry a 0"
 	await type("Cab");
 	const empty = await page.evaluate(`
 		const el = [...document.querySelectorAll(".suggestion-item")].find((e) => e.querySelector(".lure-suggest-label")?.textContent?.startsWith("Cabbage"));
-		return el?.querySelector(".lure-suggest-empty")?.textContent ?? null;
+		return !!el?.querySelector(".lure-suggest-empty");
 	`);
-	expect("the empty note is marked 0", empty, "0");
+	expect("the empty note is marked 0", empty, true);
 });
 
 await run();

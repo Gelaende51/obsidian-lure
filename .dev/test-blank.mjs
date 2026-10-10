@@ -266,7 +266,8 @@ test("a page can be typed as well as picked, and is not something to make", asyn
 	const typed = JSON.parse(await page.evaluate(`
 		const input = document.querySelector(".lure-path-input");
 		const probe = document.body.createDiv();
-		probe.style.color = "var(--text-warning)";
+		// Pages are grey: not files, so not orange like the files that are not notes.
+		probe.style.color = "var(--text-muted)";
 		const warn = getComputedStyle(probe).color;
 		probe.remove();
 		return JSON.stringify({

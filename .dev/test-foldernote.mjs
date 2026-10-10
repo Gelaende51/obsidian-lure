@@ -225,8 +225,9 @@ test("a folder's note is marked in the list, and purple like any note there and 
 	await page.evaluate(`document.querySelector(".lure-path-input")?.select(); return true;`);
 	await page.send("Input.insertText", { text: "child" });
 	await page.evaluate(PAUSE(400) + "return true;");
-	expect("and the field heading for it is purple like any note",
-		await page.evaluate(`return document.querySelector(".lure-path-input")?.dataset.lureTint ?? null;`), "md");
+	// Folder notes read as plain text beside their bold folder (issues4).
+	expect("and the field heading for it is plain, as its row is",
+		await page.evaluate(`return document.querySelector(".lure-path-input")?.dataset.lureTint ?? null;`), "folder-note");
 });
 
 test("a folder note opens from the delimiter however deep its folder is", async () => {

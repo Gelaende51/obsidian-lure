@@ -1464,7 +1464,8 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			}
 			host.addClass("lure-suggest-has-kind");
 			if (value.endIcon) setIcon(host.createSpan({ cls: "lure-suggest-kind" }), value.endIcon);
-			if (value.empty) host.createSpan({ cls: "lure-suggest-empty", text: "0" });
+			// Drawn by the stylesheet, so the row's text stays the name and its extension.
+			if (value.empty) host.createSpan({ cls: "lure-suggest-empty" });
 		}
 
 		// "keep-name" is a proposed destination that nothing exists at yet,

@@ -1734,6 +1734,9 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 }
 
 /* An empty file: a 0 at the bottom left of its icon. */
+.suggestion-item .lure-suggest-has-kind .lure-suggest-empty::after {
+	content: "0";
+}
 .suggestion-item .lure-suggest-has-kind .lure-suggest-empty {
 	position: absolute;
 	left: -4px;
