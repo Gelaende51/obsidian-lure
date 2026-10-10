@@ -54,6 +54,9 @@ jobs:
       # leave out.
       - name: tar, for the checkout
         run: |
+          # An image that declares no PATH of its own (openSUSE) is left with
+          # only the tool cache once setup-node adds to it: no /usr/bin, no sh.
+          echo "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> "$GITHUB_PATH"
           command -v tar >/dev/null && exit 0
           if command -v zypper >/dev/null; then zypper --non-interactive --gpg-auto-import-keys refresh && zypper --non-interactive install bash-sh tar gzip
           elif command -v dnf >/dev/null; then dnf install -y tar gzip
