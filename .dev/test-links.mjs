@@ -550,6 +550,31 @@ test("hard links made and split off outside Obsidian are put right in the lists"
 // Open: a symbolic link made or removed outside raises no vault event, and
 // checking when the path bar shows the note has not caught it yet on CI.
 test("symbolic links made and removed outside Obsidian are put right in the lists", async () => {
+	// Diagnostic: what the trigger and the scan do.
+	await page.evaluate(`
+		const lure = app.plugins.plugins.lure;
+		window.__diag = { shown: 0, invalidated: 0 };
+		const shown = lure.noteShown;
+		lure.noteShown = () => { window.__diag.shown++; shown(); };
+		const invalidate = lure.diskLinks.invalidate;
+		lure.diskLinks.invalidate = function () { window.__diag.invalidated++; return invalidate.call(this); };
+		return true;
+	`);
+	await outside(`fs.symlinkSync("../Note.md", at(${JSON.stringify(`${DIR}/Sub/Pointer.md`)}));`);
+	const diag = await page.evaluate(`
+		const lure = app.plugins.plugins.lure;
+		const before = JSON.stringify(window.__diag);
+		const listed = !!app.vault.getAbstractFileByPath(${JSON.stringify(`${DIR}/Sub/Pointer.md`)});
+		lure.diskLinks.invalidate();
+		await lure.diskLinks.whenReady();
+		const links = JSON.stringify(lure.diskLinks.symbolicLinks());
+		lure.noteShown();
+		${PAUSE(3500)}
+		const fm = app.metadataCache.getFileCache(app.vault.getAbstractFileByPath(${JSON.stringify(NOTE)}))?.frontmatter ?? {};
+		return before + " vaultLists=" + listed + " scan=" + links + " afterDirect=" + JSON.stringify(fm["paths-symlinks"] ?? null);
+	`);
+	expect("(diagnostic)", diag, "-");
+	await page.evaluate(`fs = require("fs"); fs.unlinkSync(require("path").join(app.vault.adapter.getBasePath(), ${JSON.stringify(`${DIR}/Sub/Pointer.md`)})); return true;`);
 	await outside(`fs.symlinkSync("../Note.md", at(${JSON.stringify(`${DIR}/Sub/Pointer.md`)}));`);
 	let lists = await listsOf(NOTE);
 	expect("a symbolic link made in a terminal is listed", lists?.["paths-symlinks"], (v) => Array.isArray(v) && v.includes(`${DIR}/Sub/Pointer.md`));
