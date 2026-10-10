@@ -135,6 +135,11 @@ export default class BreadcrumbPathPlugin extends Plugin {
 			}),
 		);
 		this.registerEvent(this.app.vault.on("create", changed));
+		// A symbolic link made or removed outside Obsidian raises no event at
+		// all: a note's lists are checked when it is opened instead.
+		this.registerEvent(this.app.workspace.on("file-open", (file) => {
+			if (file?.extension === "md") changed();
+		}));
 		// An editor that saves through a new file and a rename splits a hard
 		// link off into a file of its own, and Obsidian sees only a change.
 		this.registerEvent(

@@ -521,7 +521,12 @@ test("links made and undone outside Obsidian are put right in the lists", async 
 		const base = app.vault.adapter.getBasePath();
 		const at = (p) => path.join(base, p);
 		${code}
-		${PAUSE(4500)}
+		${PAUSE(1500)}
+		// Opened again: a symbolic link made or removed outside raises no event.
+		const leaf = app.workspace.getLeaf(false);
+		await leaf.openFile(app.vault.getAbstractFileByPath(${JSON.stringify(`${DIR}/Sibling.md`)}));
+		await leaf.openFile(app.vault.getAbstractFileByPath(${JSON.stringify(NOTE)}));
+		${PAUSE(4000)}
 		return true;
 	`);
 	await outside(`fs.linkSync(at(${JSON.stringify(NOTE)}), at(${JSON.stringify(`${DIR}/Twin.md`)}));`);
