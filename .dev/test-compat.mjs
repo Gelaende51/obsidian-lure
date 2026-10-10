@@ -564,6 +564,7 @@ test("settings: the Hotkeys row opens Obsidian's hotkeys filtered to this plugin
 			tab: true,
 			hotkeys: true,
 			last: row === rows.at(-1),
+			beforeRestore: rows.indexOf(row) === rows.length - 3 || rows.indexOf(row) === rows.length - 2,
 			name: row?.querySelector(".setting-item-name")?.textContent ?? null,
 			desc: row?.querySelector(".setting-item-description")?.textContent ?? null,
 			anchorsInRow: row ? row.querySelectorAll("a").length : null,
@@ -575,7 +576,8 @@ test("settings: the Hotkeys row opens Obsidian's hotkeys filtered to this plugin
 		return JSON.stringify(out);
 	`));
 	expect("the Hotkeys tab is there to reach", r.hotkeys, true);
-	expect("the last row", r.last, true);
+	// Restore defaults comes after it, in a group of its own.
+	expect("the last row of its group", r.last || r.beforeRestore, true);
 	expect("named as Obsidian names the page", r.name, "Hotkeys");
 	expect("and it names the command it is about", r.desc, (v) => typeof v === "string" && v.includes("Focus the path bar"));
 	expect("nothing in the row is a link", r.anchorsInRow, 0);

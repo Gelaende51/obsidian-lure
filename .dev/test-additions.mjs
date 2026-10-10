@@ -331,7 +331,8 @@ test("folders show what they hold, and several bars can stand on one row", async
 		const el = [...document.querySelectorAll(".suggestion-item")].find((e) => e.querySelector(".lure-suggest-label")?.textContent === "Cake.md");
 		return JSON.stringify(el ? [...el.querySelectorAll(".lure-bar")].filter((b) => getComputedStyle(b).display !== "none").map((b) => [...b.classList].find((c) => c.startsWith("lure-bar-"))) : null);
 	`).then(JSON.parse);
-	expect("the open note's row: where you are, Enter's row, and a leading name", bars, (v) => Array.isArray(v) && ["lure-bar-current", "lure-bar-enter", "lure-bar-leading"].every((b) => v.includes(b)));
+	// The leading names carry no bar now (blue is for where you are only).
+	expect("the open note's row: where you are and Enter's row, side by side", bars, (v) => Array.isArray(v) && ["lure-bar-current", "lure-bar-enter"].every((b) => v.includes(b)));
 	await shoot("bars");
 });
 
