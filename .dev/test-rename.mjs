@@ -161,10 +161,10 @@ test("the rename key walks the heading, the name, the extension and both paths, 
 	expect("then the name without its extension", [seen[1].value, seen[1].selected], [name, stem]);
 	expect("then the name with it", seen[2].selected, name);
 	expect("then the path from the vault", seen[3].selected, NOTE);
-	expect("then the path from the system root", seen[4].selected, (v) => typeof v === "string" && v.endsWith(NOTE) && asPosix(v).startsWith("/"));
+	expect("then the path from the system root", seen[4].selected, (v) => typeof v === "string" && asPosix(v).endsWith(NOTE) && asPosix(v).startsWith("/"));
 	// The vault comes after the system path where places can be reached —
 	// the test vault has *Access external files* on.
-	expect("then the vault, its part of the path marked", seen[5].value?.startsWith(seen[5].selected ?? "\0") && seen[5].value.endsWith(NOTE), true);
+	expect("then the vault, its part of the path marked", seen[5].value?.startsWith(seen[5].selected ?? "\0") && asPosix(seen[5].value).endsWith(NOTE), true);
 	// The last rung hands the key back rather than lapping the ladder: the
 	// cycle is a way of choosing where to rename, and a loop with no way out
 	// but Escape is not one.

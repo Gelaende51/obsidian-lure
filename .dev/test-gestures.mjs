@@ -20,6 +20,7 @@ import { canFocusEditable, canRenameFiles, CLEAR_NOTICES, CLEAR_PANES, connect, 
 import { createSuite, skipCase } from "./harness.mjs";
 import { mkdirSync, rmSync, writeFileSync } from "fs";
 import { join } from "path";
+import { homedir } from "os";
 
 const ROOT = "GestureTest";
 /**
@@ -28,7 +29,7 @@ const ROOT = "GestureTest";
  */
 let takersFound = [];
 /** Outside every vault, for the half of the table that only exists out there. */
-const EXT = `${process.env.HOME}/lure-gesture-fixtures`;
+const EXT = join(homedir(), "lure-gesture-fixtures");
 
 const page = await connect();
 
@@ -181,7 +182,7 @@ const openExternalNote = `
 	const leaf = app.workspace.getLeaf(false);
 	await leaf.setViewState({
 		type: "lure-external-file", active: true,
-		state: { path: "${EXT}/outer/inner/leaf.md" },
+		state: { path: ${JSON.stringify(join(EXT, "outer", "inner", "leaf.md"))} },
 	});
 	${PAUSE(500)}
 	return true;
@@ -269,7 +270,7 @@ test("vault segment: three presses copy where the vault is", async () => {
 test("vault segment: four presses copy the absolute path with extension", async () => {
 	await page.evaluate(openVaultNote);
 	const out = await page.evaluate(rightClicks(VAULT_SEGMENT, 4));
-	expect("clipboard", out.clipboard, `${app.vaultPath}/${ROOT}/inner/leaf.md`);
+	expect("clipboard", out.clipboard, join(app.vaultPath, ROOT, "inner", "leaf.md"));
 });
 
 test("empty space: two presses copy the vault path without the extension", async () => {
@@ -290,7 +291,7 @@ test("empty space: four presses copy the path the machine knows", async () => {
 	// takes them.
 	await page.evaluate(openVaultNote);
 	const out = await page.evaluate(rightClicks(EMPTY_SPACE, 4, AT_RIGHT_EDGE));
-	expect("clipboard", out.clipboard, `${app.vaultPath}/${ROOT}/inner/leaf.md`);
+	expect("clipboard", out.clipboard, join(app.vaultPath, ROOT, "inner", "leaf.md"));
 });
 
 test("empty space: presses select the path, then its extension, then the machine's own", async () => {
@@ -325,7 +326,7 @@ test("empty space: presses select the path, then its extension, then the machine
 
 	await page.evaluate(openVaultNote);
 	const three = await page.evaluate(clicks(3));
-	expect("three take the path the machine knows", three.selected, `${app.vaultPath}/${ROOT}/inner/leaf.md`);
+	expect("three take the path the machine knows", three.selected, join(app.vaultPath, ROOT, "inner", "leaf.md"));
 });
 
 test("empty space: a held modifier opens the note again in a tab of its own", async () => {
@@ -516,7 +517,7 @@ test("external chip: two presses copy the folder name", async () => {
 test("external chip: three presses copy it with the rest of the row", async () => {
 	await page.evaluate(openExternalNote);
 	const out = await page.evaluate(rightClicks(LAST_CHIP, 3));
-	expect("clipboard", out.clipboard, "inner/leaf.md");
+	expect("clipboard", out.clipboard, join("inner", "leaf.md"));
 });
 
 test("external chip: clicking one keeps the path to its right", async () => {
@@ -533,7 +534,7 @@ test("external chip: clicking one keeps the path to its right", async () => {
 			selected: input?.value.slice(input.selectionStart, input.selectionEnd),
 		};
 	`);
-	expect("whole tail in the field", out.value, "outer/inner/leaf.md");
+	expect("whole tail in the field", out.value, join("outer", "inner", "leaf.md"));
 	expect("only the folder selected", out.selected, "outer");
 });
 
@@ -725,12 +726,12 @@ test("the focus command walks F2's rungs, then hands focus back to the note", as
 	expect("opens on the name, without its extension", rungs[0].selected, "leaf");
 	expect("then with it", rungs[1].selected, "leaf.md");
 	expect("then the path from the vault", rungs[2].selected, `${ROOT}/inner/leaf.md`);
-	expect("then the path from the system root", rungs[3].selected, `${app.vaultPath}/${ROOT}/inner/leaf.md`);
+	expect("then the path from the system root", rungs[3].selected, join(app.vaultPath, ROOT, "inner", "leaf.md"));
 	expect("navigating, not renaming", rungs.some((r) => r.renaming), false);
 
 	// The vault's rung, where places can be reached: the test vault opens them.
 	const vault = await press();
-	expect("then the vault, its part of the path marked", typeof vault.selected === "string" && `${app.vaultPath}/${ROOT}/inner/leaf.md`.startsWith(vault.selected), true);
+	expect("then the vault, its part of the path marked", typeof vault.selected === "string" && join(app.vaultPath, ROOT, "inner", "leaf.md").startsWith(vault.selected), true);
 	const after = await press();
 	expect("the next press closes the field", after.selected, null);
 	expect("and the cursor is back in the note", after.inEditor, true);
@@ -1449,7 +1450,7 @@ test("the vault name opens the path in full, with the place selected", async () 
 	// The row is cleared to make room for the field, so what it was showing
 	// has to survive inside it — otherwise a glance at another place costs
 	// you the path you were on.
-	expect("the whole path, written out", out.value, `${app.vaultPath}/${ROOT}/inner/leaf.md`);
+	expect("the whole path, written out", out.value, join(app.vaultPath, ROOT, "inner", "leaf.md"));
 	expect("with the place selected", out.selected, app.vaultPath);
 	// The prefill must not double as the query, or the list the click just
 	// opened would filter itself down to nothing.
@@ -1514,7 +1515,7 @@ test("vault name: a second press widens the mark to the whole absolute path", as
 	// The field must not be rebuilt by the second press: what widens is the
 	// selection, over the very text the first press put there.
 	expect("the path is untouched", second.value, first.value);
-	expect("and all of it is marked", second.selected, `${app.vaultPath}/${ROOT}/inner/leaf.md`);
+	expect("and all of it is marked", second.selected, join(app.vaultPath, ROOT, "inner", "leaf.md"));
 	await pressKey(page, "Escape");
 });
 
@@ -2689,7 +2690,7 @@ test("the vault name copies its name, then where it is, then where the file is",
 	expect("three take where the vault is", await copied(3), (v) =>
 		v.some((t) => String(t).startsWith(app.vaultPath)));
 	expect("four take where the open file is", await copied(4), (v) =>
-		v.some((t) => String(t).startsWith(`${app.vaultPath}/${ROOT}`) && String(t).includes("leaf.md")));
+		v.some((t) => String(t).startsWith(join(app.vaultPath, ROOT)) && String(t).includes("leaf.md")));
 });
 
 // --------------------------------------------------------- dropping onto it

@@ -122,7 +122,7 @@ test("a command opens the field straight on its rung", async () => {
 	expect("the path from the system root", abs.selected, (v) => typeof v === "string" && asPosix(v).startsWith("/") && asPosix(v).endsWith(`/${NOTE}`));
 	await command("lure:focus-path-bar-vault");
 	const vault = await look();
-	expect("the vault: the whole path, its own part marked", vault.value?.endsWith(`/${NOTE}`) && vault.value.startsWith(vault.selected) && vault.selected.length > 0 && !vault.selected.endsWith(NOTE), true);
+	expect("the vault: the whole path, its own part marked", asPosix(vault.value)?.endsWith(`/${NOTE}`) && vault.value.startsWith(vault.selected) && vault.selected.length > 0 && !vault.selected.endsWith(NOTE), true);
 	expect("navigating, not renaming", vault.renaming, false);
 });
 
@@ -133,7 +133,7 @@ test("Shift with the focus key walks its cycle backwards", async () => {
 		await pressKey(page, "ctrl+shift+j");
 		await settle();
 		const first = await look();
-		expect("from a closed row, the last rung: the vault", first.value?.endsWith(`/${NOTE}`) && first.selected?.length > 0 && !first.selected.endsWith(NOTE), true);
+		expect("from a closed row, the last rung: the vault", asPosix(first.value)?.endsWith(`/${NOTE}`) && first.selected?.length > 0 && !first.selected.endsWith(NOTE), true);
 		await pressKey(page, "ctrl+shift+j");
 		await settle();
 		expect("then the path from the system root", (await look()).selected, (v) => typeof v === "string" && asPosix(v).endsWith(`/${NOTE}`) && asPosix(v).startsWith("/"));
@@ -151,7 +151,7 @@ test("Shift+F2 opens the rename on the last rung", async () => {
 	await settle();
 	const r = await look();
 	expect("renaming", r.renaming, true);
-	expect("on the vault's rung", r.value?.endsWith(`/${NOTE}`) && r.selected?.length > 0 && !r.selected.endsWith(NOTE), true);
+	expect("on the vault's rung", asPosix(r.value)?.endsWith(`/${NOTE}`) && r.selected?.length > 0 && !r.selected.endsWith(NOTE), true);
 });
 
 test("moving a note, Tab offers its own name first", async () => {

@@ -40,9 +40,11 @@ INSTALLER="${OBSIDIAN_INSTALLER:-$([ "$VERSION" = earliest ] && echo earliest ||
 CACHE="${OBSIDIAN_CACHE:-$HOME/.obsidian-cache}"
 trap 'pkill -f "$CACHE/" 2>/dev/null' EXIT
 # The copy of the vault goes under home, where a vault lives — so home
-# "contains" it, as the location cases expect.
+# "contains" it, as the location cases expect. Windows reads TEMP/TMP, not
+# TMPDIR; left alone it copies to %TEMP%, which a runner spells with the
+# 8.3 short name (C:\Users\RUNNER~1\...) that never matches home's long one.
 mkdir -p "$HOME/.cache/lure-ci"
-TMPDIR="$HOME/.cache/lure-ci" npx --yes obsidian-launcher@3 launch --version "$VERSION" --installer "$INSTALLER" --copy "${PLUGINS[@]}" .dev/test-vault \
+TMPDIR="$HOME/.cache/lure-ci" TEMP="$HOME/.cache/lure-ci" TMP="$HOME/.cache/lure-ci" npx --yes obsidian-launcher@3 launch --version "$VERSION" --installer "$INSTALLER" --copy "${PLUGINS[@]}" .dev/test-vault \
 	-- --remote-debugging-port="$PORT" ${OBSIDIAN_EXTRA_ARGS:-} >"$LOG" 2>&1
 
 # The port answers before the vault has loaded; wait for a page target and for

@@ -23,10 +23,11 @@ import { canRenameFiles, connect, PAUSE, quiesce, reloadPlugin, setVaultConfig }
 import { createSuite } from "./harness.mjs";
 import { mkdirSync, rmSync, writeFileSync } from "fs";
 import { join } from "path";
+import { homedir } from "os";
 
 const ROOT = "NavTest";
 /** Outside every vault on purpose — that is the thing under test. */
-const EXT = `${process.env.HOME}/lure-navlock-fixtures`;
+const EXT = join(homedir(), "lure-navlock-fixtures");
 
 const page = await connect();
 
@@ -85,7 +86,7 @@ const openExternalPanes = (branches) => `
 		if (i > 0) leaf = app.workspace.getLeaf("split", "vertical");
 		await leaf.setViewState({
 			type: "lure-external-file", active: true,
-			state: { path: "${EXT}/" + branch + "/shared/leaf.md" },
+			state: { path: require("path").join(${JSON.stringify(EXT)}, branch, "shared", "leaf.md") },
 		});
 		${PAUSE(400)}
 	}
@@ -335,8 +336,8 @@ test("outside the vault: two panes out there couple like any others", async () =
 
 	await page.evaluate(`app.plugins.plugins.lure.manager.navLock.move("sibling"); ${PAUSE(900)} return true;`);
 	expect("both stepped, each in its own tree", (await look()).folders.sort(), [
-		`${EXT}/one/twin`,
-		`${EXT}/two/twin`,
+		join(EXT, "one", "twin"),
+		join(EXT, "two", "twin"),
 	]);
 });
 
@@ -372,7 +373,7 @@ test("mixed: a vault pane and an external one walk together", async () => {
 		${PAUSE(400)}
 		await app.workspace.getLeaf("split", "vertical").setViewState({
 			type: "lure-external-file", active: true,
-			state: { path: "${EXT}/one/shared/leaf.md" },
+			state: { path: ${JSON.stringify(join(EXT, "one", "shared", "leaf.md"))} },
 		});
 		${PAUSE(900)}
 		const mgr = app.plugins.plugins.lure.manager;
@@ -391,7 +392,7 @@ test("mixed: a vault pane and an external one walk together", async () => {
 	await page.evaluate(`app.plugins.plugins.lure.manager.navLock.move("sibling"); ${PAUSE(900)} return true;`);
 	const after = await look();
 	expect("each stepped in its own world", after.folders.sort(), [
-		`${EXT}/one/twin`,
+		join(EXT, "one", "twin"),
 		`${ROOT}/alpha/twin`,
 	]);
 });
@@ -406,7 +407,7 @@ test("mixed: a shared rename asks rather than half-renaming", async () => {
 		${PAUSE(400)}
 		await app.workspace.getLeaf("split", "vertical").setViewState({
 			type: "lure-external-file", active: true,
-			state: { path: "${EXT}/one/shared/leaf.md" },
+			state: { path: ${JSON.stringify(join(EXT, "one", "shared", "leaf.md"))} },
 		});
 		${PAUSE(900)}
 		const mgr = app.plugins.plugins.lure.manager;

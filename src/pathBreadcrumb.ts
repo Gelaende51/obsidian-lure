@@ -547,6 +547,25 @@ function firstDifference(a: string, b: string): number {
 }
 
 /**
+ * An absolute path written with `/`, in the machine's own separator; a bare
+ * drive (`C:`) keeps the separator that makes it the drive's root.
+ */
+function onMachinePath(path: string): string {
+	if (PATH_SEP === "/") return path;
+	const native = path.split("/").join(PATH_SEP);
+	return /^[A-Za-z]:$/.test(native) ? native + PATH_SEP : native;
+}
+
+/**
+ * A vault path written out on the machine: the vault's own folder, then the
+ * path in the machine's separator. Joined with `/` it read
+ * `C:\\Users\\…\\vault/Notes/a.md` on Windows — one path in two spellings.
+ */
+function onMachine(base: string, vaultPath: string): string {
+	return `${base}${PATH_SEP}${vaultPath.split("/").join(PATH_SEP)}`;
+}
+
+/**
  * What the dropdown should filter by, given where the caret is.
  *
  * The segment being edited — minus its extension, for as long as the caret
@@ -557,15 +576,6 @@ function firstDifference(a: string, b: string): number {
  * rename. The extension is not what you are typing until you put the caret
  * past the dot, and then it counts like anything else.
  */
-/**
- * A vault path written out on the machine: the vault's own folder, then the
- * path in the machine's separator. Joined with `/` it read
- * `C:\\Users\\…\\vault/Notes/a.md` on Windows — one path in two spellings.
- */
-function onMachine(base: string, vaultPath: string): string {
-	return `${base}${PATH_SEP}${vaultPath.split("/").join(PATH_SEP)}`;
-}
-
 function queryAtCaret(input: HTMLInputElement): string {
 	const value = input.value;
 	const caret = input.selectionEnd ?? value.length;
@@ -9558,7 +9568,7 @@ export class PathBreadcrumb {
 		const base = this.vaultBasePath();
 		if (base !== null && isInside(normalized, base)) {
 			const relative = normalized.slice(base.length).replace(/^\/+/, "");
-			const inVault = this.plugin.app.vault.getAbstractFileByPath(normalizePath(relative));
+			const inVault = this.vaultEntry(normalizePath(relative));
 			if (inVault instanceof TFile) {
 				this.cancelNavigation();
 				this.navigateToFile(inVault, paneType);
@@ -9576,16 +9586,20 @@ export class PathBreadcrumb {
 			this.cancelNavigation();
 			return;
 		}
-		if (!(await externalExists(normalized))) {
-			new Notice(t("noticeExternalNotFound", { path: normalized }));
+		// Out here the path is the machine's: in its own separator, as the
+		// row, the locations and every other external path are spelt — a
+		// URL or a pasted `C:/…` would otherwise stand in the row with `/`.
+		const native = onMachinePath(normalized);
+		if (!(await externalExists(native))) {
+			new Notice(t("noticeExternalNotFound", { path: native }));
 			return;
 		}
-		if (isExternalFolder(normalized)) {
-			this.goToLocation(normalized);
+		if (isExternalFolder(native)) {
+			this.goToLocation(native);
 			return;
 		}
 		this.cancelNavigation();
-		void openExternalFile(this.plugin, normalized, paneType, this.leaf);
+		void openExternalFile(this.plugin, native, paneType, this.leaf);
 	}
 
 	/**

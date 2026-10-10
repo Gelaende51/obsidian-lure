@@ -24,7 +24,8 @@ import { connect, PAUSE, pressKey, quiesce, reloadPlugin, setSettings } from "./
 import { createSuite } from "./harness.mjs";
 import { mkdirSync, rmSync, writeFileSync } from "fs";
 import { homedir } from "os";
-import { join } from "path";
+import { basename, join } from "path";
+import { pathToFileURL } from "url";
 
 const BED = join(homedir(), "lure-url-fixtures");
 
@@ -184,15 +185,15 @@ test("an obsidian:// URI goes to Obsidian's own handler", async () => {
 
 test("a file:// URL for a vault note opens it as a note", async () => {
 	const base = await page.evaluate("return app.vault.adapter.getBasePath();");
-	const s = await typeAndEnter(`file://${encodeURI(`${base}/Schemes/Master plan.md`)}`);
+	const s = await typeAndEnter(pathToFileURL(join(base, "Schemes", "Master plan.md")).href);
 	expect("opened inside the vault", s.activeFile, "Schemes/Master plan.md");
 	expect("not through the external viewer", s.externalLeaves, 0);
 	expect("nothing handed to the host", s.opened, []);
 });
 
 test("a percent-encoded path outside the vault opens in the viewer", async () => {
-	const s = await typeAndEnter(`${BED}/a%20b.md`);
-	expect("decoded and opened", s.externalPath, `${BED}/a b.md`);
+	const s = await typeAndEnter(join(BED, "a%20b.md"));
+	expect("decoded and opened", s.externalPath, join(BED, "a b.md"));
 });
 
 test("a slash belonging to a scheme is not a folder separator", async () => {
@@ -228,8 +229,8 @@ test("a quoted path outside the vault is unwrapped before it is read", async () 
 	// exactly when a file manager decides to wrap one. Unwrapping has to
 	// happen before the scheme and encoding checks, or the leading quote
 	// makes it look like an ordinary name to be created in the vault.
-	const s = await typeAndEnter(`"${BED}/a%20b.md"`);
-	expect("decoded and opened outside", s.externalPath, `${BED}/a b.md`);
+	const s = await typeAndEnter(`"${join(BED, "a%20b.md")}"`);
+	expect("decoded and opened outside", s.externalPath, join(BED, "a b.md"));
 });
 
 test("a path written with a tilde is read from the home folder", async () => {
@@ -237,8 +238,8 @@ test("a path written with a tilde is read from the home folder", async () => {
 	// writes for the home folder. Nothing below the commit expands it, so the
 	// bar used to read `~/…` as a note name: Enter offered to create a note
 	// called `~` in the current folder instead of going out there.
-	const s = await typeAndEnter(`~/${BED.split("/").pop()}/a b.md`);
-	expect("opened out there, not created in the vault", s.externalPath, `${BED}/a b.md`);
+	const s = await typeAndEnter(`~/${basename(BED)}/a b.md`);
+	expect("opened out there, not created in the vault", s.externalPath, join(BED, "a b.md"));
 	expect("and no note was made out of the tilde", s.tildeNotes, 0);
 });
 
@@ -263,7 +264,9 @@ test("a path from the root is offered the machine's names, not the vault's", asy
 	// Read from the machine rather than written down: the root of a Linux
 	// box holds these, and a suite that asserted a list would be asserting
 	// this machine.
-	expect("the filesystem root is listed", s.rows, (v) => v.includes("home") || v.includes("etc"));
+	// On Windows "/" is the root of the drive Obsidian runs from, which on a
+	// runner holds little more than the work folder.
+	expect("the filesystem root is listed", s.rows, (v) => process.platform === "win32" ? v.length > 0 : v.includes("home") || v.includes("etc"));
 	// Named rather than compared against the whole vault root: a folder in
 	// the vault may happen to be called `opt` or `tmp`, and the case would
 	// then be asserting which names this machine's root holds.

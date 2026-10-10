@@ -57,7 +57,7 @@ export function classifyTypedTarget(text: string): UrlTarget | null {
 	// A path pasted out of a browser or a file manager arrives encoded but
 	// without a scheme. Only treated as such when it is already absolute,
 	// so a note called "100%20" stays a note.
-	if (/^[/\\]/.test(trimmed) && ENCODED.test(trimmed)) {
+	if (isAbsolutePath(trimmed) && ENCODED.test(trimmed)) {
 		return { kind: "path", path: safeDecode(trimmed) };
 	}
 

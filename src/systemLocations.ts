@@ -361,11 +361,12 @@ export function samePath(a: string, b: string): boolean {
 /** True when `child` is inside `parent` (or is `parent`). */
 export function isInside(child: string, parent: string): boolean {
 	if (samePath(child, parent)) return true;
-	const sep = platform() === "win32" ? "\\" : "/";
-	const base = parent.replace(/[\\/]+$/, "") + sep;
-	const value = platform() === "win32" ? child.toLowerCase() : child;
-	const prefix = platform() === "win32" ? base.toLowerCase() : base;
-	return value.startsWith(prefix);
+	// Windows takes either separator and ignores case, so a path pasted as
+	// `C:/Users/me/vault/Note.md` is as much inside as the backslashed one.
+	const win = platform() === "win32";
+	const normalize = (value: string) => (win ? value.toLowerCase().replace(/\//g, "\\") : value);
+	const base = normalize(parent).replace(/[\\/]+$/, "") + (win ? "\\" : "/");
+	return normalize(child).startsWith(base);
 }
 
 /**

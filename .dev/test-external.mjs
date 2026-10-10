@@ -17,7 +17,7 @@
 
 import { mkdirSync, rmSync, writeFileSync, readFileSync, existsSync, chmodSync } from "fs";
 import { join } from "path";
-import { homedir, userInfo } from "os";
+import { homedir, tmpdir, userInfo } from "os";
 import { canRenameFiles, connect, PAUSE, pressKey, quiesce, reloadPlugin, setSettings, setVaultConfig, asPosix } from "./cdpSession.mjs";
 import { createSuite, skipCase } from "./harness.mjs";
 import { build } from "esbuild";
@@ -59,7 +59,7 @@ const T = (key) => TRANSLATIONS[locale]?.[key] ?? EN[key];
 const MODE_LABELS = () =>
 	JSON.stringify([T("externalRenderText"), T("externalRenderMarkdown"), T("externalViewText")]);
 
-const BED = "/tmp/lure-testbed";
+const BED = join(tmpdir(), "lure-testbed");
 /** Derived, never hardcoded: the suite must not carry the author's username. */
 const HOME = homedir();
 const ACCOUNT = userInfo().username;
@@ -868,7 +868,7 @@ test("dropdown: a truncated listing says how much is missing", async () => {
 		// listing is a dozen directories and never overflows.
 		const was = app.vault.getConfig("showUnsupportedFiles");
 		app.vault.setConfig("showUnsupportedFiles", true);
-		bc.externalPath = "/usr/bin";
+		bc.externalPath = ${JSON.stringify(process.platform === "win32" ? "C:\\Windows\\System32" : "/usr/bin")};
 		bc.enterTypingMode("");
 		${PAUSE(600)}
 		const items = [...document.querySelectorAll(".suggestion-item")];
@@ -1275,6 +1275,9 @@ test("invariant: overwrite protection ignores whether a name is listed", async (
 });
 
 test("invariant: an unreadable file fails visibly and is never writable", async () => {
+	// Windows keeps no read bit for chmod to clear: 0o000 there only sets
+	// read-only, and the file stays readable.
+	if (process.platform === "win32") skipCase("chmod cannot make a file unreadable on Windows");
 	const target = join(BED, "noread.txt");
 	writeFileSync(target, "secret\n");
 	chmodSync(target, 0o000);
@@ -1371,10 +1374,10 @@ test("locations: picking a place that contains this note lands on the note", asy
 	// The whole path from that place, with its *first folder* selected — the
 	// same shape a folder click gives. Landing deep with only the file name
 	// in the field hid the path it had chosen for you.
-	const relative = r.absolute.slice(r.home.length).replace(/^\/+/, "");
+	const relative = r.absolute.slice(r.home.length).replace(/^[\\/]+/, "");
 	expect("the trail stays at the place picked", r.folder, r.home);
 	expect("the whole path from it is offered", r.field, relative);
-	expect("with the first folder selected", r.selected, relative.split("/")[0]);
+	expect("with the first folder selected", r.selected, relative.split(/[\\/]/)[0]);
 });
 
 test("locations: Tab sets in the place being pointed at", async () => {
@@ -1515,7 +1518,7 @@ test("locations: a path carried into a place keeps the part that is not there ye
 		return out;
 	`);
 	expect("the path hangs from its first folder", r.before.anchor, "sub");
-	expect("the press steps into that folder", r.external, `${BED}/sub`);
+	expect("the press steps into that folder", r.external, join(BED, "sub"));
 	expect("and the rest of the path comes with it", r.value, "nothere/untitled.md");
 	expect("opening on the folder about to be made", r.selected, "nothere");
 });
@@ -1597,7 +1600,7 @@ test("path bar: the field outside reads from the place you picked", async () => 
 	// holds the path from there. The rule is the same either way — the field
 	// counts from whatever the chips count from.
 	expect("it is the path from that place", r.field,
-		r.absolute.slice(r.base.length).replace(/^\/+/, ""));
+		r.absolute.slice(r.base?.length ?? 0).replace(/^[\\/]+/, ""));
 	expect("and the trail has collapsed to it", r.chips, []);
 });
 
