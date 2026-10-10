@@ -70,6 +70,8 @@ export default class BreadcrumbPathPlugin extends Plugin {
 	diskLinks!: DiskLinks;
 	/** Second paths made for files outside the vault, which have nowhere else to be kept. */
 	externalLinks!: ExternalLinks;
+	/** A path bar has started showing a note: its lists are checked against the disk. */
+	noteShown: () => void = () => {};
 	/** Alternates the rename command between the inline title and the header path bar. */
 	private useHeaderRename = false;
 	private originalRenameCallback: CheckCallback | null = null;
@@ -136,10 +138,9 @@ export default class BreadcrumbPathPlugin extends Plugin {
 		);
 		this.registerEvent(this.app.vault.on("create", changed));
 		// A symbolic link made or removed outside Obsidian raises no event at
-		// all: a note's lists are checked when it is opened instead.
-		this.registerEvent(this.app.workspace.on("file-open", (file) => {
-			if (file?.extension === "md") changed();
-		}));
+		// all: a note's lists are checked when a path bar shows it instead —
+		// in any pane, where Obsidian's file-open speaks only for the active one.
+		this.noteShown = changed;
 		// An editor that saves through a new file and a rename splits a hard
 		// link off into a file of its own, and Obsidian sees only a change.
 		this.registerEvent(

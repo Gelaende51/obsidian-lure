@@ -520,10 +520,6 @@ test("links made and undone outside Obsidian are put right in the lists", async 
 		const fs = require("fs"), path = require("path");
 		const base = app.vault.adapter.getBasePath();
 		const at = (p) => path.join(base, p);
-		const disk = app.plugins.plugins.lure.diskLinks;
-		let invalidated = 0;
-		const invalidate = disk.invalidate;
-		disk.invalidate = function () { invalidated++; return invalidate.call(this); };
 		${code}
 		${PAUSE(1500)}
 		// Opened again: a symbolic link made or removed outside raises no event.
@@ -531,18 +527,14 @@ test("links made and undone outside Obsidian are put right in the lists", async 
 		await leaf.openFile(app.vault.getAbstractFileByPath(${JSON.stringify(`${DIR}/Sibling.md`)}));
 		await leaf.openFile(app.vault.getAbstractFileByPath(${JSON.stringify(NOTE)}));
 		${PAUSE(4000)}
-		disk.invalidate = invalidate;
-		await disk.whenReady();
-		console.log(JSON.stringify({ invalidated, links: disk.symbolicLinks() }));
-		return JSON.stringify({ invalidated, links: disk.symbolicLinks() });
+		return true;
 	`);
 	await outside(`fs.linkSync(at(${JSON.stringify(NOTE)}), at(${JSON.stringify(`${DIR}/Twin.md`)}));`);
 	let lists = await listsOf(NOTE);
 	expect("a hard link made in a terminal is listed", lists?.["paths-hardlinks"], (v) => Array.isArray(v) && v.includes(`${DIR}/Twin.md`) && v.includes(NOTE));
 	expect("in paths too", lists?.paths, (v) => Array.isArray(v) && v.includes(`${DIR}/Twin.md`));
-	const seen = await outside(`fs.symlinkSync("../Note.md", at(${JSON.stringify(`${DIR}/Sub/Pointer.md`)}));`);
+	await outside(`fs.symlinkSync("../Note.md", at(${JSON.stringify(`${DIR}/Sub/Pointer.md`)}));`);
 	lists = await listsOf(NOTE);
-	expect("(the scan: invalidations and links seen)", seen, "-");
 	expect("a symbolic link made in a terminal is listed", lists?.["paths-symlinks"], (v) => Array.isArray(v) && v.includes(`${DIR}/Sub/Pointer.md`));
 	// An editor saving through a temporary file and a rename leaves a file of its own.
 	await outside(`

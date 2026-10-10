@@ -2687,6 +2687,7 @@ export class PathBreadcrumb {
 		if (this.mode !== "typing") {
 			const previousFile = this.file;
 			this.file = this.getFileForLeaf();
+			if (this.file !== previousFile && this.file?.extension === "md") this.plugin.noteShown();
 
 			// A leaf showing an external file has no TFile to hang the row
 			// off, so the path comes from the view itself. Checked before
