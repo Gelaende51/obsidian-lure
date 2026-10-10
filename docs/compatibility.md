@@ -93,7 +93,7 @@ orders where it touches the header, on Obsidian 1.8.7 and the latest.
 | [Advanced Rename and Delete Handler](obsidian://show-plugin?id=advanced-rename-and-delete-handler) | `advanced-rename-and-delete-handler` | Coexists (needs Obsidian 1.14.4) |
 | [Mononote](obsidian://show-plugin?id=mononote) | `mononote` | Coexists |
 | [Open Tab Settings](obsidian://show-plugin?id=open-tab-settings) | `open-tab-settings` | Coexists (needs Obsidian 1.13.4) |
-| [Iconic](obsidian://show-plugin?id=iconic) | `iconic` | Turning it on froze Obsidian on Linux and Windows test machines with Lure off too — not a conflict with Lure, to be reported upstream. On macOS it loads, and is checked beside Lure there |
+| [Iconic](obsidian://show-plugin?id=iconic) | `iconic` | Turning it on froze Obsidian on Linux and Windows test machines with Lure off too — not a conflict with Lure, to be reported upstream. On macOS it loads and coexists with Lure, both load orders |
 | [Pane Relief](obsidian://show-plugin?id=pane-relief) | `pane-relief` | Not tested: does not load on the Obsidian versions tested |
 | [ProZen](obsidian://show-plugin?id=obsidian-prozen) | `obsidian-prozen` | Not tested: the test launcher refuses its version number (`0.3`) |
 
