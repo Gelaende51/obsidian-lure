@@ -1474,7 +1474,8 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		);
 		if (badge) this.renderBadge(el, value, badge);
 		if (value.kind === "folder" && value.count !== undefined) {
-			endOf(el).createSpan({ cls: "lure-suggest-count", text: `+${value.count}` });
+			// Drawn by the stylesheet, so the row's text stays the folder's name.
+			endOf(el).createSpan({ cls: "lure-suggest-count", attr: { "data-count": String(value.count) } });
 		}
 		if (value.endIcon || value.empty) {
 			// Small marks on the file's icon — the badge's when there is one,

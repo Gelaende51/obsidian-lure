@@ -321,7 +321,8 @@ test("folders show what they hold, and several bars can stand on one row", async
 	await type("Cav");
 	const row = await page.evaluate(`
 		const el = [...document.querySelectorAll(".suggestion-item")].find((e) => e.querySelector(".lure-suggest-label")?.textContent === "Cave");
-		return JSON.stringify(el ? { count: el.querySelector(".lure-suggest-count")?.textContent ?? null } : null);
+		const c = el?.querySelector(".lure-suggest-count");
+		return JSON.stringify(el ? { count: c ? "+" + c.dataset.count : null } : null);
 	`).then(JSON.parse);
 	expect("the folder's count", row?.count, "+1");
 	await pressKey(page, "ctrl+a");

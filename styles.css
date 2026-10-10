@@ -1723,6 +1723,9 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 }
 
 /* A folder's count of what it holds, where a file shows its extension. */
+.suggestion-item .lure-suggest-count::after {
+	content: "+" attr(data-count);
+}
 .suggestion-item .lure-suggest-count {
 	color: var(--text-faint);
 	font-size: var(--font-ui-smaller);
