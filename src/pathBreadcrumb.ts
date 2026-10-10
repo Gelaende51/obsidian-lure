@@ -6865,11 +6865,26 @@ export class PathBreadcrumb {
 		this.enterTypingMode(other.path.slice(cut + 1), "all");
 	}
 
-	/** The open note's path, or one of its other paths. */
+	/**
+	 * The file Enter would make of the field, as a row for the dropdown: only
+	 * while the caret is in the last step and nothing there answers to it.
+	 */
+	private createRow(inputEl: HTMLInputElement): { label: string; path: string } | null {
+		if (this.renameMode || this.externalPath !== null || this.preview) return null;
+		const value = this.typedFieldValue() || inputEl.value;
+		if (!value.trim() || this.patternFor(value) !== null || !this.typedCreatesNew(value)) return null;
+		const caret = inputEl.selectionEnd ?? value.length;
+		if (/[\\/]/.test(value.slice(caret))) return null;
+		const folder = this.currentFolderPath();
+		const path = normalizePath(this.withNoteExtension(folder ? `${folder}/${value.trim()}` : value.trim()));
+		const name = path.slice(path.lastIndexOf("/") + 1);
+		return { label: this.fieldName(name, "file"), path };
+	}
+
+	/** One of the open note's other paths — not the note's own. */
 	private isCurrentNotePath(path: string): boolean {
 		const file = this.file;
-		if (!file || this.externalPath !== null) return false;
-		if (path === file.path) return true;
+		if (!file || this.externalPath !== null || path === file.path) return false;
 		return otherPaths(this.plugin.app, this.plugin.diskLinks, file).some((other) => other.path === path);
 	}
 
@@ -8814,6 +8829,7 @@ export class PathBreadcrumb {
 				showExtensions: this.plugin.settings.showFileExtension,
 				globActive: this.patternFor(this.preview?.text ?? (this.typedFieldValue() || inputEl.value)) !== null,
 				isCurrentNote: (path) => this.isCurrentNotePath(path),
+				createRow: this.createRow(inputEl),
 				linkKindOf: (path) =>
 					this.plugin.diskLinks.targetOfLink(path) ? "symbolic" : this.plugin.diskLinks.sameFile(path).length ? "hard" : null,
 				aliasesIn: (folder) => (this.renameMode ? [] : this.plugin.aliasRows.in(folder)),
@@ -8884,6 +8900,11 @@ export class PathBreadcrumb {
 					}
 					if (value.kind === "folder") void this.commitLink(`${value.path}/${name}`, link);
 					else if (value.kind === "file" || value.kind === "keep-name") void this.commitLink(value.path, link);
+					return;
+				}
+				// The file Enter would make: picking it makes it, as Enter does.
+				if (value.creates) {
+					void this.handleTypedSubmit(this.typedFieldValue() || inputEl.value, paneType);
 					return;
 				}
 				// A pattern, or a name it matches: the step collapses to that

@@ -643,10 +643,13 @@
 	cursor: pointer;
 }
 
+.suggestion-item .lure-suggest-type {
+	padding: 1px 4px;
+	border-radius: var(--radius-s);
+}
 .suggestion-item .lure-suggest-type:hover {
 	color: var(--text-normal);
 	background-color: rgba(var(--color-purple-rgb), 0.15);
-	border-radius: var(--radius-s);
 }
 
 .suggestion-item .lure-suggest-type-icon {
@@ -1706,4 +1709,39 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 .suggestion-item.lure-suggest-pattern .lure-suggest-label {
 	color: var(--color-green);
 	font-family: var(--font-monospace);
+}
+
+/* Pages — `:graph`, `:search` — are not files: grey. Folder notes read as
+   plain text beside their bold folder. The file Enter would make is red. */
+.suggestion-item.lure-suggest-page .lure-suggest-label {
+	color: var(--text-muted);
+}
+.suggestion-item.lure-suggest-md.lure-suggest-folder-note .lure-suggest-label,
+.suggestion-item.lure-suggest-folder-note .lure-suggest-label {
+	color: var(--text-normal);
+	font-weight: var(--font-normal);
+}
+.suggestion-item.lure-suggest-creates .lure-suggest-label {
+	color: var(--text-error);
+}
+.lure-filename input[data-lure-tint="page"],
+.lure-vault-wrapper input[data-lure-tint="page"] {
+	color: var(--text-muted);
+}
+.lure-filename input[data-lure-tint="folder-note"],
+.lure-vault-wrapper input[data-lure-tint="folder-note"] {
+	color: var(--text-normal);
+}
+
+/* An empty file: a 0 at the bottom left of its icon. */
+.suggestion-item .lure-suggest-has-kind .lure-suggest-empty {
+	position: absolute;
+	left: -4px;
+	bottom: -5px;
+	font-size: 8px;
+	line-height: 9px;
+	padding: 0 1px;
+	border-radius: 3px;
+	background-color: var(--background-primary);
+	color: var(--text-muted);
 }

@@ -38,6 +38,10 @@ export interface PathSuggestion {
 	markdown?: boolean;
 	/** Where you already are — this bar's own note, or the folder it is standing in — tinted to say so. */
 	current?: boolean;
+	/** Not there: the file Enter would make of what was typed. Red, first. */
+	creates?: boolean;
+	/** An empty file, marked with a 0 on its icon. */
+	empty?: boolean;
 	/** It matches the pattern typed for this step. Listed first, with a green edge. */
 	glob?: boolean;
 	/** The note a row opens when that is not the path it stands at: an alias, an unlisted symbolic link. */
@@ -131,8 +135,10 @@ export interface SuggestContext {
 	 * not renaming, inside the vault, and not a real name.
 	 */
 	globActive: boolean;
-	/** Whether a path is the open note or one of its other paths. */
+	/** Whether a path is one of the open note's other paths. */
 	isCurrentNote: (path: string) => boolean;
+	/** The file Enter would make of what was typed, when it would make one. */
+	createRow: { label: string; path: string } | null;
 	/** Whether a vault path is a symbolic link or one name of a hard-linked file, or neither. */
 	linkKindOf: (path: string) => "symbolic" | "hard" | null;
 	/** Notes linked to and not there yet that would be made in this folder. */
@@ -380,7 +386,7 @@ const POPOVER_CLASS = "lure-suggest-popover";
 const ENTER_ROW_CLASS = "lure-suggest-enter";
 
 /** The tints a row can carry, named the way the stylesheet names them. */
-export type SuggestTint = "current" | "keep-name" | "taken" | "unresolved" | "warn" | "md" | "external";
+export type SuggestTint = "current" | "keep-name" | "taken" | "create" | "unresolved" | "page" | "folder-note" | "warn" | "md" | "external";
 
 /**
  * The one tint a row shows.
@@ -395,7 +401,10 @@ export function tintOf(value: PathSuggestion): SuggestTint | null {
 	if (value.current) return "current";
 	if (value.kind === "keep-name") return "keep-name";
 	if (value.taken) return "taken";
+	if (value.creates) return "create";
 	if (value.unresolved) return "unresolved";
+	if (value.kind === "page") return "page";
+	if (value.folderNote) return "folder-note";
 	if (value.warn) return "warn";
 	if (value.markdown) return "md";
 	if (value.external) return "external";
@@ -886,13 +895,14 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			name.toLowerCase().startsWith(lower),
 		).filter(
 			(s) =>
-				s.kind === "folder" ||
+				!s.creates &&
+				(s.kind === "folder" ||
 				s.kind === "file" ||
 				s.kind === "location" ||
 				// A page is as completable as a name: its label is what the
 				// field holds and what Enter acts on, so Tab extending `:gr`
 				// to `:graph` is the same service it does for a folder.
-				s.kind === "page",
+				s.kind === "page"),
 		);
 	}
 
@@ -984,7 +994,8 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 	fieldTint(typed: string): { listed: boolean; tint: SuggestTint | null } {
 		const open = (this as unknown as { isOpen?: boolean }).isOpen !== false;
 		const values = open ? this.list()?.values : null;
-		const rows = Array.isArray(values) ? values.filter((row) => row.kind !== "more") : [];
+		// The row for a file Enter would make is not an answer from the folder.
+		const rows = Array.isArray(values) ? values.filter((row) => row.kind !== "more" && !row.creates) : [];
 		if (rows.length === 0) return { listed: false, tint: null };
 		const lower = typed.trim().toLowerCase();
 		const highlighted = this.highlighted();
@@ -1024,7 +1035,11 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			this.listedLabels = rows.map((row) => row.label);
 			return this.capped(rows);
 		}
-		const rows = leadingFirst(this.buildSuggestions(context, (name) => !q || name.toLowerCase().includes(q)), q);
+		const listed = leadingFirst(this.buildSuggestions(context, (name) => !q || name.toLowerCase().includes(q)), q);
+		const create = context.createRow;
+		const rows: PathSuggestion[] = create
+			? [{ label: create.label, kind: "file", path: create.path, disabled: false, creates: true }, ...listed]
+			: listed;
 		this.listedLabels = rows.filter((row) => row.kind !== "more").map((row) => row.label);
 		return this.capped(rows);
 	}
@@ -1153,6 +1168,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 					current: child.path === context.currentPath,
 					taken: takes(child.name),
 					endIcon: LINK_ICONS[context.linkKindOf(child.path) ?? "none"],
+					empty: child.stat.size === 0,
 				});
 			}
 		}
@@ -1202,7 +1218,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			// the least note-like thing in the list, and the field takes the
 			// colour of what it names, so an offered `:graph` says what it is
 			// before Enter is pressed.
-			suggestions.push({ label, kind: "page", path: type, disabled: false, warn: true });
+			suggestions.push({ label, kind: "page", path: type, disabled: false });
 		}
 
 		return suggestions;
@@ -1420,6 +1436,7 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 		if (value.unresolved) el.addClass("lure-suggest-unresolved");
 		if (value.alias) el.addClass("lure-suggest-alias");
 		if (value.glob) el.addClass("lure-suggest-glob");
+		if (value.creates) el.addClass("lure-suggest-creates");
 		if (this.getContext().isCurrentNote(value.opens ?? value.path)) el.addClass("lure-suggest-here");
 		if (value.current) el.addClass("lure-suggest-current");
 		if (value.leading) el.addClass("lure-suggest-leading");
@@ -1436,22 +1453,24 @@ export class FolderChildSuggest extends AbstractInputSuggest<PathSuggestion> {
 			badge ? value.label.slice(0, value.label.length - badge.length - 1) : value.label,
 		);
 		if (badge) this.renderBadge(el, value, badge);
-		if (value.endIcon) {
-			// A small mark at the bottom right of the file's icon — the badge's
-			// when there is one, else a file icon of its own to carry it.
+		if (value.endIcon || value.empty) {
+			// Small marks on the file's icon — the badge's when there is one,
+			// else a file icon of its own to carry them: a link's kind at the
+			// bottom right, a 0 at the bottom left for an empty file.
 			let host = el.querySelector<HTMLElement>(".lure-suggest-type-icon");
 			if (!host) {
 				host = endOf(el).createSpan({ cls: "lure-suggest-type-icon lure-suggest-file-icon" });
 				setIcon(host, typeIcon(value.label.slice(value.label.lastIndexOf(".") + 1)));
 			}
 			host.addClass("lure-suggest-has-kind");
-			setIcon(host.createSpan({ cls: "lure-suggest-kind" }), value.endIcon);
+			if (value.endIcon) setIcon(host.createSpan({ cls: "lure-suggest-kind" }), value.endIcon);
+			if (value.empty) host.createSpan({ cls: "lure-suggest-empty", text: "0" });
 		}
 
 		// "keep-name" is a proposed destination that nothing exists at yet,
 		// so there is nothing to act on either way — and neither is a note
 		// that is only linked to.
-		if (value.kind === "keep-name" || value.kind === "pattern" || value.unresolved || value.alias) return;
+		if (value.kind === "keep-name" || value.kind === "pattern" || value.creates || value.unresolved || value.alias) return;
 
 		// Outside the vault there is no TAbstractFile, so the File Explorer's
 		// handlers cannot be reused — these rows used to fall through here

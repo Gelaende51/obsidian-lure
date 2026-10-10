@@ -289,4 +289,20 @@ test("the glob count goes when the field is left by a click elsewhere", async ()
 	expect("gone after the click", await page.evaluate(`return !!app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-other-paths");`), false);
 });
 
+test("the file Enter would make is the red first row, and empty files carry a 0", async () => {
+	await inOwnFolder();
+	await type("Brand new");
+	const rows = await page.evaluate(`return JSON.stringify([...document.querySelectorAll(".suggestion-item")].map((e) => ({ label: e.querySelector(".lure-suggest-label")?.textContent, creates: e.classList.contains("lure-suggest-creates"), enter: e.classList.contains("lure-suggest-enter") })));`).then(JSON.parse);
+	expect("first row: the new file", rows[0]?.label, "Brand new.md");
+	expect("red, and the one Enter acts on", rows[0]?.creates && rows[0]?.enter, true);
+	await shoot("create-row");
+	await pressKey(page, "ctrl+a");
+	await type("Cab");
+	const empty = await page.evaluate(`
+		const el = [...document.querySelectorAll(".suggestion-item")].find((e) => e.querySelector(".lure-suggest-label")?.textContent?.startsWith("Cabbage"));
+		return el?.querySelector(".lure-suggest-empty")?.textContent ?? null;
+	`);
+	expect("the empty note is marked 0", empty, "0");
+});
+
 await run();
