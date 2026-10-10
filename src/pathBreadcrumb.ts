@@ -8736,7 +8736,7 @@ export class PathBreadcrumb {
 			// On the vault's name the field holds a path from the system root,
 			// the longest thing it ever holds, and nothing else stands on the
 			// row: it takes the row's whole width.
-			const room = host === this.vaultSegmentEl ? this.titleEl.getBoundingClientRect().right - inputEl.getBoundingClientRect().left - INPUT_SLACK_PX : 0;
+			const room = host === this.vaultSegmentEl ? (this.titleEl.parentElement ?? this.titleEl).getBoundingClientRect().right - inputEl.getBoundingClientRect().left - INPUT_SLACK_PX : 0;
 			inputEl.style.width = `${Math.max(INPUT_MIN_PX, Math.ceil(content), Math.floor(room))}px`;
 			// A field grows with what is typed into it, and a path is longer
 			// than a pane long before it is finished. Nothing here can be

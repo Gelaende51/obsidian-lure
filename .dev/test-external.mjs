@@ -750,13 +750,13 @@ test("dropdown: on the vault's name the field takes the row's whole width", asyn
 		plugin.settings.accessExternalFiles = true;
 		bc.openLocationMenu();
 		${PAUSE(300)}
-		const input = bc.inputEl, row = bc.titleEl;
+		const input = bc.inputEl, row = bc.titleEl.parentElement;
 		const gap = input && row ? Math.round(row.getBoundingClientRect().right - input.getBoundingClientRect().right) : null;
 		bc.cancelNavigation();
 		plugin.settings.accessExternalFiles = was;
 		return { gap };
 	`);
-	expect("the field reaches the row's end", r.gap !== null && r.gap >= 0 && r.gap <= 24, true);
+	expect("the field reaches the row's end (px left over)", r.gap, (v) => v !== null && v >= 0 && v <= 24);
 });
 
 test("dropdown: gated by the Access external files setting", async () => {
