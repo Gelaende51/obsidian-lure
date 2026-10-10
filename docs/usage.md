@@ -946,9 +946,13 @@ This works by wrapping the `workspace:edit-file-title` command rather than grabb
 | Colour | Means |
 | --- | --- |
 | **Purple** | A note (`.md`, `.markdown`) — what Obsidian will open as a note, picked out of a folder of mixed contents |
+| Plain | A folder's own note, beside its bold folder |
 | **Orange** | Not a note — anything Obsidian will not open as one, from a PDF to a `.txt`, and the `:page` entries with them. A folder of mixed contents is read for the notes in it, and one colour for everything else says that faster than a caution on a few of them; see [the warning colours](#the-warning-colours) |
 | **Muted** | Outside your vault, so the vault's own handling doesn't apply |
-| **Blue** edge | The open note and its other paths — alias paths, hard and symbolic links |
+| **Blue** edge | The open note's other paths — alias paths, hard and symbolic links |
+| **Red** row, last | The file <kbd>Enter</kbd> would make of what is typed, when nothing in the folder answers to it. Picking it makes it |
+| **Grey** | A page — `:graph`, `:search` and the like — which is somewhere to go, not a file |
+| **0** on a file's icon | The file is empty |
 | **Blue**, bold | Where you already are: this bar's own note, and the folder the path bar is standing on. In rename/move mode the *keep this name* entry stands in the note's place — the same note either way |
 | **Pink**, italic | A note that is linked to and not written yet, listed in the folder Obsidian would make it in. Picking it makes it |
 | **Red** | Rename/move mode only: the name is taken. Still selectable — picking one asks what to do about the file in the way; see [A name that is taken](#a-name-that-is-taken) |
