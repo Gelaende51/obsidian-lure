@@ -82,12 +82,13 @@ async function type(text) {
 }
 
 const indicator = () => page.evaluate(`
-	const el = app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-other-paths");
+	// At the row's end: the badge's icon with extensions hidden, a button after the name without.
+	const el = app.workspace.getLeaf(false).view.containerEl.querySelector(".lure-other-paths, .lure-badge-other-paths");
 	const input = document.querySelector(".lure-path-input");
 	return JSON.stringify({
 		shown: !!el,
 		count: el?.querySelector(".lure-other-paths-count")?.textContent ?? null,
-		tint: el?.dataset.lureTint ?? null,
+		tint: el?.closest("[data-lure-tint]")?.dataset.lureTint ?? null,
 		field: input ? (input.dataset.lureTint ?? (input.classList.contains("lure-will-create") ? "red" : null)) : null,
 	});
 `).then(JSON.parse);
@@ -202,7 +203,7 @@ test("after Enter the count and its colour go", async () => {
 		await app.workspace.getLeaf(false).openFile(app.vault.getAbstractFileByPath(${JSON.stringify(`${DIR}/Pie.md`)}));
 		${PAUSE(600)}
 		const leaf = app.workspace.getLeaf(false);
-		const el = leaf.view.containerEl.querySelector(".lure-other-paths");
+		const el = leaf.view.containerEl.querySelector(".lure-other-paths, .lure-badge-other-paths");
 		const bc = app.plugins.plugins.lure.manager.breadcrumbFor(leaf);
 		return JSON.stringify(el ? { file: app.workspace.getActiveFile()?.path, tint: el.dataset.lureTint, count: el.textContent, field: document.querySelector(".lure-path-input")?.value ?? null, matches: bc?.globMatches ?? "none", mode: bc?.mode, same: bc?.indicatorEl === el, all: document.querySelectorAll(".lure-other-paths").length, early: window.__lureEarly } : null);
 	`).then(JSON.parse);

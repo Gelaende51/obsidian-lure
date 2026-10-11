@@ -654,6 +654,33 @@ test("path bar: pressing the padlock mid-edit keeps what was typed", async () =>
 	expect("new name present", existsSync(to), true);
 });
 
+// Asked for: the unlock used to be granted to one location, and picking
+// another vault from the dropdown shut it again.
+test("path bar: the padlock stays open through a change of location", async () => {
+	const r = await page.evaluate(`
+		${open(join(BED, "note.md"))}
+		${breadcrumb}
+		bc.enterTypingMode("");
+		${PAUSE(300)}
+		const container = app.workspace.activeLeaf.view.containerEl;
+		container.querySelector(".lure-unlock-btn").dispatchEvent(new MouseEvent("click", { bubbles: true }));
+		${PAUSE(300)}
+		const elsewhere = bc.locationEntries().find((l) => l.kind === "home")?.path ?? "/";
+		bc.goToLocation(elsewhere);
+		${PAUSE(600)}
+		const out = {
+			moved: bc.externalPath !== null && !bc.externalPath.startsWith(${JSON.stringify(BED)}),
+			unlocked: bc.allowsExternalWrites(),
+			slot: container.querySelector(".lure-unlock-btn") ? "padlock" : container.querySelector(".lure-rename-btn") ? "rename" : null,
+		};
+		bc.cancelNavigation();
+		return out;
+	`);
+	expect("the row moved somewhere else", r.moved, true);
+	expect("still unlocked", r.unlocked, true);
+	expect("the slot still holds the rename toggle", r.slot, "rename");
+});
+
 test("path bar: refuses to overwrite an existing target", async () => {
 	// Its own file to move, rather than the one the rename case above leaves
 	// behind. Standing on that was invisible for as long as the cases ran in

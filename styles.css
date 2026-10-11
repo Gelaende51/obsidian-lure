@@ -1588,6 +1588,12 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 	padding: 0 2px;
 	--icon-size: var(--icon-s);
 }
+/* At the row's end, after the name, where the badge stands when it shows:
+   room for the chevron hung off its left. */
+.lure-filename > .lure-other-paths {
+	flex: none;
+	margin-inline-start: 6px;
+}
 
 /* The other-paths button's count, and its colour: the strongest kind of
    other path it holds, or a pattern's answer — green, matching; red, not. */
@@ -1809,6 +1815,8 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 }
 .lure-filename-badge[data-lure-tint="symbolic"] { --lure-badge-tint: var(--color-pink-rgb); }
 .lure-filename-badge[data-lure-tint="hard"] { --lure-badge-tint: var(--color-purple-rgb); }
+.lure-filename-badge[data-lure-tint="match"] { --lure-badge-tint: var(--color-green-rgb); }
+.lure-filename-badge[data-lure-tint="none"] { --lure-badge-tint: var(--color-red-rgb); }
 .lure-filename-badge[data-lure-tint]:hover {
 	background-color: rgba(var(--lure-badge-tint), 0.22);
 }

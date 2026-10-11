@@ -493,11 +493,11 @@ Three presses, in a cycle:
 the padlock open and shut rather than opening a mode every commit would refuse:
 the refusal arrives before the work rather than after it. Press the padlock, or
 press the rename key again within half a second — the second press grants exactly
-what the button grants, for this location, and opens rename mode with it.
+what the button grants and opens rename mode with it.
 
 Inside your vault there is no padlock: there is nothing to unlock, and the toggle simply has the slot.
 
-The permission is granted **to a location, not to a moment**: it survives everything you'd do while working in one place — finishing a move, clicking away from the input, opening a file — and ends when you pick a different vault, drive or root from the dropdown, when the row returns to a vault file, or on that third press. So a run of moves inside one folder takes one press, not one per file.
+The permission is granted **to the pane, not to a moment**: it survives everything you'd do while working out there — finishing a move, clicking away from the input, opening a file, picking another vault, drive or root from the dropdown, typing an absolute path — and ends when the row returns to a vault file, or on that third press. So a run of moves takes one press, not one per file or per place.
 
 With the padlock open, the path bar behaves out there the way it does inside:
 
@@ -853,14 +853,14 @@ it names, and Obsidian's own `aliases` beside the note that carries them.
 Picking one opens the note, and so does typing an alias path and pressing
 <kbd>Enter</kbd> — nothing is made there.
 
-**A note with other paths gets a button in front of the vault's segment.** It
-lists them, each under an icon for what it is: alias paths, hard links and
+**A note with other paths gets a button at the row's end**, after its name —
+inside the vault and outside it alike. It lists them, each under an icon for what it is: alias paths, hard links and
 symbolic links found in the vault (whether this plugin made them or not), the
 note a symbolic link points at, and Obsidian's aliases. A link opens that file;
 an alias is shown on the row.
 
 The button stays while the row is being edited, and its menu opens under it,
-flush with the bottom of the path bar. Each entry carries an icon for what it
+flush with the bottom of the path bar and ending where the button does. Each entry carries an icon for what it
 is — a signpost for an alias path, `@` for one of Obsidian's aliases, a chain
 for a hard link, a linked file for a symbolic link. In the dropdown the same
 icons sit as a small mark at the bottom right of the row's file icon. A symbolic link made while
@@ -877,8 +877,8 @@ extension in a badge at a row's end while extensions are hidden, and the row
 under the pointer or picked with the arrow keys highlighted; <kbd>Enter</kbd>
 opens it, <kbd>Esc</kbd> closes the list.
 
-With file extensions hidden, the button moves to the **badge at the row's
-end**: it takes the place of the file's type icon, and the badge takes its
+With file extensions hidden, the button is the **badge at the row's end**:
+it takes the place of the file's type icon, and the badge takes its
 colour behind the extension, which stays grey. Pressing the icon opens the
 list, ending where the extension does; pressing the rest of the badge writes
 the extension out, as before. The badge stays while the field is open, and
@@ -915,7 +915,8 @@ its extension, as it is typed with or without one.
 
 While the field holds a pattern, the **other-paths button counts the matches**
 in place of the other paths, **green** while there are some and **red** while
-there are none, and its menu lists them in green. A step of the path that is a
+there are none — the badge too, with extensions hidden — and its menu lists
+them in green. A step of the path that is a
 pattern is green or red on the row the same way.
 
 **The dropdown follows the pattern** for the step the caret is in. It lists

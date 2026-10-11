@@ -277,6 +277,35 @@ test("the other-paths button shows exactly when there are other paths", async ()
 	expect("the note's own row can be dragged like a File Explorer row", draggable[0], "true");
 });
 
+// Asked for: the button stood in front of the vault icon wherever the row had
+// no badge. It belongs at the row's end, where the badge would be.
+test("with extensions shown the other-paths button ends the row, not the vault", async () => {
+	await setSettings(page, { showFileExtension: true });
+	try {
+		const r = await page.evaluate(`
+			const f = app.vault.getAbstractFileByPath(${JSON.stringify(NOTE)});
+			await app.fileManager.processFrontMatter(f, (fm) => { fm.paths = [${JSON.stringify(`${DIR}/Other.md`)}]; });
+			await app.workspace.getLeaf(false).openFile(f);
+			${PAUSE(900)}
+			const root = app.workspace.getLeaf(false).view.containerEl;
+			const button = root.querySelector(".lure-other-paths");
+			const ext = root.querySelector(".lure-filename .lure-filename-ext");
+			const out = {
+				inVaultSegment: !!root.querySelector(".lure-vault-wrapper .lure-other-paths"),
+				last: button ? button.parentElement?.classList.contains("lure-filename") && button.nextElementSibling === null : null,
+				afterName: button && ext ? button.getBoundingClientRect().left >= ext.getBoundingClientRect().right - 1 : null,
+			};
+			await app.fileManager.processFrontMatter(f, (fm) => { delete fm.paths; });
+			return JSON.stringify(out);
+		`).then(JSON.parse);
+		expect("not in front of the vault", r.inVaultSegment, false);
+		expect("last in the name's box", r.last, true);
+		expect("after the extension", r.afterName, true);
+	} finally {
+		await setSettings(page, { showFileExtension: true });
+	}
+});
+
 test("renaming a hard link rewrites its entry in paths", async () => {
 	await renaming();
 	await typeOverName("Hard");
@@ -305,21 +334,21 @@ test("the button stays while editing, its menu opens under the bar, and link row
 		const root = leaf.view.containerEl;
 		root.querySelector(".lure-filename-text").click();
 		${PAUSE(500)}
-		const whileEditing = !!root.querySelector(".lure-other-paths");
-		const button = root.querySelector(".lure-other-paths");
+		const button = root.querySelector(".lure-other-paths, .lure-badge-other-paths");
+		const whileEditing = !!button;
 		button?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
 		${PAUSE(300)}
 		const menu = document.querySelector(".lure-other-paths-menu");
 		const bar = root.querySelector(".view-header");
 		const gap = menu && bar ? Math.round(menu.getBoundingClientRect().top - bar.getBoundingClientRect().bottom) : null;
-		const left = menu && button ? Math.round(menu.getBoundingClientRect().left - button.getBoundingClientRect().left) : null;
+		const right = menu && button ? Math.round(menu.getBoundingClientRect().right - button.getBoundingClientRect().right) : null;
 		const icons = [...document.querySelectorAll(".lure-other-paths-menu .lure-suggest-kind svg")].map((s) => [...s.classList].find((c) => c.startsWith("lucide-")) ?? null);
 		menu?.remove();
-		return JSON.stringify({ whileEditing, gap, left, icons });
+		return JSON.stringify({ whileEditing, gap, right, icons });
 	`).then(JSON.parse);
 	expect("the button stays while the name is being edited", r.whileEditing, true);
 	expect("the menu opens flush under the bar", r.gap !== null && Math.abs(r.gap) <= 2, true);
-	expect("and at the button's left edge", r.left !== null && Math.abs(r.left) <= 2, true);
+	expect("and ending at the button's right edge", r.right !== null && Math.abs(r.right) <= 2, true);
 	expect("a symbolic link has its own icon", r.icons, (v) => Array.isArray(v) && v.includes("lucide-arrow-up-right"));
 	// Into the folder holding the link: its row ends in the symbolic-link icon.
 	await page.evaluate(`document.querySelector(".lure-path-input")?.blur(); document.body.click(); ${PAUSE(300)} return true;`);

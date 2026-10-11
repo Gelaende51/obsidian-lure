@@ -8,6 +8,8 @@ Every release of Lure, newest first. What has landed since the last release is u
 
 ### Changed
 
+- **The other-paths button is at the row's end everywhere**, never in front of the vault: the badge's icon with extensions hidden — a pattern's match count included, the badge green or red with it — and a button after the name with extensions shown or outside the vault. Its list ends where it does.
+- **Unlocking writes outside the vault lasts through a change of location**: picking another vault, drive or root, or typing an absolute path, no longer shuts the padlock. It ends when the row returns to the vault, or by hand.
 - **An empty file's 0 sits at the bottom right of its icon**, in the dropdown and in the badge, and at the top right where a link's mark holds the bottom.
 
 ### Fixed

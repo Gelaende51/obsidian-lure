@@ -934,13 +934,6 @@ export class PathBreadcrumb {
 	private padlockAskedAt = 0;
 	/** Set the moment teardown begins, so the render path stops rebuilding what it is dismantling. */
 	private destroyed = false;
-	/**
-	 * The location the unlock was granted for. Held so the permission can
-	 * outlive the repaints that punctuate working in one place — a move
-	 * completes, a click lands outside the input — and end only when the row
-	 * is genuinely somewhere else.
-	 */
-	private unlockedBase: string | null = null;
 	/** True while the vault-root dropdown is listing places to jump to rather than a folder's contents. */
 	private showingLocations = false;
 	/**
@@ -1038,8 +1031,6 @@ export class PathBreadcrumb {
 			// Only ever opens: once open it hands the slot to the rename
 			// toggle, and shutting it again is that button's third press.
 			this.externalWritesUnlocked = true;
-			// Granted for this location, not for this moment.
-			this.unlockedBase = this.externalBase?.path ?? this.externalPath;
 			this.updateUnlockButton();
 		});
 
@@ -2855,10 +2846,8 @@ export class PathBreadcrumb {
 		if (!this.pointsOutsideVault() || this.externalWritesUnlocked) return false;
 		if (Date.now() - this.padlockAskedAt < PADLOCK_DOUBLE_MS) {
 			this.padlockAskedAt = 0;
-			// Exactly what the button's own press does, granted for the
-			// location rather than for the moment.
+			// Exactly what the button's own press does.
 			this.externalWritesUnlocked = true;
-			this.unlockedBase = this.externalBase?.path ?? this.externalPath;
 			this.updateUnlockButton();
 			return false;
 		}
@@ -3433,21 +3422,10 @@ export class PathBreadcrumb {
 		// briefly null. Revoking here relocked the padlock after every single
 		// move. The permission ends at the transitions instead — see
 		// lockExternalWrites.
-		// Typing an absolute path can leave the location the unlock was for
-		// without ever passing through one of those transitions.
-		if (
-			this.externalWritesUnlocked &&
-			this.unlockedBase !== null &&
-			this.externalPath !== null &&
-			!isInside(this.externalPath, this.unlockedBase)
-		) {
-			this.lockExternalWrites();
-		}
-
-		// Deliberately after that check and not before: the relock decides
-		// which of the pair the slot holds, so placing them first would show
-		// the rename toggle for one frame in a location that has just been
-		// locked again.
+		// Nor does leaving the location it was opened in: the unlock is the
+		// pane's until it is shut by hand or the row comes back inside the
+		// vault, through any change of place — another vault, home, a typed
+		// absolute path.
 		this.insertRenameButton();
 	}
 
@@ -4449,7 +4427,6 @@ export class PathBreadcrumb {
 
 	private lockExternalWrites(): void {
 		this.externalWritesUnlocked = false;
-		this.unlockedBase = null;
 	}
 
 	/**
@@ -4543,8 +4520,6 @@ export class PathBreadcrumb {
 
 		// "None" leaves the vault's own segment out. Its delimiter stays: it
 		// is where the path starts, and it opens what it always opened.
-		this.indicatorEl = null;
-		this.updateIndicator();
 		if (this.plugin.settings.vaultSegment !== "none") this.renderRootSegment();
 
 		const separator = this.vaultSegmentEl.createSpan({
@@ -4871,7 +4846,13 @@ export class PathBreadcrumb {
 		}
 	}
 
+	/** The name's box, then the other-paths button at its end, which emptying the box took away. */
 	private renderFilename(): void {
+		this.renderFilenameParts();
+		this.updateIndicator();
+	}
+
+	private renderFilenameParts(): void {
 		this.filenameEl.removeClass(EDITING_CLASS);
 		this.titleEl.parentElement?.removeClass(EDITING_ROW_CLASS);
 		this.filenameEl.empty();
@@ -4950,30 +4931,51 @@ export class PathBreadcrumb {
 		const badge = host.createSpan({ cls: `${EXTENSION_CLASS} lure-filename-badge` });
 		// A press on it is not one that leaves the field.
 		badge.addEventListener("mousedown", (evt) => evt.preventDefault());
-		const others = otherPaths(this.plugin.app, disk, file);
-		if (others.length) {
-			// A note with other paths: the other-paths button takes the type
-			// icon's place, and the badge their colour behind it. The icon
-			// opens their list; the rest of the badge still writes the
-			// extension out, and stays grey, apart from the button.
-			badge.dataset.lureTint = otherPathsTint(others);
-			const opener = badge.createSpan({ cls: "lure-suggest-type-icon lure-badge-other-paths" });
-			applyIcon(setIcon, opener, "lure-split", "split");
-			opener.createSpan({ cls: "lure-other-paths-count", text: String(others.length) });
-			setIcon(opener.createSpan({ cls: "lure-other-paths-chevron" }), "chevron-down");
-			setTooltip(opener, t("otherPathsTooltip"));
-			opener.addEventListener("click", (evt) => {
-				evt.stopPropagation();
-				this.showIndicatorMenu(evt, badge);
-			});
-		} else {
-			const icon = badge.createSpan({ cls: "lure-suggest-type-icon lure-suggest-has-kind" });
-			setIcon(icon, typeIcon(file.extension));
-			if (facts.endIcon) setIcon(icon.createSpan({ cls: "lure-suggest-kind" }), facts.endIcon);
-			if (facts.empty) icon.createSpan({ cls: "lure-suggest-empty" });
-		}
+		badge.createSpan({ cls: "lure-suggest-type-icon" });
+		this.fillBadgeIcon(badge, file);
 		badge.createSpan({ cls: "lure-badge-extension", text: `.${file.extension}` });
 		setTooltip(badge, `${describeFile(file.extension, facts)}\n${t("suggestShowExtension")}`);
+	}
+
+	/**
+	 * The badge's icon. With other paths, or a pattern in the field, it is
+	 * the other-paths button — a pattern's count over the paths', as the
+	 * button counts — and the badge takes their colour behind it; the icon
+	 * opens their list, the rest of the badge still writes the extension out
+	 * and stays grey. Otherwise the file's type, with its link and empty marks.
+	 */
+	private fillBadgeIcon(badge: HTMLElement, file: TFile): void {
+		const disk = this.plugin.diskLinks;
+		const others = otherPaths(this.plugin.app, disk, file);
+		const matches = this.globMatches;
+		const tint = matches !== null ? (matches.length ? "match" : "none") : others.length ? otherPathsTint(others) : null;
+		const count = matches !== null ? matches.length : others.length;
+		// Redrawn only when what it says changed: a pattern being typed asks on every key.
+		const key = tint === null ? "type" : `${tint}:${count}`;
+		const current = badge.querySelector<HTMLElement>(":scope > .lure-suggest-type-icon");
+		if (current && badge.dataset.lureIcon === key) return;
+		badge.dataset.lureIcon = key;
+		const icon = createSpan({ cls: "lure-suggest-type-icon" });
+		if (current) current.replaceWith(icon);
+		else badge.prepend(icon);
+		if (tint === null) {
+			delete badge.dataset.lureTint;
+			const link = disk.targetOfLink(file.path) ? "symbolic" : disk.sameFile(file.path).length ? "hard" : "none";
+			icon.addClass("lure-suggest-has-kind");
+			setIcon(icon, typeIcon(file.extension));
+			const kind = LINK_ICONS[link];
+			if (kind) setIcon(icon.createSpan({ cls: "lure-suggest-kind" }), kind);
+			if (file.stat.size === 0) icon.createSpan({ cls: "lure-suggest-empty" });
+			return;
+		}
+		badge.dataset.lureTint = tint;
+		icon.addClass("lure-badge-other-paths");
+		this.drawOtherPathsIcon(icon, count);
+		setTooltip(icon, matches !== null ? t("globMatchesTooltip", { count: String(count) }) : t("otherPathsTooltip"));
+		icon.addEventListener("click", (evt) => {
+			evt.stopPropagation();
+			this.showIndicatorMenu(evt, badge);
+		});
 	}
 
 	/**
@@ -6895,38 +6897,53 @@ export class PathBreadcrumb {
 		const others = file && inVault ? otherPaths(this.plugin.app, this.plugin.diskLinks, file) : outside ? this.plugin.externalLinks.othersOf(outside) : [];
 		const matches = inVault ? this.globMatches : null;
 		// Any other button in the row is one a redraw lost track of.
-		for (const stray of Array.from(this.vaultSegmentEl.querySelectorAll(".lure-other-paths"))) {
+		const row = this.titleEl.parentElement ?? this.filenameEl;
+		for (const stray of Array.from(row.querySelectorAll(".lure-other-paths"))) {
 			if (stray !== this.indicatorEl) stray.remove();
 		}
-		// The badge at the row's end carries them while it shows: its icon is
-		// the button then, and a second one at the front would say it twice.
-		if ((!others.length && matches === null) || (matches === null && this.badgeShows())) {
+		// At the row's end, never in front of the vault: the badge carries it
+		// while it shows — its icon is the button then — and everywhere else
+		// it stands after the name, where the badge would be.
+		const badge = this.badgeShows() ? this.filenameEl.querySelector<HTMLElement>(":scope > .lure-filename-badge") : null;
+		if (badge && file) {
+			this.indicatorEl?.remove();
+			this.indicatorEl = null;
+			this.fillBadgeIcon(badge, file);
+			return;
+		}
+		if (!others.length && matches === null) {
 			this.indicatorEl?.remove();
 			this.indicatorEl = null;
 			return;
 		}
 		let button = this.indicatorEl;
-		if (!button || button.parentElement !== this.vaultSegmentEl) {
-			button?.remove();
-			button = createSpan({ cls: "clickable-icon lure-other-paths" });
-			this.vaultSegmentEl.prepend(button);
-			this.indicatorEl = button;
-			button.addEventListener("mousedown", (evt) => evt.preventDefault());
-			button.addEventListener("click", (evt) => {
+		if (!button) {
+			const made = createSpan({ cls: "clickable-icon lure-other-paths" });
+			made.addEventListener("mousedown", (evt) => evt.preventDefault());
+			made.addEventListener("click", (evt) => {
 				evt.stopPropagation();
-				this.showIndicatorMenu(evt);
+				// At the row's end, so the list ends where the button does.
+				this.showIndicatorMenu(evt, made);
 			});
+			this.indicatorEl = button = made;
 		}
-		button.empty();
-		applyIcon(setIcon, button, "lure-split", "split");
-		const count = matches !== null ? matches.length : others.length;
-		button.createSpan({ cls: "lure-other-paths-count", text: String(count) });
-		// A small down chevron at the bottom left: pressing it opens a list.
-		setIcon(button.createSpan({ cls: "lure-other-paths-chevron" }), "chevron-down");
-		const colour = matches !== null ? (matches.length ? "match" : "none") : otherPathsTint(others);
-		button.dataset.lureTint = colour;
-		setTooltip(button, matches !== null ? t("globMatchesTooltip", { count: String(count) }) : t("otherPathsTooltip"));
+		// Last in the name's box, which a redraw empties: put back each time.
+		if (button.parentElement !== this.filenameEl || button.nextSibling) this.filenameEl.append(button);
+		const tint = matches !== null ? (matches.length ? "match" : "none") : otherPathsTint(others);
+		this.drawOtherPathsIcon(button, matches !== null ? matches.length : others.length);
+		button.dataset.lureTint = tint;
+		setTooltip(button, matches !== null ? t("globMatchesTooltip", { count: String(matches.length) }) : t("otherPathsTooltip"));
 	}
+
+	/** The split icon with its count and the chevron that says a list opens. */
+	private drawOtherPathsIcon(el: HTMLElement, count: number): void {
+		el.empty();
+		applyIcon(setIcon, el, "lure-split", "split");
+		el.createSpan({ cls: "lure-other-paths-count", text: String(count) });
+		// A small down chevron at the bottom left: pressing it opens a list.
+		setIcon(el.createSpan({ cls: "lure-other-paths-chevron" }), "chevron-down");
+	}
+
 
 	/**
 	 * The list of other paths, opened from the button at the front or the
@@ -8540,10 +8557,6 @@ export class PathBreadcrumb {
 	 */
 	private goToLocation(absolutePath: string): void {
 		this.showingLocations = false;
-		// A different place than the one the unlock was granted for.
-		if (this.unlockedBase !== null && !samePath(this.unlockedBase, absolutePath)) {
-			this.lockExternalWrites();
-		}
 		const base = this.vaultBasePath();
 		const location = this.locationEntries().find((entry) => samePath(entry.path, absolutePath));
 
@@ -8741,6 +8754,7 @@ export class PathBreadcrumb {
 		if (host === this.filenameEl && file?.extension && this.badgeWanted()) {
 			this.renderFileBadge(host, file);
 		}
+		this.updateIndicator();
 
 		// Measured against its own font rather than flex-sized, so it fits
 		// whatever it's seeded with (a full path, say) as tightly as the
