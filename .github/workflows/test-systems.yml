@@ -29,7 +29,7 @@ on:
       target:
         description: "What to run on"
         type: choice
-        options: [distros, old-engine, server-2019, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, peer-residue, freeze-probe, all]
+        options: [distros, old-engine, server-2019, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits, peer-residue, freeze-probe, all]
         default: distros
       suites:
         description: "Suites, space separated"
@@ -202,10 +202,18 @@ jobs:
           head -5 /usr/bin/obsidian
           .dev/ci-suites.sh
 
+  # "restricted" takes the sandbox's home and host access away and leaves
+  # only the folder the vault copy and its settings live in: what Lure does
+  # when the paths it is asked about are out of reach.
   flatpak:
     if: inputs.target == 'flatpak' || inputs.target == 'all'
+    strategy:
+      fail-fast: false
+      matrix:
+        access: [full, restricted]
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    name: flatpak (${{ matrix.access }} access)
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -222,9 +230,15 @@ jobs:
           flatpak info --user --show-permissions md.obsidian.Obsidian
       - name: Run the suites
         env:
-          OBSIDIAN_COMMAND: flatpak run --user md.obsidian.Obsidian
+          ACCESS: ${{ matrix.access }}
           SUITES: ${{ inputs.suites }}
-        run: dbus-run-session -- .dev/ci-suites.sh
+        run: |
+          if [ "$ACCESS" = restricted ]; then
+            export OBSIDIAN_COMMAND="flatpak run --user --nofilesystem=host --nofilesystem=home --filesystem=$HOME/.cache/lure-ci md.obsidian.Obsidian"
+          else
+            export OBSIDIAN_COMMAND="flatpak run --user md.obsidian.Obsidian"
+          fi
+          dbus-run-session -- .dev/ci-suites.sh
 
   snap:
     if: inputs.target == 'snap' || inputs.target == 'all'
@@ -320,6 +334,69 @@ jobs:
             bash .dev/ci-suites.sh
         env:
           SUITES: ${{ inputs.suites }}
+
+  # Little memory and half a CPU: a container capped by Docker, so timing
+  # that only holds on a fast machine shows.
+  limits-machine:
+    if: inputs.target == 'limits' || inputs.target == 'all'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    container:
+      image: ubuntu:24.04
+      options: --shm-size=1g --memory=1500m --memory-swap=1500m --cpus=0.5
+    name: limits (1.5 GB, half a CPU)
+    steps:
+      - name: tar, for the checkout
+        run: apt-get update -q && apt-get install -y -q tar gzip
+      - uses: actions/checkout@v4
+      - name: System packages
+        run: sh .dev/ci-distro-deps.sh
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - run: npm ci
+      - run: node esbuild.config.mjs production
+      - name: Run the suites
+        shell: bash
+        env:
+          OBSIDIAN_EXTRA_ARGS: --no-sandbox
+          SUITES: ${{ inputs.suites }}
+        run: .dev/ci-suites.sh
+
+  # The screen and the graphics: a netbook-sized display, a HiDPI one at
+  # twice the scale, and no GPU at all (software rendering).
+  limits-display:
+    if: inputs.target == 'limits' || inputs.target == 'all'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: small screen 1024x600
+            screen: 1024x600x24
+            args: --no-sandbox
+          - name: HiDPI, scale 2
+            screen: 1920x1080x24
+            args: --no-sandbox --force-device-scale-factor=2
+          - name: no GPU
+            screen: 1920x1080x24
+            args: --no-sandbox --disable-gpu
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    name: limits (${{ matrix.name }})
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: node esbuild.config.mjs production
+      - name: Run the suites
+        env:
+          XVFB_SCREEN: ${{ matrix.screen }}
+          OBSIDIAN_EXTRA_ARGS: ${{ matrix.args }}
+          SUITES: ${{ inputs.suites }}
+        run: .dev/ci-suites.sh
 
   # Loaded beside every suite, the header plugins of test-compat-ui changed
   # what F2 and the rename field did even after being turned off. One job
