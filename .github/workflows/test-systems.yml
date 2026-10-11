@@ -359,7 +359,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     container:
-      image: ubuntu:24.04
+      # The image the distros job already runs in, so only the limits differ.
+      image: debian:12
       options: --shm-size=1g --memory=1500m --memory-swap=1500m --cpus=0.5
     name: limits (1.5 GB, half a CPU)
     steps:

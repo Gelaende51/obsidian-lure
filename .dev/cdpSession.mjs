@@ -311,7 +311,9 @@ export async function pressKey(page, spec) {
 }
 
 /** Page-side sleep, for the debounced saves and Obsidian's own async repaints. */
-export const PAUSE = (ms) => `await new Promise((r) => setTimeout(r, ${ms}));`;
+// Stretched by LURE_SLOW with every other wait: a pause sized for a runner is
+// too short where the machine is slow on purpose.
+export const PAUSE = (ms) => `await new Promise((r) => setTimeout(r, ${Math.round(ms * SLOW)}));`;
 
 /**
  * Empties the editor area: every pane but one, and that one holding nothing.
