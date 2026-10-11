@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · alleen desktop · AGPL-3.0
 ## AI-verantwoording
 
 - **Agent** — **Claude Opus 5 / 5.5** en **Claude Sonnet 5** (Anthropic, via Claude Code): schreef de TypeScript, de CSS, alle 45 vertaalsets en de documentatie. De vertalingen zijn machinaal gemaakt en niet nagekeken door moedertaalsprekers.
-- **Verbruik** — 3 augustus – 11 oktober 2026, 44 sessies, \~13.590 antwoorden: \~12,0 mln. tokens gegenereerd, \~54,7 mln. verzonden, \~4057,7 mln. herlezingen uit de cache (\~4124,3 mln. in totaal); plus 971 headless vertaalruns: \~4,1 mln. gegenereerd, \~4,6 mln. verzonden.
+- **Verbruik** — 3 augustus – 11 oktober 2026, 44 sessies, \~13.650 antwoorden: \~12,0 mln. tokens gegenereerd, \~54,7 mln. verzonden, \~4069,1 mln. herlezingen uit de cache (\~4135,8 mln. in totaal); plus 1015 headless vertaalruns: \~4,2 mln. gegenereerd, \~4,7 mln. verzonden.
 - **Herkomst** — het model heeft geleerd van opensourcecode, documentatie en teksten van de gemeenschap die anderen hebben gepubliceerd. De meeste eer komt hun toe.
 - **Auteur** — Vault51: bepaalde elke functie, testte elke versie in een echte kluis, stuurde de correcties aan en las alle resultaten na.
 

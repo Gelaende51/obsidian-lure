@@ -35,6 +35,7 @@
  * for anyone who doesn't have this machine's history.
  */
 
+import { figuresOf, writeTranslated, loadTemplates } from "./usage-lines.mjs";
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import { join, resolve, dirname } from "path";
 import { homedir } from "os";
@@ -144,14 +145,26 @@ if (!pattern.test(text)) {
 }
 const current = text.match(pattern)[0];
 
+// The translated READMEs state the same figures in their own sentences
+// (.dev/usage-lines.mjs, templates in .dev/usage-lines.json).
+const figures = figuresOf({
+	first: ANCHOR.first, last, sessions, responses: round(total.responses),
+	output: total.output, sent: total.sent, read: total.read,
+	runs: headlessRuns.size, hOutput: headless.output, hSent: headless.sent + headless.read,
+});
+
 if (process.argv.includes("--check")) {
-	if (current === line) { console.log("usage line is current"); process.exit(0); }
-	console.error(`usage line is stale\n  is:     ${current}\n  should: ${line}`);
+	const stale = writeTranslated(figures, { check: true });
+	if (current === line && !stale.length) { console.log("usage lines are current"); process.exit(0); }
+	if (current !== line) console.error(`usage line is stale\n  is:     ${current}\n  should: ${line}`);
+	if (stale.length) console.error(`translated usage lines are stale: ${stale.join(" ")}`);
 	process.exit(1);
 }
 
 writeFileSync(readme, text.replace(pattern, line));
 console.log(line);
+const rewritten = writeTranslated(figures);
+console.log(`translated READMEs rewritten: ${rewritten.length} of ${Object.keys(loadTemplates()).length}`);
 const pctOf = (k) => `${Math.round(ratio(k) * 100)} %`;
 console.log(
 	`\nThe 1.4.0 line counted rows: kept ${pctOf("responses")} of its responses, ${pctOf("output")} of its output, ` +

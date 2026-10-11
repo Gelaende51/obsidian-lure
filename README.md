@@ -11,7 +11,7 @@ Obsidian 1.8.7+ · desktop only · AGPL-3.0
 ## AI disclosure
 
 - **Agent** — **Claude Opus 5 / 5.5** and **Claude Sonnet 5** (Anthropic, via Claude Code): wrote the TypeScript, the CSS, all 45 translation sets and the documentation. Translations are machine-generated and unreviewed by native speakers.
-- **Usage** — 3 Aug – 11 Oct 2026, 44 sessions, \~13,590 responses: \~12.0 M tokens generated, \~54.7 M sent, \~4057.7 M cached re-reads (\~4124.3 M total); plus 971 headless translation runs: \~4.1 M generated, \~4.6 M sent.
+- **Usage** — 3 Aug – 11 Oct 2026, 44 sessions, \~13,650 responses: \~12.0 M tokens generated, \~54.7 M sent, \~4069.1 M cached re-reads (\~4135.8 M total); plus 1015 headless translation runs: \~4.2 M generated, \~4.7 M sent.
 - **Upstream** — the model learned from open source code, documentation and community writing published by others. Most of the credit goes there.
 - **Author** — Vault51: specified every feature, tested each iteration in a live vault, directed the fixes, reviewed all output.
 

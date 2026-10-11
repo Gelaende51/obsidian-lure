@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · nur Desktop · AGPL-3.0
 ## KI-Offenlegung
 
 - **Agent** — **Claude Opus 5 / 5.5** und **Claude Sonnet 5** (Anthropic, über Claude Code): schrieb das TypeScript, das CSS, alle 45 Übersetzungssätze und die Dokumentation. Die Übersetzungen sind maschinell erstellt und wurden nicht von Muttersprachlern geprüft.
-- **Verbrauch** — 3. August – 11. Oktober 2026, 44 Sitzungen, \~13.590 Antworten: \~12,0 Mio. Token erzeugt, \~54,7 Mio. gesendet, \~4057,7 Mio. zwischengespeicherte Wiederholungen (\~4124,3 Mio. gesamt); zuzüglich 971 Headless-Übersetzungsläufen: \~4,1 Mio. erzeugt, \~4,6 Mio. gesendet.
+- **Verbrauch** — 3. August – 11. Oktober 2026, 44 Sitzungen, \~13.650 Antworten: \~12,0 Mio. Token erzeugt, \~54,7 Mio. gesendet, \~4069,1 Mio. zwischengespeicherte Wiederholungen (\~4135,8 Mio. gesamt); zuzüglich 1015 Headless-Übersetzungsläufen: \~4,2 Mio. erzeugt, \~4,7 Mio. gesendet.
 - **Herkunft** — das Modell hat aus quelloffenem Code, Dokumentation und Beiträgen der Gemeinschaft gelernt, die andere veröffentlicht haben. Der größte Teil der Anerkennung gebührt ihnen.
 - **Autor** — Vault51: legte jede Funktion fest, testete jede Fassung in einem echten Vault, gab die Korrekturen vor, prüfte alle Ergebnisse.
 

@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · vain työpöytä · AGPL-3.0
 ## Tekoälyilmoitus
 
 - **Agentti** — **Claude Opus 5 / 5.5** ja **Claude Sonnet 5** (Anthropic, Claude Coden kautta): kirjoitti TypeScriptin, CSS:n, kaikki 45 käännösjoukkoa ja dokumentaation. Käännökset ovat koneellisia, eivätkä äidinkieliset puhujat ole niitä tarkastaneet.
-- **Kulutus** — 3. elokuuta – 11. lokakuuta 2026, 44 istuntoa, \~13 590 vastausta: \~12,0 milj. tuotettua tokenia, \~54,7 milj. lähetettyä, \~4057,7 milj. uudelleenlukua välimuistista (\~4124,3 milj. yhteensä); lisäksi 971 päätöntä käännösajoa: \~4,1 milj. tuotettua, \~4,6 milj. lähetettyä.
+- **Kulutus** — 3. elokuuta – 11. lokakuuta 2026, 44 istuntoa, \~13 650 vastausta: \~12,0 milj. tuotettua tokenia, \~54,7 milj. lähetettyä, \~4069,1 milj. uudelleenlukua välimuistista (\~4135,8 milj. yhteensä); lisäksi 1015 päätöntä käännösajoa: \~4,2 milj. tuotettua, \~4,7 milj. lähetettyä.
 - **Lähde** — malli oppi avoimesta lähdekoodista, dokumentaatiosta ja yhteisön kirjoituksista, jotka muut ovat julkaisseet. Suurin osa ansiosta kuuluu sinne.
 - **Tekijä** — Vault51: määritteli jokaisen ominaisuuden, kokeili jokaista versiota oikeassa holvissa, ohjasi korjaukset ja luki kaikki tulokset läpi.
 

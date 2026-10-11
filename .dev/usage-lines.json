@@ -1,0 +1,739 @@
+{
+	"am": {
+		"lead": "- **ፍጆታ** —",
+		"template": "- **ፍጆታ** — ከ{fromMonth} {fromDay} እስከ {toMonth} {toDay} ቀን {year}፣ {sessions} ክፍለ ጊዜዎች፣ ወደ {responses} መልሶች፦ ወደ {output} ሚሊዮን የተፈጠሩ ቶክኖች፣ ወደ {sent} ሚሊዮን የተላኩ፣ ከመሸጎጫ ወደ {read} ሚሊዮን ድጋሚ ንባቦች (በአጠቃላይ ወደ {total} ሚሊዮን)፤ በተጨማሪም {runs} ቻት-አልባ (headless) የትርጉም ሩጫዎች፦ ወደ {hOutput} ሚሊዮን የተፈጠሩ፣ ወደ {hSent} ሚሊዮን የተላኩ።",
+		"style": {
+			"digits": "latn",
+			"decimal": ".",
+			"group": ",",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "am",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"ar": {
+		"lead": "- **الاستهلاك** —",
+		"template": "- **الاستهلاك** — من {fromDay} {fromMonth} إلى {toDay} {toMonth} {year}، {sessions} جلسة، نحو {responses} ردًّا: نحو {output} مليون رمز مُولَّد، ونحو {sent} مليون مُرسَل، ونحو {read} مليون إعادة قراءة من الذاكرة المؤقتة (نحو {total} مليون إجمالًا)؛ بالإضافة إلى {runs} عملية تشغيل ترجمة بلا واجهة محادثة: نحو {hOutput} مليون رمز مُولَّد، ونحو {hSent} مليون مُرسَل.",
+		"style": {
+			"digits": "latn",
+			"decimal": ".",
+			"group": "٬",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"names": [
+				"كانون الثاني/يناير",
+				"شباط/فبراير",
+				"آذار/مارس",
+				"نيسان/أبريل",
+				"أيار/مايو",
+				"حزيران/يونيو",
+				"تموز/يوليو",
+				"آب/أغسطس",
+				"أيلول/سبتمبر",
+				"تشرين الأول/أكتوبر",
+				"تشرين الثاني/نوفمبر",
+				"كانون الأول/ديسمبر"
+			]
+		}
+	},
+	"be": {
+		"lead": "- **Выдаткі** —",
+		"template": "- **Выдаткі** — {fromDay} {fromMonth} – {toDay} {toMonth} {year} года, {sessions} сеансы, \\~{responses} адказаў: \\~{output} млн згенераваных токенаў, \\~{sent} млн адпраўленых, \\~{read} млн перачытванняў з кэша (\\~{total} млн разам); плюс {runs} бязэкранных запускаў перакладу: \\~{hOutput} млн згенераваных, \\~{hSent} млн адпраўленых.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": " ",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "be",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"bn": {
+		"lead": "- **ব্যবহার** —",
+		"template": "- **ব্যবহার** — {fromDay} {fromMonth} – {toDay} {toMonth} {year}, {sessions}টি অধিবেশন, প্রায় {responses}টি উত্তর: প্রায় {output} মিলিয়ন টোকেন তৈরি, প্রায় {sent} মিলিয়ন পাঠানো, ক্যাশ থেকে প্রায় {read} মিলিয়ন পুনঃপাঠ (সব মিলিয়ে প্রায় {total} মিলিয়ন); সেইসঙ্গে {runs}টি হেডলেস (চ্যাট সেশন ছাড়া) অনুবাদ রান: প্রায় {hOutput} মিলিয়ন তৈরি, প্রায় {hSent} মিলিয়ন পাঠানো।",
+		"style": {
+			"digits": "beng",
+			"decimal": ".",
+			"group": ",",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "bn",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"ca": {
+		"lead": "- **Consum** —",
+		"template": "- **Consum** — del {fromDay} d'{fromMonth} a l'{toDay} d'{toMonth} de {year}, {sessions} sessions, \\~{responses} respostes: \\~{output} M de tokens generats, \\~{sent} M enviats, \\~{read} M de relectures de la memòria cau (\\~{total} M en total); a més de {runs} execucions de traducció sense sessió de xat: \\~{hOutput} M generats, \\~{hSent} M enviats.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": ".",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "ca",
+			"width": "long",
+			"withDay": false
+		}
+	},
+	"cs": {
+		"lead": "- **Spotřeba** —",
+		"template": "- **Spotřeba** — {fromDay}. {fromMonth} – {toDay}. {toMonth} {year}, {sessions} sezení, \\~{responses} odpovědí: \\~{output} mil. vygenerovaných tokenů, \\~{sent} mil. odeslaných, \\~{read} mil. opětovných čtení z mezipaměti (\\~{total} mil. celkem); plus {runs} dávkových běhů překladu bez chatové relace: \\~{hOutput} mil. vygenerovaných, \\~{hSent} mil. odeslaných.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": " ",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "cs",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"da": {
+		"lead": "- **Forbrug** —",
+		"template": "- **Forbrug** — {fromDay}. {fromMonth}–{toDay}. {toMonth} {year}, {sessions} sessioner, \\~{responses} svar: \\~{output} mio. genererede tokens, \\~{sent} mio. sendte, \\~{read} mio. genlæsninger fra cachen (\\~{total} mio. i alt); plus {runs} hovedløse oversættelseskørsler: \\~{hOutput} mio. genereret, \\~{hSent} mio. sendt.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": ".",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "da",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"de": {
+		"lead": "- **Verbrauch** —",
+		"template": "- **Verbrauch** — {fromDay}. {fromMonth} – {toDay}. {toMonth} {year}, {sessions} Sitzungen, \\~{responses} Antworten: \\~{output} Mio. Token erzeugt, \\~{sent} Mio. gesendet, \\~{read} Mio. zwischengespeicherte Wiederholungen (\\~{total} Mio. gesamt); zuzüglich {runs} Headless-Übersetzungsläufen: \\~{hOutput} Mio. erzeugt, \\~{hSent} Mio. gesendet.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": ".",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "de",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"el": {
+		"lead": "- **Κατανάλωση** —",
+		"template": "- **Κατανάλωση** — {fromDay} {fromMonth} – {toDay} {toMonth} {year}, {sessions} συνεδρίες, \\~{responses} απαντήσεις: \\~{output} εκατ. διακριτικά που παρήχθησαν, \\~{sent} εκατ. που στάλθηκαν, \\~{read} εκατ. επαναναγνώσεις από την κρυφή μνήμη (\\~{total} εκατ. συνολικά); επιπλέον {runs} εκτελέσεις μετάφρασης χωρίς περίοδο συνομιλίας: \\~{hOutput} εκατ. που παρήχθησαν, \\~{hSent} εκατ. που στάλθηκαν.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": ".",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "el",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"es": {
+		"lead": "- **Consumo** —",
+		"template": "- **Consumo** — del {fromDay} de {fromMonth} al {toDay} de {toMonth} de {year}, {sessions} sesiones, \\~{responses} respuestas: \\~{output} M de tokens generados, \\~{sent} M enviados, \\~{read} M de relecturas en caché (\\~{total} M en total); más {runs} ejecuciones de traducción sin interfaz (headless): \\~{hOutput} M generados, \\~{hSent} M enviados.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": ".",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "es",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"fa": {
+		"lead": "- **مصرف** —",
+		"template": "- **مصرف** — {fromDay} {fromMonth} تا {toDay} {toMonth} {year}، {sessions} نشست، حدود {responses} پاسخ: حدود {output} میلیون توکن تولیدشده، حدود {sent} میلیون ارسال‌شده، حدود {read} میلیون بازخوانی از حافظهٔ نهان (در مجموع حدود {total} میلیون)؛ به‌علاوه {runs} اجرای بدون‌رابط ترجمه: حدود {hOutput} میلیون تولیدشده، حدود {hSent} میلیون ارسال‌شده.",
+		"style": {
+			"digits": "arabext",
+			"decimal": "٫",
+			"group": "٬",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "fa-u-ca-gregory",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"fi": {
+		"lead": "- **Kulutus** —",
+		"template": "- **Kulutus** — {fromDay}. {fromMonth} – {toDay}. {toMonth} {year}, {sessions} istuntoa, \\~{responses} vastausta: \\~{output} milj. tuotettua tokenia, \\~{sent} milj. lähetettyä, \\~{read} milj. uudelleenlukua välimuistista (\\~{total} milj. yhteensä); lisäksi {runs} päätöntä käännösajoa: \\~{hOutput} milj. tuotettua, \\~{hSent} milj. lähetettyä.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": " ",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "fi",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"fr": {
+		"lead": "- **Consommation** —",
+		"template": "- **Consommation** — du {fromDay} {fromMonth} au {toDay} {toMonth} {year}, {sessions} sessions, \\~{responses} réponses : \\~{output} M de tokens générés, \\~{sent} M envoyés, \\~{read} M de relectures mises en cache (\\~{total} M au total) ; plus {runs} exécutions de traduction sans interface (headless) : \\~{hOutput} M générés, \\~{hSent} M envoyés.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": " ",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "fr",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"ga": {
+		"lead": "- **Úsáid** —",
+		"template": "- **Úsáid** — {fromDay} {fromMonth} – {toDay} {toMonth} {year}, {sessions} seisiún, \\~{responses} freagra: \\~{output} milliún ceadchomhartha ginte, \\~{sent} milliún seolta, \\~{read} milliún athléamh ón taisce (\\~{total} milliún san iomlán); móide {runs} rith aistriúchán gan seisiún comhrá: \\~{hOutput} milliún ginte, \\~{hSent} milliún seolta.",
+		"style": {
+			"digits": "latn",
+			"decimal": ".",
+			"group": ",",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "ga",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"he": {
+		"lead": "- **צריכה** —",
+		"template": "- **צריכה** — {fromDay} ב{fromMonth} – {toDay} ב{toMonth} {year}, {sessions} מפגשים, כ-{responses} תשובות: כ-{output} מיליון אסימונים שנוצרו, כ-{sent} מיליון שנשלחו, כ-{read} מיליון קריאות חוזרות מהמטמון (כ-{total} מיליון בסך הכול); בתוספת {runs} הרצות תרגום ללא הפעלת צ'אט: כ-{hOutput} מיליון שנוצרו, כ-{hSent} מיליון שנשלחו.",
+		"style": {
+			"digits": "latn",
+			"decimal": ".",
+			"group": ",",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "he",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"hu": {
+		"lead": "- **Fogyasztás** —",
+		"template": "- **Fogyasztás** — {year}. {fromMonth} {fromDay}. – {toMonth} {toDay}., {sessions} munkamenet, \\~{responses} válasz: \\~{output} M előállított token, \\~{sent} M elküldött, \\~{read} M újraolvasás a gyorsítótárból (összesen \\~{total} M); plusz {runs} chatmunkamenet nélküli fordítási futtatás: \\~{hOutput} M előállított, \\~{hSent} M elküldött.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": "",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "hu",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"id": {
+		"lead": "- **Pemakaian** —",
+		"template": "- **Pemakaian** — {fromDay} {fromMonth} – {toDay} {toMonth} {year}, {sessions} sesi, \\~{responses} balasan: \\~{output} juta token dihasilkan, \\~{sent} juta dikirim, \\~{read} juta pembacaan ulang dari singgahan (\\~{total} juta total); ditambah {runs} proses terjemahan headless: \\~{hOutput} juta dihasilkan, \\~{hSent} juta dikirim.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": ".",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "id",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"it": {
+		"lead": "- **Consumo** —",
+		"template": "- **Consumo** — {fromDay} {fromMonth} – {toDay} {toMonth} {year}, {sessions} sessioni, \\~{responses} risposte: \\~{output} M di token generati, \\~{sent} M inviati, \\~{read} M di riletture dalla cache (\\~{total} M in totale); più {runs} esecuzioni di traduzione headless (senza sessione di chat): \\~{hOutput} M generati, \\~{hSent} M inviati.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": ".",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "it",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"ja": {
+		"lead": "- **使用量** —",
+		"template": "- **使用量** — {year}年{fromMonth}月{fromDay}日〜{toMonth}月{toDay}日、{sessions} セッション、約 {responses} 応答: 生成トークン約 {output}、送信約 {sent}、キャッシュからの再読み込み約 {read}（合計約 {total}）。さらにヘッドレス翻訳実行 {runs} 回: 生成約 {hOutput}、送信約 {hSent}。",
+		"style": {
+			"digits": "latn",
+			"decimal": ".",
+			"group": ",",
+			"units": "man",
+			"unitChars": [
+				"億",
+				"万"
+			]
+		},
+		"month": {
+			"locale": "ja",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"ka": {
+		"lead": "- **ხარჯი** —",
+		"template": "- **ხარჯი** — {year} წლის {fromDay} {fromMonth} – {toDay} {toMonth}, {sessions} სესია, \\~{responses} პასუხი: \\~{output} მლნ წარმოქმნილი ტოკენი, \\~{sent} მლნ გაგზავნილი, \\~{read} მლნ ხელახალი წაკითხვა ქეშიდან (სულ \\~{total} მლნ); პლუს {runs} უჯექთის (headless) თარგმნის გაშვება: \\~{hOutput} მლნ წარმოქმნილი, \\~{hSent} მლნ გაგზავნილი.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": "",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "ka",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"kh": {
+		"lead": "- **ការប្រើប្រាស់** —",
+		"template": "- **ការប្រើប្រាស់** — ថ្ងៃទី {fromDay} {fromMonth} – {toDay} {toMonth} {year} {sessions} វគ្គ ប្រហែល {responses} ចម្លើយ៖ បង្កើតបានប្រហែល {output} លានថូខឹន បញ្ជូនប្រហែល {sent} លាន អានឡើងវិញពីឃ្លាំងសម្ងាត់ប្រហែល {read} លាន (សរុបប្រហែល {total} លាន)។ បូកនឹងការដំណើរការបកប្រែបែប headless (គ្មានវគ្គជជែក) ចំនួន {runs} ដង៖ បង្កើតប្រហែល {hOutput} លាន បញ្ជូនប្រហែល {hSent} លាន។",
+		"style": {
+			"digits": "khmr",
+			"decimal": ",",
+			"group": ".",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "km",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"ko": {
+		"lead": "- **사용량** —",
+		"template": "- **사용량** — {year}년 {fromMonth} {fromDay}일–{toMonth} {toDay}일, {sessions} 세션, 약 {responses}회 응답: 생성 토큰 약 {output}, 전송 약 {sent}, 캐시 재읽기 약 {read}(총 약 {total}). 추가로 헤드리스 번역 실행 {runs}회: 생성 약 {hOutput}, 전송 약 {hSent}.",
+		"style": {
+			"digits": "latn",
+			"decimal": ".",
+			"group": ",",
+			"units": "man-tight",
+			"unitChars": [
+				"억",
+				"만"
+			]
+		},
+		"month": {
+			"locale": "ko",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"lv": {
+		"lead": "- **Patēriņš** —",
+		"template": "- **Patēriņš** — {year}. gada {fromDay}. {fromMonth} – {toDay}. {toMonth}, {sessions} sesijas, \\~{responses} atbildes: \\~{output} milj. ģenerētu marķieru, \\~{sent} milj. nosūtītu, \\~{read} milj. atkārtotu nolasījumu no kešatmiņas (\\~{total} milj. kopā); plus {runs} bezuzraudzības tulkošanas palaišanas: \\~{hOutput} milj. ģenerētu, \\~{hSent} milj. nosūtītu.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": " ",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "lv",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"ms": {
+		"lead": "- **Penggunaan** —",
+		"template": "- **Penggunaan** — {fromDay} {fromMonth} – {toDay} {toMonth} {year}, {sessions} sesi, \\~{responses} balasan: \\~{output} juta token dijana, \\~{sent} juta dihantar, \\~{read} juta bacaan semula daripada cache (\\~{total} juta kesemuanya); ditambah {runs} larian terjemahan headless: \\~{hOutput} juta dijana, \\~{hSent} juta dihantar.",
+		"style": {
+			"digits": "latn",
+			"decimal": ".",
+			"group": ",",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "ms",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"ne": {
+		"lead": "- **खपत** —",
+		"template": "- **खपत** — {fromDay} {fromMonth} – {toDay} {toMonth} {year}, {sessions} वटा सत्र, करिब {responses} जवाफ: करिब {output} मिलियन टोकन उत्पादन, करिब {sent} मिलियन पठाइएको, क्यासबाट करिब {read} मिलियन पुनःपठन (जम्मा करिब {total} मिलियन); साथै हेडलेस (च्याट सत्र बिनाको) अनुवाद रनहरू {runs} पटक: करिब {hOutput} मिलियन उत्पादन, करिब {hSent} मिलियन पठाइएको।",
+		"style": {
+			"digits": "deva",
+			"decimal": ".",
+			"group": ",",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "ne",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"nl": {
+		"lead": "- **Verbruik** —",
+		"template": "- **Verbruik** — {fromDay} {fromMonth} – {toDay} {toMonth} {year}, {sessions} sessies, \\~{responses} antwoorden: \\~{output} mln. tokens gegenereerd, \\~{sent} mln. verzonden, \\~{read} mln. herlezingen uit de cache (\\~{total} mln. in totaal); plus {runs} headless vertaalruns: \\~{hOutput} mln. gegenereerd, \\~{hSent} mln. verzonden.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": ".",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "nl",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"no": {
+		"lead": "- **Forbruk** —",
+		"template": "- **Forbruk** — {fromDay}. {fromMonth} – {toDay}. {toMonth} {year}, {sessions} økter, \\~{responses} svar: \\~{output} mill. genererte tokens, \\~{sent} mill. sendte, \\~{read} mill. gjenlesinger fra hurtiglageret (\\~{total} mill. totalt); pluss {runs} hodeløse oversettelseskjøringer: \\~{hOutput} mill. generert, \\~{hSent} mill. sendt.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": " ",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "no",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"pl": {
+		"lead": "- **Zużycie** —",
+		"template": "- **Zużycie** — {fromDay} {fromMonth} – {toDay} {toMonth} {year}, {sessions} sesje, \\~{responses} odpowiedzi: \\~{output} mln wygenerowanych tokenów, \\~{sent} mln wysłanych, \\~{read} mln odczytów z pamięci podręcznej (\\~{total} mln łącznie); plus {runs} bezinterfejsowych przebiegów tłumaczenia: \\~{hOutput} mln wygenerowanych, \\~{hSent} mln wysłanych.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": " ",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "pl",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"pt-BR": {
+		"lead": "- **Consumo** —",
+		"template": "- **Consumo** — {fromDay} de {fromMonth} a {toDay} de {toMonth} de {year}, {sessions} sessões, \\~{responses} respostas: \\~{output} milhões de tokens gerados, \\~{sent} milhões enviados, \\~{read} milhões de releituras em cache (\\~{total} milhões no total); mais {runs} execuções autônomas de tradução: \\~{hOutput} milhões gerados, \\~{hSent} milhões enviados.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": ".",
+			"groupMillions": true,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "pt-BR",
+			"width": "short",
+			"withDay": true
+		}
+	},
+	"pt": {
+		"lead": "- **Consumo** —",
+		"template": "- **Consumo** — {fromDay} de {fromMonth} – {toDay} de {toMonth} de {year}, {sessions} sessões, \\~{responses} respostas: \\~{output} M tokens gerados, \\~{sent} M enviados, \\~{read} M releituras em cache (\\~{total} M no total); mais {runs} execuções autónomas de tradução: \\~{hOutput} M gerados, \\~{hSent} M enviados.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": " ",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "pt",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"ro": {
+		"lead": "- **Consum** —",
+		"template": "- **Consum** — {fromDay} {fromMonth} – {toDay} {toMonth} {year}, {sessions} de sesiuni, ~{responses} de răspunsuri: ~{output} M de jetoane generate, ~{sent} M trimise, ~{read} M recitiri din cache (~{total} M în total); plus {runs} de rulări de traducere fără sesiune de chat: ~{hOutput} M generate, ~{hSent} M trimise.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": ".",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "ro",
+			"width": "short",
+			"withDay": true
+		}
+	},
+	"ru": {
+		"lead": "- **Расход** —",
+		"template": "- **Расход** — {fromDay} {fromMonth} – {toDay} {toMonth} {year}, {sessions} сессии, \\~{responses} ответов: \\~{output} млн сгенерированных токенов, \\~{sent} млн отправленных, \\~{read} млн повторных чтений из кеша (\\~{total} млн всего); плюс {runs} автономный запуск перевода (без сессии чата): \\~{hOutput} млн сгенерированных, \\~{hSent} млн отправленных.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": " ",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "ru",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"sa": {
+		"lead": "- **व्ययः** —",
+		"template": "- **व्ययः** — {fromDay} {fromMonth} – {toDay} {toMonth} {year}, {sessions} सत्राणि, ~{responses} प्रत्युत्तराणि: ~{output} नियुताः टोकनाः जनिताः, ~{sent} नियुताः प्रेषिताः, ~{read} नियुताः सञ्चितपुनःपठनानि (~{total} नियुताः समुच्चयेन); अधिकं च {runs} संवादरहित (headless) अनुवादगमनानि: ~{hOutput} नियुताः जनिताः, ~{hSent} नियुताः प्रेषिताः।",
+		"style": {
+			"digits": "deva",
+			"decimal": ".",
+			"group": ",",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"names": [
+				"जनवरी",
+				"फेब्रुवरी",
+				"मार्च्",
+				"एप्रिल्",
+				"मे",
+				"जून्",
+				"जुलै",
+				"अगस्त्",
+				"सेप्टेम्बर्",
+				"अक्टोबर्",
+				"नवेम्बर्",
+				"डिसेम्बर्"
+			]
+		}
+	},
+	"sk": {
+		"lead": "- **Spotreba** —",
+		"template": "- **Spotreba** — {fromDay}. {fromMonth} – {toDay}. {toMonth} {year}, {sessions} relácií, \\~{responses} odpovedí: \\~{output} mil. vygenerovaných tokenov, \\~{sent} mil. odoslaných, \\~{read} mil. opätovných čítaní z vyrovnávacej pamäte (\\~{total} mil. celkom); plus {runs} bezobslužných prekladateľských behov: \\~{hOutput} mil. vygenerovaných, \\~{hSent} mil. odoslaných.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": "",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "sk",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"sq": {
+		"lead": "- **Konsumi** —",
+		"template": "- **Konsumi** — {fromDay} {fromMonth} – {toDay} {toMonth} {year}, {sessions} sesione, \\~{responses} përgjigje: \\~{output} mln token të gjeneruar, \\~{sent} mln të dërguar, \\~{read} mln rilexime nga kesh-i (\\~{total} mln gjithsej); plus {runs} ekzekutime përkthimi pa ndërfaqe bisede: \\~{hOutput} mln të gjeneruar, \\~{hSent} mln të dërguar.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": ".",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "sq",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"sr": {
+		"lead": "- **Потрошња** —",
+		"template": "- **Потрошња** — {fromDay}. {fromMonth} – {toDay}. {toMonth} {year}, {sessions} сесије, \\~{responses} одговора: \\~{output} M генерисаних токена, \\~{sent} M послатих, \\~{read} M кешираних поновних читања (\\~{total} M укупно); плус {runs} безглавих (headless) превођачких покретања: \\~{hOutput} M генерисаних, \\~{hSent} M послатих.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": ".",
+			"groupMillions": true,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "sr",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"sv": {
+		"lead": "- **Förbrukning** —",
+		"template": "- **Förbrukning** — {fromDay} {fromMonth} – {toDay} {toMonth} {year}, {sessions} sessioner, \\~{responses} svar: \\~{output} M genererade token, \\~{sent} M skickade, \\~{read} M cachade omläsningar (\\~{total} M totalt); plus {runs} fristående översättningskörningar utan chattsession: \\~{hOutput} M genererade, \\~{hSent} M skickade.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": " ",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "sv",
+			"width": "short-nodot",
+			"withDay": true
+		}
+	},
+	"th": {
+		"lead": "- **ปริมาณการใช้** —",
+		"template": "- **ปริมาณการใช้** — {fromDay} {fromMonth} – {toDay} {toMonth} {year}, {sessions} เซสชัน, คำตอบราว {responses} ครั้ง: สร้างโทเคนราว {output} ล้าน, ส่งราว {sent} ล้าน, อ่านซ้ำจากแคชราว {read} ล้าน (รวมราว {total} ล้าน); บวกกับการรันแปลภาษาแบบไม่มีการสนทนา (headless) อีก {runs} ครั้ง: สร้างราว {hOutput} ล้าน, ส่งราว {hSent} ล้าน",
+		"style": {
+			"digits": "latn",
+			"decimal": ".",
+			"group": ",",
+			"groupMillions": true,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "th",
+			"width": "short",
+			"withDay": true
+		}
+	},
+	"tr": {
+		"lead": "- **Tüketim** —",
+		"template": "- **Tüketim** — {fromDay} {fromMonth} – {toDay} {toMonth} {year}, {sessions} oturum, \\~{responses} yanıt: \\~{output} M token üretildi, \\~{sent} M gönderildi, \\~{read} M önbellekten yeniden okundu (toplam \\~{total} M); ayrıca {runs} başsız çeviri çalıştırması: \\~{hOutput} M üretildi, \\~{hSent} M gönderildi.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": ".",
+			"groupMillions": true,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "tr",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"uk": {
+		"lead": "- **Витрати** —",
+		"template": "- **Витрати** — {fromDay} {fromMonth} – {toDay} {toMonth} {year}, {sessions} сесії, \\~{responses} відповідей: \\~{output} млн згенерованих токенів, \\~{sent} млн надісланих, \\~{read} млн кешованих повторних читань (\\~{total} млн загалом); плюс {runs} автономних запусків перекладу (без сесії чату): \\~{hOutput} млн згенерованих, \\~{hSent} млн надісланих.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": " ",
+			"groupMillions": false,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "uk",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"uz": {
+		"lead": "- **Sarf** —",
+		"template": "- **Sarf** — {year}-yil {fromDay}-{fromMonth} – {toDay}-{toMonth}, {sessions} ta seans, \\~{responses} ta javob: \\~{output} mln token yaratilgan, \\~{sent} mln yuborilgan, \\~{read} mln keshdan qayta o‘qilgan (jami \\~{total} mln); qo‘shimcha {runs} ta headless (chatsiz) tarjima ishga tushirilgan: \\~{hOutput} mln yaratilgan, \\~{hSent} mln yuborilgan.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": " ",
+			"groupMillions": true,
+			"groupThousands": false
+		},
+		"month": {
+			"locale": "uz",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"vi": {
+		"lead": "- **Mức dùng** —",
+		"template": "- **Mức dùng** — {fromDay}/{fromMonth} – {toDay}/{toMonth}/{year}, {sessions} phiên, \\~{responses} phản hồi: \\~{output} triệu token được sinh ra, \\~{sent} triệu token được gửi đi, \\~{read} triệu token đọc lại từ bộ nhớ đệm (tổng cộng \\~{total} triệu); cộng thêm {runs} lượt chạy dịch headless (không qua phiên trò chuyện): \\~{hOutput} triệu được sinh ra, \\~{hSent} triệu được gửi đi.",
+		"style": {
+			"digits": "latn",
+			"decimal": ",",
+			"group": ".",
+			"groupMillions": true,
+			"groupThousands": false
+		},
+		"month": {
+			"width": "numeric",
+			"digits": "latn"
+		}
+	},
+	"zh-TW": {
+		"lead": "- **用量** —",
+		"template": "- **用量** — {year} 年 {fromMonth} 月 {fromDay} 日至 {toMonth} 月 {toDay} 日，{sessions} 個工作階段，約 {responses} 次回應：生成約 {output}個 token，傳送約 {sent}個，快取重讀約 {read}個（合計約 {total}個）；另有 {runs} 次無頭（headless）翻譯執行：生成約 {hOutput}個，傳送約 {hSent}個。",
+		"style": {
+			"digits": "latn",
+			"decimal": ".",
+			"group": ",",
+			"units": "yi",
+			"unitChars": [
+				"億",
+				"萬"
+			]
+		},
+		"month": {
+			"locale": "zh-TW",
+			"width": "long",
+			"withDay": true
+		}
+	},
+	"zh": {
+		"lead": "- **用量** —",
+		"template": "- **用量** — {year} 年 {fromMonth} 月 {fromDay} 日至 {toMonth} 月 {toDay} 日，{sessions} 个会话，约 {responses} 次回复：生成约 {output} token，发送约 {sent}，缓存重读约 {read}（合计约 {total}）；另有 {runs} 次无头（headless）翻译运行：生成约 {hOutput}，发送约 {hSent}。",
+		"style": {
+			"digits": "latn",
+			"decimal": ".",
+			"group": "",
+			"units": "yi",
+			"unitChars": [
+				"亿",
+				"万"
+			]
+		},
+		"month": {
+			"locale": "zh",
+			"width": "long",
+			"withDay": true
+		}
+	}
+}
