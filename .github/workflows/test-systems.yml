@@ -220,8 +220,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 150
     name: flatpak (${{ matrix.access }} access)
-    # Restricted is a probe: what is out of reach fails, and the log says how.
-    continue-on-error: ${{ matrix.access == 'restricted' }}
+    # Restricted: what is out of reach is skipped, and the external suite
+    # checks instead that Lure says the sandbox is why.
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -243,6 +243,7 @@ jobs:
         run: |
           if [ "$ACCESS" = restricted ]; then
             export OBSIDIAN_COMMAND="flatpak run --user --nofilesystem=host --nofilesystem=home --filesystem=$HOME/.cache/lure-ci md.obsidian.Obsidian"
+            export LURE_EXPECT_SANDBOX=1
           else
             export OBSIDIAN_COMMAND="flatpak run --user md.obsidian.Obsidian"
             # The sandbox has a /tmp of its own: the suites' files outside the
@@ -314,6 +315,12 @@ jobs:
           exe=$(find "$HOME/obsidian-win" -maxdepth 2 -iname Obsidian.exe | head -1)
           echo "exe: $exe"
           echo "OBSIDIAN_EXE=$exe" >> "$GITHUB_ENV"
+          # Windows' Node, to run the suites on the same side of the paths.
+          v=$(curl -s https://nodejs.org/dist/index.json | jq -r '[.[] | select(.version | startswith("v24."))][0].version')
+          curl -sL "https://nodejs.org/dist/$v/node-$v-win-x64.zip" -o /tmp/node-win.zip
+          unzip -q /tmp/node-win.zip -d "$HOME" && mv "$HOME/node-$v-win-x64" "$HOME/node-win"
+          wine "$HOME/node-win/node.exe" --version
+          echo "SUITE_NODE=wine $HOME/node-win/node.exe" >> "$GITHUB_ENV"
       - name: Run the suites
         env:
           OBSIDIAN_PATHS: wine

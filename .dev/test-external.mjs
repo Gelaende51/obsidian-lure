@@ -121,7 +121,10 @@ const RENDER_CEILING_MS = 14000;
 const { test, expect, run } = createSuite({
 	reset,
 	teardown,
-	skip: (name) => name.includes("[crashes"),
+	// LURE_EXPECT_SANDBOX: Obsidian runs in a sandbox that cannot see the
+	// test bed (the restricted Flatpak). Every case that works there is moot;
+	// what is left to test is that it says why.
+	skip: (name) => name.includes("[crashes") || (!!process.env.LURE_EXPECT_SANDBOX && !name.startsWith("sandbox:")),
 });
 
 /** Opens a path in the plugin's viewer and waits for the render to settle. */
@@ -338,6 +341,11 @@ const measurePanes = (direction, times) => `
 			return r.right <= pane.right + 1 && r.left >= pane.left - 1 && r.bottom <= pane.bottom + 1;
 		}),
 		editorScrolls: editor ? editor.scrollHeight > editor.clientHeight : false,
+		editorWhy: editor ? {
+			tag: editor.tagName, length: editor.value?.length ?? null, scrollH: editor.scrollHeight, clientH: editor.clientHeight,
+			overflowY: getComputedStyle(editor).overflowY, height: getComputedStyle(editor).height,
+			bodyScrollH: view.querySelector(".lure-external-body").scrollHeight, bodyClientH: view.querySelector(".lure-external-body").clientHeight,
+		} : "no editor",
 	};
 	${RESET_LAYOUT}
 	return measured;
@@ -366,6 +374,7 @@ test("layout: stacked, the bar stays put and the body scrolls under it", async (
 	expect("buttons and notes stay in the pane", r.insidePane, true);
 	expect("the body still has room", r.bodyH, (v) => v > 80);
 	expect("and it is the body that scrolls", r.editorScrolls, true);
+	if (!r.editorScrolls) console.log(`    the editor: ${JSON.stringify(r.editorWhy)}`);
 });
 
 // ---------------------------------------------------------------- editing
@@ -1017,8 +1026,17 @@ test("viewer menu: a file with no reading to edit can still be deleted", async (
 		rmSync(bed, { recursive: true, force: true });
 		skipCase("this system has no trash to move to");
 	}
-	// The Recycle Bin can take its time over a first item.
-	for (let i = 0; i < 25 && existsSync(pic); i++) await new Promise((done) => setTimeout(done, 200));
+	// The Recycle Bin can take its time over a first item, and a slow machine
+	// more: wait, and read what was said by then rather than right after.
+	for (let i = 0; i < 75 && existsSync(pic); i++) await new Promise((done) => setTimeout(done, 200));
+	if (existsSync(pic)) {
+		const later = await page.evaluate(`return [...document.querySelectorAll(".notice")].map((n) => n.textContent);`);
+		r.after = [...(r.after ?? []), ...later];
+		if (later.some((n) => n.includes(T("errorNoTrash").split("{path}")[0]))) {
+			rmSync(bed, { recursive: true, force: true });
+			skipCase("this system has no trash to move to");
+		}
+	}
 	expect("and the file is gone", existsSync(pic), false);
 	if (existsSync(pic)) console.log(`    notices after confirming: ${JSON.stringify(r.after)}`);
 	rmSync(bed, { recursive: true, force: true });
@@ -1350,6 +1368,16 @@ test("invariant: overwrite protection ignores whether a name is listed", async (
 	expect("hidden file still blocks", r.notice, (v) => /exist/i.test(v));
 	expect("hidden file untouched", readFileSync(join(BED, ".hidden.txt"), "utf8"), "hidden\n");
 	expect("source untouched", existsSync(join(BED, "plain.txt")), true);
+});
+
+test("sandbox: a file outside what the sandbox reaches says the sandbox may be why", async () => {
+	if (!process.env.LURE_EXPECT_SANDBOX) skipCase("Obsidian is not in a restricted sandbox here");
+	const r = await page.evaluate(`
+		${open(join(BED, "plain.txt"))}
+		return { error: document.querySelector(".lure-external-error")?.textContent ?? null };
+	`);
+	expect("the read failed visibly", r.error, (v) => typeof v === "string" && v.length > 0);
+	expect("and named the sandbox", r.error, (v) => (v ?? "").includes("Flatpak"));
 });
 
 test("invariant: an unreadable file fails visibly and is never writable", async () => {

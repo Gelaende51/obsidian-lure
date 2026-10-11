@@ -373,7 +373,7 @@ export class ExternalFileView extends ItemView {
 			try {
 				source = await this.readText();
 			} catch (err) {
-				readError = (err as Error).message;
+				readError = errorText(err);
 				this.readFailed = true;
 			}
 		}
