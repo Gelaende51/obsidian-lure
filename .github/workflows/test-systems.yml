@@ -29,7 +29,7 @@ on:
       target:
         description: "What to run on"
         type: choice
-        options: [distros, old-engine, server-2019, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits, wayland, nix, peer-residue, freeze-probe, all]
+        options: [distros, old-engine, server-2019, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits, wayland, nix, alpine, peer-residue, freeze-probe, all]
         default: distros
       suites:
         description: "Suites, space separated"
@@ -478,6 +478,24 @@ jobs:
           OBSIDIAN_EXTRA_ARGS: --no-sandbox
           SUITES: ${{ inputs.suites }}
         run: .dev/ci-suites.sh
+
+  # Alpine is musl, and Obsidian is built for glibc: gcompat stands in for it.
+  # Run through docker by hand, as GitHub's own actions cannot run in a musl
+  # container. A probe: it may not start at all.
+  alpine:
+    if: inputs.target == 'alpine'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Alpine with gcompat, the suites inside
+        env:
+          SUITES: ${{ inputs.suites }}
+        run: |
+          docker run --rm --shm-size=2g -e SUITES -e VERSIONS -v "$PWD:/repo" -w /repo alpine:3.22 sh -c '
+            apk add --no-cache bash nodejs npm curl git gcompat libstdc++ nss gtk+3.0 alsa-lib mesa-gbm libdrm xvfb-run xvfb procps-ng font-dejavu at-spi2-core libxkbcommon libxcomposite libxdamage libxrandr cups-libs >/dev/null &&
+            npm ci --no-audit --no-fund >/dev/null && node esbuild.config.mjs production &&
+            OBSIDIAN_EXTRA_ARGS=--no-sandbox bash .dev/ci-suites.sh'
 
   # Loaded beside every suite, the header plugins of test-compat-ui changed
   # what F2 and the rename field did even after being turned off. One job
