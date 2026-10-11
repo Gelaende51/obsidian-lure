@@ -2684,3 +2684,11 @@ from the logged readings; the factors will move as readings accumulate.
 - Symbolic links pointing *at* a file have no reverse index anywhere; only a
   walk (`find -L … -samefile`) or watching from now on (inotify, fanotify —
   filesystem-wide marks need CAP_SYS_ADMIN) finds them.
+- Other systems (searched 2026-10-11): macOS `fsgetpath(fsid, id)` returns *one*
+  path for an inode or `ATTR_CMNEXT_LINKID`, never the list; the rest is a walk
+  (or Spotlight/`locate` by name). FreeBSD/ZFS: `zfs_ids_to_path` gives one path,
+  `find -xdev -inum` the rest; no back-reference per link. ChromeOS runs
+  Obsidian in the Crostini Linux container, so the Linux answers apply inside
+  it; folders shared in from ChromeOS are a different filesystem, which a hard
+  link cannot cross. ReactOS: NTFS driver still unfinished and Obsidian does not
+  run there (see the ReactOS item), so nothing to build for.
