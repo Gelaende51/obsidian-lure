@@ -7,7 +7,17 @@
 #   is needed to ask it;
 # - server-2019: Windows Server 2019 (the Windows 10 1809 code base) in a
 #   virtual machine on the Linux runner (dockur/windows over KVM), installed
-#   from Microsoft's own 180-day evaluation image on every run.
+#   from Microsoft's own 180-day evaluation image on every run;
+# - linux-arm: the Arm64 AppImage on GitHub's Arm Linux runner;
+# - emulated: the x64 build where the machine is Arm — Windows 11 on Arm's
+#   emulation, Rosetta on Apple silicon;
+# - system-electron, flatpak, snap: Obsidian as Arch packages it (on the
+#   system's Electron), from Flathub, from the Snap store — each its own
+#   Electron and, for Flatpak, its own sandbox;
+# - wine, freebsd: the Windows build under Wine, and Obsidian's app on
+#   FreeBSD's own Electron in a FreeBSD VM. Experimental: they may not start.
+#
+# The last five start Obsidian through .dev/ci-launch-alt.mjs (OBSIDIAN_COMMAND).
 #
 # Actions → Test other systems → Run workflow, or
 #   gh workflow run test-systems.yml -f target=distros -f suites="test-tab"
@@ -19,7 +29,7 @@ on:
       target:
         description: "What to run on"
         type: choice
-        options: [distros, old-engine, server-2019, peer-residue, freeze-probe, all]
+        options: [distros, old-engine, server-2019, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, peer-residue, freeze-probe, all]
         default: distros
       suites:
         description: "Suites, space separated"
@@ -121,6 +131,191 @@ jobs:
             done
           done
           exit $failed
+
+  linux-arm:
+    if: inputs.target == 'linux-arm' || inputs.target == 'all'
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: node esbuild.config.mjs production
+      - name: System packages
+        run: sudo apt-get update -q && sudo apt-get install -y -q xvfb libfuse2t64 || sudo apt-get install -y -q xvfb libfuse2
+      - name: Run the suites
+        env:
+          OBSIDIAN_EXTRA_ARGS: --no-sandbox
+          SUITES: ${{ inputs.suites }}
+        run: .dev/ci-suites.sh
+
+  # Node is installed as x64, so the launcher fetches the x64 build and the
+  # machine emulates it. The first suite says which architecture Obsidian ran.
+  emulated:
+    if: inputs.target == 'emulated' || inputs.target == 'all'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-11-arm, macos-15]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    name: x64 emulated on ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          architecture: x64
+      - run: npm ci
+      - run: node esbuild.config.mjs production
+      - name: Run the suites
+        shell: bash
+        env:
+          SUITES: ${{ inputs.suites }}
+        run: |
+          node -p '"node runs as " + process.arch'
+          .dev/ci-suites.sh
+
+  system-electron:
+    if: inputs.target == 'system-electron' || inputs.target == 'all'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    container:
+      image: archlinux:latest
+      options: --shm-size=2g
+    steps:
+      - name: Obsidian from Arch's own package, on the system's Electron
+        run: pacman -Syu --noconfirm obsidian nodejs npm git xorg-server-xvfb xorg-xauth curl procps-ng
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: node esbuild.config.mjs production
+      - name: Run the suites
+        shell: bash
+        env:
+          OBSIDIAN_COMMAND: obsidian
+          OBSIDIAN_EXTRA_ARGS: --no-sandbox
+          SUITES: ${{ inputs.suites }}
+        run: |
+          head -5 /usr/bin/obsidian
+          .dev/ci-suites.sh
+
+  flatpak:
+    if: inputs.target == 'flatpak' || inputs.target == 'all'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: node esbuild.config.mjs production
+      - name: Obsidian from Flathub
+        run: |
+          sudo apt-get update -q && sudo apt-get install -y -q flatpak xvfb dbus-x11
+          flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+          flatpak install --user -y --noninteractive flathub md.obsidian.Obsidian
+          flatpak info --user --show-permissions md.obsidian.Obsidian
+      - name: Run the suites
+        env:
+          OBSIDIAN_COMMAND: flatpak run --user md.obsidian.Obsidian
+          SUITES: ${{ inputs.suites }}
+        run: dbus-run-session -- .dev/ci-suites.sh
+
+  snap:
+    if: inputs.target == 'snap' || inputs.target == 'all'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: node esbuild.config.mjs production
+      - name: Obsidian from the Snap store
+        run: |
+          sudo apt-get update -q && sudo apt-get install -y -q xvfb
+          sudo snap install obsidian --classic
+          snap info obsidian | head -12
+      - name: Run the suites
+        env:
+          OBSIDIAN_COMMAND: /snap/bin/obsidian
+          OBSIDIAN_EXTRA_ARGS: --no-sandbox
+          SUITES: ${{ inputs.suites }}
+        run: .dev/ci-suites.sh
+
+  # The Windows installer, installed silently into a Wine prefix. Paths reach
+  # it as Wine spells them; suites that compare paths with the host's will say so.
+  wine:
+    if: inputs.target == 'wine'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: node esbuild.config.mjs production
+      - name: Wine and the Windows installer
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt-get update -q && sudo apt-get install -y -q wine64 wine xvfb
+          export WINEPREFIX="$HOME/.wine" WINEDEBUG=-all
+          url=$(curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest | grep -o '"browser_download_url": *"[^"]*Obsidian-[0-9.]*\.exe"' | head -1 | cut -d'"' -f4)
+          echo "installer: $url"
+          curl -sL "$url" -o /tmp/obsidian-setup.exe
+          xvfb-run -a wine /tmp/obsidian-setup.exe /S
+          sleep 20
+          exe=$(find "$WINEPREFIX/drive_c" -iname Obsidian.exe | head -1)
+          echo "exe: $exe"
+          echo "OBSIDIAN_EXE=$exe" >> "$GITHUB_ENV"
+      - name: Run the suites
+        env:
+          OBSIDIAN_PATHS: wine
+          WINEDEBUG: -all
+          SUITES: ${{ inputs.suites }}
+        run: OBSIDIAN_COMMAND="wine $OBSIDIAN_EXE" .dev/ci-suites.sh
+
+  # Obsidian publishes no FreeBSD build. Its own app (the installer's
+  # app.asar from the Linux tarball, and the app version on top) runs on the
+  # Electron FreeBSD packages, in a FreeBSD VM on the Linux runner.
+  freebsd:
+    if: inputs.target == 'freebsd'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: FreeBSD, its Electron and the suites
+        uses: vmactions/freebsd-vm@v1
+        with:
+          usesh: true
+          mem: 8192
+          envs: "SUITES VERSIONS"
+          prepare: |
+            pkg install -y node npm bash curl git xorg-vfbserver xauth procps
+            pkg search -q '^electron[0-9]' | sort -V | tail -1 | xargs pkg install -y
+          run: |
+            set -e
+            electron=$(ls /usr/local/bin/electron* | sort -V | tail -1)
+            echo "electron: $electron"
+            url=$(curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest | grep -o '"browser_download_url": *"[^"]*obsidian-[0-9.]*\.tar\.gz"' | head -1 | cut -d'"' -f4)
+            curl -sL "$url" | tar -xz -C /tmp
+            asar=$(ls -d /tmp/obsidian-*/resources/app.asar | head -1)
+            npm ci
+            node esbuild.config.mjs production
+            Xvfb :99 -screen 0 1920x1080x24 >/dev/null 2>&1 &
+            export DISPLAY=:99 OBSIDIAN_COMMAND="$electron $asar" OBSIDIAN_EXTRA_ARGS=--no-sandbox
+            bash .dev/ci-suites.sh
+        env:
+          SUITES: ${{ inputs.suites }}
 
   # Loaded beside every suite, the header plugins of test-compat-ui changed
   # what F2 and the rename field did even after being turned off. One job

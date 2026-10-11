@@ -61,6 +61,7 @@ CACHE="${OBSIDIAN_CACHE:-$HOME/.obsidian-cache}"
 # otherwise hand its launch to the copy still shutting down, and see it exit.
 stop_obsidian() {
 	pkill -f "$CACHE/" 2>/dev/null
+	pkill -f "lure-ci-alt" 2>/dev/null
 	for _ in $(seq 1 20); do
 		pgrep -f "$CACHE/" >/dev/null 2>&1 || return 0
 		sleep 0.5
@@ -73,8 +74,17 @@ trap stop_obsidian EXIT
 # TMPDIR; left alone it copies to %TEMP%, which a runner spells with the
 # 8.3 short name (C:\Users\RUNNER~1\...) that never matches home's long one.
 mkdir -p "$HOME/.cache/lure-ci"
-TMPDIR="$HOME/.cache/lure-ci" TEMP="$HOME/.cache/lure-ci" TMP="$HOME/.cache/lure-ci" npx --yes obsidian-launcher@3 launch --version "$VERSION" --installer "$INSTALLER" --copy "${PLUGINS[@]}" .dev/test-vault \
-	-- --remote-debugging-port="$PORT" ${OBSIDIAN_EXTRA_ARGS:-} >"$LOG" 2>&1
+if [ -n "${OBSIDIAN_COMMAND:-}" ]; then
+	# An Obsidian installed some other way — Flatpak, Snap, a distribution's
+	# package, Wine (see test-systems.yml): the launcher's library prepares the
+	# vault and the configuration directory, and that Obsidian is started on them.
+	[ -d node_modules/obsidian-launcher ] || npm install --no-save --no-package-lock obsidian-launcher@3 >/dev/null 2>&1
+	TMPDIR="$HOME/.cache/lure-ci" OBSIDIAN_ALT_LOG="$LOG" node .dev/ci-launch-alt.mjs "$VERSION" .dev/test-vault "${PLUGINS[@]}" \
+		-- --remote-debugging-port="$PORT" ${OBSIDIAN_EXTRA_ARGS:-} >>"$LOG" 2>&1
+else
+	TMPDIR="$HOME/.cache/lure-ci" TEMP="$HOME/.cache/lure-ci" TMP="$HOME/.cache/lure-ci" npx --yes obsidian-launcher@3 launch --version "$VERSION" --installer "$INSTALLER" --copy "${PLUGINS[@]}" .dev/test-vault \
+		-- --remote-debugging-port="$PORT" ${OBSIDIAN_EXTRA_ARGS:-} >"$LOG" 2>&1
+fi
 
 # The port answers before the vault has loaded; wait for a page target and for
 # the plugin itself.
