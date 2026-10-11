@@ -1790,5 +1790,34 @@ test("Tab with one name left still steps into it", async () => {
 	expect("stepped in", (await look()).chips.at(-1), `${PREFIX}only`);
 });
 
+// Seen in a test vault: Tab round "Trumpet" reached the note's alias paths
+// at the end of the list, and each one it put on show grew a second row
+// offering to make it — though Enter opens the note it stands for.
+test("Tab onto an alias path offers to open it, not to make it", async () => {
+	const note = `${PREFIX}aliased.md`;
+	const alias = `${PREFIX}aliased-also.md`;
+	await page.evaluate(`
+		if (!app.vault.getAbstractFileByPath(${JSON.stringify(note)}))
+			await app.vault.create(${JSON.stringify(note)}, "---\\npaths:\\n  - ${note}\\n  - ${alias}\\n---\\n");
+		${PAUSE(800)}
+		return true;
+	`);
+	try {
+		await armAtRoot();
+		await type(`${PREFIX}aliased`);
+		expect("the alias is listed", (await look()).rows.includes(alias), true);
+		let shown = null;
+		for (let i = 0; i < 4 && shown !== alias.replace(/\.md$/, ""); i++) {
+			await realTab();
+			shown = (await look()).value;
+		}
+		expect("Tab put the alias on show", shown, alias.replace(/\.md$/, ""));
+		const creates = await page.evaluate(`return [...document.querySelectorAll(".suggestion-item.lure-suggest-creates")].map((e) => e.textContent).join("|");`);
+		expect("no row offers to make it", creates, "");
+	} finally {
+		await page.evaluate(`const f = app.vault.getAbstractFileByPath(${JSON.stringify(note)}); if (f) await app.fileManager.trashFile(f); return true;`);
+	}
+});
+
 await run();
 

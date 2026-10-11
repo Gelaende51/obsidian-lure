@@ -4,6 +4,12 @@
 
 Every release of Lure, newest first. What has landed since the last release is under *Unreleased*. Versions carry no `v` prefix, matching the release tags.
 
+## Unreleased
+
+### Fixed
+
+- **Tab onto an alias path no longer lists it twice.** Going round the names, each alias path or unlisted symbolic link it put on show grew a second row offering to make that file, and the field turned red, though Enter opens the note it stands for.
+
 ## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Added

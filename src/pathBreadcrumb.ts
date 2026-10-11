@@ -6071,7 +6071,12 @@ export class PathBreadcrumb {
 		const folderPath = this.currentFolderPath();
 		const candidate = normalizePath(folderPath ? `${folderPath}/${trimmed}` : trimmed);
 		if (this.entryExists(candidate, false)) return false;
-		return !this.entryExists(normalizePath(this.withNoteExtension(candidate)), false);
+		const note = normalizePath(this.withNoteExtension(candidate));
+		if (this.entryExists(note, false)) return false;
+		// A name a note answers to without the vault listing it — a path
+		// alias, a symbolic link it never picked up — is opened by Enter, as
+		// `submit` does; offering to make it put a second row under its own.
+		return !this.plugin.aliasRows.resolve(note);
 	}
 
 	/**
