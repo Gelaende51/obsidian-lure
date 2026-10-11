@@ -188,6 +188,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Diese Notiz aus dem Vault herausbewegen?",
 		moveOutBody: "Obsidian kann Links nur innerhalb des Vaults aktualisieren: Jeder Link auf diese Notiz bricht, und die Notiz selbst verlässt den Index des Vaults. Notizen, die hierher verlinken: {count}.",
 		moveOutConfirm: "Verschieben und Links brechen",
+		errorNotFound: "„{path}“ existiert nicht oder Obsidian kann es nicht sehen.",
+		errorNoPermission: "Keine Berechtigung, „{path}“ zu ändern.",
+		errorReadOnly: "„{path}“ befindet sich auf einem Laufwerk, das nicht beschreibbar ist.",
+		errorDiskFull: "Das Laufwerk ist voll.",
+		errorInUse: "„{path}“ wird von einem anderen Programm verwendet.",
+		errorNameTooLong: "Der Name ist für dieses Laufwerk zu lang.",
+		errorExists: "„{path}“ existiert bereits.",
+		errorSandbox: "Obsidian läuft in einer {sandbox}-Sandbox, die nur auf die zugewiesenen Ordner zugreifen kann.",
 	},
 
 	fr: {
@@ -359,6 +367,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Déplacer cette note hors de votre coffre ?",
 		moveOutBody: "Obsidian ne met à jour les liens qu'à l'intérieur du coffre : tous les liens vers cette note seront rompus, et la note elle-même quittera l'index du coffre. Notes qui pointent ici : {count}.",
 		moveOutConfirm: "Déplacer et rompre les liens",
+		errorNotFound: "« {path} » n’existe pas ou Obsidian ne peut pas le voir.",
+		errorNoPermission: "Aucune autorisation pour modifier « {path} ».",
+		errorReadOnly: "« {path} » se trouve sur un disque en lecture seule.",
+		errorDiskFull: "Le disque est plein.",
+		errorInUse: "« {path} » est utilisé par un autre programme.",
+		errorNameTooLong: "Le nom est trop long pour ce disque.",
+		errorExists: "« {path} » existe déjà.",
+		errorSandbox: "Obsidian s’exécute dans un bac à sable {sandbox}, qui n’accède qu’aux dossiers qui lui ont été attribués.",
 	},
 
 	es: {
@@ -529,6 +545,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "¿Mover esta nota fuera de tu bóveda?",
 		moveOutBody: "Obsidian solo actualiza los enlaces dentro de la bóveda: todos los enlaces a esta nota se romperán y la nota saldrá del índice. Notas que enlazan aquí: {count}.",
 		moveOutConfirm: "Mover y romper los enlaces",
+		errorNotFound: "«{path}» no existe o Obsidian no puede verlo.",
+		errorNoPermission: "No tienes permiso para modificar «{path}».",
+		errorReadOnly: "«{path}» está en una unidad en la que no se puede escribir.",
+		errorDiskFull: "La unidad está llena.",
+		errorInUse: "«{path}» está siendo usado por otro programa.",
+		errorNameTooLong: "El nombre es demasiado largo para esta unidad.",
+		errorExists: "«{path}» ya existe.",
+		errorSandbox: "Obsidian se ejecuta en un sandbox de {sandbox}, que solo accede a las carpetas que se le han concedido.",
 	},
 
 	it: {
@@ -699,6 +723,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Spostare questa nota fuori dal vault?",
 		moveOutBody: "Obsidian aggiorna i link solo all'interno del vault: ogni link a questa nota si romperà e la nota uscirà dall'indice del vault. Note che rimandano qui: {count}.",
 		moveOutConfirm: "Sposta e rompi i link",
+		errorNotFound: "«{path}» non esiste, oppure Obsidian non riesce a vederlo.",
+		errorNoPermission: "Nessun permesso per modificare «{path}».",
+		errorReadOnly: "«{path}» si trova su un'unità non scrivibile.",
+		errorDiskFull: "L'unità è piena.",
+		errorInUse: "«{path}» è in uso da un altro programma.",
+		errorNameTooLong: "Il nome è troppo lungo per questa unità.",
+		errorExists: "«{path}» esiste già.",
+		errorSandbox: "Obsidian è eseguito in una sandbox {sandbox}, che può accedere solo alle cartelle che le sono state assegnate.",
 	},
 
 	pt: {
@@ -869,6 +901,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Mover esta nota para fora do seu cofre?",
 		moveOutBody: "O Obsidian só atualiza ligações dentro do cofre: todas as ligações para esta nota vão quebrar e a nota sai do índice do cofre. Notas que ligam para aqui: {count}.",
 		moveOutConfirm: "Mover e quebrar as ligações",
+		errorNotFound: "«{path}» não existe ou o Obsidian não consegue vê-lo.",
+		errorNoPermission: "Sem permissão para alterar «{path}».",
+		errorReadOnly: "«{path}» está numa unidade onde não é possível escrever.",
+		errorDiskFull: "A unidade está cheia.",
+		errorInUse: "«{path}» está a ser utilizado por outro programa.",
+		errorNameTooLong: "O nome é demasiado longo para esta unidade.",
+		errorExists: "«{path}» já existe.",
+		errorSandbox: "O Obsidian é executado numa sandbox {sandbox}, que só acede às pastas que lhe foram atribuídas.",
 	},
 
 	"pt-BR": {
@@ -1039,6 +1079,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Mover esta nota para fora do seu cofre?",
 		moveOutBody: "O Obsidian só atualiza links dentro do cofre: todos os links para esta nota vão quebrar e a nota sai do índice do cofre. Notas que apontam para cá: {count}.",
 		moveOutConfirm: "Mover e quebrar os links",
+		errorNotFound: "“{path}” não existe ou o Obsidian não consegue acessá-lo.",
+		errorNoPermission: "Sem permissão para alterar “{path}”.",
+		errorReadOnly: "“{path}” está em uma unidade que não permite gravação.",
+		errorDiskFull: "A unidade está cheia.",
+		errorInUse: "“{path}” está em uso por outro programa.",
+		errorNameTooLong: "O nome é muito longo para esta unidade.",
+		errorExists: "“{path}” já existe.",
+		errorSandbox: "O Obsidian está sendo executado em uma sandbox {sandbox}, que só acessa as pastas que lhe foram concedidas.",
 	},
 
 	nl: {
@@ -1208,6 +1256,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Deze notitie buiten je kluis plaatsen?",
 		moveOutBody: "Obsidian werkt links alleen binnen de kluis bij: elke link naar deze notitie breekt en de notitie verdwijnt uit de index van de kluis. Notities die hiernaar linken: {count}.",
 		moveOutConfirm: "Verplaatsen en links breken",
+		errorNotFound: "“{path}” bestaat niet, of Obsidian kan het niet zien.",
+		errorNoPermission: "Geen toestemming om “{path}” te wijzigen.",
+		errorReadOnly: "“{path}” staat op een schijf waarnaar niet geschreven kan worden.",
+		errorDiskFull: "De schijf is vol.",
+		errorInUse: "“{path}” wordt gebruikt door een ander programma.",
+		errorNameTooLong: "De naam is te lang voor deze schijf.",
+		errorExists: "“{path}” bestaat al.",
+		errorSandbox: "Obsidian draait in een {sandbox}-sandbox, die alleen toegang heeft tot de mappen die eraan zijn gegeven.",
 	},
 
 	pl: {
@@ -1377,6 +1433,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Przenieść tę notatkę poza skarbiec?",
 		moveOutBody: "Obsidian aktualizuje odnośniki tylko wewnątrz skarbca: każdy odnośnik do tej notatki przestanie działać, a sama notatka zniknie z indeksu. Notatki odsyłające tutaj: {count}.",
 		moveOutConfirm: "Przenieś i zerwij odnośniki",
+		errorNotFound: "„{path}” nie istnieje lub Obsidian go nie widzi.",
+		errorNoPermission: "Brak uprawnień do zmiany „{path}”.",
+		errorReadOnly: "„{path}” znajduje się na dysku, na którym nie można zapisywać.",
+		errorDiskFull: "Dysk jest pełny.",
+		errorInUse: "„{path}” jest używany przez inny program.",
+		errorNameTooLong: "Nazwa jest zbyt długa dla tego dysku.",
+		errorExists: "„{path}” już istnieje.",
+		errorSandbox: "Obsidian działa w piaskownicy {sandbox}, która ma dostęp tylko do przyznanych jej folderów.",
 	},
 
 	ru: {
@@ -1546,6 +1610,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Переместить эту заметку за пределы хранилища?",
 		moveOutBody: "Obsidian обновляет ссылки только внутри хранилища: все ссылки на эту заметку перестанут работать, а сама заметка покинет индекс. Заметок со ссылками сюда: {count}.",
 		moveOutConfirm: "Переместить и разорвать ссылки",
+		errorNotFound: "«{path}» не существует или Obsidian не видит его.",
+		errorNoPermission: "Нет прав на изменение «{path}».",
+		errorReadOnly: "«{path}» находится на диске, запись на который невозможна.",
+		errorDiskFull: "Диск заполнен.",
+		errorInUse: "«{path}» используется другой программой.",
+		errorNameTooLong: "Имя слишком длинное для этого диска.",
+		errorExists: "«{path}» уже существует.",
+		errorSandbox: "Obsidian работает в песочнице {sandbox}, которая имеет доступ только к выданным ей папкам.",
 	},
 
 	uk: {
@@ -1715,6 +1787,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Перемістити цю нотатку за межі сховища?",
 		moveOutBody: "Obsidian оновлює посилання лише всередині сховища: усі посилання на цю нотатку перестануть працювати, а сама нотатка покине індекс. Нотаток із посиланнями сюди: {count}.",
 		moveOutConfirm: "Перемістити й розірвати посилання",
+		errorNotFound: "«{path}» не існує або Obsidian не бачить його.",
+		errorNoPermission: "Немає дозволу на зміну «{path}».",
+		errorReadOnly: "«{path}» розташовано на диску, на який не можна записувати.",
+		errorDiskFull: "Диск заповнений.",
+		errorInUse: "«{path}» використовується іншою програмою.",
+		errorNameTooLong: "Назва задовга для цього диска.",
+		errorExists: "«{path}» уже існує.",
+		errorSandbox: "Obsidian працює в пісочниці {sandbox}, яка має доступ лише до наданих їй тек.",
 	},
 
 	cs: {
@@ -1884,6 +1964,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Přesunout tuto poznámku mimo trezor?",
 		moveOutBody: "Obsidian aktualizuje odkazy jen uvnitř trezoru: každý odkaz na tuto poznámku se rozbije a poznámka opustí index trezoru. Poznámek odkazujících sem: {count}.",
 		moveOutConfirm: "Přesunout a rozbít odkazy",
+		errorNotFound: "„{path}“ neexistuje, nebo ji Obsidian nevidí.",
+		errorNoPermission: "Nemáte oprávnění měnit „{path}“.",
+		errorReadOnly: "„{path}“ se nachází na disku, na který nelze zapisovat.",
+		errorDiskFull: "Disk je plný.",
+		errorInUse: "„{path}“ používá jiný program.",
+		errorNameTooLong: "Název je pro tento disk příliš dlouhý.",
+		errorExists: "„{path}“ již existuje.",
+		errorSandbox: "Obsidian běží v izolovaném prostředí {sandbox}, které má přístup jen k přiděleným složkám.",
 	},
 
 	sv: {
@@ -2053,6 +2141,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Flytta ut den här anteckningen ur valvet?",
 		moveOutBody: "Obsidian uppdaterar bara länkar inuti valvet: alla länkar till den här anteckningen slutar fungera, och anteckningen lämnar valvets index. Anteckningar som länkar hit: {count}.",
 		moveOutConfirm: "Flytta och bryt länkarna",
+		errorNotFound: "”{path}” finns inte, eller så kan Obsidian inte se den.",
+		errorNoPermission: "Behörighet saknas för att ändra ”{path}”.",
+		errorReadOnly: "”{path}” ligger på en enhet som inte går att skriva till.",
+		errorDiskFull: "Enheten är full.",
+		errorInUse: "”{path}” används av ett annat program.",
+		errorNameTooLong: "Namnet är för långt för den här enheten.",
+		errorExists: "”{path}” finns redan.",
+		errorSandbox: "Obsidian körs i en {sandbox}-sandlåda som bara når de mappar den har fått tillgång till.",
 	},
 
 	da: {
@@ -2222,6 +2318,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Flyt denne note ud af dit hvælv?",
 		moveOutBody: "Obsidian opdaterer kun links inde i hvælvet: alle links til denne note går i stykker, og noten forlader hvælvets indeks. Noter, der linker hertil: {count}.",
 		moveOutConfirm: "Flyt, og bryd links",
+		errorNotFound: "“{path}” findes ikke, eller Obsidian kan ikke se den.",
+		errorNoPermission: "Ingen tilladelse til at ændre “{path}”.",
+		errorReadOnly: "“{path}” ligger på et drev, der ikke kan skrives til.",
+		errorDiskFull: "Drevet er fuldt.",
+		errorInUse: "“{path}” bruges af et andet program.",
+		errorNameTooLong: "Navnet er for langt til dette drev.",
+		errorExists: "“{path}” findes allerede.",
+		errorSandbox: "Obsidian kører i en {sandbox}-sandbox, som kun har adgang til de mapper, den har fået tildelt.",
 	},
 
 	no: {
@@ -2391,6 +2495,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Flytte dette notatet ut av hvelvet?",
 		moveOutBody: "Obsidian oppdaterer bare lenker inne i hvelvet: alle lenker til dette notatet blir brutt, og notatet forlater hvelvets indeks. Notater som lenker hit: {count}.",
 		moveOutConfirm: "Flytt og bryt lenkene",
+		errorNotFound: "«{path}» finnes ikke, eller Obsidian får ikke tilgang til den.",
+		errorNoPermission: "Ingen tillatelse til å endre «{path}».",
+		errorReadOnly: "«{path}» ligger på en stasjon det ikke kan skrives til.",
+		errorDiskFull: "Stasjonen er full.",
+		errorInUse: "«{path}» er i bruk av et annet program.",
+		errorNameTooLong: "Navnet er for langt for denne stasjonen.",
+		errorExists: "«{path}» finnes allerede.",
+		errorSandbox: "Obsidian kjører i en {sandbox}-sandkasse, som bare har tilgang til mappene den har fått.",
 	},
 
 	fi: {
@@ -2560,6 +2672,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Siirretäänkö tämä muistiinpano holvin ulkopuolelle?",
 		moveOutBody: "Obsidian päivittää linkkejä vain holvin sisällä: kaikki linkit tähän muistiinpanoon katkeavat, ja muistiinpano poistuu holvin hakemistosta. Tänne linkittäviä muistiinpanoja: {count}.",
 		moveOutConfirm: "Siirrä ja katkaise linkit",
+		errorNotFound: "”{path}” puuttuu, tai Obsidian ei näe sitä.",
+		errorNoPermission: "Ei oikeutta muuttaa kohdetta ”{path}”.",
+		errorReadOnly: "”{path}” on asemalla, johon ei voi kirjoittaa.",
+		errorDiskFull: "Asema on täynnä.",
+		errorInUse: "Toinen ohjelma käyttää kohdetta ”{path}”.",
+		errorNameTooLong: "Nimi on liian pitkä tälle asemalle.",
+		errorExists: "”{path}” on jo olemassa.",
+		errorSandbox: "Obsidian toimii {sandbox}-hiekkalaatikossa, joka yltää vain sille annettuihin kansioihin.",
 	},
 
 	tr: {
@@ -2729,6 +2849,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Bu not kasanızın dışına taşınsın mı?",
 		moveOutBody: "Obsidian bağlantıları yalnızca kasa içinde günceller: bu nota işaret eden her bağlantı kırılır ve notun kendisi kasa dizininden çıkar. Buraya bağlanan not sayısı: {count}.",
 		moveOutConfirm: "Taşı ve bağlantıları kır",
+		errorNotFound: "“{path}” yok ya da Obsidian onu göremiyor.",
+		errorNoPermission: "“{path}” üzerinde değişiklik yapmak için izin yok.",
+		errorReadOnly: "“{path}” yazılamayan bir sürücüde bulunuyor.",
+		errorDiskFull: "Sürücü dolu.",
+		errorInUse: "“{path}” başka bir program tarafından kullanılıyor.",
+		errorNameTooLong: "Ad bu sürücü için çok uzun.",
+		errorExists: "“{path}” zaten var.",
+		errorSandbox: "Obsidian bir {sandbox} sanal alanında çalışıyor ve bu alan yalnızca kendisine verilen klasörlere erişebiliyor.",
 	},
 
 	ja: {
@@ -2898,6 +3026,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "このノートを保管庫の外へ移動しますか？",
 		moveOutBody: "Obsidian がリンクを更新できるのは保管庫の中だけです。このノートを指すリンクはすべて壊れ、ノート自体も保管庫の索引から外れます。ここにリンクしているノート: {count}。",
 		moveOutConfirm: "移動してリンクを壊す",
+		errorNotFound: "「{path}」が存在しないか、Obsidianから参照できません。",
+		errorNoPermission: "「{path}」を変更する権限がありません。",
+		errorReadOnly: "「{path}」は書き込みできないドライブにあります。",
+		errorDiskFull: "ドライブの空き容量がありません。",
+		errorInUse: "「{path}」は別のプログラムで使用中です。",
+		errorNameTooLong: "このドライブでは名前が長すぎます。",
+		errorExists: "「{path}」はすでに存在します。",
+		errorSandbox: "Obsidianは{sandbox}サンドボックス内で実行されており、許可されたフォルダーにのみアクセスできます。",
 	},
 
 	ko: {
@@ -3067,6 +3203,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "이 노트를 보관함 밖으로 옮길까요?",
 		moveOutBody: "Obsidian은 보관함 안에서만 링크를 갱신합니다. 이 노트를 가리키는 링크는 모두 끊어지고, 노트 자체도 보관함 색인에서 빠집니다. 여기로 연결된 노트: {count}.",
 		moveOutConfirm: "옮기고 링크 끊기",
+		errorNotFound: "“{path}”이(가) 없거나 Obsidian에서 볼 수 없습니다.",
+		errorNoPermission: "“{path}”을(를) 변경할 권한이 없습니다.",
+		errorReadOnly: "“{path}”이(가) 쓰기가 불가능한 드라이브에 있습니다.",
+		errorDiskFull: "드라이브가 가득 찼습니다.",
+		errorInUse: "“{path}”을(를) 다른 프로그램에서 사용 중입니다.",
+		errorNameTooLong: "이름이 이 드라이브에 사용하기에는 너무 깁니다.",
+		errorExists: "“{path}”이(가) 이미 있습니다.",
+		errorSandbox: "Obsidian이 {sandbox} 샌드박스에서 실행 중이며, 부여된 폴더에만 접근할 수 있습니다.",
 	},
 
 	zh: {
@@ -3236,6 +3380,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "把这则笔记移出仓库吗？",
 		moveOutBody: "Obsidian 只能更新仓库内的链接：指向这则笔记的链接都会失效，笔记本身也会离开仓库索引。链接到此处的笔记：{count}。",
 		moveOutConfirm: "移出并断开链接",
+		errorNotFound: "“{path}”不存在，或 Obsidian 无法访问。",
+		errorNoPermission: "没有权限修改“{path}”。",
+		errorReadOnly: "“{path}”所在的驱动器不可写入。",
+		errorDiskFull: "驱动器已满。",
+		errorInUse: "“{path}”正被其他程序占用。",
+		errorNameTooLong: "名称对此驱动器来说太长。",
+		errorExists: "“{path}”已存在。",
+		errorSandbox: "Obsidian 运行在 {sandbox} 沙盒中，只能访问授予它的文件夹。",
 	},
 
 	"zh-TW": {
@@ -3405,6 +3557,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "要把這則筆記移出保險庫嗎？",
 		moveOutBody: "Obsidian 只能更新保險庫內的連結：指向這則筆記的連結都會失效，筆記本身也會離開保險庫索引。連結到此處的筆記：{count}。",
 		moveOutConfirm: "移出並中斷連結",
+		errorNotFound: "找不到「{path}」，或 Obsidian 無法存取。",
+		errorNoPermission: "沒有權限變更「{path}」。",
+		errorReadOnly: "「{path}」位於無法寫入的磁碟機上。",
+		errorDiskFull: "磁碟機已滿。",
+		errorInUse: "「{path}」正被其他程式使用中。",
+		errorNameTooLong: "名稱對此磁碟機而言太長。",
+		errorExists: "「{path}」已存在。",
+		errorSandbox: "Obsidian 在 {sandbox} 沙箱中執行，只能存取已授予的資料夾。",
 	},
 
 	ar: {
@@ -3574,6 +3734,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "هل تنقل هذه الملاحظة خارج خزنتك؟",
 		moveOutBody: "لا يحدّث Obsidian الروابط إلا داخل الخزنة: ستنكسر كل رابط يشير إلى هذه الملاحظة، وستخرج الملاحظة نفسها من فهرس الخزنة. الملاحظات المرتبطة بها: {count}.",
 		moveOutConfirm: "انقل واكسر الروابط",
+		errorNotFound: "«{path}» غير موجود، أو لا يستطيع Obsidian رؤيته.",
+		errorNoPermission: "لا توجد صلاحية لتعديل «{path}».",
+		errorReadOnly: "«{path}» موجود على قرص لا يمكن الكتابة عليه.",
+		errorDiskFull: "القرص ممتلئ.",
+		errorInUse: "«{path}» قيد الاستخدام من قبل برنامج آخر.",
+		errorNameTooLong: "الاسم طويل جدًا لهذا القرص.",
+		errorExists: "«{path}» موجود بالفعل.",
+		errorSandbox: "يعمل Obsidian داخل بيئة معزولة {sandbox}، ولا يصل إلا إلى المجلدات الممنوحة له.",
 	},
 
 	ca: {
@@ -3745,6 +3913,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Voleu moure aquesta nota fora del vostre magatzem?",
 		moveOutBody: "L'Obsidian només actualitza els enllaços dins del magatzem: tots els enllaços a aquesta nota es trencaran i la nota sortirà de l'índex. Notes que hi enllacen: {count}.",
 		moveOutConfirm: "Mou i trenca els enllaços",
+		errorNotFound: "«{path}» no existeix o l’Obsidian no el pot veure.",
+		errorNoPermission: "No teniu permís per canviar «{path}».",
+		errorReadOnly: "«{path}» és en una unitat on no es pot escriure.",
+		errorDiskFull: "La unitat és plena.",
+		errorInUse: "«{path}» està en ús per un altre programa.",
+		errorNameTooLong: "El nom és massa llarg per a aquesta unitat.",
+		errorExists: "«{path}» ja existeix.",
+		errorSandbox: "L’Obsidian s’executa en un entorn aïllat {sandbox}, que només accedeix a les carpetes que se li han donat.",
 	},
 
 	ro: {
@@ -3915,6 +4091,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Muți această notiță în afara seifului?",
 		moveOutBody: "Obsidian actualizează legăturile doar în interiorul seifului: toate legăturile către această notiță se vor rupe, iar notița iese din indexul seifului. Notițe care trimit aici: {count}.",
 		moveOutConfirm: "Mută și rupe legăturile",
+		errorNotFound: "„{path}” nu există sau Obsidian nu îl poate vedea.",
+		errorNoPermission: "Nu aveți permisiunea de a modifica „{path}”.",
+		errorReadOnly: "„{path}” se află pe o unitate pe care nu se poate scrie.",
+		errorDiskFull: "Unitatea este plină.",
+		errorInUse: "„{path}” este folosit de un alt program.",
+		errorNameTooLong: "Numele este prea lung pentru această unitate.",
+		errorExists: "„{path}” există deja.",
+		errorSandbox: "Obsidian rulează într-un sandbox {sandbox}, care are acces doar la folderele care i-au fost date.",
 	},
 
 	hu: {
@@ -4085,6 +4269,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Kimozgatod ezt a jegyzetet a tárolóból?",
 		moveOutBody: "Az Obsidian csak a tárolón belül frissíti a hivatkozásokat: minden ide mutató hivatkozás megtörik, és a jegyzet kikerül a tároló indexéből. Ide hivatkozó jegyzetek: {count}.",
 		moveOutConfirm: "Áthelyezés a hivatkozások árán",
+		errorNotFound: "A(z) „{path}” nem létezik, vagy az Obsidian nem látja.",
+		errorNoPermission: "Nincs jogosultság a(z) „{path}” módosításához.",
+		errorReadOnly: "A(z) „{path}” olyan meghajtón van, amelyre nem lehet írni.",
+		errorDiskFull: "A meghajtó megtelt.",
+		errorInUse: "A(z) „{path}” használatban van egy másik programban.",
+		errorNameTooLong: "A név túl hosszú ehhez a meghajtóhoz.",
+		errorExists: "A(z) „{path}” már létezik.",
+		errorSandbox: "Az Obsidian {sandbox} sandboxban fut, amely csak a neki megadott mappákat éri el.",
 	},
 
 	sk: {
@@ -4254,6 +4446,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Presunúť túto poznámku mimo trezora?",
 		moveOutBody: "Obsidian aktualizuje odkazy len vnútri trezora: každý odkaz na túto poznámku sa poruší a poznámka opustí index trezora. Poznámok odkazujúcich sem: {count}.",
 		moveOutConfirm: "Presunúť a porušiť odkazy",
+		errorNotFound: "„{path}“ neexistuje alebo ho Obsidian nevidí.",
+		errorNoPermission: "Nemáte povolenie meniť „{path}“.",
+		errorReadOnly: "„{path}“ je na disku, na ktorý sa nedá zapisovať.",
+		errorDiskFull: "Disk je plný.",
+		errorInUse: "„{path}“ používa iný program.",
+		errorNameTooLong: "Názov je pre tento disk príliš dlhý.",
+		errorExists: "„{path}“ už existuje.",
+		errorSandbox: "Obsidian beží v izolovanom prostredí {sandbox}, ktoré má prístup iba k priečinkom, ktoré mu boli poskytnuté.",
 	},
 
 	lv: {
@@ -4423,6 +4623,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Pārvietot šo piezīmi ārpus glabātavas?",
 		moveOutBody: "Obsidian atjaunina saites tikai glabātavas iekšienē: visas saites uz šo piezīmi pārtrūks, un pati piezīme pametīs glabātavas rādītāju. Piezīmes, kas saista šeit: {count}.",
 		moveOutConfirm: "Pārvietot un pārraut saites",
+		errorNotFound: "„{path}“ nepastāv, vai Obsidian to nevar redzēt.",
+		errorNoPermission: "Nav atļaujas mainīt „{path}“.",
+		errorReadOnly: "„{path}“ atrodas diskā, kurā nevar rakstīt.",
+		errorDiskFull: "Disks ir pilns.",
+		errorInUse: "„{path}“ izmanto cita programma.",
+		errorNameTooLong: "Nosaukums ir pārāk garš šim diskam.",
+		errorExists: "„{path}“ jau pastāv.",
+		errorSandbox: "Obsidian darbojas {sandbox} smilškastē, kurai ir piekļuve tikai tām mapēm, kas tai tika piešķirtas.",
 	},
 
 	sq: {
@@ -4593,6 +4801,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Ta zhvendosim këtë shënim jashtë kasafortës?",
 		moveOutBody: "Obsidian i përditëson lidhjet vetëm brenda kasafortës: çdo lidhje drejt këtij shënimi do të prishet, dhe vetë shënimi del nga treguesi i kasafortës. Shënime që lidhen këtu: {count}.",
 		moveOutConfirm: "Zhvendose dhe prish lidhjet",
+		errorNotFound: "„{path}“ nuk ekziston, ose Obsidian nuk e shikon dot.",
+		errorNoPermission: "Nuk ka leje për të ndryshuar „{path}“.",
+		errorReadOnly: "„{path}“ ndodhet në një disk ku nuk mund të shkruhet.",
+		errorDiskFull: "Disku është plot.",
+		errorInUse: "„{path}“ është në përdorim nga një program tjetër.",
+		errorNameTooLong: "Emri është shumë i gjatë për këtë disk.",
+		errorExists: "„{path}“ ekziston tashmë.",
+		errorSandbox: "Obsidian punon në një sandbox {sandbox}, që arrin vetëm dosjet që i janë dhënë.",
 	},
 
 	sr: {
@@ -4762,6 +4978,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Преместити ову белешку изван трезора?",
 		moveOutBody: "Obsidian ажурира везе само унутар трезора: све везе ка овој белешци ће се прекинути, а сама белешка излази из индекса трезора. Белешке које воде овде: {count}.",
 		moveOutConfirm: "Премести и прекини везе",
+		errorNotFound: "„{path}“ не постоји или га Obsidian не може видети.",
+		errorNoPermission: "Немате дозволу да измените „{path}“.",
+		errorReadOnly: "„{path}“ се налази на диску на који се не може писати.",
+		errorDiskFull: "Диск је пун.",
+		errorInUse: "„{path}“ користи други програм.",
+		errorNameTooLong: "Назив је предугачак за овај диск.",
+		errorExists: "„{path}“ већ постоји.",
+		errorSandbox: "Obsidian ради у {sandbox} сандбоксу, који има приступ само фасциклама које су му дате.",
 	},
 
 	be: {
@@ -4932,6 +5156,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Перамясціць гэту нататку за межы сховішча?",
 		moveOutBody: "Obsidian абнаўляе спасылкі толькі ўнутры сховішча: усе спасылкі на гэту нататку перастануць працаваць, а сама нататка пакіне індэкс. Нататак са спасылкамі сюды: {count}.",
 		moveOutConfirm: "Перамясціць і парваць спасылкі",
+		errorNotFound: "«{path}» не існуе або Obsidian не бачыць яго.",
+		errorNoPermission: "Няма дазволу на змяненне «{path}».",
+		errorReadOnly: "«{path}» знаходзіцца на дыску, на які нельга запісваць.",
+		errorDiskFull: "Дыск запоўнены.",
+		errorInUse: "«{path}» выкарыстоўваецца іншай праграмай.",
+		errorNameTooLong: "Назва занадта доўгая для гэтага дыска.",
+		errorExists: "«{path}» ужо існуе.",
+		errorSandbox: "Obsidian працуе ў пясочніцы {sandbox}, якая мае доступ толькі да тых папак, што ёй былі выдзелены.",
 	},
 
 	el: {
@@ -5103,6 +5335,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Μετακίνηση αυτής της σημείωσης έξω από το θησαυροφυλάκιο;",
 		moveOutBody: "Το Obsidian ενημερώνει συνδέσμους μόνο μέσα στο θησαυροφυλάκιο: κάθε σύνδεσμος προς αυτή τη σημείωση θα σπάσει και η ίδια η σημείωση φεύγει από το ευρετήριο. Σημειώσεις που συνδέουν εδώ: {count}.",
 		moveOutConfirm: "Μετακίνηση με σπάσιμο συνδέσμων",
+		errorNotFound: "Το «{path}» δεν υπάρχει ή το Obsidian δεν μπορεί να το δει.",
+		errorNoPermission: "Δεν υπάρχει άδεια για την αλλαγή του «{path}».",
+		errorReadOnly: "Το «{path}» βρίσκεται σε μονάδα δίσκου στην οποία δεν είναι δυνατή η εγγραφή.",
+		errorDiskFull: "Η μονάδα δίσκου είναι πλήρης.",
+		errorInUse: "Το «{path}» χρησιμοποιείται από άλλο πρόγραμμα.",
+		errorNameTooLong: "Το όνομα είναι πολύ μεγάλο για αυτή τη μονάδα δίσκου.",
+		errorExists: "Το «{path}» υπάρχει ήδη.",
+		errorSandbox: "Το Obsidian εκτελείται σε περιβάλλον απομόνωσης {sandbox}, το οποίο έχει πρόσβαση μόνο στους φακέλους που του έχουν δοθεί.",
 	},
 
 	ga: {
@@ -5272,6 +5512,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "An nóta seo a bhogadh amach as do dhaingean?",
 		moveOutBody: "Ní nuashonraíonn Obsidian naisc ach laistigh den daingean: brisfidh gach nasc chuig an nóta seo, agus fágfaidh an nóta féin innéacs an daingin. Nótaí a nascann anseo: {count}.",
 		moveOutConfirm: "Bog agus bris na naisc",
+		errorNotFound: "Níl „{path}“ ann, nó ní féidir le Obsidian é a fheiceáil.",
+		errorNoPermission: "Níl cead agat „{path}“ a athrú.",
+		errorReadOnly: "Tá „{path}“ ar thiomántán nach féidir scríobh air.",
+		errorDiskFull: "Tá an tiomántán lán.",
+		errorInUse: "Tá „{path}“ in úsáid ag clár eile.",
+		errorNameTooLong: "Tá an t-ainm rófhada don tiomántán seo.",
+		errorExists: "Tá „{path}“ ann cheana.",
+		errorSandbox: "Ritheann Obsidian i mbunsraith {sandbox}, nach sroicheann ach na fillteáin a tugadh dó.",
 	},
 
 	he: {
@@ -5441,6 +5689,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "להעביר את הפתק הזה אל מחוץ לכספת?",
 		moveOutBody: "Obsidian מעדכן קישורים רק בתוך הכספת: כל קישור אל הפתק הזה יישבר, והפתק עצמו ייצא מהאינדקס של הכספת. פתקים המקשרים לכאן: {count}.",
 		moveOutConfirm: "להעביר ולשבור את הקישורים",
+		errorNotFound: "“{path}” לא קיים, או ש-Obsidian לא יכול לראות אותו.",
+		errorNoPermission: "אין הרשאה לשנות את “{path}”.",
+		errorReadOnly: "“{path}” נמצא בכונן שאי אפשר לכתוב אליו.",
+		errorDiskFull: "הכונן מלא.",
+		errorInUse: "“{path}” בשימוש על ידי תוכנה אחרת.",
+		errorNameTooLong: "השם ארוך מדי עבור כונן זה.",
+		errorExists: "“{path}” כבר קיים.",
+		errorSandbox: "Obsidian פועל בתוך ארגז חול של {sandbox}, שמגיע רק אל התיקיות שניתנו לו.",
 	},
 
 	fa: {
@@ -5610,6 +5866,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "این یادداشت از گاوصندوق بیرون برده شود؟",
 		moveOutBody: "Obsidian پیوندها را تنها درون گاوصندوق به‌روز می‌کند: هر پیوندی به این یادداشت می‌شکند و خود یادداشت از فهرست گاوصندوق بیرون می‌رود. یادداشت‌هایی که به اینجا پیوند دارند: {count}.",
 		moveOutConfirm: "جابه‌جایی و شکستن پیوندها",
+		errorNotFound: "«{path}» وجود ندارد یا Obsidian نمی‌تواند آن را ببیند.",
+		errorNoPermission: "اجازهٔ تغییر «{path}» وجود ندارد.",
+		errorReadOnly: "«{path}» روی درایوی است که نوشتن در آن ممکن نیست.",
+		errorDiskFull: "درایو پر است.",
+		errorInUse: "«{path}» در حال استفاده توسط برنامهٔ دیگری است.",
+		errorNameTooLong: "این نام برای این درایو بیش از حد طولانی است.",
+		errorExists: "«{path}» از قبل وجود دارد.",
+		errorSandbox: "Obsidian در یک جعبهٔ شنی {sandbox} اجرا می‌شود که فقط به پوشه‌هایی که به آن داده شده دسترسی دارد.",
 	},
 
 	id: {
@@ -5779,6 +6043,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Pindahkan catatan ini keluar dari brankas?",
 		moveOutBody: "Obsidian hanya memperbarui tautan di dalam brankas: setiap tautan ke catatan ini akan putus, dan catatannya sendiri keluar dari indeks brankas. Catatan yang menaut ke sini: {count}.",
 		moveOutConfirm: "Pindahkan dan putuskan tautan",
+		errorNotFound: "“{path}” tidak ada, atau Obsidian tidak dapat melihatnya.",
+		errorNoPermission: "Tidak ada izin untuk mengubah “{path}”.",
+		errorReadOnly: "“{path}” berada di drive yang tidak dapat ditulisi.",
+		errorDiskFull: "Drive penuh.",
+		errorInUse: "“{path}” sedang digunakan oleh program lain.",
+		errorNameTooLong: "Nama terlalu panjang untuk drive ini.",
+		errorExists: "“{path}” sudah ada.",
+		errorSandbox: "Obsidian berjalan di dalam sandbox {sandbox}, yang hanya dapat menjangkau folder yang diberikan kepadanya.",
 	},
 
 	ms: {
@@ -5948,6 +6220,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Alihkan nota ini keluar dari bilik kebal anda?",
 		moveOutBody: "Obsidian hanya mengemas kini pautan di dalam bilik kebal: setiap pautan ke nota ini akan putus, dan notanya sendiri keluar dari indeks. Nota yang memaut ke sini: {count}.",
 		moveOutConfirm: "Alih dan putuskan pautan",
+		errorNotFound: "“{path}” tiada, atau Obsidian tidak dapat melihatnya.",
+		errorNoPermission: "Tiada kebenaran untuk mengubah “{path}”.",
+		errorReadOnly: "“{path}” berada pada pemacu yang tidak boleh ditulis.",
+		errorDiskFull: "Pemacu sudah penuh.",
+		errorInUse: "“{path}” sedang digunakan oleh program lain.",
+		errorNameTooLong: "Nama terlalu panjang untuk pemacu ini.",
+		errorExists: "“{path}” sudah wujud.",
+		errorSandbox: "Obsidian berjalan dalam kotak pasir {sandbox}, yang hanya boleh mencapai folder yang diberikan kepadanya.",
 	},
 
 	vi: {
@@ -6117,6 +6397,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Chuyển ghi chú này ra ngoài kho của bạn?",
 		moveOutBody: "Obsidian chỉ cập nhật liên kết bên trong kho: mọi liên kết trỏ tới ghi chú này sẽ hỏng, và bản thân ghi chú rời khỏi chỉ mục của kho. Số ghi chú liên kết tới đây: {count}.",
 		moveOutConfirm: "Chuyển và chấp nhận hỏng liên kết",
+		errorNotFound: "“{path}” không tồn tại hoặc Obsidian không thể truy cập được.",
+		errorNoPermission: "Không có quyền thay đổi “{path}”.",
+		errorReadOnly: "“{path}” nằm trên ổ đĩa không thể ghi dữ liệu.",
+		errorDiskFull: "Ổ đĩa đã đầy.",
+		errorInUse: "“{path}” đang được chương trình khác sử dụng.",
+		errorNameTooLong: "Tên quá dài đối với ổ đĩa này.",
+		errorExists: "“{path}” đã tồn tại.",
+		errorSandbox: "Obsidian đang chạy trong môi trường sandbox {sandbox}, chỉ truy cập được các thư mục đã được cấp.",
 	},
 
 	th: {
@@ -6286,6 +6574,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "ย้ายโน้ตนี้ออกไปนอกห้องนิรภัยหรือไม่",
 		moveOutBody: "Obsidian อัปเดตลิงก์ได้เฉพาะภายในห้องนิรภัย ลิงก์ทุกอันที่ชี้มายังโน้ตนี้จะเสีย และตัวโน้ตเองจะออกจากดัชนีของห้องนิรภัย โน้ตที่ลิงก์มาที่นี่: {count}",
 		moveOutConfirm: "ย้ายและยอมให้ลิงก์เสีย",
+		errorNotFound: "ไม่พบ “{path}” หรือ Obsidian มองไม่เห็น",
+		errorNoPermission: "ไม่มีสิทธิ์เปลี่ยนแปลง “{path}”",
+		errorReadOnly: "“{path}” อยู่บนไดรฟ์ที่ไม่สามารถเขียนข้อมูลได้",
+		errorDiskFull: "ไดรฟ์เต็ม",
+		errorInUse: "“{path}” กำลังถูกใช้งานโดยโปรแกรมอื่น",
+		errorNameTooLong: "ชื่อยาวเกินไปสำหรับไดรฟ์นี้",
+		errorExists: "“{path}” มีอยู่แล้ว",
+		errorSandbox: "Obsidian ทำงานในแซนด์บ็อกซ์ {sandbox} ซึ่งเข้าถึงได้เฉพาะโฟลเดอร์ที่ได้รับอนุญาตเท่านั้น",
 	},
 
 	kh: {
@@ -6455,6 +6751,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "ផ្លាស់ទីកំណត់ចំណាំនេះចេញពីឃ្លាំងរបស់អ្នកឬ?",
 		moveOutBody: "Obsidian ធ្វើបច្ចុប្បន្នភាពតំណតែនៅក្នុងឃ្លាំងប៉ុណ្ណោះ៖ រាល់តំណដែលចង្អុលមកកំណត់ចំណាំនេះនឹងខូច ហើយកំណត់ចំណាំនេះនឹងចាកចេញពីលិបិក្រមឃ្លាំង។ កំណត់ចំណាំដែលភ្ជាប់មកទីនេះ៖ {count}។",
 		moveOutConfirm: "ផ្លាស់ទី ហើយកាត់តំណ",
+		errorNotFound: "«{path}» មិនមានទេ ឬ Obsidian មើលមិនឃើញវា។",
+		errorNoPermission: "គ្មានសិទ្ធិផ្លាស់ប្ដូរ «{path}» ទេ។",
+		errorReadOnly: "«{path}» នៅលើដ្រាយដែលមិនអាចសរសេរទៅបានទេ។",
+		errorDiskFull: "ដ្រាយពេញហើយ។",
+		errorInUse: "«{path}» កំពុងត្រូវបានប្រើដោយកម្មវិធីផ្សេងទៀត។",
+		errorNameTooLong: "ឈ្មោះវែងពេកសម្រាប់ដ្រាយនេះ។",
+		errorExists: "«{path}» មានរួចហើយ។",
+		errorSandbox: "Obsidian ដំណើរការក្នុងប្រអប់សុវត្ថិភាព {sandbox} ដែលអាចចូលដំណើរការបានតែថតដែលបានផ្តល់ឱ្យប៉ុណ្ណោះ។",
 	},
 
 	ne: {
@@ -6624,6 +6928,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "यो टिपोट भल्टबाहिर सार्ने हो?",
 		moveOutBody: "Obsidian ले भल्टभित्रका लिंकमात्र अद्यावधिक गर्छ: यो टिपोटतर्फका सबै लिंक भाँचिनेछन्, र टिपोट आफैँ भल्टको अनुक्रमणिकाबाट बाहिरिनेछ। यहाँ लिंक गर्ने टिपोटहरू: {count}।",
 		moveOutConfirm: "सार्नुहोस् र लिंक भाँच्नुहोस्",
+		errorNotFound: "{path} छैन, वा Obsidian ले यसलाई देख्न सक्दैन।",
+		errorNoPermission: "{path} परिवर्तन गर्ने अनुमति छैन।",
+		errorReadOnly: "{path} यस्तो ड्राइभमा छ जसमा लेख्न सकिँदैन।",
+		errorDiskFull: "ड्राइभ भरिएको छ।",
+		errorInUse: "{path} अर्को प्रोग्रामद्वारा प्रयोग भइरहेको छ।",
+		errorNameTooLong: "यो ड्राइभको लागि नाम धेरै लामो छ।",
+		errorExists: "{path} पहिले नै अवस्थित छ।",
+		errorSandbox: "Obsidian {sandbox} स्यान्डबक्समा चलिरहेको छ, जसले आफूलाई दिइएका फोल्डरहरूमा मात्र पहुँच पाउँछ।",
 	},
 
 	bn: {
@@ -6793,6 +7105,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "এই নোটটি আপনার ভল্টের বাইরে সরাবেন?",
 		moveOutBody: "Obsidian কেবল ভল্টের ভেতরের লিঙ্ক হালনাগাদ করে: এই নোটের দিকে তাক করা সব লিঙ্ক ভেঙে যাবে, আর নোটটি নিজেই ভল্টের সূচি থেকে বেরিয়ে যাবে। এখানে লিঙ্ক করা নোট: {count}।",
 		moveOutConfirm: "সরান ও লিঙ্ক ভাঙুন",
+		errorNotFound: "“{path}” নেই, অথবা Obsidian এটি দেখতে পাচ্ছে না।",
+		errorNoPermission: "“{path}” পরিবর্তন করার অনুমতি নেই।",
+		errorReadOnly: "“{path}” এমন একটি ড্রাইভে আছে যেখানে লেখা যায় না।",
+		errorDiskFull: "ড্রাইভ পূর্ণ।",
+		errorInUse: "“{path}” অন্য একটি প্রোগ্রাম ব্যবহার করছে।",
+		errorNameTooLong: "এই ড্রাইভের জন্য নামটি অনেক দীর্ঘ।",
+		errorExists: "“{path}” আগে থেকেই আছে।",
+		errorSandbox: "Obsidian একটি {sandbox} স্যান্ডবক্সে চলছে, যা শুধু এতে দেওয়া ফোল্ডারগুলোতেই পৌঁছাতে পারে।",
 	},
 
 	ka: {
@@ -6964,6 +7284,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "გადავიტანოთ ეს ჩანაწერი სეიფის გარეთ?",
 		moveOutBody: "Obsidian ბმულებს მხოლოდ სეიფის შიგნით აახლებს: ამ ჩანაწერზე მიმავალი ყველა ბმული გაწყდება და თავად ჩანაწერიც სეიფის ინდექსს დატოვებს. აქ მიმართული ჩანაწერები: {count}.",
 		moveOutConfirm: "გადატანა ბმულების გაწყვეტით",
+		errorNotFound: "„{path}“ არ არსებობს ან Obsidian-ს ის არ ჩანს.",
+		errorNoPermission: "„{path}“-ის შეცვლის უფლება არ არის.",
+		errorReadOnly: "„{path}“ დისკზეა, რომელზეც ჩაწერა შეუძლებელია.",
+		errorDiskFull: "დისკი სავსეა.",
+		errorInUse: "„{path}“ სხვა პროგრამას უკავია.",
+		errorNameTooLong: "სახელი ამ დისკისთვის ზედმეტად გრძელია.",
+		errorExists: "„{path}“ უკვე არსებობს.",
+		errorSandbox: "Obsidian მუშაობს {sandbox} სენდბოქსში, რომელსაც წვდომა აქვს მხოლოდ მისთვის მიცემულ საქაღალდეებზე.",
 	},
 
 	uz: {
@@ -7133,6 +7461,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "Bu qayd omborxonadan tashqariga ko'chirilsinmi?",
 		moveOutBody: "Obsidian havolalarni faqat omborxona ichida yangilaydi: bu qaydga ishora qiluvchi har bir havola uziladi, qaydning o'zi esa omborxona indeksidan chiqadi. Bu yerga havola qiluvchi qaydlar: {count}.",
 		moveOutConfirm: "Ko'chirish va havolalarni uzish",
+		errorNotFound: "“{path}” mavjud emas yoki Obsidian uni ko‘ra olmaydi.",
+		errorNoPermission: "“{path}” ni o‘zgartirishga ruxsat yo‘q.",
+		errorReadOnly: "“{path}” yozib bo‘lmaydigan diskda joylashgan.",
+		errorDiskFull: "Disk to‘lgan.",
+		errorInUse: "“{path}” boshqa dastur tomonidan ishlatilmoqda.",
+		errorNameTooLong: "Nom bu disk uchun juda uzun.",
+		errorExists: "“{path}” allaqachon mavjud.",
+		errorSandbox: "Obsidian {sandbox} sandboxida ishlaydi, u faqat o‘ziga berilgan jildlargagina kira oladi.",
 	},
 
 	am: {
@@ -7302,6 +7638,14 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "ይህን ማስታወሻ ከመዝገብዎ ውጪ ይውሰዱት?",
 		moveOutBody: "Obsidian አገናኞችን የሚያዘምነው በመዝገቡ ውስጥ ብቻ ነው፤ ወደዚህ ማስታወሻ የሚያመለክቱ አገናኞች ሁሉ ይሰበራሉ፣ ማስታወሻውም ከመዝገቡ መረጃ ጠቋሚ ይወጣል። ወደዚህ የሚያገናኙ ማስታወሻዎች፦ {count}።",
 		moveOutConfirm: "አንቀሳቅስና አገናኞቹን ስበር",
+		errorNotFound: "“{path}” የለም፣ ወይም Obsidian ሊያየው አይችልም።",
+		errorNoPermission: "“{path}”ን ለመለወጥ ፈቃድ የለም።",
+		errorReadOnly: "“{path}” መጻፍ በማይቻልበት ድራይቭ ላይ ነው።",
+		errorDiskFull: "ድራይቭ ሞልቷል።",
+		errorInUse: "“{path}” በሌላ ፕሮግራም ጥቅም ላይ ነው።",
+		errorNameTooLong: "ስሙ ለዚህ ድራይቭ በጣም ረጅም ነው።",
+		errorExists: "“{path}” አስቀድሞ አለ።",
+		errorSandbox: "Obsidian በ{sandbox} ሳንድቦክስ ውስጥ ይሠራል፤ ይህም የተሰጡትን አቃፊዎች ብቻ ማግኘት ይችላል።",
 	},
 
 	sa: {
@@ -7471,5 +7815,13 @@ export const TRANSLATIONS: Record<string, PartialStrings> = {
 		moveOutTitle: "इदं टिप्पणं कोशात् बहिः नयतु वा?",
 		moveOutBody: "Obsidian इति कोशस्य अन्तः एव संयोजनानि नवीकरोति — अस्य टिप्पणस्य सर्वाणि संयोजनानि भङ्क्ष्यन्ते, टिप्पणं च कोशसूचीतः निर्गच्छति। अत्र संयोजयन्ति टिप्पणानि: {count}।",
 		moveOutConfirm: "नयतु संयोजनभङ्गेन सह",
+		errorNotFound: "“{path}” नास्ति, अथवा Obsidian तत् द्रष्टुं न शक्नोति।",
+		errorNoPermission: "“{path}” परिवर्तयितुम् अनुमतिः नास्ति।",
+		errorReadOnly: "“{path}” एतादृशे चालके (drive) अस्ति यत्र लेखनं न शक्यम्।",
+		errorDiskFull: "चालकः (drive) पूर्णः अस्ति।",
+		errorInUse: "“{path}” अन्येन प्रोग्रामेण उपयुज्यते।",
+		errorNameTooLong: "नाम अस्मै चालकाय (drive) अतिदीर्घम् अस्ति।",
+		errorExists: "“{path}” पूर्वमेव विद्यते।",
+		errorSandbox: "Obsidian {sandbox} सैण्डबॉक्स्-मध्ये चलति, यत् केवलं दत्तान् सञ्चिकाकोशान् (folders) प्राप्नोति।",
 	},
 };

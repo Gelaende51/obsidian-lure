@@ -1,4 +1,5 @@
 import { Menu, Notice, PaneType, WorkspaceLeaf } from "obsidian";
+import { errorText } from "./fsErrors";
 import { MENU_SECTIONS } from "./nativeFileItem";
 import { LABELS, obsidianLabel } from "./obsidianLabels";
 import { openExternalFile, openInDefaultApp } from "./externalFileView";
@@ -143,7 +144,7 @@ export function buildExternalMenu(
 			new Notice(t("noticeExternalWriteLocked"));
 			return;
 		}
-		void run().then(onChanged, (err: Error) => new Notice(t("noticeRenameFailed", { error: err.message })));
+		void run().then(onChanged, (err: Error) => new Notice(t("noticeRenameFailed", { error: errorText(err) })));
 	};
 
 	if (isFolder) {

@@ -17,6 +17,7 @@ import {
 	setIcon,
 	setTooltip,
 } from "obsidian";
+import { errorText } from "./fsErrors";
 import type { FileExplorerView } from "obsidian";
 import type BreadcrumbPathPlugin from "./main";
 import type { BreadcrumbManager } from "./breadcrumbManager";
@@ -2177,7 +2178,7 @@ export class PathBreadcrumb {
 			this.revealInExplorer(note);
 			this.navigateToFile(note);
 		} catch (err) {
-			new Notice(t("noticeCreateFailed", { error: (err as Error).message }));
+			new Notice(t("noticeCreateFailed", { error: errorText(err) }));
 		}
 	}
 
@@ -2301,7 +2302,7 @@ export class PathBreadcrumb {
 			await appendToNote(this.plugin.app, file, content.text);
 			new Notice(t("dropAppended", { name: file.name }));
 		} catch (err) {
-			new Notice(t("noticeCreateFailed", { error: (err as Error).message }));
+			new Notice(t("noticeCreateFailed", { error: errorText(err) }));
 		}
 	}
 
@@ -5705,7 +5706,7 @@ export class PathBreadcrumb {
 				await this.ensureFolderExists(parentPath);
 				await this.plugin.app.fileManager.renameFile(this.file, newPath);
 			} catch (err) {
-				new Notice(t("noticeRenameFailed", { error: (err as Error).message }));
+				new Notice(t("noticeRenameFailed", { error: errorText(err) }));
 				return;
 			}
 		}
@@ -5758,7 +5759,7 @@ export class PathBreadcrumb {
 				await rename(occupant, paths.occupant);
 			}
 		} catch (err) {
-			new Notice(t("noticeRenameFailed", { error: (err as Error).message }));
+			new Notice(t("noticeRenameFailed", { error: errorText(err) }));
 			return false;
 		}
 		return true;
@@ -5841,7 +5842,7 @@ export class PathBreadcrumb {
 			try {
 				await this.plugin.app.fileManager.renameFile(folder, target);
 			} catch (err) {
-				new Notice(t("noticeRenameFailed", { error: (err as Error).message }));
+				new Notice(t("noticeRenameFailed", { error: errorText(err) }));
 				return;
 			}
 		}
@@ -5868,7 +5869,7 @@ export class PathBreadcrumb {
 			await this.ensureFolderExists(parentPath);
 			copy = await this.plugin.app.vault.copy(this.file, newPath);
 		} catch (err) {
-			new Notice(t("noticeCopyFailed", { error: (err as Error).message }));
+			new Notice(t("noticeCopyFailed", { error: errorText(err) }));
 			return;
 		}
 
@@ -6798,7 +6799,7 @@ export class PathBreadcrumb {
 		try {
 			({ result, keeper } = await convertLink(this.plugin.app, file, to, this.plugin.diskLinks.sameFile(file.path)));
 		} catch (err) {
-			new Notice(t("noticeLinkFailed", { error: (err as Error).message }));
+			new Notice(t("noticeLinkFailed", { error: errorText(err) }));
 			return true;
 		}
 		if (result === "not-a-link") return false;
@@ -6843,7 +6844,7 @@ export class PathBreadcrumb {
 			await this.plugin.externalLinks.make(source, target, kind);
 		} catch (err) {
 			const code = (err as NodeJS.ErrnoException).code;
-			new Notice(code === "EXDEV" ? t("noticeLinkOtherDevice") : t("noticeLinkFailed", { error: (err as Error).message }));
+			new Notice(code === "EXDEV" ? t("noticeLinkOtherDevice") : t("noticeLinkFailed", { error: errorText(err) }));
 			this.inputEl?.focus();
 			return;
 		}
@@ -6886,7 +6887,7 @@ export class PathBreadcrumb {
 			await makeOtherPath(this.plugin.app, file, path, kind);
 		} catch (err) {
 			const code = (err as NodeJS.ErrnoException).code;
-			new Notice(code === "EXDEV" ? t("noticeLinkOtherDevice") : t("noticeLinkFailed", { error: (err as Error).message }));
+			new Notice(code === "EXDEV" ? t("noticeLinkOtherDevice") : t("noticeLinkFailed", { error: errorText(err) }));
 			this.inputEl?.focus();
 			return;
 		}
@@ -7195,7 +7196,7 @@ export class PathBreadcrumb {
 					await vault.create(path, "");
 					made++;
 				} catch (err) {
-					new Notice(t("noticeCreateFailed", { error: (err as Error).message }));
+					new Notice(t("noticeCreateFailed", { error: errorText(err) }));
 				}
 			}
 			if (made) new Notice(t("noticeGlobCreated", { count: String(made) }));
@@ -9815,7 +9816,7 @@ export class PathBreadcrumb {
 			this.revealInExplorer(newFile);
 			this.navigateToFile(newFile, paneType);
 		} catch (err) {
-			new Notice(t("noticeCreateFailed", { error: (err as Error).message }));
+			new Notice(t("noticeCreateFailed", { error: errorText(err) }));
 			this.inputEl?.focus();
 		}
 	}
@@ -9984,7 +9985,7 @@ export class PathBreadcrumb {
 			await createExternalFile(target);
 			new Notice(t("noticeCreated", { path: target }));
 		} catch (err) {
-			new Notice(t("noticeCreateFailed", { error: (err as Error).message }));
+			new Notice(t("noticeCreateFailed", { error: errorText(err) }));
 			this.inputEl?.focus();
 			return;
 		}
@@ -10110,7 +10111,7 @@ export class PathBreadcrumb {
 			try {
 				await trashExternalEntry(source.path);
 			} catch (err) {
-				new Notice(t("noticeExternalWriteFailed", { error: (err as Error).message }));
+				new Notice(t("noticeExternalWriteFailed", { error: errorText(err) }));
 			}
 		}
 

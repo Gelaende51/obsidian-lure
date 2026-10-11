@@ -14,6 +14,7 @@ import {
 	setIcon,
 	setTooltip,
 } from "obsidian";
+import { errorText } from "./fsErrors";
 import { shell } from "electron";
 import { readFile, writeFile } from "fs/promises";
 import { parse, sep } from "path";
@@ -396,7 +397,7 @@ export class ExternalFileView extends ItemView {
 			body.empty();
 			body.createDiv({
 				cls: "lure-external-error",
-				text: t("noticeExternalReadFailed", { error: (err as Error).message }),
+				text: t("noticeExternalReadFailed", { error: errorText(err) }),
 			});
 		}
 	}
@@ -621,7 +622,7 @@ export class ExternalFileView extends ItemView {
 		try {
 			await writeFile(this.filePath, text, "utf8");
 		} catch (err) {
-			new Notice(t("noticeExternalWriteFailed", { error: (err as Error).message }));
+			new Notice(t("noticeExternalWriteFailed", { error: errorText(err) }));
 		}
 	}
 
@@ -925,7 +926,7 @@ export class ExternalFileView extends ItemView {
 			frame.remove();
 			body.createDiv({
 				cls: "lure-external-error",
-				text: t("noticeExternalReadFailed", { error: (err as Error).message }),
+				text: t("noticeExternalReadFailed", { error: errorText(err) }),
 			});
 		}
 	}

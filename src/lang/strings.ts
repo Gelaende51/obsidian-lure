@@ -230,6 +230,14 @@ export const EN = {
 	moveOutBody: "Obsidian can only update links inside the vault, so every link pointing at this note will break, and the note itself leaves the vault index. Notes linking here: {count}.",
 	moveOutConfirm: "Move and break links",
 	errorNotAFolder: '"{path}" exists and is not a folder.',
+	errorNotFound: "{path} is not there, or Obsidian cannot see it.",
+	errorNoPermission: "No permission to change {path}.",
+	errorReadOnly: "{path} is on a drive that cannot be written to.",
+	errorDiskFull: "The drive is full.",
+	errorInUse: "{path} is in use by another program.",
+	errorNameTooLong: "The name is too long for this drive.",
+	errorExists: "{path} already exists.",
+	errorSandbox: "Obsidian runs in a {sandbox} sandbox, which only reaches the folders it was given.",
 } as const;
 
 export type StringKey = keyof typeof EN;

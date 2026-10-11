@@ -1,4 +1,5 @@
 import { App, Menu, Notice, TAbstractFile, TFile, TFolder } from "obsidian";
+import { errorText } from "./fsErrors";
 import { t } from "./lang";
 import { LABELS, obsidianLabel } from "./obsidianLabels";
 
@@ -341,7 +342,7 @@ async function moveInto(
 		try {
 			await app.fileManager.renameFile(file, to);
 		} catch (err) {
-			new Notice(t("noticeRenameFailed", { error: (err as Error).message }));
+			new Notice(t("noticeRenameFailed", { error: errorText(err) }));
 			break;
 		}
 		const at = app.vault.getAbstractFileByPath(to);
@@ -365,7 +366,7 @@ async function createNoteIn(app: App, folder: TFolder): Promise<void> {
 			eState: { rename: "all" },
 		});
 	} catch (err) {
-		new Notice(t("noticeCreateFailed", { error: (err as Error).message }));
+		new Notice(t("noticeCreateFailed", { error: errorText(err) }));
 	}
 }
 
@@ -379,7 +380,7 @@ async function createFolderIn(app: App, folder: TFolder): Promise<void> {
 		// visible and selected, ready for the explorer's rename hotkey.
 		app.internalPlugins.getPluginById("file-explorer")?.instance.revealInFolder(created);
 	} catch (err) {
-		new Notice(t("noticeCreateFailed", { error: (err as Error).message }));
+		new Notice(t("noticeCreateFailed", { error: errorText(err) }));
 	}
 }
 
@@ -396,7 +397,7 @@ async function makeCopyOfFile(app: App, file: TFile): Promise<void> {
 		const base = parent && parent !== "/" ? `${parent}/${file.basename}` : file.basename;
 		await app.vault.copy(file, app.vault.getAvailablePath(base, file.extension));
 	} catch (err) {
-		new Notice(t("noticeCopyFailed", { error: (err as Error).message }));
+		new Notice(t("noticeCopyFailed", { error: errorText(err) }));
 	}
 }
 
@@ -420,7 +421,7 @@ async function makeCopyOfFolder(app: App, folder: TFolder): Promise<void> {
 		// An empty extension asks for a free *folder* name rather than a file one.
 		await copyFolderInto(app, folder, app.vault.getAvailablePath(base, ""));
 	} catch (err) {
-		new Notice(t("noticeCopyFailed", { error: (err as Error).message }));
+		new Notice(t("noticeCopyFailed", { error: errorText(err) }));
 	}
 }
 
