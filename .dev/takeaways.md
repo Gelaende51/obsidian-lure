@@ -2727,3 +2727,20 @@ from the logged readings; the factors will move as readings accumulate.
 - FreeBSD passes the default suites once Lure asks Obsidian to look again at
   paths its watcher missed (`adapter.reconcileFile(getRealPath(p), p)`,
   internal, the call Obsidian's own watcher makes).
+- Wine: the Windows build starts on WineHQ staging (Ubuntu's wine did not)
+  once it is unpacked with 7z rather than installed, and given
+  `--no-sandbox --disable-gpu --disable-gpu-sandbox --in-process-gpu
+  --disable-features=RendererCodeIntegrity,NetworkServiceSandbox`. Without
+  them it stops on a breakpoint (0x80000003) or never opens its debugging
+  port. The tests on the Linux side hand it Linux paths (`/tmp/…`), which a
+  Windows Node reads as rooted on the current drive. That showed a real
+  Windows gap: `resolve()` adds the drive and the unresolved path lacks it,
+  so containment checks between the two always fail.
+- Containers and CI VMs run as root, and permissions do not bind root: a
+  chmod 000 file is readable there. Slim images and Flatpak runtimes have a
+  few hundred names in /usr/bin, so "a folder bigger than the dropdown's
+  cap" needs a fixture of its own. Electron's `shell.trashItem` rejects with
+  only "Failed to move item to trash" where there is no desktop trash
+  (containers, tmpfs); the reason has to be supplied by the caller.
+- FreeBSD has no /proc/mounts; `mount -p` prints the same table in fstab's
+  layout (octal escapes as /proc/mounts uses).
