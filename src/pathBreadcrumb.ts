@@ -32,6 +32,7 @@ import {
 	readableMinimum,
 } from "./pathFit";
 import { commonPrefix, planTab, TabCandidate } from "./tabComplete";
+import { shortOutside } from "./outsideNames";
 import { LinkKind, OtherPath, aliasPathsOf, convertLink, forgetOtherPath, makeOtherPath, otherPaths, recordCopy } from "./altPaths";
 import { createsFiles, expandBraces, hasGlobChars, matchPaths } from "./globPattern";
 import { FolderChildSuggest, LINK_ENTER, LINK_ICONS, describeFile, typeIcon, MODIFIED_ENTER, guardFieldKeys, pageLabel, PathSuggestion } from "./folderChildSuggest";
@@ -4967,7 +4968,7 @@ export class PathBreadcrumb {
 		const others = file ? otherPaths(this.plugin.app, disk, file) : outside ? this.plugin.externalLinks.othersOf(outside) : [];
 		const matches = file ? this.globMatches : null;
 		const { link, empty } = file
-			? { link: disk.targetOfLink(file.path) ? "symbolic" : disk.sameFile(file.path).length ? "hard" : "none", empty: file.stat.size === 0 }
+			? { link: disk.targetOfLink(file.path) ? "symbolic" : disk.isHardLinked(file.path) ? "hard" : "none", empty: file.stat.size === 0 }
 			: externalFileFacts(shown.absolute ?? "");
 		const facts: PathSuggestion = { label: shown.name, kind: "file", path: file?.path ?? shown.absolute ?? shown.name, disabled: false, empty, endIcon: LINK_ICONS[link as keyof typeof LINK_ICONS] };
 		const tint = matches !== null ? (matches.length ? "match" : "none") : others.length ? otherPathsTint(others) : null;
@@ -6998,7 +6999,7 @@ export class PathBreadcrumb {
 	private showIndicatorMenu(evt: MouseEvent, alignTo: HTMLElement | null = null): void {
 		const file = this.file;
 		const app = this.plugin.app;
-		type Entry = { path: string; icon: string; tint: string; go: (() => void) | null };
+		type Entry = { path: string; icon: string; tint: string; go: (() => void) | null; label?: string };
 		const entries: Entry[] = [];
 		for (const path of (this.globMatches ?? []).slice(0, 200)) {
 			entries.push({
@@ -7023,7 +7024,11 @@ export class PathBreadcrumb {
 			const others = otherPaths(app, this.plugin.diskLinks, file);
 			if (others.length) entries.push({ path: file.path, icon: "file", tint: "current", go: null });
 			for (const other of others) {
-				entries.push({ path: other.path, icon: OTHER_PATH_ICONS[other.kind], tint: OTHER_PATH_TINTS[other.kind], go: () => this.goToOtherPath(other) });
+				// A name outside the vault opens as a file out there; one the
+				// search did not find says only that it is somewhere outside.
+				const go = other.outside ? (other.path ? () => void openExternalFile(this.plugin, other.path, false, this.leaf) : null) : () => this.goToOtherPath(other);
+				const label = other.outside ? (other.path ? shortOutside(other.path) : "/…") : undefined;
+				entries.push({ path: other.path, icon: OTHER_PATH_ICONS[other.kind], tint: OTHER_PATH_TINTS[other.kind], go, label });
 			}
 		}
 		if (!entries.length) return;
@@ -7074,10 +7079,11 @@ export class PathBreadcrumb {
 			if (entry.tint === "match") el.addClass("lure-suggest-glob");
 			// The extension as the dropdown has it: off the name and in a
 			// badge at the row's end, when extensions are hidden.
-			const dot = entry.path.lastIndexOf(".");
-			const slash = Math.max(entry.path.lastIndexOf("/"), entry.path.lastIndexOf("\\"));
-			const extension = hideExtensions && dot > slash + 1 && dot < entry.path.length - 1 ? entry.path.slice(dot + 1) : null;
-			el.createSpan({ cls: "lure-suggest-label", text: extension ? entry.path.slice(0, dot) : entry.path });
+			const shown = entry.label ?? entry.path;
+			const dot = shown.lastIndexOf(".");
+			const slash = Math.max(shown.lastIndexOf("/"), shown.lastIndexOf("\\"));
+			const extension = hideExtensions && dot > slash + 1 && dot < shown.length - 1 ? shown.slice(dot + 1) : null;
+			el.createSpan({ cls: "lure-suggest-label", text: extension ? shown.slice(0, dot) : shown });
 			const end = el.createSpan({ cls: "lure-suggest-end" });
 			// What kind of other path it is, where the dropdown says so.
 			if (entry.tint !== "current" && entry.tint !== "match") setIcon(end.createSpan({ cls: "lure-suggest-kind" }), entry.icon);
@@ -9282,7 +9288,7 @@ export class PathBreadcrumb {
 				isCurrentNote: (path) => this.isCurrentNotePath(path),
 				createRow: this.createRow(inputEl),
 				linkKindOf: (path) =>
-					this.plugin.diskLinks.targetOfLink(path) ? "symbolic" : this.plugin.diskLinks.sameFile(path).length ? "hard" : null,
+					this.plugin.diskLinks.targetOfLink(path) ? "symbolic" : this.plugin.diskLinks.isHardLinked(path) ? "hard" : null,
 				aliasesIn: (folder) => (this.renameMode || !this.plugin.settings.listAliases ? [] : this.plugin.aliasRows.in(folder)),
 				unresolvedIn: (folder) =>
 					this.renameMode || !this.plugin.settings.listLinkedOnly ? [] : this.plugin.unresolvedNotes.in(folder),

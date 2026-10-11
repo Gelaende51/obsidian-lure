@@ -47,6 +47,7 @@ declare module "fs" {
 		name: string;
 		isDirectory(): boolean;
 		isSymbolicLink(): boolean;
+		isFile(): boolean;
 	}
 
 	export interface Stats {
@@ -137,4 +138,14 @@ declare module "path" {
 declare module "os" {
 	export function homedir(): string;
 	export function platform(): string;
+}
+
+declare module "child_process" {
+	/** Runs a program with arguments (no shell) and calls back with what it printed. */
+	export function execFile(
+		file: string,
+		args: readonly string[],
+		options: { timeout?: number; maxBuffer?: number; windowsHide?: boolean },
+		callback: (error: Error | null, stdout: string, stderr: string) => void,
+	): unknown;
 }

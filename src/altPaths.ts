@@ -2,6 +2,7 @@ import { App, FileSystemAdapter, TFile, normalizePath } from "obsidian";
 import { link, lstat, mkdir, readdir, readlink, symlink, unlink, writeFile } from "fs/promises";
 import { dirname, join, relative, resolve } from "path";
 import { lstatSync } from "fs";
+import { OutsideNames } from "./outsideNames";
 
 /**
  * A note's other paths: alias paths written in its frontmatter, hard and
@@ -31,6 +32,12 @@ export type OtherPathKind =
 export interface OtherPath {
 	path: string;
 	kind: OtherPathKind;
+	/**
+	 * A name outside the vault: `path` is absolute, or empty where the disk
+	 * counts a name the search did not find. Shown, never recorded — another
+	 * machine has other folders.
+	 */
+	outside?: boolean;
 }
 
 /** What a link is made as, from rename mode. */
@@ -199,6 +206,7 @@ export async function makeOtherPath(app: App, file: TFile, target: string, kind:
 	await mkdir(dirname(to), { recursive: true });
 	if (kind === "hard") await link(from, to);
 	else await symlink(relative(dirname(to), from), to);
+	await recheckPath(app, target);
 	await recordOtherPath(app, file, target, kind);
 	// A hard link Obsidian has already picked up read the file before the
 	// list was written into it.
@@ -258,6 +266,7 @@ export async function convertLink(app: App, file: TFile, to: LinkKind | "copy", 
 	if (to === "symbolic") await symlink(relative(dirname(at), source), at);
 	else if (to === "hard") await link(source, at);
 	else if (to === "copy") await writeFile(at, text, "utf8");
+	await recheckPath(app, file.path);
 
 	await rewriteLists(app, keeper, (lists) => {
 		let changed = forget(lists, keeper.path, file.path);
@@ -402,6 +411,9 @@ export class DiskLinks {
 	/** Paths by the file they are on disk, for files with more than one name. */
 	private byInode = new Map<string, string[]>();
 	private inodeOf = new Map<string, string>();
+	/** How many names each file of several has on disk, inside the vault or not. */
+	private nlinkOf = new Map<string, number>();
+	private outside = new OutsideNames(() => this.onReady());
 	/** Symbolic links by the vault path they point at. */
 	private linksTo = new Map<string, string[]>();
 	/** Where each symbolic link points. */
@@ -448,8 +460,11 @@ export class DiskLinks {
 		const base = basePath(this.app);
 		const byInode = new Map<string, string[]>();
 		const inodeOf = new Map<string, string>();
+		const nlinkOf = new Map<string, number>();
 		const linksTo = new Map<string, string[]>();
 		const targetOf = new Map<string, string>();
+		const unindexed: string[] = [];
+		const gone: string[] = [];
 		if (base !== null) {
 			// The vault's files, and the symbolic links in its folders that
 			// it does not list: one made while Obsidian runs is not seen.
@@ -460,6 +475,8 @@ export class DiskLinks {
 					for (const entry of await readdir(join(base, folder.path), { withFileTypes: true })) {
 						const path = folder.isRoot() ? entry.name : `${folder.path}/${entry.name}`;
 						if (entry.isSymbolicLink() && !known.has(path)) files.push({ path });
+						// A file the vault never indexed: its watcher did not hear it arrive.
+						else if (entry.isFile() && !known.has(path) && !entry.name.startsWith(".")) unindexed.push(path);
 					}
 				} catch {
 					// A folder gone meanwhile has nothing to add.
@@ -484,9 +501,12 @@ export class DiskLinks {
 							if (stats.nlink < 2) return;
 							const key = `${stats.dev}:${stats.ino}`;
 							inodeOf.set(file.path, key);
+							nlinkOf.set(file.path, stats.nlink);
 							byInode.set(key, [...(byInode.get(key) ?? []), file.path]);
-						} catch {
-							// Gone between the listing and the look: nothing to say about it.
+						} catch (err) {
+							// Gone between the listing and the look — or long gone, where
+							// the watcher did not hear it go.
+							if ((err as NodeJS.ErrnoException).code === "ENOENT" && known.has(file.path)) gone.push(file.path);
 						}
 					}),
 				);
@@ -498,14 +518,29 @@ export class DiskLinks {
 		// shown, and a redraw of every row each time cut into what the rows
 		// were doing — a navigation-lock move lost its external pane's step.
 		const seen = (m: Map<string, unknown>): string => JSON.stringify([...m].sort());
-		const news = seen(inodeOf) !== seen(this.inodeOf) || seen(targetOf) !== seen(this.targetOf);
+		const news = seen(inodeOf) !== seen(this.inodeOf) || seen(targetOf) !== seen(this.targetOf) || seen(nlinkOf) !== seen(this.nlinkOf);
 		this.byInode = byInode;
 		this.inodeOf = inodeOf;
+		this.nlinkOf = nlinkOf;
 		this.linksTo = linksTo;
 		this.targetOf = targetOf;
 		this.state = "ready";
 		if (news) this.onReady();
 		for (const settle of this.waiting.splice(0)) settle();
+		this.recheck([...unindexed, ...gone]);
+	}
+
+	/** When each path was last handed back to Obsidian, so one it will not index is not asked about on every scan. */
+	private rechecked = new Map<string, number>();
+
+	/** Paths the disk and the vault disagree about, put to Obsidian to settle (see recheckPath). */
+	private recheck(paths: string[]): void {
+		const now = Date.now();
+		for (const path of paths) {
+			if (now - (this.rechecked.get(path) ?? 0) < 60_000) continue;
+			this.rechecked.set(path, now);
+			void recheckPath(this.app, path);
+		}
 	}
 
 	/** A scan overtaken by a change: someone still waiting gets a fresh one. */
@@ -518,6 +553,27 @@ export class DiskLinks {
 		this.ensure();
 		const key = this.inodeOf.get(path);
 		return key ? (this.byInode.get(key) ?? []).filter((other) => other !== path) : [];
+	}
+
+	/** Whether a file has more than one name on disk, wherever the others are. */
+	isHardLinked(path: string): boolean {
+		this.ensure();
+		return (this.nlinkOf.get(path) ?? 0) > 1;
+	}
+
+	/**
+	 * A file's names outside the vault: the absolute paths found, then an
+	 * empty one for each name the disk counts that no search turned up.
+	 */
+	namesOutside(path: string): string[] {
+		this.ensure();
+		const nlink = this.nlinkOf.get(path) ?? 0;
+		const key = this.inodeOf.get(path);
+		const missing = nlink - (key ? (this.byInode.get(key) ?? []).length : 1);
+		if (missing <= 0) return [];
+		const base = basePath(this.app);
+		const found = base === null ? [] : this.outside.of(join(base, path), `${key}:${nlink}`, base).slice(0, missing);
+		return [...found, ...Array<string>(missing - found.length).fill("")];
 	}
 
 	/** Symbolic links pointing at a path. */
@@ -552,7 +608,8 @@ export function otherPaths(app: App, disk: DiskLinks, file: TFile): OtherPath[] 
 	}
 	const folder = parentOf(file.path);
 	for (const alias of nativeAliases(app, file)) add(folder ? `${folder}/${alias}` : alias, "name");
-	return [...found].map(([path, kind]) => ({ path, kind }));
+	const outside = disk.namesOutside(file.path).map((path): OtherPath => ({ path, kind: "hard", outside: true }));
+	return [...[...found].map(([path, kind]) => ({ path, kind })), ...outside];
 }
 
 /**
@@ -618,6 +675,26 @@ export async function reconcileLists(app: App, disk: DiskLinks): Promise<void> {
 		// has seen before, its cache kept the lists it had (seen on CI).
 		const refresh = [file.path, ...hard.filter((path) => path !== file.path && path.endsWith(".md"))];
 		await refreshNames(app, refresh.map((path) => app.vault.getAbstractFileByPath(path)).filter((there): there is TFile => there instanceof TFile));
+	}
+}
+
+/**
+ * Asks Obsidian to look at a path again — index a file that appeared, drop
+ * one that went. Its own file watching does this as the disk changes, except
+ * where it hears nothing: on FreeBSD a link made in a terminal, or by Lure
+ * itself, was never indexed, and a removed one never went. Internal API,
+ * the call Obsidian's watcher makes; where it is missing, nothing happens.
+ */
+export async function recheckPath(app: App, path: string): Promise<void> {
+	const adapter = app.vault.adapter as unknown as {
+		reconcileFile?: (realPath: string, path: string) => Promise<void>;
+		getRealPath?: (path: string) => string;
+	};
+	if (typeof adapter.reconcileFile !== "function" || typeof adapter.getRealPath !== "function") return;
+	try {
+		await adapter.reconcileFile(adapter.getRealPath(path), path);
+	} catch {
+		// Gone again, or not a file Obsidian lists: nothing to index.
 	}
 }
 

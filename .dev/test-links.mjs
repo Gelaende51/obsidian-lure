@@ -306,6 +306,37 @@ test("with extensions shown the other-paths button ends the row, not the vault",
 	}
 });
 
+// Asked for: a note hard-linked from outside the vault (an issues file kept in
+// a repository and linked in) showed nothing. The disk says it has another
+// name; where that is, the system's own index is asked — and where it has no
+// answer, the row still says there is one, outside.
+test("a hard link outside the vault is counted and listed as ~/… or /…", async () => {
+	const r = await page.evaluate(`
+		const fs = require("fs"), path = require("path"), os = require("os");
+		const note = app.vault.getAbstractFileByPath(${JSON.stringify(NOTE)});
+		const own = path.join(app.vault.adapter.basePath, note.path);
+		const outside = path.join(os.homedir(), "lure-outside-" + Date.now() + ".md");
+		fs.linkSync(own, outside);
+		try {
+			await app.workspace.getLeaf(false).openFile(app.vault.getAbstractFileByPath(${JSON.stringify(`${DIR}/Sibling.md`)}));
+			${PAUSE(400)}
+			await app.workspace.getLeaf(false).openFile(note);
+			${PAUSE(2500)}
+			const root = app.workspace.getLeaf(false).view.containerEl;
+			const button = root.querySelector(".lure-other-paths, .lure-badge-other-paths");
+			button?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+			${PAUSE(300)}
+			const rows = [...document.querySelectorAll(".lure-other-paths-menu .suggestion-item .lure-suggest-label")].map((e) => e.textContent);
+			document.querySelector(".lure-other-paths-menu")?.remove();
+			return JSON.stringify({ count: button?.querySelector(".lure-other-paths-count")?.textContent ?? null, rows, home: os.homedir() });
+		} finally {
+			fs.unlinkSync(outside);
+		}
+	`).then(JSON.parse);
+	expect("the button counts the name outside", Number(r.count), (v) => v >= 1);
+	expect("a row for it, a path from home or the root", r.rows, (v) => v.filter((row) => /^(~\/|\/)/.test(row ?? "")).length === 1);
+});
+
 test("renaming a hard link rewrites its entry in paths", async () => {
 	await renaming();
 	await typeOverName("Hard");
