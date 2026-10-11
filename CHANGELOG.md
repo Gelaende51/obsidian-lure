@@ -6,6 +6,10 @@ Every release of Lure, newest first. What has landed since the last release is u
 
 ## Unreleased
 
+### Changed
+
+- **`\` takes a rung as `/` does, on every system**, and a path can mix the two. Outside the vault a path is shown and kept in the system's own spelling whichever separators it was typed or pasted with, so one file no longer appears in two spellings in the row and the other-paths list. On Linux and macOS a file whose name holds a backslash is still listed and opened from the dropdown; it cannot be typed.
+
 ### Fixed
 
 - **A file the viewer cannot read says why in words**, as the other file operations do — and in a Flatpak or Snap, that the sandbox may keep it out of reach — instead of Node's error code.

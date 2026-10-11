@@ -37,7 +37,7 @@ import { shortOutside } from "./outsideNames";
 import { LinkKind, OtherPath, aliasPathsOf, convertLink, forgetOtherPath, makeOtherPath, otherPaths, recordCopy } from "./altPaths";
 import { createsFiles, expandBraces, hasGlobChars, matchPaths } from "./globPattern";
 import { FolderChildSuggest, LINK_ENTER, LINK_ICONS, describeFile, typeIcon, MODIFIED_ENTER, guardFieldKeys, pageLabel, PathSuggestion } from "./folderChildSuggest";
-import { ExternalChild, PATH_SEP, externalFileFacts, externalJoin, externalParent, externalSegments, isExternalFile, isExternalFolder, listExternalChildren } from "./externalFs";
+import { ExternalChild, PATH_SEP, canonicalPath, externalFileFacts, externalJoin, externalParent, externalSegments, isExternalFile, isExternalFolder, listExternalChildren } from "./externalFs";
 import {
 	CURRENT_VAULT_ICON,
 	LOCATION_ICONS,
@@ -918,7 +918,14 @@ export class PathBreadcrumb {
 	 * filesystem mode: chips come from this path, the dropdown reads with
 	 * `fs`, and the warning frame is up.
 	 */
-	private externalPath: string | null = null;
+	private externalPathValue: string | null = null;
+	/** Always in this system's spelling, whichever separators it was given in. */
+	private get externalPath(): string | null {
+		return this.externalPathValue;
+	}
+	private set externalPath(path: string | null) {
+		this.externalPathValue = path === null ? null : canonicalPath(path);
+	}
 	/**
 	 * The location the current external browse started from, kept so the
 	 * row can be drawn relative to it. Without this every chip trail
@@ -8240,7 +8247,7 @@ export class PathBreadcrumb {
 		// descends: typing a path ahead of itself is how a path gets made.
 		// Outside the vault the rules are the filesystem's, not Obsidian's.
 		if (this.externalPath === null) {
-			const name = typed.split("/").pop() ?? typed;
+			const name = typed.split(/[\\/]/).pop() ?? typed;
 			if (ILLEGAL_CHARS_RE.test(name)) return;
 		}
 
@@ -8948,7 +8955,9 @@ export class PathBreadcrumb {
 				evt.preventDefault();
 				if (evt.shiftKey) this.pressTabBack(inputEl);
 				else this.pressTab(inputEl);
-			} else if (evt.key === "/") {
+			} else if (evt.key === "/" || evt.key === "\\") {
+				// Either separator, on every system: a path is typed as it
+				// was learnt, and both are read as one.
 				// Except where the slash is part of a scheme: "https:/" +
 				// "/" is a URL being typed, not a folder called "https:".
 				if (slashBelongsToScheme(inputEl.value)) return;

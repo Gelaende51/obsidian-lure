@@ -15,6 +15,7 @@ import {
 	setTooltip,
 } from "obsidian";
 import { errorText } from "./fsErrors";
+import { canonicalPath } from "./externalFs";
 import { shell } from "electron";
 import { readFile, writeFile } from "fs/promises";
 import { parse, sep } from "path";
@@ -279,7 +280,7 @@ export class ExternalFileView extends ItemView {
 
 	async setState(state: unknown, result: ViewStateResult): Promise<void> {
 		const incoming = state as ExternalViewState;
-		const next = incoming?.path;
+		const next = typeof incoming?.path === "string" ? canonicalPath(incoming.path) : undefined;
 		if (typeof next === "string") {
 			// A different file is a different decision: the unlock never
 			// carries over. Same path means this is the render-mode toggle

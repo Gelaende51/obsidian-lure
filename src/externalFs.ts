@@ -1,5 +1,5 @@
 import { Dirent, lstatSync, readdirSync, statSync } from "fs";
-import { join, parse, sep } from "path";
+import { join, normalize, parse, sep } from "path";
 
 /**
  * A directory entry outside the vault. Deliberately the minimum the
@@ -120,3 +120,21 @@ export function externalJoin(base: string, ...parts: string[]): string {
 }
 
 export const PATH_SEP = sep;
+
+/**
+ * A path outside the vault in this system's own spelling: either separator
+ * taken, mixed or doubled, and written back with the platform's one.
+ *
+ * Typed or pasted paths arrive as people write them — `C:/Users/…` on
+ * Windows, `docs\notes` copied from a Windows machine onto Linux — and kept
+ * as they came, the row and the other-paths list would show one file in two
+ * spellings and compare them as different. A backslash is a legal character
+ * in a Linux or macOS file name; such a name is still listed and opened
+ * from the dropdown, it just cannot be typed.
+ */
+export function canonicalPath(path: string): string {
+	const unified = sep === "/" ? path.replace(/\\/g, "/") : path.replace(/\//g, "\\");
+	const normal = normalize(unified);
+	// normalize keeps a trailing separator; the row never wants one, the root aside.
+	return normal.length > 1 && /[\\/]$/.test(normal) && parse(normal).root !== normal ? normal.slice(0, -1) : normal;
+}

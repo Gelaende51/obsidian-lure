@@ -223,6 +223,21 @@ test("a slash completes a rung that is merely not there yet, and keeps it red", 
 	await pressKey(page, "Escape");
 });
 
+test("a backslash takes a rung as the slash does, on every system", async () => {
+	// A path is typed as it was learnt; Windows' separator is read as one
+	// everywhere, as Obsidian's own paths read it.
+	await type("BackslashRung");
+	await pressKey(page, "\\");
+	await page.evaluate(PAUSE(400) + "return true;");
+	const after = JSON.parse(await page.evaluate(fieldState));
+	expect("the field is ready for the next name", after.value, "");
+	const chips = JSON.parse(await page.evaluate(
+		`return JSON.stringify([...document.querySelectorAll(".view-header-title-container .lure-browse-chip")].map((c) => c.textContent));`,
+	));
+	expect("and the rung is on the row", chips, (v) => v.includes("BackslashRung"));
+	await pressKey(page, "Escape");
+});
+
 test("a slash in front of an empty field opens a path on the machine", async () => {
 	// The row's own slash means "take this rung and descend", which counts
 	// what was typed from the folder the row stands in. A path from the

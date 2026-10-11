@@ -111,6 +111,8 @@ declare module "fs/promises" {
 }
 
 declare module "path" {
+	/** Collapses doubled separators and `.`/`..` segments, in the platform's own separator. */
+	export function normalize(path: string): string;
 	export interface ParsedPath {
 		root: string;
 		dir: string;

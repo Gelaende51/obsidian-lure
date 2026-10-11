@@ -1370,6 +1370,19 @@ test("invariant: overwrite protection ignores whether a name is listed", async (
 	expect("source untouched", existsSync(join(BED, "plain.txt")), true);
 });
 
+test("a path out here given in mixed separators is kept in this system's spelling", async () => {
+	const mixed = join(BED, "sub").replace(/[\\/]/g, (c, at) => (at % 2 ? "/" : "\\")) + "//";
+	const r = await page.evaluate(`
+		${open(join(BED, "note.md"))}
+		${breadcrumb}
+		bc.externalPath = ${JSON.stringify(mixed)};
+		const out = bc.externalPath;
+		bc.cancelNavigation();
+		return out;
+	`);
+	expect("one spelling, the platform's, no trailing separator", r, join(BED, "sub"));
+});
+
 test("sandbox: a file outside what the sandbox reaches says the sandbox may be why", async () => {
 	if (!process.env.LURE_EXPECT_SANDBOX) skipCase("Obsidian is not in a restricted sandbox here");
 	const r = await page.evaluate(`
