@@ -6,6 +6,10 @@ Every release of Lure, newest first. What has landed since the last release is u
 
 ## Unreleased
 
+### Changed
+
+- **An empty file's 0 sits at the bottom right of its icon**, in the dropdown and in the badge, and at the top right where a link's mark holds the bottom.
+
 ### Fixed
 
 - **Tab onto an alias path no longer lists it twice.** Going round the names, each alias path or unlisted symbolic link it put on show grew a second row offering to make that file, and the field turned red, though Enter opens the note it stands for.

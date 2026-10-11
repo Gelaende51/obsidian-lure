@@ -366,7 +366,7 @@ test("a list opened by a click shows no red bar until something is typed or pres
 	expect("a key's highlight does", await page.evaluate(`return document.querySelectorAll(".suggestion-item.lure-suggest-enter").length;`), (v) => v <= 1);
 });
 
-test("an empty file's 0 sits at the bottom left of its icon", async () => {
+test("an empty file's 0 sits at the bottom right of its icon", async () => {
 	await inOwnFolder();
 	await type("Cab");
 	const where = await page.evaluate(`
@@ -375,9 +375,9 @@ test("an empty file's 0 sits at the bottom left of its icon", async () => {
 		const zero = el?.querySelector(".lure-suggest-empty");
 		if (!icon || !zero) return null;
 		const a = icon.getBoundingClientRect(), b = zero.getBoundingClientRect();
-		return JSON.stringify({ left: b.left < a.left + a.width / 2, bottom: b.bottom > a.top + a.height / 2 });
+		return JSON.stringify({ right: b.right > a.left + a.width / 2, bottom: b.bottom > a.top + a.height / 2 });
 	`);
-	expect("left and bottom of the icon", where && JSON.parse(where), { left: true, bottom: true });
+	expect("right and bottom of the icon", where && JSON.parse(where), { right: true, bottom: true });
 	await shoot("empty-zero");
 });
 

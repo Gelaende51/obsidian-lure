@@ -1680,13 +1680,14 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 	color: var(--text-normal);
 }
 
-/* An empty file: a 0 at the bottom left of its icon. */
+/* An empty file: a 0 at the bottom right of its icon — at the top right
+   where a link's mark already holds the bottom. */
 .suggestion-item .lure-suggest-has-kind .lure-suggest-empty::after {
 	content: "0";
 }
 .suggestion-item .lure-suggest-has-kind .lure-suggest-empty {
 	position: absolute;
-	left: -4px;
+	right: -4px;
 	bottom: -5px;
 	font-size: 8px;
 	line-height: 9px;
@@ -1783,7 +1784,7 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 }
 .lure-filename-badge .lure-suggest-empty {
 	position: absolute;
-	left: -4px;
+	right: -4px;
 	bottom: -5px;
 	font-size: 8px;
 	line-height: 9px;
@@ -1793,6 +1794,10 @@ body.lure-no-native-flash .nav-folder-title.is-flashing {
 }
 .lure-filename-badge .lure-suggest-empty::after {
 	content: "0";
+}
+.lure-suggest-has-kind .lure-suggest-kind ~ .lure-suggest-empty {
+	top: -5px;
+	bottom: auto;
 }
 
 /* A note with other paths: the badge takes their colour, faintly behind
