@@ -148,4 +148,10 @@ declare module "child_process" {
 		options: { timeout?: number; maxBuffer?: number; windowsHide?: boolean },
 		callback: (error: Error | null, stdout: string, stderr: string) => void,
 	): unknown;
+	/** The same, waiting for it: what it printed, or a throw when it fails or times out. */
+	export function execFileSync(
+		file: string,
+		args: readonly string[],
+		options: { encoding: "utf8"; timeout?: number; windowsHide?: boolean; stdio?: readonly string[] },
+	): string;
 }

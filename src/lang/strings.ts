@@ -91,6 +91,7 @@ export const EN = {
 	collisionPathTaken: '"{path}" is taken.',
 	noticeRenameFailed: "Could not rename/move file: {error}",
 	noticeCopyFailed: "Could not copy file: {error}",
+	noticeDeleteFailed: "Could not delete file: {error}",
 	noticeCopied: 'Copied to "{path}"',
 	noticeIsFolder: '"{path}" is a folder.',
 	noticeNoSelection: "No file selected.",
@@ -237,6 +238,7 @@ export const EN = {
 	errorInUse: "{path} is in use by another program.",
 	errorNameTooLong: "The name is too long for this drive.",
 	errorExists: "{path} already exists.",
+	errorNoTrash: "There is no trash to move {path} to here, so nothing was deleted.",
 	errorSandbox: "Obsidian runs in a {sandbox} sandbox, which only reaches the folders it was given.",
 } as const;
 

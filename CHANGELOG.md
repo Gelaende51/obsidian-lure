@@ -21,6 +21,9 @@ Every release of Lure, newest first. What has landed since the last release is u
 
 - **Failed file operations say what went wrong in words** — not there, no permission, a read-only or full drive, in use, the name too long, already there — with the path, instead of Node's error codes. In a Flatpak or Snap, where a folder outside the sandbox looks missing, the message says that the sandbox may be the reason.
 - **Where Obsidian does not hear a file appear or go** (FreeBSD), Lure asks it to look again: links Lure makes, and ones made in a terminal, are indexed and listed.
+- **Deleting outside the vault where there is no trash says so.** A container, a desktop without one, or a drive the system keeps no trash on refuses the move, and the file stays. The notice now says that, instead of "Could not rename/move file: Failed to move item to trash".
+- **FreeBSD's mounted drives are in the place list**, read from `mount -p`, as Linux's are from `/proc/mounts`.
+- **An HTML page opened by a path without a drive letter on Windows** (`\Users\…`, or `/home/…` under Wine) gets its stylesheets and images again; they were taken for files outside the page's folder.
 - **Tab onto an alias path no longer lists it twice.** Going round the names, each alias path or unlisted symbolic link it put on show grew a second row offering to make that file, and the field turned red, though Enter opens the note it stands for.
 
 ## 1.6.0 — 2026-10-11[^1.6.0]

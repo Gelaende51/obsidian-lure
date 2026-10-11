@@ -136,7 +136,7 @@ export function buildExternalMenu(
 			.onClick(() => showInFolder(absolutePath)),
 	);
 
-	const write = (run: () => Promise<void>) => (): void => {
+	const write = (run: () => Promise<void>, failed: "noticeRenameFailed" | "noticeDeleteFailed" = "noticeRenameFailed") => (): void => {
 		// The padlock is the whole gate, and it is checked here rather than
 		// by hiding the entries: an entry that vanishes teaches nothing,
 		// while one that says why points at the button that fixes it.
@@ -144,7 +144,7 @@ export function buildExternalMenu(
 			new Notice(t("noticeExternalWriteLocked"));
 			return;
 		}
-		void run().then(onChanged, (err: Error) => new Notice(t("noticeRenameFailed", { error: errorText(err) })));
+		void run().then(onChanged, (err: Error) => new Notice(t(failed, { error: errorText(err) })));
 	};
 
 	if (isFolder) {
@@ -184,7 +184,7 @@ export function buildExternalMenu(
 			.setTitle(obsidianLabel(LABELS.deleteAction, "Delete"))
 			.setIcon("lucide-trash-2")
 			.setWarning(true)
-			.onClick(write(() => trashEntry(plugin, absolutePath, isFolder))),
+			.onClick(write(() => trashEntry(plugin, absolutePath, isFolder), "noticeDeleteFailed")),
 	);
 
 }

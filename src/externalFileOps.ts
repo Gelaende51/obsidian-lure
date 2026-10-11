@@ -158,6 +158,13 @@ export async function renameExternalEntry(from: string, to: string): Promise<voi
  * the caller reports that rather than falling back to destroying the file.
  */
 export async function trashExternalEntry(path: string): Promise<void> {
-	await shell.trashItem(path);
+	try {
+		await shell.trashItem(path);
+	} catch (err) {
+		// Electron says only "Failed to move item to trash". The reason that
+		// matters is that the file is untouched, so it is given a code the
+		// notices can say that with.
+		throw Object.assign(new Error((err as Error)?.message ?? String(err)), { code: "ENOTRASH", path });
+	}
 	await externalChanges.removed(path);
 }

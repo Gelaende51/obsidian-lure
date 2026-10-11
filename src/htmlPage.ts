@@ -110,7 +110,10 @@ function extensionOf(path: string): string {
  * whatever the frame silently declined to do.
  */
 export async function renderablePage(html: string, filePath: string): Promise<string> {
-	const baseDir = dirname(filePath);
+	// Resolved, so it carries the drive its references will: on Windows a path
+	// from the root with no drive letter (`\\Users\\…`, or `/tmp/…` under
+	// Wine) would otherwise never contain what resolve() makes of them.
+	const baseDir = resolve(dirname(filePath));
 	const doc = new DOMParser().parseFromString(html, "text/html");
 
 	// Built with Obsidian's own element helper rather than `createElement` or

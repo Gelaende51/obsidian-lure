@@ -12,6 +12,7 @@ const REASONS = {
 	EBUSY: "errorInUse",
 	ENAMETOOLONG: "errorNameTooLong",
 	EEXIST: "errorExists",
+	ENOTRASH: "errorNoTrash",
 } as const;
 
 /** The codes a sandbox gives for a folder it was not let into. */

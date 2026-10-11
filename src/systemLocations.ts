@@ -1,3 +1,4 @@
+import { execFileSync } from "child_process";
 import { existsSync, readFileSync, readdirSync } from "fs";
 import { homedir, platform } from "os";
 import { join, parse } from "path";
@@ -92,6 +93,8 @@ const PSEUDO_FILESYSTEMS = new Set([
 	"devpts", "devtmpfs", "efivarfs", "fusectl", "hugetlbfs", "mqueue", "nsfs",
 	"proc", "pstore", "ramfs", "rpc_pipefs", "securityfs", "selinuxfs", "sysfs",
 	"tmpfs", "tracefs",
+	// FreeBSD's own.
+	"devfs", "fdescfs", "procfs", "linprocfs", "linsysfs", "nullfs",
 ]);
 
 const NETWORK_FILESYSTEMS = new Set([
@@ -99,7 +102,7 @@ const NETWORK_FILESYSTEMS = new Set([
 	"fuse.sshfs", "fuse.davfs", "fuse.gvfsd-fuse", "fuse.rclone", "9p",
 ]);
 
-const OPTICAL_FILESYSTEMS = new Set(["iso9660", "udf"]);
+const OPTICAL_FILESYSTEMS = new Set(["iso9660", "udf", "cd9660"]);
 
 /**
  * Where Obsidian keeps obsidian.json, which is the only record of which
@@ -230,6 +233,43 @@ function listLinuxMounts(): SystemLocation[] {
 	}
 
 	return mounts;
+}
+
+/** FreeBSD's mounts and when they were read: `mount` is a program there, not a file to read. */
+let bsdMounts: { at: number; list: SystemLocation[] } | null = null;
+
+/**
+ * FreeBSD has no /proc/mounts; `mount -p` prints the same table in fstab's
+ * layout. Asked at most every half minute, since the dropdown resolves its
+ * places each time it opens. A missing or failing `mount` leaves only the
+ * home folder and the root, as before.
+ */
+function listBsdMounts(): SystemLocation[] {
+	if (bsdMounts && Date.now() - bsdMounts.at < 30_000) return bsdMounts.list;
+	let contents = "";
+	try {
+		contents = execFileSync("mount", ["-p"], { encoding: "utf8", timeout: 2000, stdio: ["ignore", "pipe", "ignore"] });
+	} catch {
+		// Nothing to add.
+	}
+	const seen = new Set<string>();
+	const list: SystemLocation[] = [];
+	for (const line of contents.split("\n")) {
+		const [device, rawMount, fsType] = line.trim().split(/\s+/);
+		if (!device || !rawMount || !fsType || PSEUDO_FILESYSTEMS.has(fsType)) continue;
+		const mountPath = unescapeMountPath(rawMount);
+		if (mountPath === "/" || seen.has(mountPath)) continue;
+		seen.add(mountPath);
+		list.push({
+			label: parse(mountPath).base || mountPath,
+			path: mountPath,
+			kind: "drive",
+			device: NETWORK_FILESYSTEMS.has(fsType) ? "network" : OPTICAL_FILESYSTEMS.has(fsType) ? "optical" : /^\/dev\/da\d/.test(device) ? "usb" : "hdd",
+			isCurrentVault: false,
+		});
+	}
+	bsdMounts = { at: Date.now(), list };
+	return list;
 }
 
 function listMacVolumes(): SystemLocation[] {
@@ -409,7 +449,9 @@ export function listSystemLocations(currentVaultPath: string): SystemLocation[] 
 		? listWindowsDrives()
 		: platform() === "darwin"
 			? listMacVolumes()
-			: listLinuxMounts();
+			: platform() === "freebsd"
+				? listBsdMounts()
+				: listLinuxMounts();
 
 	return [
 		...listVaults(currentVaultPath),

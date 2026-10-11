@@ -152,9 +152,12 @@ test("a web URL opens in the Web viewer when it is on", async () => {
 		return true;
 	`);
 	const s = await typeAndEnter("https://obsidian.md");
+	// The tab is there at once; its address only once the page starts loading,
+	// which on a slow machine is well after a fixed pause.
 	const tabs = JSON.parse(await page.evaluate(`
-		${PAUSE(600)}
-		return JSON.stringify(app.workspace.getLeavesOfType("webviewer").map((l) => l.getViewState().state?.url ?? null));
+		const urls = () => app.workspace.getLeavesOfType("webviewer").map((l) => l.getViewState().state?.url ?? null);
+		for (let i = 0; i < 40 && !urls().some(Boolean); i++) ${PAUSE(250)}
+		return JSON.stringify(urls());
 	`));
 	// A tab of this application, which is what typing an address into an
 	// address bar means. `window.open` — the old answer — left Obsidian

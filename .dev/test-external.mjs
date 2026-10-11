@@ -314,7 +314,9 @@ const measurePanes = (direction, times) => `
 		active: true,
 		state: { path: ${JSON.stringify(join(BED, "big.log"))} },
 	});
-	${PAUSE(900)}
+	// 2 MB to read and lay out: a slow machine needs more than a fixed pause.
+	for (let i = 0; i < 50 && !(leaf.view.containerEl.querySelector(".lure-external-editor")?.scrollHeight > 0); i++) ${PAUSE(200)}
+	${PAUSE(300)}
 
 	const view = leaf.view.containerEl;
 	const v = view.querySelector(".lure-external-view");
@@ -880,15 +882,17 @@ test("rename: an extensionless name keeps the file's own extension", async () =>
 });
 
 test("dropdown: a truncated listing says how much is missing", async () => {
+	// A folder of its own rather than /usr/bin or System32: a slim container
+	// image or a Flatpak runtime has a few hundred names there, under the cap.
+	const MANY = join(BED, "many");
+	mkdirSync(MANY, { recursive: true });
+	for (let i = 0; i < 1100; i++) writeFileSync(join(MANY, `f${String(i).padStart(4, "0")}.txt`), "");
 	const r = await page.evaluate(`
 		${open(join(BED, "note.md"))}
 		${breadcrumb}
-		// Same reason as the tinting test: /usr/bin is mostly extension-less
-		// binaries, which Obsidian's setting filters out. With it off the
-		// listing is a dozen directories and never overflows.
 		const was = app.vault.getConfig("showUnsupportedFiles");
 		app.vault.setConfig("showUnsupportedFiles", true);
-		bc.externalPath = ${JSON.stringify(process.platform === "win32" ? "C:\\Windows\\System32" : "/usr/bin")};
+		bc.externalPath = ${JSON.stringify(MANY)};
 		bc.enterTypingMode("");
 		${PAUSE(600)}
 		const items = [...document.querySelectorAll(".suggestion-item")];
@@ -904,6 +908,8 @@ test("dropdown: a truncated listing says how much is missing", async () => {
 		app.vault.setConfig("showUnsupportedFiles", was);
 		return out;
 	`);
+	// Gone again at once: the other listings of BED expect a short one.
+	rmSync(MANY, { recursive: true, force: true });
 	expect("fills the popover exactly", r.count, r.limit);
 	expect("last row is the overflow row", r.lastIsMore, true);
 	expect("states a count", r.lastText, (v) => /\d/.test(v ?? ""));
@@ -1003,6 +1009,14 @@ test("viewer menu: a file with no reading to edit can still be deleted", async (
 	expect("it asked rather than refusing", r.asked, (v) => typeof v === "string" && v.length > 0);
 	// A runner's session has no shell to hand the Recycle Bin request to.
 	if (process.platform === "win32" && (r.after ?? []).some((n) => /FileOperation/.test(n))) skipCase("this Windows session has no Recycle Bin to move to");
+	// A container or a desktop-less system has no trash at all; then the file
+	// must stay, and the notice must say why rather than "Could not rename".
+	const noTrash = T("errorNoTrash").split("{path}")[0];
+	if ((r.after ?? []).some((n) => n.includes(noTrash))) {
+		expect("refused, file kept", existsSync(pic), true);
+		rmSync(bed, { recursive: true, force: true });
+		skipCase("this system has no trash to move to");
+	}
 	// The Recycle Bin can take its time over a first item.
 	for (let i = 0; i < 25 && existsSync(pic); i++) await new Promise((done) => setTimeout(done, 200));
 	expect("and the file is gone", existsSync(pic), false);
@@ -1342,6 +1356,8 @@ test("invariant: an unreadable file fails visibly and is never writable", async 
 	// Windows keeps no read bit for chmod to clear: 0o000 there only sets
 	// read-only, and the file stays readable.
 	if (process.platform === "win32") skipCase("chmod cannot make a file unreadable on Windows");
+	// Permissions do not bind root, which is who containers and CI VMs run as.
+	if (process.getuid?.() === 0) skipCase("running as root, which reads any file");
 	const target = join(BED, "noread.txt");
 	writeFileSync(target, "secret\n");
 	chmodSync(target, 0o000);
@@ -1461,7 +1477,7 @@ test("locations: Tab sets in the place being pointed at", async () => {
 		const places = bc.locationEntries().map((l) => ({ label: l.label, path: l.path }));
 		const wanted = places.find((pl) => !bc.currentAbsolutePath().startsWith(pl.path));
 		const row = rows.find((e) => e.textContent === wanted?.label);
-		if (!row) return { listed: false };
+		if (!row) return { listed: false, none: !wanted };
 		// Point at it the way arrowing to it would, then press the key.
 		row.dispatchEvent(new MouseEvent("mousemove", { bubbles: true }));
 		${PAUSE(250)}
@@ -1479,6 +1495,9 @@ test("locations: Tab sets in the place being pointed at", async () => {
 		bc.cancelNavigation();
 		return out;
 	`);
+	// A VM with one disk, the vault in the home folder: every place listed
+	// holds the vault, and there is nowhere else to point at.
+	if (r.none) skipCase("every place on this machine contains the vault");
 	expect("a place other than this vault is listed", r.listed, true);
 	expect("the press sets it in", r.external, r.wanted.path);
 	expect("the row is drawn from it", r.base, r.wanted.path);
@@ -1611,7 +1630,7 @@ test("locations: pointing at a place shows that place's own path, not this one's
 		// "that place's path" cannot agree by accident.
 		const wanted = places.find((pl) => !bc.currentAbsolutePath().startsWith(pl.path));
 		const row = rows.find((e) => e.textContent === wanted?.label);
-		if (!row) return { listed: false, places };
+		if (!row) return { listed: false, none: !wanted, places };
 		row.dispatchEvent(new MouseEvent("mousemove", { bubbles: true }));
 		${PAUSE(300)}
 		const out = {
@@ -1624,6 +1643,9 @@ test("locations: pointing at a place shows that place's own path, not this one's
 		bc.cancelNavigation();
 		return out;
 	`);
+	// A VM with one disk, the vault in the home folder: every place listed
+	// holds the vault, and there is nowhere else to point at.
+	if (r.none) skipCase("every place on this machine contains the vault");
 	expect("a place other than this vault is listed", r.listed, true);
 	expect("the field shows that place's own path", r.field, (v) =>
 		typeof v === "string" && v.startsWith(r.wanted.path));
