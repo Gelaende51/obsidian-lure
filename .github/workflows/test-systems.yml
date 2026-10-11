@@ -785,7 +785,9 @@ jobs:
           # Sign in now, beta or not, so a wrong password or a 2FA prompt shows
           # before a beta is out. Only the outcome is printed.
           node -e '
-            fetch("https://api.obsidian.md/user/signin", { method: "POST", headers: { "content-type": "application/json" },
+            fetch("https://api.obsidian.md/user/signin", { method: "POST",
+              // As obsidian-launcher asks (the app's own origin), so the answer is the one it will get.
+              headers: { "content-type": "application/json", origin: "app://obsidian.md", "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36" },
               body: JSON.stringify({ email: process.env.OBSIDIAN_EMAIL, password: process.env.OBSIDIAN_PASSWORD, mfa: "" }) })
               .then((r) => r.json()).then((j) => {
                 if (j.token) { console.log("signed in to the Obsidian account"); return; }
