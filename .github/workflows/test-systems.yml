@@ -270,8 +270,10 @@ jobs:
           SUITES: ${{ inputs.suites }}
         run: .dev/ci-suites.sh
 
-  # The Windows installer, installed silently into a Wine prefix. Paths reach
-  # it as Wine spells them; suites that compare paths with the host's will say so.
+  # The Windows build, unpacked from its installer into a Wine prefix. Paths
+  # reach it as Wine spells them. Not working yet (2026-10-11): Obsidian starts
+  # and says DevTools is listening, but the port never answers and no window
+  # opens — the renderer seems to stop before the vault loads.
   wine:
     if: inputs.target == 'wine'
     runs-on: ubuntu-latest
