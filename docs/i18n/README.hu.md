@@ -81,7 +81,7 @@ Egy jegyzet *kihelyezése* a széfből az egyetlen írás, amelynek olyan ára v
 
 **Kézzel:** töltsd le a `main.js`, `manifest.json` és `styles.css` fájlt a [legutóbbi kiadásból](https://github.com/Gelaende51/obsidian-lure/releases) a `<vault>/.obsidian/plugins/lure/` mappába, majd kapcsold be a **Beállítások → Közösségi bővítmények** alatt.
 
-**BRAT:** add hozzá a `Gelaende51/obsidian-lure` címet béta bővítményként.
+**BRAT:** add hozzá a `Gelaende51/obsidian-lure` címet béta bővítményként. A BRAT *automatikus buildeket* (`1.6.2-deps.1` és hasonlókat) is kínál: amikor a Lure-ba csomagolt egyik függvénykönyvtár frissül, a frissítést a tesztek sikeres lefutása után buildelik és közzéteszik, még mielőtt bárki átnézte volna. Ha csak az átnézett kiadásoknál szeretnél maradni, telepíts a közösségi könyvtárból, vagy rögzíts egy verziót a BRAT-ban.
 
 **Forrásból:** `npm install && npm run build` — lásd [fejlesztés](../development.md).
 

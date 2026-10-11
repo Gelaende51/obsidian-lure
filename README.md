@@ -76,7 +76,7 @@ Moving a note *out* of your vault is the one write that costs something nothing 
 
 **Manual:** download `main.js`, `manifest.json` and `styles.css` from the [latest release](https://github.com/Gelaende51/obsidian-lure/releases) into `<vault>/.obsidian/plugins/lure/`, then enable it under **Settings → Community plugins**.
 
-**BRAT:** add `Gelaende51/obsidian-lure` as a beta plugin.
+**BRAT:** add `Gelaende51/obsidian-lure` as a beta plugin. BRAT also offers *automated builds* (`1.6.2-deps.1` and the like): when a library bundled into Lure is updated, the update is built and published once the tests pass, before anyone has reviewed it. To keep to reviewed releases, install from the community directory, or pin a version in BRAT.
 
 **From source:** `npm install && npm run build` — see [development](docs/development.md).
 

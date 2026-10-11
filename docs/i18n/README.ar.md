@@ -84,7 +84,7 @@ Obsidian 1.8.7+ · لسطح المكتب فقط · AGPL-3.0
 
 **يدويًا:** نزِّل `main.js` و`manifest.json` و`styles.css` من [أحدث إصدار](https://github.com/Gelaende51/obsidian-lure/releases) إلى `<vault>/.obsidian/plugins/lure/`، ثم فعِّلها من **الإعدادات ← إضافات تابعة لجهات خارجية**.
 
-**BRAT:** أضف `Gelaende51/obsidian-lure` كإضافة تجريبية.
+**BRAT:** أضف `Gelaende51/obsidian-lure` كإضافة تجريبية. يوفّر BRAT أيضًا *عمليات بناء آلية* (مثل `1.6.2-deps.1`): عند تحديث مكتبة مضمَّنة في Lure، يتم بناء التحديث ونشره بعد اجتياز الاختبارات، وذلك قبل أن يراجعه أحد. للالتزام بالإصدارات التي تمت مراجعتها، ثبّت الإضافة من الدليل المجتمعي، أو ثبّت إصدارًا محددًا في BRAT.
 
 **من المصدر:** `npm install && npm run build` — انظر [التطوير](../development.md).
 

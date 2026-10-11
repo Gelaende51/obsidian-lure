@@ -3,6 +3,12 @@
 # install beside it (Folder notes, Quick Explorer, Breadcrumbs, …). The test
 # runs install the latest of each, so they test exactly the new versions.
 #
+# The `environments` job does the same for the systems the tests run on
+# (scripts/test-environments.mjs): a new container image, a distribution's new
+# Obsidian or Electron, a new Wine or runner image runs that environment's
+# target of test-systems.yml (and the main suites for a runner image), with
+# what changed passed along, so a failure opens an issue naming it.
+#
 # The last versions seen are in .github/upstream-versions.json; a change is
 # recorded after its test run, and a failing one opens an issue naming what
 # moved.
@@ -16,6 +22,7 @@ on:
 permissions:
   contents: write
   issues: write
+  actions: write
 
 jobs:
   check:
@@ -73,3 +80,37 @@ jobs:
             gh issue create --title "Tests fail against new upstream versions" \
               --body "$(printf 'The suites failed after these changed:\n\n%s\n\nRun: %s' "$list" "$RUN")"
           fi
+
+  environments:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: diff
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          out=$(node scripts/test-environments.mjs --diff)
+          echo "$out" | jq .now > .github/environment-versions.json
+          echo "$out" | jq -r '.changes[]' | sed 's/^/- /' >> "$GITHUB_STEP_SUMMARY"
+          echo "changed=$(echo "$out" | jq -r .changed)" >> "$GITHUB_OUTPUT"
+          echo "targets=$(echo "$out" | jq -r '.targets | join(" ")')" >> "$GITHUB_OUTPUT"
+          echo "main=$(echo "$out" | jq -r .mainTests)" >> "$GITHUB_OUTPUT"
+          echo "$out" | jq -r '.changes | join("\n")' > /tmp/why.txt
+      - name: Run the tests of what changed, and record it
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGETS: ${{ steps.diff.outputs.targets }}
+          MAIN: ${{ steps.diff.outputs.main }}
+        run: |
+          why=$(cat /tmp/why.txt)
+          suites="test-external test-links test-rename test-create test-drop test-urls test-html test-glob test-tab"
+          for t in $TARGETS; do
+            gh workflow run test-systems.yml --ref main -f target="$t" -f suites="$suites" -f obsidian=latest -f why="$why"
+          done
+          [ "$MAIN" = true ] && gh workflow run test.yml --ref main
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/environment-versions.json
+          git commit -m "Test environments changed: ${TARGETS:-main suites}" -m "$why"
+          git pull -q --rebase origin main && git push origin HEAD:main

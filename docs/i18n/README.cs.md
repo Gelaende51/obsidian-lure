@@ -80,7 +80,7 @@ Přesun poznámky *ven* z trezoru je jediný zápis, který stojí něco, co nic
 
 **Ručně:** stáhněte `main.js`, `manifest.json` a `styles.css` z [nejnovějšího vydání](https://github.com/Gelaende51/obsidian-lure/releases) do `<vault>/.obsidian/plugins/lure/` a pak plugin zapněte v **Nastavení → Pluginy třetích stran**.
 
-**BRAT:** přidejte `Gelaende51/obsidian-lure` jako beta plugin.
+**BRAT:** přidejte `Gelaende51/obsidian-lure` jako beta plugin. BRAT nabízí také *automatizované buildy* (`1.6.2-deps.1` a podobně): když se aktualizuje knihovna zabalená v pluginu Lure, aktualizace se sestaví a publikuje, jakmile projdou testy, ještě než ji kdokoli zkontroluje. Chcete-li zůstat u zkontrolovaných vydání, nainstalujte plugin z komunitního adresáře, nebo si v BRAT připněte verzi.
 
 **Ze zdrojů:** `npm install && npm run build` — viz [vývoj](../development.md).
 

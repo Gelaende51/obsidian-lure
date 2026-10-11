@@ -80,7 +80,7 @@ Piezīmes pārvietošana *ārā* no glabātavas ir tā vienīgā rakstīšana, k
 
 **Ar rokām:** lejupielādē `main.js`, `manifest.json` un `styles.css` no [jaunākā laidiena](https://github.com/Gelaende51/obsidian-lure/releases) mapē `<vault>/.obsidian/plugins/lure/`, tad ieslēdz to sadaļā **Iestatījumi → Trešās puses spraudnis**.
 
-**BRAT:** pievieno `Gelaende51/obsidian-lure` kā beta spraudni.
+**BRAT:** pievieno `Gelaende51/obsidian-lure` kā beta spraudni. BRAT piedāvā arī *automātiskos būvējumus* (`1.6.2-deps.1` un tamlīdzīgus): kad tiek atjaunināta kāda Lure iekļautā bibliotēka, atjauninājums tiek būvēts un publicēts, tiklīdz testi ir sekmīgi nokārtoti, pirms kāds to ir pārskatījis. Lai paliktu pie pārskatītiem izlaidumiem, instalē no kopienas direktorijas vai BRAT piesprauz konkrētu versiju.
 
 **No pirmkoda:** `npm install && npm run build` — sk. [izstrāde](../development.md).
 

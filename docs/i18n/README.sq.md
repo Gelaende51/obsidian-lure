@@ -81,7 +81,7 @@ Zhvendosja e një shënimi *jashtë* kasafortës sate është i vetmi shkrim që
 
 **Me dorë:** shkarko `main.js`, `manifest.json` dhe `styles.css` nga [publikimi i fundit](https://github.com/Gelaende51/obsidian-lure/releases) te `<vault>/.obsidian/plugins/lure/`, pastaj aktivizoje te **Konfigurime → Shtojca të treta**.
 
-**BRAT:** shtoje `Gelaende51/obsidian-lure` si shtojcë beta.
+**BRAT:** shtoje `Gelaende51/obsidian-lure` si shtojcë beta. BRAT ofron edhe *ndërtime të automatizuara* (`1.6.2-deps.1` e të ngjashme): kur përditësohet një bibliotekë e përfshirë në Lure, përditësimi ndërtohet dhe publikohet sapo kalojnë testet, përpara se dikush ta ketë shqyrtuar. Për t'iu përmbajtur versioneve të shqyrtuara, instaloje nga direktoria e komunitetit, ose fiksoje një version në BRAT.
 
 **Nga burimi:** `npm install && npm run build` — shih [zhvillimin](../development.md).
 

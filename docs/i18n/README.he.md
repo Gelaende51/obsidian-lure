@@ -83,7 +83,7 @@ Obsidian 1.8.7+ · למחשב שולחני בלבד · AGPL-3.0
 
 **ידנית:** הורידו את `main.js`, `manifest.json` ו-`styles.css` מ[הגרסה האחרונה](https://github.com/Gelaende51/obsidian-lure/releases) אל `<vault>/.obsidian/plugins/lure/`, ואז הפעילו אותו תחת **הגדרות ← תוספים קהילתיים**.
 
-**BRAT:** הוסיפו את `Gelaende51/obsidian-lure` כתוסף בטא.
+**BRAT:** הוסיפו את `Gelaende51/obsidian-lure` כתוסף בטא. BRAT מציע גם *בנייה אוטומטית* (`1.6.2-deps.1` וכדומה): כאשר ספרייה הכלולה ב-Lure מתעדכנת, העדכון נבנה ומתפרסם לאחר שהבדיקות עוברות, עוד לפני שמישהו סקר אותו. כדי להישאר עם גרסאות שנסקרו, התקינו מהספרייה הקהילתית, או נעלו גרסה ב-BRAT.
 
 **מהמקור:** `npm install && npm run build` — ראו [פיתוח](../development.md).
 

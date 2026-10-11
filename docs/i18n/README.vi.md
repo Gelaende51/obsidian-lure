@@ -81,7 +81,7 @@ Di chuyển một ghi chú *ra khỏi* kho là thao tác ghi duy nhất gây ra 
 
 **Thủ công:** tải `main.js`, `manifest.json` và `styles.css` từ [bản phát hành mới nhất](https://github.com/Gelaende51/obsidian-lure/releases) vào `<vault>/.obsidian/plugins/lure/`, rồi bật plugin trong **Cài đặt → Phần mở rộng của bên thứ ba**.
 
-**BRAT:** thêm `Gelaende51/obsidian-lure` làm plugin beta.
+**BRAT:** thêm `Gelaende51/obsidian-lure` làm plugin beta. BRAT cũng cung cấp *các bản dựng tự động* (`1.6.2-deps.1` và tương tự): khi một thư viện được đóng gói trong Lure được cập nhật, bản cập nhật sẽ được dựng và phát hành ngay khi các bài kiểm thử đạt, trước khi có ai xem xét nó. Để chỉ dùng các bản phát hành đã được xem xét, hãy cài đặt từ thư mục cộng đồng, hoặc ghim một phiên bản trong BRAT.
 
 **Từ mã nguồn:** `npm install && npm run build` — xem [phát triển](../development.md).
 

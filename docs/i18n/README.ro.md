@@ -81,7 +81,7 @@ Mutarea unei notițe *afară* din seif este singura scriere care costă ceva ce 
 
 **Manual:** descarcă `main.js`, `manifest.json` și `styles.css` din [ultima versiune](https://github.com/Gelaende51/obsidian-lure/releases) în `<vault>/.obsidian/plugins/lure/`, apoi activează-l din **Setări → Module comunitare**.
 
-**BRAT:** adaugă `Gelaende51/obsidian-lure` ca plugin beta.
+**BRAT:** adaugă `Gelaende51/obsidian-lure` ca plugin beta. BRAT oferă și *versiuni build automate* (`1.6.2-deps.1` și similare): când o bibliotecă inclusă în Lure este actualizată, actualizarea este compilată și publicată după ce trec testele, înainte ca cineva să o fi revizuit. Pentru a rămâne la versiunile revizuite, instalează din directorul comunității sau fixează o versiune în BRAT.
 
 **Din surse:** `npm install && npm run build` — vezi [dezvoltare](../development.md).
 

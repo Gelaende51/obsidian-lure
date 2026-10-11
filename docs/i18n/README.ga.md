@@ -80,7 +80,7 @@ Is é nóta a bhogadh *amach* as do thaisceadán an t-aon scríobh a chosnaíonn
 
 **De láimh:** íoslódáil `main.js`, `manifest.json` agus `styles.css` ón [eisiúint is déanaí](https://github.com/Gelaende51/obsidian-lure/releases) go dtí `<vault>/.obsidian/plugins/lure/`, ansin cuir ar siúl é faoi **Socruithe → Breiseáin pobail**.
 
-**BRAT:** cuir `Gelaende51/obsidian-lure` leis mar bhreiseán béite.
+**BRAT:** cuir `Gelaende51/obsidian-lure` leis mar bhreiseán béite. Cuireann BRAT *tógálacha uathoibrithe* ar fáil freisin (`1.6.2-deps.1` agus a leithéid): nuair a nuashonraítear leabharlann atá cuimsithe i Lure, déantar an nuashonrú a thógáil agus a fhoilsiú nuair a éiríonn leis na tástálacha, sula ndéanann duine ar bith athbhreithniú air. Chun cloí le heisiúintí athbhreithnithe, suiteáil ón eolaire pobail, nó greamaigh leagan i BRAT.
 
 **Ón bhfoinse:** `npm install && npm run build` — féach [forbairt](../development.md).
 

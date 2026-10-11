@@ -81,7 +81,7 @@ Een notitie *uit* je kluis verplaatsen is de ene schrijfactie die iets kost wat 
 
 **Handmatig:** download `main.js`, `manifest.json` en `styles.css` uit de [nieuwste release](https://github.com/Gelaende51/obsidian-lure/releases) naar `<vault>/.obsidian/plugins/lure/` en zet de plugin aan bij **Instellingen → Externe plug-ins**.
 
-**BRAT:** voeg `Gelaende51/obsidian-lure` toe als bètaplugin.
+**BRAT:** voeg `Gelaende51/obsidian-lure` toe als bètaplugin. BRAT biedt ook *geautomatiseerde builds* (`1.6.2-deps.1` en dergelijke): wanneer een bibliotheek die in Lure is gebundeld wordt bijgewerkt, wordt de update gebouwd en gepubliceerd zodra de tests slagen, voordat iemand deze heeft gecontroleerd. Wil je bij gecontroleerde releases blijven, installeer dan vanuit de communitymap of zet in BRAT een versie vast.
 
 **Vanuit de broncode:** `npm install && npm run build` — zie [ontwikkeling](../development.md).
 

@@ -80,7 +80,7 @@ Déplacer une note *hors* de votre coffre est la seule écriture dont le coût n
 
 **Manuelle :** téléchargez `main.js`, `manifest.json` et `styles.css` depuis la [dernière version publiée](https://github.com/Gelaende51/obsidian-lure/releases) dans `<vault>/.obsidian/plugins/lure/`, puis activez le plugin dans **Paramètres → Modules complémentaires**.
 
-**BRAT :** ajoutez `Gelaende51/obsidian-lure` comme plugin bêta.
+**BRAT :** ajoutez `Gelaende51/obsidian-lure` comme plugin bêta. BRAT propose aussi des *builds automatisés* (`1.6.2-deps.1` et similaires) : lorsqu'une bibliothèque intégrée à Lure est mise à jour, la mise à jour est compilée et publiée une fois les tests réussis, avant que quiconque l'ait examinée. Pour vous en tenir aux versions examinées, installez le plugin depuis le répertoire communautaire, ou épinglez une version dans BRAT.
 
 **Depuis les sources :** `npm install && npm run build` — voir [développement](../development.md).
 

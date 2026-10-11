@@ -473,6 +473,20 @@ npm run stamp -- --freshness --only README,CHANGELOG   # only for the documents 
 
 Bumping a hash is a claim that the translation reflects that commit, so it is never a side effect of stamping the language row — read what `--check` lists first. The hash can only be bumped after the English change is committed, which is why this is a second commit rather than part of the first.
 
+## Dependencies and test environments
+
+Three things change under Lure without a commit here, and each one runs the tests that cover it.
+
+- **Its dependencies.** Dependabot (`.github/dependabot.yml`) checks npm and the GitHub Actions every Monday. Each update is a pull request on a branch of this repository, and the Test workflow runs on every branch, so it comes with its results. The bundled runtime dependencies (picomatch) come as one group, majors included. Build, type and lint tools have their minor and patch updates grouped, and each major on its own. The actions come as one group. Merging stays a person's call. A new `eslint-plugin-obsidianmd` is worth merging before a release: it is the community review's own rule set, and its new warnings show up there first.
+- **What ships, built ahead of review.** When the tests pass on a Dependabot branch whose production dependency tree differs from main's (what esbuild bundles into `main.js`), `auto-build.yml` builds that branch and publishes it as a GitHub pre-release, `<next patch>-deps.<run>` (e.g. `1.6.2-deps.3`), tagged at the branch's commit and attested like a real release. Main is untouched. Obsidian's installer and the community directory keep to `manifest.json` there, while BRAT offers the newest release including pre-releases by semver. Someone who installed Lure through BRAT gets these builds unless they pin a version, and the next real release (1.6.2) ranks above all of them. Obsidian itself does not offer 1.6.2 to someone on a `1.6.2-deps` build (it compares versions more strictly than semver), so they update through BRAT until 1.6.3.
+- **The systems the tests run on.** `watch.yml` checks daily, besides Obsidian and the neighbouring plugins (`scripts/upstream-versions.mjs`), what each test environment is made of (`scripts/test-environments.mjs`). That covers:
+  - the container images by digest;
+  - Arch's and Nix's Obsidian, and FreeBSD's and Alpine edge's Electron, from Repology;
+  - Flathub's and Snap's Obsidian, and WineHQ staging;
+  - the runner images, from GitHub's runner-images releases.
+
+  A change runs that environment's target of `test-systems.yml`, and the main suites for a runner image. What changed goes in the run's `why`, so a failure opens an issue naming it. The last state is in `.github/environment-versions.json`; a source that cannot be read keeps its last value and starts nothing.
+
 ## The listing
 
 The public page carries a few things `manifest.json` has no field for — tags, an optional long description, a pricing model, a listing icon, screenshots. They are edited in a form at `community.obsidian.md/account/plugins/lure/edit`, and until now they existed nowhere in this repository. `listing.json` is where they live.

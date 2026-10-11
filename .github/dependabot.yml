@@ -1,0 +1,35 @@
+# Weekly checks for newer dependencies. Each update arrives as a pull request
+# on a branch of this repository, where the Test workflow runs it (it runs on
+# every branch). What ships inside main.js is built from that branch once its
+# tests pass and published as a pre-release for BRAT (auto-build.yml); merging
+# stays a person's call.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 10
+    groups:
+      # Bundled into main.js (picomatch): every update, majors included, in one
+      # pull request, so one automated build covers it.
+      runtime:
+        dependency-type: production
+      # Build, type-check and lint tools: minor and patch updates together;
+      # each major on its own, since those change what the build accepts.
+      build-tools:
+        dependency-type: development
+        update-types: [minor, patch]
+    commit-message:
+      prefix: "Dependencies"
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: "Actions"

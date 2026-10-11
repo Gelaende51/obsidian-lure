@@ -81,7 +81,7 @@ Qaydni omboringizdan *tashqariga* ko‘chirish — hech narsa qaytarib bera olma
 
 **Qo‘lda:** [so‘nggi relizdan](https://github.com/Gelaende51/obsidian-lure/releases) `main.js`, `manifest.json` va `styles.css` fayllarini `<vault>/.obsidian/plugins/lure/` papkasiga yuklab oling, so‘ng plaginni **Sozlamalar → Tashqi plaginlar** bo‘limida yoqing.
 
-**BRAT:** `Gelaende51/obsidian-lure` ni beta plagin sifatida qo‘shing.
+**BRAT:** `Gelaende51/obsidian-lure` ni beta plagin sifatida qo‘shing. BRAT shuningdek *avtomatik buildlar*ni (`1.6.2-deps.1` va shunga o‘xshashlar) ham taklif etadi: Lure tarkibiga kiritilgan kutubxona yangilanganda, yangilanish testlardan o‘tgach, hech kim uni ko‘rib chiqmasdan turib, build qilinadi va e’lon qilinadi. Faqat ko‘rib chiqilgan relizlarda qolish uchun community katalogidan o‘rnating yoki BRAT’da versiyani qotirib qo‘ying.
 
 **Manbadan:** `npm install && npm run build` — [ishlab chiqish](../development.md) hujjatiga qarang.
 

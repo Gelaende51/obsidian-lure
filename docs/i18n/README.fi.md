@@ -81,7 +81,7 @@ Muistiinpanon siirtäminen *pois* holvista on ainoa kirjoitus, jonka hintaa mik�
 
 **Käsin:** lataa `main.js`, `manifest.json` ja `styles.css` [uusimmasta julkaisusta](https://github.com/Gelaende51/obsidian-lure/releases) hakemistoon `<vault>/.obsidian/plugins/lure/`, ja kytke se sitten päälle kohdasta **Asetukset → Yhteisön lisäosat**.
 
-**BRAT:** lisää `Gelaende51/obsidian-lure` beetalisäosana.
+**BRAT:** lisää `Gelaende51/obsidian-lure` beetalisäosana. BRAT tarjoaa myös *automaattisia koosteita* (`1.6.2-deps.1` ja vastaavat): kun Lureen niputettu kirjasto päivittyy, päivitys rakennetaan ja julkaistaan testien läpäisyn jälkeen, ennen kuin kukaan on tarkistanut sen. Pysyäksesi tarkistetuissa julkaisuissa asenna yhteisön hakemistosta tai kiinnitä versio BRATissa.
 
 **Lähdekoodista:** `npm install && npm run build` — katso [kehitys](../development.md).
 

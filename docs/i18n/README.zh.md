@@ -80,7 +80,7 @@ Obsidian 的开发者政策要求插件说明任何对仓库之外文件的访�
 
 **手动：** 从[最新发布](https://github.com/Gelaende51/obsidian-lure/releases)下载 `main.js`、`manifest.json` 和 `styles.css`，放入 `<vault>/.obsidian/plugins/lure/`，然后在**设置 → 第三方插件**中启用。
 
-**BRAT：** 将 `Gelaende51/obsidian-lure` 添加为 beta 插件。
+**BRAT：** 将 `Gelaende51/obsidian-lure` 添加为 beta 插件。BRAT 还提供*自动构建*（如 `1.6.2-deps.1` 等）：当 Lure 所打包的某个库更新时，只要测试通过，更新就会被构建并发布，而此时尚未经过任何人审核。若想只使用经过审核的版本，请从社区目录安装，或在 BRAT 中固定版本。
 
 **从源码：** `npm install && npm run build`——参见[开发](../development.md)。
 

@@ -80,7 +80,7 @@ Obsidian の開発者ポリシーは、保管庫の外にあるファイルへ�
 
 **手動:** [最新のリリース](https://github.com/Gelaende51/obsidian-lure/releases) から `main.js`、`manifest.json`、`styles.css` を `<vault>/.obsidian/plugins/lure/` にダウンロードし、**設定 → コミュニティプラグイン** で有効にします。
 
-**BRAT:** `Gelaende51/obsidian-lure` をベータプラグインとして追加します。
+**BRAT:** `Gelaende51/obsidian-lure` をベータプラグインとして追加します。BRAT では*自動ビルド*(`1.6.2-deps.1` など)も提供されています。Lure に組み込まれているライブラリが更新されると、テストに通った時点で、誰もレビューしないうちにそのアップデートがビルドされ公開されます。レビュー済みのリリースのみを使用するには、コミュニティディレクトリからインストールするか、BRAT でバージョンを固定してください。
 
 **ソースから:** `npm install && npm run build` — [開発](../development.md)を参照してください。
 

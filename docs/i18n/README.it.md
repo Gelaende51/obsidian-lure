@@ -81,7 +81,7 @@ Spostare una nota *fuori* dal vault è l'unica scrittura che costa qualcosa che 
 
 **Manuale:** scarica `main.js`, `manifest.json` e `styles.css` dall'[ultima release](https://github.com/Gelaende51/obsidian-lure/releases) in `<vault>/.obsidian/plugins/lure/`, poi attivalo in **Impostazioni → Plugin di terze parti**.
 
-**BRAT:** aggiungi `Gelaende51/obsidian-lure` come plugin beta.
+**BRAT:** aggiungi `Gelaende51/obsidian-lure` come plugin beta. BRAT offre anche *build automatiche* (`1.6.2-deps.1` e simili): quando una libreria inclusa in Lure viene aggiornata, l'aggiornamento viene compilato e pubblicato una volta superati i test, prima che qualcuno lo abbia revisionato. Per attenersi alle versioni revisionate, installa dalla directory della community oppure fissa una versione in BRAT.
 
 **Dai sorgenti:** `npm install && npm run build` — vedi [sviluppo](../development.md).
 

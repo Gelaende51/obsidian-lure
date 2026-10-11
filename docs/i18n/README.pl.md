@@ -81,7 +81,7 @@ Przeniesienie notatki *poza* skarbiec to jedyny zapis, który kosztuje coś, cze
 
 **Ręcznie:** pobierz `main.js`, `manifest.json` i `styles.css` z [najnowszego wydania](https://github.com/Gelaende51/obsidian-lure/releases) do `<vault>/.obsidian/plugins/lure/`, a potem włącz wtyczkę w **Ustawienia → Wtyczki społeczności**.
 
-**BRAT:** dodaj `Gelaende51/obsidian-lure` jako wtyczkę beta.
+**BRAT:** dodaj `Gelaende51/obsidian-lure` jako wtyczkę beta. BRAT oferuje też *automatyczne kompilacje* (`1.6.2-deps.1` i podobne): gdy biblioteka dołączona do Lure zostaje zaktualizowana, aktualizacja jest budowana i publikowana po przejściu testów, zanim ktokolwiek ją zweryfikuje. Aby pozostać przy zweryfikowanych wydaniach, zainstaluj wtyczkę z katalogu społeczności lub przypnij wersję w BRAT.
 
 **Ze źródeł:** `npm install && npm run build` — zobacz [rozwój](../development.md).
 

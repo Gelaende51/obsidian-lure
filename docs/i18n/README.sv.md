@@ -81,7 +81,7 @@ Att flytta en anteckning *ut* ur ditt valv är den enda skrivning som kostar nå
 
 **Manuellt:** ladda ner `main.js`, `manifest.json` och `styles.css` från den [senaste utgåvan](https://github.com/Gelaende51/obsidian-lure/releases) till `<vault>/.obsidian/plugins/lure/`, och aktivera det sedan under **Inställningar → Gemenskapstillägg**.
 
-**BRAT:** lägg till `Gelaende51/obsidian-lure` som ett betatillägg.
+**BRAT:** lägg till `Gelaende51/obsidian-lure` som ett betatillägg. BRAT erbjuder också *automatiska byggen* (`1.6.2-deps.1` och liknande): när ett bibliotek som ingår i Lure uppdateras, byggs och publiceras uppdateringen så fort testerna går igenom, innan någon har granskat den. Om du vill hålla dig till granskade versioner kan du installera från community-katalogen eller fästa en version i BRAT.
 
 **Från källkod:** `npm install && npm run build` — se [utveckling](../development.md).
 

@@ -80,7 +80,7 @@ At flytte en note *ud* af din boks er den ene skrivehandling, der koster noget, 
 
 **Manuelt:** hent `main.js`, `manifest.json` og `styles.css` fra [seneste udgivelse](https://github.com/Gelaende51/obsidian-lure/releases) til `<vault>/.obsidian/plugins/lure/`, og slå det derefter til under **Indstillinger → Fællesskabsplugins**.
 
-**BRAT:** tilføj `Gelaende51/obsidian-lure` som betaplugin.
+**BRAT:** tilføj `Gelaende51/obsidian-lure` som betaplugin. BRAT tilbyder også *automatiske builds* (`1.6.2-deps.1` og lignende): når et bibliotek, der er bundtet i Lure, opdateres, bliver opdateringen bygget og udgivet, så snart testene er bestået, før nogen har gennemgået den. Hvis du kun vil holde dig til gennemgåede udgivelser, skal du installere fra community-kataloget eller fastlåse en version i BRAT.
 
 **Fra kildekode:** `npm install && npm run build` — se [udvikling](../development.md).
 

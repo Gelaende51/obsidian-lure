@@ -80,7 +80,7 @@ Memindahkan catatan *keluar* dari vault Anda adalah satu-satunya penulisan yang 
 
 **Manual:** unduh `main.js`, `manifest.json`, dan `styles.css` dari [rilis terbaru](https://github.com/Gelaende51/obsidian-lure/releases) ke `<vault>/.obsidian/plugins/lure/`, lalu nyalakan di **Pengaturan → Plugin komunitas**.
 
-**BRAT:** tambahkan `Gelaende51/obsidian-lure` sebagai plugin beta.
+**BRAT:** tambahkan `Gelaende51/obsidian-lure` sebagai plugin beta. BRAT juga menawarkan *build otomatis* (`1.6.2-deps.1` dan sejenisnya): ketika pustaka yang dibundel ke dalam Lure diperbarui, pembaruan tersebut dibuild dan dipublikasikan setelah pengujian lulus, sebelum ada yang meninjaunya. Untuk tetap menggunakan rilis yang telah ditinjau, instal dari direktori komunitas, atau sematkan versi di BRAT.
 
 **Dari sumber:** `npm install && npm run build` — lihat [pengembangan](../development.md).
 

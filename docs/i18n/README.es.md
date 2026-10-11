@@ -81,7 +81,7 @@ Mover una nota *fuera* de tu bóveda es la única escritura que cuesta algo que 
 
 **Manual:** descarga `main.js`, `manifest.json` y `styles.css` de la [última versión publicada](https://github.com/Gelaende51/obsidian-lure/releases) en `<vault>/.obsidian/plugins/lure/` y actívalo en **Preferencias → Complementos comunitarios**.
 
-**BRAT:** añade `Gelaende51/obsidian-lure` como plugin beta.
+**BRAT:** añade `Gelaende51/obsidian-lure` como plugin beta. BRAT también ofrece *compilaciones automáticas* (`1.6.2-deps.1` y similares): cuando se actualiza una librería incluida en Lure, la actualización se compila y se publica en cuanto pasan las pruebas, antes de que nadie la haya revisado. Para ceñirte a las versiones revisadas, instala desde el directorio de la comunidad o fija una versión en BRAT.
 
 **Desde el código fuente:** `npm install && npm run build` — véase [desarrollo](../development.md).
 

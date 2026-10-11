@@ -80,7 +80,7 @@ Obsidian 的開發者政策要求外掛說明任何對儲存庫以外檔案的�
 
 **手動：** 從[最新版本](https://github.com/Gelaende51/obsidian-lure/releases)下載 `main.js`、`manifest.json` 與 `styles.css` 到 `<vault>/.obsidian/plugins/lure/`，然後在**設定 → 第三方外掛程式**中啟用。
 
-**BRAT：** 將 `Gelaende51/obsidian-lure` 新增為 beta 外掛。
+**BRAT：** 將 `Gelaende51/obsidian-lure` 新增為 beta 外掛。BRAT 也提供*自動建置*版本（例如 `1.6.2-deps.1`）：當 Lure 所打包的函式庫有更新時，只要測試通過，就會在任何人審查之前建置並發布該更新。若要只使用經過審查的版本，請從社群目錄安裝，或在 BRAT 中固定版本。
 
 **從原始碼：** `npm install && npm run build`——請參閱[開發](../development.md)。
 

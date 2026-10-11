@@ -80,7 +80,7 @@ Mengalihkan sesuatu nota *keluar* daripada bilik kebal anda ialah satu-satunya p
 
 **Manual:** muat turun `main.js`, `manifest.json` dan `styles.css` daripada [keluaran terkini](https://github.com/Gelaende51/obsidian-lure/releases) ke `<vault>/.obsidian/plugins/lure/`, kemudian hidupkannya di bawah **Tetapan → Plugin pihak ketiga**.
 
-**BRAT:** tambah `Gelaende51/obsidian-lure` sebagai plugin beta.
+**BRAT:** tambah `Gelaende51/obsidian-lure` sebagai plugin beta. BRAT juga menawarkan *binaan automatik* (`1.6.2-deps.1` dan seumpamanya): apabila sebuah pustaka yang dibundel ke dalam Lure dikemas kini, kemas kini itu dibina dan diterbitkan sebaik sahaja ujian lulus, sebelum sesiapa menyemaknya. Untuk kekal dengan keluaran yang telah disemak, pasang daripada direktori komuniti, atau sematkan versi dalam BRAT.
 
 **Daripada sumber:** `npm install && npm run build` — lihat [pembangunan](../development.md).
 

@@ -80,7 +80,7 @@ Obsidian 1.8.7+ · ለዴስክቶፕ ብቻ · AGPL-3.0
 
 **በእጅ፦** `main.js`፣ `manifest.json` እና `styles.css`ን ከ[የቅርብ ጊዜው ልቀት](https://github.com/Gelaende51/obsidian-lure/releases) ወደ `<vault>/.obsidian/plugins/lure/` ያውርዱ፣ ከዚያም በ**ቅንብሮች → የሶስተኛ ወገን ተሰኪ** ስር ያብሩት።
 
-**BRAT፦** `Gelaende51/obsidian-lure`ን እንደ ቤታ ተሰኪ ያክሉ።
+**BRAT፦** `Gelaende51/obsidian-lure`ን እንደ ቤታ ተሰኪ ያክሉ። BRAT *አውቶማቲክ ግንባታዎችንም* (`1.6.2-deps.1` እና የመሳሰሉትን) ያቀርባል፦ በLure ውስጥ የተካተተ ላይብረሪ ሲዘምን፣ ማሻሻያው ተገንብቶ ሙከራዎቹ ካለፉ በኋላ ማንም ሳይመረምረው ይታተማል። በተመረመሩ ልቀቶች ላይ ለመቆየት ከማህበረሰቡ ማውጫ ይጫኑ፣ ወይም በBRAT ውስጥ ስሪት ይሰኩ።
 
 **ከምንጭ፦** `npm install && npm run build` — ይመልከቱ [ልማት](../development.md)።
 

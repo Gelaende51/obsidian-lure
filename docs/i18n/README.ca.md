@@ -81,7 +81,7 @@ Cap dels dos desbloquejos es desa a l'espai de treball ni a les opcions, així q
 
 **Manual:** baixa `main.js`, `manifest.json` i `styles.css` de la [darrera versió publicada](https://github.com/Gelaende51/obsidian-lure/releases) a `<vault>/.obsidian/plugins/lure/` i activa'l a **Configuració → Connectors de tercers**.
 
-**BRAT:** afegeix `Gelaende51/obsidian-lure` com a connector beta.
+**BRAT:** afegeix `Gelaende51/obsidian-lure` com a connector beta. BRAT també ofereix *compilacions automàtiques* (`1.6.2-deps.1` i similars): quan s'actualitza una biblioteca inclosa a Lure, l'actualització es compila i es publica un cop superades les proves, abans que ningú l'hagi revisada. Per ceñir-te a les versions revisades, instal·la des del directori de la comunitat, o fixa una versió a BRAT.
 
 **Des del codi font:** `npm install && npm run build` — vegeu [desenvolupament](../development.md).
 

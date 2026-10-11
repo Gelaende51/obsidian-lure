@@ -1,0 +1,93 @@
+# An automated build of a dependency update that changes what ships inside
+# main.js, for those who would rather have it now than wait for a person to
+# read it.
+#
+# Runs when the Test workflow passes on a Dependabot npm branch. If the
+# production dependency tree (what esbuild bundles) differs from main's, the
+# branch is built and published as a GitHub pre-release, `<next patch>-deps.<n>`
+# (e.g. 1.6.2-deps.3), tagged at the branch's commit, with a build-provenance
+# attestation like a real release. Nothing touches main: Obsidian's own
+# installer and the community directory keep to manifest.json there, while
+# BRAT, which takes the newest release *including* pre-releases by semver,
+# offers it. The next real release (1.6.2) ranks above every -deps build.
+name: Automated build
+on:
+  workflow_run:
+    workflows: [Test]
+    types: [completed]
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  build:
+    if: github.event.workflow_run.conclusion == 'success' && startsWith(github.event.workflow_run.head_branch, 'dependabot/npm_and_yarn/')
+    runs-on: ubuntu-latest
+    env:
+      SHA: ${{ github.event.workflow_run.head_sha }}
+      BRANCH: ${{ github.event.workflow_run.head_branch }}
+      TESTS: ${{ github.event.workflow_run.html_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+      - id: shipped
+        name: Does it change what ships?
+        run: |
+          # The production entries of the lockfile: what esbuild can bundle.
+          tree() {
+            git show "$1:package-lock.json" | node -e '
+              const lock = JSON.parse(require("fs").readFileSync(0, "utf8"));
+              for (const [path, p] of Object.entries(lock.packages))
+                if (path && !p.dev) console.log(`${path.replace(/^.*node_modules\//, "")} ${p.version}`);' | sort
+          }
+          git fetch -q origin main
+          if diff <(tree origin/main) <(tree "$SHA") > /tmp/shipped.diff; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No change to what ships in main.js: nothing to build." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.shipped.outputs.changed == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - if: steps.shipped.outputs.changed == 'true'
+        name: Build
+        id: build
+        run: |
+          npm ci
+          base=$(node -p 'require("./manifest.json").version')
+          IFS=. read -r major minor patch <<< "$base"
+          version="$major.$minor.$((patch + 1))-deps.${{ github.run_number }}"
+          node -e 'const f="manifest.json",m=JSON.parse(require("fs").readFileSync(f,"utf8"));m.version=process.argv[1];require("fs").writeFileSync(f,JSON.stringify(m,null,"\t")+"\n")' "$version"
+          node esbuild.config.mjs production
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - if: steps.shipped.outputs.changed == 'true'
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: "main.js, manifest.json, styles.css"
+      - if: steps.shipped.outputs.changed == 'true'
+        name: Publish as a pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.build.outputs.version }}
+        run: |
+          changes=$(grep '^[<>]' /tmp/shipped.diff | sed 's/^</- was:/; s/^>/- now:/')
+          cat > /tmp/notes.md <<NOTES
+          **Automated build — not reviewed by a person.** A dependency bundled into main.js changed; this is that change built as it is, after the test suites passed on it.
+
+          $changes
+
+          - Branch: \`$BRANCH\` at \`${SHA:0:7}\`
+          - Tests: $TESTS
+
+          Install it through BRAT, which offers pre-releases; Obsidian's own installer and the community directory keep to the last reviewed release. The next reviewed release supersedes it.
+          NOTES
+          sed -i 's/^          //' /tmp/notes.md
+          gh release create "$VERSION" main.js manifest.json styles.css --prerelease --target "$SHA" \
+            --title "$VERSION (automated build)" --notes-file /tmp/notes.md

@@ -80,7 +80,7 @@ Obsidian의 개발자 정책은 보관함 밖 파일에 대한 모든 접근을 
 
 **수동:** [최신 릴리스](https://github.com/Gelaende51/obsidian-lure/releases)에서 `main.js`, `manifest.json`, `styles.css`를 `<vault>/.obsidian/plugins/lure/`로 내려받은 다음 **설정 → 커뮤니티 플러그인**에서 켭니다.
 
-**BRAT:** `Gelaende51/obsidian-lure`를 베타 플러그인으로 추가합니다.
+**BRAT:** `Gelaende51/obsidian-lure`를 베타 플러그인으로 추가합니다. BRAT은 *자동 빌드*(`1.6.2-deps.1` 등)도 제공합니다. Lure에 번들된 라이브러리가 업데이트되면, 테스트를 통과한 뒤 누군가 검토하기도 전에 해당 업데이트가 빌드되어 게시됩니다. 검토된 릴리스만 사용하려면 커뮤니티 디렉터리에서 설치하거나 BRAT에서 버전을 고정하세요.
 
 **소스에서:** `npm install && npm run build` — [개발](../development.md)을 참고하세요.
 

@@ -85,7 +85,7 @@ Ingen av opplåsingene lagres i arbeidsflaten eller i innstillingene, så skrivi
 
 **Manuelt:** last ned `main.js`, `manifest.json` og `styles.css` fra [siste utgivelse](https://github.com/Gelaende51/obsidian-lure/releases) til `<vault>/.obsidian/plugins/lure/`, og slå det så på under **Innstillinger → Third-party plugin**.
 
-**BRAT:** legg til `Gelaende51/obsidian-lure` som betatillegg.
+**BRAT:** legg til `Gelaende51/obsidian-lure` som betatillegg. BRAT tilbyr også *automatiske bygg* (`1.6.2-deps.1` og lignende): når et bibliotek som er bundlet inn i Lure oppdateres, blir oppdateringen bygget og publisert så snart testene er bestått, før noen har gjennomgått den. For å holde deg til gjennomgåtte utgivelser kan du installere fra fellesskapskatalogen, eller låse en versjon i BRAT.
 
 **Fra kildekode:** `npm install && npm run build` — se [utvikling](../development.md).
 

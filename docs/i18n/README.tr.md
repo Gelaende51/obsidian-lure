@@ -81,7 +81,7 @@ Bir notu kasanızın *dışına* taşımak, bedeli hiçbir şeyle geri alınamay
 
 **Elle:** [son sürümden](https://github.com/Gelaende51/obsidian-lure/releases) `main.js`, `manifest.json` ve `styles.css` dosyalarını `<vault>/.obsidian/plugins/lure/` klasörüne indirin, ardından **Ayarlar → Topluluk Eklentileri** altında etkinleştirin.
 
-**BRAT:** `Gelaende51/obsidian-lure` deposunu beta eklentisi olarak ekleyin.
+**BRAT:** `Gelaende51/obsidian-lure` deposunu beta eklentisi olarak ekleyin. BRAT ayrıca *otomatik derlemeler* de sunar (`1.6.2-deps.1` gibi): Lure'a dahil edilen bir kütüphane güncellendiğinde, güncelleme testler geçildikten sonra, henüz kimse incelemeden derlenir ve yayımlanır. İncelenmiş sürümlerde kalmak için topluluk dizininden kurun veya BRAT'ta bir sürümü sabitleyin.
 
 **Kaynaktan:** `npm install && npm run build` — bkz. [geliştirme](../development.md).
 

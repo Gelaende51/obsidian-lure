@@ -81,7 +81,7 @@ Eine Notiz aus deinem Vault *hinaus* zu verschieben, ist der eine Schreibvorgang
 
 **Manuell:** `main.js`, `manifest.json` und `styles.css` aus dem [neuesten Release](https://github.com/Gelaende51/obsidian-lure/releases) nach `<vault>/.obsidian/plugins/lure/` herunterladen und das Plugin dann unter **Einstellungen → Externe Erweiterungen** aktivieren.
 
-**BRAT:** `Gelaende51/obsidian-lure` als Beta-Plugin hinzufügen.
+**BRAT:** `Gelaende51/obsidian-lure` als Beta-Plugin hinzufügen. BRAT bietet auch *automatische Builds* (`1.6.2-deps.1` und ähnliche): Wird eine in Lure eingebundene Bibliothek aktualisiert, wird das Update gebaut und veröffentlicht, sobald die Tests bestehen, noch bevor es jemand geprüft hat. Um bei geprüften Releases zu bleiben, installiere das Plugin über das Community-Verzeichnis oder fixiere in BRAT eine Version.
 
 **Aus dem Quelltext:** `npm install && npm run build` — siehe [Entwicklung](../development.md).
 

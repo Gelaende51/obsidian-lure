@@ -39,6 +39,9 @@ on:
         type: choice
         options: [both, latest, earliest]
         default: both
+      why:
+        description: "Set by the environment watch: what changed. A failing run then opens an issue saying so."
+        default: ""
 
 permissions:
   contents: read
@@ -649,3 +652,21 @@ jobs:
             /mnt/shared/*.log
             /mnt/shared/*.txt
           if-no-files-found: ignore
+
+  # Started by the environment watch (watch.yml): a failure is reported as an
+  # issue naming what changed, since nobody is looking at a scheduled run.
+  report:
+    needs: [distros, old-engine, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits-machine, limits-display, wayland, nix, alpine, server-2019]
+    if: always() && inputs.why != '' && contains(needs.*.result, 'failure')
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          WHY: ${{ inputs.why }}
+          TARGET: ${{ inputs.target }}
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh issue create --repo "$GITHUB_REPOSITORY" --title "Tests fail on $TARGET after its environment changed" \
+            --body "$(printf 'The %s environment changed:\n\n%s\n\nRun: %s' "$TARGET" "$WHY" "$RUN")"
