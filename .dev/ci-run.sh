@@ -114,4 +114,14 @@ fi
 OBSIDIAN_CDP_PORT="$PORT" node .dev/ci-prepare.mjs || exit 1
 # SUITE_NODE runs the suite on another Node — Windows' own under Wine, so
 # the test and the app it drives agree on what a path looks like.
-OBSIDIAN_CDP_PORT="$PORT" ${SUITE_NODE:-node} ".dev/$SUITE.mjs" ${SUITE_FILTER:+"$SUITE_FILTER"}
+if [ -z "${SUITE_NODE:-}" ]; then
+	OBSIDIAN_CDP_PORT="$PORT" node ".dev/$SUITE.mjs" ${SUITE_FILTER:+"$SUITE_FILTER"}
+	exit $?
+fi
+# Windows' Node under Wine cannot write to a pipe (EBADF on its stderr): it
+# writes to a file, shown when it is done.
+out="$CACHE/suite-$SUITE.out"
+OBSIDIAN_CDP_PORT="$PORT" $SUITE_NODE ".dev/$SUITE.mjs" ${SUITE_FILTER:+"$SUITE_FILTER"} >"$out" 2>&1 </dev/null
+code=$?
+tr -d '\r' < "$out"
+exit $code

@@ -53,7 +53,7 @@ const EXTERNAL_AT_START = await (async () => {
 	return false;
 })();
 
-const { test, expect, run } = createSuite({ reset, teardown });
+const { test, expect, run } = createSuite({ reset, teardown, outside: (name) => name.includes("outside the vault") });
 
 const buildFixtures = `
 	const mk = async (p) => { if (!app.vault.getAbstractFileByPath(p)) await app.vault.createFolder(p); };

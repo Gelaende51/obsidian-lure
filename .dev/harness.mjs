@@ -132,7 +132,13 @@ async function captureFailure(name, label) {
 	} catch {}
 }
 
-export function createSuite({ reset, teardown, skip, argv = process.argv.slice(2) } = {}) {
+export function createSuite({ reset, teardown, skip: skipNamed, outside, argv = process.argv.slice(2) } = {}) {
+	// `outside` names the cases that read or write outside the vault. Where
+	// Obsidian runs in a sandbox that cannot see there (LURE_EXPECT_SANDBOX,
+	// the restricted Flatpak) they are left out as `skip` leaves its own:
+	// what is tested there instead is that Lure says why (test-external).
+	const sandboxed = !!process.env.LURE_EXPECT_SANDBOX;
+	const skip = (name) => !!skipNamed?.(name) || (sandboxed && !!outside?.(name));
 	const results = [];
 	const tests = [];
 	const { filter, seed, shuffled, verbose, first } = readArgs(argv);

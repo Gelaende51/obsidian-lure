@@ -12,7 +12,7 @@
  */
 
 import { CLEAR_NOTICES, connect, PAUSE, pressKey, quiesce, reloadPlugin, parkPointer, setSettings } from "./cdpSession.mjs";
-import { createSuite } from "./harness.mjs";
+import { createSuite, skipCase } from "./harness.mjs";
 
 const DIR = "Lure-links";
 const NOTE = `${DIR}/Note.md`;
@@ -35,6 +35,7 @@ const fixture = `
 `;
 
 const { test, expect, run } = createSuite({
+	outside: (name) => name.includes("outside the vault"),
 	reset: async () => {
 		await reloadPlugin(page);
 		await quiesce(page);
@@ -316,7 +317,14 @@ test("a hard link outside the vault is counted and listed as ~/… or /…", asy
 		const note = app.vault.getAbstractFileByPath(${JSON.stringify(NOTE)});
 		const own = path.join(app.vault.adapter.basePath, note.path);
 		const outside = path.join(os.homedir(), "lure-outside-" + Date.now() + ".md");
-		fs.linkSync(own, outside);
+		try {
+			fs.linkSync(own, outside);
+		} catch (err) {
+			// The vault on one drive and the home folder on another: no hard
+			// link can join them.
+			if (err.code === "EXDEV") return JSON.stringify({ exdev: true });
+			throw err;
+		}
 		try {
 			await app.workspace.getLeaf(false).openFile(app.vault.getAbstractFileByPath(${JSON.stringify(`${DIR}/Sibling.md`)}));
 			${PAUSE(400)}
@@ -333,6 +341,7 @@ test("a hard link outside the vault is counted and listed as ~/… or /…", asy
 			fs.unlinkSync(outside);
 		}
 	`).then(JSON.parse);
+	if (r.exdev) skipCase("the vault and the home folder are on different drives");
 	expect("the button counts the name outside", Number(r.count), (v) => v >= 1);
 	expect("a row for it, a path from home or the root", r.rows, (v) => v.filter((row) => /^(~\/|\/)/.test(row ?? "")).length === 1);
 });

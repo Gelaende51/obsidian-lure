@@ -48,7 +48,7 @@ const EXTERNAL_AT_START = await (async () => {
 	return false;
 })();
 
-const { test, expect, run } = createSuite({ reset, teardown });
+const { test, expect, run } = createSuite({ reset, teardown, outside: () => true });
 
 /** One transparent GIF pixel, so an inlined image has a real byte count. */
 const PIXEL = Buffer.from("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", "base64");

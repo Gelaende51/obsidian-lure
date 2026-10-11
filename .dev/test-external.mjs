@@ -124,7 +124,10 @@ const { test, expect, run } = createSuite({
 	// LURE_EXPECT_SANDBOX: Obsidian runs in a sandbox that cannot see the
 	// test bed (the restricted Flatpak). Every case that works there is moot;
 	// what is left to test is that it says why.
-	skip: (name) => name.includes("[crashes") || (!!process.env.LURE_EXPECT_SANDBOX && !name.startsWith("sandbox:")),
+	skip: (name) => name.includes("[crashes"),
+	// Everything here is outside the vault but the case that checks the
+	// sandbox says so.
+	outside: (name) => !name.startsWith("sandbox:"),
 });
 
 /** Opens a path in the plugin's viewer and waits for the render to settle. */
@@ -340,7 +343,10 @@ const measurePanes = (direction, times) => `
 			const r = el.getBoundingClientRect();
 			return r.right <= pane.right + 1 && r.left >= pane.left - 1 && r.bottom <= pane.bottom + 1;
 		}),
-		editorScrolls: editor ? editor.scrollHeight > editor.clientHeight : false,
+		// Scrolled, not measured: on some systems (openSUSE, FreeBSD) a long
+		// textarea reports its scrollHeight as its own height until it has
+		// been scrolled, though it scrolls.
+		editorScrolls: editor ? (() => { editor.scrollTop = 1e6; const moved = editor.scrollTop > 0; editor.scrollTop = 0; return moved; })() : false,
 		editorWhy: editor ? {
 			tag: editor.tagName, length: editor.value?.length ?? null, scrollH: editor.scrollHeight, clientH: editor.clientHeight,
 			overflowY: getComputedStyle(editor).overflowY, height: getComputedStyle(editor).height,

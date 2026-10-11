@@ -320,6 +320,9 @@ jobs:
           curl -sL "https://nodejs.org/dist/$v/node-$v-win-x64.zip" -o /tmp/node-win.zip
           unzip -q /tmp/node-win.zip -d "$HOME" && mv "$HOME/node-$v-win-x64" "$HOME/node-win"
           wine "$HOME/node-win/node.exe" --version
+          # The suites build their string tables with esbuild, whose binary
+          # is per platform: Windows' Node looks for Windows' one.
+          npm install --no-save --force "@esbuild/win32-x64@$(node -p 'require("esbuild/package.json").version')"
           echo "SUITE_NODE=wine $HOME/node-win/node.exe" >> "$GITHUB_ENV"
       - name: Run the suites
         env:

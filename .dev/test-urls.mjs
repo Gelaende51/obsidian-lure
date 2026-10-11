@@ -58,7 +58,7 @@ const EXTERNAL_AT_START = await (async () => {
  * function declarations hoist, so the suite can still be built here,
  * above the cases that register into it.
  */
-const { test, expect, run } = createSuite({ reset, teardown });
+const { test, expect, run } = createSuite({ reset, teardown, outside: (name) => /outside the vault|tilde/.test(name) });
 
 /** The files outside every vault that the `file://` cases are pointed at. */
 function buildBed() {
