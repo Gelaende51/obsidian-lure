@@ -9,7 +9,7 @@
 
 Kaikki Luren julkaisut, uusin ensin. Se, mikä on valmistunut viimeisimmän julkaisun jälkeen, on kohdassa *Julkaisematon*. Versionumeroissa ei ole `v`-etuliitettä, samoin kuin julkaisutunnisteissa.
 
-## Julkaisematon
+## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Lisätty
 
@@ -261,6 +261,7 @@ Ensimmäinen julkaisu. Korvaa muistiinpanon otsikkorivillä olevan tiedostonimen
 - **Holvin ulkopuolella** (oletuksena pois päältä): holvin nimi avaa muut holvisi, kotikansion, tiedostojärjestelmän juuren ja liitetyt asemat. Mitään siellä ei kirjoiteta, ennen kuin avaat lukituksen, ja muistiinpanon voi vain kopioida holvista ulos, ei koskaan siirtää.
 - **45 kieltä.**
 
+[^1.6.0]: Muutokset version 1.5.2 jälkeen: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.2...1.6.0>
 [^1.5.2]: Muutokset version 1.5.1 jälkeen: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.1...1.5.2>
 [^1.5.1]: Muutokset version 1.5.0 jälkeen: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: Muutokset version 1.4.0 jälkeen: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>

@@ -9,7 +9,7 @@
 
 Cada versió de Lure, de la més nova a la més antiga. El que ha arribat des de la darrera versió és a *Sense publicar*. Les versions no porten el prefix `v`, igual que les etiquetes de les versions.
 
-## Sense publicar
+## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Afegit
 
@@ -261,6 +261,7 @@ Primera versió. Substitueix el nom del fitxer a la capçalera d'una nota per un
 - **Fora del cofre** (desactivat per defecte): el nom del cofre obre els teus altres cofres, la carpeta personal, l'arrel del sistema de fitxers i les unitats muntades. No s'hi escriu res fins que ho desbloquegis, i una nota només es pot copiar fora del cofre, mai moure.
 - **45 idiomes.**
 
+[^1.6.0]: Canvis des de la 1.5.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.2...1.6.0>
 [^1.5.2]: Canvis des de la 1.5.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.1...1.5.2>
 [^1.5.1]: Canvis des de la 1.5.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: Canvis des de la 1.4.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>

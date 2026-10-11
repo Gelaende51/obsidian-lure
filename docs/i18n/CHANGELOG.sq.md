@@ -9,7 +9,7 @@
 
 Çdo publikim i Lure, më i riu i pari. Ajo që ka ardhur që nga publikimi i fundit ndodhet nën *Të papublikuara*. Versionet nuk kanë prapashtesën `v`, njësoj si etiketat e publikimeve.
 
-## Të papublikuara
+## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Të shtuara
 
@@ -261,6 +261,7 @@ Publikimi i parë. E zëvendëson emrin e skedarit në kokën e një shënimi me
 - **Jashtë kasafortës** (e fikur si parazgjedhje): emri i kasafortës hap kasafortat e tua të tjera, dosjen e shtëpisë, rrënjën e sistemit të skedarëve dhe disqet e montuara. Atje jashtë nuk shkruhet asgjë derisa ta shkyçësh, dhe një shënim mund vetëm të kopjohet jashtë kasafortës, kurrë të zhvendoset.
 - **45 gjuhë.**
 
+[^1.6.0]: Ndryshimet që nga 1.5.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.2...1.6.0>
 [^1.5.2]: Ndryshimet që nga 1.5.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.1...1.5.2>
 [^1.5.1]: Ndryshimet që nga 1.5.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: Ndryshimet që nga 1.4.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>

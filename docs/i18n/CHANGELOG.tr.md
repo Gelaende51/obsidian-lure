@@ -9,7 +9,7 @@
 
 Lure'un her sürümü, en yenisi en üstte. Son sürümden bu yana gelenler *Yayımlanmamış* başlığı altındadır. Sürüm numaraları, sürüm etiketleriyle uyumlu olarak `v` öneki taşımaz.
 
-## Yayımlanmamış
+## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Eklenenler
 
@@ -261,6 +261,7 @@ Lure'un her sürümü, en yenisi en üstte. Son sürümden bu yana gelenler *Yay
 - **Kasanın dışında** (öntanımlı olarak kapalı): kasa adı diğer kasalarınızı, ev klasörünüzü, dosya sistemi kökünü ve bağlı sürücüleri açar. Siz kilidini açana kadar orada hiçbir şey yazılmaz ve bir not kasanın dışına yalnızca kopyalanabilir, asla taşınamaz.
 - **45 dil.**
 
+[^1.6.0]: 1.5.2'dan bu yana değişiklikler: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.2...1.6.0>
 [^1.5.2]: 1.5.1'dan bu yana değişiklikler: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.1...1.5.2>
 [^1.5.1]: 1.5.0'dan bu yana değişiklikler: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: 1.4.0'dan bu yana değişiklikler: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>

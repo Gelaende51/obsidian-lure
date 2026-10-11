@@ -9,7 +9,7 @@
 
 Fiecare versiune a Lure, cea mai nouă prima. Ce a apărut de la ultima versiune se află sub *Nelansate*. Versiunile nu poartă prefixul `v`, la fel ca etichetele de lansare.
 
-## Nelansate
+## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Adăugat
 
@@ -261,6 +261,7 @@ Prima lansare. Înlocuiește numele fișierului din antetul unei notițe cu un t
 - **În afara seifului** (dezactivat implicit): numele seifului deschide celelalte seifuri, dosarul personal, rădăcina sistemului de fișiere și unitățile montate. Nimic de acolo nu este scris până nu deblochezi, iar o notiță poate fi doar copiată în afara seifului, niciodată mutată.
 - **45 de limbi.**
 
+[^1.6.0]: Modificări de la 1.5.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.2...1.6.0>
 [^1.5.2]: Modificări de la 1.5.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.1...1.5.2>
 [^1.5.1]: Modificări de la 1.5.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: Modificări de la 1.4.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>

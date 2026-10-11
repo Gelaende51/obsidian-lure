@@ -8,7 +8,7 @@
 
 Hver udgivelse af Lure, nyeste først. Det, der er kommet til siden seneste udgivelse, står under *Ikke udgivet*. Versioner har intet `v`-præfiks, så de svarer til udgivelsesmærkerne.
 
-## Ikke udgivet
+## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Tilføjet
 
@@ -260,6 +260,7 @@ Første udgivelse. Erstatter filnavnet i en notes overskriftslinje med en klikba
 - **Uden for boksen** (slået fra som standard): boksens navn åbner dine andre bokse, hjemmemappen, filsystemets rod og tilsluttede drev. Intet derude bliver skrevet, før du låser op, og en note kan kun kopieres ud af boksen, aldrig flyttes.
 - **45 sprog.**
 
+[^1.6.0]: Ændringer siden 1.5.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.2...1.6.0>
 [^1.5.2]: Ændringer siden 1.5.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.1...1.5.2>
 [^1.5.1]: Ændringer siden 1.5.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: Ændringer siden 1.4.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>

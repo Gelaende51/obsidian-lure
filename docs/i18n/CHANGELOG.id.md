@@ -8,7 +8,7 @@
 
 Setiap rilis Lure, yang terbaru lebih dulu. Apa yang sudah mendarat sejak rilis terakhir ada di bawah *Belum dirilis*. Versi tidak memakai awalan `v`, sesuai dengan tanda rilisnya.
 
-## Belum dirilis
+## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Ditambahkan
 
@@ -260,6 +260,7 @@ Rilis pertama. Mengganti nama berkas di bilah judul sebuah catatan dengan jalur 
 - **Di luar vault** (mati secara bawaan): nama vault membuka vault Anda yang lain, folder rumah, akar sistem berkas, dan diska yang terpasang. Tak ada apa pun di luar sana yang ditulis sampai Anda membuka kuncinya, dan sebuah catatan hanya bisa disalin keluar dari vault, tak pernah dipindahkan.
 - **45 bahasa.**
 
+[^1.6.0]: Perubahan sejak 1.5.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.2...1.6.0>
 [^1.5.2]: Perubahan sejak 1.5.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.1...1.5.2>
 [^1.5.1]: Perubahan sejak 1.5.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: Perubahan sejak 1.4.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>

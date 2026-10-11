@@ -9,7 +9,7 @@
 
 Każde wydanie Lure, od najnowszego. To, co pojawiło się od ostatniego wydania, znajduje się pod nagłówkiem *Niewydane*. Wersje nie mają przedrostka `v`, zgodnie ze znacznikami wydań.
 
-## Niewydane
+## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Dodano
 
@@ -260,6 +260,7 @@ Pierwsze wydanie. Zastępuje nazwę pliku w nagłówku notatki klikalną, edytow
 - **Poza skarbcem** (domyślnie wyłączone): nazwa skarbca otwiera inne skarbce, katalog domowy, katalog główny systemu plików i zamontowane napędy. Nic tam na zewnątrz nie jest zapisywane, dopóki tego nie odblokujesz, a notatkę można poza skarbiec tylko skopiować, nigdy przenieść.
 - **45 języków.**
 
+[^1.6.0]: Zmiany od 1.5.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.2...1.6.0>
 [^1.5.2]: Zmiany od 1.5.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.1...1.5.2>
 [^1.5.1]: Zmiany od 1.5.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
 [^1.5.0]: Zmiany od 1.4.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.4.0...1.5.0>
