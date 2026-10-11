@@ -2713,3 +2713,8 @@ from the logged readings; the factors will move as readings accumulate.
   on Arm) that is a failure; `reloadPlugin` now waits for it.
 - The editor-split hard-link case of test-links is timing-sensitive: it failed
   once on an unchanged Linux runner (small-screen job) and on Server 2019.
+- x64 Obsidian under Rosetta (macos-15, Node as x64): test-tab loses 15
+  folder-walk cases — the field never opens after a folder click — while the
+  same suite passes on macOS natively and on Windows 11 on Arm's x64
+  emulation. Not chased: the Mac build is universal, so Rosetta is chosen, not
+  given. Kept as a probe (continue-on-error).
