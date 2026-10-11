@@ -1104,6 +1104,37 @@ test("padlock: the unlock survives the work and a change of place", async () => 
 	expect("the move happened", existsSync(join(BED, "m1-moved.txt")), true);
 });
 
+// Asked for: outside the vault the extension stayed in the name and the
+// other-paths button stood in front of the vault. Both belong at the end.
+test("path bar: outside the vault the extension is a badge, as a note's", async () => {
+	await setSettings(page, { showFileExtension: false });
+	writeFileSync(join(BED, "badged.txt"), "x\n");
+	const r = await page.evaluate(`
+		${open(join(BED, "badged.txt"))}
+		${PAUSE(400)}
+		const root = app.workspace.activeLeaf.view.containerEl;
+		const badge = root.querySelector(".lure-filename > .lure-filename-badge");
+		return {
+			name: root.querySelector(".lure-filename-text")?.textContent ?? null,
+			extension: badge?.querySelector(".lure-badge-extension")?.textContent ?? null,
+			front: !!root.querySelector(".lure-vault-wrapper .lure-other-paths"),
+		};
+	`);
+	expect("the name without its extension", r.name, "badged");
+	expect("the extension in the badge", r.extension, ".txt");
+	expect("nothing in front of the vault", r.front, false);
+	const pressed = await page.evaluate(`
+		app.workspace.activeLeaf.view.containerEl.querySelector(".lure-filename-badge").dispatchEvent(new MouseEvent("click", { bubbles: true }));
+		${PAUSE(400)}
+		const input = document.querySelector(".lure-path-input");
+		const out = input ? { value: input.value, selected: input.value.slice(input.selectionStart, input.selectionEnd) } : null;
+		document.querySelector(".lure-path-input")?.blur();
+		document.body.click();
+		return out;
+	`);
+	expect("pressing it writes the name out with the extension marked", pressed, { value: "badged.txt", selected: ".txt" });
+});
+
 test("dropdown: the keep-this-name entry stands out in blue", async () => {
 	const r = await page.evaluate(`
 		${open(join(BED, "note.md"))}

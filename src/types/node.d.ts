@@ -58,6 +58,8 @@ declare module "fs" {
 		ino: number;
 		/** How many directory entries name this file; above one, it has hard links. */
 		nlink: number;
+		/** Bytes: zero for an empty file. */
+		size: number;
 	}
 
 	export const constants: {

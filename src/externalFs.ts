@@ -1,4 +1,4 @@
-import { Dirent, readdirSync, statSync } from "fs";
+import { Dirent, lstatSync, readdirSync, statSync } from "fs";
 import { join, parse, sep } from "path";
 
 /**
@@ -80,6 +80,20 @@ export function isExternalFile(path: string): boolean {
 		return statSync(path).isFile();
 	} catch {
 		return false;
+	}
+}
+
+/**
+ * What a file outside the vault is on disk, for the marks its badge carries:
+ * a symbolic link, one of several names (a hard link), and whether it is empty.
+ */
+export function externalFileFacts(path: string): { link: "symbolic" | "hard" | "none"; empty: boolean } {
+	try {
+		const own = lstatSync(path);
+		if (own.isSymbolicLink()) return { link: "symbolic", empty: statSync(path).size === 0 };
+		return { link: own.nlink > 1 ? "hard" : "none", empty: own.size === 0 };
+	} catch {
+		return { link: "none", empty: false };
 	}
 }
 

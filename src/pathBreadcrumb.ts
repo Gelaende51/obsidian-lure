@@ -35,7 +35,7 @@ import { commonPrefix, planTab, TabCandidate } from "./tabComplete";
 import { LinkKind, OtherPath, aliasPathsOf, convertLink, forgetOtherPath, makeOtherPath, otherPaths, recordCopy } from "./altPaths";
 import { createsFiles, expandBraces, hasGlobChars, matchPaths } from "./globPattern";
 import { FolderChildSuggest, LINK_ENTER, LINK_ICONS, describeFile, typeIcon, MODIFIED_ENTER, guardFieldKeys, pageLabel, PathSuggestion } from "./folderChildSuggest";
-import { ExternalChild, PATH_SEP, externalJoin, externalParent, externalSegments, isExternalFile, isExternalFolder, listExternalChildren } from "./externalFs";
+import { ExternalChild, PATH_SEP, externalFileFacts, externalJoin, externalParent, externalSegments, isExternalFile, isExternalFolder, listExternalChildren } from "./externalFs";
 import {
 	CURRENT_VAULT_ICON,
 	LOCATION_ICONS,
@@ -467,6 +467,14 @@ function onlyChangedFolder(before: string[], after: string[]): number | null {
 	}
 	// The last segment is the file, not a folder.
 	return found !== null && found < before.length - 1 ? found : null;
+}
+
+/** The file at the row's end, in the vault (`file`) or outside it (`absolute`). */
+interface ShownFile {
+	name: string;
+	extension: string;
+	file: TFile | null;
+	absolute: string | null;
 }
 
 function stemLength(name: string): number {
@@ -1103,9 +1111,15 @@ export class PathBreadcrumb {
 			// The badge stands for the hidden extension, and pressing it is
 			// asking to see it: the name opens with the extension written out
 			// and marked, as the dropdown's badge does for a row.
-			if (target.closest(".lure-filename-badge") && this.file && !this.paneTypeFor(evt)) {
-				this.revealFileExtension(this.file);
-				return;
+			if (target.closest(".lure-filename-badge") && !this.paneTypeFor(evt)) {
+				if (this.externalFileName !== null && this.externalPath !== null) {
+					this.revealExternalExtension(this.externalFileName);
+					return;
+				}
+				if (this.file) {
+					this.revealFileExtension(this.file);
+					return;
+				}
 			}
 			if (target.closest(".lure-filename-text")) {
 				// A modifier means "open it", not "edit it" — the same rule
@@ -4867,10 +4881,13 @@ export class PathBreadcrumb {
 		// lived at the external path.
 		if (this.externalPath !== null) {
 			if (this.externalFileName) {
+				// With extensions hidden, as a note's: the name, then its badge.
+				const shown = this.badgeWanted() ? this.shownFile() : null;
 				this.filenameEl.createSpan({
 					cls: "lure-filename-text",
-					text: this.externalFileName,
+					text: shown ? this.externalFileName.slice(0, stemLength(this.externalFileName)) : this.externalFileName,
 				});
+				if (shown) this.renderFileBadge(this.filenameEl, shown);
 			}
 			return;
 		}
@@ -4911,8 +4928,9 @@ export class PathBreadcrumb {
 				cls: EXTENSION_CLASS,
 				text: this.file.name.slice(this.file.basename.length),
 			});
-		} else if (this.file.extension) {
-			this.renderFileBadge(this.filenameEl, this.file);
+		} else {
+			const shown = this.shownFile();
+			if (shown) this.renderFileBadge(this.filenameEl, shown);
 		}
 		makeDraggable(this.plugin.app, nameEl, this.file);
 	}
@@ -4924,17 +4942,14 @@ export class PathBreadcrumb {
 	 * after the vault name. It stays while the field is open, so the row
 	 * goes on saying what the file is while its name is edited.
 	 */
-	private renderFileBadge(host: HTMLElement, file: TFile): void {
-		const disk = this.plugin.diskLinks;
-		const link = disk.targetOfLink(file.path) ? "symbolic" : disk.sameFile(file.path).length ? "hard" : "none";
-		const facts = { label: file.name, kind: "file" as const, path: file.path, disabled: false, empty: file.stat.size === 0, endIcon: LINK_ICONS[link] };
+	private renderFileBadge(host: HTMLElement, shown: ShownFile): void {
 		const badge = host.createSpan({ cls: `${EXTENSION_CLASS} lure-filename-badge` });
 		// A press on it is not one that leaves the field.
 		badge.addEventListener("mousedown", (evt) => evt.preventDefault());
 		badge.createSpan({ cls: "lure-suggest-type-icon" });
-		this.fillBadgeIcon(badge, file);
-		badge.createSpan({ cls: "lure-badge-extension", text: `.${file.extension}` });
-		setTooltip(badge, `${describeFile(file.extension, facts)}\n${t("suggestShowExtension")}`);
+		const facts = this.fillBadgeIcon(badge, shown);
+		badge.createSpan({ cls: "lure-badge-extension", text: `.${shown.extension}` });
+		setTooltip(badge, `${describeFile(shown.extension, facts)}\n${t("suggestShowExtension")}`);
 	}
 
 	/**
@@ -4943,30 +4958,35 @@ export class PathBreadcrumb {
 	 * button counts — and the badge takes their colour behind it; the icon
 	 * opens their list, the rest of the badge still writes the extension out
 	 * and stays grey. Otherwise the file's type, with its link and empty marks.
+	 * Returns what the badge says of the file, for its tooltip.
 	 */
-	private fillBadgeIcon(badge: HTMLElement, file: TFile): void {
+	private fillBadgeIcon(badge: HTMLElement, shown: ShownFile): PathSuggestion {
 		const disk = this.plugin.diskLinks;
-		const others = otherPaths(this.plugin.app, disk, file);
-		const matches = this.globMatches;
+		const file = shown.file;
+		const outside = file ? null : this.getExternalPathForLeaf();
+		const others = file ? otherPaths(this.plugin.app, disk, file) : outside ? this.plugin.externalLinks.othersOf(outside) : [];
+		const matches = file ? this.globMatches : null;
+		const { link, empty } = file
+			? { link: disk.targetOfLink(file.path) ? "symbolic" : disk.sameFile(file.path).length ? "hard" : "none", empty: file.stat.size === 0 }
+			: externalFileFacts(shown.absolute ?? "");
+		const facts: PathSuggestion = { label: shown.name, kind: "file", path: file?.path ?? shown.absolute ?? shown.name, disabled: false, empty, endIcon: LINK_ICONS[link as keyof typeof LINK_ICONS] };
 		const tint = matches !== null ? (matches.length ? "match" : "none") : others.length ? otherPathsTint(others) : null;
 		const count = matches !== null ? matches.length : others.length;
 		// Redrawn only when what it says changed: a pattern being typed asks on every key.
-		const key = tint === null ? "type" : `${tint}:${count}`;
+		const key = tint === null ? `type:${link}:${empty}` : `${tint}:${count}`;
 		const current = badge.querySelector<HTMLElement>(":scope > .lure-suggest-type-icon");
-		if (current && badge.dataset.lureIcon === key) return;
+		if (current && badge.dataset.lureIcon === key) return facts;
 		badge.dataset.lureIcon = key;
 		const icon = createSpan({ cls: "lure-suggest-type-icon" });
 		if (current) current.replaceWith(icon);
 		else badge.prepend(icon);
 		if (tint === null) {
 			delete badge.dataset.lureTint;
-			const link = disk.targetOfLink(file.path) ? "symbolic" : disk.sameFile(file.path).length ? "hard" : "none";
 			icon.addClass("lure-suggest-has-kind");
-			setIcon(icon, typeIcon(file.extension));
-			const kind = LINK_ICONS[link];
-			if (kind) setIcon(icon.createSpan({ cls: "lure-suggest-kind" }), kind);
-			if (file.stat.size === 0) icon.createSpan({ cls: "lure-suggest-empty" });
-			return;
+			setIcon(icon, typeIcon(shown.extension));
+			if (facts.endIcon) setIcon(icon.createSpan({ cls: "lure-suggest-kind" }), facts.endIcon);
+			if (empty) icon.createSpan({ cls: "lure-suggest-empty" });
+			return facts;
 		}
 		badge.dataset.lureTint = tint;
 		icon.addClass("lure-badge-other-paths");
@@ -4976,6 +4996,7 @@ export class PathBreadcrumb {
 			evt.stopPropagation();
 			this.showIndicatorMenu(evt, badge);
 		});
+		return facts;
 	}
 
 	/**
@@ -5196,7 +5217,7 @@ export class PathBreadcrumb {
 	 */
 	private revealExtensionInField(): void {
 		const input = this.inputEl;
-		const extension = this.file?.extension;
+		const extension = this.shownFile()?.extension;
 		if (!input || !extension) return;
 		const dotted = `.${extension}`;
 		if (!input.value.toLowerCase().endsWith(dotted.toLowerCase())) {
@@ -5205,6 +5226,13 @@ export class PathBreadcrumb {
 		}
 		input.focus();
 		input.setSelectionRange(input.value.length - dotted.length, input.value.length);
+	}
+
+	/** The same press outside the vault, where the field already takes the whole name: the extension is what gets marked. */
+	private revealExternalExtension(name: string): void {
+		this.editFromName = true;
+		this.enterTypingMode(name, "none");
+		this.inputEl?.setSelectionRange(stemLength(name), name.length);
 	}
 
 	private revealFileExtension(file: TFile): void {
@@ -6883,9 +6911,26 @@ export class PathBreadcrumb {
 		return this.inputEl === null || this.filenameEl.querySelector(":scope > .lure-filename-badge") !== null;
 	}
 
-	/** Whether the open file's extension goes in a badge: hidden from names, a file in the vault, no locations menu. */
+	/** Whether the open file's extension goes in a badge: hidden from names, a file with one, no locations menu. */
 	private badgeWanted(): boolean {
-		return !this.plugin.settings.showFileExtension && !!this.file?.extension && this.externalPath === null && !this.showingLocations;
+		return !this.plugin.settings.showFileExtension && this.shownFile() !== null;
+	}
+
+	/**
+	 * The file the row ends in, as its badge describes it: the open note in
+	 * the vault, or the file outside it this leaf is showing. Null without
+	 * one, or for a name with no extension to put in a badge.
+	 */
+	private shownFile(): ShownFile | null {
+		if (this.showingLocations) return null;
+		if (this.externalPath === null) {
+			const file = this.file;
+			return file?.extension ? { name: file.name, extension: file.extension, file, absolute: null } : null;
+		}
+		const name = this.externalFileName;
+		const dot = name ? name.lastIndexOf(".") : -1;
+		if (!name || dot <= 0 || dot === name.length - 1) return null;
+		return { name, extension: name.slice(dot + 1), file: null, absolute: externalJoin(this.externalPath, name) };
 	}
 
 	private updateIndicator(): void {
@@ -6905,10 +6950,11 @@ export class PathBreadcrumb {
 		// while it shows — its icon is the button then — and everywhere else
 		// it stands after the name, where the badge would be.
 		const badge = this.badgeShows() ? this.filenameEl.querySelector<HTMLElement>(":scope > .lure-filename-badge") : null;
-		if (badge && file) {
+		const shown = badge ? this.shownFile() : null;
+		if (badge && shown) {
 			this.indicatorEl?.remove();
 			this.indicatorEl = null;
-			this.fillBadgeIcon(badge, file);
+			this.fillBadgeIcon(badge, shown);
 			return;
 		}
 		if (!others.length && matches === null) {
@@ -8750,9 +8796,9 @@ export class PathBreadcrumb {
 		// The badge stays beside the field: opening the dropdown is no reason
 		// for the row to stop saying what the file is, and the other-paths
 		// button stays at the row's end with it rather than moving to the front.
-		const file = this.file;
-		if (host === this.filenameEl && file?.extension && this.badgeWanted()) {
-			this.renderFileBadge(host, file);
+		const shown = this.shownFile();
+		if (host === this.filenameEl && shown && this.badgeWanted()) {
+			this.renderFileBadge(host, shown);
 		}
 		this.updateIndicator();
 

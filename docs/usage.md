@@ -877,8 +877,8 @@ extension in a badge at a row's end while extensions are hidden, and the row
 under the pointer or picked with the arrow keys highlighted; <kbd>Enter</kbd>
 opens it, <kbd>Esc</kbd> closes the list.
 
-With file extensions hidden, the button is the **badge at the row's end**:
-it takes the place of the file's type icon, and the badge takes its
+With file extensions hidden, the button is the **badge at the row's end** —
+for a file outside the vault as for a note: it takes the place of the file's type icon, and the badge takes its
 colour behind the extension, which stays grey. Pressing the icon opens the
 list, ending where the extension does; pressing the rest of the badge writes
 the extension out, as before. The badge stays while the field is open, and
