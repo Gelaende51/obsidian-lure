@@ -479,26 +479,30 @@ jobs:
           SUITES: ${{ inputs.suites }}
         run: .dev/ci-suites.sh
 
-  # Alpine is musl, and Obsidian is built for glibc: gcompat stands in for it.
-  # Run through docker by hand, as GitHub's own actions cannot run in a musl
-  # container. A probe: it may not start at all.
+  # Alpine is musl; Obsidian's own binary is built for glibc and does not
+  # start there even with gcompat (libudev, __memcpy_chk, posix_fallocate64).
+  # Obsidian's app runs on Alpine's own Electron instead, as on FreeBSD. Run
+  # through docker by hand: GitHub's actions cannot run in a musl container.
   alpine:
     if: inputs.target == 'alpine'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
-      - name: Alpine with gcompat, the suites inside
+      - name: Alpine, its Electron and the suites
         env:
           SUITES: ${{ inputs.suites }}
         run: |
           docker run --rm --shm-size=2g -e SUITES -e VERSIONS -v "$PWD:/repo" -w /repo alpine:3.22 sh -c '
-            apk add --no-cache bash nodejs npm curl git gcompat libstdc++ nss gtk+3.0 alsa-lib mesa-gbm libdrm xvfb-run xvfb procps-ng font-dejavu at-spi2-core libxkbcommon libxcomposite libxdamage libxrandr cups-libs >/dev/null &&
-            npm ci --no-audit --no-fund >/dev/null && node esbuild.config.mjs production &&
-            OBSIDIAN_EXTRA_ARGS=--no-sandbox bash .dev/ci-suites.sh; code=$?
-            bin=$(find "$HOME/.obsidian-cache" -type f -name obsidian 2>/dev/null | head -1)
-            echo "--- the binary: $bin"; [ -n "$bin" ] && { "$bin" --version 2>&1 | head -8; ldd "$bin" 2>&1 | grep -i "not found\|error" | head -8; }
-            exit $code'
+            apk add --no-cache bash nodejs npm curl git electron xvfb-run xvfb procps-ng font-dejavu python3 make g++ >/dev/null || exit 1
+            electron=$(command -v electron); echo "electron: $electron $($electron --version 2>/dev/null)"
+            url=$(curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest | grep -o "\"browser_download_url\": *\"[^\"]*obsidian-[0-9.]*\.tar\.gz\"" | head -1 | cut -d"\"" -f4)
+            curl -sL "$url" | tar -xz -C /tmp
+            asar=$(ls -d /tmp/obsidian-*/resources/app.asar | head -1)
+            npm ci --no-audit --no-fund >/dev/null && node esbuild.config.mjs production || exit 1
+            npm install --no-save --no-package-lock obsidian-launcher@3 >/dev/null 2>&1
+            (cd node_modules/classic-level && node -e "require(\"node-gyp-build\")(\".\")" 2>/dev/null || npx --yes node-gyp rebuild >/dev/null)
+            OBSIDIAN_COMMAND="$electron $asar" OBSIDIAN_EXTRA_ARGS=--no-sandbox bash .dev/ci-suites.sh'
 
   # Loaded beside every suite, the header plugins of test-compat-ui changed
   # what F2 and the rename field did even after being turned off. One job
