@@ -272,8 +272,11 @@ jobs:
           url=$(curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest | grep -o '"browser_download_url": *"[^"]*Obsidian-[0-9.]*\.exe"' | head -1 | cut -d'"' -f4)
           echo "installer: $url"
           curl -sL "$url" -o /tmp/obsidian-setup.exe
-          xvfb-run -a wine /tmp/obsidian-setup.exe /S
-          sleep 20
+          # One display for the whole install: xvfb-run took its own down
+          # under the installer as soon as the first process returned.
+          Xvfb :98 -screen 0 1280x800x24 >/dev/null 2>&1 &
+          DISPLAY=:98 wine /tmp/obsidian-setup.exe /S || true
+          wineserver -w
           exe=$(find "$WINEPREFIX/drive_c" -iname Obsidian.exe | head -1)
           echo "exe: $exe"
           echo "OBSIDIAN_EXE=$exe" >> "$GITHUB_ENV"
@@ -300,7 +303,8 @@ jobs:
           mem: 8192
           envs: "SUITES VERSIONS"
           prepare: |
-            pkg install -y node npm bash curl git xorg-vfbserver xauth procps
+            # pgrep and pkill are in FreeBSD's base system.
+            pkg install -y node npm bash curl git xorg-vfbserver xauth
             pkg search -q '^electron[0-9]' | sort -V | tail -1 | xargs pkg install -y
           run: |
             set -e
