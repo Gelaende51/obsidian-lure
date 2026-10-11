@@ -782,6 +782,15 @@ jobs:
             echo "::notice::No Insider credentials (OBSIDIAN_EMAIL, OBSIDIAN_PASSWORD): Obsidian's beta is not tested."
             echo "run=false" >> "$GITHUB_OUTPUT"; exit 0
           fi
+          # Sign in now, beta or not, so a wrong password or a 2FA prompt shows
+          # before a beta is out. Only the outcome is printed.
+          node -e '
+            fetch("https://api.obsidian.md/user/signin", { method: "POST", headers: { "content-type": "application/json" },
+              body: JSON.stringify({ email: process.env.OBSIDIAN_EMAIL, password: process.env.OBSIDIAN_PASSWORD, mfa: "" }) })
+              .then((r) => r.json()).then((j) => {
+                if (j.token) { console.log("signed in to the Obsidian account"); return; }
+                console.log(`::error::Obsidian sign-in failed: ${String(j.error ?? "no token").slice(0, 120)}`); process.exit(1);
+              });'
           npm install --no-save --no-package-lock obsidian-launcher@3 >/dev/null 2>&1
           versions=$(node --input-type=module -e 'const { default: L } = await import("obsidian-launcher"); const l = new L(); const [b] = await l.resolveVersion("latest-beta"); const [s] = await l.resolveVersion("latest"); console.log(b + " " + s);')
           read -r beta stable <<< "$versions"
