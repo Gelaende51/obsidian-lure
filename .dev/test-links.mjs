@@ -654,6 +654,18 @@ test("hard links made and split off outside Obsidian are put right in the lists"
 		fs.renameSync(twin + ".tmp", twin);
 	`);
 	lists = await until((v) => !v.includes(`${DIR}/Twin.md`));
+	// Intermittent on some runners: whether the file itself still says so, or
+	// only Obsidian's cache of it, tells a list not written from a stale cache.
+	if ((lists?.["paths-hardlinks"] ?? []).includes(`${DIR}/Twin.md`)) {
+		const onDisk = await page.evaluate(`
+			const fs = require("fs"), path = require("path");
+			const at = (p) => path.join(app.vault.adapter.getBasePath(), p);
+			const head = (p) => fs.readFileSync(at(p), "utf8").split("---")[1] ?? "";
+			const ino = (p) => fs.statSync(at(p)).ino + "/" + fs.statSync(at(p)).nlink;
+			return JSON.stringify({ note: head(${JSON.stringify(NOTE)}), twin: head(${JSON.stringify(`${DIR}/Twin.md`)}), inodes: [ino(${JSON.stringify(NOTE)}), ino(${JSON.stringify(`${DIR}/Twin.md`)})] });
+		`);
+		console.log(`    split-off diagnosis: ${onDisk}`);
+	}
 	expect("a hard link an editor's save split off is taken out", lists?.["paths-hardlinks"] ?? [], (v) => !v.includes(`${DIR}/Twin.md`));
 	expect("and out of paths", lists?.paths ?? [], (v) => !v.includes(`${DIR}/Twin.md`));
 });
