@@ -75,7 +75,9 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add .github/upstream-versions.json
           git commit -m "Tested against new upstream versions: $RESULT" -m "$list"
-          git push origin HEAD:main
+          # The tests take a while and main may have moved meanwhile: put the
+          # record on top of it, and say so in the issue either way.
+          for _ in 1 2 3; do git pull -q --rebase origin main && git push -q origin HEAD:main && break; sleep 5; done
           if [ "$RESULT" != "success" ]; then
             gh issue create --title "Tests fail against new upstream versions" \
               --body "$(printf 'The suites failed after these changed:\n\n%s\n\nRun: %s' "$list" "$RUN")"
@@ -116,4 +118,4 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add .github/environment-versions.json
           git commit -m "Test environments changed: ${TARGETS:-main suites}" -m "$why"
-          git pull -q --rebase origin main && git push origin HEAD:main
+          for _ in 1 2 3; do git pull -q --rebase origin main && git push -q origin HEAD:main && break; sleep 5; done
