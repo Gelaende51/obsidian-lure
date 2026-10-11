@@ -174,6 +174,7 @@ jobs:
       - name: Run the suites
         shell: bash
         env:
+          LURE_SLOW: "3"
           SUITES: ${{ inputs.suites }}
         run: |
           node -p '"node runs as " + process.arch'
@@ -214,6 +215,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     name: flatpak (${{ matrix.access }} access)
+    # Restricted is a probe: what is out of reach fails, and the log says how.
+    continue-on-error: ${{ matrix.access == 'restricted' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -237,6 +240,9 @@ jobs:
             export OBSIDIAN_COMMAND="flatpak run --user --nofilesystem=host --nofilesystem=home --filesystem=$HOME/.cache/lure-ci md.obsidian.Obsidian"
           else
             export OBSIDIAN_COMMAND="flatpak run --user md.obsidian.Obsidian"
+            # The sandbox has a /tmp of its own: the suites' files outside the
+            # vault go under home, where it can see them.
+            mkdir -p "$HOME/.cache/lure-ci/tmp" && export TMPDIR="$HOME/.cache/lure-ci/tmp"
           fi
           dbus-run-session -- .dev/ci-suites.sh
 
@@ -286,12 +292,13 @@ jobs:
           url=$(curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest | grep -o '"browser_download_url": *"[^"]*Obsidian-[0-9.]*\.exe"' | head -1 | cut -d'"' -f4)
           echo "installer: $url"
           curl -sL "$url" -o /tmp/obsidian-setup.exe
-          # One display for the whole install: xvfb-run took its own down
-          # under the installer as soon as the first process returned.
-          Xvfb :98 -screen 0 1280x800x24 >/dev/null 2>&1 &
-          DISPLAY=:98 wine /tmp/obsidian-setup.exe /S || true
-          wineserver -w
-          exe=$(find "$WINEPREFIX/drive_c" -iname Obsidian.exe | head -1)
+          # Unpacked rather than installed: the silent install under Wine left
+          # no Obsidian.exe behind. The NSIS installer carries the app as a 7z.
+          sudo apt-get install -y -q p7zip-full
+          7z x -y -o/tmp/nsis /tmp/obsidian-setup.exe >/dev/null
+          7z x -y -o"$HOME/obsidian-win" "$(find /tmp/nsis -iname 'app-64.7z' | head -1)" >/dev/null
+          wineboot -i >/dev/null 2>&1 || true
+          exe=$(find "$HOME/obsidian-win" -maxdepth 2 -iname Obsidian.exe | head -1)
           echo "exe: $exe"
           echo "OBSIDIAN_EXE=$exe" >> "$GITHUB_ENV"
       - name: Run the suites
@@ -319,6 +326,8 @@ jobs:
           prepare: |
             # pgrep and pkill are in FreeBSD's base system.
             pkg install -y node npm bash curl git xorg-vfbserver xauth
+            # The scripts ask for /bin/bash; FreeBSD keeps it in /usr/local.
+            ln -sf /usr/local/bin/bash /bin/bash
             pkg search -q '^electron[0-9]' | sort -V | tail -1 | xargs pkg install -y
           run: |
             set -e
@@ -360,8 +369,11 @@ jobs:
         shell: bash
         env:
           OBSIDIAN_EXTRA_ARGS: --no-sandbox
+          LURE_SLOW: "3"
           SUITES: ${{ inputs.suites }}
-        run: .dev/ci-suites.sh
+        run: |
+          Xvfb :99 -screen 0 1920x1080x24 >/dev/null 2>&1 &
+          DISPLAY=:99 .dev/ci-suites.sh
 
   # The screen and the graphics: a netbook-sized display, a HiDPI one at
   # twice the scale, and no GPU at all (software rendering).

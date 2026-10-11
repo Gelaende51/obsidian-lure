@@ -6,6 +6,8 @@
 
 const PORT = process.env.OBSIDIAN_CDP_PORT ?? 9222;
 const ORIGIN = `http://127.0.0.1:${PORT}`;
+/** How much slower than a runner this machine is meant to be: LURE_SLOW=3 triples the wait for an answer. */
+const SLOW = Math.max(1, Number(process.env.LURE_SLOW) || 1);
 
 /**
  * Picks the Obsidian window to drive.
@@ -149,7 +151,9 @@ export async function connect() {
 	 * in an async IIFE so a test step can await Obsidian's own promises —
 	 * opening a file, waiting for a debounce — inline.
 	 */
-	const evaluate = async (expression, timeoutMs = 15000) => {
+	// LURE_SLOW stretches every wait for a machine that is slow on purpose —
+	// an emulated build, a capped CPU — rather than lengthening them for all.
+	const evaluate = async (expression, timeoutMs = 15000 * SLOW) => {
 		// A step that never settles must fail its own test rather than wedge
 		// the run — and a render heavy enough to kill the renderer outright
 		// looks exactly like a step that never settles.
@@ -452,6 +456,14 @@ export async function reloadPlugin(page, id = "lure") {
 		await app.plugins.disablePlugin(${JSON.stringify(id)});
 		await new Promise((r) => setTimeout(r, 200));
 		await app.plugins.enablePlugin(${JSON.stringify(id)});
+		// Enabling does not wait for an async onload: until it has run, Lure
+		// has no manager, and a case that saved settings straight after found
+		// none (seen on emulated x64, where loading is slow).
+		for (let i = 0; i < 100; i++) {
+			const p = app.plugins.plugins[${JSON.stringify(id)}];
+			if (p?._loaded && (${JSON.stringify(id)} !== "lure" || p.manager)) break;
+			await new Promise((r) => setTimeout(r, 100));
+		}
 		await new Promise((r) => setTimeout(r, 400));
 		return true;
 	`);
