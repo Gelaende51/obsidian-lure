@@ -629,7 +629,7 @@ jobs:
           echo "--- results"; cat /mnt/shared/results.txt 2>/dev/null || echo "none"
           [ -f /mnt/shared/run-error.txt ] && { echo "::error::the run in the guest stopped"; tr -d '\r' < /mnt/shared/run-error.txt; }
           [ -f /mnt/shared/done.txt ] || { echo "::error::the guest did not finish"; docker logs --tail 40 windows; exit 1; }
-          ! grep -qvE ' (0|2)$' /mnt/shared/results.txt
+          ! tr -d '\r' < /mnt/shared/results.txt | grep -qvE ' (0|2)$'
       - name: Keep the guest's logs
         if: always()
         uses: actions/upload-artifact@v4

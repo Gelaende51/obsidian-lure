@@ -315,7 +315,7 @@ const measurePanes = (direction, times) => `
 		state: { path: ${JSON.stringify(join(BED, "big.log"))} },
 	});
 	// 2 MB to read and lay out: a slow machine needs more than a fixed pause.
-	for (let i = 0; i < 50 && !(leaf.view.containerEl.querySelector(".lure-external-editor")?.scrollHeight > 0); i++) ${PAUSE(200)}
+	for (let i = 0; i < 50 && !(leaf.view.containerEl.querySelector(".lure-external-editor")?.value?.length > 0); i++) ${PAUSE(200)}
 	${PAUSE(300)}
 
 	const view = leaf.view.containerEl;
@@ -1804,17 +1804,29 @@ test("writes: Ctrl+Enter onto the file's own name says the name is taken", async
 test("writes: the rename key asks the padlock, and shows it asking", async () => {
 	const at = join(BED, "padlock-key.txt");
 	writeFileSync(at, "hello\n");
-	await page.evaluate(`${open(at)} return true;`);
+	// The flash is half a second; a slow machine reads after it is over, so
+	// it is recorded as it happens.
+	await page.evaluate(`
+		${open(at)}
+		const el = app.workspace.activeLeaf.view.containerEl.querySelector(".lure-unlock-btn");
+		window.__lureFlash = { flashing: false, icon: null };
+		window.__lureFlashWatch?.disconnect();
+		window.__lureFlashWatch = new MutationObserver(() => {
+			if (window.__lureFlash.flashing || !el.classList.contains("lure-padlock-flash")) return;
+			window.__lureFlash = { flashing: true, icon: el.querySelector("svg")?.getAttribute("class") ?? null };
+		});
+		window.__lureFlashWatch.observe(el, { attributes: true, subtree: true, childList: true });
+		return true;
+	`);
 	await pressKey(page, "F2");
 	const asked = await page.evaluate(`
 		${PAUSE(150)}
 		${breadcrumb}
-		const el = app.workspace.activeLeaf.view.containerEl.querySelector(".lure-unlock-btn");
+		window.__lureFlashWatch?.disconnect();
 		return JSON.stringify({
 			rename: bc.renameMode,
 			unlocked: bc.allowsExternalWrites(),
-			flashing: !!el?.classList.contains("lure-padlock-flash"),
-			icon: el?.querySelector("svg")?.getAttribute("class") ?? null,
+			...window.__lureFlash,
 		});
 	`).then(JSON.parse);
 	// It used to open rename mode out here with the padlock shut, leaving the

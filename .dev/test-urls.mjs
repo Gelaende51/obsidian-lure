@@ -21,7 +21,7 @@
  */
 
 import { connect, PAUSE, pressKey, quiesce, reloadPlugin, setSettings } from "./cdpSession.mjs";
-import { createSuite } from "./harness.mjs";
+import { createSuite, skipCase } from "./harness.mjs";
 import { mkdirSync, rmSync, writeFileSync } from "fs";
 import { homedir } from "os";
 import { basename, join } from "path";
@@ -163,6 +163,19 @@ test("a web URL opens in the Web viewer when it is on", async () => {
 	// address bar means. `window.open` — the old answer — left Obsidian
 	// altogether unless the user had also turned on the viewer's own
 	// "open external links here" setting.
+	if (!tabs.some(Boolean) && tabs.length) {
+		// A tab but no page: ask the Web viewer directly, without Lure. If it
+		// cannot load one either (FreeBSD's Electron), the platform is why.
+		const own = await page.evaluate(`
+			const leaf = app.workspace.getLeaf("tab");
+			await leaf.setViewState({ type: "webviewer", state: { url: "https://obsidian.md" } });
+			for (let i = 0; i < 20 && !leaf.getViewState().state?.url; i++) ${PAUSE(250)}
+			const url = leaf.getViewState().state?.url ?? null;
+			leaf.detach();
+			return url;
+		`);
+		if (!own) skipCase("Obsidian's own Web viewer loads no page on this system");
+	}
 	expect("opened in a Web viewer tab", tabs, (v) => Array.isArray(v) && v.some((url) => (url ?? "").includes("obsidian.md")));
 	expect("nothing handed to the desktop", s.opened, []);
 	expect("no note was created for it", s.activeFile, null);
