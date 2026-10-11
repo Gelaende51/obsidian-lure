@@ -306,6 +306,8 @@ jobs:
           OBSIDIAN_PATHS: wine
           WINEDEBUG: -all
           SUITES: ${{ inputs.suites }}
+          # Chromium's sandbox and GPU process are what break under Wine.
+          OBSIDIAN_EXTRA_ARGS: --no-sandbox --disable-gpu
         run: OBSIDIAN_COMMAND="wine $OBSIDIAN_EXE" .dev/ci-suites.sh
 
   # Obsidian publishes no FreeBSD build. Its own app (the installer's
@@ -325,7 +327,7 @@ jobs:
           envs: "SUITES VERSIONS"
           prepare: |
             # pgrep and pkill are in FreeBSD's base system.
-            pkg install -y node npm bash curl git xorg-vfbserver xauth
+            pkg install -y node npm bash curl git xorg-vfbserver xauth python3 gmake
             # The scripts ask for /bin/bash; FreeBSD keeps it in /usr/local.
             ln -sf /usr/local/bin/bash /bin/bash
             pkg search -q '^electron[0-9]' | sort -V | tail -1 | xargs pkg install -y
@@ -338,6 +340,10 @@ jobs:
             asar=$(ls -d /tmp/obsidian-*/resources/app.asar | head -1)
             npm ci
             node esbuild.config.mjs production
+            # The launcher's library writes Obsidian's local storage through
+            # classic-level, which ships no FreeBSD build: compiled here.
+            npm install --no-save --no-package-lock obsidian-launcher@3
+            (cd node_modules/classic-level && npx --yes node-gyp rebuild)
             Xvfb :99 -screen 0 1920x1080x24 >/dev/null 2>&1 &
             export DISPLAY=:99 OBSIDIAN_COMMAND="$electron $asar" OBSIDIAN_EXTRA_ARGS=--no-sandbox
             bash .dev/ci-suites.sh
@@ -356,7 +362,7 @@ jobs:
     name: limits (1.5 GB, half a CPU)
     steps:
       - name: tar, for the checkout
-        run: apt-get update -q && apt-get install -y -q tar gzip
+        run: apt-get update -q && apt-get install -y -q tar gzip curl
       - uses: actions/checkout@v4
       - name: System packages
         run: sh .dev/ci-distro-deps.sh
