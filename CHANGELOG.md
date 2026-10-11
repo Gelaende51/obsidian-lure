@@ -13,8 +13,14 @@ Every release of Lure, newest first. What has landed since the last release is u
 - **Unlocking writes outside the vault lasts through a change of location**: picking another vault, drive or root, or typing an absolute path, no longer shuts the padlock. It ends when the row returns to the vault, or by hand.
 - **An empty file's 0 sits at the bottom right of its icon**, in the dropdown and in the badge, and at the top right where a link's mark holds the bottom.
 
+### Added
+
+- **Hard links outside the vault are counted.** A note that has another name somewhere else on the disk — an issues file kept in a repository and linked into the vault, say — gets the purple hard-link mark and a row in its other-paths list, shown from your home folder as `~/…` or from the root as `/…`. Where it is, the system's own index is asked: Windows lists a file's names; on Linux and macOS the file-name index (`plocate`/`locate`, Spotlight) is searched for the same file. A name it cannot find is listed as `/…`. These rows open the file; they are not written into `paths`.
+
 ### Fixed
 
+- **Failed file operations say what went wrong in words** — not there, no permission, a read-only or full drive, in use, the name too long, already there — with the path, instead of Node's error codes. In a Flatpak or Snap, where a folder outside the sandbox looks missing, the message says that the sandbox may be the reason.
+- **Where Obsidian does not hear a file appear or go** (FreeBSD), Lure asks it to look again: links Lure makes, and ones made in a terminal, are indexed and listed.
 - **Tab onto an alias path no longer lists it twice.** Going round the names, each alias path or unlisted symbolic link it put on show grew a second row offering to make that file, and the field turned red, though Enter opens the note it stands for.
 
 ## 1.6.0 — 2026-10-11[^1.6.0]
