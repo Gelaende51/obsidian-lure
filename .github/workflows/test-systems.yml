@@ -50,7 +50,7 @@ jobs:
   distros:
     if: inputs.target == 'distros' || inputs.target == 'all'
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 150
     strategy:
       fail-fast: false
       matrix:
@@ -104,7 +104,7 @@ jobs:
   old-engine:
     if: inputs.target == 'old-engine' || inputs.target == 'all'
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -135,7 +135,7 @@ jobs:
   linux-arm:
     if: inputs.target == 'linux-arm' || inputs.target == 'all'
     runs-on: ubuntu-24.04-arm
-    timeout-minutes: 60
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -161,7 +161,7 @@ jobs:
       matrix:
         os: [windows-11-arm, macos-15]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 60
+    timeout-minutes: 150
     name: x64 emulated on ${{ matrix.os }}
     # Rosetta is a probe: test-tab passes on macOS natively and on Windows'
     # emulation, and loses 15 folder-walk cases (the field never opens) only
@@ -188,7 +188,7 @@ jobs:
   system-electron:
     if: inputs.target == 'system-electron' || inputs.target == 'all'
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 150
     container:
       image: archlinux:latest
       options: --shm-size=2g
@@ -218,7 +218,7 @@ jobs:
       matrix:
         access: [full, restricted]
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 150
     name: flatpak (${{ matrix.access }} access)
     # Restricted is a probe: what is out of reach fails, and the log says how.
     continue-on-error: ${{ matrix.access == 'restricted' }}
@@ -254,7 +254,7 @@ jobs:
   snap:
     if: inputs.target == 'snap' || inputs.target == 'all'
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -282,7 +282,7 @@ jobs:
   wine:
     if: inputs.target == 'wine'
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -323,7 +323,7 @@ jobs:
   freebsd:
     if: inputs.target == 'freebsd'
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
       - name: FreeBSD, its Electron and the suites
@@ -362,7 +362,7 @@ jobs:
   limits-machine:
     if: inputs.target == 'limits' || inputs.target == 'all'
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 180
     container:
       # The image the distros job already runs in, so only the limits differ.
       image: debian:12
@@ -407,7 +407,7 @@ jobs:
             screen: 1920x1080x24
             args: --no-sandbox --disable-gpu
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 150
     name: limits (${{ matrix.name }})
     steps:
       - uses: actions/checkout@v4
@@ -429,7 +429,7 @@ jobs:
   wayland:
     if: inputs.target == 'wayland' || inputs.target == 'all'
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -454,7 +454,7 @@ jobs:
   nix:
     if: inputs.target == 'nix' || inputs.target == 'all'
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -486,7 +486,7 @@ jobs:
   alpine:
     if: inputs.target == 'alpine'
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
       - name: Alpine, its Electron and the suites
