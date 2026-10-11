@@ -293,8 +293,14 @@ jobs:
       - run: node esbuild.config.mjs production
       - name: Wine and the Windows installer
         run: |
+          # WineHQ's staging build: Ubuntu's Wine 9 started Obsidian and then
+          # never answered on its port.
           sudo dpkg --add-architecture i386
-          sudo apt-get update -q && sudo apt-get install -y -q wine64 wine xvfb
+          sudo mkdir -pm755 /etc/apt/keyrings
+          sudo wget -qO /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
+          sudo wget -qNP /etc/apt/sources.list.d/ "https://dl.winehq.org/wine-builds/ubuntu/dists/$(lsb_release -cs)/winehq-$(lsb_release -cs).sources"
+          sudo apt-get update -q && sudo apt-get install -y -q --install-recommends winehq-staging xvfb
+          wine --version
           export WINEPREFIX="$HOME/.wine" WINEDEBUG=-all
           url=$(curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest | grep -o '"browser_download_url": *"[^"]*Obsidian-[0-9.]*\.exe"' | head -1 | cut -d'"' -f4)
           echo "installer: $url"
@@ -314,7 +320,8 @@ jobs:
           WINEDEBUG: -all
           SUITES: ${{ inputs.suites }}
           # Chromium's sandbox and GPU process are what break under Wine.
-          OBSIDIAN_EXTRA_ARGS: --no-sandbox --disable-gpu
+          # Windows-only protections Wine cannot provide, and the GPU in-process.
+          OBSIDIAN_EXTRA_ARGS: --no-sandbox --disable-gpu --disable-gpu-sandbox --in-process-gpu --disable-features=RendererCodeIntegrity,NetworkServiceSandbox
         run: OBSIDIAN_COMMAND="wine $OBSIDIAN_EXE" .dev/ci-suites.sh
 
   # Obsidian publishes no FreeBSD build. Its own app (the installer's
