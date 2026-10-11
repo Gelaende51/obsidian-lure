@@ -2718,3 +2718,12 @@ from the logged readings; the factors will move as readings accumulate.
   same suite passes on macOS natively and on Windows 11 on Arm's x64
   emulation. Not chased: the Mac build is universal, so Rosetta is chosen, not
   given. Kept as a probe (continue-on-error).
+- Alpine (musl): Obsidian's own binary does not start even with gcompat
+  (libudev missing, glibc-only symbols such as `__memcpy_chk`,
+  `posix_fallocate64`). Its app runs on Alpine's own Electron, which only edge
+  packages — the FreeBSD route again.
+- Nix's Obsidian (wrapped on Nix's Electron) and a Wayland session (headless
+  Weston, `--ozone-platform=wayland`) pass the suites as they are.
+- FreeBSD passes the default suites once Lure asks Obsidian to look again at
+  paths its watcher missed (`adapter.reconcileFile(getRealPath(p), p)`,
+  internal, the call Obsidian's own watcher makes).
