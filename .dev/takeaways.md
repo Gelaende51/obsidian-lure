@@ -2692,3 +2692,24 @@ from the logged readings; the factors will move as readings accumulate.
   it; folders shared in from ChromeOS are a different filesystem, which a hard
   link cannot cross. ReactOS: NTFS driver still unfinished and Obsidian does not
   run there (see the ReactOS item), so nothing to build for.
+
+## Other systems as test environments (2026-10-11, test-systems.yml)
+- An Obsidian the launcher did not download (Flatpak, Snap, Arch's package on
+  the system Electron, Wine, FreeBSD) can still be tested: the launcher's
+  library prepares the vault and the configuration directory, and that
+  Obsidian is pointed at it with `--user-data-dir` (`.dev/ci-launch-alt.mjs`).
+  The library writes local storage through `classic-level`, which has no
+  FreeBSD build (compile with node-gyp), and refuses a platform it has no
+  installer for (ask it as Linux).
+- Obsidian runs on FreeBSD's own Electron from the Linux tarball's
+  `resources/app.asar`; 82 of 85 cases pass. The three that fail are new files
+  on disk never reaching Obsidian's index — file watching there does not see them.
+- Flatpak gives the app its own `/tmp`: files a suite makes in the host's
+  `/tmp` are invisible to it. Its `/usr` is the runtime's.
+- Wine: Obsidian 1.14.4 starts (`--no-sandbox --disable-gpu`), reports DevTools
+  listening, and then neither answers on the port nor opens a window.
+- `enablePlugin` does not wait for an async `onload`: a test that touches the
+  plugin straight after can find it half made. On a slow machine (x64 emulated
+  on Arm) that is a failure; `reloadPlugin` now waits for it.
+- The editor-split hard-link case of test-links is timing-sensitive: it failed
+  once on an unchanged Linux runner (small-screen job) and on Server 2019.
