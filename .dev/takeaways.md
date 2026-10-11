@@ -2668,3 +2668,19 @@ from the logged readings; the factors will move as readings accumulate.
 ## Windows PowerShell 5.1 hands a JSON array down the pipeline whole
 - `Invoke-RestMethod <url returning an array> | Where-Object {…}` in Windows PowerShell 5.1 (what Windows Server 2019 ships) passes the array as one object: the filter sees every element's property at once, matches, and `Select-Object -First 1` returns the whole list. Assign the result to a variable first (`$all = Invoke-RestMethod …; $all | Where-Object …`), which enumerates it. PowerShell 7 does not have this quirk, so a script tried on a newer machine works.
 - In the Server 2019 VM this turned the Node download URL into nonsense (400), the setup stopped, and the suites never started — four and a half hours of a silent wait. The host now gives up as soon as `setup.log` holds an error, and the logon script writes `run-error.txt` from a `trap`.
+
+## Finding a file's other names outside the vault (2026-10-11)
+
+- A vault scan only pairs names *inside* the vault; `stat().nlink` still says a
+  file has more names, but not where. Nothing in the kernel maps an inode back
+  to its paths on ext4 (this machine), so an exact answer means walking a tree.
+- Exact without walking: XFS with parent pointers (`xfs_io -c 'parent -p'`,
+  `XFS_IOC_GETPARENTS`, only on a filesystem formatted with them), NTFS
+  (`FindFirstFileNameW`/`FindNextFileNameW`, `fsutil hardlink list`). Btrfs
+  `inspect-internal inode-resolve` and ext4 `debugfs ncheck` need root.
+- Cheap and usually right: the system's file-name index. `plocate -b '\name'`
+  then compare `dev:ino` found the repo copy of a hard-linked note in 0.07 s;
+  it misses renamed links and anything newer than the nightly `updatedb`.
+- Symbolic links pointing *at* a file have no reverse index anywhere; only a
+  walk (`find -L … -samefile`) or watching from now on (inotify, fanotify —
+  filesystem-wide marks need CAP_SYS_ADMIN) finds them.
