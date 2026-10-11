@@ -9,6 +9,28 @@
 
 Elke release van Lure, de nieuwste eerst. Wat er sinds de laatste release is geland staat onder *Niet uitgebracht*. Versies dragen geen `v`-voorvoegsel, net als de release-tags.
 
+## Niet uitgebracht
+
+### Gewijzigd
+
+- **De knop met de andere paden staat overal aan het einde van de rij**, nooit vóór de kluis: het pictogram van de badge als extensies verborgen zijn — het aantal treffers van een patroon inbegrepen, de badge daarmee groen of rood — en een knop na de naam als extensies getoond worden. De lijst eindigt waar de knop staat.
+- **Buiten de kluis is de extensie ook een badge**, als extensies verborgen zijn: de naam van het bestand, dan het type, de link- en leegmarkeringen en de extensie aan het einde van de rij, met de knop met de andere paden erin. Er indrukken schrijft de naam uit met de extensie gemarkeerd.
+- **Schrijven buiten de kluis ontgrendeld houden blijft gelden bij een andere locatie**: een andere kluis, schijf of root kiezen, of een absoluut pad typen, sluit het hangslot niet meer. Het eindigt wanneer de rij terugkeert naar de kluis, of met de hand.
+- **De 0 van een leeg bestand staat rechtsonder bij het pictogram**, in de dropdown en in de badge, en rechtsboven waar de markering van een link de onderkant heeft.
+
+### Toegevoegd
+
+- **Harde links buiten de kluis worden geteld.** Een notitie die elders op de schijf nog een naam heeft — een issues-bestand in een repository, gelinkt in de kluis, bijvoorbeeld — krijgt de paarse markering voor harde links en een rij in de lijst met andere paden, getoond vanuit je thuismap als `~/…` of vanaf de root als `/…`. Waar het staat, wordt aan de eigen index van het systeem gevraagd: Windows geeft de namen van een bestand weer; op Linux en macOS wordt de bestandsnaamindex (`plocate`/`locate`, Spotlight) doorzocht op hetzelfde bestand. Een naam die niet te vinden is, wordt getoond als `/…`. Deze rijen openen het bestand; ze worden niet in `paths` geschreven.
+
+### Opgelost
+
+- **Mislukte bestandsbewerkingen zeggen in woorden wat er misging** — er niet, geen toestemming, een alleen-lezen of volle schijf, in gebruik, de naam te lang, er al — met het pad, in plaats van de foutcodes van Node. In een Flatpak of Snap, waar een map buiten de sandbox ontbreekt, zegt het bericht dat de sandbox de oorzaak kan zijn.
+- **Waar Obsidian niet hoort dat een bestand verschijnt of verdwijnt** (FreeBSD), vraagt Lure het opnieuw te kijken: links die Lure maakt en links die in een terminal zijn gemaakt, worden geïndexeerd en getoond.
+- **Verwijderen buiten de kluis waar geen prullenbak is, zegt dat.** Een container, een desktop zonder prullenbak of een schijf waarop het systeem geen prullenbak bijhoudt weigert de verplaatsing, en het bestand blijft staan. De melding zegt dat nu, in plaats van "Could not rename/move file: Failed to move item to trash".
+- **De gekoppelde schijven van FreeBSD staan in de plaatsenlijst**, gelezen uit `mount -p`, zoals die van Linux uit `/proc/mounts`.
+- **Een HTML-pagina geopend via een pad zonder stationsletter op Windows** (`\Users\…`, of `/home/…` onder Wine) krijgt weer zijn stijlbladen en afbeeldingen; die werden aangezien voor bestanden buiten de map van de pagina.
+- **Tab naar een aliaspad toont het niet meer dubbel.** Bij het langslopen van de namen kreeg elk aliaspad of niet-getoonde symbolische link dat het toonde een tweede rij die aanbood dat bestand te maken, en het veld werd rood, hoewel Enter de notitie opent waar het voor staat.
+
 ## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Toegevoegd

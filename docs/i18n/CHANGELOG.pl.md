@@ -9,6 +9,28 @@
 
 Każde wydanie Lure, od najnowszego. To, co pojawiło się od ostatniego wydania, znajduje się pod nagłówkiem *Niewydane*. Wersje nie mają przedrostka `v`, zgodnie ze znacznikami wydań.
 
+## Niewydane
+
+### Zmieniono
+
+- **Przycisk innych ścieżek jest wszędzie na końcu wiersza**, nigdy przed sejfem: ikona plakietki, gdy rozszerzenia są ukryte — wraz z liczbą dopasowań wzorca, z plakietką zieloną lub czerwoną — oraz przycisk po nazwie, gdy rozszerzenia są pokazane. Jego lista kończy się tam, gdzie on.
+- **Poza sejfem rozszerzenie też jest plakietką**, gdy rozszerzenia są ukryte: nazwa pliku, potem jego typ, znaczniki dowiązania i pustego pliku, a na końcu wiersza rozszerzenie, a w nim przycisk innych ścieżek. Naciśnięcie go zapisuje nazwę w całości, z zaznaczonym rozszerzeniem.
+- **Odblokowanie zapisu poza sejfem trwa przez zmianę lokalizacji**: wybranie innego sejfu, dysku lub katalogu głównego albo wpisanie ścieżki bezwzględnej nie zamyka już kłódki. Kończy się, gdy wiersz wraca do sejfu, albo ręcznie.
+- **Zero pustego pliku jest w prawym dolnym rogu jego ikony**, na liście rozwijanej i w plakietce, a w prawym górnym rogu tam, gdzie znacznik dowiązania zajmuje dolny.
+
+### Dodano
+
+- **Twarde dowiązania poza sejfem są zliczane.** Notatka, która ma inną nazwę gdzie indziej na dysku — na przykład plik zgłoszeń trzymany w repozytorium i podlinkowany do sejfu — dostaje fioletowy znacznik twardego dowiązania i wiersz na liście innych ścieżek, pokazany od twojego folderu domowego jako `~/…` albo od korzenia jako `/…`. Miejsce, w którym się znajduje, ustala własny indeks systemu: Windows wypisuje nazwy pliku; w Linuksie i macOS przeszukiwany jest indeks nazw plików (`plocate`/`locate`, Spotlight) pod kątem tego samego pliku. Nazwa, której nie da się znaleźć, jest wypisana jako `/…`. Te wiersze otwierają plik; nie są zapisywane w `paths`.
+
+### Naprawiono
+
+- **Nieudane operacje na plikach mówią słowami, co poszło nie tak** — brak pliku, brak uprawnień, dysk tylko do odczytu lub pełny, plik w użyciu, zbyt długa nazwa, nazwa już istnieje — wraz ze ścieżką, zamiast kodów błędów Node. We Flatpaku lub Snapie, gdzie folder poza piaskownicą wygląda na nieistniejący, komunikat mówi, że przyczyną może być piaskownica.
+- **Tam, gdzie Obsidian nie słyszy, że plik się pojawił lub zniknął** (FreeBSD), Lure prosi go o ponowne sprawdzenie: dowiązania tworzone przez Lure i te utworzone w terminalu są indeksowane i wyświetlane na liście.
+- **Usuwanie poza sejfem, gdy nie ma kosza, mówi o tym.** Kontener, pulpit bez kosza lub dysk, na którym system nie prowadzi kosza, odmawia przeniesienia, a plik zostaje. Komunikat mówi teraz o tym, zamiast „Could not rename/move file: Failed to move item to trash".
+- **Zamontowane dyski FreeBSD są na liście miejsc**, odczytywane z `mount -p`, tak jak dyski Linuksa z `/proc/mounts`.
+- **Strona HTML otwarta ścieżką bez litery dysku w Windows** (`\Users\…` albo `/home/…` pod Wine) znów dostaje swoje arkusze stylów i obrazy; były brane za pliki spoza folderu strony.
+- **Tab na ścieżce aliasu nie wyświetla jej już dwa razy.** Podczas przechodzenia po nazwach każda ścieżka aliasu lub niewymieniona dowiązana symbolicznie, którą pokazał, zyskiwała drugi wiersz z propozycją utworzenia tego pliku, a pole robiło się czerwone, choć Enter otwiera notatkę, którą ta ścieżka reprezentuje.
+
 ## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Dodano

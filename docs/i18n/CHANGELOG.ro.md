@@ -9,6 +9,28 @@
 
 Fiecare versiune a Lure, cea mai nouă prima. Ce a apărut de la ultima versiune se află sub *Nelansate*. Versiunile nu poartă prefixul `v`, la fel ca etichetele de lansare.
 
+## Nelansate
+
+### Modificat
+
+- **Butonul celorlalte căi se află peste tot la capătul rândului**, niciodată în fața dosarului seifului: pictograma insignei când extensiile sunt ascunse — inclusiv numărul de potriviri al unui model, cu insigna verde sau roșie odată cu el — și un buton după nume când extensiile sunt afișate. Lista lui se termină acolo unde se termină el.
+- **În afara seifului, și extensia este o insignă**, când extensiile sunt ascunse: numele fișierului, apoi tipul lui, semnele de legătură și de fișier gol, iar extensia la capătul rândului, cu butonul celorlalte căi în ea. Apăsarea ei scrie numele întreg, cu extensia marcată.
+- **Deblocarea scrierilor în afara seifului rămâne activă la schimbarea locației**: alegerea altui seif, a altei unități sau a rădăcinii, ori tastarea unei căi absolute, nu mai închide lacătul. Se încheie când rândul revine în seif, sau manual.
+- **Cifra 0 a unui fișier gol se află jos în dreapta pictogramei**, în lista derulantă și în insignă, iar sus în dreapta acolo unde semnul unei legături ocupă partea de jos.
+
+### Adăugat
+
+- **Legăturile fizice din afara seifului sunt numărate.** O notă care mai are un nume în altă parte pe disc — de exemplu un fișier de probleme ținut într-un depozit și legat în seif — primește semnul violet de legătură fizică și un rând în lista ei de alte căi, afișat de la dosarul tău personal ca `~/…` sau de la rădăcină ca `/…`. Locul în care se află este aflat de la indexul propriu al sistemului: Windows listează numele unui fișier; pe Linux și macOS se caută același fișier în indexul numelor de fișiere (`plocate`/`locate`, Spotlight). Un nume pe care nu îl găsește apare în listă ca `/…`. Aceste rânduri deschid fișierul; nu sunt scrise în `paths`.
+
+### Corectat
+
+- **Operațiile eșuate cu fișiere spun în cuvinte ce a mers prost** — nu există, fără permisiune, unitate doar în citire sau plină, în uz, nume prea lung, există deja — împreună cu calea, în loc de codurile de eroare ale Node. Într-un Flatpak sau Snap, unde un dosar din afara sandbox-ului pare lipsă, mesajul spune că motivul poate fi sandbox-ul.
+- **Acolo unde Obsidian nu aude când apare sau dispare un fișier** (FreeBSD), Lure îi cere să se uite din nou: legăturile făcute de Lure și cele făcute într-un terminal sunt indexate și listate.
+- **Ștergerea în afara seifului, unde nu există coș de gunoi, spune asta.** Un container, un desktop fără coș sau o unitate pe care sistemul nu ține coș refuză mutarea, iar fișierul rămâne. Mesajul spune acum acest lucru, în loc de „Could not rename/move file: Failed to move item to trash".
+- **Unitățile montate pe FreeBSD apar în lista de locuri**, citite din `mount -p`, așa cum cele de pe Linux sunt citite din `/proc/mounts`.
+- **O pagină HTML deschisă printr-o cale fără literă de unitate pe Windows** (`\Users\…`, sau `/home/…` sub Wine) își primește din nou foile de stil și imaginile; erau luate drept fișiere din afara dosarului paginii.
+- **Tab pe o cale-alias nu o mai listează de două ori.** La trecerea pe rând prin nume, fiecare cale-alias sau legătură simbolică nelistată pe care o afișa primea un al doilea rând care oferea crearea acelui fișier, iar câmpul devenea roșu, deși Enter deschide nota pe care o reprezintă.
+
 ## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Adăugat

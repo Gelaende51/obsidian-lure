@@ -9,6 +9,28 @@
 
 Jede Veröffentlichung von Lure, die neueste zuerst. Was seit der letzten Veröffentlichung dazugekommen ist, steht unter *Unveröffentlicht*. Versionen tragen kein `v` davor, passend zu den Release-Tags.
 
+## Unveröffentlicht
+
+### Geändert
+
+- **Der Button für die anderen Pfade sitzt überall am Ende der Zeile**, nie vor dem Vault: das Symbol des Badges bei ausgeblendeten Endungen — samt der Trefferzahl eines Musters, das Badge dabei grün oder rot — und ein Button hinter dem Namen bei angezeigten Endungen. Seine Liste endet dort, wo er endet.
+- **Außerhalb des Vaults ist die Endung ebenfalls ein Badge**, wenn Endungen ausgeblendet sind: der Name der Datei, dann ihr Typ, die Markierungen für Link und leere Datei und ihre Endung am Zeilenende, darin der Button für die anderen Pfade. Ein Druck darauf schreibt den Namen mit markierter Endung aus.
+- **Das Entsperren von Schreibzugriffen außerhalb des Vaults bleibt über einen Ortswechsel hinweg bestehen**: Wer einen anderen Vault, ein anderes Laufwerk oder die Wurzel wählt oder einen absoluten Pfad tippt, schließt das Vorhängeschloss nicht mehr. Es endet, wenn die Zeile in den Vault zurückkehrt, oder von Hand.
+- **Die 0 einer leeren Datei sitzt unten rechts an ihrem Symbol**, im Dropdown und im Badge, und oben rechts, wo die Markierung eines Links die untere Ecke belegt.
+
+### Hinzugefügt
+
+- **Hardlinks außerhalb des Vaults werden gezählt.** Eine Notiz, die anderswo auf dem Datenträger noch einen weiteren Namen hat — etwa eine Issues-Datei, die in einem Repository liegt und in den Vault verlinkt ist —, bekommt die violette Hardlink-Markierung und eine Zeile in ihrer Liste der anderen Pfade, vom Home-Ordner aus als `~/…` gezeigt oder von der Wurzel aus als `/…`. Wo sie liegt, wird beim Index des Systems erfragt: Windows listet die Namen einer Datei auf; unter Linux und macOS wird der Dateinamenindex (`plocate`/`locate`, Spotlight) nach derselben Datei durchsucht. Ein Name, den er nicht finden kann, wird als `/…` aufgeführt. Diese Zeilen öffnen die Datei; sie werden nicht in `paths` geschrieben.
+
+### Behoben
+
+- **Fehlgeschlagene Dateioperationen sagen in Worten, was schiefging** — nicht vorhanden, keine Berechtigung, schreibgeschütztes oder volles Laufwerk, in Benutzung, Name zu lang, schon vorhanden — samt dem Pfad, statt der Fehlercodes von Node. In einem Flatpak oder Snap, wo ein Ordner außerhalb der Sandbox fehlend aussieht, weist die Meldung darauf hin, dass die Sandbox der Grund sein kann.
+- **Wo Obsidian nicht mitbekommt, dass eine Datei auftaucht oder verschwindet** (FreeBSD), bittet Lure es, noch einmal hinzusehen: Links, die Lure anlegt, und solche aus einem Terminal werden indexiert und aufgelistet.
+- **Das Löschen außerhalb des Vaults sagt es, wenn es keinen Papierkorb gibt.** Ein Container, ein Desktop ohne Papierkorb oder ein Laufwerk, auf dem das System keinen führt, verweigert das Verschieben, und die Datei bleibt. Die Meldung sagt das jetzt, statt „Could not rename/move file: Failed to move item to trash“.
+- **Die eingehängten Laufwerke von FreeBSD stehen in der Ortsliste**, gelesen aus `mount -p`, wie die von Linux aus `/proc/mounts`.
+- **Eine HTML-Seite, die über einen Pfad ohne Laufwerksbuchstaben unter Windows geöffnet wird** (`\Users\…`, oder `/home/…` unter Wine), bekommt ihre Stylesheets und Bilder wieder; sie wurden für Dateien außerhalb des Ordners der Seite gehalten.
+- **Tab auf einen Alias-Pfad führt ihn nicht mehr doppelt auf.** Beim Reihumwechseln durch die Namen bekam jeder Alias-Pfad und jeder nicht aufgeführte symbolische Link, den es zeigte, eine zweite Zeile, die anbot, diese Datei anzulegen, und das Feld wurde rot, obwohl Enter die Notiz öffnet, für die er steht.
+
 ## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Hinzugefügt

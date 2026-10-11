@@ -9,6 +9,28 @@
 
 A Lure minden kiadása, a legújabbal kezdve. Ami a legutóbbi kiadás óta került be, a *Kiadatlan* szakaszban található. A verziószámok elé nem kerül `v` előtag, így megegyeznek a kiadási címkékkel.
 
+## Kiadatlan
+
+### Módosítva
+
+- **A más útvonalak gombja mindenhol a sor végén áll**, soha nem a vault előtt: a jelvény ikonja, ha a kiterjesztések rejtve vannak — a minta találatainak száma is benne, ezzel együtt a jelvény zöld vagy piros —, illetve a név utáni gomb, ha a kiterjesztések látszanak. A listája ott ér véget, ahol a gomb.
+- **A vaulton kívül a kiterjesztés is jelvény**, ha a kiterjesztések rejtve vannak: a fájl neve, majd a típus-, hivatkozás- és üresfájl-jelölései, a kiterjesztése pedig a sor végén, benne a más útvonalak gombjával. Megnyomására kiírja a nevet a kiterjesztés megjelölésével.
+- **A vaulton kívüli írás feloldása helyváltoztatás után is megmarad**: másik vault, meghajtó vagy gyökér kiválasztása, illetve abszolút útvonal beírása már nem zárja vissza a lakatot. Akkor ér véget, ha a sor visszatér a vaultba, vagy kézzel.
+- **Az üres fájl 0-ja az ikonja jobb alsó sarkában áll**, a legördülő listában és a jelvényben is, a jobb felső sarokban pedig ott, ahol a hivatkozás jelölése foglalja az alsót.
+
+### Hozzáadva
+
+- **A vaulton kívüli hard linkeket is számolja.** Az a jegyzet, amelynek a lemezen máshol is van másik neve — például egy repositoryban tartott, a vaultba belinkelt issues-fájl —, megkapja a lila hard link jelölést, és egy sort a más útvonalak listájában, a saját mappádból `~/…`, a gyökérből `/…` alakban mutatva. Hogy hol van, azt a rendszer saját indexétől kérdezi: a Windows kilistázza a fájl neveit; Linuxon és macOS-en a fájlnév-indexben (`plocate`/`locate`, Spotlight) keresi ugyanazt a fájlt. Az a név, amelyet nem talál, `/…` alakban szerepel. Ezek a sorok megnyitják a fájlt; nem íródnak be a `paths` közé.
+
+### Javítva
+
+- **A sikertelen fájlműveletek szavakkal mondják meg, mi ment félre** — nincs ott, nincs jogosultság, csak olvasható vagy megtelt a meghajtó, használatban van, túl hosszú a név, már létezik — az útvonallal együtt, a Node hibakódjai helyett. Flatpakban vagy Snapben, ahol a sandboxon kívüli mappa hiányzónak tűnik, az üzenet jelzi, hogy ennek a sandbox lehet az oka.
+- **Ahol az Obsidian nem hallja, hogy egy fájl megjelent vagy eltűnt** (FreeBSD), a Lure megkéri, hogy nézze meg újra: a Lure által készített és a terminálban készített linkek is bekerülnek az indexbe és a listába.
+- **A vaulton kívüli törlés, ha nincs kuka, ezt közli.** Egy konténer, a kuka nélküli asztali környezet vagy az a meghajtó, amelyen a rendszer nem vezet kukát, megtagadja az áthelyezést, a fájl pedig marad. Az értesítés ezt mondja ki a „Could not rename/move file: Failed to move item to trash” helyett.
+- **A FreeBSD csatolt meghajtói szerepelnek a helylistában**, a `mount -p` kimenetéből olvasva, ahogy a Linuxéi a `/proc/mounts` fájlból.
+- **A Windowson meghajtóbetű nélküli útvonallal megnyitott HTML-oldal** (`\Users\…`, vagy `/home/…` Wine alatt) újra megkapja a stíluslapjait és képeit; korábban az oldal mappáján kívüli fájloknak vélte őket.
+- **A Tab egy álnév-útvonalra már nem listázza azt kétszer.** A neveken végigjárva minden megjelenített álnév-útvonal vagy nem listázott szimbolikus link kapott egy második sort, amely a fájl létrehozását ajánlotta fel, a mező pedig pirosra váltott, pedig az Enter megnyitja a jegyzetet, amelyet az útvonal jelöl.
+
 ## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Hozzáadva

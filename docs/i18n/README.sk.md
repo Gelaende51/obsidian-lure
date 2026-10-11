@@ -15,7 +15,7 @@ Obsidian 1.8.7+ · iba počítač · AGPL-3.0
 ## Vyhlásenie o AI
 
 - **Agent** — **Claude Opus 5 / 5.5** a **Claude Sonnet 5** (Anthropic, cez Claude Code): napísal TypeScript, CSS, všetkých 45 sád prekladov a dokumentáciu. Preklady vznikli strojovo a rodení hovoriaci ich nekontrolovali.
-- **Spotreba** — 3. augusta – 11. októbra 2026, 44 relácií, \~13070 odpovedí: \~11,7 mil. vygenerovaných tokenov, \~53,9 mil. odoslaných, \~3915,3 mil. opätovných čítaní z vyrovnávacej pamäte (\~3980,9 mil. celkom); plus 795 bezobslužných prekladateľských behov: \~4,0 mil. vygenerovaných, \~4,3 mil. odoslaných.
+- **Spotreba** — 3. augusta – 11. októbra 2026, 44 relácií, \~13590 odpovedí: \~12,0 mil. vygenerovaných tokenov, \~54,7 mil. odoslaných, \~4057,7 mil. opätovných čítaní z vyrovnávacej pamäte (\~4124,3 mil. celkom); plus 971 bezobslužných prekladateľských behov: \~4,1 mil. vygenerovaných, \~4,6 mil. odoslaných.
 - **Zdroj** — model sa učil z otvoreného kódu, dokumentácie a textov komunity, ktoré zverejnili iní. Väčšina zásluh patrí im.
 - **Autor** — Vault51: určil každú funkciu, každú verziu vyskúšal v skutočnom trezore, riadil opravy, prezrel všetky výstupy.
 

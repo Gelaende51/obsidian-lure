@@ -15,7 +15,7 @@ Obsidian 1.8.7+ · hanya desktop · AGPL-3.0
 ## Pengungkapan AI
 
 - **Agen** — **Claude Opus 5 / 5.5** dan **Claude Sonnet 5** (Anthropic, lewat Claude Code): menulis TypeScript, CSS, seluruh 45 set terjemahan, dan dokumentasinya. Terjemahan dibuat mesin dan belum ditinjau penutur asli.
-- **Pemakaian** — 3 Agustus – 11 Oktober 2026, 44 sesi, \~13.070 balasan: \~11,7 juta token dihasilkan, \~53,9 juta dikirim, \~3915,3 juta pembacaan ulang dari singgahan (\~3980,9 juta total); ditambah 795 proses terjemahan headless: \~4,0 juta dihasilkan, \~4,3 juta dikirim.
+- **Pemakaian** — 3 Agustus – 11 Oktober 2026, 44 sesi, \~13.590 balasan: \~12,0 juta token dihasilkan, \~54,7 juta dikirim, \~4057,7 juta pembacaan ulang dari singgahan (\~4124,3 juta total); ditambah 971 proses terjemahan headless: \~4,1 juta dihasilkan, \~4,6 juta dikirim.
 - **Hulu** — model belajar dari kode sumber terbuka, dokumentasi, dan tulisan komunitas yang diterbitkan orang lain. Sebagian besar kreditnya milik mereka.
 - **Penulis** — Vault51: menentukan setiap fitur, mencoba tiap versi di vault sungguhan, mengarahkan perbaikan, meninjau seluruh hasilnya.
 

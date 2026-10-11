@@ -8,6 +8,28 @@
 
 Každé vydání pluginu Lure, od nejnovějšího. Co přibylo od posledního vydání, najdete pod *Nevydáno*. Verze nemají předponu `v`, stejně jako značky vydání.
 
+## Nevydáno
+
+### Změněno
+
+- **Tlačítko dalších cest je všude na konci řádku**, nikdy před trezorem: ikona odznaku při skrytých příponách — včetně počtu shod vzoru, s odznakem zeleným či červeným — a tlačítko za jménem při zobrazených příponách. Jeho seznam končí tam, kde ono.
+- **Mimo trezor je přípona také odznak**, při skrytých příponách: jméno souboru, pak jeho typ, značky odkazu a prázdného souboru a jeho přípona na konci řádku, v ní tlačítko dalších cest. Stisknutím se jméno vypíše s označenou příponou.
+- **Odemknutí zápisů mimo trezor vydrží i při změně umístění**: výběr jiného trezoru, jednotky či kořene nebo napsání absolutní cesty už zámek nezavře. Skončí, když se řádek vrátí do trezoru, nebo ručně.
+- **Nula prázdného souboru je vpravo dole na jeho ikoně**, v rozbalovacím seznamu i v odznaku, a vpravo nahoře tam, kde spodní roh zabírá značka odkazu.
+
+### Přidáno
+
+- **Pevné odkazy mimo trezor se počítají.** Poznámka, která má jinde na disku další jméno — třeba soubor s úkoly uložený v repozitáři a odkazovaný do trezoru — dostane fialovou značku pevného odkazu a řádek v seznamu dalších cest, zobrazený od vaší domovské složky jako `~/…` nebo od kořene jako `/…`. Kde leží, se ptá vlastního indexu systému: Windows vypíše jména souboru; v Linuxu a macOS se v indexu názvů souborů (`plocate`/`locate`, Spotlight) hledá týž soubor. Jméno, které nenajde, je uvedeno jako `/…`. Tyto řádky soubor otevřou; do `paths` se nezapisují.
+
+### Opraveno
+
+- **Neúspěšné souborové operace říkají slovy, co se stalo** — neexistuje, chybí oprávnění, jednotka jen pro čtení nebo plná, používá se, jméno je příliš dlouhé, už existuje — a uvádějí cestu, místo chybových kódů Node. Ve Flatpaku nebo Snapu, kde složka mimo sandbox vypadá, že neexistuje, zpráva uvádí, že důvodem může být sandbox.
+- **Tam, kde Obsidian neslyší, že soubor vznikl nebo zmizel** (FreeBSD), ho Lure požádá, aby se podíval znovu: odkazy vytvořené pluginem Lure i v terminálu se indexují a zobrazují.
+- **Mazání mimo trezor tam, kde není koš, to řekne.** Kontejner, desktop bez koše nebo jednotka, na které systém koš nevede, přesun odmítne a soubor zůstane. Oznámení to nyní říká, místo „Could not rename/move file: Failed to move item to trash".
+- **Připojené jednotky FreeBSD jsou v seznamu míst**, načtené z `mount -p`, stejně jako jednotky Linuxu z `/proc/mounts`.
+- **Stránka HTML otevřená cestou bez písmene jednotky ve Windows** (`\Users\…`, nebo `/home/…` pod Wine) opět dostává své styly a obrázky; byly považovány za soubory mimo složku stránky.
+- **Tab na cestu aliasu ji už neuvádí dvakrát.** Při procházení jmen každá cesta aliasu nebo nezobrazený symbolický odkaz, který zobrazil, získal druhý řádek nabízející vytvoření onoho souboru a pole zčervenalo, ačkoli Enter otevře poznámku, kterou zastupuje.
+
 ## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Přidáno

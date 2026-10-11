@@ -9,6 +9,28 @@
 
 Lure'un her sürümü, en yenisi en üstte. Son sürümden bu yana gelenler *Yayımlanmamış* başlığı altındadır. Sürüm numaraları, sürüm etiketleriyle uyumlu olarak `v` öneki taşımaz.
 
+## Yayımlanmamış
+
+### Değişenler
+
+- **Diğer yollar düğmesi her yerde satırın sonundadır**, asla kasanın önünde değil: uzantılar gizliyken rozetin simgesi — bir desenin eşleşme sayısı da dahil, rozet onunla birlikte yeşil ya da kırmızı olur — uzantılar gösterilirken de adın ardından bir düğme. Listesi de aynı yerde biter.
+- **Kasanın dışında uzantı da bir rozettir**, uzantılar gizliyken: dosyanın adı, ardından türü, bağlantı ve boşluk işaretleri, satırın sonunda da uzantısı; diğer yollar düğmesi bunun içindedir. Ona basmak, adı uzantısı işaretli olarak yazar.
+- **Kasanın dışına yazmanın kilidini açmak, konum değişse de sürer**: başka bir kasa, sürücü ya da kök seçmek veya mutlak bir yol yazmak artık asma kilidi kapatmaz. Satır kasaya döndüğünde ya da elle kapatıldığında sona erer.
+- **Boş bir dosyanın 0'ı simgesinin sağ altında durur**, açılır listede ve rozette; bir bağlantı işareti sağ alt köşeyi tuttuğunda ise sağ üstte durur.
+
+### Eklenenler
+
+- **Kasanın dışındaki sabit bağlantılar sayılır.** Diskte başka bir yerde de adı olan bir not — örneğin bir depoda tutulup kasaya bağlanmış bir sorun dosyası — mor sabit bağlantı işaretini ve diğer yollar listesinde bir satır alır; bu satır ana klasörünüzden `~/…` ya da kökten `/…` olarak gösterilir. Nerede olduğunu sistemin kendi dizini söyler: Windows bir dosyanın adlarını listeler; Linux ve macOS'ta aynı dosya için dosya adı dizininde (`plocate`/`locate`, Spotlight) arama yapılır. Bulunamayan bir ad `/…` olarak listelenir. Bu satırlar dosyayı açar; `paths` içine yazılmaz.
+
+### Düzeltilenler
+
+- **Başarısız dosya işlemleri, ne ters gittiğini Node'un hata kodları yerine sözcüklerle söyler** — yok, izin yok, salt okunur ya da dolu sürücü, kullanımda, ad çok uzun, zaten var — yolla birlikte. Bir Flatpak ya da Snap'te, korumalı alanın dışındaki bir klasör yokmuş gibi göründüğünde, ileti nedenin korumalı alan olabileceğini belirtir.
+- **Obsidian'ın bir dosyanın belirdiğini ya da kaybolduğunu duymadığı yerlerde** (FreeBSD), Lure ondan yeniden bakmasını ister: Lure'un yaptığı bağlantılar ve bir terminalde yapılanlar dizine eklenir ve listelenir.
+- **Çöp kutusu olmayan yerde kasanın dışından silmek bunu söyler.** Bir kapsayıcı, çöp kutusu olmayan bir masaüstü ya da sistemin çöp kutusu tutmadığı bir sürücü taşımayı reddeder ve dosya kalır. Bildirim artık "Could not rename/move file: Failed to move item to trash" yerine bunu söyler.
+- **FreeBSD'nin bağlı sürücüleri yer listesindedir**, Linux'unkiler `/proc/mounts` dosyasından okunduğu gibi `mount -p` çıktısından okunur.
+- **Windows'ta sürücü harfi olmayan bir yolla açılan HTML sayfası** (`\Users\…` ya da Wine altında `/home/…`) stil sayfalarına ve görsellerine yeniden kavuşur; bunlar sayfanın klasörü dışındaki dosyalar sanılıyordu.
+- **Bir takma ad yoluna Tab ile geçmek artık onu iki kez listelemez.** Adlar arasında dönerken, gösterdiği her takma ad yolu ya da listelenmemiş sembolik bağlantı, o dosyayı oluşturmayı öneren ikinci bir satır edinirdi ve alan kırmızıya dönerdi, oysa Enter onun işaret ettiği notu açar.
+
 ## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Eklenenler

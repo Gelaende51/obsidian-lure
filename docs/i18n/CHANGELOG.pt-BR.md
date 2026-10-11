@@ -8,6 +8,28 @@
 
 Todas as versões do Lure, da mais recente para a mais antiga. O que entrou desde a última versão está em *Não publicado*. As versões não levam o prefixo `v`, assim como as tags de release.
 
+## Não publicado
+
+### Alterado
+
+- **O botão de outros caminhos fica sempre no fim da linha**, nunca na frente do cofre: o ícone do selo com as extensões ocultas — com a contagem de resultados de um padrão, o selo verde ou vermelho junto — e um botão depois do nome com as extensões visíveis. A lista dele termina onde ele está.
+- **Fora do cofre a extensão também é um selo**, com as extensões ocultas: o nome do arquivo, depois o tipo, as marcas de link e de vazio e a extensão no fim da linha, com o botão de outros caminhos dentro. Pressioná-lo escreve o nome por inteiro com a extensão marcada.
+- **O desbloqueio de gravações fora do cofre dura através de uma mudança de local**: escolher outro cofre, unidade ou raiz, ou digitar um caminho absoluto, não fecha mais o cadeado. Ele termina quando a linha volta ao cofre, ou manualmente.
+- **O 0 de um arquivo vazio fica no canto inferior direito do ícone**, no menu suspenso e no selo, e no canto superior direito quando a marca de um link ocupa o inferior.
+
+### Adicionado
+
+- **Os hard links fora do cofre são contados.** Uma nota que tem outro nome em algum outro lugar do disco — um arquivo de issues mantido num repositório e vinculado ao cofre, por exemplo — recebe a marca roxa de hard link e uma linha na sua lista de outros caminhos, mostrada a partir da sua pasta pessoal como `~/…` ou a partir da raiz como `/…`. Para saber onde ele está, consulta-se o índice do próprio sistema: o Windows lista os nomes de um arquivo; no Linux e no macOS busca-se o mesmo arquivo no índice de nomes de arquivo (`plocate`/`locate`, Spotlight). Um nome que ele não consegue encontrar aparece como `/…`. Essas linhas abrem o arquivo; não são gravadas em `paths`.
+
+### Corrigido
+
+- **As operações de arquivo que falham dizem em palavras o que deu errado** — não existe, sem permissão, unidade somente leitura ou cheia, em uso, nome longo demais, já existe — com o caminho, em vez dos códigos de erro do Node. Num Flatpak ou Snap, onde uma pasta fora do sandbox parece não existir, a mensagem diz que o sandbox pode ser o motivo.
+- **Onde o Obsidian não percebe um arquivo surgir ou sumir** (FreeBSD), o Lure pede que ele olhe de novo: os links que o Lure cria, e os criados num terminal, são indexados e listados.
+- **Excluir fora do cofre onde não há lixeira avisa isso.** Um contêiner, um desktop sem lixeira ou uma unidade em que o sistema não mantém lixeira recusa a movimentação, e o arquivo permanece. O aviso agora diz isso, em vez de "Could not rename/move file: Failed to move item to trash".
+- **As unidades montadas do FreeBSD estão na lista de locais**, lidas de `mount -p`, como as do Linux são lidas de `/proc/mounts`.
+- **Uma página HTML aberta por um caminho sem letra de unidade no Windows** (`\Users\…`, ou `/home/…` sob o Wine) volta a receber suas folhas de estilo e imagens; elas eram tomadas por arquivos fora da pasta da página.
+- **Tab sobre um caminho de alias não o lista mais duas vezes.** Ao percorrer os nomes, cada caminho de alias ou link simbólico não listado que ele exibia ganhava uma segunda linha oferecendo criar aquele arquivo, e o campo ficava vermelho, embora Enter abra a nota que ele representa.
+
 ## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Adicionado

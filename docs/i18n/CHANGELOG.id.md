@@ -8,6 +8,28 @@
 
 Setiap rilis Lure, yang terbaru lebih dulu. Apa yang sudah mendarat sejak rilis terakhir ada di bawah *Belum dirilis*. Versi tidak memakai awalan `v`, sesuai dengan tanda rilisnya.
 
+## Belum dirilis
+
+### Diubah
+
+- **Tombol jalur lain berada di ujung baris di mana-mana**, tidak pernah di depan vault: ikon lencana saat ekstensi disembunyikan — termasuk jumlah kecocokan sebuah pola, dengan lencana yang menjadi hijau atau merah bersamanya — dan sebuah tombol setelah nama saat ekstensi ditampilkan. Daftarnya berakhir di tempat yang sama dengan tombolnya.
+- **Di luar vault, ekstensi juga berupa lencana**, saat ekstensi disembunyikan: nama berkas, lalu jenisnya, tanda tautan dan tanda kosong, serta ekstensinya di ujung baris, dengan tombol jalur lain di dalamnya. Menekannya menuliskan nama secara utuh dengan ekstensi yang ditandai.
+- **Membuka kunci penulisan di luar vault bertahan setelah lokasi diganti**: memilih vault, drive, atau root lain, atau mengetik jalur absolut, tidak lagi menutup gembok. Kunci baru tertutup ketika baris kembali ke vault, atau secara manual.
+- **Angka 0 pada berkas kosong berada di kanan bawah ikonnya**, di menu tarik-turun dan di lencana, dan di kanan atas bila tanda tautan menempati bagian bawah.
+
+### Ditambahkan
+
+- **Tautan keras di luar vault dihitung.** Catatan yang memiliki nama lain di tempat lain pada disk — misalnya berkas isu yang disimpan di sebuah repositori dan ditautkan ke vault — mendapat tanda tautan keras berwarna ungu dan satu baris di daftar jalur lainnya, ditampilkan dari folder home Anda sebagai `~/…` atau dari root sebagai `/…`. Untuk mengetahui lokasinya, indeks bawaan sistem ditanyai: Windows mendaftar nama-nama sebuah berkas; di Linux dan macOS indeks nama berkas (`plocate`/`locate`, Spotlight) dicari untuk berkas yang sama. Nama yang tidak dapat ditemukan didaftar sebagai `/…`. Baris-baris ini membuka berkasnya; baris-baris ini tidak ditulis ke dalam `paths`.
+
+### Diperbaiki
+
+- **Operasi berkas yang gagal kini menjelaskan masalahnya dengan kata-kata** — tidak ada, tidak ada izin, drive hanya-baca atau penuh, sedang dipakai, nama terlalu panjang, sudah ada — beserta jalurnya, bukan kode galat Node. Di Flatpak atau Snap, tempat folder di luar sandbox tampak hilang, pesan menyebutkan bahwa sandbox mungkin penyebabnya.
+- **Di tempat Obsidian tidak mendengar sebuah berkas muncul atau hilang** (FreeBSD), Lure memintanya memeriksa ulang: tautan yang dibuat Lure, dan yang dibuat di terminal, diindeks dan didaftar.
+- **Menghapus di luar vault yang tidak memiliki tempat sampah kini mengatakannya.** Kontainer, desktop tanpa tempat sampah, atau drive yang tidak memiliki tempat sampah di sistem menolak pemindahan, dan berkas tetap ada. Pemberitahuan kini menyebutkan hal itu, bukan "Could not rename/move file: Failed to move item to trash".
+- **Drive terpasang di FreeBSD ada di daftar tempat**, dibaca dari `mount -p`, seperti milik Linux dari `/proc/mounts`.
+- **Halaman HTML yang dibuka lewat jalur tanpa huruf drive di Windows** (`\Users\…`, atau `/home/…` di bawah Wine) kembali mendapatkan stylesheet dan gambarnya; sebelumnya keduanya dianggap berkas di luar folder halaman.
+- **Tab ke jalur alias tidak lagi mendaftarkannya dua kali.** Saat berputar di antara nama-nama, setiap jalur alias atau tautan simbolik yang tidak terdaftar yang ditampilkannya memunculkan baris kedua yang menawarkan pembuatan berkas itu, dan kolom menjadi merah, padahal Enter membuka catatan yang diwakilinya.
+
 ## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Ditambahkan

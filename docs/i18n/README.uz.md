@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · faqat kompyuter versiyasi · AGPL-3.0
 ## Sun'iy intellekt haqida ma'lumot
 
 - **Agent** — **Claude Opus 5 / 5.5** va **Claude Sonnet 5** (Anthropic, Claude Code orqali): TypeScript kodini, CSS'ni, barcha 45 ta tarjima to‘plamini va hujjatlarni yozgan. Tarjimalar mashina tomonidan yaratilgan va ona tili egalari tomonidan tekshirilmagan.
-- **Sarf** — 2026-yil 3-avgust – 11-oktabr, 44 ta seans, \~13 070 ta javob: \~11,7 mln token yaratilgan, \~53,9 mln yuborilgan, \~3 915,3 mln keshdan qayta o‘qilgan (jami \~3 980,9 mln); qo‘shimcha 795 ta headless (chatsiz) tarjima ishga tushirilgan: \~4,0 mln yaratilgan, \~4,3 mln yuborilgan.
+- **Sarf** — 2026-yil 3-avgust – 11-oktabr, 44 ta seans, \~13 590 ta javob: \~12,0 mln token yaratilgan, \~54,7 mln yuborilgan, \~4 057,7 mln keshdan qayta o‘qilgan (jami \~4 124,3 mln); qo‘shimcha 971 ta headless (chatsiz) tarjima ishga tushirilgan: \~4,1 mln yaratilgan, \~4,6 mln yuborilgan.
 - **Manba** — model boshqalar e'lon qilgan ochiq manbali kod, hujjatlar va hamjamiyat yozuvlaridan o‘rgangan. Asosiy xizmat o‘shalarga tegishli.
 - **Muallif** — Vault51: har bir imkoniyatni belgilagan, har bir iteratsiyani jonli omborda sinab ko‘rgan, tuzatishlarni yo‘naltirgan va barcha natijani ko‘rib chiqqan.
 

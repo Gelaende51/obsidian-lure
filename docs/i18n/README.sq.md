@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · vetëm për desktop · AGPL-3.0
 ## Deklarim për IA-në
 
 - **Agjenti** — **Claude Opus 5 / 5.5** dhe **Claude Sonnet 5** (Anthropic, përmes Claude Code): shkroi TypeScript-in, CSS-në, të 45 grupet e përkthimeve dhe dokumentacionin. Përkthimet janë të krijuara nga makina dhe të pashqyrtuara nga folës amtarë.
-- **Konsumi** — 3 gusht – 11 tetor 2026, 44 sesione, \~13.070 përgjigje: \~11,7 mln token të gjeneruar, \~53,9 mln të dërguar, \~3915,3 mln rilexime nga kesh-i (\~3980,9 mln gjithsej); plus 795 ekzekutime përkthimi pa ndërfaqe bisede: \~4,0 mln të gjeneruar, \~4,3 mln të dërguar.
+- **Konsumi** — 3 gusht – 11 tetor 2026, 44 sesione, \~13.590 përgjigje: \~12,0 mln token të gjeneruar, \~54,7 mln të dërguar, \~4057,7 mln rilexime nga kesh-i (\~4124,3 mln gjithsej); plus 971 ekzekutime përkthimi pa ndërfaqe bisede: \~4,1 mln të gjeneruar, \~4,6 mln të dërguar.
 - **Burimi** — modeli mësoi nga kodi me burim të hapur, dokumentacioni dhe shkrimet e komunitetit të botuara nga të tjerë. Pjesa më e madhe e meritës u takon atyre.
 - **Autori** — Vault51: përcaktoi çdo veçori, provoi çdo përsëritje në një kasafortë të gjallë, drejtoi ndreqjet, shqyrtoi çdo rezultat.
 

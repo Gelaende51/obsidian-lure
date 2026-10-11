@@ -8,6 +8,28 @@
 
 Hver udgivelse af Lure, nyeste først. Det, der er kommet til siden seneste udgivelse, står under *Ikke udgivet*. Versioner har intet `v`-præfiks, så de svarer til udgivelsesmærkerne.
 
+## Ikke udgivet
+
+### Ændret
+
+- **Knappen med de andre stier sidder overalt for enden af rækken**, aldrig foran vaulten: badgens ikon, når filtypenavne er skjult — med et mønsters antal match, hvis det er et mønster, og badgen grøn eller rød med det — og en knap efter navnet, når filtypenavne vises. Dens liste slutter, hvor den gør.
+- **Uden for vaulten er filtypenavnet også et badge**, når filtypenavne er skjult: filens navn, så dens type, mærkerne for link og tom fil og dens filtypenavn for enden af rækken, med knappen til de andre stier i det. Trykker man på det, skrives navnet ud med filtypenavnet markeret.
+- **At låse op for skrivning uden for vaulten varer ved gennem et skift af placering**: at vælge en anden vault, et andet drev eller en anden rod, eller at skrive en absolut sti, lukker ikke længere hængelåsen. Det holder op, når rækken vender tilbage til vaulten, eller i hånden.
+- **En tom fils 0 sidder nederst til højre på dens ikon**, i rullelisten og i badgen, og øverst til højre, hvor et links mærke har pladsen nederst.
+
+### Tilføjet
+
+- **Hårde links uden for vaulten tælles med.** En note, der har et andet navn et andet sted på disken — for eksempel en fil med opgaver, som ligger i et repository og er linket ind i vaulten — får det lilla mærke for hårdt link og en række i sin liste over andre stier, vist fra din hjemmemappe som `~/…` eller fra roden som `/…`. For at finde, hvor det er, spørges systemets eget indeks: Windows oplister en fils navne; på Linux og macOS søges der i filnavnsindekset (`plocate`/`locate`, Spotlight) efter den samme fil. Et navn, det ikke kan finde, vises som `/…`. Disse rækker åbner filen; de skrives ikke i `paths`.
+
+### Rettet
+
+- **Mislykkede filhandlinger siger med ord, hvad der gik galt** — findes ikke, ingen tilladelse, et skrivebeskyttet eller fuldt drev, i brug, navnet for langt, findes allerede — med stien, i stedet for Nodes fejlkoder. I en Flatpak eller Snap, hvor en mappe uden for sandkassen ser ud til at mangle, siger beskeden, at sandkassen kan være årsagen.
+- **Hvor Obsidian ikke hører, at en fil dukker op eller forsvinder** (FreeBSD), beder Lure den om at se efter igen: links, Lure laver, og links lavet i en terminal, bliver indekseret og vist.
+- **Sletning uden for vaulten siger fra, hvor der ikke er nogen papirkurv.** En container, et skrivebord uden papirkurv eller et drev, som systemet ikke fører papirkurv på, afviser flytningen, og filen bliver liggende. Beskeden siger nu det, i stedet for "Could not rename/move file: Failed to move item to trash".
+- **FreeBSD's monterede drev står i listen over steder**, læst fra `mount -p`, ligesom Linux' læses fra `/proc/mounts`.
+- **En HTML-side åbnet med en sti uden drevbogstav på Windows** (`\Users\…`, eller `/home/…` under Wine) får igen sine typografiark og billeder; de blev taget for filer uden for sidens mappe.
+- **Tab til en aliassti viser den ikke længere to gange.** Når man gik rundt mellem navnene, fik hver aliassti eller hvert ulistet symbolsk link, den viste, en ekstra række, der tilbød at oprette den fil, og feltet blev rødt, selv om Enter åbner den note, den står for.
+
 ## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Tilføjet

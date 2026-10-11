@@ -9,6 +9,28 @@
 
 Cada versió de Lure, de la més nova a la més antiga. El que ha arribat des de la darrera versió és a *Sense publicar*. Les versions no porten el prefix `v`, igual que les etiquetes de les versions.
 
+## Sense publicar
+
+### Canviat
+
+- **El botó dels altres camins és arreu al final de la fila**, mai davant de la caixa forta: la icona de la insígnia quan les extensions són amagades — amb el nombre de coincidències d'un patró inclòs, i la insígnia verda o vermella amb ell — i un botó després del nom quan les extensions són visibles. La seva llista acaba on acaba ell.
+- **Fora de la caixa forta l'extensió també és una insígnia**, amb les extensions amagades: el nom del fitxer, després el seu tipus, les marques d'enllaç i de buit, i la seva extensió al final de la fila, amb el botó dels altres camins a dins. En prémer-la s'escriu el nom amb l'extensió marcada.
+- **Desbloquejar les escriptures fora de la caixa forta dura mentre canvies d'ubicació**: triar una altra caixa forta, unitat o arrel, o escriure un camí absolut, ja no tanca el cadenat. Acaba quan la fila torna a la caixa forta, o a mà.
+- **El 0 d'un fitxer buit és a baix a la dreta de la seva icona**, al desplegable i a la insígnia, i a dalt a la dreta quan la marca d'un enllaç ocupa la part baixa.
+
+### Afegit
+
+- **Els enllaços durs fora de la caixa forta es compten.** Una nota que té un altre nom en algun altre lloc del disc — un fitxer d'incidències guardat en un repositori i enllaçat a la caixa forta, per exemple — rep la marca lila d'enllaç dur i una fila a la seva llista d'altres camins, mostrada des de la carpeta personal com a `~/…` o des de l'arrel com a `/…`. Per saber on és, es consulta l'índex del mateix sistema: Windows llista els noms d'un fitxer; a Linux i macOS es cerca el mateix fitxer a l'índex de noms de fitxer (`plocate`/`locate`, Spotlight). Un nom que no es pot trobar es llista com a `/…`. Aquestes files obren el fitxer; no s'escriuen a `paths`.
+
+### Corregit
+
+- **Les operacions de fitxers que fallen diuen amb paraules què ha anat malament** — no hi és, sense permís, unitat de només lectura o plena, en ús, nom massa llarg, ja hi és — amb el camí, en lloc dels codis d'error de Node. En un Flatpak o un Snap, on una carpeta fora del sandbox sembla que falti, el missatge diu que el motiu podria ser el sandbox.
+- **Allà on Obsidian no s'assabenta que un fitxer apareix o desapareix** (FreeBSD), Lure li demana que torni a mirar: els enllaços que fa Lure, i els fets en un terminal, s'indexen i es llisten.
+- **Esborrar fora de la caixa forta on no hi ha paperera ho diu.** Un contenidor, un escriptori sense paperera o una unitat on el sistema no té paperera rebutgen el moviment, i el fitxer es queda. L'avís ara ho diu, en lloc de "Could not rename/move file: Failed to move item to trash".
+- **Les unitats muntades de FreeBSD són a la llista de llocs**, llegides de `mount -p`, com les de Linux ho són de `/proc/mounts`.
+- **Una pàgina HTML oberta per un camí sense lletra d'unitat a Windows** (`\Users\…`, o `/home/…` sota Wine) torna a rebre els seus fulls d'estil i imatges; es prenien per fitxers fora de la carpeta de la pàgina.
+- **El Tab cap a un camí àlies ja no el llista dues vegades.** En recórrer els noms, cada camí àlies o enllaç simbòlic no llistat que mostrava obtenia una segona fila que oferia crear aquell fitxer, i el camp es posava vermell, tot i que Enter obre la nota que representa.
+
 ## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Afegit

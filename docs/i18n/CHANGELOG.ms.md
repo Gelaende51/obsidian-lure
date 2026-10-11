@@ -8,6 +8,28 @@
 
 Setiap keluaran Lure, yang terbaharu dahulu. Apa yang telah mendarat sejak keluaran terakhir ada di bawah *Belum dikeluarkan*. Versi tidak membawa awalan `v`, sepadan dengan tag keluarannya.
 
+## Belum dikeluarkan
+
+### Diubah
+
+- **Butang laluan lain berada di hujung baris di mana-mana**, tidak pernah di hadapan peti besi: ikon lencana dengan sambungan disembunyikan — termasuk kiraan padanan sesuatu corak, lencana menjadi hijau atau merah bersamanya — dan sebuah butang selepas nama dengan sambungan dipaparkan. Senarainya berakhir di tempat yang sama.
+- **Di luar peti besi, sambungan juga menjadi lencana**, dengan sambungan disembunyikan: nama fail, kemudian jenisnya, tanda pautan dan tanda kosong serta sambungannya di hujung baris, dengan butang laluan lain di dalamnya. Menekannya menulis nama itu sepenuhnya dengan sambungan ditanda.
+- **Membuka kunci penulisan di luar peti besi kekal merentasi pertukaran lokasi**: memilih peti besi, pemacu atau akar lain, atau menaip laluan mutlak, tidak lagi mengunci mangga itu semula. Ia tamat apabila baris kembali ke peti besi, atau dengan tangan.
+- **Angka 0 bagi fail kosong terletak di bawah kanan ikonnya**, dalam senarai lungsur dan dalam lencana, dan di atas kanan apabila tanda pautan menempati bahagian bawah.
+
+### Ditambah
+
+- **Pautan keras di luar peti besi dikira.** Sebuah nota yang mempunyai nama lain di tempat lain pada cakera — fail isu yang disimpan dalam repositori dan dipautkan ke dalam peti besi, umpamanya — mendapat tanda pautan keras ungu dan satu baris dalam senarai laluan lainnya, ditunjukkan dari folder utama anda sebagai `~/…` atau dari akar sebagai `/…`. Untuk mengetahui di mana ia berada, indeks sistem sendiri ditanya: Windows menyenaraikan nama-nama sesebuah fail; pada Linux dan macOS indeks nama fail (`plocate`/`locate`, Spotlight) dicari untuk fail yang sama. Nama yang tidak ditemui disenaraikan sebagai `/…`. Baris-baris ini membuka fail itu; ia tidak ditulis ke dalam `paths`.
+
+### Dibaiki
+
+- **Operasi fail yang gagal menyatakan apa yang tidak kena dengan kata-kata** — tiada di situ, tiada kebenaran, pemacu baca sahaja atau penuh, sedang digunakan, nama terlalu panjang, sudah ada — beserta laluannya, bukannya kod ralat Node. Dalam Flatpak atau Snap, yang folder di luar kotak pasirnya kelihatan hilang, mesej itu menyatakan bahawa kotak pasir mungkin puncanya.
+- **Di mana Obsidian tidak mendengar sesebuah fail muncul atau hilang** (FreeBSD), Lure memintanya melihat semula: pautan yang dibuat oleh Lure, dan yang dibuat dalam terminal, diindeks dan disenaraikan.
+- **Memadam di luar peti besi apabila tiada tong sampah menyatakannya.** Bekas, desktop tanpa tong sampah, atau pemacu yang sistemnya tidak menyimpan tong sampah padanya menolak pemindahan itu, dan fail kekal. Notis kini menyatakan itu, bukannya "Could not rename/move file: Failed to move item to trash".
+- **Pemacu terpasang FreeBSD ada dalam senarai tempat**, dibaca daripada `mount -p`, sebagaimana pemacu Linux daripada `/proc/mounts`.
+- **Halaman HTML yang dibuka melalui laluan tanpa huruf pemacu pada Windows** (`\Users\…`, atau `/home/…` di bawah Wine) mendapat semula helaian gaya dan imejnya; ia tersilap dianggap fail di luar folder halaman itu.
+- **Tab ke laluan alias tidak lagi menyenaraikannya dua kali.** Semasa bergilir melalui nama-nama, setiap laluan alias atau pautan simbolik tidak tersenarai yang dipaparkannya mendapat baris kedua yang menawarkan untuk membuat fail itu, dan medan bertukar merah, walaupun Enter membuka nota yang diwakilinya.
+
 ## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Ditambah

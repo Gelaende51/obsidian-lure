@@ -9,6 +9,28 @@
 
 Kaikki Luren julkaisut, uusin ensin. Se, mikä on valmistunut viimeisimmän julkaisun jälkeen, on kohdassa *Julkaisematon*. Versionumeroissa ei ole `v`-etuliitettä, samoin kuin julkaisutunnisteissa.
 
+## Julkaisematon
+
+### Muutettu
+
+- **Muiden polkujen painike on kaikkialla rivin lopussa**, ei koskaan holvin edessä: kuvakkeena merkin kuvake, kun tarkenteet on piilotettu — kaavan osumien määrä mukaan lukien, merkki vihreänä tai punaisena sen mukana — ja nimen jälkeen painike, kun tarkenteet näytetään. Sen luettelo päättyy samaan paikkaan.
+- **Holvin ulkopuolellakin tarkenne on merkki**, kun tarkenteet on piilotettu: tiedoston nimi, sitten sen tyyppi, linkki- ja tyhjyysmerkit sekä tarkenne rivin lopussa, ja muiden polkujen painike on sen sisällä. Painallus kirjoittaa nimen auki tarkenne merkittynä.
+- **Kirjoitusten avaus holvin ulkopuolelle säilyy sijainnin vaihtuessa**: toisen holvin, aseman tai juuren valinta tai absoluuttisen polun kirjoittaminen ei enää sulje lukkoa. Se päättyy, kun rivi palaa holviin, tai käsin.
+- **Tyhjän tiedoston 0 on kuvakkeensa oikeassa alakulmassa** alasvetoluettelossa ja merkissä, ja oikeassa yläkulmassa, kun linkin merkki on alhaalla.
+
+### Lisätty
+
+- **Holvin ulkopuoliset kovat linkit lasketaan.** Muistiinpano, jolla on toinen nimi jossakin muualla levyllä — esimerkiksi repositoriossa pidetty ongelmatiedosto, joka on linkitetty holviin — saa violetin kovan linkin merkin ja rivin muiden polkujen luetteloonsa, näytettynä kotikansiostasi muodossa `~/…` tai juuresta muodossa `/…`. Sijainti kysytään järjestelmän omasta hakemistosta: Windows luettelee tiedoston nimet; Linuxissa ja macOS:ssä tiedostonimihakemistosta (`plocate`/`locate`, Spotlight) haetaan sama tiedosto. Nimi, jota ei löydy, luetellaan muodossa `/…`. Nämä rivit avaavat tiedoston; niitä ei kirjoiteta kohtaan `paths`.
+
+### Korjattu
+
+- **Epäonnistuneet tiedostotoiminnot kertovat sanoin, mikä meni pieleen** — ei ole olemassa, ei oikeutta, kirjoitussuojattu tai täysi asema, käytössä, nimi liian pitkä, on jo olemassa — polun kanssa, Noden virhekoodien sijaan. Flatpakissa tai Snapissa, jossa hiekkalaatikon ulkopuolinen kansio näyttää puuttuvan, viesti kertoo, että syynä voi olla hiekkalaatikko.
+- **Kun Obsidian ei kuule tiedoston ilmestyvän tai katoavan** (FreeBSD), Lure pyytää sitä katsomaan uudelleen: Luren tekemät linkit ja päätteessä tehdyt indeksoidaan ja luetellaan.
+- **Holvin ulkopuolella poistaminen kertoo, jos roskakoria ei ole.** Kontti, työpöytä ilman roskakoria tai asema, jolla järjestelmä ei pidä roskakoria, kieltäytyy siirrosta, ja tiedosto säilyy. Ilmoitus kertoo nyt tämän tekstin "Could not rename/move file: Failed to move item to trash" sijaan.
+- **FreeBSD:n liitetyt asemat ovat paikkaluettelossa**, luettuna komennolla `mount -p`, kuten Linuxin asemat luetaan tiedostosta `/proc/mounts`.
+- **HTML-sivun, joka avataan polulla ilman asematunnusta Windowsissa** (`\Users\…`, tai `/home/…` Winen alla), tyylitiedostot ja kuvat latautuvat taas; ne oli luultu sivun kansion ulkopuolisiksi tiedostoiksi.
+- **Tab aliaspolun kohdalla ei enää luettele sitä kahdesti.** Nimiä kierrettäessä jokainen näytille tuotu aliaspolku tai luetteloimaton symbolinen linkki sai toisen rivin, joka tarjosi tiedoston luomista, ja kenttä muuttui punaiseksi, vaikka Enter avaa muistiinpanon, jota se vastaa.
+
 ## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Lisätty

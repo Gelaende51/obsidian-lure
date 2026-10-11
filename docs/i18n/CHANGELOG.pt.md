@@ -8,6 +8,28 @@
 
 Todas as versões do Lure, da mais recente para a mais antiga. O que chegou desde a última versão está em *Por lançar*. Os números de versão não levam prefixo `v`, tal como as etiquetas das versões.
 
+## Por lançar
+
+### Alterado
+
+- **O botão dos outros caminhos fica agora sempre no fim da linha**, nunca antes do cofre: o ícone do emblema com as extensões ocultas — a contagem de correspondências de um padrão incluída, com o emblema verde ou vermelho — e um botão depois do nome com as extensões visíveis. A sua lista termina onde ele termina.
+- **Fora do cofre, a extensão também é um emblema**, com as extensões ocultas: o nome do ficheiro, depois o seu tipo, as marcas de ligação e de vazio e a sua extensão no fim da linha, com o botão dos outros caminhos lá dentro. Ao premi-lo, escreve o nome por inteiro com a extensão marcada.
+- **Desbloquear a escrita fora do cofre mantém-se ao mudar de localização**: escolher outro cofre, unidade ou raiz, ou escrever um caminho absoluto, já não fecha o cadeado. Termina quando a linha volta ao cofre, ou à mão.
+- **O 0 de um ficheiro vazio fica no canto inferior direito do seu ícone**, na lista e no emblema, e no canto superior direito onde a marca de uma ligação ocupa o inferior.
+
+### Adicionado
+
+- **As ligações fixas fora do cofre são contadas.** Uma nota que tem outro nome noutro sítio do disco — um ficheiro de problemas guardado num repositório e ligado ao cofre, por exemplo — recebe a marca roxa de ligação fixa e uma linha na sua lista de outros caminhos, mostrada a partir da sua pasta pessoal como `~/…` ou a partir da raiz como `/…`. Para saber onde está, pergunta-se ao índice do próprio sistema: o Windows lista os nomes de um ficheiro; no Linux e no macOS procura-se o mesmo ficheiro no índice de nomes de ficheiros (`plocate`/`locate`, Spotlight). Um nome que não consiga encontrar aparece como `/…`. Estas linhas abrem o ficheiro; não são escritas em `paths`.
+
+### Corrigido
+
+- **As operações de ficheiros que falham dizem por palavras o que correu mal** — não existe, sem permissão, unidade só de leitura ou cheia, em uso, nome demasiado longo, já existe — com o caminho, em vez dos códigos de erro do Node. Num Flatpak ou Snap, onde uma pasta fora da sandbox parece não existir, a mensagem diz que a sandbox pode ser o motivo.
+- **Onde o Obsidian não ouve um ficheiro aparecer ou desaparecer** (FreeBSD), o Lure pede-lhe que volte a ver: as ligações que o Lure cria, e as criadas num terminal, são indexadas e listadas.
+- **Apagar fora do cofre onde não há reciclagem di-lo.** Um contentor, um ambiente de trabalho sem reciclagem ou uma unidade em que o sistema não mantém reciclagem recusa a mudança, e o ficheiro fica. O aviso passa a dizê-lo, em vez de "Could not rename/move file: Failed to move item to trash".
+- **As unidades montadas do FreeBSD estão na lista de locais**, lidas de `mount -p`, tal como as do Linux o são de `/proc/mounts`.
+- **Uma página HTML aberta por um caminho sem letra de unidade no Windows** (`\Users\…`, ou `/home/…` no Wine) volta a ter as suas folhas de estilo e imagens; eram tomadas por ficheiros fora da pasta da página.
+- **O Tab para um caminho de alias já não o lista duas vezes.** Ao percorrer os nomes, cada caminho de alias ou ligação simbólica não listada que mostrava ganhava uma segunda linha a propor criar esse ficheiro, e o campo ficava vermelho, embora o Enter abra a nota que ele representa.
+
 ## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Adicionado

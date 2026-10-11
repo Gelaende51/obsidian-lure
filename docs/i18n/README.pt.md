@@ -15,7 +15,7 @@ Obsidian 1.8.7+ · apenas em computador · AGPL-3.0
 ## Divulgação sobre IA
 
 - **Agente** — **Claude Opus 5 / 5.5** e **Claude Sonnet 5** (Anthropic, através do Claude Code): escreveram o TypeScript, o CSS, todos os 45 conjuntos de tradução e a documentação. As traduções são geradas por máquina e não foram revistas por falantes nativos.
-- **Consumo** — 3 de agosto – 11 de outubro de 2026, 44 sessões, \~13 070 respostas: \~11,7 M tokens gerados, \~53,9 M enviados, \~3915,3 M releituras em cache (\~3980,9 M no total); mais 795 execuções autónomas de tradução: \~4,0 M gerados, \~4,3 M enviados.
+- **Consumo** — 3 de agosto – 11 de outubro de 2026, 44 sessões, \~13 590 respostas: \~12,0 M tokens gerados, \~54,7 M enviados, \~4057,7 M releituras em cache (\~4124,3 M no total); mais 971 execuções autónomas de tradução: \~4,1 M gerados, \~4,6 M enviados.
 - **Origem** — o modelo aprendeu com código aberto, documentação e escrita comunitária publicados por outras pessoas. É aí que está a maior parte do mérito.
 - **Autor** — Vault51: especificou todas as funcionalidades, testou cada iteração num cofre real, orientou as correções e reviu todos os resultados.
 

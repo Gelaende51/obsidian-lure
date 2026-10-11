@@ -9,6 +9,28 @@
 
 Ogni release di Lure, dalla più recente. Ciò che è arrivato dopo l'ultima release sta sotto *Non rilasciato*. Le versioni non hanno il prefisso `v`, come i tag delle release.
 
+## Non rilasciato
+
+### Modificato
+
+- **Il pulsante degli altri percorsi è ovunque alla fine della riga**, mai davanti al vault: l'icona del badge con le estensioni nascoste (compreso il conteggio delle corrispondenze di un pattern, con il badge verde o rosso) e un pulsante dopo il nome con le estensioni visibili. Il suo elenco finisce dove finisce il pulsante.
+- **Fuori dal vault anche l'estensione è un badge**, con le estensioni nascoste: il nome del file, poi il suo tipo, i segni di link e di file vuoto e la sua estensione alla fine della riga, con il pulsante degli altri percorsi al suo interno. Premerlo scrive il nome per intero con l'estensione evidenziata.
+- **Lo sblocco della scrittura fuori dal vault dura anche se cambi posizione**: scegliere un altro vault, un'altra unità o la radice, oppure digitare un percorso assoluto, non chiude più il lucchetto. Termina quando la riga torna al vault, o a mano.
+- **Lo 0 di un file vuoto sta in basso a destra della sua icona**, nel menu a discesa e nel badge, e in alto a destra dove il segno di un link occupa il basso.
+
+### Aggiunto
+
+- **Gli hard link fuori dal vault vengono contati.** Una nota che ha un altro nome altrove sul disco (per esempio un file di issue tenuto in un repository e collegato al vault) riceve il segno viola dell'hard link e una riga nel suo elenco degli altri percorsi, mostrata dalla tua cartella home come `~/…` o dalla radice come `/…`. Per sapere dove si trova, viene interrogato l'indice del sistema stesso: Windows elenca i nomi di un file; su Linux e macOS si cerca lo stesso file nell'indice dei nomi di file (`plocate`/`locate`, Spotlight). Un nome che non riesce a trovare è elencato come `/…`. Queste righe aprono il file; non vengono scritte in `paths`.
+
+### Corretto
+
+- **Le operazioni sui file non riuscite dicono a parole che cosa è andato storto** (inesistente, nessun permesso, unità di sola lettura o piena, in uso, nome troppo lungo, già presente), con il percorso, invece dei codici di errore di Node. In un Flatpak o in uno Snap, dove una cartella fuori dalla sandbox sembra mancare, il messaggio dice che la causa potrebbe essere la sandbox.
+- **Dove Obsidian non sente comparire o sparire un file** (FreeBSD), Lure gli chiede di riguardare: i link creati da Lure, e quelli creati in un terminale, vengono indicizzati ed elencati.
+- **L'eliminazione fuori dal vault dove non esiste un cestino lo dice.** Un container, un desktop senza cestino o un'unità su cui il sistema non tiene un cestino rifiutano lo spostamento, e il file resta. L'avviso ora lo dice, invece di "Could not rename/move file: Failed to move item to trash".
+- **Le unità montate di FreeBSD sono nell'elenco dei luoghi**, lette da `mount -p`, come quelle di Linux lo sono da `/proc/mounts`.
+- **Una pagina HTML aperta tramite un percorso senza lettera di unità su Windows** (`\Users\…`, oppure `/home/…` sotto Wine) riceve di nuovo i suoi fogli di stile e le sue immagini; venivano scambiati per file fuori dalla cartella della pagina.
+- **Tab su un percorso alias non lo elenca più due volte.** Facendo il giro dei nomi, ogni percorso alias o link simbolico non elencato che mostrava faceva comparire una seconda riga che proponeva di creare quel file, e il campo diventava rosso, anche se Enter apre la nota che rappresenta.
+
 ## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Aggiunto

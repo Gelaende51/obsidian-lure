@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · només escriptori · AGPL-3.0
 ## Divulgació sobre la IA
 
 - **Agent** — **Claude Opus 5 / 5.5** i **Claude Sonnet 5** (Anthropic, mitjançant Claude Code): va escriure el TypeScript, el CSS, els 45 jocs de traduccions i la documentació. Les traduccions són automàtiques i no han estat revisades per parlants nadius.
-- **Consum** — del 3 d'agost a l'11 d'octubre de 2026, 44 sessions, \~13.070 respostes: \~11,7 M de tokens generats, \~53,9 M enviats, \~3915,3 M de relectures de la memòria cau (\~3980,9 M en total); a més de 795 execucions de traducció sense sessió de xat: \~4,0 M generats, \~4,3 M enviats.
+- **Consum** — del 3 d'agost a l'11 d'octubre de 2026, 44 sessions, \~13.590 respostes: \~12,0 M de tokens generats, \~54,7 M enviats, \~4057,7 M de relectures de la memòria cau (\~4124,3 M en total); a més de 971 execucions de traducció sense sessió de xat: \~4,1 M generats, \~4,6 M enviats.
 - **Origen** — el model ho ha après de codi obert, documentació i escrits de la comunitat publicats per altres. La major part del mèrit és seva.
 - **Autor** — Vault51: va definir cada funció, va provar cada iteració en un cofre real, va dirigir les correccions i va revisar tots els resultats.
 

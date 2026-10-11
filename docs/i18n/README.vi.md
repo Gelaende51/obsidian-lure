@@ -16,7 +16,7 @@ Obsidian 1.8.7+ · chỉ trên máy tính · AGPL-3.0
 ## Công bố về AI
 
 - **Tác nhân** — **Claude Opus 5 / 5.5** và **Claude Sonnet 5** (Anthropic, qua Claude Code): viết mã TypeScript, CSS, toàn bộ 45 bộ bản dịch và tài liệu. Các bản dịch do máy tạo ra và chưa được người bản ngữ hiệu đính.
-- **Mức dùng** — 3/8 – 11/10/2026, 44 phiên, \~13.070 phản hồi: \~11,7 triệu token được sinh ra, \~53,9 triệu token được gửi đi, \~3.915,3 triệu token đọc lại từ bộ nhớ đệm (tổng cộng \~3.980,9 triệu); cộng thêm 795 lượt chạy dịch headless (không qua phiên trò chuyện): \~4,0 triệu được sinh ra, \~4,3 triệu được gửi đi.
+- **Mức dùng** — 3/8 – 11/10/2026, 44 phiên, \~13.590 phản hồi: \~12,0 triệu token được sinh ra, \~54,7 triệu token được gửi đi, \~4.057,7 triệu token đọc lại từ bộ nhớ đệm (tổng cộng \~4.124,3 triệu); cộng thêm 971 lượt chạy dịch headless (không qua phiên trò chuyện): \~4,1 triệu được sinh ra, \~4,6 triệu được gửi đi.
 - **Nguồn cội** — mô hình đã học từ mã nguồn mở, tài liệu và bài viết cộng đồng do người khác công bố. Phần lớn công lao thuộc về họ.
 - **Tác giả** — Vault51: đặt ra mọi tính năng, thử nghiệm từng phiên bản trong một kho thật, chỉ đạo các bản sửa, duyệt toàn bộ đầu ra.
 

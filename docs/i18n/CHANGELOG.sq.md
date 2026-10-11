@@ -9,6 +9,28 @@
 
 Çdo publikim i Lure, më i riu i pari. Ajo që ka ardhur që nga publikimi i fundit ndodhet nën *Të papublikuara*. Versionet nuk kanë prapashtesën `v`, njësoj si etiketat e publikimeve.
 
+## Të papublikuara
+
+### Të ndryshuara
+
+- **Butoni i shtigjeve të tjera është në fund të rreshtit kudo**, kurrë përpara depozitës: ikona e distinktivit kur shtesat janë fshehur — përfshirë numrin e përputhjeve të një modeli, me distinktivin jeshil ose të kuq me të — dhe një buton pas emrit kur shtesat shfaqen. Lista e tij mbaron aty ku mbaron ai.
+- **Jashtë depozitës shtesa është gjithashtu distinktiv**, kur shtesat janë fshehur: emri i skedarit, pastaj lloji i tij, shenjat e lidhjes dhe të zbrazëtisë dhe shtesa e tij në fund të rreshtit, me butonin e shtigjeve të tjera brenda tij. Shtypja e tij e shkruan emrin të plotë me shtesën të shënuar.
+- **Shkyçja e shkrimeve jashtë depozitës vazhdon edhe pas ndryshimit të vendndodhjes**: zgjedhja e një depozite tjetër, disku ose rrënjë, ose shtypja e një shtegu absolut, nuk e mbyll më dry-n. Mbaron kur rreshti kthehet te depozita, ose me dorë.
+- **0-ja e një skedari bosh qëndron poshtë djathtas ikonës së tij**, në listën rënëse dhe në distinktiv, dhe lart djathtas aty ku shenja e një lidhjeje zë pjesën e poshtme.
+
+### Të shtuara
+
+- **Lidhjet e forta jashtë depozitës numërohen.** Një shënim që ka një emër tjetër diku tjetër në disk — një skedar problemesh i mbajtur në një depo kodi dhe i lidhur me depozitën, për shembull — merr shenjën vjollcë të lidhjes së fortë dhe një rresht në listën e shtigjeve të tjera, të shfaqur nga dosja juaj kryesore si `~/…` ose nga rrënja si `/…`. Se ku ndodhet, pyetet indeksi vetë i sistemit: Windows liston emrat e një skedari; në Linux dhe macOS kërkohet te indeksi i emrave të skedarëve (`plocate`/`locate`, Spotlight) për të njëjtin skedar. Një emër që nuk gjendet listohet si `/…`. Këto rreshta e hapin skedarin; nuk shkruhen te `paths`.
+
+### Të ndrequra
+
+- **Veprimet e dështuara me skedarë tregojnë me fjalë çfarë shkoi keq** — nuk ekziston, nuk ka leje, disk vetëm për lexim ose i plotë, në përdorim, emri shumë i gjatë, ekziston tashmë — me shtegun, në vend të kodeve të gabimit të Node-it. Në një Flatpak ose Snap, ku një dosje jashtë kutisë së rërës duket e munguar, mesazhi thotë se arsyeja mund të jetë kutia e rërës.
+- **Aty ku Obsidian nuk dëgjon që një skedar shfaqet ose zhduket** (FreeBSD), Lure i kërkon të shikojë përsëri: lidhjet që krijon Lure, dhe ato që krijohen në terminal, indeksohen dhe listohen.
+- **Fshirja jashtë depozitës aty ku nuk ka plehra e thotë këtë.** Një kontejner, një desktop pa shportë, ose një disk ku sistemi nuk mban shportë e refuzon zhvendosjen, dhe skedari mbetet. Njoftimi tani e thotë këtë, në vend të "Could not rename/move file: Failed to move item to trash".
+- **Disqet e montuara të FreeBSD-së janë në listën e vendeve**, të lexuara nga `mount -p`, ashtu siç ato të Linux-it lexohen nga `/proc/mounts`.
+- **Një faqe HTML e hapur me një shteg pa shkronjë disku në Windows** (`\Users\…`, ose `/home/…` nën Wine) i merr sërish fletët e stilit dhe imazhet; ato merreshin si skedarë jashtë dosjes së faqes.
+- **Tab te një shteg-alias nuk e liston më dy herë.** Gjatë kalimit nëpër emra, çdo shteg-alias ose lidhje simbolike e palistuar që shfaqej rriste një rresht të dytë që ofronte krijimin e atij skedari, dhe fusha bëhej e kuqe, megjithëse Enter e hap shënimin që ai përfaqëson.
+
 ## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Të shtuara

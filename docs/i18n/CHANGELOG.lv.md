@@ -8,6 +8,28 @@
 
 Katrs Lure laidiens, jaunākais pirmais. Tas, kas ienācis kopš pēdējā laidiena, ir sadaļā *Neizdots*. Versijām nav `v` priedēkļa, tāpat kā laidienu tagiem.
 
+## Neizdots
+
+### Mainīts
+
+- **Citu ceļu poga visur ir rindas beigās**, nekad pirms glabātavas: nozīmītes ikona, kad paplašinājumi ir paslēpti — arī raksta atbilstību skaits, nozīmīte ar to zaļa vai sarkana — un poga aiz nosaukuma, kad paplašinājumi ir redzami. Tās saraksts beidzas tur, kur tā.
+- **Ārpus glabātavas paplašinājums ir arī nozīmīte**, kad paplašinājumi ir paslēpti: faila nosaukums, tad tā veids, saites un tukšuma zīmes, bet paplašinājums rindas beigās, un citu ceļu poga ir tajā. Nospiežot to, nosaukums tiek ierakstīts pilnībā ar iezīmētu paplašinājumu.
+- **Ierakstīšanas ārpus glabātavas atbloķējums turpinās arī pēc atrašanās vietas maiņas**: citas glabātavas, diska vai saknes izvēle vai absolūta ceļa ierakstīšana vairs neaizver atslēgu. Tas beidzas, kad rinda atgriežas glabātavā, vai ar roku.
+- **Tukša faila 0 atrodas ikonas apakšējā labajā stūrī**, nolaižamajā sarakstā un nozīmītē, bet augšējā labajā stūrī, kur apakšējo aizņem saites zīme.
+
+### Pievienots
+
+- **Cietās saites ārpus glabātavas tiek skaitītas.** Piezīme, kurai kaut kur citur diskā ir cits nosaukums — piemēram, problēmu fails, ko glabā repozitorijā un ir sasaistīts ar glabātavu — saņem violeto cietās saites zīmi un rindu savā citu ceļu sarakstā, kas tiek rādīts no jūsu mājas mapes kā `~/…` vai no saknes kā `/…`. Lai noskaidrotu, kur tā atrodas, tiek vaicāts paša sistēmas indeksam: Windows uzskaita faila nosaukumus; Linux un macOS sistēmās tā paša faila meklēšana notiek failu nosaukumu indeksā (`plocate`/`locate`, Spotlight). Nosaukums, ko nevar atrast, tiek uzskaitīts kā `/…`. Šīs rindas atver failu; tās netiek ierakstītas `paths`.
+
+### Labots
+
+- **Neizdevušās failu darbības vārdos pasaka, kas nogāja greizi** — nav tur, nav atļaujas, diska tikai lasāms vai pilns, lietošanā, nosaukums pārāk garš, jau eksistē — kopā ar ceļu, nevis Node kļūdu kodus. Flatpak vai Snap vidē, kur mape ārpus smilškastes šķiet trūkstoša, ziņojumā teikts, ka iemesls var būt smilškaste.
+- **Kur Obsidian nedzird, ka fails parādās vai pazūd** (FreeBSD), Lure lūdz to paskatīties vēlreiz: saites, ko veido Lure, un tās, kas izveidotas terminālī, tiek indeksētas un uzskaitītas.
+- **Dzēšana ārpus glabātavas, kur nav atkritnes, to pasaka.** Konteiners, darbvirsma bez atkritnes vai disks, kurā sistēma neglabā atkritni, noraida pārvietošanu, un fails paliek. Paziņojums tagad to saka, nevis "Could not rename/move file: Failed to move item to trash".
+- **FreeBSD pieslēgtie diski ir vietu sarakstā**, nolasīti no `mount -p`, tāpat kā Linux diski no `/proc/mounts`.
+- **HTML lapa, kas atvērta ar ceļu bez diska burta sistēmā Windows** (`\Users\…` vai `/home/…` zem Wine), atkal saņem savas stila lapas un attēlus; tie tika uzskatīti par failiem ārpus lapas mapes.
+- **Tab uz aizstājvārda ceļa to vairs neuzskaita divreiz.** Ejot cauri nosaukumiem, katrs aizstājvārda ceļš vai neuzskaitīta simboliskā saite, ko tas parādīja, ieguva otru rindu, kas piedāvāja izveidot šo failu, un lauks kļuva sarkans, kaut gan Enter atver piezīmi, ko tas apzīmē.
+
 ## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Pievienots

@@ -9,6 +9,28 @@
 
 Hver utgivelse av Lure, den nyeste først. Det som har kommet inn siden forrige utgivelse, står under *Ikke utgitt*. Versjonene har ingen `v` foran seg, slik som utgivelsesmerkene.
 
+## Ikke utgitt
+
+### Endret
+
+- **Knappen for andre stier ligger på slutten av raden overalt**, aldri foran hvelvet: merkets ikon når filendelser er skjult — med treffantallet til et mønster, og merket grønt eller rødt sammen med det — og en knapp etter navnet når filendelser vises. Listen slutter der knappen gjør.
+- **Utenfor hvelvet er filendelsen også et merke**, når filendelser er skjult: filens navn, så typen, lenke- og tomhetsmerkene og filendelsen på slutten av raden, med knappen for andre stier i seg. Trykker du på det, skrives navnet ut med filendelsen markert.
+- **Opplåsing av skriving utenfor hvelvet varer gjennom et skifte av sted**: å velge et annet hvelv, en annen stasjon eller rot, eller å skrive en absolutt sti, lukker ikke lenger hengelåsen. Den slutter når raden går tilbake til hvelvet, eller for hånd.
+- **Nullen til en tom fil står nederst til høyre på ikonet**, i nedtrekkslisten og i merket, og øverst til høyre der en lenkes merke har plassen nederst.
+
+### Lagt til
+
+- **Harde lenker utenfor hvelvet telles.** Et notat som har et annet navn et annet sted på disken — for eksempel en saksfil som ligger i et repositorium og er lenket inn i hvelvet — får det lilla merket for hard lenke og en rad i listen over andre stier, vist fra hjemmemappen din som `~/…` eller fra roten som `/…`. For å finne hvor den er, spørres systemets egen indeks: Windows lister navnene til en fil; på Linux og macOS søkes filnavnindeksen (`plocate`/`locate`, Spotlight) etter den samme filen. Et navn som ikke finnes, listes som `/…`. Disse radene åpner filen; de skrives ikke inn i `paths`.
+
+### Rettet
+
+- **Mislykkede filoperasjoner sier med ord hva som gikk galt** — finnes ikke, ingen tillatelse, en skrivebeskyttet eller full stasjon, i bruk, navnet for langt, finnes allerede — med stien, i stedet for Nodes feilkoder. I en Flatpak eller Snap, der en mappe utenfor sandkassen ser ut til å mangle, sier meldingen at sandkassen kan være grunnen.
+- **Der Obsidian ikke hører at en fil kommer eller går** (FreeBSD), ber Lure det om å se etter på nytt: lenker Lure lager, og lenker laget i en terminal, blir indeksert og listet.
+- **Sletting utenfor hvelvet der det ikke finnes papirkurv, sier fra om det.** En beholder, et skrivebord uten papirkurv eller en stasjon som systemet ikke har papirkurv på, nekter flyttingen, og filen blir liggende. Varselet sier nå det, i stedet for "Could not rename/move file: Failed to move item to trash".
+- **FreeBSDs monterte stasjoner står i stedlisten**, lest fra `mount -p`, slik Linux sine leses fra `/proc/mounts`.
+- **En HTML-side åpnet med en sti uten stasjonsbokstav på Windows** (`\Users\…`, eller `/home/…` under Wine) får stilarkene og bildene sine igjen; de ble tatt for filer utenfor sidens mappe.
+- **Tab til en aliassti lister den ikke lenger to ganger.** Når man gikk rundt navnene, fikk hver aliassti eller ulistet symbolsk lenke den viste en ekstra rad som tilbød å lage den filen, og feltet ble rødt, selv om Enter åpner notatet den står for.
+
 ## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Lagt til

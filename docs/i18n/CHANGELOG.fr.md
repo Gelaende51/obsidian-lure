@@ -8,6 +8,28 @@
 
 Toutes les versions de Lure, de la plus récente à la plus ancienne. Ce qui a été ajouté depuis la dernière version figure sous *Non publié*. Les numéros de version ne portent pas de préfixe `v`, comme les étiquettes de publication.
 
+## Non publié
+
+### Modifié
+
+- **Le bouton des autres chemins se trouve partout à la fin de la ligne**, jamais devant le coffre : l'icône du badge lorsque les extensions sont masquées — le nombre de correspondances d'un motif compris, le badge devenant vert ou rouge avec lui — et un bouton après le nom lorsque les extensions sont affichées. Sa liste se termine au même endroit.
+- **Hors du coffre, l'extension est aussi un badge**, lorsque les extensions sont masquées : le nom du fichier, puis son type, les marques de lien et de fichier vide, et son extension à la fin de la ligne, avec le bouton des autres chemins à l'intérieur. Appuyer dessus écrit le nom en entier avec l'extension marquée.
+- **Le déverrouillage de l'écriture hors du coffre persiste après un changement d'emplacement** : choisir un autre coffre, lecteur ou racine, ou taper un chemin absolu, ne referme plus le cadenas. Il prend fin lorsque la ligne revient au coffre, ou manuellement.
+- **Le 0 d'un fichier vide se place en bas à droite de son icône**, dans le menu déroulant et dans le badge, et en haut à droite lorsque la marque d'un lien occupe le bas.
+
+### Ajouté
+
+- **Les liens physiques hors du coffre sont comptés.** Une note qui porte un autre nom ailleurs sur le disque — un fichier de tickets conservé dans un dépôt et lié dans le coffre, par exemple — reçoit la marque violette de lien physique et une ligne dans sa liste d'autres chemins, affichée depuis votre dossier personnel sous la forme `~/…` ou depuis la racine sous la forme `/…`. Pour savoir où il se trouve, l'index du système est interrogé : Windows énumère les noms d'un fichier ; sous Linux et macOS, l'index des noms de fichiers (`plocate`/`locate`, Spotlight) est recherché pour le même fichier. Un nom introuvable est listé sous la forme `/…`. Ces lignes ouvrent le fichier ; elles ne sont pas écrites dans `paths`.
+
+### Corrigé
+
+- **Les opérations sur les fichiers qui échouent disent en toutes lettres ce qui s'est passé** — introuvable, pas d'autorisation, lecteur en lecture seule ou plein, fichier en cours d'utilisation, nom trop long, déjà présent — avec le chemin, au lieu des codes d'erreur de Node. Dans un Flatpak ou un Snap, où un dossier hors du bac à sable semble manquer, le message indique que le bac à sable peut en être la cause.
+- **Là où Obsidian n'entend pas un fichier apparaître ou disparaître** (FreeBSD), Lure lui demande de regarder à nouveau : les liens créés par Lure, et ceux créés dans un terminal, sont indexés et listés.
+- **Supprimer hors du coffre là où il n'y a pas de corbeille le signale.** Un conteneur, un bureau sans corbeille ou un lecteur sur lequel le système ne tient pas de corbeille refuse le déplacement, et le fichier reste. L'avis le dit désormais, au lieu de « Could not rename/move file: Failed to move item to trash ».
+- **Les lecteurs montés de FreeBSD figurent dans la liste des emplacements**, lus depuis `mount -p`, comme ceux de Linux le sont depuis `/proc/mounts`.
+- **Une page HTML ouverte par un chemin sans lettre de lecteur sous Windows** (`\Users\…`, ou `/home/…` sous Wine) retrouve ses feuilles de style et ses images ; elles étaient prises pour des fichiers extérieurs au dossier de la page.
+- **Tab sur un chemin d'alias ne le liste plus deux fois.** En parcourant les noms, chaque chemin d'alias ou lien symbolique non listé qu'il affichait voyait apparaître une seconde ligne proposant de créer ce fichier, et le champ devenait rouge, alors qu'Entrée ouvre la note qu'il désigne.
+
 ## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Ajouté

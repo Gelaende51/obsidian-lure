@@ -9,6 +9,28 @@
 
 Todas las versiones de Lure, de la más reciente a la más antigua. Lo que ha entrado desde la última versión está bajo *Sin publicar*. Los números de versión no llevan el prefijo `v`, igual que las etiquetas de publicación.
 
+## Sin publicar
+
+### Cambiado
+
+- **El botón de otras rutas queda al final de la fila en todas partes**, nunca delante de la bóveda: el icono de la insignia con las extensiones ocultas — con el número de coincidencias de un patrón incluido, y la insignia en verde o rojo con él — y un botón después del nombre con las extensiones visibles. Su lista termina donde termina él.
+- **Fuera de la bóveda la extensión también es una insignia**, con las extensiones ocultas: el nombre del archivo, luego su tipo, las marcas de enlace y de vacío, y su extensión al final de la fila, con el botón de otras rutas dentro. Al pulsarla se escribe el nombre con la extensión marcada.
+- **Desbloquear la escritura fuera de la bóveda dura aunque cambie la ubicación**: elegir otra bóveda, unidad o raíz, o escribir una ruta absoluta, ya no cierra el candado. Termina cuando la fila vuelve a la bóveda, o a mano.
+- **El 0 de un archivo vacío va abajo a la derecha de su icono**, en el desplegable y en la insignia, y arriba a la derecha donde la marca de un enlace ocupa la parte de abajo.
+
+### Añadido
+
+- **Se cuentan los enlaces duros fuera de la bóveda.** Una nota que tiene otro nombre en otro lugar del disco — un archivo de incidencias guardado en un repositorio y enlazado en la bóveda, por ejemplo — recibe la marca morada de enlace duro y una fila en su lista de otras rutas, mostrada desde tu carpeta personal como `~/…` o desde la raíz como `/…`. Para saber dónde está, se consulta el propio índice del sistema: Windows enumera los nombres de un archivo; en Linux y macOS se busca el mismo archivo en el índice de nombres de archivo (`plocate`/`locate`, Spotlight). Un nombre que no encuentra se muestra como `/…`. Estas filas abren el archivo; no se escriben en `paths`.
+
+### Corregido
+
+- **Las operaciones de archivo fallidas explican con palabras qué ha ido mal** — no existe, sin permiso, unidad de solo lectura o llena, en uso, nombre demasiado largo, ya existe — con la ruta, en lugar de los códigos de error de Node. En un Flatpak o Snap, donde una carpeta fuera del entorno aislado parece no existir, el mensaje dice que el motivo puede ser el entorno aislado.
+- **Donde Obsidian no se entera de que un archivo aparece o desaparece** (FreeBSD), Lure le pide que vuelva a mirar: los enlaces que crea Lure, y los creados en un terminal, se indexan y se muestran en la lista.
+- **Borrar fuera de la bóveda donde no hay papelera lo dice.** Un contenedor, un escritorio sin papelera o una unidad en la que el sistema no mantiene papelera rechaza el traslado, y el archivo se queda. Ahora el aviso lo dice, en lugar de "Could not rename/move file: Failed to move item to trash".
+- **Las unidades montadas de FreeBSD están en la lista de lugares**, leídas de `mount -p`, igual que las de Linux se leen de `/proc/mounts`.
+- **Una página HTML abierta con una ruta sin letra de unidad en Windows** (`\Users\…`, o `/home/…` bajo Wine) recupera sus hojas de estilo e imágenes; se las tomaba por archivos fuera de la carpeta de la página.
+- **Tab sobre una ruta alias ya no la muestra dos veces.** Al recorrer los nombres, cada ruta alias o enlace simbólico no listado que mostraba generaba una segunda fila que ofrecía crear ese archivo, y el campo se ponía en rojo, aunque Enter abre la nota que representa.
+
 ## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Añadido

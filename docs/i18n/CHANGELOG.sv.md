@@ -9,6 +9,28 @@
 
 Varje utgåva av Lure, nyast först. Det som har landat sedan den senaste utgåvan ligger under *Ej släppt*. Versionerna bär inget `v`-prefix, i linje med utgåvetaggarna.
 
+## Ej släppt
+
+### Ändrat
+
+- **Knappen för övriga sökvägar sitter överallt i radens slut**, aldrig framför valvet: märkets ikon när filändelserna är dolda — en mönsterträffs antal ingår, och märket är grönt eller rött med den — och en knapp efter namnet när filändelserna visas. Dess lista slutar där den gör.
+- **Utanför valvet är filändelsen också ett märke**, när filändelserna är dolda: filens namn, sedan dess typ, länk- och tomhetsmärken och dess filändelse i radens slut, med knappen för övriga sökvägar i sig. Trycker man på det skrivs namnet ut med filändelsen markerad.
+- **Upplåst skrivning utanför valvet består över ett platsbyte**: att välja ett annat valv, en annan enhet eller rot, eller skriva en absolut sökväg, stänger inte längre hänglåset. Det upphör när raden återvänder till valvet, eller för hand.
+- **En tom fils 0 sitter nere till höger på dess ikon**, i rullgardinsmenyn och i märket, och uppe till höger där en länks märke upptar det nedre hörnet.
+
+### Tillagt
+
+- **Hårda länkar utanför valvet räknas.** En anteckning som har ett annat namn någon annanstans på disken — en ärendefil som ligger i ett arkiv och är länkad in i valvet, till exempel — får det lila märket för hård länk och en rad i sin lista över övriga sökvägar, visad från din hemmapp som `~/…` eller från roten som `/…`. Var den finns frågas systemets eget index: Windows listar en fils namn; på Linux och macOS genomsöks filnamnsindexet (`plocate`/`locate`, Spotlight) efter samma fil. Ett namn som inte kan hittas listas som `/…`. Dessa rader öppnar filen; de skrivs inte in i `paths`.
+
+### Rättat
+
+- **Misslyckade filåtgärder säger med ord vad som gick fel** — finns inte, saknar behörighet, skrivskyddad eller full enhet, används, namnet för långt, finns redan — med sökvägen, i stället för Nodes felkoder. I en Flatpak eller Snap, där en mapp utanför sandlådan ser ut att saknas, anger meddelandet att sandlådan kan vara orsaken.
+- **Där Obsidian inte hör att en fil dyker upp eller försvinner** (FreeBSD) ber Lure det titta igen: länkar som Lure gör, och sådana som görs i en terminal, indexeras och listas.
+- **Att radera utanför valvet där det saknas papperskorg säger det.** En container, ett skrivbord utan papperskorg eller en enhet som systemet inte för någon papperskorg på vägrar flytten, och filen blir kvar. Aviseringen säger nu det, i stället för "Could not rename/move file: Failed to move item to trash".
+- **FreeBSD:s monterade enheter finns i platslistan**, lästa från `mount -p`, som Linux-enheterna läses från `/proc/mounts`.
+- **En HTML-sida som öppnas med en sökväg utan enhetsbokstav på Windows** (`\Users\…`, eller `/home/…` under Wine) får sina stilmallar och bilder igen; de togs för filer utanför sidans mapp.
+- **Tabb till en aliassökväg listar den inte längre två gånger.** När man gick runt namnen fick varje aliassökväg eller olistad symbolisk länk som visades en andra rad som erbjöd att skapa den filen, och fältet blev rött, fast Enter öppnar anteckningen den står för.
+
 ## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Tillagt

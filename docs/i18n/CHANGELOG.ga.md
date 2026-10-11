@@ -8,6 +8,28 @@
 
 Gach eisiúint de Lure, an ceann is nuaí ar dtús. Tá a bhfuil tagtha isteach ó bhí an eisiúint dheireanach ann faoi *Gan eisiúint*. Níl réimír `v` ar na leaganacha, ar aon dul leis na clibeanna eisiúna.
 
+## Gan eisiúint
+
+### Athraithe
+
+- **Tá an cnaipe do na conairí eile ag deireadh an tsraith i ngach áit**, riamh os comhair an stóir: deilbhín an bhaiste nuair atá iarmhairtí folaithe — lena n-áirítear líon comhoiriúnuithe patrúin, agus an badge glas nó dearg leis — agus cnaipe i ndiaidh an ainm nuair atá iarmhairtí á léiriú. Críochnaíonn a liosta san áit a gcríochnaíonn sé féin.
+- **Lasmuigh den stór is badge an iarmhír freisin**, nuair atá iarmhairtí folaithe: ainm an chomhaid, ansin a chineál, marcanna an naisc agus an fholmhaithe agus a iarmhír ag deireadh an tsraith, agus an cnaipe do na conairí eile ann. Scríobhann brú air an t-ainm amach agus an iarmhír marcáilte.
+- **Maireann díghlasáil na scríbhneoireachta lasmuigh den stór trí athrú suímh**: ní dhúnann rogha stóir, tiomántáin nó fréimhe eile, ná conair absalóideach a chlóscríobh, an glas a thuilleadh. Críochnaíonn sé nuair a fhilleann an sraith ar an stór, nó de láimh.
+- **Tá 0 comhaid fholmha ag bun na láimhe deise dá deilbhín**, san anuas agus sa badge, agus ag barr na láimhe deise nuair atá marc naisc ag an mbun.
+
+### Curtha leis
+
+- **Comhairtear naisc chrua lasmuigh den stór.** Faigheann nóta a bhfuil ainm eile aige áit éigin eile ar an diosca — comhad ceisteanna a coinnítear i ndánlann agus atá nasctha isteach sa stór, mar shampla — an marc corcra naisc chrua agus sraith ina liosta conairí eile, léirithe ó d'fhillteán baile mar `~/…` nó ón bhfréamh mar `/…`. Chun an áit a fháil amach, fiafraítear d'innéacs an chórais féin: liostálann Windows ainmneacha comhaid; ar Linux agus macOS cuirtear cuardach ar innéacs na n-ainmneacha comhad (`plocate`/`locate`, Spotlight) don chomhad céanna. Liostaítear ainm nach bhfaightear mar `/…`. Osclaíonn na sraitheanna seo an comhad; ní scríobhtar iad isteach i `paths`.
+
+### Deisithe
+
+- **Insíonn teachtaireachtaí faoi oibríochtaí comhad a theip cad a chuaigh amú i bhfocail** — níl ann, gan cead, tiomántán inléite amháin nó lán, in úsáid, an t-ainm rófhada, ann cheana — leis an gconair, in ionad chóid earráide Node. I Flatpak nó i Snap, nuair a fheictear fillteán lasmuigh den bhosca gainimh mar atá ar iarraidh, deir an teachtaireacht go bhféadfadh an bosca gainimh a bheith ina chúis.
+- **Nuair nach gcloiseann Obsidian comhad ag teacht ná ag imeacht** (FreeBSD), iarrann Lure air breathnú arís: innéacsaítear agus liostaítear naisc a dhéanann Lure, agus iad siúd a dhéantar i dteirminéal.
+- **Má scriostar lasmuigh den stór nuair nach bhfuil bruscar ann, deirtear amhlaidh.** Diúltaíonn coimeádán, deasc gan bruscar, nó tiomántán nach gcoinníonn an córas bruscar air, don aistriú, agus fanann an comhad. Deir an fógra sin anois, in ionad "Could not rename/move file: Failed to move item to trash".
+- **Tá tiomántáin fheistithe FreeBSD sa liosta áiteanna**, léite ó `mount -p`, mar a léitear cinn Linux ó `/proc/mounts`.
+- **Faigheann leathanach HTML a osclaítear le conair gan litir tiomántáin ar Windows** (`\Users\…`, nó `/home/…` faoi Wine) a bhileoga stíle agus a íomhánna arís; measadh gur comhaid iad lasmuigh d'fhillteán an leathanaigh.
+- **Ní liostaíonn Tab ar chonair ailias faoi dhó í a thuilleadh.** Agus é ag dul timpeall na n-ainmneacha, d'fhás an dara sraith ar gach conair ailias nó nasc siombalach gan liostú a chuir sé ar taispeáint, ag tairiscint an comhad sin a dhéanamh, agus d'iompaigh an réimse dearg, cé go n-osclaíonn Enter an nóta a seasann sé dó.
+
 ## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Curtha leis

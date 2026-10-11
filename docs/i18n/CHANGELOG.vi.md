@@ -9,6 +9,28 @@
 
 Mọi bản phát hành của Lure, mới nhất ở trên cùng. Những gì đã được đưa vào kể từ bản phát hành gần nhất nằm dưới mục *Chưa phát hành*. Số phiên bản không có tiền tố `v`, khớp với các thẻ phát hành.
 
+## Chưa phát hành
+
+### Đã thay đổi
+
+- **Nút các đường dẫn khác nằm ở cuối hàng ở mọi nơi**, không bao giờ đứng trước vault: biểu tượng của huy hiệu khi phần mở rộng bị ẩn — kèm số kết quả khớp của một mẫu, huy hiệu xanh lá hoặc đỏ theo đó — và một nút đặt sau tên khi phần mở rộng được hiển thị. Danh sách của nó kết thúc ở chính chỗ nút đó nằm.
+- **Bên ngoài vault, phần mở rộng cũng là một huy hiệu**, khi phần mở rộng bị ẩn: tên của tệp, rồi đến dấu loại, dấu liên kết và dấu trống của nó, còn phần mở rộng nằm ở cuối hàng, cùng với nút các đường dẫn khác trong đó. Nhấn vào đó sẽ viết trọn tên với phần mở rộng được đánh dấu.
+- **Việc mở khóa ghi bên ngoài vault được giữ qua lần đổi vị trí**: chọn vault, ổ đĩa hoặc thư mục gốc khác, hay gõ một đường dẫn tuyệt đối, không còn đóng ổ khóa nữa. Nó chỉ kết thúc khi hàng quay lại vault, hoặc khi bạn tự đóng.
+- **Số 0 của tệp trống nằm ở góc dưới bên phải biểu tượng của nó**, trong danh sách thả xuống và trong huy hiệu, và ở góc trên bên phải khi dấu liên kết đã chiếm góc dưới.
+
+### Đã thêm
+
+- **Liên kết cứng bên ngoài vault được đếm.** Một ghi chú có tên khác ở nơi khác trên đĩa — chẳng hạn một tệp issues được giữ trong kho mã nguồn và liên kết vào vault — sẽ có dấu liên kết cứng màu tím và một dòng trong danh sách các đường dẫn khác của nó, hiển thị từ thư mục home của bạn dưới dạng `~/…` hoặc từ thư mục gốc dưới dạng `/…`. Để biết nó nằm ở đâu, chỉ mục riêng của hệ thống sẽ được hỏi: Windows liệt kê các tên của một tệp; trên Linux và macOS, chỉ mục tên tệp (`plocate`/`locate`, Spotlight) được tìm kiếm để tìm cùng tệp đó. Tên nào không tìm thấy sẽ được liệt kê là `/…`. Các dòng này mở tệp; chúng không được ghi vào `paths`.
+
+### Đã sửa
+
+- **Các thao tác tệp thất bại giờ nói bằng lời điều gì đã xảy ra** — không có ở đó, không có quyền, ổ chỉ đọc hoặc đầy, đang được sử dụng, tên quá dài, đã tồn tại — kèm theo đường dẫn, thay vì mã lỗi của Node. Trong Flatpak hoặc Snap, nơi một thư mục bên ngoài sandbox trông như bị mất, thông báo cho biết rằng sandbox có thể là nguyên nhân.
+- **Ở nơi Obsidian không nghe thấy một tệp xuất hiện hay biến mất** (FreeBSD), Lure yêu cầu nó xem lại: các liên kết do Lure tạo, và những liên kết tạo trong terminal, đều được lập chỉ mục và liệt kê.
+- **Việc xóa bên ngoài vault ở nơi không có thùng rác sẽ báo như vậy.** Một container, một môi trường desktop không có thùng rác, hoặc một ổ đĩa mà hệ thống không giữ thùng rác sẽ từ chối việc chuyển, và tệp vẫn còn nguyên. Thông báo giờ nói rõ điều đó, thay vì "Could not rename/move file: Failed to move item to trash".
+- **Các ổ đĩa đã gắn của FreeBSD có trong danh sách vị trí**, được đọc từ `mount -p`, như của Linux được đọc từ `/proc/mounts`.
+- **Một trang HTML được mở bằng đường dẫn không có ký tự ổ đĩa trên Windows** (`\Users\…`, hoặc `/home/…` dưới Wine) lại nhận được stylesheet và hình ảnh của nó; trước đây chúng bị coi là tệp nằm ngoài thư mục của trang.
+- **Tab vào một đường dẫn bí danh không còn liệt kê nó hai lần.** Khi đi vòng qua các tên, mỗi đường dẫn bí danh hoặc liên kết tượng trưng không có trong danh sách mà nó đưa ra đều mọc thêm một dòng thứ hai đề nghị tạo tệp đó, và ô nhập chuyển sang màu đỏ, dù Enter vẫn mở ghi chú mà nó đại diện.
+
 ## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Đã thêm

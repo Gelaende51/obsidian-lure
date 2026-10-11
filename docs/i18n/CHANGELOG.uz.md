@@ -9,6 +9,28 @@
 
 Lure'ning har bir relizi, eng yangisi birinchi. Oxirgi relizdan beri qo‘shilganlar *Chiqarilmagan* bo‘limida. Versiyalar reliz teglariga mos ravishda `v` prefiksisiz yoziladi.
 
+## Chiqarilmagan
+
+### O‘zgartirildi
+
+- **Boshqa yo‘llar tugmasi hamma joyda qator oxirida turadi**, hech qachon vault oldida emas: kengaytmalar yashirilganda nishonning belgisi — andozaning mos kelishlar soni ham shunda, nishon u bilan yashil yoki qizil — kengaytmalar ko‘rsatilganda esa nomdan keyingi tugma. Uning ro‘yxati o‘zi tugagan joyda tugaydi.
+- **Vaultdan tashqarida kengaytma ham nishon bo‘ladi**, kengaytmalar yashirilganda: fayl nomi, so‘ng uning turi, havola va bo‘shlik belgilari, qator oxirida esa kengaytmasi, boshqa yo‘llar tugmasi ham shunda. Uni bosish nomni kengaytmasi belgilangan holda yozib chiqaradi.
+- **Vaultdan tashqariga yozishni ochish joy o‘zgarganda ham davom etadi**: boshqa vault, disk yoki ildizni tanlash yoki mutlaq yo‘l yozish endi qulfni yopmaydi. U qator vaultga qaytganda yoki qo‘lda tugaydi.
+- **Bo‘sh faylning 0 belgisi ikonkasining pastki o‘ng burchagida turadi**, ochiladigan ro‘yxatda ham, nishonda ham, havola belgisi pastki burchakni egallagan joyda esa yuqori o‘ng burchakda.
+
+### Qo‘shildi
+
+- **Vaultdan tashqaridagi qattiq havolalar hisobga olinadi.** Diskning boshqa joyida yana bir nomga ega eslatma — masalan, repozitoriyda saqlanib vaultga ulangan issues fayli — binafsha qattiq havola belgisini va boshqa yo‘llar ro‘yxatida o‘z qatorini oladi; u uy papkangizdan `~/…` yoki ildizdan `/…` ko‘rinishida ko‘rsatiladi. U qayerdaligini tizimning o‘z indeksidan so‘raladi: Windows fayl nomlarini ro‘yxatlaydi; Linux va macOS da fayl nomlari indeksidan (`plocate`/`locate`, Spotlight) xuddi shu fayl qidiriladi. Topib bo‘lmagan nom `/…` deb ro‘yxatga olinadi. Bu qatorlar faylni ochadi; ular `paths` ichiga yozilmaydi.
+
+### Tuzatildi
+
+- **Bajarilmagan fayl amallari nima xato ketganini so‘z bilan aytadi** — yo‘q, ruxsat yo‘q, faqat o‘qish uchun yoki to‘lgan disk, band, nom juda uzun, allaqachon bor — yo‘l bilan birga, Node xato kodlari o‘rniga. Flatpak yoki Snap da, sandbox tashqarisidagi papka yo‘qdek ko‘ringanda, xabar sababi sandbox bo‘lishi mumkinligini aytadi.
+- **Obsidian fayl paydo bo‘lishi yoki yo‘qolishini eshitmaydigan joyda** (FreeBSD) Lure undan qayta qarashni so‘raydi: Lure yaratgan havolalar va terminalda yaratilganlar indekslanadi va ro‘yxatda ko‘rinadi.
+- **Axlat qutisi bo‘lmagan joyda vaultdan tashqarini o‘chirish buni aytadi.** Konteyner, axlat qutisiz ish stoli yoki tizim axlat qutisi yuritmaydigan disk ko‘chirishni rad etadi va fayl qoladi. Xabar endi "Could not rename/move file: Failed to move item to trash" o‘rniga shuni aytadi.
+- **FreeBSD ulangan disklari joylar ro‘yxatida bor**, Linuxniki `/proc/mounts` dan o‘qilgani kabi `mount -p` dan o‘qiladi.
+- **Windows da disk harfisiz yo‘l (`\Users\…`, yoki Wine ostida `/home/…`) bilan ochilgan HTML sahifa** yana uslublar jadvallari va rasmlarini oladi; ular sahifa papkasidan tashqaridagi fayllar deb olinardi.
+- **Taxallus yo‘liga Tab endi uni ikki marta ro‘yxatlamaydi.** Nomlarni aylanib chiqishda ko‘rsatgan har bir taxallus yo‘li yoki ro‘yxatda yo‘q simvolik havola shu faylni yaratishni taklif qiladigan ikkinchi qator hosil qilardi va maydon qizarardi, holbuki Enter u bildirgan eslatmani ochadi.
+
 ## 1.6.0 — 2026-10-11[^1.6.0]
 
 ### Qo‘shildi
