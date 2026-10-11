@@ -4,6 +4,12 @@
 
 Every release of Lure, newest first. What has landed since the last release is under *Unreleased*. Versions carry no `v` prefix, matching the release tags.
 
+## Unreleased
+
+### Fixed
+
+- **A file the viewer cannot read says why in words**, as the other file operations do — and in a Flatpak or Snap, that the sandbox may keep it out of reach — instead of Node's error code.
+
 ## 1.6.1 — 2026-10-11[^1.6.1]
 
 ### Changed
