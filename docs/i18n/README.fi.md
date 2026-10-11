@@ -1,4 +1,4 @@
-<!-- Käännös tiedostosta README.md — tilanne: commit 4ebd35e.
+<!-- Käännös tiedostosta README.md — tilanne: commit 57cb4b1.
      Konekäännös (Claude Opus 5), jota äidinkieliset puhujat eivät ole
      tarkastaneet. Korjaukset ovat tervetulleita; englanninkielinen README
      on ratkaiseva versio. -->

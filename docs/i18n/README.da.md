@@ -1,4 +1,4 @@
-<!-- Oversættelse af README.md — status: commit 4ebd35e.
+<!-- Oversættelse af README.md — status: commit 57cb4b1.
      Maskinoversat (Claude Opus 5) og ikke gennemlæst af modersmålstalere.
      Rettelser er velkomne; den engelske README er den gældende udgave. -->
 
