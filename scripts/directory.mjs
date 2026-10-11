@@ -135,7 +135,13 @@ if (mode === "released") {
 		await page.open(`${ADMIN}/review-branch`);
 		await page.getByRole("textbox").first().fill(ref);
 		await page.getByRole("button", { name: /Run preview scan/i }).click();
-		await page.waitForURL((u) => !u.pathname.endsWith("/review-branch"), { timeout: 60_000 });
+		// The site used to go back to the reviews list; when it stays, what it
+		// says is the answer (a queued note, or why it refused), and the list
+		// below is still where the preview shows up.
+		await page.waitForURL((u) => !u.pathname.endsWith("/review-branch"), { timeout: 60_000 }).catch(async () => {
+			const said = (await page.locator("main").innerText().catch(() => "")).replace(/\s+/g, " ").trim();
+			console.log(`review-branch stayed open: ${said.slice(0, 400) || "(no text)"}`);
+		});
 		// The preview shows Pending first (~5 min); poll the page up to 30 minutes.
 		let preview, release;
 		for (let i = 0; i < 60; i++) {
