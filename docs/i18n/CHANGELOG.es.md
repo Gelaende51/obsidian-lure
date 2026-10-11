@@ -1,4 +1,4 @@
-<!-- Traducción de CHANGELOG.md — estado: commit 5e821e9.
+<!-- Traducción de CHANGELOG.md — estado: commit 542a793.
      Traducción automática (Claude Opus 5), no revisada por hablantes nativos.
      Se agradecen las correcciones; el CHANGELOG en inglés es la versión
      de referencia. -->

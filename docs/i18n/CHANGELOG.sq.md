@@ -1,4 +1,4 @@
-<!-- Përkthim i CHANGELOG.md — gjendja: commit 5e821e9.
+<!-- Përkthim i CHANGELOG.md — gjendja: commit 542a793.
      Përkthim me makinë (Claude Opus 5), i pashqyrtuar nga folës amtarë.
      Ndreqjet janë të mirëpritura; versioni përcaktues është CHANGELOG-u
      në anglisht. -->

@@ -1,4 +1,4 @@
-<!-- Aistriúchán ar CHANGELOG.md — staid: tiomantas 5e821e9.
+<!-- Aistriúchán ar CHANGELOG.md — staid: tiomantas 542a793.
      Aistriúchán meaisín (Claude Opus 5) nár léigh cainteoirí dúchais é.
      Fáilte roimh cheartúcháin; is é an CHANGELOG Béarla an leagan údarásach. -->
 

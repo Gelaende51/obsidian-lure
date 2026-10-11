@@ -1,4 +1,4 @@
-<!-- Terjemahan CHANGELOG.md — status: commit 5e821e9.
+<!-- Terjemahan CHANGELOG.md — status: commit 542a793.
      Terjemahan mesin (Claude Opus 5), belum disemak penutur jati.
      Pembetulan dialu-alukan; CHANGELOG bahasa Inggeris ialah versi rujukan. -->
 
