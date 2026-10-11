@@ -654,33 +654,6 @@ test("path bar: pressing the padlock mid-edit keeps what was typed", async () =>
 	expect("new name present", existsSync(to), true);
 });
 
-// Asked for: the unlock used to be granted to one location, and picking
-// another vault from the dropdown shut it again.
-test("path bar: the padlock stays open through a change of location", async () => {
-	const r = await page.evaluate(`
-		${open(join(BED, "note.md"))}
-		${breadcrumb}
-		bc.enterTypingMode("");
-		${PAUSE(300)}
-		const container = app.workspace.activeLeaf.view.containerEl;
-		container.querySelector(".lure-unlock-btn").dispatchEvent(new MouseEvent("click", { bubbles: true }));
-		${PAUSE(300)}
-		const elsewhere = bc.locationEntries().find((l) => l.kind === "home")?.path ?? "/";
-		bc.goToLocation(elsewhere);
-		${PAUSE(600)}
-		const out = {
-			moved: bc.externalPath !== null && !bc.externalPath.startsWith(${JSON.stringify(BED)}),
-			unlocked: bc.allowsExternalWrites(),
-			slot: container.querySelector(".lure-unlock-btn") ? "padlock" : container.querySelector(".lure-rename-btn") ? "rename" : null,
-		};
-		bc.cancelNavigation();
-		return out;
-	`);
-	expect("the row moved somewhere else", r.moved, true);
-	expect("still unlocked", r.unlocked, true);
-	expect("the slot still holds the rename toggle", r.slot, "rename");
-});
-
 test("path bar: refuses to overwrite an existing target", async () => {
 	// Its own file to move, rather than the one the rename case above leaves
 	// behind. Standing on that was invisible for as long as the cases ran in
@@ -1089,7 +1062,7 @@ test("header: inside the vault the slot is the rename toggle and nothing else", 
 	expect("the padlock is not", r.padlock, false);
 });
 
-test("padlock: the unlock survives the work, and ends on leaving the place", async () => {
+test("padlock: the unlock survives the work and a change of place", async () => {
 	writeFileSync(join(BED, "m1.txt"), "a\n");
 	const r = await page.evaluate(`
 		${open(join(BED, "m1.txt"))}
@@ -1114,10 +1087,11 @@ test("padlock: the unlock survives the work, and ends on leaving the place", asy
 		// and the toggle standing there is what says the permission holds.
 		out.padlockStillThere = !!document.querySelector(".lure-rename-btn");
 
-		// Picking somewhere else does end it.
+		// Nor does picking somewhere else (asked for: it used to end it).
 		bcOf().goToLocation(${JSON.stringify(HOME)});
 		${PAUSE(500)}
 		out.afterNewLocation = bcOf().externalWritesUnlocked;
+		out.slotAfterNewLocation = !!document.querySelector(".lure-rename-btn") && !document.querySelector(".lure-unlock-btn");
 		bcOf().cancelNavigation();
 		return out;
 	`);
@@ -1125,7 +1099,8 @@ test("padlock: the unlock survives the work, and ends on leaving the place", asy
 	expect("survives a click-away", r.afterClickAway, true);
 	expect("survives a completed move", r.afterMove, true);
 	expect("the slot is still the unlocked one", r.padlockStillThere, true);
-	expect("ends on a new location", r.afterNewLocation, false);
+	expect("survives a new location", r.afterNewLocation, true);
+	expect("with the slot still the unlocked one", r.slotAfterNewLocation, true);
 	expect("the move happened", existsSync(join(BED, "m1-moved.txt")), true);
 });
 

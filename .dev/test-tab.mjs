@@ -1806,12 +1806,14 @@ test("Tab onto an alias path offers to open it, not to make it", async () => {
 		await armAtRoot();
 		await type(`${PREFIX}aliased`);
 		expect("the alias is listed", (await look()).rows.includes(alias), true);
+		// Written with its extension where extensions are shown, without where not.
+		const isAlias = (v) => v === alias || v === alias.replace(/\.md$/, "");
 		let shown = null;
-		for (let i = 0; i < 4 && shown !== alias.replace(/\.md$/, ""); i++) {
+		for (let i = 0; i < 6 && !isAlias(shown); i++) {
 			await realTab();
 			shown = (await look()).value;
 		}
-		expect("Tab put the alias on show", shown, alias.replace(/\.md$/, ""));
+		expect("Tab put the alias on show", shown, isAlias);
 		const creates = await page.evaluate(`return [...document.querySelectorAll(".suggestion-item.lure-suggest-creates")].map((e) => e.textContent).join("|");`);
 		expect("no row offers to make it", creates, "");
 	} finally {
