@@ -1,4 +1,4 @@
-<!-- Käännös tiedostosta CHANGELOG.md — tilanne: commit 542a793.
+<!-- Käännös tiedostosta CHANGELOG.md — tilanne: commit fd258e9.
      Konekäännös (Claude Opus 5), jota äidinkieliset puhujat eivät ole
      tarkastaneet. Korjaukset ovat tervetulleita; englanninkielinen
      CHANGELOG on ratkaiseva versio. -->

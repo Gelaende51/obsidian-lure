@@ -1,4 +1,4 @@
-<!-- Bản dịch của CHANGELOG.md — trạng thái: commit 542a793.
+<!-- Bản dịch của CHANGELOG.md — trạng thái: commit fd258e9.
      Dịch máy (Claude Opus 5), chưa được người bản ngữ hiệu đính.
      Rất hoan nghênh mọi đính chính; bản tiếng Anh của CHANGELOG là bản
      chuẩn. -->

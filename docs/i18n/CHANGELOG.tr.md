@@ -1,4 +1,4 @@
-<!-- CHANGELOG.md çevirisi — durum: commit 542a793.
+<!-- CHANGELOG.md çevirisi — durum: commit fd258e9.
      Makine çevirisi (Claude Opus 5), ana dili konuşanlarca gözden
      geçirilmedi. Düzeltmeler memnuniyetle karşılanır; belirleyici sürüm
      İngilizce CHANGELOG'dur. -->

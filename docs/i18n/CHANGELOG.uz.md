@@ -1,4 +1,4 @@
-<!-- CHANGELOG.md tarjimasi — holat: commit 542a793.
+<!-- CHANGELOG.md tarjimasi — holat: commit fd258e9.
      Mashina tarjimasi (Claude Opus 5), ona tili egalari tomonidan
      tekshirilmagan. Tuzatishlar mamnuniyat bilan qabul qilinadi;
      hal qiluvchi nusxa — inglizcha CHANGELOG. -->

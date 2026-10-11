@@ -1,4 +1,4 @@
-<!-- CHANGELOG.md tulkojums — stāvoklis: revīzija 542a793.
+<!-- CHANGELOG.md tulkojums — stāvoklis: revīzija fd258e9.
      Mašīntulkojums (Claude Opus 5), ko nav pārlasījuši dzimtās valodas
      runātāji. Labojumi ir gaidīti; noteicošais ir CHANGELOG angļu valodā. -->
 

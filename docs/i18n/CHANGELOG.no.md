@@ -1,4 +1,4 @@
-<!-- Oversettelse av CHANGELOG.md — status: commit 542a793.
+<!-- Oversettelse av CHANGELOG.md — status: commit fd258e9.
      Maskinoversatt (Claude Opus 5) og ikke gjennomlest av morsmålsbrukere.
      Rettelser er velkomne; den engelske CHANGELOG-filen er den gjeldende
      utgaven. -->
