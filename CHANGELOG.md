@@ -4,7 +4,7 @@
 
 Every release of Lure, newest first. What has landed since the last release is under *Unreleased*. Versions carry no `v` prefix, matching the release tags.
 
-## Unreleased
+## 1.6.1 — 2026-10-11[^1.6.1]
 
 ### Changed
 
@@ -278,6 +278,7 @@ First release. Replaces the filename in a note's header with a clickable, editab
 - **Outside the vault** (off by default): the vault name opens your other vaults, home, the filesystem root and mounted drives. Nothing out there is written until you unlock it, and a note can only be copied out of the vault, never moved.
 - **45 languages.**
 
+[^1.6.1]: Changes since 1.6.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.6.0...1.6.1>
 [^1.6.0]: Changes since 1.5.2: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.2...1.6.0>
 [^1.5.2]: Changes since 1.5.1: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.1...1.5.2>
 [^1.5.1]: Changes since 1.5.0: <https://github.com/Gelaende51/obsidian-lure/compare/1.5.0...1.5.1>
