@@ -29,7 +29,7 @@ on:
       target:
         description: "What to run on"
         type: choice
-        options: [distros, old-engine, server-2019, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits, peer-residue, freeze-probe, all]
+        options: [distros, old-engine, server-2019, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits, wayland, nix, peer-residue, freeze-probe, all]
         default: distros
       suites:
         description: "Suites, space separated"
@@ -421,6 +421,61 @@ jobs:
         env:
           XVFB_SCREEN: ${{ matrix.screen }}
           OBSIDIAN_EXTRA_ARGS: ${{ matrix.args }}
+          SUITES: ${{ inputs.suites }}
+        run: .dev/ci-suites.sh
+
+  # A Wayland session instead of X: a headless Weston, and Obsidian on
+  # Electron's own Wayland backend.
+  wayland:
+    if: inputs.target == 'wayland' || inputs.target == 'all'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: node esbuild.config.mjs production
+      - name: Weston, headless
+        run: sudo apt-get update -q && sudo apt-get install -y -q weston
+      - name: Run the suites
+        env:
+          OBSIDIAN_EXTRA_ARGS: --no-sandbox --ozone-platform=wayland --enable-features=UseOzonePlatform,WaylandWindowDecorations
+          SUITES: ${{ inputs.suites }}
+        run: |
+          export XDG_RUNTIME_DIR="$RUNNER_TEMP/xdg" && mkdir -p -m 700 "$XDG_RUNTIME_DIR"
+          weston --backend=headless --socket=wayland-1 --width=1920 --height=1080 >weston.log 2>&1 &
+          sleep 3
+          WAYLAND_DISPLAY=wayland-1 .dev/ci-suites.sh
+
+  # Obsidian as Nix packages it: wrapped to run on Nix's own Electron.
+  nix:
+    if: inputs.target == 'nix' || inputs.target == 'all'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: node esbuild.config.mjs production
+      - uses: cachix/install-nix-action@v31
+      - name: Obsidian from nixpkgs
+        env:
+          NIXPKGS_ALLOW_UNFREE: "1"
+        run: |
+          nix profile install --impure nixpkgs#obsidian
+          sudo apt-get install -y -q xvfb
+          echo "$HOME/.nix-profile/bin" >> "$GITHUB_PATH"
+          head -20 "$HOME/.nix-profile/bin/obsidian" | grep -a electron | head -3 || true
+      - name: Run the suites
+        env:
+          OBSIDIAN_COMMAND: obsidian
+          OBSIDIAN_EXTRA_ARGS: --no-sandbox
           SUITES: ${{ inputs.suites }}
         run: .dev/ci-suites.sh
 

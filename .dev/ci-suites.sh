@@ -9,7 +9,7 @@ failed=0
 for version in ${VERSIONS:-latest}; do
 	for suite in ${SUITES:?}; do
 		echo "::group::$suite (Obsidian $version)"
-		if [ -n "${DISPLAY:-}" ] || [ "$(uname)" = Darwin ] || [ "${OS:-}" = Windows_NT ]; then
+		if [ -n "${DISPLAY:-}" ] || [ -n "${WAYLAND_DISPLAY:-}" ] || [ "$(uname)" = Darwin ] || [ "${OS:-}" = Windows_NT ]; then
 			OBSIDIAN_VERSION=$version .dev/ci-run.sh "$suite"
 		else
 			OBSIDIAN_VERSION=$version xvfb-run -a -s "-screen 0 ${XVFB_SCREEN:-1920x1080x24}" .dev/ci-run.sh "$suite"
