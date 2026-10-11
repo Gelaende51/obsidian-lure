@@ -487,6 +487,28 @@ Three things change under Lure without a commit here, and each one runs the test
 
   A change runs that environment's target of `test-systems.yml`, and the main suites for a runner image. What changed goes in the run's `why`, so a failure opens an issue naming it. The last state is in `.github/environment-versions.json`; a source that cannot be read keeps its last value and starts nothing.
 
+### Canaries: what is coming
+
+`test-canary.yml` runs every Monday what Lure will meet next, as targets of `test-systems.yml`:
+
+| Target | What is next | Needs |
+|---|---|---|
+| `obsidian-beta` | Obsidian's current beta (early access) | secrets `OBSIDIAN_EMAIL`, `OBSIDIAN_PASSWORD` of an Insider account without two-factor sign-in; skipped without them, or when no beta is newer than the release |
+| `electron-next` | Obsidian's app on `electron@beta` | — (also run by the daily watch when a new Electron beta appears) |
+| `distros-next` | `debian:sid`, `fedora:rawhide`, `ubuntu:devel`, `opensuse/tumbleweed` | — |
+| `runner-next` | GitHub's `ubuntu-26.04` image | — |
+| `npm-next` | TypeScript's nightly, the newest esbuild, ESLint, typescript-eslint, `eslint-plugin-obsidianmd` and picomatch, Obsidian's API types from GitHub | — |
+| `peer-betas` | each neighbouring plugin's newest pre-release, where newer than its release (`.dev/peer-betas.mjs`, `PEER_CHANNEL=beta`) | — |
+
+None of them is part of a release. A failing target opens one issue, *Tests fail on <target>*; later failures add to it, and a later pass closes it. A canary failure is a warning about something unreleased: read it against the same suite on the released versions before calling it Lure's.
+
+The secrets are set by the maintainer, never by a script:
+
+```bash
+gh secret set OBSIDIAN_EMAIL --repo Gelaende51/obsidian-lure      # asks for the value, hidden
+gh secret set OBSIDIAN_PASSWORD --repo Gelaende51/obsidian-lure
+```
+
 ## The listing
 
 The public page carries a few things `manifest.json` has no field for — tags, an optional long description, a pricing model, a listing icon, screenshots. They are edited in a form at `community.obsidian.md/account/plugins/lure/edit`, and until now they existed nowhere in this repository. `listing.json` is where they live.

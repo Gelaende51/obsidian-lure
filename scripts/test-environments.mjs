@@ -49,6 +49,7 @@ const SOURCES = {
 	"Flathub's Obsidian": [async () => (await get("https://flathub.org/api/v2/appstream/md.obsidian.Obsidian")).releases?.[0]?.version, ["flatpak"]],
 	"Snap's Obsidian": [snap, ["snap"]],
 	"WineHQ staging": [wine, ["wine"]],
+	"electron@beta": [async () => (await get("https://registry.npmjs.org/electron"))["dist-tags"]?.beta, ["electron-next"]],
 	"runner ubuntu24": [() => runner("ubuntu24"), ["main"]],
 	"runner win25": [() => runner("win25"), ["main"]],
 	"runner ubuntu24-arm64": [() => runner("ubuntu24-arm64"), ["linux-arm"]],

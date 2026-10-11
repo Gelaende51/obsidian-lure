@@ -1,0 +1,33 @@
+# What is coming, tested before it arrives: Obsidian's beta, the next
+# Electron, the next distributions and runner image, the next build tools and
+# API types, and the neighbouring plugins' pre-releases. Weekly, never part of
+# a release. Each runs as a target of test-systems.yml with `why` set, so a
+# failure opens (or adds to) one issue per target — "Tests fail on <target>" —
+# and a later pass closes it.
+name: Canary
+on:
+  schedule:
+    - cron: "30 6 * * 1" # Mondays, 06:30 UTC, after Dependabot's checks
+  workflow_dispatch:
+
+permissions:
+  actions: write
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          all="test-blank test-additions test-create test-drop test-external test-glob test-tab test-urls test-html test-links test-rename test-gestures test-navlock test-keyleak test-compat test-compat-ui test-foldernote"
+          systems="test-external test-links test-rename test-create test-drop test-urls test-html test-glob test-tab"
+          peers="test-compat test-compat-ui test-foldernote test-keyleak"
+          run() { gh workflow run test-systems.yml --ref main -f target="$1" -f suites="$2" -f obsidian=latest -f why="Canary ($(date -u +%F)): $3"; }
+          run obsidian-beta "$all" "Obsidian's current beta"
+          run electron-next "$all" "Obsidian's app on the next Electron (electron@beta)"
+          run distros-next "$systems" "debian:sid, fedora:rawhide, ubuntu:devel, opensuse/tumbleweed"
+          run runner-next "$systems" "GitHub's next Ubuntu runner (ubuntu-26.04)"
+          run npm-next "$systems" "TypeScript's nightly, the newest build tools and Obsidian's API types from GitHub"
+          run peer-betas "$peers" "the neighbouring plugins' newest pre-releases"

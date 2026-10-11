@@ -13,6 +13,7 @@
 	"Flathub's Obsidian": "1.14.4",
 	"Snap's Obsidian": "1.14.4",
 	"WineHQ staging": "11.19~noble-1",
+	"electron@beta": "45.0.0-beta.1",
 	"runner ubuntu24": "ubuntu24/20261004.327",
 	"runner win25": "win25/20261004.281",
 	"runner ubuntu24-arm64": "ubuntu24-arm64/20261004.142",

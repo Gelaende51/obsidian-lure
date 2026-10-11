@@ -105,8 +105,11 @@ jobs:
         run: |
           why=$(cat /tmp/why.txt)
           suites="test-external test-links test-rename test-create test-drop test-urls test-html test-glob test-tab"
+          all="test-blank test-additions test-create test-drop test-external test-glob test-tab test-urls test-html test-links test-rename test-gestures test-navlock test-keyleak test-compat test-compat-ui test-foldernote"
           for t in $TARGETS; do
-            gh workflow run test-systems.yml --ref main -f target="$t" -f suites="$suites" -f obsidian=latest -f why="$why"
+            # A new Electron beta is a heads-up for every suite, not only the system ones.
+            [ "$t" = electron-next ] && s="$all" || s="$suites"
+            gh workflow run test-systems.yml --ref main -f target="$t" -f suites="$s" -f obsidian=latest -f why="$why"
           done
           [ "$MAIN" = true ] && gh workflow run test.yml --ref main
           git config user.name "github-actions[bot]"

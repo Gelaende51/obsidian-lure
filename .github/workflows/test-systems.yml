@@ -29,7 +29,7 @@ on:
       target:
         description: "What to run on"
         type: choice
-        options: [distros, old-engine, server-2019, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits, wayland, nix, alpine, peer-residue, freeze-probe, all]
+        options: [distros, distros-next, electron-next, runner-next, npm-next, peer-betas, obsidian-beta, old-engine, server-2019, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits, wayland, nix, alpine, peer-residue, freeze-probe, all]
         default: distros
       suites:
         description: "Suites, space separated"
@@ -51,13 +51,14 @@ env:
 
 jobs:
   distros:
-    if: inputs.target == 'distros' || inputs.target == 'all'
+    if: inputs.target == 'distros' || inputs.target == 'distros-next' || inputs.target == 'all'
     runs-on: ubuntu-latest
     timeout-minutes: 150
     strategy:
       fail-fast: false
       matrix:
-        image: ["debian:12", "ubuntu:20.04", "fedora:42", "archlinux:latest", "opensuse/leap:16.0"]
+        # distros-next: what the next releases of each will be (a canary).
+        image: ${{ fromJSON(inputs.target == 'distros-next' && '["debian:sid", "fedora:rawhide", "ubuntu:devel", "opensuse/tumbleweed"]' || '["debian:12", "ubuntu:20.04", "fedora:42", "archlinux:latest", "opensuse/leap:16.0"]') }}
     container:
       image: ${{ matrix.image }}
       options: --shm-size=2g
@@ -653,10 +654,149 @@ jobs:
             /mnt/shared/*.txt
           if-no-files-found: ignore
 
+  # ---------------------------------------------------------------- canaries
+  # What is coming rather than what is out: a heads-up, started weekly by
+  # test-canary.yml. A failure here is a warning about a future release.
+
+  # Obsidian's own app on the next Electron (npm's electron@beta), before an
+  # installer ships with it: Chromium's layout and APIs as they will be.
+  electron-next:
+    if: inputs.target == 'electron-next'
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci && node esbuild.config.mjs production
+      - name: The next Electron, and Obsidian's app for it
+        run: |
+          npm install --prefix /tmp/electron-next electron@beta >/dev/null
+          electron=/tmp/electron-next/node_modules/electron/dist/electron
+          echo "electron: $($electron --version 2>/dev/null)"
+          url=$(curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest | grep -o '"browser_download_url": *"[^"]*obsidian-[0-9.]*\.tar\.gz"' | head -1 | cut -d'"' -f4)
+          curl -sL "$url" | tar -xz -C /tmp
+          echo "OBSIDIAN_COMMAND=$electron $(ls -d /tmp/obsidian-*/resources/app.asar | head -1)" >> "$GITHUB_ENV"
+      - name: Run the suites
+        env:
+          SUITES: ${{ inputs.suites }}
+          VERSIONS: latest
+          OBSIDIAN_EXTRA_ARGS: --no-sandbox
+        run: .dev/ci-suites.sh
+
+  # The next Ubuntu runner image, with the launcher's own Obsidian.
+  runner-next:
+    if: inputs.target == 'runner-next'
+    runs-on: ubuntu-26.04
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci && node esbuild.config.mjs production
+      - run: command -v xvfb-run || (sudo apt-get update -q && sudo apt-get install -y -q xvfb)
+      - name: Run the suites
+        env:
+          SUITES: ${{ inputs.suites }}
+          OBSIDIAN_EXTRA_ARGS: --no-sandbox
+        run: .dev/ci-suites.sh
+
+  # The next build and type tools (TypeScript's nightly, the newest of the
+  # rest, Obsidian's API types as they stand on GitHub), then the suites.
+  npm-next:
+    if: inputs.target == 'npm-next'
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - name: The next versions
+        run: |
+          npm install --no-save typescript@next esbuild@latest eslint@latest typescript-eslint@latest \
+            eslint-plugin-obsidianmd@latest picomatch@latest "obsidian@github:obsidianmd/obsidian-api"
+          npm ls typescript esbuild eslint eslint-plugin-obsidianmd obsidian picomatch --depth=0 || true
+      - name: Build, type-check and lint with them
+        run: npm run build
+      - run: command -v xvfb-run || (sudo apt-get update -q && sudo apt-get install -y -q xvfb)
+      - name: Run the suites
+        env:
+          SUITES: ${{ inputs.suites }}
+          VERSIONS: latest
+          OBSIDIAN_EXTRA_ARGS: --no-sandbox
+        run: .dev/ci-suites.sh
+
+  # The neighbouring plugins at their newest pre-releases, where they have
+  # one newer than their last release (.dev/peer-betas.mjs).
+  peer-betas:
+    if: inputs.target == 'peer-betas'
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci && node esbuild.config.mjs production
+      - name: Run the suites
+        env:
+          SUITES: ${{ inputs.suites }}
+          VERSIONS: latest
+          PEER_CHANNEL: beta
+          GITHUB_TOKEN: ${{ github.token }}
+          OBSIDIAN_EXTRA_ARGS: --no-sandbox
+        run: .dev/ci-suites.sh
+
+  # Obsidian's own beta (early access), which needs an Insider account:
+  # repository secrets OBSIDIAN_EMAIL and OBSIDIAN_PASSWORD, set by the
+  # maintainer. Without them, or with no beta out, there is nothing to run.
+  obsidian-beta:
+    if: inputs.target == 'obsidian-beta'
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    env:
+      OBSIDIAN_EMAIL: ${{ secrets.OBSIDIAN_EMAIL }}
+      OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - id: beta
+        name: Is there a beta, and may it be fetched?
+        run: |
+          if [ -z "$OBSIDIAN_EMAIL" ] || [ -z "$OBSIDIAN_PASSWORD" ]; then
+            echo "::notice::No Insider credentials (OBSIDIAN_EMAIL, OBSIDIAN_PASSWORD): Obsidian's beta is not tested."
+            echo "run=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          npm install --no-save --no-package-lock obsidian-launcher@3 >/dev/null 2>&1
+          versions=$(node --input-type=module -e 'const { default: L } = await import("obsidian-launcher"); const l = new L(); const [b] = await l.resolveVersion("latest-beta"); const [s] = await l.resolveVersion("latest"); console.log(b + " " + s);')
+          read -r beta stable <<< "$versions"
+          echo "beta $beta, release $stable"
+          if [ "$beta" = "$stable" ]; then echo "::notice::No beta newer than $stable."; echo "run=false" >> "$GITHUB_OUTPUT"; else echo "run=true" >> "$GITHUB_OUTPUT"; fi
+      - if: steps.beta.outputs.run == 'true'
+        run: npm ci && node esbuild.config.mjs production
+      - if: steps.beta.outputs.run == 'true'
+        name: Run the suites
+        env:
+          SUITES: ${{ inputs.suites }}
+          VERSIONS: latest-beta
+          OBSIDIAN_EXTRA_ARGS: --no-sandbox
+        run: .dev/ci-suites.sh
+
   # Started by the environment watch (watch.yml): a failure is reported as an
   # issue naming what changed, since nobody is looking at a scheduled run.
   report:
-    needs: [distros, old-engine, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits-machine, limits-display, wayland, nix, alpine, server-2019]
+    needs: [distros, old-engine, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits-machine, limits-display, wayland, nix, alpine, server-2019, electron-next, runner-next, npm-next, peer-betas, obsidian-beta]
     if: always() && inputs.why != '' && contains(needs.*.result, 'failure')
     runs-on: ubuntu-latest
     permissions:
@@ -668,5 +808,28 @@ jobs:
           TARGET: ${{ inputs.target }}
           RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          gh issue create --repo "$GITHUB_REPOSITORY" --title "Tests fail on $TARGET after its environment changed" \
-            --body "$(printf 'The %s environment changed:\n\n%s\n\nRun: %s' "$TARGET" "$WHY" "$RUN")"
+          # One issue per target, kept open: a later failure is a comment on
+          # it, so a canary that fails week after week does not pile up.
+          title="Tests fail on $TARGET"
+          body="$(printf '%s\n\nRun: %s' "$WHY" "$RUN")"
+          open=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"$title\" in:title" --json number,title -q ".[] | select(.title == \"$title\") | .number" | head -1)
+          if [ -n "$open" ]; then gh issue comment "$open" --repo "$GITHUB_REPOSITORY" --body "$body"
+          else gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" --body "$body"; fi
+
+  # The same target passing again closes its issue.
+  all-clear:
+    needs: [distros, old-engine, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits-machine, limits-display, wayland, nix, alpine, server-2019, electron-next, runner-next, npm-next, peer-betas, obsidian-beta]
+    if: always() && inputs.why != '' && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled')
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET: ${{ inputs.target }}
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          title="Tests fail on $TARGET"
+          for n in $(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"$title\" in:title" --json number,title -q ".[] | select(.title == \"$title\") | .number"); do
+            gh issue close "$n" --repo "$GITHUB_REPOSITORY" --comment "Passing again: $RUN"
+          done
