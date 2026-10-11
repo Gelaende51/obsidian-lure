@@ -1108,31 +1108,36 @@ test("padlock: the unlock survives the work and a change of place", async () => 
 // other-paths button stood in front of the vault. Both belong at the end.
 test("path bar: outside the vault the extension is a badge, as a note's", async () => {
 	await setSettings(page, { showFileExtension: false });
-	writeFileSync(join(BED, "badged.txt"), "x\n");
-	const r = await page.evaluate(`
-		${open(join(BED, "badged.txt"))}
-		${PAUSE(400)}
-		const root = app.workspace.activeLeaf.view.containerEl;
-		const badge = root.querySelector(".lure-filename > .lure-filename-badge");
-		return {
-			name: root.querySelector(".lure-filename-text")?.textContent ?? null,
-			extension: badge?.querySelector(".lure-badge-extension")?.textContent ?? null,
-			front: !!root.querySelector(".lure-vault-wrapper .lure-other-paths"),
-		};
-	`);
-	expect("the name without its extension", r.name, "badged");
-	expect("the extension in the badge", r.extension, ".txt");
-	expect("nothing in front of the vault", r.front, false);
-	const pressed = await page.evaluate(`
-		app.workspace.activeLeaf.view.containerEl.querySelector(".lure-filename-badge").dispatchEvent(new MouseEvent("click", { bubbles: true }));
-		${PAUSE(400)}
-		const input = document.querySelector(".lure-path-input");
-		const out = input ? { value: input.value, selected: input.value.slice(input.selectionStart, input.selectionEnd) } : null;
-		document.querySelector(".lure-path-input")?.blur();
-		document.body.click();
-		return out;
-	`);
-	expect("pressing it writes the name out with the extension marked", pressed, { value: "badged.txt", selected: ".txt" });
+	try {
+		writeFileSync(join(BED, "badged.txt"), "x\n");
+		const r = await page.evaluate(`
+			${open(join(BED, "badged.txt"))}
+			${PAUSE(400)}
+			const root = app.workspace.activeLeaf.view.containerEl;
+			const badge = root.querySelector(".lure-filename > .lure-filename-badge");
+			return {
+				name: root.querySelector(".lure-filename-text")?.textContent ?? null,
+				extension: badge?.querySelector(".lure-badge-extension")?.textContent ?? null,
+				front: !!root.querySelector(".lure-vault-wrapper .lure-other-paths"),
+			};
+		`);
+		expect("the name without its extension", r.name, "badged");
+		expect("the extension in the badge", r.extension, ".txt");
+		expect("nothing in front of the vault", r.front, false);
+		const pressed = await page.evaluate(`
+			app.workspace.activeLeaf.view.containerEl.querySelector(".lure-filename-badge").dispatchEvent(new MouseEvent("click", { bubbles: true }));
+			${PAUSE(400)}
+			const input = document.querySelector(".lure-path-input");
+			const out = input ? { value: input.value, selected: input.value.slice(input.selectionStart, input.selectionEnd) } : null;
+			document.querySelector(".lure-path-input")?.blur();
+			document.body.click();
+			return out;
+		`);
+		expect("pressing it writes the name out with the extension marked", pressed, { value: "badged.txt", selected: ".txt" });
+	} finally {
+		// The rest of the suite reads names with their extensions.
+		await setSettings(page, { showFileExtension: true });
+	}
 });
 
 test("dropdown: the keep-this-name entry stands out in blue", async () => {
@@ -1959,12 +1964,12 @@ if (!(await canRenameFiles(page))) {
 
 /** The other-paths button of the active pane: its count, colour and menu. */
 const OTHER_PATHS = `
-	const btn = app.workspace.activeLeaf.view.containerEl.querySelector(".lure-other-paths");
+	const btn = app.workspace.activeLeaf.view.containerEl.querySelector(".lure-other-paths, .lure-badge-other-paths");
 	btn?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
 	${PAUSE(300)}
 	const menu = [...document.querySelectorAll(".lure-other-paths-menu .suggestion-item")].map((e) => [e.dataset.path, e.dataset.lureTint]);
 	document.querySelector(".lure-other-paths-menu")?.remove();
-	return { count: btn?.querySelector(".lure-other-paths-count")?.textContent ?? null, tint: btn?.dataset.lureTint ?? null, menu };
+	return { count: btn?.querySelector(".lure-other-paths-count")?.textContent ?? null, tint: btn?.closest("[data-lure-tint]")?.dataset.lureTint ?? null, menu };
 `;
 
 test("links: Shift+Enter, renaming a file out here, makes a hard link and lists it", async () => {
