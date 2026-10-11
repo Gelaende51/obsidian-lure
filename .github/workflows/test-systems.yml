@@ -326,7 +326,11 @@ jobs:
           wine "$HOME/node-win/node.exe" --version
           # The suites build their string tables with esbuild, whose binary
           # is per platform: Windows' Node looks for Windows' one.
-          npm install --no-save --force "@esbuild/win32-x64@$(node -p 'require("esbuild/package.json").version')"
+          # npm skips a package for another OS even with --force, so the
+          # binary is unpacked by hand and named in ESBUILD_BINARY_PATH.
+          esv=$(node -p 'require("./node_modules/esbuild/package.json").version')
+          (cd /tmp && npm pack "@esbuild/win32-x64@$esv" --silent | xargs tar -xzf)
+          echo "ESBUILD_BINARY_PATH=$(winepath -w /tmp/package/esbuild.exe)" >> "$GITHUB_ENV"
           echo "SUITE_NODE=wine $HOME/node-win/node.exe" >> "$GITHUB_ENV"
       - name: Run the suites
         env:
