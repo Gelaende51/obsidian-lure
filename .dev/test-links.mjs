@@ -631,8 +631,20 @@ const outside = (code) => page.evaluate(`
 `);
 
 test("hard links made and split off outside Obsidian are put right in the lists", async () => {
+	// Waited for, as the symbolic-link case below waits: where the system
+	// reports no new file (FreeBSD) the scan finds it, has Obsidian index it,
+	// and scans again — a moment later, not at once.
+	const until = async (done) => {
+		let lists = null;
+		for (let i = 0; i < 12; i++) {
+			lists = await listsOf(NOTE);
+			if (done(lists?.["paths-hardlinks"] ?? [])) break;
+			await settle(1000);
+		}
+		return lists;
+	};
 	await outside(`fs.linkSync(at(${JSON.stringify(NOTE)}), at(${JSON.stringify(`${DIR}/Twin.md`)}));`);
-	let lists = await listsOf(NOTE);
+	let lists = await until((v) => v.includes(`${DIR}/Twin.md`));
 	expect("a hard link made in a terminal is listed", lists?.["paths-hardlinks"], (v) => Array.isArray(v) && v.includes(`${DIR}/Twin.md`) && v.includes(NOTE));
 	expect("in paths too", lists?.paths, (v) => Array.isArray(v) && v.includes(`${DIR}/Twin.md`));
 	// An editor saving through a temporary file and a rename leaves a file of its own.
@@ -641,7 +653,7 @@ test("hard links made and split off outside Obsidian are put right in the lists"
 		fs.writeFileSync(twin + ".tmp", fs.readFileSync(twin));
 		fs.renameSync(twin + ".tmp", twin);
 	`);
-	lists = await listsOf(NOTE);
+	lists = await until((v) => !v.includes(`${DIR}/Twin.md`));
 	expect("a hard link an editor's save split off is taken out", lists?.["paths-hardlinks"] ?? [], (v) => !v.includes(`${DIR}/Twin.md`));
 	expect("and out of paths", lists?.paths ?? [], (v) => !v.includes(`${DIR}/Twin.md`));
 });
