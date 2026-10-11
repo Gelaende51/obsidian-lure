@@ -1,0 +1,200 @@
+{
+	"version": "1.6.0",
+	"head": "Date: Oct 11, 2026Version: 1.6.0Commit: c1940cdCompleted",
+	"against": "none",
+	"findings": [
+		{
+			"section": "Releases",
+			"level": "Pass",
+			"text": "The main.js release asset has a verified GitHub artifact attestation.",
+			"where": []
+		},
+		{
+			"section": "Releases",
+			"level": "Pass",
+			"text": "The styles.css release asset has a verified GitHub artifact attestation.",
+			"where": []
+		},
+		{
+			"section": "Network requests",
+			"level": "Pass",
+			"text": "No suspicious network patterns found.",
+			"where": []
+		},
+		{
+			"section": "Behavior",
+			"level": "Warning",
+			"text": "Direct Filesystem Access: Uses the Node.js fs module to access the filesystem outside of the Obsidian vault API. Can read and write any file on the system.",
+			"where": []
+		},
+		{
+			"section": "Behavior",
+			"level": "Recommendation",
+			"text": "Vault Enumeration: Enumerates all files in the vault (vault.getFiles, getMarkdownFiles, etc.). Gives the plugin access to every file path in the vault.",
+			"where": []
+		},
+		{
+			"section": "Behavior",
+			"level": "Recommendation",
+			"text": "Clipboard Access: Reads or writes the system clipboard. May expose content copied from outside Obsidian.",
+			"where": []
+		},
+		{
+			"section": "Behavior",
+			"level": "Recommendation",
+			"text": "Local Storage: Persists data in localStorage or sessionStorage instead of the Obsidian plugin data APIs",
+			"where": []
+		},
+		{
+			"section": "Behavior",
+			"level": "Pass",
+			"text": "Vault Read: Reads individual vault files via the Obsidian API (vault.read, vault.cachedRead)",
+			"where": []
+		},
+		{
+			"section": "Behavior",
+			"level": "Pass",
+			"text": "Vault Write: Creates or modifies vault files via the Obsidian API (vault.modify, vault.create, etc.)",
+			"where": []
+		},
+		{
+			"section": "Source code",
+			"level": "Recommendation",
+			"text": "display is deprecated. Since 1.13.0. Use {@link getSettingDefinitions} instead.",
+			"where": [
+				"src/settingsTab.ts:537"
+			]
+		},
+		{
+			"section": "CSS lint",
+			"level": "Warning",
+			"text": "Unexpected browser feature \"multicolumn\" is only partially supported by Obsidian 1.7.4",
+			"where": [
+				"styles.css:75",
+				"styles.css:1196"
+			]
+		},
+		{
+			"section": "CSS lint",
+			"level": "Warning",
+			"text": "Unexpected browser feature \"text-decoration\" is only partially supported by Obsidian 1.7.4",
+			"where": [
+				"styles.css:143",
+				"styles.css:144",
+				"styles.css:155",
+				"styles.css:156",
+				"styles.css:168"
+			]
+		},
+		{
+			"section": "CSS lint",
+			"level": "Warning",
+			"text": "Unexpected browser feature \"css-display-contents\" is only partially supported by Obsidian 1.7.4",
+			"where": [
+				"styles.css:1188"
+			]
+		},
+		{
+			"section": "CSS lint",
+			"level": "Warning",
+			"text": "Avoid !important — override styles by increasing selector specificity or using CSS variables instead.",
+			"where": [
+				"styles.css:25",
+				"styles.css:31",
+				"styles.css:1105",
+				"styles.css:1106",
+				"styles.css:1115",
+				"styles.css:1119"
+			]
+		},
+		{
+			"section": "Dependencies",
+			"level": "Pass",
+			"text": "No vulnerable dependencies found.",
+			"where": []
+		},
+		{
+			"section": "Build verification",
+			"level": "Pass",
+			"text": "Build reproduced the release main.js byte-for-byte",
+			"where": []
+		}
+	],
+	"added": [
+		{
+			"section": "Behavior",
+			"level": "Warning",
+			"text": "Direct Filesystem Access: Uses the Node.js fs module to access the filesystem outside of the Obsidian vault API. Can read and write any file on the system.",
+			"where": []
+		},
+		{
+			"section": "Behavior",
+			"level": "Recommendation",
+			"text": "Vault Enumeration: Enumerates all files in the vault (vault.getFiles, getMarkdownFiles, etc.). Gives the plugin access to every file path in the vault.",
+			"where": []
+		},
+		{
+			"section": "Behavior",
+			"level": "Recommendation",
+			"text": "Clipboard Access: Reads or writes the system clipboard. May expose content copied from outside Obsidian.",
+			"where": []
+		},
+		{
+			"section": "Behavior",
+			"level": "Recommendation",
+			"text": "Local Storage: Persists data in localStorage or sessionStorage instead of the Obsidian plugin data APIs",
+			"where": []
+		},
+		{
+			"section": "Source code",
+			"level": "Recommendation",
+			"text": "display is deprecated. Since 1.13.0. Use {@link getSettingDefinitions} instead.",
+			"where": [
+				"src/settingsTab.ts:537"
+			]
+		},
+		{
+			"section": "CSS lint",
+			"level": "Warning",
+			"text": "Unexpected browser feature \"multicolumn\" is only partially supported by Obsidian 1.7.4",
+			"where": [
+				"styles.css:75",
+				"styles.css:1196"
+			]
+		},
+		{
+			"section": "CSS lint",
+			"level": "Warning",
+			"text": "Unexpected browser feature \"text-decoration\" is only partially supported by Obsidian 1.7.4",
+			"where": [
+				"styles.css:143",
+				"styles.css:144",
+				"styles.css:155",
+				"styles.css:156",
+				"styles.css:168"
+			]
+		},
+		{
+			"section": "CSS lint",
+			"level": "Warning",
+			"text": "Unexpected browser feature \"css-display-contents\" is only partially supported by Obsidian 1.7.4",
+			"where": [
+				"styles.css:1188"
+			]
+		},
+		{
+			"section": "CSS lint",
+			"level": "Warning",
+			"text": "Avoid !important — override styles by increasing selector specificity or using CSS variables instead.",
+			"where": [
+				"styles.css:25",
+				"styles.css:31",
+				"styles.css:1105",
+				"styles.css:1106",
+				"styles.css:1115",
+				"styles.css:1119"
+			]
+		}
+	],
+	"gone": []
+}
