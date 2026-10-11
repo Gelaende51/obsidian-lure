@@ -1,4 +1,4 @@
-<!-- Bản dịch của README.md — trạng thái: commit 64b0be6.
+<!-- Bản dịch của README.md — trạng thái: commit 4ebd35e.
      Dịch máy (Claude Opus 5), chưa được người bản ngữ hiệu đính.
      Rất hoan nghênh mọi đính chính; bản tiếng Anh của README là bản
      chuẩn. -->

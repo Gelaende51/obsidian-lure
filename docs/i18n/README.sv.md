@@ -1,4 +1,4 @@
-<!-- Översättning av README.md — status: commit 64b0be6.
+<!-- Översättning av README.md — status: commit 4ebd35e.
      Maskinöversatt (Claude Opus 5) och inte granskad av modersmålstalare.
      Rättelser är välkomna; den engelska README-filen är den gällande
      versionen. -->

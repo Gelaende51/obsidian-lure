@@ -1,4 +1,4 @@
-<!-- README.md çevirisi — durum: commit 64b0be6.
+<!-- README.md çevirisi — durum: commit 4ebd35e.
      Makine çevirisi (Claude Opus 5), ana dili konuşanlarca gözden
      geçirilmedi. Düzeltmeler memnuniyetle karşılanır; belirleyici sürüm
      İngilizce README'dir. -->

@@ -1,4 +1,4 @@
-<!-- README.md tarjimasi — holat: commit 64b0be6.
+<!-- README.md tarjimasi — holat: commit 4ebd35e.
      Mashina tarjimasi (Claude Opus 5), ona tili egalari tomonidan
      tekshirilmagan. Tuzatishlar mamnuniyat bilan qabul qilinadi;
      hal qiluvchi nusxa — inglizcha README. -->

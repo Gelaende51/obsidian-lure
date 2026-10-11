@@ -1,4 +1,4 @@
-<!-- Terjemahan README.md — status: commit 64b0be6.
+<!-- Terjemahan README.md — status: commit 4ebd35e.
      Terjemahan mesin (Claude Opus 5), belum disemak penutur jati.
      Pembetulan dialu-alukan; README bahasa Inggeris ialah versi rujukan. -->
 
