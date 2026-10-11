@@ -345,7 +345,7 @@ jobs:
             npm install --no-save --no-package-lock obsidian-launcher@3
             (cd node_modules/classic-level && npx --yes node-gyp rebuild)
             Xvfb :99 -screen 0 1920x1080x24 >/dev/null 2>&1 &
-            export DISPLAY=:99 OBSIDIAN_COMMAND="$electron $asar" OBSIDIAN_EXTRA_ARGS=--no-sandbox
+            export DISPLAY=:99 OBSIDIAN_COMMAND="$electron $asar" OBSIDIAN_EXTRA_ARGS=--no-sandbox OBSIDIAN_PLATFORM_AS=linux
             bash .dev/ci-suites.sh
         env:
           SUITES: ${{ inputs.suites }}

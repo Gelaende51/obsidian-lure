@@ -88,7 +88,8 @@ fi
 
 # The port answers before the vault has loaded; wait for a page target and for
 # the plugin itself.
-for _ in $(seq 1 240); do
+# Longer where the machine is slow on purpose (LURE_SLOW, see cdpSession.mjs).
+for _ in $(seq 1 $((240 * ${LURE_SLOW:-1}))); do
 	if curl -s --max-time 1 "http://127.0.0.1:$PORT/json/list" | grep -q '"type": *"page"'; then
 		if OBSIDIAN_CDP_PORT="$PORT" node .dev/cdp.mjs eval '!!app?.plugins?.plugins?.lure' 2>/dev/null | grep -q true; then
 			ready=1
@@ -100,6 +101,10 @@ done
 if [ -z "${ready:-}" ]; then
 	echo "Obsidian did not come up with Lure loaded; launcher log:" >&2
 	tail -40 "$LOG" >&2
+	# What the window got as far as, when it answers at all.
+	echo "--- the page:" >&2
+	curl -s --max-time 3 "http://127.0.0.1:$PORT/json/list" | head -c 600 >&2
+	OBSIDIAN_CDP_PORT="$PORT" timeout 20 node .dev/cdp.mjs eval 'JSON.stringify({ url: location.href, app: !!window.app, vault: window.app?.vault?.getName?.(), safe: window.app?.plugins?.isEnabled?.(), manifests: Object.keys(window.app?.plugins?.manifests ?? {}).length, enabled: [...(window.app?.plugins?.enabledPlugins ?? [])].length, title: document.title })' >&2 2>&1
 	exit 1
 fi
 

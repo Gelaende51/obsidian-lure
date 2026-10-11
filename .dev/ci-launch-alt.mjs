@@ -16,7 +16,12 @@
 import { spawn, execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync, openSync } from "node:fs";
 import { join, resolve } from "node:path";
-import ObsidianLauncher from "obsidian-launcher";
+
+// The library picks an installer for the platform it runs on and has none for
+// FreeBSD; the Electron used here is the system's own, so it is asked as if
+// on Linux (OBSIDIAN_PLATFORM_AS=linux). Read when the module loads: set first.
+if (process.env.OBSIDIAN_PLATFORM_AS) Object.defineProperty(process, "platform", { value: process.env.OBSIDIAN_PLATFORM_AS });
+const { default: ObsidianLauncher } = await import("obsidian-launcher");
 
 const [version = "latest", vault = ".dev/test-vault", ...rest] = process.argv.slice(2);
 const cut = rest.indexOf("--");
