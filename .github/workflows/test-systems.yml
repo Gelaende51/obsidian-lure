@@ -495,7 +495,10 @@ jobs:
           docker run --rm --shm-size=2g -e SUITES -e VERSIONS -v "$PWD:/repo" -w /repo alpine:3.22 sh -c '
             apk add --no-cache bash nodejs npm curl git gcompat libstdc++ nss gtk+3.0 alsa-lib mesa-gbm libdrm xvfb-run xvfb procps-ng font-dejavu at-spi2-core libxkbcommon libxcomposite libxdamage libxrandr cups-libs >/dev/null &&
             npm ci --no-audit --no-fund >/dev/null && node esbuild.config.mjs production &&
-            OBSIDIAN_EXTRA_ARGS=--no-sandbox bash .dev/ci-suites.sh'
+            OBSIDIAN_EXTRA_ARGS=--no-sandbox bash .dev/ci-suites.sh; code=$?
+            bin=$(find "$HOME/.obsidian-cache" -type f -name obsidian 2>/dev/null | head -1)
+            echo "--- the binary: $bin"; [ -n "$bin" ] && { "$bin" --version 2>&1 | head -8; ldd "$bin" 2>&1 | grep -i "not found\|error" | head -8; }
+            exit $code'
 
   # Loaded beside every suite, the header plugins of test-compat-ui changed
   # what F2 and the rename field did even after being turned off. One job
