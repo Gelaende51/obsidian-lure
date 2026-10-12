@@ -16,6 +16,7 @@
 	"license": "AGPL-3.0-only",
 	"devDependencies": {
 		"development-template": "https://codeload.github.com/Gelaende51/development-template/tar.gz/refs/tags/v1.0.1",
+		"electron-template": "https://codeload.github.com/Gelaende51/electron-template/tar.gz/refs/tags/v0.2.0",
 		"esbuild": "^0.28.2",
 		"eslint": "^9.39.0",
 		"eslint-plugin-obsidianmd": "^0.4.2",

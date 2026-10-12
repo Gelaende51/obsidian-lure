@@ -1,13 +1,12 @@
 /**
- * A single long-lived CDP connection, so a test run isn't one WebSocket
- * handshake per assertion. Same protocol as .dev/cdp.mjs, kept separate so
- * that stays a one-shot command-line tool.
+ * Lure's CDP session: electron-template's (one long-lived connection, real
+ * key presses, PAUSE/SLOW, …) with Obsidian's window choice and the
+ * Obsidian-specific helpers the suites share. Same protocol as .dev/cdp.mjs,
+ * kept separate so that stays a one-shot command-line tool.
  */
+import { connect as connectApp, decodeTitle, describeKey, pressKey, PAUSE, parkPointer as park, isPainting, asPosix } from "electron-template/cdp-session";
 
-const PORT = process.env.OBSIDIAN_CDP_PORT ?? 9222;
-const ORIGIN = `http://127.0.0.1:${PORT}`;
-/** How much slower than a runner this machine is meant to be: LURE_SLOW=3 triples the wait for an answer. */
-const SLOW = Math.max(1, Number(process.env.LURE_SLOW) || 1);
+export { describeKey, pressKey, PAUSE, isPainting, asPosix };
 
 /**
  * Picks the Obsidian window to drive.
@@ -20,22 +19,6 @@ const SLOW = Math.max(1, Number(process.env.LURE_SLOW) || 1);
  *
  * Set OBSIDIAN_VAULT to choose; with one window open it is optional.
  */
-/**
- * Obsidian HTML-escapes the window title, so a vault named
- * "L'Éclaire, c'est moi" arrives as "L&#39;Éclaire, c&#39;est moi" and a
- * literal comparison never matches. Decode before comparing, or a vault with
- * an apostrophe in its name is simply unreachable from these tools.
- */
-function decodeTitle(title) {
-	return title
-		.replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
-		.replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCharCode(parseInt(code, 16)))
-		.replace(/&quot;/g, '"')
-		.replace(/&lt;/g, "<")
-		.replace(/&gt;/g, ">")
-		.replace(/&amp;/g, "&");
-}
-
 function pickTarget(targets, vault) {
 	const pages = targets.filter((t) => t.type === "page" && !t.url.startsWith("devtools://"));
 	if (!pages.length) throw new Error("No page target — is a vault open?");
@@ -83,237 +66,39 @@ function pickTarget(targets, vault) {
 }
 
 export async function connect() {
-	const targets = await (await fetch(`${ORIGIN}/json/list`)).json();
-	const page = pickTarget(targets, process.env.OBSIDIAN_VAULT);
-
-	const socket = new WebSocket(page.webSocketDebuggerUrl);
-	await new Promise((resolve, reject) => {
-		socket.addEventListener("open", resolve, { once: true });
-		socket.addEventListener("error", () => reject(new Error("WebSocket failed")), { once: true });
+	return connectApp({
+		pickTarget: (pages) => pickTarget(pages, process.env.OBSIDIAN_VAULT),
+		check: process.env.OBSIDIAN_WINDOW || process.env.ALLOW_SETTINGS ? undefined : obsidianSettingsInFront,
 	});
-
-	let nextId = 1;
-	const pending = new Map();
-	socket.addEventListener("message", (event) => {
-		const message = JSON.parse(event.data);
-		if (message.method === "Debugger.paused") onPaused?.(message.params);
-		const settle = pending.get(message.id);
-		if (!settle) return;
-		pending.delete(message.id);
-		if (message.error) settle.reject(new Error(message.error.message));
-		else settle.resolve(message.result);
-	});
-
-	// Input events get a deadline of their own: one that is never answered
-	// (macOS has done this to a Cmd+letter) fails the case it belongs to
-	// instead of holding the whole job until the runner gives up on it.
-	const send = (method, params = {}) =>
-		new Promise((resolve, reject) => {
-			const id = nextId++;
-			pending.set(id, { resolve, reject });
-			socket.send(JSON.stringify({ id, method, params }));
-			if (method.startsWith("Input.")) {
-				setTimeout(() => {
-					if (!pending.delete(id)) return;
-					reject(new Error(`${method} was not answered within 10 s`));
-				}, 10000);
-			}
-		});
-
-	// The first time the page stops answering, where it is: the debugger can
-	// still stop a script that loops, and a pause that never comes says the
-	// page is blocked outside JavaScript (a sync call into the main process).
-	let onPaused = null;
-	let sampled = false;
-	const sampleStack = async () => {
-		if (sampled) return;
-		sampled = true;
-		const within = (promise, ms) => Promise.race([promise, new Promise((r) => setTimeout(() => r(null), ms))]);
-		const paused = new Promise((resolve) => (onPaused = resolve));
-		await within(send("Debugger.enable").catch(() => null), 5000);
-		await within(send("Debugger.pause").catch(() => null), 5000);
-		const params = await within(paused, 5000);
-		onPaused = null;
-		if (!params) {
-			console.log("    stuck page: the debugger could not pause it");
-			return;
-		}
-		console.log("    stuck page, paused in:");
-		for (const frame of params.callFrames.slice(0, 12)) {
-			console.log(`      ${frame.functionName || "(anonymous)"}  ${(frame.url || "?").split("/").pop()}:${frame.location.lineNumber + 1}`);
-		}
-		await within(send("Debugger.resume").catch(() => null), 5000);
-		await within(send("Debugger.disable").catch(() => null), 5000);
-	};
-
-	/**
-	 * Evaluates in the page and returns the value. Expressions are wrapped
-	 * in an async IIFE so a test step can await Obsidian's own promises —
-	 * opening a file, waiting for a debounce — inline.
-	 */
-	// LURE_SLOW stretches every wait for a machine that is slow on purpose —
-	// an emulated build, a capped CPU — rather than lengthening them for all.
-	const evaluate = async (expression, timeoutMs = 15000 * SLOW) => {
-		// A step that never settles must fail its own test rather than wedge
-		// the run — and a render heavy enough to kill the renderer outright
-		// looks exactly like a step that never settles.
-		const result = await Promise.race([
-			send("Runtime.evaluate", {
-				expression: `(async () => { ${expression} })()`,
-				returnByValue: true,
-				awaitPromise: true,
-			}),
-			new Promise((_, reject) =>
-				setTimeout(() => reject(new Error(`page did not answer in ${timeoutMs}ms`)), timeoutMs),
-			),
-		]).catch(async (error) => {
-			if (error.message.startsWith("page did not answer")) await sampleStack();
-			throw error;
-		});
-		if (result.exceptionDetails) {
-			throw new Error(result.exceptionDetails.exception?.description ?? "threw in page");
-		}
-		return result.result.value;
-	};
-
-	// Obsidian's settings, open in a window of their own, sit in front of the
-	// vault and take the focus with them — and a suite then measures a window
-	// that cannot answer a click. Three suites failed sixteen assertions that
-	// way in one run, every one of them a dropdown that "would not open".
-	// Refused rather than worked around: it is the same class as a window that
-	// is not compositing, and the answer is the same — say so, and let the
-	// person close it.
-	//
-	// A probe that means to drive the settings says so with OBSIDIAN_WINDOW,
-	// or with ALLOW_SETTINGS for the ones that open them from the vault side.
-	if (!process.env.OBSIDIAN_WINDOW && !process.env.ALLOW_SETTINGS) {
-		const settingsOpen = await evaluate(
-			`const s = window.app?.setting;
-			 // Two ways for them to be up: in this window, where the container
-			 // is in this document, or in one of their own, where it is not —
-			 // the instance here keeps a stale container either way, so the
-			 // window itself is the honest question.
-			 const own = s?.win;
-			 return !!(s?.containerEl?.isConnected) || !!(own && own !== window && !own.closed);`,
-		).catch(() => false);
-		if (settingsOpen) {
-			socket.close();
-			throw new Error(
-				"Obsidian's settings are open, and in a window of their own they take the\n" +
-					"focus this window needs — clicks land nowhere and dropdowns never open.\n" +
-					"Close them and run again (ALLOW_SETTINGS=1 to drive them on purpose).",
-			);
-		}
-	}
-
-	const session = { send, evaluate, close: () => socket.close() };
-	globalThis.__harnessSession = session; // for the harness's failure screenshots (development-template)
-	return session;
 }
 
-
-/**
- * A real key press, dispatched by the browser rather than synthesised in the
- * page.
- *
- * An event made with `new KeyboardEvent(...)` is `isTrusted: false`, and
- * Obsidian decides what reaches a command from a capture-phase window
- * listener with a scope stack on top of it — so a synthetic event tests the
- * listener under it rather than the path a user takes. It is the difference
- * between the two that found the rename-dialog bug: `executeCommandById`
- * reported the plugin stealing focus, while a real key showed the command
- * never running at all.
- */
-/**
- * keyCode, DOM code, and the text the key produces.
- *
- * The text matters more than it looks. A key sent as `rawKeyDown` with no
- * text never reaches the focused element for Enter and Tab — the event
- * arrives at the window and stops there, so a field's own keydown handler
- * never runs and the test reports the feature broken. Enter carries a
- * carriage return and Tab a tab; the genuinely textless keys (Escape,
- * arrows, function keys) carry nothing and are dispatched as raw.
- */
-const KEY_CODES = {
-	Escape: [27, "Escape", ""], Enter: [13, "Enter", "\r"], Tab: [9, "Tab", "\t"],
-	Backspace: [8, "Backspace", ""], Delete: [46, "Delete", ""], Space: [32, "Space", " "],
-	ArrowUp: [38, "ArrowUp", ""], ArrowDown: [40, "ArrowDown", ""],
-	ArrowLeft: [37, "ArrowLeft", ""], ArrowRight: [39, "ArrowRight", ""],
-	Home: [36, "Home", ""], End: [35, "End", ""],
-	PageUp: [33, "PageUp", ""], PageDown: [34, "PageDown", ""],
-	// The key itself, pressed alone: a tap of it completes in the path bar.
-	Alt: [18, "AltLeft", ""],
-};
-
-const MODIFIER_BITS = { alt: 1, ctrl: 2, control: 2, meta: 4, cmd: 4, shift: 8 };
-
-/** "ctrl+shift+f2" -> the CDP payload for one press. */
-/** Keys a word-wise "ctrl" moves over, which macOS moves over with Alt instead. */
-const WORD_KEYS = new Set(["ArrowLeft", "ArrowRight", "Backspace", "Delete"]);
-
-export function describeKey(spec) {
-	const parts = spec.split("+");
-	const name = parts.pop();
-	let modifiers = 0;
-	for (const raw of parts) {
-		// The suites were written where Ctrl is Obsidian's Mod. On macOS Mod is
-		// Cmd, and a word at a time is Alt — so "ctrl" is read the way the
-		// press is meant there. Ctrl+Tab stays Ctrl on every system.
-		let part = raw.toLowerCase();
-		if (process.platform === "darwin" && (part === "ctrl" || part === "control") && name !== "Tab") {
-			part = WORD_KEYS.has(name) ? "alt" : "meta";
-		}
-		const bit = MODIFIER_BITS[part];
-		if (!bit) throw new Error(`unknown modifier "${part}" in "${spec}"`);
-		modifiers |= bit;
-	}
-
-	const fn = /^[fF](\d{1,2})$/.exec(name);
-	if (fn) {
-		const n = Number(fn[1]);
-		if (n < 1 || n > 12) throw new Error(`no such function key "${name}"`);
-		return { key: `F${n}`, code: `F${n}`, keyCode: 111 + n, modifiers, text: "" };
-	}
-	if (KEY_CODES[name]) {
-		const [keyCode, code, text] = KEY_CODES[name];
-		return { key: name === "Space" ? " " : name, code, keyCode, modifiers, text };
-	}
-	if (name.length === 1) {
-		const upper = name.toUpperCase();
-		const code = /[0-9]/.test(name) ? `Digit${name}` : `Key${upper}`;
-		// A modified press produces no text: ctrl+l must not also type an "l".
-		return { key: name, code, keyCode: upper.charCodeAt(0), modifiers, text: modifiers ? "" : name };
-	}
-	throw new Error(`don't know how to press "${name}"`);
+// Obsidian's settings, open in a window of their own, sit in front of the
+// vault and take the focus with them — and a suite then measures a window
+// that cannot answer a click. Three suites failed sixteen assertions that
+// way in one run, every one of them a dropdown that "would not open".
+// Refused rather than worked around: it is the same class as a window that
+// is not compositing, and the answer is the same — say so, and let the
+// person close it.
+//
+// A probe that means to drive the settings says so with OBSIDIAN_WINDOW,
+// or with ALLOW_SETTINGS for the ones that open them from the vault side.
+async function obsidianSettingsInFront(evaluate) {
+	const settingsOpen = await evaluate(
+		`const s = window.app?.setting;
+		 // Two ways for them to be up: in this window, where the container
+		 // is in this document, or in one of their own, where it is not —
+		 // the instance here keeps a stale container either way, so the
+		 // window itself is the honest question.
+		 const own = s?.win;
+		 return !!(s?.containerEl?.isConnected) || !!(own && own !== window && !own.closed);`,
+	).catch(() => false);
+	if (!settingsOpen) return null;
+	return (
+		"Obsidian's settings are open, and in a window of their own they take the\n" +
+		"focus this window needs — clicks land nowhere and dropdowns never open.\n" +
+		"Close them and run again (ALLOW_SETTINGS=1 to drive them on purpose)."
+	);
 }
-
-/** Presses a key in a connected page. Accepts the same specs as describeKey. */
-/**
- * On macOS a Cmd+letter is the menu's to answer, not the page's: delivered
- * bare it either does nothing or never comes back. Naming the editing
- * command with the press is how the debugger asks for it (what Puppeteer
- * does on a Mac).
- */
-const MAC_COMMANDS = { a: "selectAll", c: "copy", x: "cut", v: "paste", z: "undo" };
-
-export async function pressKey(page, spec) {
-	const { key, code, keyCode, modifiers, text } = describeKey(spec);
-	const base = { key, code, windowsVirtualKeyCode: keyCode, nativeVirtualKeyCode: keyCode, modifiers };
-	const command = process.platform === "darwin" && modifiers === 4 ? MAC_COMMANDS[key.toLowerCase()] : undefined;
-	await page.send("Input.dispatchKeyEvent", {
-		...base,
-		type: text ? "keyDown" : "rawKeyDown",
-		text,
-		unmodifiedText: text,
-		...(command ? { commands: [command] } : {}),
-	});
-	await page.send("Input.dispatchKeyEvent", { ...base, type: "keyUp" });
-}
-
-/** Page-side sleep, for the debounced saves and Obsidian's own async repaints. */
-// Stretched by LURE_SLOW with every other wait: a pause sized for a runner is
-// too short where the machine is slow on purpose.
-export const PAUSE = (ms) => `await new Promise((r) => setTimeout(r, ${Math.round(ms * SLOW)}));`;
 
 /**
  * Empties the editor area: every pane but one, and that one holding nothing.
@@ -408,17 +193,7 @@ export async function restoreTabTakers(page, running) {
  * a hot corner, and driving the pointer into one takes the window out of
  * compositing, which is worse than what it fixes.
  */
-export async function parkPointer(page) {
-	const size = JSON.parse(
-		await page.evaluate(`return JSON.stringify([window.innerWidth, window.innerHeight]);`),
-	);
-	await page.send("Input.dispatchMouseEvent", {
-		type: "mouseMoved",
-		x: Math.max(0, size[0] - 8),
-		y: Math.round(size[1] / 2),
-		buttons: 0,
-	});
-}
+export const parkPointer = park;
 
 export const CLEAR_NOTICES = `document.querySelectorAll(".notice").forEach((n) => n.remove());`;
 
@@ -637,34 +412,6 @@ export async function canRenameFiles(page, at = "LureRenameProbe") {
 	`);
 }
 
-/**
- * Whether this window is actually compositing frames.
- *
- * Every geometry assertion in the suites rests on the row having refitted,
- * and the refit runs from a `ResizeObserver` — which, like
- * `requestAnimationFrame`, is delivered in the rendering steps. A window that
- * Chromium has stopped painting delivers neither, so the divider moves, the
- * box really does get narrower, and the row keeps the previous width's
- * layout. Every measurement then describes a row that was never fitted, and
- * the failures it produces are detailed, plausible and entirely fictional.
- *
- * The existing gates cannot see this. `document.visibilityState` reads
- * "visible", `document.hidden` is false and `document.hasFocus()` is true in
- * exactly this state — measured. Counting frames is the only question that
- * answers it: no frames in half a second means nothing measured here is worth
- * reporting.
- */
-export async function isPainting(page) {
-	const frames = await page.evaluate(`
-		let frames = 0;
-		const tick = () => { frames++; requestAnimationFrame(tick); };
-		requestAnimationFrame(tick);
-		await new Promise((r) => setTimeout(r, 500));
-		return frames;
-	`);
-	return Number(frames) > 0;
-}
-
 export async function canFocusEditable(page, notePath) {
 	return await page.evaluate(`
 		const file = app.vault.getAbstractFileByPath(${JSON.stringify(notePath)});
@@ -697,11 +444,3 @@ export async function canFocusEditable(page, notePath) {
 	`);
 }
 
-/**
- * A machine path the way the suites were written to read one: `C:\\a\\b`
- * becomes `/C:/a/b`, so an assertion about where a path starts and ends holds
- * on Windows as on Linux. Anything that is not a string comes back as it is.
- */
-export function asPosix(value) {
-	return typeof value === "string" ? value.replace(/\\/g, "/").replace(/^([A-Za-z]):/, "/$1:") : value;
-}
