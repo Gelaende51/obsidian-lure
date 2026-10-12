@@ -72,7 +72,9 @@ jobs:
           # only the tool cache once setup-node adds to it: no /usr/bin, no sh.
           echo "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> "$GITHUB_PATH"
           command -v tar >/dev/null && exit 0
-          if command -v zypper >/dev/null; then zypper --non-interactive --gpg-auto-import-keys refresh && zypper --non-interactive install bash-sh tar gzip
+          # A font: openSUSE's images have none, and text with no font lays out
+          # with no height (a long textarea then has nothing to scroll).
+          if command -v zypper >/dev/null; then zypper --non-interactive --gpg-auto-import-keys refresh && zypper --non-interactive install bash-sh tar gzip dejavu-fonts
           elif command -v dnf >/dev/null; then dnf install -y tar gzip
           elif command -v pacman >/dev/null; then pacman -Sy --noconfirm tar gzip
           else apt-get update -q && apt-get install -y -q tar gzip; fi
@@ -359,7 +361,7 @@ jobs:
           envs: "SUITES VERSIONS"
           prepare: |
             # pgrep and pkill are in FreeBSD's base system.
-            pkg install -y node npm bash curl git xorg-vfbserver xauth python3 gmake
+            pkg install -y node npm bash curl git xorg-vfbserver xauth python3 gmake dejavu
             # The scripts ask for /bin/bash; FreeBSD keeps it in /usr/local.
             ln -sf /usr/local/bin/bash /bin/bash
             pkg search -q '^electron[0-9]' | sort -V | tail -1 | xargs pkg install -y
