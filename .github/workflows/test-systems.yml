@@ -29,7 +29,7 @@ on:
       target:
         description: "What to run on"
         type: choice
-        options: [distros, vault-elsewhere, distros-next, electron-next, runner-next, npm-next, peer-betas, obsidian-beta, old-engine, server-2019, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits, wayland, nix, alpine, peer-residue, freeze-probe, all]
+        options: [distros, vault-elsewhere, distros-next, electron-next, runner-next, npm-next, peer-betas, old-engine, server-2019, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits, wayland, nix, alpine, peer-residue, freeze-probe, all]
         default: distros
       suites:
         description: "Suites, space separated"
@@ -853,59 +853,10 @@ jobs:
           OBSIDIAN_EXTRA_ARGS: --no-sandbox
         run: .dev/ci-suites.sh
 
-  # Obsidian's own beta (early access), which needs an Insider account:
-  # repository secrets OBSIDIAN_EMAIL and OBSIDIAN_PASSWORD, set by the
-  # maintainer. Without them, or with no beta out, there is nothing to run.
-  obsidian-beta:
-    if: inputs.target == 'obsidian-beta'
-    runs-on: ubuntu-latest
-    timeout-minutes: 150
-    env:
-      OBSIDIAN_EMAIL: ${{ secrets.OBSIDIAN_EMAIL }}
-      OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: "24"
-          cache: npm
-      - id: beta
-        name: Is there a beta, and may it be fetched?
-        run: |
-          if [ -z "$OBSIDIAN_EMAIL" ] || [ -z "$OBSIDIAN_PASSWORD" ]; then
-            echo "::notice::No Insider credentials (OBSIDIAN_EMAIL, OBSIDIAN_PASSWORD): Obsidian's beta is not tested."
-            echo "run=false" >> "$GITHUB_OUTPUT"; exit 0
-          fi
-          # Sign in now, beta or not, so a wrong password or a 2FA prompt shows
-          # before a beta is out. Only the outcome is printed.
-          node -e '
-            fetch("https://api.obsidian.md/user/signin", { method: "POST",
-              // As obsidian-launcher asks, from the app origin, so the answer is the one it will get.
-              headers: { "content-type": "application/json", origin: "app://obsidian.md", "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36" },
-              body: JSON.stringify({ email: process.env.OBSIDIAN_EMAIL, password: process.env.OBSIDIAN_PASSWORD, mfa: "" }) })
-              .then((r) => r.json()).then((j) => {
-                if (j.token) { console.log("signed in to the Obsidian account"); return; }
-                console.log(`::error::Obsidian sign-in failed: ${String(j.error ?? "no token").slice(0, 120)}`); process.exit(1);
-              });'
-          npm install --no-save --no-package-lock obsidian-launcher@3 >/dev/null 2>&1
-          versions=$(node --input-type=module -e 'const { default: L } = await import("obsidian-launcher"); const l = new L(); const [b] = await l.resolveVersion("latest-beta"); const [s] = await l.resolveVersion("latest"); console.log(b + " " + s);')
-          read -r beta stable <<< "$versions"
-          echo "beta $beta, release $stable"
-          if [ "$beta" = "$stable" ]; then echo "::notice::No beta newer than $stable."; echo "run=false" >> "$GITHUB_OUTPUT"; else echo "run=true" >> "$GITHUB_OUTPUT"; fi
-      - if: steps.beta.outputs.run == 'true'
-        run: npm ci && node esbuild.config.mjs production
-      - if: steps.beta.outputs.run == 'true'
-        name: Run the suites
-        env:
-          SUITES: ${{ inputs.suites }}
-          VERSIONS: latest-beta
-          OBSIDIAN_EXTRA_ARGS: --no-sandbox
-        run: .dev/ci-suites.sh
-
   # Started by the environment watch (watch.yml): a failure is reported as an
   # issue naming what changed, since nobody is looking at a scheduled run.
   report:
-    needs: [distros, vault-elsewhere, old-engine, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits-machine, limits-display, wayland, nix, alpine, server-2019, electron-next, runner-next, npm-next, peer-betas, obsidian-beta]
+    needs: [distros, vault-elsewhere, old-engine, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits-machine, limits-display, wayland, nix, alpine, server-2019, electron-next, runner-next, npm-next, peer-betas]
     if: always() && inputs.why != '' && contains(needs.*.result, 'failure')
     runs-on: ubuntu-latest
     permissions:
@@ -927,7 +878,7 @@ jobs:
 
   # The same target passing again closes its issue.
   all-clear:
-    needs: [distros, vault-elsewhere, old-engine, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits-machine, limits-display, wayland, nix, alpine, server-2019, electron-next, runner-next, npm-next, peer-betas, obsidian-beta]
+    needs: [distros, vault-elsewhere, old-engine, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits-machine, limits-display, wayland, nix, alpine, server-2019, electron-next, runner-next, npm-next, peer-betas]
     if: always() && inputs.why != '' && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled')
     runs-on: ubuntu-latest
     permissions:

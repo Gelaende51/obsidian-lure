@@ -493,7 +493,7 @@ Three things change under Lure without a commit here, and each one runs the test
 
 | Target | What is next | Needs |
 |---|---|---|
-| `obsidian-beta` | Obsidian's current beta (early access) | secrets `OBSIDIAN_EMAIL`, `OBSIDIAN_PASSWORD` of an Insider account without two-factor sign-in; skipped without them, or when no beta is newer than the release |
+| Obsidian's beta | not here: the logs of this public repository are public, and early-access builds are not to be reported in public. `.dev/beta-local.sh` runs the same suites on the maintainer's machine, in a Debian container (Docker or Podman), with the Insider account from `.personal/personal.md`; logs stay in `.personal/beta-logs/` | an Insider account without two-factor sign-in |
 | `electron-next` | Obsidian's app on `electron@beta` | — (also run by the daily watch when a new Electron beta appears) |
 | `distros-next` | `debian:sid`, `fedora:rawhide`, `ubuntu:devel`, `opensuse/tumbleweed` | — |
 | `runner-next` | GitHub's `ubuntu-26.04` image | — |
@@ -501,13 +501,6 @@ Three things change under Lure without a commit here, and each one runs the test
 | `peer-betas` | each neighbouring plugin's newest pre-release, where newer than its release (`.dev/peer-betas.mjs`, `PEER_CHANNEL=beta`) | — |
 
 None of them is part of a release. A failing target opens one issue, *Tests fail on <target>*; later failures add to it, and a later pass closes it. A canary failure is a warning about something unreleased: read it against the same suite on the released versions before calling it Lure's.
-
-The secrets are set by the maintainer, never by a script:
-
-```bash
-gh secret set OBSIDIAN_EMAIL --repo Gelaende51/obsidian-lure      # asks for the value, hidden
-gh secret set OBSIDIAN_PASSWORD --repo Gelaende51/obsidian-lure
-```
 
 ## The listing
 

@@ -1,7 +1,8 @@
-# What is coming, tested before it arrives: Obsidian's beta, the next
-# Electron, the next distributions and runner image, the next build tools and
+# What is coming, tested before it arrives: the next Electron, the next distributions and runner image, the next build tools and
 # API types, and the neighbouring plugins' pre-releases. Weekly, never part of
-# a release. Each runs as a target of test-systems.yml with `why` set, so a
+# a release. (Obsidian's own beta is tested on the maintainer's machine,
+# .dev/beta-local.sh: this repository's logs are public, early access is not.)
+# Each runs as a target of test-systems.yml with `why` set, so a
 # failure opens (or adds to) one issue per target — "Tests fail on <target>" —
 # and a later pass closes it.
 name: Canary
@@ -25,7 +26,6 @@ jobs:
           systems="test-external test-links test-rename test-create test-drop test-urls test-html test-glob test-tab"
           peers="test-compat test-compat-ui test-foldernote test-keyleak"
           run() { gh workflow run test-systems.yml --ref main -f target="$1" -f suites="$2" -f obsidian=latest -f why="Canary ($(date -u +%F)): $3"; }
-          run obsidian-beta "$all" "Obsidian's current beta"
           run electron-next "$all" "Obsidian's app on the next Electron (electron@beta)"
           run distros-next "$systems" "debian:sid, fedora:rawhide, ubuntu:devel, opensuse/tumbleweed"
           run runner-next "$systems" "GitHub's next Ubuntu runner (ubuntu-26.04)"
