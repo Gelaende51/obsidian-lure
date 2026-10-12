@@ -1044,6 +1044,7 @@ test("viewer menu: a file with no reading to edit can still be deleted", async (
 	for (let i = 0; i < 75 && existsSync(pic); i++) await new Promise((done) => setTimeout(done, 200));
 	if (existsSync(pic)) {
 		const later = await page.evaluate(`return [...document.querySelectorAll(".notice")].map((n) => n.textContent);`);
+		console.log(`    after the wait: ${await page.evaluate(`return JSON.stringify({ dialog: !!document.querySelector(".modal-container"), menus: document.querySelectorAll(".menu").length });`)}`);
 		r.after = [...(r.after ?? []), ...later];
 		// The trash still busy after a long wait — Lure says so — is this
 		// machine's speed, not a refusal.
