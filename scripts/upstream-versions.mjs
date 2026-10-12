@@ -28,7 +28,19 @@ const ids = [...readFileSync(join(root, ".dev/ci-run.sh"), "utf8").matchAll(/-p 
 const [desktop, plugins] = await Promise.all([json(`${RAW}/desktop-releases.json`), json(`${RAW}/community-plugins.json`)]);
 const repoOf = Object.fromEntries(plugins.map((p) => [p.id, p.repo]));
 
-const now = { obsidian: desktop.latestVersion, plugins: {} };
+// Obsidian's newest beta (early access) when it is newer than the release —
+// recorded here, in public, as a version number only; it is tested on the
+// maintainer's machine (.dev/beta-local.sh), since these logs are public.
+const newer = (a, b) => a.localeCompare(b, "en", { numeric: true }) > 0;
+let beta = null;
+try {
+	const list = await json("https://raw.githubusercontent.com/jesse-r-s-hines/wdio-obsidian-service/HEAD/obsidian-versions.json");
+	const newest = (list.versions ?? []).filter((v) => v.isBeta).map((v) => v.version).sort((a, b) => a.localeCompare(b, "en", { numeric: true })).at(-1);
+	if (newest && newer(newest, desktop.latestVersion)) beta = newest;
+} catch {
+	beta = undefined; // unreadable: keep what was recorded
+}
+const now = { obsidian: desktop.latestVersion, obsidianBeta: beta, plugins: {} };
 for (const id of ids.sort()) {
 	const repo = repoOf[id];
 	if (!repo) { now.plugins[id] = "not in the directory"; continue; }
@@ -47,8 +59,11 @@ if (!process.argv.includes("--diff")) {
 }
 let before = { obsidian: null, plugins: {} };
 try { before = JSON.parse(readFileSync(join(root, ".github/upstream-versions.json"), "utf8")); } catch {}
+if (now.obsidianBeta === undefined) now.obsidianBeta = before.obsidianBeta ?? null;
+// A new beta is reported on its own: it starts no public test run.
+const betaNew = now.obsidianBeta && now.obsidianBeta !== before.obsidianBeta ? now.obsidianBeta : null;
 const changes = [];
 if (before.obsidian !== now.obsidian) changes.push(`Obsidian ${before.obsidian ?? "—"} → ${now.obsidian}`);
 for (const [id, v] of Object.entries(now.plugins)) if (before.plugins?.[id] !== v) changes.push(`${id} ${before.plugins?.[id] ?? "—"} → ${v}`);
 // For the workflow: whether to test, what changed, and the new state.
-console.log(JSON.stringify({ changed: changes.length > 0, changes, now }));
+console.log(JSON.stringify({ changed: changes.length > 0, changes, betaNew, now }));

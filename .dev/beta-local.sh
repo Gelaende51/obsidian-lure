@@ -49,4 +49,11 @@ if docker info >/dev/null 2>&1; then engine=docker; elif command -v podman >/dev
 		VERSIONS=latest-beta OBSIDIAN_EXTRA_ARGS=--no-sandbox bash .dev/ci-suites.sh 2>&1 | tee /logs/suites.log
 		cp obsidian-*.log /logs/ 2>/dev/null || true
 	' 2>&1 | tee "$LOGS/run.log"
+# What was tested, for .dev/beta-pending.mjs: the beta the launcher resolved,
+# and whether the suites passed. Not when there was nothing to test.
+if [ -f "$LOGS/suites.log" ]; then
+	version=$(awk '/^beta /{print $2}' "$LOGS/versions.txt" | tr -d ,)
+	failed=$(grep -c "::error::" "$LOGS/suites.log" || true)
+	printf '{"version": "%s", "at": "%s", "failedSuites": %s, "logs": "%s"}\n' "$version" "$(date -Iseconds)" "${failed:-0}" "$LOGS" > .personal/beta-logs/tested.json
+fi
 echo "logs: $LOGS"

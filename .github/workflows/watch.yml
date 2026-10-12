@@ -30,6 +30,7 @@ jobs:
     outputs:
       changed: ${{ steps.diff.outputs.changed }}
       changes: ${{ steps.diff.outputs.changes }}
+      beta: ${{ steps.diff.outputs.beta }}
     steps:
       - uses: actions/checkout@v7
       - id: diff
@@ -39,6 +40,7 @@ jobs:
           out=$(node scripts/upstream-versions.mjs --diff)
           echo "changed=$(echo "$out" | jq -r .changed)" >> "$GITHUB_OUTPUT"
           echo "changes=$(echo "$out" | jq -c .changes)" >> "$GITHUB_OUTPUT"
+          echo "beta=$(echo "$out" | jq -r '.betaNew // ""')" >> "$GITHUB_OUTPUT"
           echo "$out" | jq .now > upstream-versions.json
           echo "$out" | jq -r '.changes[]' | sed 's/^/- /' >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v7
@@ -55,7 +57,7 @@ jobs:
 
   record:
     needs: [check, test]
-    if: always() && needs.check.outputs.changed == 'true' && needs.test.result != 'cancelled' && needs.test.result != 'skipped'
+    if: always() && needs.test.result != 'cancelled' && ((needs.check.outputs.changed == 'true' && needs.test.result != 'skipped') || needs.check.outputs.beta != '')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -74,7 +76,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add .github/upstream-versions.json
-          git commit -m "Tested against new upstream versions: $RESULT" -m "$list"
+          # A new Obsidian beta alone is recorded for the maintainer's machine
+          # to test (.dev/beta-pending.mjs finds it there); its results stay off GitHub.
+          if [ "${{ needs.check.outputs.changed }}" = true ]; then subject="Tested against new upstream versions: $RESULT"; else subject="New Obsidian beta ${{ needs.check.outputs.beta }}: to be tested locally"; RESULT=success; fi
+          [ -n "${{ needs.check.outputs.beta }}" ] && list="$list"$'\n'"- Obsidian beta ${{ needs.check.outputs.beta }} (tested locally, .dev/beta-local.sh)"
+          git commit -m "$subject" -m "$list"
           # The tests take a while and main may have moved meanwhile: put the
           # record on top of it, and say so in the issue either way.
           for _ in 1 2 3; do git pull -q --rebase origin main && git push -q origin HEAD:main && break; sleep 5; done

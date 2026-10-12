@@ -493,7 +493,7 @@ Three things change under Lure without a commit here, and each one runs the test
 
 | Target | What is next | Needs |
 |---|---|---|
-| Obsidian's beta | not here: the logs of this public repository are public, and early-access builds are not to be reported in public. `.dev/beta-local.sh` runs the same suites on the maintainer's machine, in a Debian container (Docker or Podman), with the Insider account from `.personal/personal.md`; logs stay in `.personal/beta-logs/` | an Insider account without two-factor sign-in |
+| Obsidian's beta | not here: the logs of this public repository are public, and early-access builds are not to be reported in public. The daily watch records a new beta's version number (`obsidianBeta` in `.github/upstream-versions.json`); `.dev/beta-pending.mjs` tells a local session it is untested, and `.dev/beta-local.sh` runs the same suites on the maintainer's machine, in a Debian container (Docker or Podman), with the Insider account from `.personal/personal.md`; logs stay in `.personal/beta-logs/` | an Insider account without two-factor sign-in |
 | `electron-next` | Obsidian's app on `electron@beta` | — (also run by the daily watch when a new Electron beta appears) |
 | `distros-next` | `debian:sid`, `fedora:rawhide`, `ubuntu:devel`, `opensuse/tumbleweed` | — |
 | `runner-next` | GitHub's `ubuntu-26.04` image | — |
