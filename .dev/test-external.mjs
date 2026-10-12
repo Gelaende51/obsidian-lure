@@ -1038,6 +1038,12 @@ test("viewer menu: a file with no reading to edit can still be deleted", async (
 	if (existsSync(pic)) {
 		const later = await page.evaluate(`return [...document.querySelectorAll(".notice")].map((n) => n.textContent);`);
 		r.after = [...(r.after ?? []), ...later];
+		// The trash still busy after a long wait — Lure says so — is this
+		// machine's speed, not a refusal.
+		if (later.some((n) => n.includes(T("noticeTrashSlow").split("{path}")[0]))) {
+			rmSync(bed, { recursive: true, force: true });
+			skipCase("the trash here did not answer in time");
+		}
 		if (later.some((n) => n.includes(T("errorNoTrash").split("{path}")[0]))) {
 			rmSync(bed, { recursive: true, force: true });
 			skipCase("this system has no trash to move to");

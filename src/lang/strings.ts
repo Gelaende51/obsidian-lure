@@ -92,6 +92,7 @@ export const EN = {
 	noticeRenameFailed: "Could not rename/move file: {error}",
 	noticeCopyFailed: "Could not copy file: {error}",
 	noticeDeleteFailed: "Could not delete file: {error}",
+	noticeTrashSlow: "The trash has not answered yet; {path} is where it was so far.",
 	noticeCopied: 'Copied to "{path}"',
 	noticeIsFolder: '"{path}" is a folder.',
 	noticeNoSelection: "No file selected.",
