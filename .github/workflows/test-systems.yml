@@ -176,10 +176,7 @@ jobs:
   # "restricted" takes the sandbox's home and host access away and leaves
   # only the folder the vault copy and its settings live in: what Lure does
   # when the paths it is asked about are out of reach.
-  # Flathub's Obsidian, with its own permissions and restricted to the test
-  # folder (electron-template's reusable workflow). Restricted: what is out of
-  # reach is skipped, and the external suite checks that Lure says the
-  # sandbox is why.
+  # Run through electron-template's reusable flatpak workflow.
   flatpak:
     if: inputs.target == 'flatpak' || inputs.target == 'all'
     uses: Gelaende51/electron-template/.github/workflows/flatpak.yml@v0.5.0
