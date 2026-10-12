@@ -855,41 +855,15 @@ jobs:
 
   # Started by the environment watch (watch.yml): a failure is reported as an
   # issue naming what changed, since nobody is looking at a scheduled run.
+  # One issue per target, closed when it passes again (development-template).
   report:
     needs: [distros, vault-elsewhere, old-engine, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits-machine, limits-display, wayland, nix, alpine, server-2019, electron-next, runner-next, npm-next, peer-betas]
-    if: always() && inputs.why != '' && contains(needs.*.result, 'failure')
-    runs-on: ubuntu-latest
+    if: always() && inputs.why != ''
+    uses: Gelaende51/development-template/.github/workflows/target-issue.yml@v1.0.1
     permissions:
       issues: write
-    steps:
-      - env:
-          GH_TOKEN: ${{ github.token }}
-          WHY: ${{ inputs.why }}
-          TARGET: ${{ inputs.target }}
-          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        run: |
-          # One issue per target, kept open: a later failure is a comment on
-          # it, so a canary that fails week after week does not pile up.
-          title="Tests fail on $TARGET"
-          body="$(printf '%s\n\nRun: %s' "$WHY" "$RUN")"
-          open=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"$title\" in:title" --json number,title -q ".[] | select(.title == \"$title\") | .number" | head -1)
-          if [ -n "$open" ]; then gh issue comment "$open" --repo "$GITHUB_REPOSITORY" --body "$body"
-          else gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" --body "$body"; fi
-
-  # The same target passing again closes its issue.
-  all-clear:
-    needs: [distros, vault-elsewhere, old-engine, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits-machine, limits-display, wayland, nix, alpine, server-2019, electron-next, runner-next, npm-next, peer-betas]
-    if: always() && inputs.why != '' && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled')
-    runs-on: ubuntu-latest
-    permissions:
-      issues: write
-    steps:
-      - env:
-          GH_TOKEN: ${{ github.token }}
-          TARGET: ${{ inputs.target }}
-          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        run: |
-          title="Tests fail on $TARGET"
-          for n in $(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"$title\" in:title" --json number,title -q ".[] | select(.title == \"$title\") | .number"); do
-            gh issue close "$n" --repo "$GITHUB_REPOSITORY" --comment "Passing again: $RUN"
-          done
+    with:
+      target: ${{ inputs.target }}
+      why: ${{ inputs.why }}
+      failed: ${{ contains(needs.*.result, 'failure') }}
+      cancelled: ${{ contains(needs.*.result, 'cancelled') }}
