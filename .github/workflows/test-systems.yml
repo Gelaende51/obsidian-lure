@@ -99,56 +99,37 @@ jobs:
 
   linux-arm:
     if: inputs.target == 'linux-arm' || inputs.target == 'all'
-    runs-on: ubuntu-24.04-arm
-    timeout-minutes: 150
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: "24"
-          cache: npm
-      - run: npm ci
-      - run: node esbuild.config.mjs production
-      - name: System packages
-        run: sudo apt-get update -q && sudo apt-get install -y -q xvfb libfuse2t64 || sudo apt-get install -y -q xvfb libfuse2
-      - name: Run the suites
-        env:
-          OBSIDIAN_EXTRA_ARGS: --no-sandbox
-          SUITES: ${{ inputs.suites }}
-        run: .dev/ci-suites.sh
+    uses: Gelaende51/electron-template/.github/workflows/platform.yml@v0.10.0
+    with:
+      runs-on: ubuntu-24.04-arm
+      setup: sudo apt-get update -q && sudo apt-get install -y -q xvfb libfuse2t64 || sudo apt-get install -y -q xvfb libfuse2
+      suites: ${{ inputs.suites }}
+      versions: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
+      run: .dev/ci-suites.sh
+      suite-env: |
+        OBSIDIAN_EXTRA_ARGS=--no-sandbox
 
   # Node is installed as x64, so the launcher fetches the x64 build and the
   # machine emulates it. The first suite says which architecture Obsidian ran.
+  # Rosetta is a probe: test-tab passes on macOS natively and on Windows'
+  # emulation, and loses 15 folder-walk cases (the field never opens) only
+  # under Rosetta, where the run also outlasts the hour. Obsidian's Mac
+  # build is universal, so users there run the Arm one unless they force it.
   emulated:
     if: inputs.target == 'emulated' || inputs.target == 'all'
     strategy:
       fail-fast: false
       matrix:
         os: [windows-11-arm, macos-15]
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 150
-    name: x64 emulated on ${{ matrix.os }}
-    # Rosetta is a probe: test-tab passes on macOS natively and on Windows'
-    # emulation, and loses 15 folder-walk cases (the field never opens) only
-    # under Rosetta, where the run also outlasts the hour. Obsidian's Mac
-    # build is universal, so users there run the Arm one unless they force it.
-    continue-on-error: ${{ matrix.os == 'macos-15' }}
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: "24"
-          architecture: x64
-      - run: npm ci
-      - run: node esbuild.config.mjs production
-      - name: Run the suites
-        shell: bash
-        env:
-          LURE_SLOW: "3"
-          SUITES: ${{ inputs.suites }}
-        run: |
-          node -p '"node runs as " + process.arch'
-          .dev/ci-suites.sh
+    uses: Gelaende51/electron-template/.github/workflows/platform.yml@v0.10.0
+    with:
+      runs-on: ${{ matrix.os }}
+      node-arch: x64
+      slow: 3
+      probe: ${{ matrix.os == 'macos-15' }}
+      suites: ${{ inputs.suites }}
+      versions: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
+      run: .dev/ci-suites.sh
 
   system-electron:
     if: inputs.target == 'system-electron' || inputs.target == 'all'
@@ -265,8 +246,7 @@ jobs:
 
   # Little memory and half a CPU: a container capped by Docker, so timing
   # that only holds on a fast machine shows.
-  # 1.5 GB and half a CPU; a small screen, HiDPI, no GPU
-  # (electron-template's reusable workflow).
+  # And odd displays: a small screen, HiDPI, no GPU (electron-template).
   limits:
     if: inputs.target == 'limits' || inputs.target == 'all'
     uses: Gelaende51/electron-template/.github/workflows/limits.yml@v0.9.0
