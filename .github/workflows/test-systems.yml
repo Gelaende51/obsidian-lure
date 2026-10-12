@@ -192,27 +192,15 @@ jobs:
 
   snap:
     if: inputs.target == 'snap' || inputs.target == 'all'
-    runs-on: ubuntu-latest
-    timeout-minutes: 150
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: "24"
-          cache: npm
-      - run: npm ci
-      - run: node esbuild.config.mjs production
-      - name: Obsidian from the Snap store
-        run: |
-          sudo apt-get update -q && sudo apt-get install -y -q xvfb
-          sudo snap install obsidian --classic
-          snap info obsidian | head -12
-      - name: Run the suites
-        env:
-          OBSIDIAN_COMMAND: /snap/bin/obsidian
-          OBSIDIAN_EXTRA_ARGS: --no-sandbox
-          SUITES: ${{ inputs.suites }}
-        run: .dev/ci-suites.sh
+    uses: Gelaende51/electron-template/.github/workflows/snap.yml@v0.7.0
+    with:
+      snap: obsidian
+      command-var: OBSIDIAN_COMMAND
+      suites: ${{ inputs.suites }}
+      versions: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
+      run: .dev/ci-suites.sh
+      suite-env: |
+        OBSIDIAN_EXTRA_ARGS=--no-sandbox
 
   # The Windows build, unpacked from its installer into a Wine prefix. Paths
   # reach it as Wine spells them. Not working yet (2026-10-11): Obsidian starts
