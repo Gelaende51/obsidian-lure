@@ -1487,7 +1487,13 @@ test("locations: picking a place that contains this note lands on the note", asy
 		await app.workspace.getLeaf(false).openFile(md);
 		${PAUSE(400)}
 		${breadcrumb}
-		const home = bc.locationEntries().find((l) => l.kind === "home");
+		// The nearest place that holds the note, whatever it is — the home
+		// folder, a drive, a mount or the root: a vault can be anywhere.
+		const abs = app.vault.adapter.getFullPath(md.path);
+		const norm = (p) => p.toLowerCase().replace(/\\\\/g, "/").replace(/\\/+$/, "");
+		const home = bc.locationEntries()
+			.filter((l) => !l.isCurrentVault && (norm(abs) + "/").startsWith(norm(l.path) + "/"))
+			.sort((a, b) => b.path.length - a.path.length)[0];
 		bc.goToLocation(home.path);
 		${PAUSE(600)}
 		const container = app.workspace.activeLeaf.view.containerEl
@@ -1507,10 +1513,6 @@ test("locations: picking a place that contains this note lands on the note", asy
 	// The whole path from that place, with its *first folder* selected — the
 	// same shape a folder click gives. Landing deep with only the file name
 	// in the field hid the path it had chosen for you.
-	// Under Wine the home folder (C:\\users\\…) is not where the vault was
-	// copied (Z:\\home\\…, Linux's home): nothing to land on from there.
-	const norm = (p) => p.toLowerCase().replace(/\\/g, "/").replace(/\/+$/, "");
-	if (!norm(r.absolute).startsWith(norm(r.home) + "/")) skipCase("the home folder does not contain the vault here");
 	const relative = r.absolute.slice(r.home.length).replace(/^[\\/]+/, "");
 	expect("the trail stays at the place picked", r.folder, r.home);
 	expect("the whole path from it is offered", r.field, relative);
