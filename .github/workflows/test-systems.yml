@@ -334,27 +334,12 @@ jobs:
   # Electron's own Wayland backend.
   wayland:
     if: inputs.target == 'wayland' || inputs.target == 'all'
-    runs-on: ubuntu-latest
-    timeout-minutes: 150
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: "24"
-          cache: npm
-      - run: npm ci
-      - run: node esbuild.config.mjs production
-      - name: Weston, headless
-        run: sudo apt-get update -q && sudo apt-get install -y -q weston
-      - name: Run the suites
-        env:
-          OBSIDIAN_EXTRA_ARGS: --no-sandbox --ozone-platform=wayland --enable-features=UseOzonePlatform,WaylandWindowDecorations
-          SUITES: ${{ inputs.suites }}
-        run: |
-          export XDG_RUNTIME_DIR="$RUNNER_TEMP/xdg" && mkdir -p -m 700 "$XDG_RUNTIME_DIR"
-          weston --backend=headless --socket=wayland-1 --width=1920 --height=1080 >weston.log 2>&1 &
-          sleep 3
-          WAYLAND_DISPLAY=wayland-1 .dev/ci-suites.sh
+    uses: Gelaende51/electron-template/.github/workflows/wayland.yml@v0.8.0
+    with:
+      flags-var: OBSIDIAN_EXTRA_ARGS
+      suites: ${{ inputs.suites }}
+      versions: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
+      run: .dev/ci-suites.sh
 
   # Obsidian as Nix packages it: wrapped to run on Nix's own Electron.
   nix:
