@@ -13,6 +13,10 @@ const REASONS = {
 	ENAMETOOLONG: "errorNameTooLong",
 	EEXIST: "errorExists",
 	ENOTRASH: "errorNoTrash",
+	// A drive that cannot do it at all: links on most network shares and
+	// FAT/exFAT drives.
+	ENOTSUP: "errorNotSupported",
+	EOPNOTSUPP: "errorNotSupported",
 } as const;
 
 /** The codes a sandbox gives for a folder it was not let into. */

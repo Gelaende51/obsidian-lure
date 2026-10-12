@@ -239,6 +239,7 @@ export const EN = {
 	errorInUse: "{path} is in use by another program.",
 	errorNameTooLong: "The name is too long for this drive.",
 	errorExists: "{path} already exists.",
+	errorNotSupported: "The drive {path} is on cannot do this (links are not possible on many network shares and USB drives).",
 	errorNoTrash: "There is no trash to move {path} to here, so nothing was deleted.",
 	errorSandbox: "Obsidian runs in a {sandbox} sandbox, which only reaches the folders it was given.",
 } as const;

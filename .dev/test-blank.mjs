@@ -408,6 +408,9 @@ test("a view this plugin has never heard of is named after itself", async () => 
 			const fresh = app.workspace.getLeaf("tab");
 			app.workspace.setActiveLeaf(fresh, { focus: true });
 			${PAUSE(900)}
+			// Windows draws the stranger's header later: wait for the row to say something.
+			const row = () => app.workspace.getMostRecentLeaf().view.containerEl.querySelector(".view-header-title-container")?.textContent ?? "";
+			for (let i = 0; i < 30 && !row().trim(); i++) ${PAUSE(150)}
 			return app.workspace.getMostRecentLeaf().view.getViewType();
 		`);
 		expect("the plugin answered the new tab", type, (v) => v !== "empty");

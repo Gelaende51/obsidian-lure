@@ -673,7 +673,7 @@ jobs:
           - { place: "outside home (/srv)", os: ubuntu-latest, kind: srv }
           - { place: "SMB network share", os: ubuntu-latest, kind: smb }
           - { place: "second drive (D:)", os: windows-latest, kind: drive }
-          - { place: "UNC share (\\\\localhost\\lure)", os: windows-latest, kind: unc }
+          - { place: "UNC share (\\\\<machine>\\lure)", os: windows-latest, kind: unc }
     runs-on: ${{ matrix.os }}
     timeout-minutes: 150
     name: vault on ${{ matrix.place }}
@@ -707,7 +707,9 @@ jobs:
             unc)
               mkdir -p /c/lure-share
               powershell -NoProfile -Command "New-SmbShare -Name lure -Path C:\\lure-share -FullAccess Everyone | Out-Null; Get-SmbShare -Name lure"
-              echo "LURE_VAULT_PARENT=\\\\localhost\\lure" >> "$GITHUB_ENV" ;;
+              # The machine's own name, not localhost: a file:// URL keeps a
+              # real host, and localhost is emptied by the URL parser.
+              echo "LURE_VAULT_PARENT=\\\\$COMPUTERNAME\\lure" >> "$GITHUB_ENV" ;;
           esac
       - name: Run the suites
         shell: bash

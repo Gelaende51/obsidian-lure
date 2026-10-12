@@ -453,12 +453,25 @@ export function listSystemLocations(currentVaultPath: string): SystemLocation[] 
 				? listBsdMounts()
 				: listLinuxMounts();
 
-	return [
+	const places = [
 		...listVaults(currentVaultPath),
 		...anchors,
 		// The root entry already covers whichever drive holds it.
 		...mounts.filter((mount) => !samePath(mount.path, rootPath)),
 	];
+	// A vault on a network share (\\server\share\…) is on no drive letter and
+	// under no mount listed: its share is a place of its own.
+	const vaultRoot = currentVaultPath ? parse(currentVaultPath).root : "";
+	if (vaultRoot && !places.some((place) => place.kind !== "vault" && isInside(currentVaultPath, place.path))) {
+		places.push({
+			label: vaultRoot.replace(/[\\/]+$/, "") || vaultRoot,
+			path: vaultRoot,
+			kind: "drive",
+			device: /^[\\/]{2}/.test(vaultRoot) ? "network" : "unknown",
+			isCurrentVault: false,
+		});
+	}
+	return places;
 }
 
 /**

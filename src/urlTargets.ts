@@ -74,6 +74,10 @@ function decodeFileUrl(href: string): string | null {
 	try {
 		const url = new URL(href);
 		const path = safeDecode(url.pathname);
+		// A host is a network share on Windows — `file://server/share/a.md` is
+		// `\\server\share\a.md`, as Windows itself writes it. (`localhost`
+		// never gets here: the URL parser empties it, as the standard says.)
+		if (url.host) return isWindows() ? `\\\\${url.host}${path.replace(/\//g, "\\")}` : null;
 		return /^\/[A-Za-z]:/.test(path) ? path.slice(1) : path;
 	} catch {
 		return null;
@@ -115,4 +119,8 @@ export function isAbsolutePath(text: string): boolean {
  */
 export function slashBelongsToScheme(valueSoFar: string): boolean {
 	return /^[a-z][a-z0-9+.-]*:\/?$/i.test(valueSoFar) || /^[a-z][a-z0-9+.-]*:\/\//i.test(valueSoFar);
+}
+
+function isWindows(): boolean {
+	return (window as unknown as { process?: { platform?: string } }).process?.platform === "win32";
 }

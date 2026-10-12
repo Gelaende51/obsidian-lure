@@ -1544,9 +1544,18 @@ test("the list of a right-hand pane opens under its own field, not the left pane
 });
 
 test("the offer ignores case, spells the name as it is, and prefers the spelling typed", async () => {
-	// Two folders that differ only in case cannot both exist on Windows, nor
-	// on macOS's default (case-insensitive) file system.
-	if (process.platform === "win32" || process.platform === "darwin") skipCase("needs a case-sensitive file system");
+	// Two folders that differ only in case cannot both exist where the
+	// vault's drive ignores case: Windows, macOS's default, most network
+	// shares. Asked of the drive itself, not guessed from the system.
+	const ignoresCase = await page.evaluate(`
+		const fs = require("fs"), path = require("path");
+		const probe = path.join(app.vault.adapter.basePath, ".lure-case-probe");
+		fs.writeFileSync(probe, "");
+		const same = fs.existsSync(path.join(app.vault.adapter.basePath, ".LURE-CASE-PROBE"));
+		fs.unlinkSync(probe);
+		return same;
+	`);
+	if (ignoresCase) skipCase("the vault's drive ignores case");
 	const upper = `${PREFIX}zCase`, lower = `${PREFIX}zcase`;
 	await page.evaluate(`for (const f of ${JSON.stringify([upper, lower])}) if (!app.vault.getAbstractFileByPath(f)) await app.vault.createFolder(f); return true;`);
 	try {

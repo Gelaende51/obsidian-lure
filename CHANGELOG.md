@@ -12,6 +12,7 @@ Every release of Lure, newest first. What has landed since the last release is u
 
 ### Fixed
 
+- **Vaults on network shares.** A vault on a Windows share (`\\server\share\…`) has that share among the places, since it is on no drive letter. A `file://server/share/…` URL opens the file on that share. Where the drive cannot make links at all, as most network shares and USB drives cannot, asking for a hard or symbolic link says so in words.
 - **A delete outside the vault that the system's trash is slow to take says so** after ten seconds, until the trash answers, instead of nothing happening on screen.
 - **A file the viewer cannot read says why in words**, as the other file operations do — and in a Flatpak or Snap, that the sandbox may keep it out of reach — instead of Node's error code.
 

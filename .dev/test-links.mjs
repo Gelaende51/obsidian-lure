@@ -13,6 +13,7 @@
 
 import { CLEAR_NOTICES, connect, PAUSE, pressKey, quiesce, reloadPlugin, parkPointer, setSettings } from "./cdpSession.mjs";
 import { createSuite, skipCase } from "./harness.mjs";
+import { readFileSync } from "node:fs";
 
 const DIR = "Lure-links";
 const NOTE = `${DIR}/Note.md`;
@@ -34,8 +35,26 @@ const fixture = `
 	return true;
 `;
 
+/**
+ * Whether the vault's drive can make hard and symbolic links at all: most
+ * network shares (SMB) and FAT/exFAT drives cannot. There the cases that
+ * make links are left out, and one asks instead that Lure says so.
+ */
+const LINKS = await page.evaluate(`
+	const fs = require("fs"), path = require("path");
+	const probe = path.join(app.vault.adapter.basePath, ".lure-link-probe");
+	fs.writeFileSync(probe, "");
+	const can = { hard: true, symbolic: true };
+	try { fs.linkSync(probe, probe + "-h"); fs.unlinkSync(probe + "-h"); } catch { can.hard = false; }
+	try { fs.symlinkSync(".lure-link-probe", probe + "-s"); fs.unlinkSync(probe + "-s"); } catch { can.symbolic = false; }
+	fs.unlinkSync(probe);
+	return JSON.stringify(can);
+`).then(JSON.parse);
+const MAKES_LINKS = /hard link|symbolic link|link rows|each kind has its own list|names its origin/;
+
 const { test, expect, run } = createSuite({
 	outside: (name) => name.includes("outside the vault"),
+	skip: (name) => (!LINKS.hard || !LINKS.symbolic) && MAKES_LINKS.test(name),
 	reset: async () => {
 		await reloadPlugin(page);
 		await quiesce(page);
@@ -113,6 +132,18 @@ test("Alt+Enter, renaming, adds an alias path and moves nothing", async () => {
 	expect("the note stays where it was", (await disk(NOTE)).exists, true);
 	expect("nothing is made at the alias", (await disk(`${DIR}/Alias one.md`)).exists, false);
 	expect("the alias is in paths", await pathsOf(NOTE), [`${DIR}/Alias one.md`]);
+});
+
+test("on a drive that cannot make links, asking for one says so", async () => {
+	if (LINKS.hard) skipCase("this drive makes hard links");
+	await renaming();
+	await typeOverName("Hard");
+	await pressKey(page, "shift+Enter");
+	await settle(1500);
+	const notices = await page.evaluate(`return [...document.querySelectorAll(".notice")].map((n) => n.textContent);`);
+	// The English text (the suites run Obsidian in English), up to the path.
+	const said = readFileSync(new URL("../src/lang/strings.ts", import.meta.url), "utf8").match(/errorNotSupported: "([^"{]*)/)[1];
+	expect("it says the drive cannot", notices, (v) => v.some((n) => n.includes(said)));
 });
 
 test("Shift+Enter, renaming, makes a hard link and records both paths", async () => {
