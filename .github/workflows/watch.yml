@@ -31,7 +31,7 @@ jobs:
       changed: ${{ steps.diff.outputs.changed }}
       changes: ${{ steps.diff.outputs.changes }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - id: diff
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -41,7 +41,7 @@ jobs:
           echo "changes=$(echo "$out" | jq -c .changes)" >> "$GITHUB_OUTPUT"
           echo "$out" | jq .now > upstream-versions.json
           echo "$out" | jq -r '.changes[]' | sed 's/^/- /' >> "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: upstream-versions
           path: upstream-versions.json
@@ -58,8 +58,8 @@ jobs:
     if: always() && needs.check.outputs.changed == 'true' && needs.test.result != 'cancelled' && needs.test.result != 'skipped'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
         with:
           name: upstream-versions
       - name: Record the versions, and say so if Lure broke against them
@@ -86,7 +86,7 @@ jobs:
   environments:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - id: diff
         env:
           GITHUB_TOKEN: ${{ github.token }}

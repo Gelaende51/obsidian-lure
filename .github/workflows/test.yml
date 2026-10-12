@@ -49,7 +49,7 @@ jobs:
       linux: ${{ steps.plan.outputs.linux }}
       desktops: ${{ steps.plan.outputs.desktops }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - id: plan
         env:
           WANT_SUITES: ${{ inputs.suites }}
@@ -100,8 +100,8 @@ jobs:
       matrix:
         suite: ${{ fromJSON(needs.plan.outputs.unit) }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
@@ -120,8 +120,8 @@ jobs:
         version: ${{ fromJSON(needs.plan.outputs.versions) }}
     name: ${{ matrix.suite }} (Obsidian ${{ matrix.version }})
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
@@ -129,7 +129,7 @@ jobs:
       - name: Build the plugin
         run: node esbuild.config.mjs production
       - name: Cache Obsidian downloads
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.obsidian-cache
           key: obsidian-${{ matrix.version }}-${{ runner.os }}-${{ hashFiles('manifest.json') }}
@@ -152,14 +152,14 @@ jobs:
           exit $code
       - name: Keep the pictures the colour cases take
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: look-${{ matrix.suite }}-${{ matrix.version }}
           path: shots/look/
           if-no-files-found: ignore
       - name: Keep Obsidian's log and the failure screenshots
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: failures-${{ matrix.suite }}-${{ matrix.version }}
           path: |
@@ -184,8 +184,8 @@ jobs:
         runner: ${{ fromJSON(needs.plan.outputs.desktops) }}
     name: ${{ matrix.suite }} (Obsidian ${{ matrix.version }}, ${{ matrix.runner }})
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
@@ -193,7 +193,7 @@ jobs:
       - name: Build the plugin
         run: node esbuild.config.mjs production
       - name: Cache Obsidian downloads
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.obsidian-cache
           key: obsidian-${{ matrix.version }}-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('manifest.json') }}
@@ -213,14 +213,14 @@ jobs:
           exit $code
       - name: Keep the pictures the colour cases take
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: look-${{ matrix.suite }}-${{ matrix.version }}-${{ matrix.runner }}
           path: shots/look/
           if-no-files-found: ignore
       - name: Keep Obsidian's log and the failure screenshots
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: failures-${{ matrix.suite }}-${{ matrix.version }}-${{ matrix.runner }}
           path: |

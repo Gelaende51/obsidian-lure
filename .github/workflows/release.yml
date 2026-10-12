@@ -53,8 +53,8 @@ jobs:
     env:
       COOKIE: ${{ secrets.OBSIDIAN_COMMUNITY_COOKIE }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
       - name: Preview scan of ${{ github.sha }}, compared with the last release
@@ -71,11 +71,11 @@ jobs:
     outputs:
       tag: ${{ steps.tag.outputs.tag }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: main
           fetch-depth: 0 # the stamp script reads which commit last touched each English file
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
@@ -113,11 +113,11 @@ jobs:
     steps:
       # A tag pushed from a workflow starts no workflow of its own, so the
       # release is built from it here.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ needs.prepare.outputs.tag || github.ref }}
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
@@ -136,7 +136,7 @@ jobs:
             exit 1
           fi
 
-      - uses: actions/attest-build-provenance@v1
+      - uses: actions/attest-build-provenance@v4
         with:
           subject-path: "main.js, manifest.json, styles.css"
 
@@ -164,8 +164,8 @@ jobs:
       TAG: ${{ needs.prepare.outputs.tag || github.ref_name }}
       COOKIE: ${{ secrets.OBSIDIAN_COMMUNITY_COOKIE }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
       - name: Queue the directory's scan

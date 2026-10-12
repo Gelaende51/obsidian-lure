@@ -78,10 +78,10 @@ jobs:
           elif command -v dnf >/dev/null; then dnf install -y tar gzip
           elif command -v pacman >/dev/null; then pacman -Sy --noconfirm tar gzip
           else apt-get update -q && apt-get install -y -q tar gzip; fi
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: System packages
         run: sh .dev/ci-distro-deps.sh
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
       - run: npm ci
@@ -112,8 +112,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 150
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
@@ -143,8 +143,8 @@ jobs:
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 150
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
@@ -175,8 +175,8 @@ jobs:
     # build is universal, so users there run the Arm one unless they force it.
     continue-on-error: ${{ matrix.os == 'macos-15' }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           architecture: x64
@@ -201,7 +201,7 @@ jobs:
     steps:
       - name: Obsidian from Arch's own package, on the system's Electron
         run: pacman -Syu --noconfirm obsidian nodejs npm git xorg-server-xvfb xorg-xauth curl procps-ng
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: npm ci
       - run: node esbuild.config.mjs production
       - name: Run the suites
@@ -229,8 +229,8 @@ jobs:
     # Restricted: what is out of reach is skipped, and the external suite
     # checks instead that Lure says the sandbox is why.
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
@@ -263,8 +263,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 150
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
@@ -291,8 +291,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 150
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
@@ -352,7 +352,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 180
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: FreeBSD, its Electron and the suites
         uses: vmactions/freebsd-vm@v1
         with:
@@ -398,10 +398,10 @@ jobs:
     steps:
       - name: tar, for the checkout
         run: apt-get update -q && apt-get install -y -q tar gzip curl
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: System packages
         run: sh .dev/ci-distro-deps.sh
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
       - run: npm ci
@@ -437,8 +437,8 @@ jobs:
     timeout-minutes: 150
     name: limits (${{ matrix.name }})
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
@@ -458,8 +458,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 150
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
@@ -483,8 +483,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 150
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
@@ -515,7 +515,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 150
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Alpine, its Electron and the suites
         env:
           SUITES: ${{ inputs.suites }}
@@ -548,8 +548,8 @@ jobs:
                continuous-mode, obsidian-filename-heading-sync, advanced-rename-and-delete-handler, mononote, open-tab-settings]
     name: residue of ${{ matrix.peer }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
@@ -583,8 +583,8 @@ jobs:
         os: [ubuntu-latest, windows-2025, macos-15]
     name: freeze probe, ${{ matrix.peer }}, Lure ${{ matrix.lure }}, ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
@@ -608,7 +608,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 300
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Let the runner user use KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -652,7 +652,7 @@ jobs:
           ! tr -d '\r' < /mnt/shared/results.txt | grep -qvE ' (0|2)$'
       - name: Keep the guest's logs
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: server-2019-logs
           path: |
@@ -678,8 +678,8 @@ jobs:
     timeout-minutes: 150
     name: vault on ${{ matrix.place }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
@@ -727,8 +727,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 150
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
@@ -754,8 +754,8 @@ jobs:
     runs-on: ubuntu-26.04
     timeout-minutes: 150
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
@@ -774,8 +774,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 150
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
@@ -807,8 +807,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 150
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
@@ -833,8 +833,8 @@ jobs:
       OBSIDIAN_EMAIL: ${{ secrets.OBSIDIAN_EMAIL }}
       OBSIDIAN_PASSWORD: ${{ secrets.OBSIDIAN_PASSWORD }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
