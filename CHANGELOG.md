@@ -8,6 +8,8 @@ Every release of Lure, newest first. What has landed since the last release is u
 
 ### Changed
 
+- **The renaming chords work on a click in the list too**: <kbd>Alt</kbd>, <kbd>Shift</kbd> and <kbd>Ctrl</kbd>+<kbd>Shift</kbd> held while clicking a row add an alias path, a hard link or a symbolic link there, as they do with <kbd>Enter</kbd>; <kbd>Ctrl</kbd> copies, as it already did.
+
 - **`\` takes a rung as `/` does, on every system**, and a path can mix the two. Outside the vault a path is shown and kept in the system's own spelling whichever separators it was typed or pasted with, so one file no longer appears in two spellings in the row and the other-paths list. On Linux and macOS a file whose name holds a backslash is still listed and opened from the dropdown; it cannot be typed.
 
 ### Fixed

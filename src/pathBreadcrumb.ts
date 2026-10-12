@@ -6779,7 +6779,9 @@ export class PathBreadcrumb {
 	 * anything else, and always outside rename mode.
 	 */
 	private linkKindFor(evt: UserEvent | null | undefined): LinkKind | null {
-		if (!this.renameMode || !(evt instanceof KeyboardEvent)) return null;
+		// A click with the chord held does what Enter with it does: the row is
+		// where the link goes, whichever way it was picked.
+		if (!this.renameMode || !(evt instanceof KeyboardEvent || evt instanceof MouseEvent)) return null;
 		const mod = Keymap.isModifier(evt, "Mod");
 		if (evt.altKey && !evt.shiftKey && !mod) return "alias";
 		if (evt.shiftKey && !evt.altKey && !mod) return "hard";
