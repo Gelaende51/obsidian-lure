@@ -265,70 +265,17 @@ jobs:
 
   # Little memory and half a CPU: a container capped by Docker, so timing
   # that only holds on a fast machine shows.
-  limits-machine:
+  # 1.5 GB and half a CPU; a small screen, HiDPI, no GPU
+  # (electron-template's reusable workflow).
+  limits:
     if: inputs.target == 'limits' || inputs.target == 'all'
-    runs-on: ubuntu-latest
-    timeout-minutes: 180
-    container:
-      # The image the distros job already runs in, so only the limits differ.
-      image: debian:12
-      options: --shm-size=1g --memory=1500m --memory-swap=1500m --cpus=0.5
-    name: limits (1.5 GB, half a CPU)
-    steps:
-      - name: tar, for the checkout
-        run: apt-get update -q && apt-get install -y -q tar gzip curl
-      - uses: actions/checkout@v7
-      - name: System packages
-        run: sh .dev/ci-distro-deps.sh
-      - uses: actions/setup-node@v7
-        with:
-          node-version: "24"
-      - run: npm ci
-      - run: node esbuild.config.mjs production
-      - name: Run the suites
-        shell: bash
-        env:
-          OBSIDIAN_EXTRA_ARGS: --no-sandbox
-          LURE_SLOW: "3"
-          SUITES: ${{ inputs.suites }}
-        run: |
-          Xvfb :99 -screen 0 1920x1080x24 >/dev/null 2>&1 &
-          DISPLAY=:99 .dev/ci-suites.sh
-
-  # The screen and the graphics: a netbook-sized display, a HiDPI one at
-  # twice the scale, and no GPU at all (software rendering).
-  limits-display:
-    if: inputs.target == 'limits' || inputs.target == 'all'
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - name: small screen 1024x600
-            screen: 1024x600x24
-            args: --no-sandbox
-          - name: HiDPI, scale 2
-            screen: 1920x1080x24
-            args: --no-sandbox --force-device-scale-factor=2
-          - name: no GPU
-            screen: 1920x1080x24
-            args: --no-sandbox --disable-gpu
-    runs-on: ubuntu-latest
-    timeout-minutes: 150
-    name: limits (${{ matrix.name }})
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: "24"
-          cache: npm
-      - run: npm ci
-      - run: node esbuild.config.mjs production
-      - name: Run the suites
-        env:
-          XVFB_SCREEN: ${{ matrix.screen }}
-          OBSIDIAN_EXTRA_ARGS: ${{ matrix.args }}
-          SUITES: ${{ inputs.suites }}
-        run: .dev/ci-suites.sh
+    uses: Gelaende51/electron-template/.github/workflows/limits.yml@v0.9.0
+    with:
+      flags-var: OBSIDIAN_EXTRA_ARGS
+      suites: ${{ inputs.suites }}
+      versions: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
+      run: bash .dev/ci-suites.sh
+      toolkit-ref: v0.9.0
 
   # A Wayland session instead of X: a headless Weston, and Obsidian on
   # Electron's own Wayland backend.
@@ -344,31 +291,15 @@ jobs:
   # Obsidian as Nix packages it: wrapped to run on Nix's own Electron.
   nix:
     if: inputs.target == 'nix' || inputs.target == 'all'
-    runs-on: ubuntu-latest
-    timeout-minutes: 150
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: "24"
-          cache: npm
-      - run: npm ci
-      - run: node esbuild.config.mjs production
-      - uses: cachix/install-nix-action@v31
-      - name: Obsidian from nixpkgs
-        env:
-          NIXPKGS_ALLOW_UNFREE: "1"
-        run: |
-          nix profile install --impure nixpkgs#obsidian
-          sudo apt-get install -y -q xvfb
-          echo "$HOME/.nix-profile/bin" >> "$GITHUB_PATH"
-          head -20 "$HOME/.nix-profile/bin/obsidian" | grep -a electron | head -3 || true
-      - name: Run the suites
-        env:
-          OBSIDIAN_COMMAND: obsidian
-          OBSIDIAN_EXTRA_ARGS: --no-sandbox
-          SUITES: ${{ inputs.suites }}
-        run: .dev/ci-suites.sh
+    uses: Gelaende51/electron-template/.github/workflows/nix.yml@v0.9.0
+    with:
+      package: obsidian
+      command-var: OBSIDIAN_COMMAND
+      suites: ${{ inputs.suites }}
+      versions: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
+      run: .dev/ci-suites.sh
+      suite-env: |
+        OBSIDIAN_EXTRA_ARGS=--no-sandbox
 
   # Alpine is musl; Obsidian's own binary is built for glibc and does not
   # start there even with gcompat (libudev, __memcpy_chk, posix_fallocate64).
@@ -721,7 +652,7 @@ jobs:
   # issue naming what changed, since nobody is looking at a scheduled run.
   # One issue per target, closed when it passes again (development-template).
   report:
-    needs: [distros, vault-elsewhere, old-engine, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits-machine, limits-display, wayland, nix, alpine, server-2019, electron-next, runner-next, npm-next, peer-betas]
+    needs: [distros, vault-elsewhere, old-engine, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits, wayland, nix, alpine, server-2019, electron-next, runner-next, npm-next, peer-betas]
     if: always() && inputs.why != ''
     uses: Gelaende51/development-template/.github/workflows/target-issue.yml@v1
     permissions:
