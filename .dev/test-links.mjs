@@ -134,23 +134,27 @@ test("Alt+Enter, renaming, adds an alias path and moves nothing", async () => {
 	expect("the alias is in paths", await pathsOf(NOTE), [`${DIR}/Alias one.md`]);
 });
 
-test("Alt+click on a row, renaming, adds an alias path as Alt+Enter does", async () => {
+test("Alt+click on a folder row, renaming, adds an alias path there as Alt+Enter does", async () => {
 	// The chords that work on Enter work on a click in the list as well.
+	// Renaming lists what is there (no "make it" row), so the row is a folder.
 	await renaming();
-	await typeOverName("Alias click");
+	await page.evaluate(`document.querySelector(".lure-path-input").select(); return true;`);
+	await typeOverName("Sub");
 	await settle(500);
 	const clicked = await page.evaluate(`
-		const row = [...document.querySelectorAll(".suggestion-item")].find((e) => e.textContent.includes("Alias click"));
-		if (!row) return false;
+		const rows = [...document.querySelectorAll(".suggestion-item")];
+		const label = (e) => (e.querySelector(".lure-suggest-label")?.textContent ?? e.textContent).trim().replace(/[\\\\/]$/, "");
+		const row = rows.find((e) => label(e) === "Sub");
+		if (!row) return "no row among: " + rows.map(label).join(" | ");
 		row.dispatchEvent(new MouseEvent("mousemove", { bubbles: true }));
 		row.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, altKey: true }));
-		return true;
+		return "clicked";
 	`);
-	expect("there was a row to click", clicked, true);
+	expect("there was a row to click", clicked, "clicked");
 	await settle(900);
 	expect("the note stays where it was", (await disk(NOTE)).exists, true);
-	expect("nothing is made at the alias", (await disk(`${DIR}/Alias click.md`)).exists, false);
-	expect("the alias is in paths", await pathsOf(NOTE), [`${DIR}/Alias click.md`]);
+	expect("nothing is made at the alias", (await disk(`${DIR}/Sub/Note.md`)).exists, false);
+	expect("the alias is in paths", await pathsOf(NOTE), [`${DIR}/Sub/Note.md`]);
 });
 
 test("on a drive that cannot make links, asking for one says so", async () => {
