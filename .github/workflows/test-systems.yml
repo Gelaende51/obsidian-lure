@@ -29,7 +29,7 @@ on:
       target:
         description: "What to run on"
         type: choice
-        options: [distros, distros-next, electron-next, runner-next, npm-next, peer-betas, obsidian-beta, old-engine, server-2019, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits, wayland, nix, alpine, peer-residue, freeze-probe, all]
+        options: [distros, vault-elsewhere, distros-next, electron-next, runner-next, npm-next, peer-betas, obsidian-beta, old-engine, server-2019, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits, wayland, nix, alpine, peer-residue, freeze-probe, all]
         default: distros
       suites:
         description: "Suites, space separated"
@@ -660,6 +660,62 @@ jobs:
             /mnt/shared/*.txt
           if-no-files-found: ignore
 
+  # The vault somewhere other than under the home folder: a folder outside it,
+  # a real SMB network share (served and mounted on the runner itself), a
+  # second drive, a UNC path. Nothing in Lure or the suites may assume where
+  # a vault is.
+  vault-elsewhere:
+    if: inputs.target == 'vault-elsewhere' || inputs.target == 'all'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { place: "outside home (/srv)", os: ubuntu-latest, kind: srv }
+          - { place: "SMB network share", os: ubuntu-latest, kind: smb }
+          - { place: "second drive (D:)", os: windows-latest, kind: drive }
+          - { place: "UNC share (\\\\localhost\\lure)", os: windows-latest, kind: unc }
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 150
+    name: vault on ${{ matrix.place }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: node esbuild.config.mjs production
+      - name: The place
+        shell: bash
+        run: |
+          case "${{ matrix.kind }}" in
+            srv)
+              sudo mkdir -p /srv/lure-vaults && sudo chown "$USER" /srv/lure-vaults
+              echo "LURE_VAULT_PARENT=/srv/lure-vaults" >> "$GITHUB_ENV" ;;
+            smb)
+              sudo apt-get update -q && sudo apt-get install -y -q samba cifs-utils xvfb >/dev/null
+              sudo mkdir -p /srv/lure-share && sudo chown "$USER" /srv/lure-share
+              printf '[lure]\n path = /srv/lure-share\n read only = no\n guest ok = yes\n force user = %s\n' "$USER" | sudo tee -a /etc/samba/smb.conf >/dev/null
+              sudo systemctl restart smbd
+              sudo mkdir -p /mnt/lure-smb
+              sudo mount -t cifs //127.0.0.1/lure /mnt/lure-smb -o guest,uid=$(id -u),gid=$(id -g),vers=3.0
+              mount | grep lure-smb
+              echo "LURE_VAULT_PARENT=/mnt/lure-smb" >> "$GITHUB_ENV" ;;
+            drive)
+              mkdir -p /d/lure-vaults
+              echo "LURE_VAULT_PARENT=D:\\lure-vaults" >> "$GITHUB_ENV" ;;
+            unc)
+              mkdir -p /c/lure-share
+              powershell -NoProfile -Command "New-SmbShare -Name lure -Path C:\\lure-share -FullAccess Everyone | Out-Null; Get-SmbShare -Name lure"
+              echo "LURE_VAULT_PARENT=\\\\localhost\\lure" >> "$GITHUB_ENV" ;;
+          esac
+      - name: Run the suites
+        shell: bash
+        env:
+          SUITES: ${{ inputs.suites }}
+          OBSIDIAN_EXTRA_ARGS: --no-sandbox
+        run: .dev/ci-suites.sh
+
   # ---------------------------------------------------------------- canaries
   # What is coming rather than what is out: a heads-up, started weekly by
   # test-canary.yml. A failure here is a warning about a future release.
@@ -818,7 +874,7 @@ jobs:
   # Started by the environment watch (watch.yml): a failure is reported as an
   # issue naming what changed, since nobody is looking at a scheduled run.
   report:
-    needs: [distros, old-engine, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits-machine, limits-display, wayland, nix, alpine, server-2019, electron-next, runner-next, npm-next, peer-betas, obsidian-beta]
+    needs: [distros, vault-elsewhere, old-engine, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits-machine, limits-display, wayland, nix, alpine, server-2019, electron-next, runner-next, npm-next, peer-betas, obsidian-beta]
     if: always() && inputs.why != '' && contains(needs.*.result, 'failure')
     runs-on: ubuntu-latest
     permissions:
@@ -840,7 +896,7 @@ jobs:
 
   # The same target passing again closes its issue.
   all-clear:
-    needs: [distros, old-engine, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits-machine, limits-display, wayland, nix, alpine, server-2019, electron-next, runner-next, npm-next, peer-betas, obsidian-beta]
+    needs: [distros, vault-elsewhere, old-engine, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits-machine, limits-display, wayland, nix, alpine, server-2019, electron-next, runner-next, npm-next, peer-betas, obsidian-beta]
     if: always() && inputs.why != '' && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled')
     runs-on: ubuntu-latest
     permissions:

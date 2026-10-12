@@ -82,16 +82,20 @@ trap stop_obsidian EXIT
 # "contains" it, as the location cases expect. Windows reads TEMP/TMP, not
 # TMPDIR; left alone it copies to %TEMP%, which a runner spells with the
 # 8.3 short name (C:\Users\RUNNER~1\...) that never matches home's long one.
-mkdir -p "$HOME/.cache/lure-ci"
+# LURE_VAULT_PARENT puts the vault copy somewhere else — another drive, a
+# folder outside home, a network share — since a vault can be anywhere
+# (test-systems' vault-elsewhere target). Lure and the suites must not care.
+VAULTS="${LURE_VAULT_PARENT:-$HOME/.cache/lure-ci}"
+mkdir -p "$VAULTS"
 if [ -n "${OBSIDIAN_COMMAND:-}" ]; then
 	# An Obsidian installed some other way — Flatpak, Snap, a distribution's
 	# package, Wine (see test-systems.yml): the launcher's library prepares the
 	# vault and the configuration directory, and that Obsidian is started on them.
 	[ -d node_modules/obsidian-launcher ] || npm install --no-save --no-package-lock obsidian-launcher@3 >/dev/null 2>&1
-	TMPDIR="$HOME/.cache/lure-ci" OBSIDIAN_ALT_LOG="$LOG" node .dev/ci-launch-alt.mjs "$VERSION" .dev/test-vault "${PLUGINS[@]}" \
+	TMPDIR="$VAULTS" OBSIDIAN_ALT_LOG="$LOG" node .dev/ci-launch-alt.mjs "$VERSION" .dev/test-vault "${PLUGINS[@]}" \
 		-- --remote-debugging-port="$PORT" ${OBSIDIAN_EXTRA_ARGS:-} >>"$LOG" 2>&1
 else
-	TMPDIR="$HOME/.cache/lure-ci" TEMP="$HOME/.cache/lure-ci" TMP="$HOME/.cache/lure-ci" npx --yes obsidian-launcher@3 launch --version "$VERSION" --installer "$INSTALLER" --copy "${PLUGINS[@]}" .dev/test-vault \
+	TMPDIR="$VAULTS" TEMP="$VAULTS" TMP="$VAULTS" npx --yes obsidian-launcher@3 launch --version "$VERSION" --installer "$INSTALLER" --copy "${PLUGINS[@]}" .dev/test-vault \
 		-- --remote-debugging-port="$PORT" ${OBSIDIAN_EXTRA_ARGS:-} >"$LOG" 2>&1
 fi
 
