@@ -672,6 +672,8 @@ jobs:
         include:
           - { place: "outside home (/srv)", os: ubuntu-latest, kind: srv }
           - { place: "SMB network share", os: ubuntu-latest, kind: smb }
+          - { place: "NFS share", os: ubuntu-latest, kind: nfs }
+          - { place: "NFS share on macOS", os: macos-latest, kind: nfs-mac }
           - { place: "second drive (D:)", os: windows-latest, kind: drive }
           - { place: "UNC share (\\\\<machine>\\lure)", os: windows-latest, kind: unc }
     runs-on: ${{ matrix.os }}
@@ -701,6 +703,21 @@ jobs:
               sudo mount -t cifs //127.0.0.1/lure /mnt/lure-smb -o guest,uid=$(id -u),gid=$(id -g),vers=3.0
               mount | grep lure-smb
               echo "LURE_VAULT_PARENT=/mnt/lure-smb" >> "$GITHUB_ENV" ;;
+            nfs)
+              sudo apt-get update -q && sudo apt-get install -y -q nfs-kernel-server nfs-common >/dev/null
+              sudo mkdir -p /srv/lure-nfs && sudo chown "$USER" /srv/lure-nfs
+              echo "/srv/lure-nfs 127.0.0.1(rw,sync,no_subtree_check,all_squash,anonuid=$(id -u),anongid=$(id -g))" | sudo tee -a /etc/exports >/dev/null
+              sudo exportfs -ra && sudo systemctl restart nfs-kernel-server
+              sudo mkdir -p /mnt/lure-nfs && sudo mount -t nfs 127.0.0.1:/srv/lure-nfs /mnt/lure-nfs
+              mount | grep lure-nfs
+              echo "LURE_VAULT_PARENT=/mnt/lure-nfs" >> "$GITHUB_ENV" ;;
+            nfs-mac)
+              mkdir -p "$HOME/lure-nfs-export" "$HOME/lure-nfs"
+              echo "$HOME/lure-nfs-export -alldirs -mapall=$(id -u):$(id -g) localhost" | sudo tee /etc/exports >/dev/null
+              sudo nfsd enable; sudo nfsd restart; sleep 3; showmount -e localhost || true
+              sudo mount -t nfs -o resvport,nolocks,locallocks localhost:"$HOME/lure-nfs-export" "$HOME/lure-nfs"
+              mount | grep lure-nfs
+              echo "LURE_VAULT_PARENT=$HOME/lure-nfs" >> "$GITHUB_ENV" ;;
             drive)
               mkdir -p /d/lure-vaults
               echo "LURE_VAULT_PARENT=D:\\lure-vaults" >> "$GITHUB_ENV" ;;

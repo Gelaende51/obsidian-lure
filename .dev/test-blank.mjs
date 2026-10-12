@@ -416,6 +416,16 @@ test("a view this plugin has never heard of is named after itself", async () => 
 		expect("the plugin answered the new tab", type, (v) => v !== "empty");
 		const s = await look();
 		expect("the row names the view it found", s.parts, (v) => v.some((p) => p.startsWith(":")));
+		if (!s.parts.some((p) => p.startsWith(":"))) {
+			// Empty on Windows only: what the leaf and its header hold then.
+			console.log(`    the leaf: ${await page.evaluate(`
+				const leaf = app.workspace.getMostRecentLeaf(), el = leaf.view.containerEl;
+				const title = el.querySelector(".view-header-title-container");
+				return JSON.stringify({ type: leaf.view.getViewType(), active: app.workspace.activeLeaf === leaf,
+					header: !!el.querySelector(".view-header"), title: title ? title.outerHTML.slice(0, 300) : null,
+					lureRows: document.querySelectorAll(".lure-path-row, .lure-breadcrumb").length });
+			`)}`);
+		}
 		expect("without the word view twice", s.parts, (v) => !v.some((p) => p.endsWith("-view")));
 		expect("and it is that view's own name", s.parts.join(""), (v) => v.includes(`:${type.replace(/-view$/, "")}`));
 	} finally {
