@@ -969,7 +969,14 @@ const deleteFromViewer = (confirm) => `
 		refused: [...document.querySelectorAll(".notice")].map((n) => n.textContent),
 		asked: document.querySelector(".modal-container") ? (document.querySelector(".modal-title")?.textContent ?? "") : null,
 	};
-	${confirm ? `document.querySelector(".modal-container button.mod-warning")?.click(); ${PAUSE(1500)}` : ""}
+	${confirm ? `
+		// A slow machine draws the dialog late: wait for its button, and say
+		// whether it was ever pressed.
+		for (let i = 0; i < 30 && !document.querySelector(".modal-container button.mod-warning"); i++) ${PAUSE(100)}
+		const confirmButton = document.querySelector(".modal-container button.mod-warning");
+		confirmButton?.click();
+		out.confirmed = !!confirmButton;
+		${PAUSE(1500)}` : ""}
 	out.after = [...document.querySelectorAll(".notice")].map((n) => n.textContent);
 	document.querySelectorAll(".notice").forEach((n) => n.remove());
 	document.querySelectorAll(".modal-container").forEach((m) => m.remove());
@@ -1050,7 +1057,7 @@ test("viewer menu: a file with no reading to edit can still be deleted", async (
 		}
 	}
 	expect("and the file is gone", existsSync(pic), false);
-	if (existsSync(pic)) console.log(`    notices after confirming: ${JSON.stringify(r.after)}`);
+	if (existsSync(pic)) console.log(`    notices after confirming: ${JSON.stringify(r.after)}; confirm pressed: ${r.confirmed}`);
 	rmSync(bed, { recursive: true, force: true });
 });
 

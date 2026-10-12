@@ -85,8 +85,19 @@ trap stop_obsidian EXIT
 # LURE_VAULT_PARENT puts the vault copy somewhere else — another drive, a
 # folder outside home, a network share — since a vault can be anywhere
 # (test-systems' vault-elsewhere target). Lure and the suites must not care.
-VAULTS="${LURE_VAULT_PARENT:-$HOME/.cache/lure-ci}"
+# Only the vault goes there: Obsidian's own settings folder stays local, as
+# a user's does — Chromium's databases want file locks a share may not give.
+VAULTS="$HOME/.cache/lure-ci"
 mkdir -p "$VAULTS"
+VAULT_ARGS=(--copy .dev/test-vault)
+if [ -n "${LURE_VAULT_PARENT:-}" ]; then
+	placed="$LURE_VAULT_PARENT/test-vault-$$"
+	# Git Bash copies by its own spelling of the path (//localhost/lure/…),
+	# Obsidian opens Windows' (\\localhost\lure\…).
+	if command -v cygpath >/dev/null; then here=$(cygpath -u "$placed"); placed=$(cygpath -w "$placed"); else here="$placed"; fi
+	rm -rf "$here" && cp -r .dev/test-vault "$here"
+	VAULT_ARGS=("$placed")
+fi
 if [ -n "${OBSIDIAN_COMMAND:-}" ]; then
 	# An Obsidian installed some other way — Flatpak, Snap, a distribution's
 	# package, Wine (see test-systems.yml): the launcher's library prepares the
@@ -95,7 +106,7 @@ if [ -n "${OBSIDIAN_COMMAND:-}" ]; then
 	TMPDIR="$VAULTS" OBSIDIAN_ALT_LOG="$LOG" node .dev/ci-launch-alt.mjs "$VERSION" .dev/test-vault "${PLUGINS[@]}" \
 		-- --remote-debugging-port="$PORT" ${OBSIDIAN_EXTRA_ARGS:-} >>"$LOG" 2>&1
 else
-	TMPDIR="$VAULTS" TEMP="$VAULTS" TMP="$VAULTS" npx --yes obsidian-launcher@3 launch --version "$VERSION" --installer "$INSTALLER" --copy "${PLUGINS[@]}" .dev/test-vault \
+	TMPDIR="$VAULTS" TEMP="$VAULTS" TMP="$VAULTS" npx --yes obsidian-launcher@3 launch --version "$VERSION" --installer "$INSTALLER" "${PLUGINS[@]}" "${VAULT_ARGS[@]}" \
 		-- --remote-debugging-port="$PORT" ${OBSIDIAN_EXTRA_ARGS:-} >"$LOG" 2>&1
 fi
 
