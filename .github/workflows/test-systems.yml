@@ -736,6 +736,9 @@ jobs:
       - name: The next Electron, and Obsidian's app for it
         run: |
           npm install --prefix /tmp/electron-next electron@beta >/dev/null
+          # npm no longer runs install scripts unasked, and Electron's
+          # downloads the binary: run it.
+          node /tmp/electron-next/node_modules/electron/install.js
           electron=/tmp/electron-next/node_modules/electron/dist/electron
           echo "electron: $($electron --version 2>/dev/null)"
           url=$(curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest | grep -o '"browser_download_url": *"[^"]*obsidian-[0-9.]*\.tar\.gz"' | head -1 | cut -d'"' -f4)
@@ -790,8 +793,17 @@ jobs:
             npm install --no-save --legacy-peer-deps $next
           fi
           npm ls typescript esbuild eslint eslint-plugin-obsidianmd obsidian picomatch --depth=0 || true
-      - name: Build, type-check and lint with them
-        run: npm run build
+      - name: Type-check and build with them
+        run: npx tsc -noEmit -skipLibCheck && npm run check:lang && node esbuild.config.mjs production
+      # Lint on its own: a linter that does not take the next TypeScript yet
+      # (typescript-eslint refused TS 7 at first) is the heads-up, said as a
+      # warning, and the type check and the suites still run.
+      - name: Lint with them
+        run: |
+          if ! npx eslint src > /tmp/lint.log 2>&1; then
+            tail -20 /tmp/lint.log
+            echo "::warning::npm-next: lint fails with the next versions: $(grep -m1 -E 'Error:|error ' /tmp/lint.log | cut -c1-160)"
+          fi
       - run: command -v xvfb-run || (sudo apt-get update -q && sudo apt-get install -y -q xvfb)
       - name: Run the suites
         env:
