@@ -176,46 +176,22 @@ jobs:
   # "restricted" takes the sandbox's home and host access away and leaves
   # only the folder the vault copy and its settings live in: what Lure does
   # when the paths it is asked about are out of reach.
+  # Flathub's Obsidian, with its own permissions and restricted to the test
+  # folder (electron-template's reusable workflow). Restricted: what is out of
+  # reach is skipped, and the external suite checks that Lure says the
+  # sandbox is why.
   flatpak:
     if: inputs.target == 'flatpak' || inputs.target == 'all'
-    strategy:
-      fail-fast: false
-      matrix:
-        access: [full, restricted]
-    runs-on: ubuntu-latest
-    timeout-minutes: 150
-    name: flatpak (${{ matrix.access }} access)
-    # Restricted: what is out of reach is skipped, and the external suite
-    # checks instead that Lure says the sandbox is why.
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: "24"
-          cache: npm
-      - run: npm ci
-      - run: node esbuild.config.mjs production
-      - name: Obsidian from Flathub
-        run: |
-          sudo apt-get update -q && sudo apt-get install -y -q flatpak xvfb dbus-x11
-          flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-          flatpak install --user -y --noninteractive flathub md.obsidian.Obsidian
-          flatpak info --user --show-permissions md.obsidian.Obsidian
-      - name: Run the suites
-        env:
-          ACCESS: ${{ matrix.access }}
-          SUITES: ${{ inputs.suites }}
-        run: |
-          if [ "$ACCESS" = restricted ]; then
-            export OBSIDIAN_COMMAND="flatpak run --user --nofilesystem=host --nofilesystem=home --filesystem=$HOME/.cache/lure-ci md.obsidian.Obsidian"
-            export LURE_EXPECT_SANDBOX=1
-          else
-            export OBSIDIAN_COMMAND="flatpak run --user md.obsidian.Obsidian"
-            # The sandbox has a /tmp of its own: the suites' files outside the
-            # vault go under home, where it can see them.
-            mkdir -p "$HOME/.cache/lure-ci/tmp" && export TMPDIR="$HOME/.cache/lure-ci/tmp"
-          fi
-          dbus-run-session -- .dev/ci-suites.sh
+    uses: Gelaende51/electron-template/.github/workflows/flatpak.yml@v0.5.0
+    with:
+      app-id: md.obsidian.Obsidian
+      command-var: OBSIDIAN_COMMAND
+      data-dir: .cache/lure-ci
+      suites: ${{ inputs.suites }}
+      versions: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
+      run: .dev/ci-suites.sh
+      restricted-env: |
+        LURE_EXPECT_SANDBOX=1
 
   snap:
     if: inputs.target == 'snap' || inputs.target == 'all'
