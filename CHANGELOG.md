@@ -12,7 +12,7 @@ Every release of Lure, newest first. What has landed since the last release is u
 
 ### Fixed
 
-- **A delete outside the vault that the system's trash is slow to take says so** after ten seconds, instead of nothing happening on screen; the file is moved once the trash answers.
+- **A delete outside the vault that the system's trash is slow to take says so** after ten seconds, until the trash answers, instead of nothing happening on screen.
 - **A file the viewer cannot read says why in words**, as the other file operations do — and in a Flatpak or Snap, that the sandbox may keep it out of reach — instead of Node's error code.
 
 ## 1.6.1 — 2026-10-11[^1.6.1]

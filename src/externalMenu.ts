@@ -288,11 +288,14 @@ async function trashEntry(plugin: LurePlugin, absolutePath: string, isFolder: bo
 	// The system's trash can take its time — a slow disk, a busy or emulated
 	// machine — and until it answers nothing on screen changes. Past ten
 	// seconds it is said, without deciding the outcome: the move may still land.
-	const slow = window.setTimeout(() => new Notice(t("noticeTrashSlow", { path: shortOutside(absolutePath) })), 10_000);
+	// The notice stays until the trash answers, then goes.
+	let waiting: Notice | null = null;
+	const slow = window.setTimeout(() => (waiting = new Notice(t("noticeTrashSlow", { path: shortOutside(absolutePath) }), 0)), 10_000);
 	try {
 		await trashExternalEntry(absolutePath);
 	} finally {
 		window.clearTimeout(slow);
+		(waiting as Notice | null)?.hide();
 	}
 }
 
