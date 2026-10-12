@@ -1,26 +1,9 @@
 #!/bin/bash
 # Runs every suite in $SUITES on every Obsidian version in $VERSIONS through
-# ci-run.sh, under a virtual display where there is no real one, and reports
-# each as the workflow does: 0 passed, 2 skipped cases (a warning), else failed.
-# Used by the jobs of test-systems.yml that differ only in how Obsidian got there.
-set +e
+# ci-run.sh: electron-template's electron-suites (virtual display where there
+# is none; 0 passed, 2 skipped cases as a warning, else failed with the tail
+# of Obsidian's log). Used by the jobs of test-systems.yml that differ only in
+# how Obsidian got there, and by beta-local.sh.
 cd "$(dirname "$0")/.."
-failed=0
-for version in ${VERSIONS:-latest}; do
-	for suite in ${SUITES:?}; do
-		echo "::group::$suite (Obsidian $version)"
-		if [ -n "${DISPLAY:-}" ] || [ -n "${WAYLAND_DISPLAY:-}" ] || [ "$(uname)" = Darwin ] || [ "${OS:-}" = Windows_NT ]; then
-			OBSIDIAN_VERSION=$version .dev/ci-run.sh "$suite"
-		else
-			OBSIDIAN_VERSION=$version xvfb-run -a -s "-screen 0 ${XVFB_SCREEN:-1920x1080x24}" .dev/ci-run.sh "$suite"
-		fi
-		code=$?
-		echo "::endgroup::"
-		case $code in
-			0) ;;
-			2) echo "::warning::$suite ($version) skipped cases" ;;
-			*) echo "::error::$suite ($version) failed"; failed=1; tail -30 "obsidian-$suite.log" 2>/dev/null ;;
-		esac
-	done
-done
-exit $failed
+RUN_SUITE=.dev/ci-run.sh VERSION_VAR=OBSIDIAN_VERSION APP_NAME=Obsidian SUITE_LOG='obsidian-%s.log' \
+	exec bash node_modules/electron-template/bin/electron-suites.sh
