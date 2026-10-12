@@ -33,11 +33,14 @@ jobs:
       beta: ${{ steps.diff.outputs.beta }}
     steps:
       - uses: actions/checkout@v7
+      # obsidian-upstream-watch comes from obsidian-toolkit, a devDependency;
+      # the neighbours are the `-p id:` list in .dev/ci-run.sh (devkit.config.json).
+      - run: npm ci --ignore-scripts --no-audit --no-fund
       - id: diff
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          out=$(node scripts/upstream-versions.mjs --diff)
+          out=$(node node_modules/obsidian-toolkit/bin/upstream-watch.mjs --diff)
           echo "changed=$(echo "$out" | jq -r .changed)" >> "$GITHUB_OUTPUT"
           echo "changes=$(echo "$out" | jq -c .changes)" >> "$GITHUB_OUTPUT"
           echo "beta=$(echo "$out" | jq -r '.betaNew // ""')" >> "$GITHUB_OUTPUT"

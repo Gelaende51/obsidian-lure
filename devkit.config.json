@@ -3,6 +3,9 @@
 	"id": "lure",
 	"name": "Lure",
 	"repository": "Gelaende51/obsidian-lure",
+	"obsidian": {
+		"neighboursFrom": ".dev/ci-run.sh"
+	},
 	"environments": {
 		"image debian:12": {
 			"source": "docker",
