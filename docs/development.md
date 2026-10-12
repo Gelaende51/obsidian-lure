@@ -264,7 +264,7 @@ leave the right thing on screen, and fail on its own for no reason of its own.
 That produced months of contradictory numbers: a suite reporting 179/190 in a
 combined run and 190/190 alone, with different failures each time.
 
-The cure is in `.dev/harness.mjs`, which every suite now shares. It calls the
+The cure is in the harness every suite shares (`development-template/harness`, from Lure's former `.dev/harness.mjs`). It calls the
 suite's `reset` **before every case** — this session's build reloaded, nothing
 left open from the case before, the fixture tree rebuilt as declared — so no
 case can inherit anything from its predecessor except the app itself. `--shuffle`

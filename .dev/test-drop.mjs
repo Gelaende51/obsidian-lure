@@ -17,7 +17,7 @@
  */
 
 import { connect, PAUSE, pressKey, quiesce, reloadPlugin, setSettings } from "./cdpSession.mjs";
-import { createSuite } from "./harness.mjs";
+import { createSuite } from "development-template/harness";
 
 const ROOT = "LureDrop";
 const TEXT = "dropped line one\ndropped line two";

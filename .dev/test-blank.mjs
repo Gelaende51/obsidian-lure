@@ -17,7 +17,7 @@
  */
 
 import { connect, PAUSE, pressKey, quiesce, reloadPlugin, restoreTabTakers, standDownTabTakers, asPosix } from "./cdpSession.mjs";
-import { createSuite, skipCase } from "./harness.mjs";
+import { createSuite, skipCase } from "development-template/harness";
 
 const ROOT = "LureBlank";
 const NOTE = `${ROOT}/target.md`;

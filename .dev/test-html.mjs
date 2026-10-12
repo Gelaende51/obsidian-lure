@@ -15,7 +15,7 @@
  */
 
 import { connect, PAUSE, quiesce, reloadPlugin, setSettings } from "./cdpSession.mjs";
-import { createSuite } from "./harness.mjs";
+import { createSuite } from "development-template/harness";
 import { mkdirSync, rmSync, writeFileSync } from "fs";
 import { homedir } from "os";
 import { join } from "path";

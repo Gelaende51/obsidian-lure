@@ -207,7 +207,7 @@ export async function connect() {
 	}
 
 	const session = { send, evaluate, close: () => socket.close() };
-	globalThis.__lureSession = session; // for harness.mjs's failure screenshots
+	globalThis.__harnessSession = session; // for the harness's failure screenshots (development-template)
 	return session;
 }
 

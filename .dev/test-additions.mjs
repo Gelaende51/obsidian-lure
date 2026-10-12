@@ -15,7 +15,7 @@
  */
 
 import { CLEAR_NOTICES, connect, PAUSE, pressKey, quiesce, reloadPlugin, parkPointer, setSettings, asPosix } from "./cdpSession.mjs";
-import { createSuite } from "./harness.mjs";
+import { createSuite } from "development-template/harness";
 
 const DIR = "Lure-add";
 const NOTE = `${DIR}/Cake.md`;

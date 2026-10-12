@@ -25,7 +25,7 @@
  */
 
 import { CLEAR_NOTICES, connect, PAUSE, pressKey, quiesce, reloadPlugin, parkPointer, asPosix } from "./cdpSession.mjs";
-import { createSuite, skipCase } from "./harness.mjs";
+import { createSuite, skipCase } from "development-template/harness";
 
 const NOTE = "Schemes/2026/Cake catapult.md";
 /** Named so nothing in a real vault can collide with them, and deleted at the end. */

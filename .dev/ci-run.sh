@@ -11,7 +11,7 @@
 # suites talk to. Needs a display: on a runner that is xvfb-run.
 #
 # Exit code is the suite's: 0 passed, 1 failed, 2 a case could not be asked
-# here (see Skipped in harness.mjs).
+# here (see Skipped in development-template's harness).
 set -u
 cd "$(dirname "$0")/.."
 SUITE="${1:?usage: ci-run.sh <suite, e.g. test-tab>}"

@@ -147,7 +147,7 @@ jobs:
           xvfb-run -a -s "-screen 0 1920x1080x24" .dev/ci-run.sh "${{ matrix.suite }}"
           code=$?
           # 2: cases that could not be asked on this display (see Skipped in
-          # .dev/harness.mjs) — not a failure, but not to be read as clean.
+          # development-template's harness) — not a failure, but not to be read as clean.
           if [ $code -eq 2 ]; then echo "::warning::${{ matrix.suite }} skipped cases it could not ask here"; exit 0; fi
           exit $code
       - name: Keep the pictures the colour cases take

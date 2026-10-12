@@ -20,7 +20,7 @@
  */
 
 import { CLEAR_NOTICES, connect, PAUSE, pressKey, quiesce, reloadPlugin, parkPointer } from "./cdpSession.mjs";
-import { createSuite } from "./harness.mjs";
+import { createSuite } from "development-template/harness";
 
 const NOTE = "Lure-keyleak/List note.md";
 const BODY = "- one\n- two\n- three\n\n| a | b |\n| --- | --- |\n| 1 | 2 |\n";

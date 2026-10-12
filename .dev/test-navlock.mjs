@@ -20,7 +20,7 @@
  */
 
 import { canRenameFiles, connect, PAUSE, quiesce, reloadPlugin, setVaultConfig } from "./cdpSession.mjs";
-import { createSuite } from "./harness.mjs";
+import { createSuite } from "development-template/harness";
 import { mkdirSync, rmSync, writeFileSync } from "fs";
 import { join } from "path";
 import { homedir } from "os";

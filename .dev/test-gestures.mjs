@@ -17,7 +17,7 @@
  */
 
 import { canFocusEditable, canRenameFiles, CLEAR_NOTICES, CLEAR_PANES, connect, restoreTabTakers, standDownTabTakers, isPainting, PAUSE, pressKey, quiesce, reloadPlugin, setSettings, setVaultConfig, parkPointer } from "./cdpSession.mjs";
-import { createSuite, skipCase } from "./harness.mjs";
+import { createSuite, skipCase } from "development-template/harness";
 import { mkdirSync, rmSync, writeFileSync } from "fs";
 import { join } from "path";
 import { homedir } from "os";

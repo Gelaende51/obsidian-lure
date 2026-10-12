@@ -24,7 +24,7 @@
  */
 
 import { canFocusEditable, canRenameFiles, connect, PAUSE, pressKey, quiesce, reloadPlugin, setVaultConfig, asPosix } from "./cdpSession.mjs";
-import { createSuite } from "./harness.mjs";
+import { createSuite } from "development-template/harness";
 
 const FIXTURE = "LureRename";
 const NOTE = `${FIXTURE}/Scrolling note.md`;

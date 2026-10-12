@@ -12,7 +12,7 @@
  */
 
 import { CLEAR_NOTICES, connect, PAUSE, pressKey, quiesce, reloadPlugin, parkPointer, setSettings } from "./cdpSession.mjs";
-import { createSuite, skipCase } from "./harness.mjs";
+import { createSuite, skipCase } from "development-template/harness";
 import { readFileSync } from "node:fs";
 
 const DIR = "Lure-links";

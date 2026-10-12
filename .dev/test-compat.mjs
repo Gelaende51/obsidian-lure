@@ -20,7 +20,7 @@
  */
 
 import { connect, PAUSE, reloadPlugin } from "./cdpSession.mjs";
-import { createSuite } from "./harness.mjs";
+import { createSuite } from "development-template/harness";
 
 /**
  * Every community plugin known to contend for the header or the folder

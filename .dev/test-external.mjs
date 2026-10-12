@@ -19,7 +19,7 @@ import { mkdirSync, rmSync, writeFileSync, readFileSync, existsSync, chmodSync, 
 import { join } from "path";
 import { homedir, tmpdir, userInfo } from "os";
 import { canRenameFiles, connect, PAUSE, pressKey, quiesce, reloadPlugin, setSettings, setVaultConfig, asPosix } from "./cdpSession.mjs";
-import { createSuite, skipCase } from "./harness.mjs";
+import { createSuite, skipCase } from "development-template/harness";
 import { build } from "esbuild";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve as resolvePath } from "node:path";

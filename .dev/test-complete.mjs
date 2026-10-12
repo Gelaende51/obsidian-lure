@@ -12,7 +12,7 @@
  *     node .dev/test-complete.mjs [name filter]
  */
 
-import { createSuite } from "./harness.mjs";
+import { createSuite } from "development-template/harness";
 import { build } from "esbuild";
 
 const bundle = await build({
