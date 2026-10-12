@@ -17,7 +17,7 @@
 # - wine, freebsd: the Windows build under Wine, and Obsidian's app on
 #   FreeBSD's own Electron in a FreeBSD VM. Experimental: they may not start.
 #
-# The last five start Obsidian through .dev/ci-launch-alt.mjs (OBSIDIAN_COMMAND).
+# The last five start Obsidian through obsidian-toolkit's launch-alt (OBSIDIAN_COMMAND).
 #
 # Actions → Test other systems → Run workflow, or
 #   gh workflow run test-systems.yml -f target=distros -f suites="test-tab"

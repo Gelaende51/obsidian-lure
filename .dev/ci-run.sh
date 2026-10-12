@@ -67,7 +67,7 @@ CACHE="${OBSIDIAN_CACHE:-$HOME/.obsidian-cache}"
 # otherwise hand its launch to the copy still shutting down, and see it exit.
 stop_obsidian() {
 	pkill -f "$CACHE/" 2>/dev/null
-	pkill -f "lure-ci-alt" 2>/dev/null
+	pkill -f "obsidian-ci-alt" 2>/dev/null
 	# Under Wine the app's processes are Windows ones the patterns above do
 	# not reach; left running, the next suite's Obsidian never starts.
 	[ "${OBSIDIAN_PATHS:-}" = wine ] && wineserver -k 2>/dev/null
@@ -103,7 +103,7 @@ if [ -n "${OBSIDIAN_COMMAND:-}" ]; then
 	# package, Wine (see test-systems.yml): the launcher's library prepares the
 	# vault and the configuration directory, and that Obsidian is started on them.
 	[ -d node_modules/obsidian-launcher ] || npm install --no-save --no-package-lock obsidian-launcher@3 >/dev/null 2>&1
-	TMPDIR="$VAULTS" OBSIDIAN_ALT_LOG="$LOG" node .dev/ci-launch-alt.mjs "$VERSION" .dev/test-vault "${PLUGINS[@]}" \
+	TMPDIR="$VAULTS" OBSIDIAN_ALT_LOG="$LOG" node node_modules/obsidian-toolkit/bin/launch-alt.mjs "$VERSION" .dev/test-vault "${PLUGINS[@]}" \
 		-- --remote-debugging-port="$PORT" ${OBSIDIAN_EXTRA_ARGS:-} >>"$LOG" 2>&1
 else
 	TMPDIR="$VAULTS" TEMP="$VAULTS" TMP="$VAULTS" npx --yes obsidian-launcher@3 launch --version "$VERSION" --installer "$INSTALLER" "${PLUGINS[@]}" "${VAULT_ARGS[@]}" \
