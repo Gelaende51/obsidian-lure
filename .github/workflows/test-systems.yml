@@ -724,8 +724,13 @@ jobs:
       - run: npm ci
       - name: The next versions
         run: |
-          npm install --no-save typescript@next esbuild@latest eslint@latest typescript-eslint@latest \
-            eslint-plugin-obsidianmd@latest picomatch@latest "obsidian@github:obsidianmd/obsidian-api"
+          next="typescript@next esbuild@latest eslint@latest typescript-eslint@latest eslint-plugin-obsidianmd@latest picomatch@latest obsidian@github:obsidianmd/obsidian-api"
+          # A peer range that does not take the next version yet is itself the
+          # heads-up: said as a warning, then installed regardless.
+          if ! npm install --no-save $next 2>/tmp/npm.err; then
+            grep -E "Could not resolve|peer .* from" /tmp/npm.err | sed 's/^npm error /::warning::npm-next: /' | head -5
+            npm install --no-save --legacy-peer-deps $next
+          fi
           npm ls typescript esbuild eslint eslint-plugin-obsidianmd obsidian picomatch --depth=0 || true
       - name: Build, type-check and lint with them
         run: npm run build

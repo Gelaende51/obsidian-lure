@@ -1501,6 +1501,10 @@ test("locations: picking a place that contains this note lands on the note", asy
 	// The whole path from that place, with its *first folder* selected — the
 	// same shape a folder click gives. Landing deep with only the file name
 	// in the field hid the path it had chosen for you.
+	// Under Wine the home folder (C:\\users\\…) is not where the vault was
+	// copied (Z:\\home\\…, Linux's home): nothing to land on from there.
+	const norm = (p) => p.toLowerCase().replace(/\\/g, "/").replace(/\/+$/, "");
+	if (!norm(r.absolute).startsWith(norm(r.home) + "/")) skipCase("the home folder does not contain the vault here");
 	const relative = r.absolute.slice(r.home.length).replace(/^[\\/]+/, "");
 	expect("the trail stays at the place picked", r.folder, r.home);
 	expect("the whole path from it is offered", r.field, relative);
