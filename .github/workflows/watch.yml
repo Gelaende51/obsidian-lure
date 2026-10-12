@@ -80,7 +80,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add .github/upstream-versions.json
           # A new Obsidian beta alone is recorded for the maintainer's machine
-          # to test (.dev/beta-pending.mjs finds it there); its results stay off GitHub.
+          # to test (obsidian-toolkit's beta-pending finds it there); its results stay off GitHub.
           if [ "${{ needs.check.outputs.changed }}" = true ]; then subject="Tested against new upstream versions: $RESULT"; else subject="New Obsidian beta ${{ needs.check.outputs.beta }}: to be tested locally"; RESULT=success; fi
           [ -n "${{ needs.check.outputs.beta }}" ] && list="$list"$'\n'"- Obsidian beta ${{ needs.check.outputs.beta }} (tested locally, .dev/beta-local.sh)"
           git commit -m "$subject" -m "$list"

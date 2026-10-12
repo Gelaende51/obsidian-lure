@@ -3,8 +3,29 @@
 	"id": "lure",
 	"name": "Lure",
 	"repository": "Gelaende51/obsidian-lure",
+	"suites": [
+		"test-blank",
+		"test-additions",
+		"test-create",
+		"test-drop",
+		"test-external",
+		"test-glob",
+		"test-tab",
+		"test-urls",
+		"test-html",
+		"test-links",
+		"test-rename",
+		"test-gestures",
+		"test-navlock",
+		"test-keyleak",
+		"test-compat",
+		"test-compat-ui",
+		"test-foldernote"
+	],
 	"obsidian": {
-		"neighboursFrom": ".dev/ci-run.sh"
+		"neighboursFrom": ".dev/ci-run.sh",
+		"betaLogs": ".personal/beta-logs",
+		"suiteRunner": ".dev/ci-suites.sh"
 	},
 	"environments": {
 		"image debian:12": {
