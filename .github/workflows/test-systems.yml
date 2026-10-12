@@ -50,62 +50,21 @@ env:
   VERSIONS: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
 
 jobs:
+  # Distribution containers (electron-template's reusable workflow: tar,
+  # PATH, Electron's libraries, a font, Xvfb).
   distros:
     if: inputs.target == 'distros' || inputs.target == 'distros-next' || inputs.target == 'all'
-    runs-on: ubuntu-latest
-    timeout-minutes: 150
-    strategy:
-      fail-fast: false
-      matrix:
-        # distros-next: what the next releases of each will be (a canary).
-        image: ${{ fromJSON(inputs.target == 'distros-next' && '["debian:sid", "fedora:rawhide", "ubuntu:devel", "opensuse/tumbleweed"]' || '["debian:12", "ubuntu:20.04", "fedora:42", "archlinux:latest", "opensuse/leap:16.0"]') }}
-    container:
-      image: ${{ matrix.image }}
-      options: --shm-size=2g
-    name: ${{ matrix.image }}
-    steps:
-      # Checkout unpacks with tar, which the smallest images (openSUSE Leap)
-      # leave out.
-      - name: tar, for the checkout
-        run: |
-          # An image that declares no PATH of its own (openSUSE) is left with
-          # only the tool cache once setup-node adds to it: no /usr/bin, no sh.
-          echo "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> "$GITHUB_PATH"
-          command -v tar >/dev/null && exit 0
-          # A font: openSUSE's images have none, and text with no font lays out
-          # with no height (a long textarea then has nothing to scroll).
-          if command -v zypper >/dev/null; then zypper --non-interactive --gpg-auto-import-keys refresh && zypper --non-interactive install bash-sh tar gzip dejavu-fonts
-          elif command -v dnf >/dev/null; then dnf install -y tar gzip
-          elif command -v pacman >/dev/null; then pacman -Sy --noconfirm tar gzip
-          else apt-get update -q && apt-get install -y -q tar gzip; fi
-      - uses: actions/checkout@v7
-      - name: System packages
-        run: sh .dev/ci-distro-deps.sh
-      - uses: actions/setup-node@v7
-        with:
-          node-version: "24"
-      - run: npm ci
-      - run: node esbuild.config.mjs production
-      - name: Run the suites
-        shell: bash
-        env:
-          # Root in a container: Electron's sandbox will not start as root.
-          OBSIDIAN_EXTRA_ARGS: --no-sandbox
-          SUITES: ${{ inputs.suites }}
-        run: |
-          set +e
-          Xvfb :99 -screen 0 1920x1080x24 >/dev/null 2>&1 &
-          export DISPLAY=:99
-          failed=0
-          for version in $VERSIONS; do
-            for suite in $SUITES; do
-              echo "::group::$suite (Obsidian $version)"
-              OBSIDIAN_VERSION=$version .dev/ci-run.sh "$suite"; code=$?
-              echo "::endgroup::"
-              case $code in 0) ;; 2) echo "::warning::$suite ($version) skipped cases" ;; *) echo "::error::$suite ($version) failed"; failed=1 ;; esac
-            done
-          done
-          exit $failed
+    uses: Gelaende51/electron-template/.github/workflows/distros.yml@v0.4.0
+    with:
+      # distros-next: what the next releases of each will be (a canary).
+      images: ${{ inputs.target == 'distros-next' && '["debian:sid", "fedora:rawhide", "ubuntu:devel", "opensuse/tumbleweed"]' || '["debian:12", "ubuntu:20.04", "fedora:42", "archlinux:latest", "opensuse/leap:16.0"]' }}
+      suites: ${{ inputs.suites }}
+      versions: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
+      run: bash .dev/ci-suites.sh
+      toolkit-ref: v0.4.0
+      # Root in a container: Electron's sandbox will not start as root.
+      suite-env: |
+        OBSIDIAN_EXTRA_ARGS=--no-sandbox
 
   old-engine:
     if: inputs.target == 'old-engine' || inputs.target == 'all'
