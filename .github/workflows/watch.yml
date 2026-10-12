@@ -4,7 +4,7 @@
 # runs install the latest of each, so they test exactly the new versions.
 #
 # The `environments` job does the same for the systems the tests run on
-# (scripts/test-environments.mjs): a new container image, a distribution's new
+# (development-template's environment-watch, environments in devkit.config.json): a new container image, a distribution's new
 # Obsidian or Electron, a new Wine or runner image runs that environment's
 # target of test-systems.yml (and the main suites for a runner image), with
 # what changed passed along, so a failure opens an issue naming it.
@@ -93,11 +93,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      # environment-watch comes from development-template, a devDependency;
+      # the environments themselves are listed in devkit.config.json.
+      - run: npm ci --ignore-scripts --no-audit --no-fund
       - id: diff
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          out=$(node scripts/test-environments.mjs --diff)
+          out=$(node node_modules/development-template/bin/environment-watch.mjs --diff)
           echo "$out" | jq .now > .github/environment-versions.json
           echo "$out" | jq -r '.changes[]' | sed 's/^/- /' >> "$GITHUB_STEP_SUMMARY"
           echo "changed=$(echo "$out" | jq -r .changed)" >> "$GITHUB_OUTPUT"

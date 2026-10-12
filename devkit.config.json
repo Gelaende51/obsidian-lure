@@ -1,0 +1,156 @@
+{
+	"$schema": "./node_modules/development-template/schema/devkit.config.schema.json",
+	"id": "lure",
+	"name": "Lure",
+	"repository": "Gelaende51/obsidian-lure",
+	"environments": {
+		"image debian:12": {
+			"source": "docker",
+			"repo": "library/debian",
+			"tag": "12",
+			"targets": [
+				"distros",
+				"limits"
+			]
+		},
+		"image ubuntu:20.04": {
+			"source": "docker",
+			"repo": "library/ubuntu",
+			"tag": "20.04",
+			"targets": [
+				"distros"
+			]
+		},
+		"image fedora:42": {
+			"source": "docker",
+			"repo": "library/fedora",
+			"tag": "42",
+			"targets": [
+				"distros"
+			]
+		},
+		"image archlinux:latest": {
+			"source": "docker",
+			"repo": "library/archlinux",
+			"tag": "latest",
+			"targets": [
+				"distros",
+				"system-electron"
+			]
+		},
+		"image opensuse/leap:16.0": {
+			"source": "docker",
+			"repo": "opensuse/leap",
+			"tag": "16.0",
+			"targets": [
+				"distros"
+			]
+		},
+		"image alpine:edge": {
+			"source": "docker",
+			"repo": "library/alpine",
+			"tag": "edge",
+			"targets": [
+				"alpine"
+			]
+		},
+		"image dockurr/windows": {
+			"source": "docker",
+			"repo": "dockurr/windows",
+			"tag": "latest",
+			"targets": [
+				"server-2019"
+			]
+		},
+		"Arch's obsidian": {
+			"source": "repology",
+			"project": "obsidian",
+			"repo": "arch",
+			"targets": [
+				"system-electron"
+			]
+		},
+		"Nix's obsidian": {
+			"source": "repology",
+			"project": "obsidian",
+			"repo": "nix_unstable",
+			"targets": [
+				"nix"
+			]
+		},
+		"FreeBSD's newest electron": {
+			"source": "repology",
+			"project": "electron",
+			"repo": "freebsd",
+			"targets": [
+				"freebsd"
+			]
+		},
+		"Alpine edge's electron": {
+			"source": "repology",
+			"project": "electron",
+			"repo": "alpine_edge",
+			"targets": [
+				"alpine"
+			]
+		},
+		"Flathub's Obsidian": {
+			"source": "flathub",
+			"app": "md.obsidian.Obsidian",
+			"targets": [
+				"flatpak"
+			]
+		},
+		"Snap's Obsidian": {
+			"source": "snap",
+			"name": "obsidian",
+			"targets": [
+				"snap"
+			]
+		},
+		"WineHQ staging": {
+			"source": "winehq",
+			"package": "winehq-staging",
+			"dist": "noble",
+			"targets": [
+				"wine"
+			]
+		},
+		"electron@beta": {
+			"source": "npm",
+			"package": "electron",
+			"tag": "beta",
+			"targets": [
+				"electron-next"
+			]
+		},
+		"runner ubuntu24": {
+			"source": "runner",
+			"image": "ubuntu24",
+			"targets": [
+				"main"
+			]
+		},
+		"runner win25": {
+			"source": "runner",
+			"image": "win25",
+			"targets": [
+				"main"
+			]
+		},
+		"runner ubuntu24-arm64": {
+			"source": "runner",
+			"image": "ubuntu24-arm64",
+			"targets": [
+				"linux-arm"
+			]
+		},
+		"runner win11-arm64": {
+			"source": "runner",
+			"image": "win11-arm64",
+			"targets": [
+				"emulated"
+			]
+		}
+	}
+}
