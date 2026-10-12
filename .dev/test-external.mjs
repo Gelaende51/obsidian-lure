@@ -974,6 +974,14 @@ const deleteFromViewer = (confirm) => `
 		// whether it was ever pressed.
 		for (let i = 0; i < 30 && !document.querySelector(".modal-container button.mod-warning"); i++) ${PAUSE(100)}
 		const confirmButton = document.querySelector(".modal-container button.mod-warning");
+		// Every notice from here on, kept: on a slow machine the answer comes
+		// after the first look and is gone (5 s) before the last one.
+		window.__lureNotices = [];
+		window.__lureNoticeWatch?.disconnect();
+		window.__lureNoticeWatch = new MutationObserver(() => {
+			for (const n of document.querySelectorAll(".notice")) if (!window.__lureNotices.includes(n.textContent)) window.__lureNotices.push(n.textContent);
+		});
+		window.__lureNoticeWatch.observe(document.body, { childList: true, subtree: true });
 		confirmButton?.click();
 		out.confirmed = !!confirmButton;
 		${PAUSE(1500)}` : ""}
@@ -1043,8 +1051,7 @@ test("viewer menu: a file with no reading to edit can still be deleted", async (
 	// more: wait, and read what was said by then rather than right after.
 	for (let i = 0; i < 75 && existsSync(pic); i++) await new Promise((done) => setTimeout(done, 200));
 	if (existsSync(pic)) {
-		const later = await page.evaluate(`return [...document.querySelectorAll(".notice")].map((n) => n.textContent);`);
-		console.log(`    after the wait: ${await page.evaluate(`return JSON.stringify({ dialog: !!document.querySelector(".modal-container"), menus: document.querySelectorAll(".menu").length });`)}`);
+		const later = await page.evaluate(`window.__lureNoticeWatch?.disconnect(); return window.__lureNotices ?? [];`);
 		r.after = [...(r.after ?? []), ...later];
 		// The trash still busy after a long wait — Lure says so — is this
 		// machine's speed, not a refusal.
