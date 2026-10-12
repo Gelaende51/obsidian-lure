@@ -30,7 +30,7 @@ jobs:
       BRANCH: ${{ github.event.workflow_run.head_branch }}
       TESTS: ${{ github.event.workflow_run.html_url }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 0
@@ -52,7 +52,7 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
       - if: steps.shipped.outputs.changed == 'true'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
@@ -68,7 +68,7 @@ jobs:
           node esbuild.config.mjs production
           echo "version=$version" >> "$GITHUB_OUTPUT"
       - if: steps.shipped.outputs.changed == 'true'
-        uses: actions/attest-build-provenance@v1
+        uses: actions/attest-build-provenance@v4
         with:
           subject-path: "main.js, manifest.json, styles.css"
       - if: steps.shipped.outputs.changed == 'true'
