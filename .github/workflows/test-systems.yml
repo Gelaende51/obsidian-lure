@@ -218,63 +218,22 @@ jobs:
   # reach it as Wine spells them. Not working yet (2026-10-11): Obsidian starts
   # and says DevTools is listening, but the port never answers and no window
   # opens — the renderer seems to stop before the vault loads.
+  # Obsidian's Windows build under WineHQ staging, the suites run by Windows'
+  # Node under Wine (electron-template's reusable workflow).
   wine:
     if: inputs.target == 'wine'
-    runs-on: ubuntu-latest
-    timeout-minutes: 150
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: "24"
-          cache: npm
-      - run: npm ci
-      - run: node esbuild.config.mjs production
-      - name: Wine and the Windows installer
-        run: |
-          # WineHQ's staging build: Ubuntu's Wine 9 started Obsidian and then
-          # never answered on its port.
-          sudo dpkg --add-architecture i386
-          sudo mkdir -pm755 /etc/apt/keyrings
-          sudo wget -qO /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
-          sudo wget -qNP /etc/apt/sources.list.d/ "https://dl.winehq.org/wine-builds/ubuntu/dists/$(lsb_release -cs)/winehq-$(lsb_release -cs).sources"
-          sudo apt-get update -q && sudo apt-get install -y -q --install-recommends winehq-staging xvfb
-          wine --version
-          export WINEPREFIX="$HOME/.wine" WINEDEBUG=-all
-          url=$(curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest | grep -o '"browser_download_url": *"[^"]*Obsidian-[0-9.]*\.exe"' | head -1 | cut -d'"' -f4)
-          echo "installer: $url"
-          curl -sL "$url" -o /tmp/obsidian-setup.exe
-          # Unpacked rather than installed: the silent install under Wine left
-          # no Obsidian.exe behind. The NSIS installer carries the app as a 7z.
-          sudo apt-get install -y -q p7zip-full
-          7z x -y -o/tmp/nsis /tmp/obsidian-setup.exe >/dev/null
-          7z x -y -o"$HOME/obsidian-win" "$(find /tmp/nsis -iname 'app-64.7z' | head -1)" >/dev/null
-          wineboot -i >/dev/null 2>&1 || true
-          exe=$(find "$HOME/obsidian-win" -maxdepth 2 -iname Obsidian.exe | head -1)
-          echo "exe: $exe"
-          echo "OBSIDIAN_EXE=$exe" >> "$GITHUB_ENV"
-          # Windows' Node, to run the suites on the same side of the paths.
-          v=$(curl -s https://nodejs.org/dist/index.json | jq -r '[.[] | select(.version | startswith("v24."))][0].version')
-          curl -sL "https://nodejs.org/dist/$v/node-$v-win-x64.zip" -o /tmp/node-win.zip
-          unzip -q /tmp/node-win.zip -d "$HOME" && mv "$HOME/node-$v-win-x64" "$HOME/node-win"
-          wine "$HOME/node-win/node.exe" --version
-          # The suites build their string tables with esbuild, whose binary
-          # is per platform: Windows' Node looks for Windows' one.
-          # npm skips a package for another OS even with --force, so the
-          # binary is unpacked by hand and named in ESBUILD_BINARY_PATH.
-          esv=$(node -p 'require("./node_modules/esbuild/package.json").version')
-          (cd /tmp && npm pack "@esbuild/win32-x64@$esv" --silent | xargs tar -xzf)
-          echo "ESBUILD_BINARY_PATH=$(winepath -w /tmp/package/esbuild.exe)" >> "$GITHUB_ENV"
-          echo "SUITE_NODE=wine $HOME/node-win/node.exe" >> "$GITHUB_ENV"
-      - name: Run the suites
-        env:
-          OBSIDIAN_PATHS: wine
-          WINEDEBUG: -all
-          SUITES: ${{ inputs.suites }}
-          # Chromium's sandbox and GPU process are what break under Wine.
-          # Windows-only protections Wine cannot provide, and the GPU in-process.
-          OBSIDIAN_EXTRA_ARGS: --no-sandbox --disable-gpu --disable-gpu-sandbox --in-process-gpu --disable-features=RendererCodeIntegrity,NetworkServiceSandbox
-        run: OBSIDIAN_COMMAND="wine $OBSIDIAN_EXE" .dev/ci-suites.sh
+    uses: Gelaende51/electron-template/.github/workflows/wine.yml@v0.6.0
+    with:
+      installer-repo: obsidianmd/obsidian-releases
+      installer-pattern: 'Obsidian-[0-9.]*\.exe'
+      exe: Obsidian.exe
+      command-var: OBSIDIAN_COMMAND
+      flags-var: OBSIDIAN_EXTRA_ARGS
+      suites: ${{ inputs.suites }}
+      versions: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
+      run: .dev/ci-suites.sh
+      suite-env: |
+        OBSIDIAN_PATHS=wine
 
   # Obsidian publishes no FreeBSD build. Its own app (the installer's
   # app.asar from the Linux tarball, and the app version on top) runs on the
