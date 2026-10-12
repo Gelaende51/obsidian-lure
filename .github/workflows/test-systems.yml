@@ -380,60 +380,12 @@ jobs:
 
   server-2019:
     if: inputs.target == 'server-2019' || inputs.target == 'all'
-    runs-on: ubuntu-latest
-    timeout-minutes: 300
-    steps:
-      - uses: actions/checkout@v7
-      - name: Let the runner user use KVM
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-          ls -l /dev/kvm
-      - name: Hand the guest the repository and what to run
-        env:
-          SUITES: ${{ inputs.suites }}
-        run: |
-          sudo mkdir -p /mnt/win /mnt/shared
-          sudo chown "$USER" /mnt/win /mnt/shared
-          rsync -a --exclude node_modules --exclude .git ./ /mnt/shared/repo/
-          echo "$SUITES" > /mnt/shared/suites.txt
-          echo "$VERSIONS" > /mnt/shared/versions.txt
-      - name: Install and start Windows Server 2019 (evaluation)
-        run: |
-          docker run -d --name windows -e VERSION=2019 -e RAM_SIZE=10G -e CPU_CORES=4 -e DISK_SIZE=48G \
-            --device=/dev/kvm --device=/dev/net/tun --cap-add NET_ADMIN \
-            -v /mnt/win:/storage -v "$PWD/.dev/vm:/oem" -v /mnt/shared:/shared \
-            --stop-timeout 120 docker.io/dockurr/windows
-      - name: Wait for the suites in the guest
-        run: |
-          for i in $(seq 1 270); do
-            [ -f /mnt/shared/done.txt ] && break
-            # Setup reports its errors in setup.log: no use waiting past one.
-            if grep -qa "FullyQualifiedErrorId" /mnt/shared/setup.log 2>/dev/null; then
-              echo "::error::setup failed in the guest"; tr -d '\r' < /mnt/shared/setup.log; exit 1
-            fi
-            # Setup done and no run within a quarter of an hour: it is not coming.
-            if grep -qa "setup finished" /mnt/shared/setup.log 2>/dev/null && [ ! -f /mnt/shared/run-started.txt ]; then
-              setup_done=${setup_done:-$i}
-              if [ $((i - setup_done)) -ge 15 ]; then echo "::error::setup finished but the run did not start"; tr -d '\r' < /mnt/shared/setup.log; exit 1; fi
-            fi
-            if [ $((i % 10)) -eq 0 ]; then echo "--- minute $i"; docker logs --tail 3 windows 2>&1; ls /mnt/shared; fi
-            sleep 60
-          done
-          echo "--- results"; cat /mnt/shared/results.txt 2>/dev/null || echo "none"
-          [ -f /mnt/shared/run-error.txt ] && { echo "::error::the run in the guest stopped"; tr -d '\r' < /mnt/shared/run-error.txt; }
-          [ -f /mnt/shared/done.txt ] || { echo "::error::the guest did not finish"; docker logs --tail 40 windows; exit 1; }
-          ! tr -d '\r' < /mnt/shared/results.txt | grep -qvE ' (0|2)$'
-      - name: Keep the guest's logs
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: server-2019-logs
-          path: |
-            /mnt/shared/*.log
-            /mnt/shared/*.txt
-          if-no-files-found: ignore
+    uses: Gelaende51/electron-template/.github/workflows/windows-vm.yml@v0.12.0
+    with:
+      windows-version: "2019"
+      guest-scripts: .dev/vm
+      suites: ${{ inputs.suites }}
+      versions: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
 
   # The vault somewhere other than under the home folder: a folder outside it,
   # a real SMB network share (served and mounted on the runner itself), a
