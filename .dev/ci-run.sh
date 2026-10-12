@@ -52,7 +52,7 @@ fi
 # PEER_CHANNEL=beta: each neighbour at its newest pre-release where it has one
 # (test-systems' peer-betas target, a heads-up on their next releases).
 if [ "${PEER_CHANNEL:-}" = beta ]; then
-	mapfile -t PLUGINS < <(node .dev/peer-betas.mjs "${PLUGINS[@]}")
+	mapfile -t PLUGINS < <(node node_modules/obsidian-toolkit/bin/peer-betas.mjs "${PLUGINS[@]}")
 fi
 
 # The installer (Electron) goes with the app: the newest for "latest", the

@@ -832,7 +832,7 @@ jobs:
         run: .dev/ci-suites.sh
 
   # The neighbouring plugins at their newest pre-releases, where they have
-  # one newer than their last release (.dev/peer-betas.mjs).
+  # one newer than their last release (obsidian-toolkit's peer-betas).
   peer-betas:
     if: inputs.target == 'peer-betas'
     runs-on: ubuntu-latest
