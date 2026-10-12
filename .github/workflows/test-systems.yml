@@ -441,74 +441,14 @@ jobs:
   # a vault is.
   vault-elsewhere:
     if: inputs.target == 'vault-elsewhere' || inputs.target == 'all'
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - { place: "outside home (/srv)", os: ubuntu-latest, kind: srv }
-          - { place: "SMB network share", os: ubuntu-latest, kind: smb }
-          - { place: "NFS share", os: ubuntu-latest, kind: nfs }
-          - { place: "NFS share on macOS", os: macos-latest, kind: nfs-mac }
-          - { place: "second drive (D:)", os: windows-latest, kind: drive }
-          - { place: "UNC share (\\\\<machine>\\lure)", os: windows-latest, kind: unc }
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 150
-    name: vault on ${{ matrix.place }}
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: "24"
-          cache: npm
-      - run: npm ci
-      - run: node esbuild.config.mjs production
-      - name: The place
-        shell: bash
-        run: |
-          case "${{ matrix.kind }}" in
-            srv)
-              sudo mkdir -p /srv/lure-vaults && sudo chown "$USER" /srv/lure-vaults
-              echo "LURE_VAULT_PARENT=/srv/lure-vaults" >> "$GITHUB_ENV" ;;
-            smb)
-              sudo apt-get update -q && sudo apt-get install -y -q samba cifs-utils xvfb >/dev/null
-              sudo mkdir -p /srv/lure-share && sudo chown "$USER" /srv/lure-share
-              printf '[lure]\n path = /srv/lure-share\n read only = no\n guest ok = yes\n force user = %s\n' "$USER" | sudo tee -a /etc/samba/smb.conf >/dev/null
-              sudo systemctl restart smbd
-              sudo mkdir -p /mnt/lure-smb
-              sudo mount -t cifs //127.0.0.1/lure /mnt/lure-smb -o guest,uid=$(id -u),gid=$(id -g),vers=3.0
-              mount | grep lure-smb
-              echo "LURE_VAULT_PARENT=/mnt/lure-smb" >> "$GITHUB_ENV" ;;
-            nfs)
-              sudo apt-get update -q && sudo apt-get install -y -q nfs-kernel-server nfs-common >/dev/null
-              sudo mkdir -p /srv/lure-nfs && sudo chown "$USER" /srv/lure-nfs
-              echo "/srv/lure-nfs 127.0.0.1(rw,sync,no_subtree_check,all_squash,anonuid=$(id -u),anongid=$(id -g))" | sudo tee -a /etc/exports >/dev/null
-              sudo exportfs -ra && sudo systemctl restart nfs-kernel-server
-              sudo mkdir -p /mnt/lure-nfs && sudo mount -t nfs 127.0.0.1:/srv/lure-nfs /mnt/lure-nfs
-              mount | grep lure-nfs
-              echo "LURE_VAULT_PARENT=/mnt/lure-nfs" >> "$GITHUB_ENV" ;;
-            nfs-mac)
-              mkdir -p "$HOME/lure-nfs-export" "$HOME/lure-nfs"
-              echo "$HOME/lure-nfs-export -alldirs -mapall=$(id -u):$(id -g) localhost" | sudo tee /etc/exports >/dev/null
-              sudo nfsd enable; sudo nfsd restart; sleep 3; showmount -e localhost || true
-              sudo mount -t nfs -o resvport,nolocks,locallocks localhost:"$HOME/lure-nfs-export" "$HOME/lure-nfs"
-              mount | grep lure-nfs
-              echo "LURE_VAULT_PARENT=$HOME/lure-nfs" >> "$GITHUB_ENV" ;;
-            drive)
-              mkdir -p /d/lure-vaults
-              echo "LURE_VAULT_PARENT=D:\\lure-vaults" >> "$GITHUB_ENV" ;;
-            unc)
-              mkdir -p /c/lure-share
-              powershell -NoProfile -Command "New-SmbShare -Name lure -Path C:\\lure-share -FullAccess Everyone | Out-Null; Get-SmbShare -Name lure"
-              # The machine's own name, not localhost: a file:// URL keeps a
-              # real host, and localhost is emptied by the URL parser.
-              echo "LURE_VAULT_PARENT=\\\\$COMPUTERNAME\\lure" >> "$GITHUB_ENV" ;;
-          esac
-      - name: Run the suites
-        shell: bash
-        env:
-          SUITES: ${{ inputs.suites }}
-          OBSIDIAN_EXTRA_ARGS: --no-sandbox
-        run: .dev/ci-suites.sh
+    uses: Gelaende51/electron-template/.github/workflows/data-elsewhere.yml@v0.11.0
+    with:
+      parent-var: LURE_VAULT_PARENT
+      suites: ${{ inputs.suites }}
+      versions: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
+      run: .dev/ci-suites.sh
+      suite-env: |
+        OBSIDIAN_EXTRA_ARGS=--no-sandbox
 
   # ---------------------------------------------------------------- canaries
   # What is coming rather than what is out: a heads-up, started weekly by
