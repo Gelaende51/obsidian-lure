@@ -54,14 +54,14 @@ jobs:
   # PATH, Electron's libraries, a font, Xvfb).
   distros:
     if: inputs.target == 'distros' || inputs.target == 'distros-next' || inputs.target == 'all'
-    uses: Gelaende51/electron-template/.github/workflows/distros.yml@v0.5.1
+    uses: Gelaende51/electron-template/.github/workflows/distros.yml@v0.14.0
     with:
       # distros-next: what the next releases of each will be (a canary).
       images: ${{ inputs.target == 'distros-next' && '["debian:sid", "fedora:rawhide", "ubuntu:devel", "opensuse/tumbleweed"]' || '["debian:12", "ubuntu:20.04", "fedora:42", "archlinux:latest", "opensuse/leap:16.0"]' }}
       suites: ${{ inputs.suites }}
       versions: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
       run: bash .dev/ci-suites.sh
-      toolkit-ref: v0.5.1
+      toolkit-ref: v0.14.0
       # Root in a container: Electron's sandbox will not start as root.
       suite-env: |
         OBSIDIAN_EXTRA_ARGS=--no-sandbox
@@ -70,7 +70,7 @@ jobs:
   # Electron 21): ci-run.sh reads OBSIDIAN_INSTALLER.
   old-engine:
     if: inputs.target == 'old-engine' || inputs.target == 'all'
-    uses: Gelaende51/electron-template/.github/workflows/platform.yml@v0.13.0
+    uses: Gelaende51/electron-template/.github/workflows/platform.yml@v0.14.0
     with:
       runs-on: ubuntu-latest
       suites: ${{ inputs.suites }}
@@ -82,7 +82,7 @@ jobs:
 
   linux-arm:
     if: inputs.target == 'linux-arm' || inputs.target == 'all'
-    uses: Gelaende51/electron-template/.github/workflows/platform.yml@v0.10.0
+    uses: Gelaende51/electron-template/.github/workflows/platform.yml@v0.14.0
     with:
       runs-on: ubuntu-24.04-arm
       setup: sudo apt-get update -q && sudo apt-get install -y -q xvfb libfuse2t64 || sudo apt-get install -y -q xvfb libfuse2
@@ -104,7 +104,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-11-arm, macos-15]
-    uses: Gelaende51/electron-template/.github/workflows/platform.yml@v0.10.0
+    uses: Gelaende51/electron-template/.github/workflows/platform.yml@v0.14.0
     with:
       runs-on: ${{ matrix.os }}
       node-arch: x64
@@ -116,7 +116,7 @@ jobs:
 
   system-electron:
     if: inputs.target == 'system-electron' || inputs.target == 'all'
-    uses: Gelaende51/electron-template/.github/workflows/distro-package.yml@v0.13.0
+    uses: Gelaende51/electron-template/.github/workflows/distro-package.yml@v0.14.0
     with:
       image: archlinux:latest
       install: pacman -Syu --noconfirm obsidian nodejs npm git xorg-server-xvfb xorg-xauth curl procps-ng
@@ -134,7 +134,7 @@ jobs:
   # Run through electron-template's reusable flatpak workflow.
   flatpak:
     if: inputs.target == 'flatpak' || inputs.target == 'all'
-    uses: Gelaende51/electron-template/.github/workflows/flatpak.yml@v0.5.1
+    uses: Gelaende51/electron-template/.github/workflows/flatpak.yml@v0.14.0
     with:
       app-id: md.obsidian.Obsidian
       command-var: OBSIDIAN_COMMAND
@@ -147,7 +147,7 @@ jobs:
 
   snap:
     if: inputs.target == 'snap' || inputs.target == 'all'
-    uses: Gelaende51/electron-template/.github/workflows/snap.yml@v0.7.0
+    uses: Gelaende51/electron-template/.github/workflows/snap.yml@v0.14.0
     with:
       snap: obsidian
       command-var: OBSIDIAN_COMMAND
@@ -165,7 +165,7 @@ jobs:
   # Node under Wine (electron-template's reusable workflow).
   wine:
     if: inputs.target == 'wine'
-    uses: Gelaende51/electron-template/.github/workflows/wine.yml@v0.6.0
+    uses: Gelaende51/electron-template/.github/workflows/wine.yml@v0.14.0
     with:
       installer-repo: obsidianmd/obsidian-releases
       installer-pattern: 'Obsidian-[0-9.]*\.exe'
@@ -183,7 +183,7 @@ jobs:
   # Electron FreeBSD packages, in a FreeBSD VM on the Linux runner.
   freebsd:
     if: inputs.target == 'freebsd'
-    uses: Gelaende51/obsidian-toolkit/.github/workflows/freebsd.yml@v0.5.0
+    uses: Gelaende51/obsidian-toolkit/.github/workflows/freebsd.yml@v0.6.0
     with:
       suites: ${{ inputs.suites }}
       versions: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
@@ -193,19 +193,19 @@ jobs:
   # And odd displays: a small screen, HiDPI, no GPU (electron-template).
   limits:
     if: inputs.target == 'limits' || inputs.target == 'all'
-    uses: Gelaende51/electron-template/.github/workflows/limits.yml@v0.9.0
+    uses: Gelaende51/electron-template/.github/workflows/limits.yml@v0.14.0
     with:
       flags-var: OBSIDIAN_EXTRA_ARGS
       suites: ${{ inputs.suites }}
       versions: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
       run: bash .dev/ci-suites.sh
-      toolkit-ref: v0.9.0
+      toolkit-ref: v0.14.0
 
   # A Wayland session instead of X: a headless Weston, and Obsidian on
   # Electron's own Wayland backend.
   wayland:
     if: inputs.target == 'wayland' || inputs.target == 'all'
-    uses: Gelaende51/electron-template/.github/workflows/wayland.yml@v0.8.0
+    uses: Gelaende51/electron-template/.github/workflows/wayland.yml@v0.14.0
     with:
       flags-var: OBSIDIAN_EXTRA_ARGS
       suites: ${{ inputs.suites }}
@@ -215,7 +215,7 @@ jobs:
   # Obsidian as Nix packages it: wrapped to run on Nix's own Electron.
   nix:
     if: inputs.target == 'nix' || inputs.target == 'all'
-    uses: Gelaende51/electron-template/.github/workflows/nix.yml@v0.9.0
+    uses: Gelaende51/electron-template/.github/workflows/nix.yml@v0.14.0
     with:
       package: obsidian
       command-var: OBSIDIAN_COMMAND
@@ -231,7 +231,7 @@ jobs:
   # through docker by hand: GitHub's actions cannot run in a musl container.
   alpine:
     if: inputs.target == 'alpine'
-    uses: Gelaende51/obsidian-toolkit/.github/workflows/alpine.yml@v0.5.0
+    uses: Gelaende51/obsidian-toolkit/.github/workflows/alpine.yml@v0.6.0
     with:
       suites: ${{ inputs.suites }}
       versions: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
@@ -308,7 +308,7 @@ jobs:
 
   server-2019:
     if: inputs.target == 'server-2019' || inputs.target == 'all'
-    uses: Gelaende51/electron-template/.github/workflows/windows-vm.yml@v0.12.0
+    uses: Gelaende51/electron-template/.github/workflows/windows-vm.yml@v0.14.0
     with:
       windows-version: "2019"
       guest-scripts: .dev/vm
@@ -321,7 +321,7 @@ jobs:
   # a vault is.
   vault-elsewhere:
     if: inputs.target == 'vault-elsewhere' || inputs.target == 'all'
-    uses: Gelaende51/electron-template/.github/workflows/data-elsewhere.yml@v0.11.0
+    uses: Gelaende51/electron-template/.github/workflows/data-elsewhere.yml@v0.14.0
     with:
       parent-var: LURE_VAULT_PARENT
       suites: ${{ inputs.suites }}
@@ -338,115 +338,50 @@ jobs:
   # installer ships with it: Chromium's layout and APIs as they will be.
   electron-next:
     if: inputs.target == 'electron-next'
-    runs-on: ubuntu-latest
-    timeout-minutes: 150
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: "24"
-          cache: npm
-      - run: npm ci && node esbuild.config.mjs production
-      - name: The next Electron, and Obsidian's app for it
-        run: |
-          npm install --prefix /tmp/electron-next electron@beta >/dev/null
-          # npm no longer runs install scripts unasked, and Electron's
-          # downloads the binary: run it.
-          node /tmp/electron-next/node_modules/electron/install.js
-          electron=/tmp/electron-next/node_modules/electron/dist/electron
-          echo "electron: $($electron --version 2>/dev/null)"
-          url=$(curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest | grep -o '"browser_download_url": *"[^"]*obsidian-[0-9.]*\.tar\.gz"' | head -1 | cut -d'"' -f4)
-          curl -sL "$url" | tar -xz -C /tmp
-          echo "OBSIDIAN_COMMAND=$electron $(ls -d /tmp/obsidian-*/resources/app.asar | head -1)" >> "$GITHUB_ENV"
-      - name: Run the suites
-        env:
-          SUITES: ${{ inputs.suites }}
-          VERSIONS: latest
-          OBSIDIAN_EXTRA_ARGS: --no-sandbox
-        run: .dev/ci-suites.sh
+    uses: Gelaende51/obsidian-toolkit/.github/workflows/electron-next.yml@v0.6.0
+    with:
+      suites: ${{ inputs.suites }}
 
   # The next Ubuntu runner image, with the launcher's own Obsidian.
   runner-next:
     if: inputs.target == 'runner-next'
-    runs-on: ubuntu-26.04
-    timeout-minutes: 150
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: "24"
-          cache: npm
-      - run: npm ci && node esbuild.config.mjs production
-      - run: command -v xvfb-run || (sudo apt-get update -q && sudo apt-get install -y -q xvfb)
-      - name: Run the suites
-        env:
-          SUITES: ${{ inputs.suites }}
-          OBSIDIAN_EXTRA_ARGS: --no-sandbox
-        run: .dev/ci-suites.sh
+    uses: Gelaende51/electron-template/.github/workflows/platform.yml@v0.14.0
+    with:
+      runs-on: ubuntu-26.04
+      setup: command -v xvfb-run || (sudo apt-get update -q && sudo apt-get install -y -q xvfb)
+      suites: ${{ inputs.suites }}
+      run: .dev/ci-suites.sh
+      suite-env: |
+        OBSIDIAN_EXTRA_ARGS=--no-sandbox
 
   # The next build and type tools (TypeScript's nightly, the newest of the
   # rest, Obsidian's API types as they stand on GitHub), then the suites.
   npm-next:
     if: inputs.target == 'npm-next'
-    runs-on: ubuntu-latest
-    timeout-minutes: 150
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: "24"
-          cache: npm
-      - run: npm ci
-      - name: The next versions
-        run: |
-          next="typescript@next esbuild@latest eslint@latest typescript-eslint@latest eslint-plugin-obsidianmd@latest picomatch@latest obsidian@github:obsidianmd/obsidian-api"
-          # A peer range that does not take the next version yet is itself the
-          # heads-up: said as a warning, then installed regardless.
-          if ! npm install --no-save $next 2>/tmp/npm.err; then
-            grep -E "Could not resolve|peer .* from" /tmp/npm.err | sed 's/^npm error /::warning::npm-next: /' | head -5
-            npm install --no-save --legacy-peer-deps $next
-          fi
-          npm ls typescript esbuild eslint eslint-plugin-obsidianmd obsidian picomatch --depth=0 || true
-      - name: Type-check and build with them
-        run: npx tsc -noEmit -skipLibCheck && npm run check:lang && node esbuild.config.mjs production
-      # Lint on its own: a linter that does not take the next TypeScript yet
-      # (typescript-eslint refused TS 7 at first) is the heads-up, said as a
-      # warning, and the type check and the suites still run.
-      - name: Lint with them
-        run: |
-          if ! npx eslint src > /tmp/lint.log 2>&1; then
-            tail -20 /tmp/lint.log
-            echo "::warning::npm-next: lint fails with the next versions: $(grep -m1 -E 'Error:|error ' /tmp/lint.log | cut -c1-160)"
-          fi
-      - run: command -v xvfb-run || (sudo apt-get update -q && sudo apt-get install -y -q xvfb)
-      - name: Run the suites
-        env:
-          SUITES: ${{ inputs.suites }}
-          VERSIONS: latest
-          OBSIDIAN_EXTRA_ARGS: --no-sandbox
-        run: .dev/ci-suites.sh
+    uses: Gelaende51/development-template/.github/workflows/npm-next.yml@v1
+    with:
+      next: typescript@next esbuild@latest eslint@latest typescript-eslint@latest eslint-plugin-obsidianmd@latest picomatch@latest obsidian@github:obsidianmd/obsidian-api
+      show: typescript esbuild eslint eslint-plugin-obsidianmd obsidian picomatch
+      check: npx tsc -noEmit -skipLibCheck && npm run check:lang && node esbuild.config.mjs production
+      lint: npx eslint src
+      setup: command -v xvfb-run || (sudo apt-get update -q && sudo apt-get install -y -q xvfb)
+      suites: ${{ inputs.suites }}
+      run: .dev/ci-suites.sh
+      suite-env: |
+        OBSIDIAN_EXTRA_ARGS=--no-sandbox
 
   # The neighbouring plugins at their newest pre-releases, where they have
   # one newer than their last release (obsidian-toolkit's peer-betas).
   peer-betas:
     if: inputs.target == 'peer-betas'
-    runs-on: ubuntu-latest
-    timeout-minutes: 150
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: "24"
-          cache: npm
-      - run: npm ci && node esbuild.config.mjs production
-      - name: Run the suites
-        env:
-          SUITES: ${{ inputs.suites }}
-          VERSIONS: latest
-          PEER_CHANNEL: beta
-          GITHUB_TOKEN: ${{ github.token }}
-          OBSIDIAN_EXTRA_ARGS: --no-sandbox
-        run: .dev/ci-suites.sh
+    uses: Gelaende51/electron-template/.github/workflows/platform.yml@v0.14.0
+    with:
+      runs-on: ubuntu-latest
+      suites: ${{ inputs.suites }}
+      run: .dev/ci-suites.sh
+      suite-env: |
+        PEER_CHANNEL=beta
+        OBSIDIAN_EXTRA_ARGS=--no-sandbox
 
   # Started by the environment watch (watch.yml): a failure is reported as an
   # issue naming what changed, since nobody is looking at a scheduled run.
