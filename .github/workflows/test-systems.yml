@@ -183,7 +183,7 @@ jobs:
   # Electron FreeBSD packages, in a FreeBSD VM on the Linux runner.
   freebsd:
     if: inputs.target == 'freebsd'
-    uses: Gelaende51/obsidian-toolkit/.github/workflows/freebsd.yml@v0.10.1
+    uses: Gelaende51/obsidian-toolkit/.github/workflows/freebsd.yml@v0.10.2
     with:
       suites: ${{ inputs.suites }}
       versions: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
@@ -231,7 +231,7 @@ jobs:
   # through docker by hand: GitHub's actions cannot run in a musl container.
   alpine:
     if: inputs.target == 'alpine'
-    uses: Gelaende51/obsidian-toolkit/.github/workflows/alpine.yml@v0.10.1
+    uses: Gelaende51/obsidian-toolkit/.github/workflows/alpine.yml@v0.10.2
     with:
       suites: ${{ inputs.suites }}
       versions: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
@@ -338,7 +338,7 @@ jobs:
   # installer ships with it: Chromium's layout and APIs as they will be.
   electron-next:
     if: inputs.target == 'electron-next'
-    uses: Gelaende51/obsidian-toolkit/.github/workflows/electron-next.yml@v0.10.1
+    uses: Gelaende51/obsidian-toolkit/.github/workflows/electron-next.yml@v0.10.2
     with:
       suites: ${{ inputs.suites }}
 
