@@ -1,5 +1,6 @@
 {
   "obsidian": "1.14.4",
+  "obsidianBeta": null,
   "plugins": {
     "advanced-rename-and-delete-handler": "2.1.2",
     "another-name": "1.0.1",
@@ -17,7 +18,7 @@
     "mononote": "1.2.2",
     "nav-link-header": "2.8.0",
     "notebook-navigator": "3.4.3",
-    "obsidian-filename-heading-sync": "1.11.1",
+    "obsidian-filename-heading-sync": "1.11.2",
     "obsidian-front-matter-title-plugin": "4.2.1",
     "obsidian-hider": "1.7.1",
     "obsidian-hover-editor": "0.11.31",
