@@ -14,7 +14,7 @@ set -eu
 cd "$(dirname "$0")/.."
 VERSION="${1:?usage: release.sh <x.y.z>}"
 
-node scripts/release.mjs "$VERSION" --check
+node node_modules/obsidian-toolkit/bin/release.mjs "$VERSION" --check
 if ! node .dev/usage-stats.mjs --check >/dev/null 2>&1; then
 	echo "The usage figures are stale: run node .dev/usage-stats.mjs (it writes every README) and commit," >&2
 	echo "or RELEASE_STALE_USAGE=1 to release with the figures as they are." >&2

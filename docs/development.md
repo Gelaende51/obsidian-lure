@@ -434,11 +434,11 @@ BRAT and Obsidian's own installer both read `manifest.json` on the default branc
 The release runs on GitHub's runners (`.github/workflows/release.yml`). Two steps come first, on the maintainer's machine, because only it can do them: the *Unreleased* entries translated into every changelog as a pending section under its own translated "Unreleased" heading, and the AI-usage figures refreshed (`node .dev/usage-stats.mjs`) and carried into the translated READMEs. Then:
 
 ```bash
-node scripts/release.mjs 1.5.2 --check   # everything ready? names what is missing
+npx obsidian-release 1.5.2 --check     # everything ready? names what is missing
 .dev/release.sh 1.5.2                    # checks again, starts the workflow, waits for it
 ```
 
-The workflow runs the whole test suite on both Obsidian versions, then `scripts/release.mjs` moves every changelog's pending section under the version heading with its compare-link footnote and bumps `manifest.json`, `package.json` and `versions.json`; it builds, commits, renews the changelog stamps in a second commit, tags, pushes, and builds the release from the tag with its attestation. Pushing a tag by hand still works and releases the tree as it is (tested first). What it did by hand before is below, and is still what the script does.
+The workflow runs the whole test suite on both Obsidian versions, then obsidian-toolkit's `obsidian-release` moves every changelog's pending section under the version heading with its compare-link footnote and bumps `manifest.json`, `package.json` and `versions.json`; it builds, commits, renews the changelog stamps in a second commit, tags, pushes, and builds the release from the tag with its attestation. Pushing a tag by hand still works and releases the tree as it is (tested first). What it did by hand before is below, and is still what the script does.
 
 Move the *Unreleased* entries in `CHANGELOG.md` under a heading for the new version, with its date and a footnote holding its compare link (`## 1.3.0 — 2026-09-20[^1.3.0]`, and `[^1.3.0]: Changes since 1.2.0: <…/compare/1.2.0...1.3.0>` at the bottom, while the *Unreleased* heading and its footnote go until something lands again — the translated changelogs take the same two-line change), before tagging — the tag should point at a commit whose changelog already names it. Entries describe what a user notices, not how it was built; the commit messages carry the rest.
 
@@ -506,7 +506,7 @@ None of them is part of a release. A failing target opens one issue, *Tests fail
 
 The public page carries a few things `manifest.json` has no field for — tags, an optional long description, a pricing model, a listing icon, screenshots. They are edited in a form at `community.obsidian.md/account/plugins/lure/edit`, and until now they existed nowhere in this repository. `listing.json` is where they live.
 
-They cannot go in `manifest.json`, for three separate reasons. Obsidian's [manifest reference](https://docs.obsidian.md/Reference/Manifest) is a closed list of nine properties and the submission review validates against it. The manifest is parsed with strict `JSON.parse` at plugin load, so there is nowhere to leave a note next to a value — a comment there breaks the app rather than a linter. And the lifecycles differ: manifest fields change with a version and are downloaded by every user, while a tag changes when you change your mind about it and belongs to nobody's download. Because `listing.json` is read by nothing but `scripts/check-listing.mjs`, keys beginning with `_` can carry that missing annotation.
+They cannot go in `manifest.json`, for three separate reasons. Obsidian's [manifest reference](https://docs.obsidian.md/Reference/Manifest) is a closed list of nine properties and the submission review validates against it. The manifest is parsed with strict `JSON.parse` at plugin load, so there is nowhere to leave a note next to a value — a comment there breaks the app rather than a linter. And the lifecycles differ: manifest fields change with a version and are downloaded by every user, while a tag changes when you change your mind about it and belongs to nobody's download. Because `listing.json` is read by nothing but `obsidian-check-listing`, keys beginning with `_` can carry that missing annotation.
 
 ```bash
 npm run check:listing              # validate the file
@@ -519,7 +519,7 @@ Nothing here writes to the site. The form saves with a `PATCH /api/entries/lure`
 
 Only what was actually chosen is kept. `pricing` is `free`, which is the default; the icon and long description are unset; the short description is taken from `manifest.json`'s `description` by the site itself, so a second copy here would just be a second thing to keep right — the checker rejects it. The rule is that if the site can work a value out, the repository does not keep it.
 
-The tag vocabulary is not documented anywhere. It is compiled into the community site's own JavaScript, and `scripts/obsidian-listing-tags.mjs` holds a copy read from there together with a `--refresh` that reads it again and reports what moved. Lure's three are `navigation`, `files`, `folders`, in that order — the form lets them be dragged, so the order is a choice and not an accident.
+The tag vocabulary is not documented anywhere. It is compiled into the community site's own JavaScript, and obsidian-toolkit's `obsidian-listing-tags` holds a copy read from there together with a `--refresh` that reads it again and reports what moved. Lure's three are `navigation`, `files`, `folders`, in that order — the form lets them be dragged, so the order is a choice and not an accident.
 
 ## Reporting bugs
 
