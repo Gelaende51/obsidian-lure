@@ -23,9 +23,51 @@
 		"test-foldernote"
 	],
 	"obsidian": {
-		"neighboursFrom": ".dev/ci-run.sh",
 		"betaLogs": ".personal/beta-logs",
-		"suiteRunner": ".dev/ci-suites.sh"
+		"suiteRunner": ".dev/ci-suites.sh",
+		"neighbours": [
+			"folder-notes",
+			"folder-note-plugin",
+			"create-folder-notes-with-dropdown",
+			"quick-explorer",
+			"obsidian-front-matter-title-plugin",
+			"nav-link-header",
+			"running-head",
+			"crumbs-obsidian",
+			"breadcrumbs",
+			"home-launcher",
+			"obsidian-outliner",
+			"table-editor-obsidian"
+		],
+		"suitePlugins": {
+			"test-compat-ui": [
+				"obsidian-icon-folder",
+				"cmdr",
+				"pane-relief",
+				"obsidian-hider",
+				"make-md",
+				"tab-file-path",
+				"obsidian-hover-editor",
+				"notebook-navigator",
+				"editor-breadcrumbs",
+				"another-name",
+				"obsidian-path-title",
+				"vertical-tabs",
+				"continuous-mode",
+				"obsidian-filename-heading-sync",
+				"advanced-rename-and-delete-handler",
+				"mononote",
+				"open-tab-settings",
+				"iconic@darwin"
+			]
+		},
+		"keepEnabled": [
+			"home-launcher"
+		],
+		"window": [
+			1600,
+			1000
+		]
 	},
 	"environments": {
 		"image debian:12": {
