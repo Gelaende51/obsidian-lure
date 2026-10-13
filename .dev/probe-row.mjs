@@ -8,7 +8,7 @@
  * that up, prints each part's width and classes, and keeps a picture.
  *
  *   node .dev/probe-row.mjs              (Obsidian on the debugging port)
- *   LURE_SHOTS=shots .dev/ci-run.sh probe-row
+ *   SHOTS=shots .dev/ci-run.sh probe-row
  */
 import { connect, PAUSE, setSettings } from "./cdpSession.mjs";
 
@@ -55,12 +55,12 @@ await page.evaluate(`
 	return true;
 `);
 console.log("--- after a reload with the note in the background, brought forward\n" + (await read()));
-if (process.env.LURE_SHOTS) {
+if (process.env.SHOTS ?? process.env.LURE_SHOTS) {
 	const { mkdirSync, writeFileSync } = await import("node:fs");
-	mkdirSync(`${process.env.LURE_SHOTS}/look`, { recursive: true });
+	mkdirSync(`${process.env.SHOTS ?? process.env.LURE_SHOTS}/look`, { recursive: true });
 	const png = await page.send("Page.captureScreenshot", { format: "png" });
 	const data = png?.result?.data ?? png?.data;
-	if (data) writeFileSync(`${process.env.LURE_SHOTS}/look/split-row.png`, Buffer.from(data, "base64"));
+	if (data) writeFileSync(`${process.env.SHOTS ?? process.env.LURE_SHOTS}/look/split-row.png`, Buffer.from(data, "base64"));
 }
 await setSettings(page, { showFileExtension: true });
 page.close();

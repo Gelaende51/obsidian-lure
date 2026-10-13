@@ -75,9 +75,9 @@ const { test, expect, run } = createSuite({
 
 const settle = (ms = 500) => page.evaluate(PAUSE(ms) + "return true;");
 
-/** A picture of the window, kept with LURE_SHOTS set: only a picture says a look shows. */
+/** A picture of the window, kept with SHOTS set: only a picture says a look shows. */
 async function shoot(name) {
-	const dir = process.env.LURE_SHOTS;
+	const dir = process.env.SHOTS ?? process.env.LURE_SHOTS;
 	if (!dir) return;
 	const { mkdirSync, writeFileSync } = await import("node:fs");
 	mkdirSync(`${dir}/look`, { recursive: true });

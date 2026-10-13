@@ -81,11 +81,11 @@ const look = async () => JSON.parse(await page.evaluate(`
 `));
 
 /**
- * A picture of the window for the colour cases, kept with LURE_SHOTS set: a
+ * A picture of the window for the colour cases, kept with SHOTS set: a
  * class says a colour was asked for, only a picture says it shows.
  */
 async function shoot(name) {
-	const dir = process.env.LURE_SHOTS;
+	const dir = process.env.SHOTS ?? process.env.LURE_SHOTS;
 	if (!dir) return;
 	const { mkdirSync, writeFileSync } = await import("node:fs");
 	mkdirSync(`${dir}/look`, { recursive: true });
