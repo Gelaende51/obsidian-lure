@@ -41,7 +41,7 @@ permissions:
 
 jobs:
   suites:
-    uses: Gelaende51/obsidian-toolkit/.github/workflows/suites.yml@v0.13.0
+    uses: Gelaende51/obsidian-toolkit/.github/workflows/suites.yml@v0.13.1
     with:
       suites: ${{ inputs.suites }}
       filter: ${{ inputs.filter }}
