@@ -2744,3 +2744,14 @@ from the logged readings; the factors will move as readings accumulate.
   (containers, tmpfs); the reason has to be supplied by the caller.
 - FreeBSD has no /proc/mounts; `mount -p` prints the same table in fstab's
   layout (octal escapes as /proc/mounts uses).
+- systemd splits `ExecStart=` at spaces unless the words are double-quoted.
+  The directory-session timer was written with this repository's path
+  ("file path edit") bare, so every daily run started `node …/file` and
+  failed with MODULE_NOT_FOUND — for weeks, silently: the secret was still
+  renewed whenever release.sh ran the script by hand, so nothing looked
+  broken. Quote every path a generated unit names, and look at
+  `journalctl --user -u <unit>` once after installing a timer.
+- npm 12 refuses dependencies given as a tarball URL unless `allow-remote`
+  allows them; `allow-remote=root` in `.npmrc` allows the project's own
+  direct ones only, so packages installed that way cannot pull each other in
+  — each one a project uses is listed in its own package.json.
