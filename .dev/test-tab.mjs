@@ -26,6 +26,7 @@
 
 import { CLEAR_NOTICES, connect, PAUSE, pressKey, quiesce, reloadPlugin, parkPointer, asPosix } from "./cdpSession.mjs";
 import { createSuite, skipCase } from "development-template/harness";
+import { SLOW } from "electron-template/cdp-session";
 
 const NOTE = "Schemes/2026/Cake catapult.md";
 /** Named so nothing in a real vault can collide with them, and deleted at the end. */
@@ -160,6 +161,18 @@ const field = `
 `;
 
 const look = async () => JSON.parse(await page.evaluate(field));
+// The offer can be in the field before the list has drawn its rows (KDE on
+// X11 drew them later, and the rows read empty): wait for what the case
+// needs, then check it as before.
+const lookUntil = async (ready, ms = 3000) => {
+	const end = Date.now() + ms * SLOW;
+	let s = await look();
+	while (!ready(s) && Date.now() < end) {
+		await new Promise((r) => setTimeout(r, 100));
+		s = await look();
+	}
+	return s;
+};
 
 async function armed() {
 	await page.evaluate(arm);
@@ -1364,7 +1377,7 @@ test("taking an offer stops at the fork, and never chooses past it", async () =>
 	// answered by the key rather than by the user.
 	await armAtRoot();
 	await type(`${PREFIX}a`);
-	const offered = await look();
+	const offered = await lookUntil((s) => Array.isArray(s.rows) && s.rows.length > 0);
 	expect("the offer reaches the fork", offered.value, `${PREFIX}alp`);
 	expect("and stops there", offered.selected, "lp");
 	expect("with every name past it still listed", offered.rows, (v) =>
