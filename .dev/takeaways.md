@@ -2755,3 +2755,18 @@ from the logged readings; the factors will move as readings accumulate.
   allows them; `allow-remote=root` in `.npmrc` allows the project's own
   direct ones only, so packages installed that way cannot pull each other in
   — each one a project uses is listed in its own package.json.
+- Desktop sessions without a login (desktops.yml): Cinnamon's window manager
+  (Muffin, a Mutter fork) exits with "Unsupported session type" unless
+  `XDG_SESSION_TYPE` is set; logind would set it, a CI shell does not. Ubuntu's
+  `kde-plasma-desktop` with `--no-install-recommends` brings no X11 KWin —
+  Plasma starts, nothing manages windows; install `kwin-x11` by name.
+- Arch gives compositors file capabilities (`cap_sys_nice` on sway); a Docker
+  container's bounding set lacks it, so exec fails with "Operation not
+  permitted" even as root. `setcap -r` the binary inside the container.
+- Hyprland (Aquamarine) needs a DRM device for its buffers even with
+  `HYPRLAND_HEADLESS_ONLY=1`: without one, "CBackend::create() failed!".
+  Hyprland's own CI runs it in a NixOS VM with a virtio GPU.
+- obsidian-launcher's `launch` spawns Obsidian detached with `stdio: "ignore"`:
+  a crash at start leaves no trace. run-suite now runs the cached binary
+  (`~/.obsidian-cache/obsidian-installer/linux-*/Obsidian-*/obsidian`) on its
+  own for 20 s when Obsidian does not come up, and prints what it says.
