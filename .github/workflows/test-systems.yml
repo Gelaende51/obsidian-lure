@@ -388,10 +388,10 @@ jobs:
   # One issue per target, closed when it passes again (development-template).
   # Real desktop sessions: Xorg itself, the major X11 desktops (Xfce, MATE,
   # Cinnamon, LXQt, KDE Plasma, GNOME, Budgie) and Wayland compositors (GNOME,
-  # KDE, Sway, labwc, Hyprland, Weston) — electron-template's reusable workflow.
+  # KDE, Sway, labwc, Weston) — electron-template's reusable workflow.
   desktops:
     if: inputs.target == 'desktops' || inputs.target == 'all'
-    uses: Gelaende51/electron-template/.github/workflows/desktops.yml@v0.15.0
+    uses: Gelaende51/electron-template/.github/workflows/desktops.yml@v0.15.1
     with:
       flags-var: OBSIDIAN_EXTRA_ARGS
       suites: ${{ inputs.suites }}
