@@ -182,10 +182,10 @@ The declarations are deliberately narrower than the real ones: `readFileSync` ex
 
 Two things to check when touching this. `npm run build` must pass with `@types/node` absent from `node_modules` — that is the review's environment, so it is the one that matters. And the bundle should not change: these are types, they erase, and `main.js` was byte-identical across the swap.
 
-**Releases carry build provenance.** `.github/workflows/release.yml` builds the assets on GitHub's runners, checks the tag against `manifest.json`, and attaches a signed attestation to each one, so a downloaded bundle can be traced to a commit:
+**Releases carry build provenance.** `.github/workflows/release.yml` runs the tests and hands over to obsidian-toolkit's reusable release workflow, which builds the assets on GitHub's runners, checks the tag against `manifest.json`, and attaches a signed attestation to each one, so a downloaded bundle can be traced to a commit. That workflow signs, so it is named as the signer (releases up to 1.6.1 were signed here and verify without `--signer-repo`):
 
 ```bash
-gh attestation verify main.js --repo Gelaende51/obsidian-lure
+gh attestation verify main.js --repo Gelaende51/obsidian-lure --signer-repo Gelaende51/obsidian-toolkit
 ```
 
 ## Testing
