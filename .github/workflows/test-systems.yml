@@ -66,36 +66,19 @@ jobs:
       suite-env: |
         OBSIDIAN_EXTRA_ARGS=--no-sandbox
 
+  # Today's Obsidian on its oldest installer that still runs it (1.1.16,
+  # Electron 21): ci-run.sh reads OBSIDIAN_INSTALLER.
   old-engine:
     if: inputs.target == 'old-engine' || inputs.target == 'all'
-    runs-on: ubuntu-latest
-    timeout-minutes: 150
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: "24"
-          cache: npm
-      - run: npm ci
-      - run: node esbuild.config.mjs production
-      - name: Run the suites on installer 1.1.16 (Electron 21)
-        shell: bash
-        env:
-          OBSIDIAN_EXTRA_ARGS: --no-sandbox
-          OBSIDIAN_INSTALLER: "1.1.16"
-          SUITES: ${{ inputs.suites }}
-        run: |
-          set +e
-          failed=0
-          for version in $VERSIONS; do
-            for suite in $SUITES; do
-              echo "::group::$suite (Obsidian $version, installer 1.1.16)"
-              OBSIDIAN_VERSION=$version xvfb-run -a -s "-screen 0 1920x1080x24" .dev/ci-run.sh "$suite"; code=$?
-              echo "::endgroup::"
-              case $code in 0) ;; 2) echo "::warning::$suite ($version) skipped cases" ;; *) echo "::error::$suite ($version) failed"; failed=1 ;; esac
-            done
-          done
-          exit $failed
+    uses: Gelaende51/electron-template/.github/workflows/platform.yml@v0.13.0
+    with:
+      runs-on: ubuntu-latest
+      suites: ${{ inputs.suites }}
+      versions: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
+      run: .dev/ci-suites.sh
+      suite-env: |
+        OBSIDIAN_INSTALLER=1.1.16
+        OBSIDIAN_EXTRA_ARGS=--no-sandbox
 
   linux-arm:
     if: inputs.target == 'linux-arm' || inputs.target == 'all'
@@ -133,26 +116,17 @@ jobs:
 
   system-electron:
     if: inputs.target == 'system-electron' || inputs.target == 'all'
-    runs-on: ubuntu-latest
-    timeout-minutes: 150
-    container:
+    uses: Gelaende51/electron-template/.github/workflows/distro-package.yml@v0.13.0
+    with:
       image: archlinux:latest
-      options: --shm-size=2g
-    steps:
-      - name: Obsidian from Arch's own package, on the system's Electron
-        run: pacman -Syu --noconfirm obsidian nodejs npm git xorg-server-xvfb xorg-xauth curl procps-ng
-      - uses: actions/checkout@v7
-      - run: npm ci
-      - run: node esbuild.config.mjs production
-      - name: Run the suites
-        shell: bash
-        env:
-          OBSIDIAN_COMMAND: obsidian
-          OBSIDIAN_EXTRA_ARGS: --no-sandbox
-          SUITES: ${{ inputs.suites }}
-        run: |
-          head -5 /usr/bin/obsidian
-          .dev/ci-suites.sh
+      install: pacman -Syu --noconfirm obsidian nodejs npm git xorg-server-xvfb xorg-xauth curl procps-ng
+      command: obsidian
+      command-var: OBSIDIAN_COMMAND
+      suites: ${{ inputs.suites }}
+      versions: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
+      run: .dev/ci-suites.sh
+      suite-env: |
+        OBSIDIAN_EXTRA_ARGS=--no-sandbox
 
   # "restricted" takes the sandbox's home and host access away and leaves
   # only the folder the vault copy and its settings live in: what Lure does
@@ -209,40 +183,10 @@ jobs:
   # Electron FreeBSD packages, in a FreeBSD VM on the Linux runner.
   freebsd:
     if: inputs.target == 'freebsd'
-    runs-on: ubuntu-latest
-    timeout-minutes: 180
-    steps:
-      - uses: actions/checkout@v7
-      - name: FreeBSD, its Electron and the suites
-        uses: vmactions/freebsd-vm@v1
-        with:
-          usesh: true
-          mem: 8192
-          envs: "SUITES VERSIONS"
-          prepare: |
-            # pgrep and pkill are in FreeBSD's base system.
-            pkg install -y node npm bash curl git xorg-vfbserver xauth python3 gmake dejavu
-            # The scripts ask for /bin/bash; FreeBSD keeps it in /usr/local.
-            ln -sf /usr/local/bin/bash /bin/bash
-            pkg search -q '^electron[0-9]' | sort -V | tail -1 | xargs pkg install -y
-          run: |
-            set -e
-            electron=$(ls /usr/local/bin/electron* | sort -V | tail -1)
-            echo "electron: $electron"
-            url=$(curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest | grep -o '"browser_download_url": *"[^"]*obsidian-[0-9.]*\.tar\.gz"' | head -1 | cut -d'"' -f4)
-            curl -sL "$url" | tar -xz -C /tmp
-            asar=$(ls -d /tmp/obsidian-*/resources/app.asar | head -1)
-            npm ci
-            node esbuild.config.mjs production
-            # The launcher's library writes Obsidian's local storage through
-            # classic-level, which ships no FreeBSD build: compiled here.
-            npm install --no-save --no-package-lock obsidian-launcher@3
-            (cd node_modules/classic-level && npx --yes node-gyp rebuild)
-            Xvfb :99 -screen 0 1920x1080x24 >/dev/null 2>&1 &
-            export DISPLAY=:99 OBSIDIAN_COMMAND="$electron $asar" OBSIDIAN_EXTRA_ARGS=--no-sandbox OBSIDIAN_PLATFORM_AS=linux
-            bash .dev/ci-suites.sh
-        env:
-          SUITES: ${{ inputs.suites }}
+    uses: Gelaende51/obsidian-toolkit/.github/workflows/freebsd.yml@v0.5.0
+    with:
+      suites: ${{ inputs.suites }}
+      versions: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
 
   # Little memory and half a CPU: a container capped by Docker, so timing
   # that only holds on a fast machine shows.
@@ -287,26 +231,10 @@ jobs:
   # through docker by hand: GitHub's actions cannot run in a musl container.
   alpine:
     if: inputs.target == 'alpine'
-    runs-on: ubuntu-latest
-    timeout-minutes: 150
-    steps:
-      - uses: actions/checkout@v7
-      - name: Alpine, its Electron and the suites
-        env:
-          SUITES: ${{ inputs.suites }}
-        run: |
-          docker run --rm --shm-size=2g -e SUITES -e VERSIONS -v "$PWD:/repo" -w /repo alpine:edge sh -c '
-            # Electron is packaged for edge only (community, else testing).
-            echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
-            apk add --no-cache bash nodejs npm curl git electron xvfb-run xvfb procps-ng font-dejavu python3 make g++ >/dev/null || { apk search -q electron | head; exit 1; }
-            electron=$(command -v electron); echo "electron: $electron $($electron --version 2>/dev/null)"
-            url=$(curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest | grep -o "\"browser_download_url\": *\"[^\"]*obsidian-[0-9.]*\.tar\.gz\"" | head -1 | cut -d"\"" -f4)
-            curl -sL "$url" | tar -xz -C /tmp
-            asar=$(ls -d /tmp/obsidian-*/resources/app.asar | head -1)
-            npm ci --no-audit --no-fund >/dev/null && node esbuild.config.mjs production || exit 1
-            npm install --no-save --no-package-lock obsidian-launcher@3 >/dev/null 2>&1
-            (cd node_modules/classic-level && node -e "require(\"node-gyp-build\")(\".\")" 2>/dev/null || npx --yes node-gyp rebuild >/dev/null)
-            OBSIDIAN_COMMAND="$electron $asar" OBSIDIAN_EXTRA_ARGS=--no-sandbox bash .dev/ci-suites.sh'
+    uses: Gelaende51/obsidian-toolkit/.github/workflows/alpine.yml@v0.5.0
+    with:
+      suites: ${{ inputs.suites }}
+      versions: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
 
   # Loaded beside every suite, the header plugins of test-compat-ui changed
   # what F2 and the rename field did even after being turned off. One job
