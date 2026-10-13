@@ -54,14 +54,14 @@ jobs:
   # PATH, Electron's libraries, a font, Xvfb).
   distros:
     if: inputs.target == 'distros' || inputs.target == 'distros-next' || inputs.target == 'all'
-    uses: Gelaende51/electron-template/.github/workflows/distros.yml@v0.16.0
+    uses: Gelaende51/electron-template/.github/workflows/distros.yml@v0.17.0
     with:
       # distros-next: what the next releases of each will be (a canary).
       images: ${{ inputs.target == 'distros-next' && '["debian:sid", "fedora:rawhide", "ubuntu:devel", "opensuse/tumbleweed"]' || '["debian:12", "ubuntu:20.04", "fedora:42", "archlinux:latest", "opensuse/leap:16.0"]' }}
       suites: ${{ inputs.suites }}
       versions: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
       run: bash .dev/ci-suites.sh
-      toolkit-ref: v0.16.0
+      toolkit-ref: v0.17.0
       # Xorg itself, as the distributions' users run X — not Xvfb.
       display: xorg
       # Root in a container: Electron's sandbox will not start as root.
@@ -72,7 +72,7 @@ jobs:
   # Electron 21): ci-run.sh reads OBSIDIAN_INSTALLER.
   old-engine:
     if: inputs.target == 'old-engine' || inputs.target == 'all'
-    uses: Gelaende51/electron-template/.github/workflows/platform.yml@v0.16.0
+    uses: Gelaende51/electron-template/.github/workflows/platform.yml@v0.17.0
     with:
       runs-on: ubuntu-latest
       suites: ${{ inputs.suites }}
@@ -84,7 +84,7 @@ jobs:
 
   linux-arm:
     if: inputs.target == 'linux-arm' || inputs.target == 'all'
-    uses: Gelaende51/electron-template/.github/workflows/platform.yml@v0.16.0
+    uses: Gelaende51/electron-template/.github/workflows/platform.yml@v0.17.0
     with:
       runs-on: ubuntu-24.04-arm
       setup: sudo apt-get update -q && sudo apt-get install -y -q xvfb libfuse2t64 || sudo apt-get install -y -q xvfb libfuse2
@@ -106,7 +106,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-11-arm, macos-15]
-    uses: Gelaende51/electron-template/.github/workflows/platform.yml@v0.16.0
+    uses: Gelaende51/electron-template/.github/workflows/platform.yml@v0.17.0
     with:
       runs-on: ${{ matrix.os }}
       node-arch: x64
@@ -118,7 +118,7 @@ jobs:
 
   system-electron:
     if: inputs.target == 'system-electron' || inputs.target == 'all'
-    uses: Gelaende51/electron-template/.github/workflows/distro-package.yml@v0.16.0
+    uses: Gelaende51/electron-template/.github/workflows/distro-package.yml@v0.17.0
     with:
       image: archlinux:latest
       install: pacman -Syu --noconfirm obsidian nodejs npm git xorg-server-xvfb xorg-xauth curl procps-ng
@@ -136,7 +136,7 @@ jobs:
   # Run through electron-template's reusable flatpak workflow.
   flatpak:
     if: inputs.target == 'flatpak' || inputs.target == 'all'
-    uses: Gelaende51/electron-template/.github/workflows/flatpak.yml@v0.16.0
+    uses: Gelaende51/electron-template/.github/workflows/flatpak.yml@v0.17.0
     with:
       app-id: md.obsidian.Obsidian
       command-var: OBSIDIAN_COMMAND
@@ -149,7 +149,7 @@ jobs:
 
   snap:
     if: inputs.target == 'snap' || inputs.target == 'all'
-    uses: Gelaende51/electron-template/.github/workflows/snap.yml@v0.16.0
+    uses: Gelaende51/electron-template/.github/workflows/snap.yml@v0.17.0
     with:
       snap: obsidian
       command-var: OBSIDIAN_COMMAND
@@ -167,7 +167,7 @@ jobs:
   # Node under Wine (electron-template's reusable workflow).
   wine:
     if: inputs.target == 'wine'
-    uses: Gelaende51/electron-template/.github/workflows/wine.yml@v0.16.0
+    uses: Gelaende51/electron-template/.github/workflows/wine.yml@v0.17.0
     with:
       installer-repo: obsidianmd/obsidian-releases
       installer-pattern: 'Obsidian-[0-9.]*\.exe'
@@ -195,19 +195,19 @@ jobs:
   # And odd displays: a small screen, HiDPI, no GPU (electron-template).
   limits:
     if: inputs.target == 'limits' || inputs.target == 'all'
-    uses: Gelaende51/electron-template/.github/workflows/limits.yml@v0.16.0
+    uses: Gelaende51/electron-template/.github/workflows/limits.yml@v0.17.0
     with:
       flags-var: OBSIDIAN_EXTRA_ARGS
       suites: ${{ inputs.suites }}
       versions: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
       run: bash .dev/ci-suites.sh
-      toolkit-ref: v0.16.0
+      toolkit-ref: v0.17.0
 
   # A Wayland session instead of X: a headless Weston, and Obsidian on
   # Electron's own Wayland backend.
   wayland:
     if: inputs.target == 'wayland' || inputs.target == 'all'
-    uses: Gelaende51/electron-template/.github/workflows/wayland.yml@v0.16.0
+    uses: Gelaende51/electron-template/.github/workflows/wayland.yml@v0.17.0
     with:
       flags-var: OBSIDIAN_EXTRA_ARGS
       suites: ${{ inputs.suites }}
@@ -217,7 +217,7 @@ jobs:
   # Obsidian as Nix packages it: wrapped to run on Nix's own Electron.
   nix:
     if: inputs.target == 'nix' || inputs.target == 'all'
-    uses: Gelaende51/electron-template/.github/workflows/nix.yml@v0.16.0
+    uses: Gelaende51/electron-template/.github/workflows/nix.yml@v0.17.0
     with:
       package: obsidian
       command-var: OBSIDIAN_COMMAND
@@ -310,7 +310,7 @@ jobs:
 
   server-2019:
     if: inputs.target == 'server-2019' || inputs.target == 'all'
-    uses: Gelaende51/electron-template/.github/workflows/windows-vm.yml@v0.16.0
+    uses: Gelaende51/electron-template/.github/workflows/windows-vm.yml@v0.17.0
     with:
       windows-version: "2019"
       guest-scripts: .dev/vm
@@ -323,7 +323,7 @@ jobs:
   # a vault is.
   vault-elsewhere:
     if: inputs.target == 'vault-elsewhere' || inputs.target == 'all'
-    uses: Gelaende51/electron-template/.github/workflows/data-elsewhere.yml@v0.16.0
+    uses: Gelaende51/electron-template/.github/workflows/data-elsewhere.yml@v0.17.0
     with:
       parent-var: LURE_VAULT_PARENT
       suites: ${{ inputs.suites }}
@@ -347,7 +347,7 @@ jobs:
   # The next Ubuntu runner image, with the launcher's own Obsidian.
   runner-next:
     if: inputs.target == 'runner-next'
-    uses: Gelaende51/electron-template/.github/workflows/platform.yml@v0.16.0
+    uses: Gelaende51/electron-template/.github/workflows/platform.yml@v0.17.0
     with:
       runs-on: ubuntu-26.04
       setup: command -v xvfb-run || (sudo apt-get update -q && sudo apt-get install -y -q xvfb)
@@ -376,7 +376,7 @@ jobs:
   # one newer than their last release (obsidian-toolkit's peer-betas).
   peer-betas:
     if: inputs.target == 'peer-betas'
-    uses: Gelaende51/electron-template/.github/workflows/platform.yml@v0.16.0
+    uses: Gelaende51/electron-template/.github/workflows/platform.yml@v0.17.0
     with:
       runs-on: ubuntu-latest
       suites: ${{ inputs.suites }}
@@ -390,15 +390,17 @@ jobs:
   # One issue per target, closed when it passes again (development-template).
   # Real desktop sessions: Xorg itself, the major X11 desktops (Xfce, MATE,
   # Cinnamon, LXQt, KDE Plasma, GNOME, Budgie) and Wayland compositors (GNOME,
-  # KDE, Sway, labwc, Weston) — electron-template's reusable workflow.
+  # KDE, Sway, labwc, Weston; Hyprland and COSMIC in Arch) — electron-template's
+  # reusable workflow.
   desktops:
     if: inputs.target == 'desktops' || inputs.target == 'all'
-    uses: Gelaende51/electron-template/.github/workflows/desktops.yml@v0.16.0
+    uses: Gelaende51/electron-template/.github/workflows/desktops.yml@v0.17.0
     with:
       flags-var: OBSIDIAN_EXTRA_ARGS
       suites: ${{ inputs.suites }}
       versions: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
       run: .dev/ci-suites.sh
+      toolkit-ref: v0.17.0
 
   report:
     needs: [distros, vault-elsewhere, old-engine, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits, wayland, nix, alpine, server-2019, electron-next, runner-next, npm-next, peer-betas, desktops]
