@@ -29,7 +29,7 @@ on:
       target:
         description: "What to run on"
         type: choice
-        options: [distros, vault-elsewhere, distros-next, electron-next, runner-next, npm-next, peer-betas, old-engine, server-2019, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits, wayland, nix, alpine, peer-residue, freeze-probe, all]
+        options: [distros, vault-elsewhere, distros-next, electron-next, runner-next, npm-next, peer-betas, old-engine, server-2019, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits, wayland, nix, alpine, peer-residue, freeze-probe, desktops, all]
         default: distros
       suites:
         description: "Suites, space separated"
@@ -386,8 +386,20 @@ jobs:
   # Started by the environment watch (watch.yml): a failure is reported as an
   # issue naming what changed, since nobody is looking at a scheduled run.
   # One issue per target, closed when it passes again (development-template).
+  # Real desktop sessions: Xorg itself, the major X11 desktops (Xfce, MATE,
+  # Cinnamon, LXQt, KDE Plasma, GNOME, Budgie) and Wayland compositors (GNOME,
+  # KDE, Sway, labwc, Hyprland, Weston) — electron-template's reusable workflow.
+  desktops:
+    if: inputs.target == 'desktops' || inputs.target == 'all'
+    uses: Gelaende51/electron-template/.github/workflows/desktops.yml@v0.15.0
+    with:
+      flags-var: OBSIDIAN_EXTRA_ARGS
+      suites: ${{ inputs.suites }}
+      versions: ${{ inputs.obsidian == 'both' && 'earliest latest' || inputs.obsidian }}
+      run: .dev/ci-suites.sh
+
   report:
-    needs: [distros, vault-elsewhere, old-engine, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits, wayland, nix, alpine, server-2019, electron-next, runner-next, npm-next, peer-betas]
+    needs: [distros, vault-elsewhere, old-engine, linux-arm, emulated, system-electron, flatpak, snap, wine, freebsd, limits, wayland, nix, alpine, server-2019, electron-next, runner-next, npm-next, peer-betas, desktops]
     if: always() && inputs.why != ''
     uses: Gelaende51/development-template/.github/workflows/target-issue.yml@v1
     permissions:
