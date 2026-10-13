@@ -11,7 +11,7 @@
 		"check:minver": "node scripts/check-min-app-version.mjs",
 		"tags": "obsidian-listing-tags",
 		"lint": "eslint src",
-		"stamp": "node scripts/i18n-stamp.mjs"
+		"stamp": "obsidian-i18n-stamp"
 	},
 	"license": "AGPL-3.0-only",
 	"devDependencies": {
@@ -21,7 +21,7 @@
 		"eslint": "^9.39.0",
 		"eslint-plugin-obsidianmd": "^0.4.2",
 		"obsidian": "latest",
-		"obsidian-toolkit": "https://codeload.github.com/Gelaende51/obsidian-toolkit/tar.gz/refs/tags/v0.11.1",
+		"obsidian-toolkit": "https://codeload.github.com/Gelaende51/obsidian-toolkit/tar.gz/refs/tags/v0.12.0",
 		"tslib": "^2.6.0",
 		"typescript": "^5.4.0",
 		"typescript-eslint": "^8.71.1"
