@@ -61,8 +61,9 @@ jobs:
         if: env.COOKIE != ''
         timeout-minutes: 35
         run: |
+          npm ci --ignore-scripts --no-audit --no-fund
           npm install --no-save --no-package-lock playwright-core@1
-          node scripts/directory.mjs review "${{ github.sha }}"
+          node node_modules/obsidian-toolkit/bin/directory.mjs review "${{ github.sha }}"
 
   prepare:
     if: github.event_name == 'workflow_dispatch'
@@ -171,17 +172,18 @@ jobs:
       - name: Queue the directory's scan
         if: env.COOKIE != ''
         run: |
+          npm ci --ignore-scripts --no-audit --no-fund
           npm install --no-save --no-package-lock playwright-core@1
-          node scripts/directory.mjs request "$TAG"
+          node node_modules/obsidian-toolkit/bin/directory.mjs request "$TAG"
       - name: Wait for the directory to list it
         id: confirm
         if: env.COOKIE != ''
         timeout-minutes: 45
-        run: node scripts/directory.mjs confirm "$TAG"
+        run: node node_modules/obsidian-toolkit/bin/directory.mjs confirm "$TAG"
       - name: Read the release's review, compare it with the previous one and record it
         if: env.COOKIE != ''
         timeout-minutes: 35
-        run: node scripts/directory.mjs released "$TAG"
+        run: node node_modules/obsidian-toolkit/bin/directory.mjs released "$TAG"
       - name: Commit the recorded review
         if: always() && env.COOKIE != '' && hashFiles(format('.github/directory-reviews/{0}.json', env.TAG)) != ''
         run: |
