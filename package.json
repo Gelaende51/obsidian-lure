@@ -18,7 +18,7 @@
 		"development-template": "https://codeload.github.com/Gelaende51/development-template/tar.gz/refs/tags/v1.2.0",
 		"electron-template": "https://codeload.github.com/Gelaende51/electron-template/tar.gz/refs/tags/v0.17.1",
 		"esbuild": "^0.28.2",
-		"eslint": "^9.39.0",
+		"eslint": "^10.12.0",
 		"eslint-plugin-obsidianmd": "^0.4.2",
 		"obsidian": "latest",
 		"obsidian-toolkit": "https://codeload.github.com/Gelaende51/obsidian-toolkit/tar.gz/refs/tags/v0.13.2",
