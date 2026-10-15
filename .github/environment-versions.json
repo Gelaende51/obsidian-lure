@@ -7,9 +7,9 @@
   "image alpine:edge": "sha256:020dfcbaaf4cc1078bf2d9c7ba31a8466e334061dcd2f248001d68f79e52c000",
   "image dockurr/windows": "sha256:16fd7c39a3e48bb946d29c59dc6015942e5b900a1fa5d7e5552053bfc48ee2ea",
   "Arch's obsidian": "1.14.4",
-  "Nix's obsidian": "1.13.7",
+  "Nix's obsidian": "1.14.4",
   "FreeBSD's newest electron": "44.7.0",
-  "Alpine edge's electron": "42.11.3",
+  "Alpine edge's electron": "42.11.10",
   "Flathub's Obsidian": "1.14.4",
   "Snap's Obsidian": "1.14.4",
   "WineHQ staging": "11.19~noble-1",
@@ -17,5 +17,5 @@
   "runner ubuntu24": "ubuntu24/20261012.334",
   "runner win25": "win25/20261013.288",
   "runner ubuntu24-arm64": "ubuntu24-arm64/20261012.149",
-  "runner win11-arm64": "win11-arm64/20261004.186"
+  "runner win11-arm64": "win11-arm64/20261006.188"
 }
