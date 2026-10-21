@@ -1,5 +1,5 @@
 {
-  "image debian:12": "sha256:2c037a04925515fdd6ea85ea14a682d0e79931f5e9f5d07b6dbfc6ba12f9e858",
+  "image debian:12": "sha256:854dd8ab51d62866dbd8f5431d15ce77b12983a2a4a1e1fe43a2395dc7ef9f61",
   "image ubuntu:20.04": "sha256:8feb4d8ca5354def3d8fce243717141ce31e2c428701f6682bd2fafe15388214",
   "image fedora:42": "sha256:99e203b80b1c3d8f7e161ec10a68fd02b081ef83a3963553e513c82846b97814",
   "image archlinux:latest": "sha256:e43f1fd80e073992c5f173efbbbf65144170bf60aeb7369940087d63eacea8f4",
@@ -13,7 +13,7 @@
   "Flathub's Obsidian": "1.14.4",
   "Snap's Obsidian": "1.14.4",
   "WineHQ staging": "11.20~noble-1",
-  "electron@beta": "45.0.0-beta.5",
+  "electron@beta": "45.0.0-beta.7",
   "runner ubuntu24": "ubuntu24/20261018.339",
   "runner win25": "win25/20261013.288",
   "runner ubuntu24-arm64": "ubuntu24-arm64/20261018.154",
