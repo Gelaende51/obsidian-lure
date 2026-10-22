@@ -2,8 +2,8 @@
   "image debian:12": "sha256:854dd8ab51d62866dbd8f5431d15ce77b12983a2a4a1e1fe43a2395dc7ef9f61",
   "image ubuntu:20.04": "sha256:8feb4d8ca5354def3d8fce243717141ce31e2c428701f6682bd2fafe15388214",
   "image fedora:42": "sha256:99e203b80b1c3d8f7e161ec10a68fd02b081ef83a3963553e513c82846b97814",
-  "image archlinux:latest": "sha256:e43f1fd80e073992c5f173efbbbf65144170bf60aeb7369940087d63eacea8f4",
-  "image opensuse/leap:16.0": "sha256:5e54545c0726b48ed1c86253f6ad3da65886cd4c447123b8019569de4c157c76",
+  "image archlinux:latest": "sha256:52dfbd5afb23a220d5ee92dafcb4c788d96c026ed04179890c23adef4c897fa0",
+  "image opensuse/leap:16.0": "sha256:0c459bfe558e59b44b484e0e02dad66a28cdba92d24c8121d3901177938a3175",
   "image alpine:edge": "sha256:020dfcbaaf4cc1078bf2d9c7ba31a8466e334061dcd2f248001d68f79e52c000",
   "image dockurr/windows": "sha256:16fd7c39a3e48bb946d29c59dc6015942e5b900a1fa5d7e5552053bfc48ee2ea",
   "Arch's obsidian": "1.14.4",
@@ -14,8 +14,8 @@
   "Snap's Obsidian": "1.14.4",
   "WineHQ staging": "11.20~noble-1",
   "electron@beta": "45.0.0-beta.7",
-  "runner ubuntu24": "ubuntu24/20261018.339",
-  "runner win25": "win25/20261013.288",
-  "runner ubuntu24-arm64": "ubuntu24-arm64/20261018.154",
+  "runner ubuntu24": "ubuntu24/20261021.345",
+  "runner win25": "win25/20261021.299",
+  "runner ubuntu24-arm64": "ubuntu24-arm64/20261021.157",
   "runner win11-arm64": "win11-arm64/20261006.188"
 }
