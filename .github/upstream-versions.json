@@ -1,6 +1,6 @@
 {
-  "obsidian": "1.14.4",
-  "obsidianBeta": null,
+  "obsidian": "1.14.5",
+  "obsidianBeta": "1.15.0",
   "plugins": {
     "advanced-rename-and-delete-handler": "3.0.0",
     "another-name": "1.0.1",
