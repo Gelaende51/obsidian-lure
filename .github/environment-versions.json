@@ -10,12 +10,12 @@
   "Nix's obsidian": "1.14.4",
   "FreeBSD's newest electron": "44.9.0",
   "Alpine edge's electron": "42.11.10",
-  "Flathub's Obsidian": "1.14.4",
+  "Flathub's Obsidian": "1.14.5",
   "Snap's Obsidian": "1.14.5",
   "WineHQ staging": "11.20~noble-1",
   "electron@beta": "45.0.0-beta.7",
-  "runner ubuntu24": "ubuntu24/20261012.334",
+  "runner ubuntu24": "ubuntu24/20261023.334",
   "runner win25": "win25/20261021.299",
-  "runner ubuntu24-arm64": "ubuntu24-arm64/20261012.149",
+  "runner ubuntu24-arm64": "ubuntu24-arm64/20261023.149",
   "runner win11-arm64": "win11-arm64/20261006.188"
 }
