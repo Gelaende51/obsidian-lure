@@ -24,7 +24,7 @@
 		"obsidian-toolkit": "https://codeload.github.com/Gelaende51/obsidian-toolkit/tar.gz/refs/tags/v0.13.2",
 		"tslib": "^2.6.0",
 		"typescript": "^5.4.0",
-		"typescript-eslint": "^8.71.1"
+		"typescript-eslint": "^8.72.0"
 	},
 	"dependencies": {
 		"picomatch": "^4.0.7"
