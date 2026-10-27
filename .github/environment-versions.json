@@ -14,8 +14,8 @@
   "Snap's Obsidian": "1.14.5",
   "WineHQ staging": "11.20~noble-1",
   "electron@beta": "45.0.0-beta.7",
-  "runner ubuntu24": "ubuntu24/20261023.334",
+  "runner ubuntu24": "ubuntu24/20261026.354",
   "runner win25": "win25/20261021.299",
-  "runner ubuntu24-arm64": "ubuntu24-arm64/20261023.149",
+  "runner ubuntu24-arm64": "ubuntu24-arm64/20261026.166",
   "runner win11-arm64": "win11-arm64/20261006.188"
 }
