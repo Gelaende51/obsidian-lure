@@ -1,9 +1,9 @@
 {
-  "image debian:12": "sha256:854dd8ab51d62866dbd8f5431d15ce77b12983a2a4a1e1fe43a2395dc7ef9f61",
+  "image debian:12": "sha256:d74df7598108a173a621eda4d58a2adbf850b2d9a9d81bc2cca1a6c21174a880",
   "image ubuntu:20.04": "sha256:8feb4d8ca5354def3d8fce243717141ce31e2c428701f6682bd2fafe15388214",
   "image fedora:42": "sha256:99e203b80b1c3d8f7e161ec10a68fd02b081ef83a3963553e513c82846b97814",
-  "image archlinux:latest": "sha256:52dfbd5afb23a220d5ee92dafcb4c788d96c026ed04179890c23adef4c897fa0",
-  "image opensuse/leap:16.0": "sha256:40b8e1fc290b203380b9adc7cd147ef2141f5a613c7cf7117f678f626855654e",
+  "image archlinux:latest": "sha256:e82623936fa1a69700b48e98b058df6eaab18b737c27473a7234a40fdecb9413",
+  "image opensuse/leap:16.0": "sha256:952857883a24c24a64c8bc67d7d1a8f9d4800ad4fbe075fc4566ff9af706cb8b",
   "image alpine:edge": "sha256:020dfcbaaf4cc1078bf2d9c7ba31a8466e334061dcd2f248001d68f79e52c000",
   "image dockurr/windows": "sha256:16fd7c39a3e48bb946d29c59dc6015942e5b900a1fa5d7e5552053bfc48ee2ea",
   "Arch's obsidian": "1.14.5",
