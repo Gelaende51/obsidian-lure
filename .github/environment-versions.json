@@ -12,7 +12,7 @@
   "Alpine edge's electron": "42.11.10",
   "Flathub's Obsidian": "1.14.5",
   "Snap's Obsidian": "1.14.5",
-  "WineHQ staging": "11.20~noble-1",
+  "WineHQ staging": "11.21~noble-1",
   "electron@beta": "45.0.0-beta.7",
   "runner ubuntu24": "ubuntu24/20261026.354",
   "runner win25": "win25/20261021.299",
