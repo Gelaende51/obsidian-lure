@@ -8,14 +8,14 @@
   "image dockurr/windows": "sha256:16fd7c39a3e48bb946d29c59dc6015942e5b900a1fa5d7e5552053bfc48ee2ea",
   "Arch's obsidian": "1.14.5",
   "Nix's obsidian": "1.14.5",
-  "FreeBSD's newest electron": "44.10.0",
-  "Alpine edge's electron": "42.11.10",
+  "FreeBSD's newest electron": "44.10.1",
+  "Alpine edge's electron": "42.11.18",
   "Flathub's Obsidian": "1.14.5",
   "Snap's Obsidian": "1.14.5",
   "WineHQ staging": "11.21~noble-1",
   "electron@beta": "45.0.0-beta.7",
-  "runner ubuntu24": "ubuntu24/20261026.354",
+  "runner ubuntu24": "ubuntu24/20261101.360",
   "runner win25": "win25/20261021.299",
-  "runner ubuntu24-arm64": "ubuntu24-arm64/20261026.166",
+  "runner ubuntu24-arm64": "ubuntu24-arm64/20261101.172",
   "runner win11-arm64": "win11-arm64/20261006.188"
 }
