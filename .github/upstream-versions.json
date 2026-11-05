@@ -1,6 +1,6 @@
 {
   "obsidian": "1.15.0",
-  "obsidianBeta": null,
+  "obsidianBeta": "1.15.1",
   "plugins": {
     "advanced-rename-and-delete-handler": "3.4.0",
     "another-name": "1.0.1",
@@ -19,11 +19,11 @@
     "nav-link-header": "2.8.0",
     "notebook-navigator": "3.5.0",
     "obsidian-filename-heading-sync": "1.12.0",
-    "obsidian-front-matter-title-plugin": "4.2.1",
+    "obsidian-front-matter-title-plugin": "4.3.0",
     "obsidian-hider": "1.7.1",
     "obsidian-hover-editor": "0.11.31",
     "obsidian-icon-folder": "2.14.7",
-    "obsidian-outliner": "4.10.2",
+    "obsidian-outliner": "4.11.0",
     "obsidian-path-title": "1.0.7",
     "open-tab-settings": "3.4.0",
     "pane-relief": "0.5.9",
