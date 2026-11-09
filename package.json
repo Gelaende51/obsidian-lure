@@ -19,12 +19,12 @@
 		"electron-template": "https://codeload.github.com/Gelaende51/electron-template/tar.gz/refs/tags/v0.17.1",
 		"esbuild": "^0.28.2",
 		"eslint": "^9.39.0",
-		"eslint-plugin-obsidianmd": "^0.4.2",
+		"eslint-plugin-obsidianmd": "^0.5.1",
 		"obsidian": "latest",
 		"obsidian-toolkit": "https://codeload.github.com/Gelaende51/obsidian-toolkit/tar.gz/refs/tags/v0.13.2",
-		"tslib": "^2.6.0",
+		"tslib": "^2.9.1",
 		"typescript": "^5.4.0",
-		"typescript-eslint": "^8.71.1"
+		"typescript-eslint": "^8.72.1"
 	},
 	"dependencies": {
 		"picomatch": "^4.0.7"
