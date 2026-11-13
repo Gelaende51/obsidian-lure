@@ -11,11 +11,11 @@
   "FreeBSD's newest electron": "44.10.2",
   "Alpine edge's electron": "42.11.18",
   "Flathub's Obsidian": "1.15.0",
-  "Snap's Obsidian": "1.15.0",
+  "Snap's Obsidian": "1.15.1",
   "WineHQ staging": "11.21~noble-1",
   "electron@beta": "45.0.0-beta.7",
   "runner ubuntu24": "ubuntu24/20261111.370",
-  "runner win25": "win25/20261101.318",
+  "runner win25": "win25/20261111.331",
   "runner ubuntu24-arm64": "ubuntu24-arm64/20261111.182",
   "runner win11-arm64": "win11-arm64/20261006.188"
 }
